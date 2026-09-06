@@ -1,5 +1,5 @@
-"""ClearGlass operational agents.
+"""Governed social growth agent controls for ClearGlassInc Artemis."""
 
-Agents are recommendation and analysis components. External effects require
-separate, authenticated executors and explicit policy approval.
-"""
+from .policy import Action, Approval, Decision, authorize, canonical_artifact_hash
+
+__all__ = ["Action", "Approval", "Decision", "authorize", "canonical_artifact_hash"]
