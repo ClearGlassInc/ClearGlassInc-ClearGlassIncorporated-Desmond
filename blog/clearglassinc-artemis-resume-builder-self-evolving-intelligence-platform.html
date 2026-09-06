@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>ClearGlassInc Artemis Resume Builder: Self-Evolving AI Intelligence Platform Blueprint — ClearGlass Inc.</title>
+<meta name="description" content="A production full-stack design document for ClearGlassInc Artemis: Gotham, Foundry, AIP, Apollo, ontology-driven agents, safe self-improvement loops, policy-as-code, evals, and mission-grade deployment."/>
+<link rel="canonical" href="https://www.clearglassinc.com/blog/clearglassinc-artemis-resume-builder-self-evolving-intelligence-platform.html"/>
+<link rel="alternate" type="application/rss+xml" title="ClearGlass Insights RSS" href="https://www.clearglassinc.com/blog/feed.xml"/>
+<meta name="author" content="Desmond Otieno Odhiambo"/>
+<meta name="robots" content="index,follow,max-image-preview:large"/>
+<meta name="keywords" content="ClearGlassInc Artemis, resume builder, Palantir AIP, Palantir Foundry, Gotham, Apollo, self-evolving AI, intelligence platform, ontology, AI agents, policy as code"/>
+<meta property="og:type" content="article"/>
+<meta property="og:title" content="ClearGlassInc Artemis Resume Builder: Self-Evolving AI Intelligence Platform Blueprint"/>
+<meta property="og:description" content="A production full-stack design document for ClearGlassInc Artemis: Gotham, Foundry, AIP, Apollo, ontology-driven agents, safe self-improvement loops, policy-as-code, evals, and mission-grade deployment."/>
+<meta property="og:url" content="https://www.clearglassinc.com/blog/clearglassinc-artemis-resume-builder-self-evolving-intelligence-platform.html"/>
+<meta property="og:site_name" content="ClearGlass Inc."/>
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+<meta property="article:published_time" content="2026-07-06"/>
+<meta property="article:modified_time" content="2026-07-07"/>
+<meta property="article:author" content="Desmond Otieno Odhiambo"/>
+<meta property="article:section" content="AI Architecture"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="ClearGlassInc Artemis Resume Builder: Self-Evolving AI Intelligence Platform Blueprint"/>
+<meta name="twitter:description" content="A production full-stack design document for ClearGlassInc Artemis: Gotham, Foundry, AIP, Apollo, ontology-driven agents, safe self-improvement loops, policy-as-code, evals, and mission-grade deployment."/>
+<meta name="twitter:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="insights.css"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "ClearGlassInc Artemis Resume Builder: Self-Evolving AI Intelligence Platform Blueprint",
+  "description": "A production full-stack design document for ClearGlassInc Artemis: Gotham, Foundry, AIP, Apollo, ontology-driven agents, safe self-improvement loops, policy-as-code, evals, and mission-grade deployment.",
+  "image": "https://www.clearglassinc.com/assets/images/clearglass-logo.png",
+  "datePublished": "2026-07-06",
+  "dateModified": "2026-07-07",
+  "author": {
+    "@type": "Person",
+    "name": "Desmond Otieno Odhiambo",
+    "jobTitle": "Founder & Software Architect",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "ClearGlass Inc.",
+      "url": "https://www.clearglassinc.com"
+    }
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "ClearGlass Inc.",
+    "url": "https://www.clearglassinc.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.clearglassinc.com/assets/images/clearglass-logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.clearglassinc.com/blog/clearglassinc-artemis-resume-builder-self-evolving-intelligence-platform.html"
+  }
+}
+</script>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --white:#fafbfc;--off:#f3f5f8;--paper:#fff;
+  --dark:#0a0c10;--text:#0a0c10;--text-2:#3a3f4a;--text-3:#6b7280;--text-4:#9ca3af;
+  --line:rgba(10,12,16,.08);--line-soft:rgba(10,12,16,.05);
+  --prism-1:#38bdf8;--prism-2:#a78bfa;--prism-3:#f472b6;--prism-4:#34d399;--prism-5:#fbbf24;--prism-6:#60a5fa;
+  --glass:rgba(255,255,255,.72);--shadow:0 24px 80px -44px rgba(6,8,18,.55);
+  --crystal:linear-gradient(135deg,#38bdf8 0%,#a78bfa 25%,#f472b6 50%,#fbbf24 75%,#34d399 100%);
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'Urbanist',system-ui,sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{font-family:var(--sans);color:var(--text);background:var(--white);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;overflow-x:hidden}
+a{color:inherit}
+::selection{background:rgba(167,139,250,.22)}
+
+/* banners */
+.class-banner{background:#0a0c10;color:#cfe9ff;text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.18em;font-weight:600;padding:6px 16px}
+.class-banner span{opacity:.55;font-weight:400;margin:0 8px}
+.unclass-banner{background:#0d1f17;color:#4ade80;text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;font-weight:700;padding:6px 16px}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px clamp(16px,5vw,40px);background:rgba(250,251,252,.78);backdrop-filter:blur(20px) saturate(1.2);border-bottom:1px solid var(--line)}
+.nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}
+.nav-mark{width:40px;height:40px;border-radius:11px;overflow:hidden;background:#fff;display:grid;place-items:center;box-shadow:0 6px 20px rgba(0,0,0,.08);flex-shrink:0}
+.nav-mark img{width:100%;height:100%;object-fit:cover;display:block}
+.nav-name{font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:-.01em}
+.nav-name em{font-style:italic;font-weight:300;color:var(--text-3)}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{color:var(--text-3);text-decoration:none;font-size:13.5px;font-weight:600;padding:8px 14px;border-radius:10px;transition:color .18s,background .18s}
+.nav-links a:hover{color:var(--text);background:rgba(255,255,255,.7)}
+.nav-cta{background:var(--dark);color:#fff !important}
+.nav-cta:hover{background:#1a1d25;color:#fff !important}
+@media(max-width:860px){.nav-links a:not(.nav-cta){display:none}}
+
+/* reading progress */
+.progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--crystal);z-index:200;transition:width .1s linear}
+
+/* layout */
+.wrap{max-width:760px;margin:0 auto;padding:0 clamp(20px,5vw,28px)}
+.hero{padding:clamp(56px,9vw,104px) 0 clamp(28px,5vw,44px)}
+.kicker{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-3);font-weight:600;margin-bottom:22px}
+.kicker::before{content:"";width:24px;height:1.5px;background:var(--crystal)}
+h1.title{font-family:var(--serif);font-weight:600;font-size:clamp(36px,6.2vw,62px);line-height:1.04;letter-spacing:-.02em;margin-bottom:24px}
+h1.title em{font-style:italic;font-weight:400;background:var(--crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.dek{font-size:clamp(18px,2.4vw,22px);line-height:1.5;color:var(--text-2);font-weight:400;max-width:42ch}
+.byline{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:34px;padding-top:24px;border-top:1px solid var(--line)}
+.byline-av{width:42px;height:42px;border-radius:50%;background:var(--crystal);display:grid;place-items:center;color:#fff;font-weight:700;font-family:var(--serif);font-size:19px;flex-shrink:0}
+.byline-meta{font-size:14px;line-height:1.45}
+.byline-meta b{font-weight:700}
+.byline-meta span{color:var(--text-3)}
+
+/* article body */
+article{font-size:18.5px;line-height:1.72;color:var(--text-2)}
+article p{margin:0 0 22px}
+article p strong,article li strong{color:var(--text);font-weight:700}
+article h2{font-family:var(--serif);color:var(--text);font-weight:600;font-size:clamp(27px,4vw,38px);line-height:1.12;letter-spacing:-.015em;margin:56px 0 18px;scroll-margin-top:96px}
+article h3{color:var(--text);font-weight:700;font-size:clamp(19px,2.6vw,23px);margin:38px 0 12px;letter-spacing:-.01em}
+article h2 .num{font-family:var(--mono);font-size:.42em;color:var(--prism-2);vertical-align:middle;margin-right:12px;letter-spacing:.05em}
+article a.link{color:var(--text);text-decoration:underline;text-decoration-color:rgba(167,139,250,.5);text-underline-offset:3px;text-decoration-thickness:1.5px;transition:text-decoration-color .2s}
+article a.link:hover{text-decoration-color:var(--prism-2)}
+article ul,article ol{margin:0 0 22px;padding-left:24px}
+article li{margin:0 0 11px}
+article ul li::marker{color:var(--prism-2)}
+
+.lede{font-size:21px;line-height:1.6;color:var(--text)}
+.lede::first-letter{font-family:var(--serif);font-size:3.4em;line-height:.82;float:left;font-weight:600;margin:6px 12px 0 0;background:var(--crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+/* pull quote */
+.pull{margin:40px 0;padding:6px 0 6px 28px;border-left:3px solid transparent;border-image:var(--crystal) 1;font-family:var(--serif);font-style:italic;font-size:clamp(24px,3.6vw,33px);line-height:1.28;color:var(--text);font-weight:500}
+
+/* callout */
+.callout{margin:34px 0;padding:24px 26px;border-radius:18px;background:var(--paper);border:1px solid var(--line);box-shadow:0 14px 40px -28px rgba(6,8,18,.5)}
+.callout-tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--prism-2);margin-bottom:10px}
+.callout p{font-size:17px;margin:0;color:var(--text-2)}
+.callout p strong{color:var(--text)}
+
+/* framework diagram */
+.gates{margin:34px 0;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:640px){.gates{grid-template-columns:1fr 1fr}}
+.gate{position:relative;padding:20px 16px;border-radius:16px;background:var(--paper);border:1px solid var(--line);box-shadow:0 12px 34px -26px rgba(6,8,18,.5)}
+.gate .g-no{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text-4);letter-spacing:.08em}
+.gate .g-name{font-family:var(--serif);font-size:23px;font-weight:600;margin:6px 0 6px;color:var(--text)}
+.gate .g-desc{font-size:13.5px;line-height:1.45;color:var(--text-3)}
+.gate::after{content:"→";position:absolute;right:-13px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--prism-2);font-weight:700;z-index:2}
+.gate:last-child::after{display:none}
+@media(max-width:640px){.gate:nth-child(2)::after{display:none}}
+.gate-1{box-shadow:0 12px 34px -26px rgba(56,189,248,.7);border-top:2px solid var(--prism-1)}
+.gate-2{border-top:2px solid var(--prism-2)}
+.gate-3{border-top:2px solid var(--prism-5)}
+.gate-4{border-top:2px solid var(--prism-4)}
+
+/* risk router table */
+.router{margin:30px 0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--paper)}
+.router-row{display:grid;grid-template-columns:92px 1fr;gap:0;border-bottom:1px solid var(--line-soft);font-size:15px}
+.router-row:last-child{border-bottom:none}
+.router-score{padding:16px 14px;font-family:var(--mono);font-weight:600;font-size:13px;display:flex;align-items:center;color:#fff}
+.router-body{padding:16px 18px;color:var(--text-2);line-height:1.5}
+.router-body b{color:var(--text);display:block;font-size:15px;margin-bottom:2px}
+.r-low{background:linear-gradient(135deg,#34d399,#10b981)}
+.r-med{background:linear-gradient(135deg,#fbbf24,#f59e0b)}
+.r-high{background:linear-gradient(135deg,#f472b6,#db2777)}
+
+/* steps */
+.steps{counter-reset:s;list-style:none;padding:0;margin:28px 0}
+.steps li{position:relative;padding:0 0 22px 56px;margin:0}
+.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:-2px;width:38px;height:38px;border-radius:11px;background:var(--dark);color:#fff;font-family:var(--mono);font-weight:600;font-size:15px;display:grid;place-items:center}
+.steps li b{color:var(--text);display:block;margin-bottom:3px;font-size:18px}
+
+/* tl;dr / key takeaways */
+.tldr{margin:8px 0 44px;padding:24px 26px;border-radius:18px;background:#0a0c10;color:#e7ecff}
+.tldr h4{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:#9aa6c8;font-weight:600;margin-bottom:14px}
+.tldr ul{margin:0;padding-left:20px}
+.tldr li{margin-bottom:9px;font-size:15.5px;line-height:1.5;color:#cdd5ef}
+.tldr li::marker{color:var(--prism-2)}
+.tldr li b{color:#fff}
+
+/* CTA */
+.cta{margin:64px 0 24px;padding:clamp(34px,6vw,52px);border-radius:26px;background:radial-gradient(120% 140% at 0% 0%,#15192a 0%,#0a0c10 60%);color:#fff;text-align:center;position:relative;overflow:hidden}
+.cta::before{content:"";position:absolute;inset:0;background:var(--crystal);opacity:.10;mix-blend-mode:screen}
+.cta-k{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:#9aa6c8;position:relative}
+.cta h3{font-family:var(--serif);font-weight:600;font-size:clamp(26px,4.4vw,40px);line-height:1.12;margin:14px 0 12px;position:relative}
+.cta p{color:#cdd5ef;max-width:46ch;margin:0 auto 26px;position:relative;font-size:16.5px}
+.cta-row{display:inline-flex;justify-content:center;flex-wrap:wrap;position:relative;border:1px solid rgba(255,255,255,.18);border-radius:16px;overflow:hidden;background:rgba(255,255,255,.07);box-shadow:0 18px 46px -28px rgba(255,255,255,.36)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 26px;border-radius:0;font-weight:700;font-size:15px;text-decoration:none;transition:background .18s,color .18s,transform .15s,box-shadow .2s;min-height:50px}
+.btn+.btn{border-left:1px solid rgba(255,255,255,.18)}
+.btn-primary{background:#fff;color:#0a0c10}
+.btn-primary:hover{background:#f4f7fb;box-shadow:inset 0 -2px 0 rgba(167,139,250,.35)}
+.btn-ghost{background:transparent;color:#fff}
+.btn-ghost:hover{background:rgba(255,255,255,.14)}
+@media(max-width:560px){.cta-row{display:flex;width:100%;flex-direction:column}.btn{width:100%}.btn+.btn{border-left:0;border-top:1px solid rgba(255,255,255,.18)}}
+
+/* related / share */
+.endbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin:44px 0;padding-top:26px;border-top:1px solid var(--line)}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--text-3);background:var(--off);border:1px solid var(--line);padding:6px 11px;border-radius:8px}
+.share a{font-size:13px;font-weight:600;color:var(--text-3);text-decoration:none;margin-left:14px}
+.share a:hover{color:var(--text)}
+
+/* footer */
+.footer{background:#0a0c10;color:#9aa6c8;padding:56px clamp(20px,5vw,40px) 28px;margin-top:40px}
+.footer-in{max-width:1100px;margin:0 auto}
+.footer-top{display:flex;flex-wrap:wrap;gap:40px;justify-content:space-between;align-items:flex-start}
+.footer-brand{display:flex;align-items:center;gap:12px}
+.footer-mark{width:38px;height:38px;border-radius:10px;overflow:hidden;background:#fff}
+.footer-mark img{width:100%;height:100%;object-fit:cover}
+.footer-brand b{color:#fff;font-family:var(--serif);font-size:20px;font-weight:600;display:block}
+.footer-brand span{font-size:12px;color:#6b7280}
+.footer-cols{display:flex;flex-wrap:wrap;gap:36px}
+.footer-col h5{color:#e7ecff;font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;font-family:var(--mono);font-weight:600}
+.footer-col a{display:block;color:#9aa6c8;text-decoration:none;font-size:14px;margin-bottom:9px;transition:color .15s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;margin-top:40px;padding-top:22px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px}
+.footer-tagline{margin-top:18px;font-family:var(--serif);font-style:italic;color:#6b7280;font-size:15px}
+pre{margin:24px 0;padding:18px 20px;border-radius:14px;background:#0a0c10;color:#dbeafe;overflow:auto;font-size:13px;line-height:1.55;border:1px solid rgba(255,255,255,.08)}code{font-family:var(--mono)}article code{background:rgba(10,12,16,.06);color:var(--text);padding:.12em .35em;border-radius:6px}pre code{background:transparent;color:inherit;padding:0}
+
+/* advanced blog feature system */
+.article-tools{position:sticky;top:72px;z-index:80;background:rgba(250,251,252,.86);backdrop-filter:blur(18px);border-block:1px solid var(--line);padding:10px clamp(20px,5vw,28px);display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.tool-chip{border:1px solid var(--line);background:#fff;color:var(--text-2);border-radius:999px;padding:8px 12px;font:700 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;text-decoration:none;box-shadow:0 10px 24px -20px rgba(6,8,18,.45)}
+.tool-chip:hover,.tool-chip.active{color:var(--text);border-color:rgba(167,139,250,.42);background:linear-gradient(135deg,rgba(56,189,248,.08),rgba(167,139,250,.08))}
+.toc{margin:0 0 34px;padding:18px;border-radius:18px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow)}
+.toc b{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px}.toc a{display:inline-block;margin:6px 10px 6px 0;color:var(--text-2);font-size:14px;text-decoration:none;border-bottom:1px solid rgba(167,139,250,.35)}
+.feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:30px 0}.feature-card{padding:18px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,#fff,rgba(243,245,248,.74));box-shadow:var(--shadow)}.feature-card h4{font-size:17px;color:var(--text);margin-bottom:6px}.feature-card p{font-size:15.5px;margin:0;color:var(--text-2)}
+.matrix{margin:30px 0;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#fff}.matrix-row{display:grid;grid-template-columns:1fr 1.2fr 1.1fr;border-bottom:1px solid var(--line-soft)}.matrix-row:last-child{border-bottom:0}.matrix-row>*{padding:14px 16px;font-size:14px;line-height:1.45}.matrix-head{background:#0a0c10;color:#fff;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;font-size:11px}.metric-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:28px 0}.metric-pill{padding:16px 12px;border:1px solid var(--line);border-radius:16px;background:#fff;text-align:center}.metric-pill strong{display:block;font-family:var(--serif);font-size:30px;color:var(--text)}.metric-pill span{font-family:var(--mono);font-size:10px;color:var(--text-3);letter-spacing:.1em;text-transform:uppercase}.power-mode pre{max-height:none}.copyable{position:relative}.copy-code{position:absolute;right:10px;top:10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#dbeafe;border-radius:9px;padding:6px 9px;font:700 11px var(--mono);cursor:pointer}
+@media(max-width:720px){.feature-grid,.metric-strip{grid-template-columns:1fr}.matrix-row{grid-template-columns:1fr}.matrix-head{display:none}.article-tools{top:60px}}
+</style>
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/glass.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="../brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body data-ix-page="article" data-ix-slug="clearglassinc-artemis-resume-builder-self-evolving-intelligence-platform" data-ix-theme="light" class="article-page">
+<div class="progress" id="progress"></div>
+<div class="class-banner">UNCLASSIFIED / NON-CLASSIFIÉ <span>·</span> CLEARGLASS INTELLIGENCE DESK <span>·</span> OPEN PUBLICATION</div>
+<nav class="nav"><a class="nav-brand" href="../index.html"><span class="nav-mark"><img src="../assets/images/clearglass-logo.png" alt="ClearGlass logo"/></span><span class="nav-name">ClearGlassInc. <em>2040</em></span></a><div class="nav-links"><a href="index.html">Insights</a><a href="../ai-operator.html">AI Operator</a><a href="../guardian.html">Guardian</a><a href="../government.html">Government</a><a href="../index.html#contact" class="nav-cta">Book a briefing →</a></div></nav>
+<main class="wrap">
+<header class="hero"><div class="kicker">AI Architecture · Artemis Engineering Notes</div><h1 class="title">ClearGlassInc Artemis <em>Resume Builder</em>: Self-Evolving Intelligence Blueprint</h1><p class="dek">A mission-grade architecture and implementation document for a self-improving, agentic, audited AI intelligence platform built across Palantir Gotham, Foundry, AIP, and Apollo.</p><div class="byline"><div class="byline-av">D</div><div class="byline-meta"><b>Desmond Otieno Odhiambo</b><br/><span>Published July 6, 2026 · 28 min read</span></div></div></header>
+</main>
+
+<div class="article-tools" aria-label="Article tools">
+  <a class="tool-chip" href="#system-architecture">Architecture</a>
+  <a class="tool-chip" href="#data-ontology">Ontology</a>
+  <a class="tool-chip" href="#ai-agent-design">Agents</a>
+  <a class="tool-chip" href="#self-improvement-loop">Self-improvement</a>
+  <a class="tool-chip" href="#code-examples">Python code</a>
+  <button class="tool-chip" id="copyLink" type="button">Copy link</button>
+</div>
+
+<main class="wrap">
+<article id="article">
+<nav class="toc" aria-label="Article table of contents"><b>Blueprint navigation</b><a href="#system-architecture">System Architecture</a><a href="#data-ontology">Data and Ontology</a><a href="#ai-agent-design">AI and Agent Design</a><a href="#self-improvement-loop">Self-Improvement Loop</a><a href="#full-stack-implementation">Full-Stack Implementation</a><a href="#security-governance">Security and Governance</a><a href="#code-examples">Code Examples</a><a href="#scenario">Scenario Walkthrough</a></nav>
+<p class="lede"><strong>ClearGlassInc Artemis</strong> is designed as a self-evolving intelligence operating system: a governed platform that ingests live and historical data, grounds every assertion in an ontology, routes AI work through explicit policy gates, and improves prompts, workflows, heuristics, and model routing only after human-approved evaluation.</p>
+<div class="callout"><span class="callout-tag">Platform thesis</span><p><strong>Gotham</strong> is the operational intelligence workbench, <strong>Foundry</strong> is the data and ontology backbone, <strong>AIP</strong> is the governed AI execution layer, and <strong>Apollo</strong> is the secure deployment, rollback, and runtime-control plane.</p></div>
+<h2 id="system-architecture"><span class="num">01</span>System Architecture</h2>
+<p>The architecture uses a layered control surface so analysts can move at mission speed without allowing the AI layer to mutate goals, bypass compartments, or perform operationally significant actions without approval.</p>
+<pre><code>operator_browser ──► web_ui ──► api_gateway ──► policy_enforcer
+                                      │
+                                      ├──► artemis_backend_services
+                                      ├──► foundry_ontology_and_pipelines
+                                      ├──► gotham_cases_entities_tracks
+                                      ├──► aip_agent_runtime_and_evals
+                                      └──► apollo_release_runtime_control</code></pre>
+<ul><li><strong>Frontend:</strong> mission cockpit, case canvas, graph explorer, eval dashboard, approval queue, and audit timeline.</li><li><strong>Backend:</strong> FastAPI services for cases, events, feedback, tool execution, routing, and approvals.</li><li><strong>Data layer:</strong> Foundry datasets, streaming topics, lakehouse tables, vector indexes, and immutable ledgers.</li><li><strong>Ontology layer:</strong> mission entities, relationships, confidence scores, lineage, temporal state, and permission tags.</li><li><strong>AI orchestration:</strong> AIP copilots, bounded agents, tool registry, model router, eval harness, prompt registry, and workflow state machines.</li><li><strong>Deployment:</strong> Apollo channels for dev, staging, mission rehearsal, production, rollback, and kill-switch control.</li></ul>
+<h2 id="data-ontology"><span class="num">02</span>Data and Ontology</h2>
+<p>Foundry owns the canonical data integration fabric. Gotham consumes and operationalizes the same ontology for investigations, entity tracking, link analysis, and case management. AIP agents are constrained to ontology-aware tools so their work can be inspected, reproduced, and denied by policy.</p>
+<pre><code class="language-sql">CREATE TABLE ontology_entity (
+  entity_id TEXT PRIMARY KEY,
+  entity_type TEXT NOT NULL,
+  display_name TEXT NOT NULL,
+  confidence NUMERIC CHECK (confidence BETWEEN 0 AND 1),
+  compartments TEXT[] NOT NULL,
+  coalition_visibility TEXT[] NOT NULL,
+  valid_time tstzrange NOT NULL,
+  lineage JSONB NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE ontology_relationship (
+  relationship_id TEXT PRIMARY KEY,
+  source_entity_id TEXT REFERENCES ontology_entity(entity_id),
+  target_entity_id TEXT REFERENCES ontology_entity(entity_id),
+  relationship_type TEXT NOT NULL,
+  confidence NUMERIC CHECK (confidence BETWEEN 0 AND 1),
+  evidence_refs TEXT[] NOT NULL,
+  valid_time tstzrange NOT NULL,
+  policy_tags TEXT[] NOT NULL
+);</code></pre>
+<p>Core entities include person, organization, location, device, account, sensor, vehicle, document, event, alert, mission, case, hypothesis, collection requirement, action package, model artifact, prompt artifact, workflow version, and approval decision.</p>
+<h2 id="ai-agent-design"><span class="num">03</span>AI and Agent Design</h2>
+<p>Artemis separates cognition from authority. Agents may triage, enrich, correlate, summarize, recommend, and prepare work packages. They may not execute operationally significant actions unless the policy engine returns an approval requirement and a human approver signs the action package.</p>
+<pre><code class="language-python">@dataclass(frozen=True)
+class AgentToolRequest:
+    actor_id: str
+    mission_id: str
+    tool_name: str
+    input: dict
+    purpose: str
+    compartments: list[str]
+
+async def execute_tool(req: AgentToolRequest) -&gt; dict:
+    decision = await policy.check(
+        actor=req.actor_id,
+        action=f"tool:{req.tool_name}",
+        resource=req.input,
+        context={"mission_id": req.mission_id, "purpose": req.purpose},
+    )
+    if decision.effect == "deny":
+        raise PermissionError(decision.reason)
+    if decision.requires_approval:
+        return await approvals.open_package(req, decision)
+    return await tool_registry.invoke(req.tool_name, req.input)</code></pre>
+<h2 id="self-improvement-loop"><span class="num">04</span>Self-Improvement Loop</h2>
+<p>The improvement loop captures operator corrections, feedback, query logs, alert outcomes, task latency, confidence calibration, and mission results. Those signals become eval cases. Evals produce candidate prompt versions, workflow changes, heuristic updates, or model-routing policies. Apollo promotes only approved versions and can roll back instantly.</p>
+<pre><code class="language-python">class ImprovementLoop:
+    async def ingest_signal(self, signal):
+        await ledger.append("feedback.signal", signal)
+        eval_case = await eval_builder.from_signal(signal)
+        await eval_store.upsert(eval_case)
+
+    async def propose_change(self, artifact_id: str):
+        baseline = await registry.load(artifact_id)
+        candidate = await optimizer.generate_candidate(baseline)
+        report = await eval_runner.compare(baseline, candidate)
+        if report.precision_delta &gt;= 0.03 and report.safety_regressions == 0:
+            return await approvals.request_change(candidate, report)
+        return await registry.reject(candidate, report)</code></pre>
+<ul><li><strong>Versioning:</strong> every prompt, router, workflow, and eval set has immutable semantic versions.</li><li><strong>Rollback:</strong> Apollo channels pin runtime versions and can revert within minutes.</li><li><strong>Drift detection:</strong> telemetry monitors embedding drift, label drift, confidence calibration, false positives, and operator override rates.</li><li><strong>Guardrails:</strong> the system can propose upgrades, but cannot change mission objectives, policy, access boundaries, or action authority.</li></ul>
+<h2 id="full-stack-implementation"><span class="num">05</span>Full-Stack Implementation</h2>
+<pre><code class="language-typescript">export async function submitOperatorFeedback(input: FeedbackInput) {
+  const res = await fetch('/api/feedback', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ ...input, uiTimestamp: new Date().toISOString() })
+  });
+  if (!res.ok) throw new Error('feedback rejected');
+  return res.json();
+}</code></pre>
+<pre><code class="language-python">@app.post('/api/feedback')
+async def feedback(payload: FeedbackPayload, user: User = Depends(authn)):
+    await authz.require(user, 'feedback:create', payload.mission_id)
+    event = payload.model_dump() | {'actor_id': user.id, 'received_at': utcnow()}
+    await bus.publish('artemis.feedback.v1', event)
+    return {'status': 'accepted', 'event_id': event['id']}</code></pre>
+<h2 id="security-governance"><span class="num">06</span>Security and Governance</h2>
+<p>Security is enforced at identity, action, data, model, prompt, tool, deployment, and audit layers. Need-to-know controls apply at row, column, entity, relationship, case, and mission levels. Coalition visibility is explicit, not inferred.</p>
+<pre><code class="language-rego">package artemis.authz
+
+default allow = false
+
+allow {
+  input.actor.clearance &gt;= input.resource.required_clearance
+  every c in input.resource.compartments { c in input.actor.compartments }
+  input.action in input.actor.allowed_actions
+  input.context.mission_id in input.actor.active_missions
+}
+
+requires_approval {
+  input.action == "action_package:submit"
+  input.resource.operational_significance == "high"
+}</code></pre>
+<h2 id="code-examples"><span class="num">07</span>Code Examples</h2>
+<pre><code class="language-python">async def correlate_alert(alert_id: str, user: User):
+    alert = await ontology.get('Alert', alert_id, actor=user)
+    neighbors = await ontology.query(
+        """
+        MATCH (a:Alert {id:$alert_id})-[:MENTIONS|OBSERVED_NEAR*1..3]-(e)
+        WHERE e.confidence &gt;= 0.62
+        RETURN e ORDER BY e.confidence DESC LIMIT 50
+        """,
+        {"alert_id": alert_id},
+        actor=user,
+    )
+    summary = await aip.invoke(
+        agent='correlation_analyst',
+        input={'alert': alert, 'neighbors': neighbors},
+        policy_context={'mission_id': alert['mission_id']},
+    )
+    return {'alert': alert, 'entities': neighbors, 'summary': summary}</code></pre>
+<pre><code class="language-yaml">apollo:
+  application: artemis-aip-runtime
+  channels:
+    dev: auto
+    staging: approval_required
+    mission-rehearsal: two_person_rule
+    production: change_board_required
+  rollback:
+    max_time_minutes: 5
+    preserve_audit_ledger: true
+  kill_switches:
+    - disable_tool_execution
+    - freeze_prompt_versions
+    - route_all_actions_to_human_review</code></pre>
+<h2 id="scenario"><span class="num">08</span>Scenario Walkthrough</h2>
+<p>A live event enters Artemis from a streaming source. Foundry normalizes it, attaches source lineage, and maps it onto the ontology as an alert connected to entities, locations, and prior cases. Gotham surfaces the graph to the analyst. AIP triage agents enrich the event, compare it to historical patterns, and draft a recommendation with confidence, evidence, and dissenting hypotheses.</p>
+<p>The commander sees an action package: why the alert matters, what evidence supports it, what the model is uncertain about, and which policy gates apply. The commander approves enrichment and rejects an operational recommendation because one source is stale. Artemis records the correction, builds an eval case, tests the relevant prompt and heuristic, proposes a routing update that penalizes stale-source recommendations, and sends it to human review. Apollo promotes the approved change to staging, measures precision and latency, and only then rolls it into production.</p>
+<div class="pull">The system gets better by learning the shape of good judgment, not by granting itself new authority.</div>
+
+  <div class="cta">
+    <div class="cta-k">ClearGlassInc Artemis · Resume Builder</div>
+    <h3>Build governed intelligence artifacts that flow from signal to decision.</h3>
+    <p>Use the same ClearGlass pattern for resume-grade intelligence products: grounded content, approval-aware workflows, exportable evidence, and clean operator handoff.</p>
+    <div class="cta-row">
+      <a href="resume-builder.html" class="btn btn-primary">Open Resume Builder →</a>
+      <a href="index.html" class="btn btn-ghost">Back to Insights</a>
+    </div>
+  </div>
+
+  <section class="ix-related" id="ixRelated">
+    <b>Related from the desk</b>
+    <div class="ix-related-grid">
+      <a class="ix-related-card" href="clearglassinc-artemis-self-evolving-ai-intelligence-platform.html"><span class="k">AI Architecture</span><h4>ClearGlassInc Artemis: Self-Evolving AI Intelligence Platform</h4><p>The companion full-stack blueprint for governed agents, ontology-driven workflows, evals, and Apollo-controlled deployment.</p><span class="m">Architecture brief →</span></a>
+      <a class="ix-related-card" href="index.html"><span class="k">The hub</span><h4>All ClearGlass Insights</h4><p>Governed AI, cybersecurity architecture, autonomy, OSINT workflows, and high-trust software systems.</p><span class="m">Browse every brief →</span></a>
+    </div>
+  </section>
+
+  <div class="endbar">
+    <div class="tags"><span class="tag">CLEARGLASSINC ARTEMIS</span><span class="tag">RESUME BUILDER</span><span class="tag">AIP</span><span class="tag">FOUNDRY</span><span class="tag">APOLLO</span></div>
+    <div class="share"><a href="index.html">← All insights</a></div>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="footer-in">
+    <div class="footer-top">
+      <a href="../index.html" class="footer-brand">
+        <div class="footer-mark"><img src="../assets/images/clearglass-logo.png" alt="ClearGlass logo"></div>
+        <div><b>ClearGlassInc</b><span>See Through Everything</span></div>
+      </a>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h5>Insights</h5>
+          <a href="index.html">All articles</a>
+          <a href="ai-agent-governance-governed-autonomy.html">Governed Autonomy</a>
+          <a href="osint-workflow-that-survives-contact-with-reality.html">OSINT Tradecraft</a>
+          <a href="cybersecurity-architecture-for-agentic-software.html">Agentic Cyber Architecture</a>
+        </div>
+        <div class="footer-col">
+          <h5>Products</h5>
+          <a href="../ai-operator.html">AI Operator</a>
+          <a href="../guardian.html">Guardian</a>
+          <a href="../artemis-iv.html">Artemis IV Core</a>
+        </div>
+        <div class="footer-col">
+          <h5>Company</h5>
+          <a href="../index.html#vision">Vision</a>
+          <a href="../government.html">Government</a>
+          <a href="../index.html#contact">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> ClearGlass Inc. All rights reserved. Ontario, Canada</span>
+      <span>Clarity Is Power</span>
+    </div>
+    <div class="footer-tagline">"The truth is transparent. The truth is dangerous."</div>
+  </div>
+</footer>
+<div class="unclass-banner">UNCLASSIFIED / NON-CLASSIFIÉ — END OF DOCUMENT</div>
+
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+var pb=document.getElementById('progress');
+function upd(){var h=document.documentElement;var sc=h.scrollTop||document.body.scrollTop;var mx=h.scrollHeight-h.clientHeight;pb.style.width=(mx>0?(sc/mx*100):0)+'%';}
+addEventListener('scroll',upd,{passive:true});upd();
+
+document.querySelectorAll('pre').forEach(pre=>{pre.classList.add('copyable');const btn=document.createElement('button');btn.className='copy-code';btn.type='button';btn.textContent='Copy';btn.addEventListener('click',async()=>{await navigator.clipboard.writeText(pre.innerText.replace(/^Copy\n/,''));btn.textContent='Copied';setTimeout(()=>btn.textContent='Copy',1200);});pre.appendChild(btn);});
+document.getElementById('copyLink')?.addEventListener('click',async e=>{await navigator.clipboard.writeText(location.href);e.currentTarget.textContent='Copied';setTimeout(()=>e.currentTarget.textContent='Copy link',1200);});
+</script>
+<script defer src="insights.js"></script>
+<script defer src="/logo-badge.js"></script>
+<script defer src="assistant/writing-help.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › <a href="index.html">ClearGlass Intelligence · Insights</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="clearglassinc-artemis-self-evolving-ai-intelligence-platform.html"><span><b>Previous</b>Self-Evolving AI Platforms</span></a>
+      <a href="index.html"><span><b>Topic hub</b>ClearGlass Intelligence</span></a>
+      <a href="resume-builder.html"><span><b>Next in journey</b>Resume Builder</span></a>
+    </div>
+    <ul>
+      <li><a href="resume-builder.html"><b>Resume Builder</b> — PDF-export resume tool</a></li>
+      <li><a href="../artemis-self-evolving-platform.html"><b>Self-Evolving Platform</b> — Artemis&#x27;s autonomous improvement loop</a></li>
+      <li><a href="artemis-governed-ai-gtm-visual-growth-engine.html"><b>Governed AI Threat Modeling</b> — the Artemis GTM visual growth engine</a></li>
+      <li><a href="clearglassinc-0-to-1m-corporate-execution-plan.html"><b>$0-to-$1M Execution Plan</b> — the corporate build-out playbook</a></li>
+      <li><a href="ethical-sales-system-100k-revenue-prompt.html"><b>Ethical Sales Psychology</b> — a 100K revenue system prompt</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="../nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

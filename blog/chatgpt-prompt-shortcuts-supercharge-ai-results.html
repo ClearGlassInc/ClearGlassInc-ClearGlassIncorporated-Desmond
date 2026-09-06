@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Mastering the Machine: Advanced Prompt Engineering | ClearGlass Insights</title>
+  <meta name="description" content="A practical guide to 60+ prompt modules, quality controls, repeatable workflows, and an interactive composer for building precise AI prompts.">
+  <meta name="author" content="Desmond Otieno Odhiambo">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://www.clearglassinc.com/blog/chatgpt-prompt-shortcuts-supercharge-ai-results.html">
+  <link rel="alternate" type="application/rss+xml" title="ClearGlass Insights RSS" href="https://www.clearglassinc.com/blog/feed.xml">
+  <link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+  <link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#07111f">
+  <meta name="msapplication-TileColor" content="#07111f">
+  <meta name="msapplication-TileImage" content="/icon-192.png">
+  <meta name="msapplication-config" content="/browserconfig.xml">
+  <meta property="og:type" content="article"><meta property="og:title" content="Mastering the Machine: A Comprehensive Guide to Advanced Prompt Engineering"><meta property="og:description" content="Use practical prompt modules, quality gates, and an interactive prompt composer to create clearer, safer, and more useful AI outputs."><meta property="og:url" content="https://www.clearglassinc.com/blog/chatgpt-prompt-shortcuts-supercharge-ai-results.html"><meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"><meta property="article:published_time" content="2026-07-29"><meta property="article:section" content="AI Productivity">
+  <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Mastering the Machine: Advanced Prompt Engineering"><meta name="twitter:description" content="60+ prompt modules, honest limitations, production-ready stacks, and an interactive composer.">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Mastering the Machine: A Comprehensive Guide to Advanced Prompt Engineering","description":"A practical guide to advanced prompt modules, quality control, repeatable workflows, and an interactive prompt composer.","datePublished":"2026-07-29","dateModified":"2026-07-29","author":{"@type":"Person","name":"Desmond Otieno Odhiambo"},"publisher":{"@type":"Organization","name":"ClearGlass Inc.","url":"https://www.clearglassinc.com","logo":{"@type":"ImageObject","url":"https://www.clearglassinc.com/assets/images/clearglass-logo.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.clearglassinc.com/blog/chatgpt-prompt-shortcuts-supercharge-ai-results.html"},"keywords":["ChatGPT prompt shortcuts","AI prompts","prompt engineering","ChatGPT tips","prompt templates"]}</script>
+  <link rel="stylesheet" href="insights.css">
+  <style>
+    :root{--night:#050914;--panel:#0b1425;--ink:#edf7ff;--muted:#9fb2c8;--cyan:#51e6ff;--violet:#a78bfa;--lime:#7cf5b2;--line:rgba(122,217,255,.2)}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:85px}body{margin:0;background:radial-gradient(circle at 15% 0,rgba(81,230,255,.12),transparent 30%),var(--night);color:var(--ink);font:16px/1.7 Inter,system-ui,sans-serif}.nav{position:sticky;top:0;z-index:10;background:rgba(5,9,20,.9);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}.nav-inner,.wrap{max-width:1120px;margin:auto;padding-left:24px;padding-right:24px}.nav-inner{min-height:68px;display:flex;align-items:center;justify-content:space-between}.nav a{color:var(--ink);text-decoration:none;font-weight:750}.nav-links{display:flex;gap:20px}.brand em{color:var(--cyan);font-style:normal}.hero{padding:78px 0 56px;border-bottom:1px solid var(--line)}.kicker,.label{font:800 11px/1.2 ui-monospace,monospace;letter-spacing:.17em;text-transform:uppercase;color:var(--lime)}h1{font-size:clamp(44px,7vw,82px);line-height:.96;letter-spacing:-.055em;max-width:1000px;margin:18px 0 24px}.dek{max-width:760px;font-size:clamp(18px,2vw,23px);color:#c4d4e7}.meta{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font:700 12px ui-monospace,monospace}.layout{display:grid;grid-template-columns:230px minmax(0,790px);gap:54px;padding-top:52px;padding-bottom:80px}.toc{position:sticky;top:92px;align-self:start}.toc a{display:block;color:var(--muted);text-decoration:none;padding:7px 0;font-size:13px}.toc a:hover,.toc a:focus-visible{color:var(--cyan)}article h2{font-size:clamp(30px,4vw,45px);line-height:1.08;letter-spacing:-.035em;margin:68px 0 18px}article>p{color:#c4d4e7}.truth{border:1px solid rgba(124,245,178,.34);background:linear-gradient(135deg,rgba(124,245,178,.11),rgba(81,230,255,.06));border-radius:20px;padding:22px;margin:28px 0}.group{border:1px solid var(--line);background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.02));border-radius:24px;padding:24px;margin:20px 0}.group h3{font-size:22px;margin:0 0 5px}.group>p{color:var(--muted);margin-top:0}.tokens{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.token{border:1px solid rgba(167,139,250,.19);background:rgba(5,9,20,.55);border-radius:14px;padding:15px}.token b{display:block;color:var(--cyan);font:800 13px ui-monospace,monospace}.token span{display:block;color:#c4d4e7;margin:5px 0;font-size:14px}.token code{color:#bcaaff;font-size:12px}.prompt{position:relative;white-space:pre-wrap;background:#02050b;border:1px solid rgba(81,230,255,.3);border-radius:18px;padding:20px;color:#dffcff;overflow:auto}.copy{border:1px solid var(--line);background:#101c31;color:var(--ink);border-radius:999px;padding:9px 13px;font-weight:750;cursor:pointer}.copy:hover,.copy:focus-visible{border-color:var(--cyan)}.builder{border:1px solid rgba(81,230,255,.35);background:linear-gradient(145deg,rgba(81,230,255,.08),rgba(167,139,250,.07));border-radius:24px;padding:24px}.builder-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field label{font:800 11px ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--lime)}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:12px;background:#050914;color:var(--ink);font:inherit;padding:12px}.field textarea{min-height:100px;resize:vertical}.field input:focus-visible,.field select:focus-visible,.field textarea:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}.builder-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}.builder-status{color:var(--muted);font:700 12px ui-monospace,monospace}.preview{min-height:170px;margin:18px 0 0}.secondary{background:transparent}.experimental{columns:2;column-gap:25px}.experimental code{color:#bcaaff}.footer{border-top:1px solid var(--line);padding:32px;text-align:center;color:var(--muted)}@media(max-width:800px){.layout{grid-template-columns:1fr}.toc{position:static}.tokens,.builder-grid{grid-template-columns:1fr}.field.full{grid-column:auto}}@media(max-width:520px){.nav-links a:first-child{display:none}.experimental{columns:1}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  </style>
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body data-ix-page="article" data-ix-slug="chatgpt-prompt-shortcuts-supercharge-ai-results">
+  <nav class="nav" aria-label="Primary"><div class="nav-inner"><a class="brand" href="index.html">ClearGlass <em>Insights</em></a><div class="nav-links"><a href="../index.html">Home</a><a href="index.html">Blog</a></div></div></nav>
+  <header class="hero"><div class="wrap"><div class="kicker">AI productivity · Prompt field guide</div><h1>Mastering the Machine: Advanced Prompt Engineering</h1><p class="dek">I have been collecting these for months. Here is the bookmarkable field guide: practical cues for faster, clearer, and smarter outputs—plus an honest explanation of what they can and cannot do.</p><div class="meta"><span>By Desmond Otieno Odhiambo</span><time datetime="2026-07-29">July 29, 2026</time><span>14 minute read</span><span>60+ shortcuts</span></div></div></header>
+  <main class="wrap layout"><aside class="toc" aria-label="On this page"><div class="label">On this page</div><a href="#how">How they work</a><a href="#foundations">Foundations</a><a href="#style">Tone &amp; style</a><a href="#roles">Roles &amp; reasoning</a><a href="#analysis">Analysis</a><a href="#format">Formatting</a><a href="#quality">Quality control</a><a href="#experimental">Experimental labels</a><a href="#workflows">Workflows</a><a href="#builder">Prompt composer</a><a href="#stacks">Power stacks</a></aside>
+  <article>
+    <section class="truth" id="how"><div class="label">Reality check</div><h2>These are cues—not secret commands</h2><p>ChatGPT does not have a universal hidden command language for these phrases. They work because concise labels communicate intent. Results still depend on your context, constraints, source material, and requested output. A label such as <b>FACT-CHECK</b> asks for verification; it does not guarantee live browsing or make an unsupported claim true.</p><p>Likewise, asking for “chain of thought,” “force trace,” or “metacognitive” output cannot guarantee access to private internal reasoning. Ask instead for a concise rationale, assumptions, calculations, evidence, or a verification checklist you can inspect.</p></section>
+    <h2 id="foundations">🧠 Foundational shortcuts</h2>
+    <div class="group"><h3>Compress, clarify, organize</h3><p>Use these when the problem is information shape—not subject-matter depth.</p><div class="tokens">
+      <div class="token"><b>ELI5 / ELI12 / ELI15</b><span>Explain for a chosen level in plain language.</span><code>ELI12: Explain blockchain technology.</code></div><div class="token"><b>TL;DR</b><span>Condense long content into key points.</span><code>TL;DR: [paste content]</code></div><div class="token"><b>STEP-BY-STEP</b><span>Turn a task into an ordered procedure.</span><code>Build a portfolio site, step-by-step.</code></div><div class="token"><b>CHECKLIST</b><span>Create a checkable action list.</span><code>CHECKLIST: Launch a YouTube channel.</code></div><div class="token"><b>EXEC SUMMARY</b><span>Surface decisions, risks, and implications.</span><code>EXEC SUMMARY: [paste report]</code></div><div class="token"><b>OUTLINE</b><span>Build a structured content skeleton.</span><code>OUTLINE: Content marketing strategy.</code></div><div class="token"><b>FRAMEWORK</b><span>Organize a reusable approach.</span><code>FRAMEWORK: Weekly time management.</code></div>
+    </div></div>
+    <h2 id="style">✍️ Tone &amp; style modifiers</h2><div class="group"><h3>Control the voice</h3><p>Name the audience, tone, and constraints rather than hoping the model infers them.</p><div class="tokens"><div class="token"><b>JARGON / JARGONIZE</b><span>Use domain terminology where it improves precision.</span><code>JARGON: Cloud migration benefits.</code></div><div class="token"><b>HUMANIZE</b><span>Use natural, conversational phrasing.</span><code>HUMANIZE: This thank-you email.</code></div><div class="token"><b>AUDIENCE: [TYPE]</b><span>Adapt knowledge and examples to the reader.</span><code>AUDIENCE: Teenagers — healthy eating.</code></div><div class="token"><b>TONE: [STYLE]</b><span>Set a friendly, formal, direct, or humorous voice.</span><code>TONE: Friendly — welcome message.</code></div><div class="token"><b>SIMPLIFY</b><span>Reduce complexity without removing the core meaning.</span><code>SIMPLIFY: Machine-learning concepts.</code></div><div class="token"><b>AMPLIFY</b><span>Add energy, specificity, and momentum.</span><code>AMPLIFY: Product launch announcement.</code></div></div></div>
+    <h2 id="roles">👤 Roles &amp; reasoning</h2><div class="group"><h3>Choose a lens, then demand evidence</h3><div class="tokens"><div class="token"><b>ACT AS: [ROLE]</b><span>Apply a professional lens; it does not confer credentials.</span><code>ACT AS: Career coach — resume tips.</code></div><div class="token"><b>ROLE · TASK · FORMAT</b><span>Define the job as a compact contract.</span><code>ROLE: Editor | TASK: Review | FORMAT: Table</code></div><div class="token"><b>MULTI-PERSPECTIVE</b><span>Present credible competing viewpoints.</span><code>MULTI-PERSPECTIVE: Remote work.</code></div><div class="token"><b>EXPERT MODE / CONSULTANT</b><span>Request deeper terminology and strategic advice.</span><code>CONSULTANT: Improve retention.</code></div><div class="token"><b>FEYNMAN TECHNIQUE</b><span>Explain simply, expose gaps, then rebuild.</span><code>FEYNMAN: AI language models.</code></div><div class="token"><b>FIRST PRINCIPLES</b><span>Separate assumptions from basic constraints.</span><code>FIRST PRINCIPLES: Reduce expenses.</code></div><div class="token"><b>DELIBERATE THINKING</b><span>Ask for considered analysis before a concise result.</span><code>Analyze options; state assumptions and checks.</code></div><div class="token"><b>BIAS CHECK</b><span>Inspect framing, missing groups, and weak assumptions.</span><code>SYSTEMATIC BIAS CHECK: [statement]</code></div><div class="token"><b>DIALECTIC</b><span>Stage claim, counterclaim, and synthesis.</span><code>DIALECTIC: AI and human jobs.</code></div><div class="token"><b>DEVIL'S ADVOCATE</b><span>Stress the strongest counterarguments.</span><code>DEVIL'S ADVOCATE: This proposal.</code></div><div class="token"><b>METACOGNITIVE</b><span>Request an inspectable plan and self-check—not private reasoning.</span><code>Show assumptions, method, and validation.</code></div><div class="token"><b>CHAIN OF THOUGHT</b><span>Prefer a concise rationale or verifiable calculation.</span><code>Give the answer, key steps, and checks.</code></div></div></div>
+    <h2 id="analysis">📊 Analytical shortcuts</h2><div class="group"><h3>Interrogate the decision</h3><div class="tokens"><div class="token"><b>SWOT</b><span>Strengths, weaknesses, opportunities, threats.</span><code>SWOT: Launch an online course.</code></div><div class="token"><b>COMPARE</b><span>Compare against explicit criteria.</span><code>COMPARE: A vs B | Criteria: cost, risk.</code></div><div class="token"><b>CONTEXT STACK</b><span>Layer goal, constraints, evidence, and history.</span><code>CONTEXT STACK: AI in education.</code></div><div class="token"><b>3-PASS ANALYSIS</b><span>Review structure, evidence, then polish.</span><code>3-PASS ANALYSIS: Business pitch.</code></div><div class="token"><b>PRE-MORTEM</b><span>Assume failure and identify likely causes.</span><code>PRE-MORTEM: Product launch.</code></div><div class="token"><b>ROOT CAUSE</b><span>Trace symptoms to testable causes.</span><code>ROOT CAUSE: Traffic decline.</code></div><div class="token"><b>IMPACT ANALYSIS</b><span>Map first- and second-order consequences.</span><code>IMPACT: Remote-work policy.</code></div><div class="token"><b>RISK MATRIX</b><span>Rank likelihood, impact, controls, and owners.</span><code>RISK MATRIX: New market entry.</code></div></div></div>
+    <h2 id="format">📋 Output-formatting tokens</h2><div class="group"><h3>Specify the deliverable</h3><div class="tokens"><div class="token"><b>FORMAT AS: [TYPE]</b><span>Request a table, list, JSON, memo, or slides.</span><code>FORMAT AS: Table — compare EVs.</code></div><div class="token"><b>BEGIN WITH / END WITH</b><span>Control the opening and close.</span><code>BEGIN WITH: Decision | END WITH: Risks</code></div><div class="token"><b>REWRITE AS: [STYLE]</b><span>Transform existing text without changing facts.</span><code>REWRITE AS: Casual blog post.</code></div><div class="token"><b>TEMPLATE</b><span>Create a reusable fill-in structure.</span><code>TEMPLATE: Email newsletter.</code></div><div class="token"><b>HIERARCHY</b><span>Order information by importance or dependency.</span><code>HIERARCHY: Project priorities.</code></div></div></div>
+    <h2 id="quality">🛡️ Simulation &amp; quality control</h2><div class="group"><h3>Review the answer—not the model's hidden process</h3><div class="tokens"><div class="token"><b>REFLECTIVE MODE / EVAL-SELF</b><span>Score the draft against explicit criteria and revise.</span><code>Score accuracy, clarity, utility; then revise.</code></div><div class="token"><b>NO AUTOPILOT</b><span>Reject clichés and demand distinct options.</span><code>Give 10 non-overlapping ad concepts.</code></div><div class="token"><b>MULTI-AGENT SIMULATION</b><span>Simulate named roles; it may still be one model.</span><code>Customer | Support | Compliance review.</code></div><div class="token"><b>FRICTION / STRESS TEST</b><span>Add adverse constraints to test resilience.</span><code>STRESS TEST: Strategy at half the budget.</code></div><div class="token"><b>SCENARIO PLANNING</b><span>Explore plausible futures and indicators.</span><code>Optimistic, base, adverse scenarios.</code></div><div class="token"><b>GUARDRAIL</b><span>State hard boundaries and exclusions.</span><code>GUARDRAIL: Cite sources; flag uncertainty.</code></div><div class="token"><b>FACT-CHECK / TRUTH GATE</b><span>Request citations and distinguish verified from unknown.</span><code>Verify each claim; link primary sources.</code></div><div class="token"><b>PEER REVIEW / CRITIC LOOP</b><span>Apply a rubric, list defects, and produce a revision.</span><code>PEER REVIEW: Research method.</code></div><div class="token"><b>FORCE TRACE</b><span>Use a decision log: sources, assumptions, result, confidence.</span><code>Return evidence and an audit table.</code></div><div class="token"><b>FAILSAFE</b><span>Ask for an instruction-compliance check; enforce critical rules outside AI.</span><code>List unmet requirements before finalizing.</code></div></div></div>
+    <h2 id="experimental">🧪 Experimental labels</h2><div class="truth"><p><b>Use creatively, not literally.</b> The following names are memorable prompt labels, but they are not documented universal ChatGPT controls. Define the behavior you want after the label; otherwise the model may interpret it inconsistently.</p><div class="experimental"><p><code>THOUGHT_WIPE</code> — restart from stated facts</p><p><code>TOKEN_MASKING</code> — ignore specified fields</p><p><code>ECHO-FREEZE</code> — preserve named assumptions</p><p><code>TEMPERATURE_SIM</code> — request safer or bolder variants</p><p><code>TRIGGER_CHAIN</code> — execute named phases</p><p><code>FORK_CONTEXT</code> — explore independent branches</p><p><code>ZERO-KNOWLEDGE</code> — assume no reader context</p><p><code>SHADOW_PRO</code> — decompose the problem</p><p><code>SELF_PATCH</code> — find and revise defects</p><p><code>AUTO_MODULATE</code> — adapt depth by section</p><p><code>SAFE_LATCH</code> — repeat and preserve boundaries</p><p><code>ZERO_IMPRINT</code> — inspect bias; it cannot erase training</p><p><code>QUANT_CHAIN</code> — show formulas and verify arithmetic</p></div></div>
+    <h2 id="workflows">⚙️ Productivity workflows</h2><div class="group"><h3>Turn one response into a process</h3><div class="tokens"><div class="token"><b>DRAFT | REVIEW | PUBLISH</b><span>Create, critique, then produce a final version.</span><code>DRAFT | REVIEW | PUBLISH: AI trends article.</code></div><div class="token"><b>ITERATE</b><span>Generate materially different versions and compare.</span><code>ITERATE: Marketing copy, 3 versions.</code></div><div class="token"><b>RAPID PROTOTYPE</b><span>Create the smallest testable concept.</span><code>RAPID PROTOTYPE: App feature.</code></div><div class="token"><b>BATCH PROCESS</b><span>Apply one schema across multiple inputs.</span><code>BATCH: Captions | Return numbered table.</code></div></div></div>
+    <h2 id="builder">Build a production-ready prompt</h2>
+    <p>Use the composer to stack context, reasoning, guardrails, and delivery requirements into one portable prompt. Everything runs locally in your browser; the page sends no prompt content to a server.</p>
+    <section class="builder" aria-labelledby="builder-title">
+      <div class="label" id="builder-title">Interactive prompt composer</div>
+      <div class="builder-grid">
+        <div class="field"><label for="builder-role">Role</label><input id="builder-role" autocomplete="off" placeholder="Senior financial analyst"></div>
+        <div class="field"><label for="builder-audience">Audience</label><input id="builder-audience" autocomplete="off" placeholder="Executive leadership team"></div>
+        <div class="field full"><label for="builder-task">Goal or task</label><textarea id="builder-task" placeholder="Evaluate the proposed market expansion and recommend the next decision."></textarea></div>
+        <div class="field"><label for="builder-reasoning">Analysis module</label><select id="builder-reasoning"><option value="">None</option><option>FIRST PRINCIPLES</option><option>PRE-MORTEM</option><option>MULTI-PERSPECTIVE</option><option>FEYNMAN TECHNIQUE</option><option>SCENARIO PLANNING</option></select></div>
+        <div class="field"><label for="builder-format">Output format</label><select id="builder-format"><option>Executive brief</option><option>Markdown table</option><option>Step-by-step plan</option><option>Checklist</option><option>JSON</option></select></div>
+        <div class="field full"><label for="builder-guardrail">Guardrail</label><input id="builder-guardrail" autocomplete="off" placeholder="Use only supplied evidence; label uncertainty; do not invent facts."></div>
+      </div>
+      <pre class="prompt preview" id="builder-preview" tabindex="0" aria-live="polite">TASK: Describe the result you need
+FORMAT AS: Executive brief</pre>
+      <div class="builder-actions"><button class="copy" type="button" data-copy="builder-preview">Copy composed prompt</button><button class="copy secondary" id="builder-reset" type="button">Reset</button><span class="builder-status" id="builder-status" aria-live="polite">2 modules · 10 words</span></div>
+    </section>
+    <h2 id="stacks">Stack shortcuts for stronger prompts</h2><p>The most reliable order is <b>context → role/task → constraints → quality checks → format</b>. Pipe symbols are just readable separators.</p>
+    <pre class="prompt" id="p1">CONTEXT: B2B SaaS startup raising a seed round
+AUDIENCE: Investors
+TASK: Create an executive summary
+GUARDRAIL: Use only the supplied metrics; flag missing evidence
+FORMAT AS: 6 presentation slides with speaker notes</pre><button class="copy" type="button" data-copy="p1">Copy prompt</button>
+    <pre class="prompt" id="p2">ACT AS: Project manager | PRE-MORTEM | RISK MATRIX
+GOAL: Launch the customer portal in 30 days
+CONSTRAINTS: 4 engineers, fixed budget, no weekend work
+FORMAT AS: Table with risk, signal, likelihood, impact, mitigation, owner</pre><button class="copy" type="button" data-copy="p2">Copy prompt</button>
+    <pre class="prompt" id="p3">SIMPLIFY | HUMANIZE | FORMAT AS: Bullet points
+AUDIENCE: New customer
+TONE: Friendly and direct
+GUARDRAIL: Preserve every date, price, and commitment in the source</pre><button class="copy" type="button" data-copy="p3">Copy prompt</button>
+    <section class="truth"><div class="label">The one formula to bookmark</div><h2>Good prompts beat magic words</h2><p><b>Goal + context + evidence + constraints + audience + output format + quality bar.</b> Shortcuts make that formula faster to write. They do not replace it.</p></section>
+  </article></main>
+  <footer class="footer">© <span id="year"></span> ClearGlass Inc. · Ontario, Canada · Clarity Is Power.</footer>
+  <script>
+    document.querySelector('#year').textContent = new Date().getFullYear();
+
+    const builderFields = {
+      role: document.querySelector('#builder-role'),
+      audience: document.querySelector('#builder-audience'),
+      task: document.querySelector('#builder-task'),
+      reasoning: document.querySelector('#builder-reasoning'),
+      format: document.querySelector('#builder-format'),
+      guardrail: document.querySelector('#builder-guardrail')
+    };
+    const builderPreview = document.querySelector('#builder-preview');
+    const builderStatus = document.querySelector('#builder-status');
+
+    function composePrompt() {
+      const lines = [];
+      const add = (label, value) => value.trim() && lines.push(`${label}: ${value.trim()}`);
+      add('ACT AS', builderFields.role.value);
+      add('AUDIENCE', builderFields.audience.value);
+      add('TASK', builderFields.task.value || 'Describe the result you need');
+      if (builderFields.reasoning.value) lines.push(`ANALYSIS: ${builderFields.reasoning.value}`);
+      add('GUARDRAIL', builderFields.guardrail.value);
+      add('FORMAT AS', builderFields.format.value);
+      builderPreview.textContent = lines.join('\n');
+      const wordCount = builderPreview.textContent.trim().split(/\s+/).filter(Boolean).length;
+      builderStatus.textContent = `${lines.length} modules · ${wordCount} words`;
+    }
+
+    Object.values(builderFields).forEach(field => field.addEventListener('input', composePrompt));
+    document.querySelector('#builder-reset').addEventListener('click', () => {
+      Object.values(builderFields).forEach(field => { field.selectedIndex = 0; field.value = ''; });
+      builderFields.format.value = 'Executive brief';
+      composePrompt();
+      builderFields.role.focus();
+    });
+    document.querySelectorAll('[data-copy]').forEach(button => button.addEventListener('click', async () => {
+      const source = document.querySelector(`#${button.dataset.copy}`);
+      const originalLabel = button.textContent;
+      try {
+        await navigator.clipboard.writeText(source.textContent);
+        button.textContent = 'Copied';
+      } catch {
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(source);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        button.textContent = 'Selected — press Ctrl/Cmd+C';
+      }
+      window.setTimeout(() => { button.textContent = originalLabel; }, 2200);
+    }));
+    composePrompt();
+  </script>
+  <script defer src="insights.js"></script><script defer src="../nav.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › <a href="index.html">ClearGlass Intelligence · Insights</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="coffee-and-technology-digital-revolution.html"><span><b>Previous</b>Coffee &amp; Technology</span></a>
+      <a href="index.html"><span><b>Topic hub</b>ClearGlass Intelligence</span></a>
+      <a href="ai-generated-phishing-54-percent-click-rate.html"><span><b>Next in journey</b>AI-Generated Phishing Hits a 54% Click Rate</span></a>
+    </div>
+    <ul>
+      <li><a href="../ai-operator.html"><b>AI Operator Workspace</b> — human-in-the-loop agent operations</a></li>
+      <li><a href="ai-agent-governance-governed-autonomy.html"><b>AI Agent Governance</b> — the governed-autonomy playbook</a></li>
+      <li><a href="ai-generated-phishing-54-percent-click-rate.html"><b>AI-Generated Phishing Hits a 54% Click Rate</b> — this week&#x27;s long read on why identity beats detection</a></li>
+      <li><a href="telecommunications-legal-briefing-30-july-2026.html"><b>Telecommunications Legal Briefing</b> — a source-led Canadian telecommunications law briefing</a></li>
+      <li><a href="canada-digital-control-architecture-charter.html"><b>Canada’s Digital-Control Architecture</b> — a source-led analysis of safety, surveillance and the Charter</a></li>
+      <li><a href="greenbelt-92-percent-access-beats-process.html"><b>92%: When Access Beats Process</b> — a source-led Ontario Greenbelt accountability brief</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

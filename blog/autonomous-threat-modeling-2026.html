@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#050913">
+  <title>Autonomous Threat Modeling in 2026 | ClearGlass Inc.</title>
+  <meta name="description" content="Autonomous threat modeling makes security continuous, architecture-grounded, and executable at machine speed across agentic AI, critical infrastructure, and cyber-physical systems.">
+  <meta name="author" content="Desmond Otieno Odhiambo">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <meta name="keywords" content="autonomous threat modeling, AI threat modeling, agentic AI security, continuous threat modeling, cyber-physical threat modeling, automated STRIDE, MAESTRO threat modeling, critical infrastructure security">
+  <link rel="canonical" href="https://www.clearglassinc.com/blog/autonomous-threat-modeling-2026.html">
+  <link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="msapplication-TileColor" content="#07111f">
+  <meta name="msapplication-TileImage" content="/icon-192.png">
+  <meta name="msapplication-config" content="/browserconfig.xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="ClearGlass Inc.">
+  <meta property="og:title" content="Autonomous Threat Modeling in 2026">
+  <meta property="og:description" content="Static threat models cannot govern agentic AI and cyber-physical autonomy. The 2026 control is continuous, architecture-aware, evidence-grounded threat modeling.">
+  <meta property="og:url" content="https://www.clearglassinc.com/blog/autonomous-threat-modeling-2026.html">
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+  <meta property="article:published_time" content="2026-07-18">
+  <meta property="article:modified_time" content="2026-07-18">
+  <meta property="article:author" content="Desmond Otieno Odhiambo">
+  <meta property="article:section" content="Autonomous Security Architecture">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Autonomous Threat Modeling in 2026">
+  <meta name="twitter:description" content="Autonomous attackers do not wait for quarterly workshops. Threat modeling must become continuous, executable, and grounded in real architecture.">
+  <meta name="twitter:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://www.clearglassinc.com/blog/autonomous-threat-modeling-2026.html#article",
+  "headline": "Autonomous Threat Modeling in 2026",
+  "alternativeHeadline": "Why static STRIDE workshops are an obsolete control for agentic AI and cyber-physical systems",
+  "description": "A technical exploration of continuous, architecture-aware, AI-driven threat modeling for agentic AI, critical infrastructure, defense platforms, and autonomous cyber-physical systems.",
+  "datePublished": "2026-07-18",
+  "dateModified": "2026-07-18",
+  "proficiencyLevel": "Expert",
+  "dependencies": "Architecture inventory, source code, runtime telemetry, trust-boundary data, isolated validation environments, and human approval controls",
+  "keywords": [
+    "autonomous threat modeling",
+    "AI threat modeling",
+    "agentic AI security",
+    "continuous threat modeling",
+    "cyber-physical threat modeling",
+    "automated STRIDE",
+    "MAESTRO"
+  ],
+  "author": {
+    "@type": "Person",
+    "name": "Desmond Otieno Odhiambo",
+    "jobTitle": "Founder & Software Architect",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "ClearGlass Inc.",
+      "url": "https://www.clearglassinc.com"
+    }
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "ClearGlass Inc.",
+    "url": "https://www.clearglassinc.com/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.clearglassinc.com/assets/images/clearglass-logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.clearglassinc.com/blog/autonomous-threat-modeling-2026.html"
+  },
+  "citation": [
+    "https://www.amazon.science/blog/how-amazon-uses-ai-agents-to-anticipate-and-counter-cyber-threats",
+    "https://aws.amazon.com/about-aws/whats-new/2026/06/aws-security-agent-threat-modeling/",
+    "https://cloudsecurityalliance.org/blog/2025/02/06/agentic-ai-threat-modeling-framework-maestro",
+    "https://apiiro.com/blog/introducing-ai-threat-modeling/",
+    "https://www.nist.gov/itl/ai-risk-management-framework",
+    "https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html",
+    "https://www.canada.ca/en/communications-security/news/2026/04/cyber-centre-launches-new-initiative-to-help-canadas-critical-infrastructure-prepare-for-severe-cyber-threats.html"
+  ]
+}
+</script>
+
+  <style>
+    *,*::before,*::after{box-sizing:border-box}
+    :root{
+      --bg:#050913;--bg2:#081321;--panel:rgba(14,26,45,.78);--panel2:rgba(18,35,59,.94);
+      --line:rgba(129,177,255,.20);--line2:rgba(129,177,255,.38);--text:#edf5ff;--muted:#a9bad1;
+      --cyan:#50d9ff;--mint:#42f5b3;--violet:#a58bff;--amber:#ffd166;--red:#ff6b83;
+      --sans:'Inter',system-ui,sans-serif;--serif:'Cormorant Garamond',Georgia,serif;--mono:'IBM Plex Mono',monospace;
+      --max:1120px
+    }
+    html{scroll-behavior:smooth;scroll-padding-top:88px}
+    body{margin:0;color:var(--text);font-family:var(--sans);background:
+      radial-gradient(900px 620px at 10% -10%,rgba(80,217,255,.16),transparent 58%),
+      radial-gradient(850px 620px at 96% 3%,rgba(165,139,255,.15),transparent 58%),
+      linear-gradient(180deg,var(--bg2),var(--bg) 62%);line-height:1.65;overflow-x:hidden}
+    body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.32;background:
+      linear-gradient(rgba(129,177,255,.055) 1px,transparent 1px) 0 0/48px 48px,
+      linear-gradient(90deg,rgba(129,177,255,.055) 1px,transparent 1px) 0 0/48px 48px;mask-image:linear-gradient(#000,transparent 82%)}
+    a{color:inherit}.wrap{width:min(var(--max),calc(100% - 36px));margin:auto;position:relative;z-index:1}
+    .progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--cyan),var(--mint),var(--violet));z-index:100}
+    .classification{padding:7px 16px;text-align:center;font:600 10px/1.4 var(--mono);letter-spacing:.19em;text-transform:uppercase;color:#bfffe7;background:#071711;border-bottom:1px solid rgba(66,245,179,.18)}
+    .nav{position:sticky;top:0;z-index:50;background:rgba(5,9,19,.82);backdrop-filter:blur(18px) saturate(1.25);border-bottom:1px solid var(--line)}
+    .nav-inner{height:68px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .brand{display:flex;align-items:center;gap:11px;text-decoration:none;font-weight:800}.brand img{width:39px;height:39px;border-radius:11px;object-fit:cover;border:1px solid var(--line2)}
+    .brand span{font-family:var(--serif);font-size:24px}.brand em{font-style:italic;color:var(--cyan);font-weight:500}
+    .nav-links{display:flex;gap:5px;align-items:center}.nav-links a{text-decoration:none;color:var(--muted);font-size:13px;font-weight:700;padding:8px 12px;border-radius:999px}.nav-links a:hover,.nav-links a:focus-visible{color:#fff;background:rgba(255,255,255,.07);outline:none}
+    .nav-links .cta{color:#041018;background:linear-gradient(100deg,var(--cyan),var(--mint))}
+    .hero{padding:clamp(68px,10vw,130px) 0 52px}.eyebrow{font:600 11px/1.4 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--mint)}
+    h1{max-width:1050px;margin:18px 0 24px;font:600 clamp(48px,8vw,94px)/.95 var(--serif);letter-spacing:-.035em}
+    h1 em{font-style:italic;background:linear-gradient(100deg,var(--cyan),var(--mint) 45%,var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .dek{max-width:840px;margin:0;color:#d8e7fa;font-size:clamp(20px,2.7vw,27px);line-height:1.45}
+    .byline{display:flex;flex-wrap:wrap;gap:14px 24px;margin-top:32px;padding-top:24px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}.byline b{color:#fff}
+    .signal{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:34px 0 0}.signal div{padding:18px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.035)}.signal b{display:block;font:600 19px var(--mono);color:var(--cyan)}.signal span{font-size:12px;color:var(--muted)}
+    main{display:grid;grid-template-columns:minmax(0,760px) minmax(230px,1fr);gap:48px;align-items:start;padding-bottom:90px}
+    article{font-size:18px;color:#cbd9ea}.lede{font-size:22px;color:#f3f8ff}.lede::first-letter{float:left;font:600 4em/.78 var(--serif);margin:10px 12px 0 0;color:var(--cyan)}
+    article p{margin:0 0 22px}article strong{color:#fff}article h2{margin:62px 0 18px;color:#fff;font:600 clamp(30px,4vw,43px)/1.08 var(--serif);letter-spacing:-.018em}article h3{margin:36px 0 12px;color:#fff;font-size:21px}article ul,article ol{padding-left:24px;margin:0 0 25px}article li{margin-bottom:10px}article li::marker{color:var(--mint)}
+    .pull{margin:42px 0;padding:4px 0 4px 25px;border-left:3px solid var(--cyan);font:500 italic clamp(28px,4vw,39px)/1.22 var(--serif);color:#fff}
+    .callout{margin:34px 0;padding:24px;border:1px solid var(--line2);border-radius:20px;background:linear-gradient(145deg,rgba(80,217,255,.08),rgba(165,139,255,.07))}.callout b{display:block;margin-bottom:8px;font:600 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--mint)}
+    .table-wrap{overflow-x:auto;margin:30px 0;border:1px solid var(--line);border-radius:18px;background:var(--panel)}table{width:100%;border-collapse:collapse;min-width:760px}th,td{padding:16px 18px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}th{font:600 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);background:rgba(255,255,255,.035)}td:first-child{color:#fff;font-weight:700}tr:last-child td{border-bottom:0}
+    .architecture{display:grid;gap:12px;margin:30px 0}.layer{display:grid;grid-template-columns:55px 1fr;gap:16px;padding:19px;border:1px solid var(--line);border-radius:17px;background:var(--panel)}.layer i{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;font:600 12px var(--mono);font-style:normal;color:#071018;background:linear-gradient(135deg,var(--cyan),var(--mint))}.layer h3{margin:0 0 4px;font-size:18px}.layer p{margin:0;font-size:15px;color:var(--muted)}
+    pre{overflow:auto;padding:22px;border-radius:17px;border:1px solid var(--line);background:#03070d;color:#c9ffe8;font:13px/1.65 var(--mono)}
+    .sidebar{position:sticky;top:94px;display:grid;gap:14px}.side-card{padding:20px;border:1px solid var(--line);border-radius:18px;background:var(--panel)}.side-card h2{margin:0 0 11px;font-size:15px}.side-card a{display:block;padding:7px 0;color:var(--muted);text-decoration:none;font-size:13px;border-bottom:1px solid rgba(129,177,255,.10)}.side-card a:last-child{border-bottom:0}.side-card a:hover{color:#fff}.side-card p{margin:0;color:var(--muted);font-size:13px}.side-card .mini-cta{margin-top:13px;padding:10px 12px;border:0;border-radius:10px;color:#041018;background:linear-gradient(100deg,var(--cyan),var(--mint));font-weight:800;text-align:center}
+    .sources{font-size:14px}.sources a{color:#a9dfff;text-underline-offset:3px}.sources li{margin-bottom:12px}
+    .conversion{margin:54px 0 20px;padding:30px;border:1px solid var(--line2);border-radius:24px;background:linear-gradient(145deg,rgba(80,217,255,.12),rgba(165,139,255,.11))}.conversion h2{margin:0 0 12px}.conversion .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 17px;border-radius:999px;text-decoration:none;font-size:14px;font-weight:800;border:1px solid var(--line2)}.btn.primary{color:#041018;background:linear-gradient(100deg,var(--cyan),var(--mint));border:0}.btn:hover{transform:translateY(-1px)}
+    footer{border-top:1px solid var(--line);padding:34px 0;color:var(--muted);font-size:13px}.foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+    @media(max-width:920px){main{grid-template-columns:1fr}.sidebar{position:static;grid-template-columns:repeat(2,1fr)}.signal{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:640px){.wrap{width:min(100% - 24px,var(--max))}.nav-links a:not(.cta){display:none}.hero{padding-top:55px}.signal,.sidebar{grid-template-columns:1fr}h1{font-size:clamp(43px,15vw,68px)}article{font-size:17px}.layer{grid-template-columns:46px 1fr}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+  </style>
+  <link rel="stylesheet" href="../brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+  <div id="progress" class="progress" aria-hidden="true"></div>
+  <div class="classification">UNCLASSIFIED / DEFENSIVE SECURITY RESEARCH / HUMAN OVERSIGHT REQUIRED</div>
+  <nav class="nav" aria-label="Article navigation">
+    <div class="wrap nav-inner">
+      <a class="brand" href="../index.html"><img src="../assets/images/clearglass-logo.png" alt="ClearGlass Inc."><span>ClearGlass <em>Intelligence</em></span></a>
+      <div class="nav-links"><a href="index.html">Insights</a><a href="../cyber-defense-console.html">Cyber Defense</a><a href="../offers/index.html">Services</a><a class="cta" href="../index.html#contact">Request briefing</a></div>
+    </div>
+  </nav>
+
+  <header class="wrap hero">
+    <div class="eyebrow">Autonomous Security Architecture · 2026</div>
+    <h1>Your static threat model <em>died when autonomy arrived.</em></h1>
+    <p class="dek">Autonomous threat modeling is the convergence of continuous AI-driven security analysis and the requirement to model threats against systems whose behavior is probabilistic, multi-agent, and capable of changing the physical world.</p>
+    <div class="byline"><span><b>Desmond Otieno Odhiambo</b> · Founder &amp; Software Architect</span><span>ClearGlass Inc.</span><span>Published July 18, 2026</span><span>18-minute technical exploration</span></div>
+    <div class="signal" aria-label="Article thesis signals">
+      <div><b>Continuous</b><span>Triggered by code, architecture, identity, and runtime change.</span></div>
+      <div><b>Grounded</b><span>Based on real data flows, permissions, telemetry, and evidence.</span></div>
+      <div><b>Adversarial</b><span>Red/blue simulation in isolated, authorized environments.</span></div>
+      <div><b>Governed</b><span>Human validation remains the final control for consequential action.</span></div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <main>
+      <article id="article">
+        <p class="lede">Organizations still treating threat modeling as a periodic, human-only workshop on static diagrams are operating with an obsolete control. The problem is not that STRIDE, PASTA, attack trees, or data-flow diagrams stopped being useful. The problem is that the systems they are meant to describe now change faster, reason probabilistically, invoke tools, retain memory, collaborate with other agents, and increasingly actuate physical infrastructure.</p>
+
+        <p>In 2026, threat modeling must become a <strong>living security control</strong>: continuously discovering architecture, recalculating trust boundaries, testing abuse paths, and producing evidence-backed mitigations whenever the system changes. The model must cover not only software components, but also agent identity, memory, tool permissions, model supply chains, runtime behavior, sensor inputs, actuator commands, and the human authorization boundaries that contain them.</p>
+
+        <div class="pull">Autonomous attackers do not wait for your quarterly workshop. Defensive analysis cannot remain scheduled, static, and disconnected from execution.</div>
+
+        <h2 id="definition">What autonomous threat modeling actually means</h2>
+        <p>Autonomous threat modeling is not a chatbot that fills in a STRIDE spreadsheet. It is an orchestrated system that ingests architecture evidence, forms and tests hypotheses about abuse paths, ranks risks in context, and updates the model as code, infrastructure, identities, integrations, and runtime signals evolve.</p>
+        <p>The strongest implementations combine deterministic discovery and policy checks with AI reasoning. Conventional code inventories assets, permissions, dependencies, network paths, and configuration. Specialized agents interpret intent, infer trust boundaries, generate candidate threats, challenge one another, and explain mitigations. Sandboxed validation then determines whether the proposed path is real. Human reviewers approve consequential conclusions and production changes.</p>
+
+        <div class="table-wrap" role="region" aria-label="Traditional versus autonomous threat modeling comparison" tabindex="0">
+          <table>
+            <thead><tr><th>Dimension</th><th>Traditional process</th><th>Autonomous / AI-driven process</th></tr></thead>
+            <tbody>
+              <tr><td>Cadence</td><td>Periodic project gate, workshop, or annual review.</td><td>Continuous; triggered by design, code, cloud, identity, dependency, and runtime changes.</td></tr>
+              <tr><td>Scope</td><td>A human-selected sample of components and flows.</td><td>Discovery across source, infrastructure, diagrams, tickets, runtime telemetry, permissions, and dependencies.</td></tr>
+              <tr><td>Analysis</td><td>Manual brainstorming using STRIDE, PASTA, attack trees, and spreadsheets.</td><td>Framework-guided agents, graph analysis, attack-path generation, adversarial review, and deterministic validation.</td></tr>
+              <tr><td>Output</td><td>A report that begins aging as soon as the workshop ends.</td><td>A versioned living model with evidence, prioritized controls, ownership, and change history.</td></tr>
+              <tr><td>Speed</td><td>Days or weeks for a substantial system.</td><td>Seconds to hours for bounded analysis; Amazon reports reducing one ATA workflow from weeks to about four hours.</td></tr>
+              <tr><td>Attack surface</td><td>Software components, data flows, users, and trust boundaries.</td><td>Those elements plus agent tools, memory, model behavior, agent-to-agent interaction, cyber-physical actuation, and AI supply chains.</td></tr>
+              <tr><td>Human role</td><td>Primary analyst and report author.</td><td>System owner, strategic validator, exception handler, and final authority for consequential actions.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="architecture">The seven-component operating architecture</h2>
+        <p>A production system should be decomposed into explicit control planes rather than built as one unconstrained “security agent.” The following architecture keeps discovery, reasoning, validation, approval, and evidence separate.</p>
+        <div class="architecture">
+          <div class="layer"><i>01</i><div><h3>Architecture ingestion and continuous discovery</h3><p>Parse source code, infrastructure-as-code, API contracts, identity policies, cloud graphs, diagrams, screenshots, tickets, wikis, SBOMs, and runtime inventories. Build a canonical component-and-flow graph with provenance for every assertion.</p></div></div>
+          <div class="layer"><i>02</i><div><h3>Trust-boundary and permission graph</h3><p>Model principals, workloads, agents, tools, data classifications, credentials, egress routes, approval gates, and physical actuators. Permissions must be represented as executable constraints, not prose.</p></div></div>
+          <div class="layer"><i>03</i><div><h3>Framework-guided threat analysis</h3><p>Apply STRIDE, PASTA, LINDDUN, attack trees, and domain-specific extensions against observed architecture. Use MAESTRO for the seven-layer agentic AI stack, where threats can propagate across models, data, orchestration, infrastructure, observability, compliance, and the broader agent ecosystem.</p></div></div>
+          <div class="layer"><i>04</i><div><h3>Attack-path and lateral-movement analysis</h3><p>Generate graph paths from entry points to protected assets. Score preconditions, reachability, privilege transitions, business impact, safety impact, detectability, and recovery cost.</p></div></div>
+          <div class="layer"><i>05</i><div><h3>Adversarial simulation</h3><p>Run authorized red and blue agents in isolated, ephemeral environments. Red agents vary techniques; blue agents validate telemetry, detections, and mitigations. Every claim must be grounded in observable execution evidence.</p></div></div>
+          <div class="layer"><i>06</i><div><h3>Governance and human authorization</h3><p>Route findings and proposed changes by risk. High-impact mitigations, detection deployment, access changes, and actions affecting production or physical systems require independent approval.</p></div></div>
+          <div class="layer"><i>07</i><div><h3>Tamper-evident evidence and continuous update</h3><p>Record source revisions, model and prompt versions, agent actions, tool results, approvals, test telemetry, findings, risk decisions, and residual-risk ownership. Re-run only the affected model region when evidence changes.</p></div></div>
+        </div>
+
+        <div class="callout"><b>Production evidence</b><p>Amazon’s Autonomous Threat Analysis uses specialized red-team and blue-team agents in isolated environments, validates claims against real telemetry, retains human approval before production deployment, and reports a reduction from weeks of manual work to approximately four hours—a 96% cycle-time reduction for the described workflow.</p></div>
+
+        <h2 id="agentic">Agentic AI changes the threat model</h2>
+        <p>Traditional models assume the application follows deterministic code paths. Agentic systems introduce a decision-making principal that interprets natural-language inputs, selects tools, constructs plans, stores context, and may delegate to other agents. The attack surface therefore includes behavior and interaction—not only code.</p>
+        <ul>
+          <li><strong>Prompt and context injection:</strong> untrusted content can redirect goals or influence tool selection.</li>
+          <li><strong>Tool abuse and excessive privilege:</strong> a model can be manipulated into using legitimate capabilities for an unauthorized purpose.</li>
+          <li><strong>Memory poisoning:</strong> malicious state can persist across sessions and influence future decisions.</li>
+          <li><strong>Identity confusion:</strong> the agent may possess credentials that do not represent the current user, task, or approval scope.</li>
+          <li><strong>Approval manipulation:</strong> attackers can target risk scores, confidence thresholds, reviewer context, or the workflow that decides whether an action is allowed.</li>
+          <li><strong>Multi-agent propagation:</strong> one compromised agent can poison shared memory, delegate malicious work, or create cascading failures across the mesh.</li>
+          <li><strong>Supply-chain compromise:</strong> models, tools, MCP servers, plugins, retrieved documents, and agent skills all become executable dependencies.</li>
+          <li><strong>Denial of wallet and unsafe recursion:</strong> loops can consume compute, trigger repeated actions, or exhaust operational capacity.</li>
+        </ul>
+        <p>CSA’s MAESTRO framework addresses this by examining seven connected layers rather than treating the model as an isolated component. OWASP’s agent security guidance similarly identifies prompt injection, tool abuse, memory poisoning, goal hijacking, excessive autonomy, approval manipulation, cascading failure, and supply-chain exposure as first-class risks.</p>
+
+        <h2 id="cyberphysical">Cyber-physical autonomy raises the consequence ceiling</h2>
+        <p>When software can affect vehicles, energy systems, water controls, emergency communications, industrial equipment, or autonomous response platforms, the threat model must include the physical process. A successful cyber action can change safety, availability, mission readiness, environmental conditions, and human life.</p>
+        <p>The model must include sensor trust, timing, control loops, degraded modes, manual override, actuator constraints, communications loss, firmware and OTA update paths, V2X interfaces, maintenance tooling, and software-defined supply-chain dependencies. Threats such as sensor spoofing, false data injection, actuator hijacking, command replay, unsafe failover, and compromised maintenance access cannot be represented adequately as generic application findings.</p>
+
+        <h3>Defense and sensor-rich platforms</h3>
+        <p>Canada’s Armoured Combat Support Vehicle program includes a $2 billion acquisition of 360 vehicles based on the LAV 6.0 platform, while separate reconnaissance programs integrate state-of-the-art surveillance systems into LAV 6.0 chassis. These programs illustrate the broader security reality: modern platforms are distributed cyber-physical systems with sensors, software, communications, maintainers, suppliers, and sustainment dependencies. Threat modeling must follow those dependencies through the entire lifecycle.</p>
+
+        <h3>Critical infrastructure and emergency systems</h3>
+        <p>The Canadian Centre for Cyber Security’s 2026 CIREN initiative warns that AI and automation are increasing the speed and reach of malicious activity against critical infrastructure and calls for organizations to prepare for severe, prolonged disruption. Continuous threat models should therefore test whether essential services can isolate critical systems, operate independently, degrade safely, and rebuild from trusted states.</p>
+
+        <h3>Internal agent swarms</h3>
+        <p>Teams deploying multi-agent systems for intelligence, operations, software delivery, finance, or customer service need an executable model of agent identity, delegation, shared memory, tool scope, egress, approval, and shutdown. A diagram that says “planner → executor → reviewer” is not a threat model until each transition has a trust decision and each capability has a bounded authority contract.</p>
+
+        <h2 id="shiftleft">Threat modeling moves left—and stays live</h2>
+        <p>Agentic analysis can begin before code exists. AWS Security Agent can generate STRIDE-based threat models from application design documents or source code. Apiiro’s Guardian Agent accepts design documents, architecture diagrams, and images of whiteboards, then grounds analysis in code, runtime, organizational context, and graph-based architecture evidence.</p>
+        <p>This changes the economics of the security gate. A feature epic, architecture decision record, API contract, or design sketch can trigger an initial model. The model then becomes more precise as code, infrastructure, and telemetry arrive. Security is no longer a one-time blocker at the end; it is a continuously refined design constraint.</p>
+
+        <h2 id="risks">Autonomy introduces new risks into the modeling system</h2>
+        <p>The autonomous threat modeler is itself a high-value system and must be threat-modeled. It ingests sensitive architecture, has broad visibility, generates security conclusions, and may propose changes to production controls. A compromised modeler could hide real threats, manufacture false ones, poison risk rankings, leak diagrams, or manipulate approvals.</p>
+        <ul>
+          <li><strong>Hallucinated threats or mitigations:</strong> require architecture provenance, deterministic validation, and explicit confidence.</li>
+          <li><strong>Prompt injection through source material:</strong> treat code comments, tickets, diagrams, documentation, and telemetry as untrusted data.</li>
+          <li><strong>Poisoned knowledge and retrieval:</strong> sign trusted corpora, record source lineage, and separate evidence from instructions.</li>
+          <li><strong>Agent supply-chain compromise:</strong> pin models, tools, prompts, policies, actions, and container images; verify provenance and revoke quickly.</li>
+          <li><strong>Over-automation:</strong> never allow the modeler to create its own authority, expand privileges, or deploy high-impact controls without approval.</li>
+          <li><strong>False confidence:</strong> measure coverage, false positives, false negatives, reproducibility, and residual risk—not the fluency of the report.</li>
+        </ul>
+
+        <pre><code># Defensive control loop — architecture, analysis, evidence, approval
+on_change(evidence):
+    affected_graph = discover_and_diff(evidence)
+    candidates = threat_agents.analyze(affected_graph, frameworks=[STRIDE, MAESTRO])
+    ranked = deterministic_policy.score(candidates)
+    validated = sandbox.verify(ranked, authorized_scope=True)
+    review_queue = governance.route(validated)
+    audit.append(evidence, candidates, validated, review_queue)
+
+# High-impact mitigation or production change never self-authorizes.</code></pre>
+
+        <h2 id="implementation">A practical implementation sequence</h2>
+        <ol>
+          <li><strong>Establish the canonical architecture graph.</strong> Inventory assets, actors, data flows, identities, tools, dependencies, trust boundaries, safety functions, and operational owners.</li>
+          <li><strong>Define deterministic invariants.</strong> Encode prohibited states such as “untrusted content cannot directly authorize an external action” or “a safety actuator cannot execute without an authenticated command and independent policy validation.”</li>
+          <li><strong>Add framework agents.</strong> Use separate agents for discovery, STRIDE/PASTA analysis, MAESTRO analysis, attack-path construction, control mapping, and skeptical review.</li>
+          <li><strong>Build isolated validation environments.</strong> Use representative systems and synthetic or sanitized data. Prevent production reachability and customer-data exposure.</li>
+          <li><strong>Implement risk routing and four-eyes approval.</strong> Separate requester, analyst, approver, executor, and auditor roles for consequential operations.</li>
+          <li><strong>Instrument evidence.</strong> Record every architecture claim, model output, test execution, policy decision, approval, mitigation, and residual risk.</li>
+          <li><strong>Start with one bounded pilot.</strong> Apply the system to an internal agent workflow or a defined infrastructure segment, compare against a human baseline, and measure coverage and analyst time.</li>
+          <li><strong>Expand only after verification.</strong> Promote to broader use when results are reproducible, controls remain fail-closed, and operators can halt, replay, and recover the system.</li>
+        </ol>
+
+        <h2 id="clearglass">The ClearGlass operating position</h2>
+        <p>ClearGlass focuses on the oversight layer required to make autonomous threat modeling trustworthy: architecture discovery, agent orchestration, trust-boundary design, risk routing, human approval, tamper-evident evidence, secure deployment, and operational recovery. The value is not another fluent report. It is a controlled system that can explain what changed, why a threat matters, how it was validated, which mitigation was approved, and who owns the residual risk.</p>
+        <p>This approach connects directly to <a href="../agentmesh.html">Agent Mesh orchestration</a>, the <a href="../cyber-defense-console.html">Cyber Defense Console</a>, <a href="../ai-operator.html">human-in-the-loop AI operations</a>, the <a href="cybersecurity-architecture-for-agentic-software.html">agentic software security architecture</a>, and ClearGlass infrastructure-hardening engagements. For critical systems, disciplined governance is not overhead. It is the mechanism that lets automation scale without manufacturing unbounded authority.</p>
+
+        <div class="conversion">
+          <h2>Turn the threat model into an operational control.</h2>
+          <p>ClearGlass can assess an agentic or cyber-physical architecture, map its trust boundaries, design the continuous modeling workflow, and establish the approval, evidence, and recovery controls required for production use.</p>
+          <div class="actions"><a class="btn primary" href="../index.html#contact">Request an autonomous threat-modeling briefing</a><a class="btn" href="../offers/hardening-sprint.html">Review hardening services</a><a class="btn" href="index.html">Explore more research</a></div>
+        </div>
+
+        <h2 id="sources">Primary sources and technical references</h2>
+        <ol class="sources">
+          <li><a href="https://www.amazon.science/blog/how-amazon-uses-ai-agents-to-anticipate-and-counter-cyber-threats" rel="noopener noreferrer">Amazon Science — How Amazon uses AI agents to anticipate and counter cyber threats</a></li>
+          <li><a href="https://aws.amazon.com/about-aws/whats-new/2026/06/aws-security-agent-threat-modeling/" rel="noopener noreferrer">AWS — Security Agent support for AI-powered STRIDE threat modeling</a></li>
+          <li><a href="https://cloudsecurityalliance.org/blog/2025/02/06/agentic-ai-threat-modeling-framework-maestro" rel="noopener noreferrer">Cloud Security Alliance — MAESTRO agentic AI threat-modeling framework</a></li>
+          <li><a href="https://apiiro.com/blog/introducing-ai-threat-modeling/" rel="noopener noreferrer">Apiiro — AI Threat Modeling with architecture, code, runtime, diagrams, and whiteboard images</a></li>
+          <li><a href="https://www.nist.gov/itl/ai-risk-management-framework" rel="noopener noreferrer">NIST — Artificial Intelligence Risk Management Framework and critical-infrastructure profile work</a></li>
+          <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html" rel="noopener noreferrer">OWASP — AI Agent Security Cheat Sheet</a></li>
+          <li><a href="https://www.canada.ca/en/communications-security/news/2026/04/cyber-centre-launches-new-initiative-to-help-canadas-critical-infrastructure-prepare-for-severe-cyber-threats.html" rel="noopener noreferrer">Canadian Centre for Cyber Security — CIREN critical-infrastructure resilience initiative</a></li>
+          <li><a href="https://www.canada.ca/en/department-national-defence/corporate/reports-publications/proactive-disclosure/nddn-supplementary-estimates-b-2023-2024/background-notes/procurement.html" rel="noopener noreferrer">National Defence — Armoured Combat Support Vehicle procurement based on LAV 6.0</a></li>
+          <li><a href="https://www.cyber.gc.ca/en/guidance/cyber-threat-bulletin-cyber-threat-operational-technology" rel="noopener noreferrer">Canadian Centre for Cyber Security — Cyber threat to operational technology</a></li>
+        </ol>
+      </article>
+
+      <aside class="sidebar" aria-label="Article contents and related ClearGlass resources">
+        <div class="side-card"><h2>In this exploration</h2><a href="#definition">Definition</a><a href="#architecture">Operating architecture</a><a href="#agentic">Agentic AI risks</a><a href="#cyberphysical">Cyber-physical systems</a><a href="#shiftleft">Shift-left workflow</a><a href="#risks">New risks</a><a href="#implementation">Implementation sequence</a><a href="#sources">Sources</a></div>
+        <div class="side-card"><h2>Related systems</h2><a href="cybersecurity-architecture-for-agentic-software.html">Agentic software security architecture</a><a href="ai-agent-governance-governed-autonomy.html">Governed autonomy playbook</a><a href="../agentmesh.html">Agent Mesh</a><a href="../cyber-defense-console.html">Cyber Defense Console</a><a href="../sats-digital-twin.html">SATS cyber-physical digital twin</a></div>
+        <div class="side-card"><h2>Operational principle</h2><p>Model output is evidence to validate—not authority to execute.</p><a class="mini-cta" href="../index.html#contact">Request briefing</a></div>
+      </aside>
+    </main>
+  </div>
+
+  <footer><div class="wrap foot"><span>© 2026 ClearGlass Inc. · Ontario, Canada</span><span>Autonomous security requires bounded authority, observable evidence, and human control.</span></div></footer>
+
+  <script>
+    (function(){
+      "use strict";
+      var bar=document.getElementById("progress");
+      function update(){var d=document.documentElement;var max=d.scrollHeight-d.clientHeight;bar.style.width=(max>0?d.scrollTop/max*100:0)+"%";}
+      addEventListener("scroll",update,{passive:true});update();
+    })();
+  </script>
+  <script defer src="/logo-badge.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › <a href="index.html">ClearGlass Intelligence · Insights</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="index.html"><span><b>Previous</b>ClearGlass Intelligence</span></a>
+      <a href="index.html"><span><b>Topic hub</b>ClearGlass Intelligence</span></a>
+      <a href="ai-agent-governance-governed-autonomy.html"><span><b>Next in journey</b>AI Agent Governance</span></a>
+    </div>
+    <ul>
+      <li><a href="../offers/autonomous-threat-modeling.html"><b>Autonomous Threat Modeling</b> — continuous threat-modeling assessment and implementation services</a></li>
+      <li><a href="../cyber-defense-console.html"><b>Cyber Defense Console</b> — the ClearGlass command center for defensive operations</a></li>
+      <li><a href="../agentmesh.html"><b>Agent Mesh</b> — multi-agent OSINT orchestration</a></li>
+      <li><a href="cybersecurity-architecture-for-agentic-software.html"><b>Security Architecture for Agentic Software</b> — designing defenses for autonomous systems</a></li>
+      <li><a href="ai-agent-governance-governed-autonomy.html"><b>AI Agent Governance</b> — the governed-autonomy playbook</a></li>
+      <li><a href="clearglass-platform-audit-2026.html"><b>The ClearGlass Platform Audit</b> — keep, simplify, gate, build — the platform upgrade doctrine</a></li>
+      <li><a href="ai-agents-insider-threat.html"><b>AI Agents Are the New Insider Threat</b> — why agent identity is a security boundary</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="../nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

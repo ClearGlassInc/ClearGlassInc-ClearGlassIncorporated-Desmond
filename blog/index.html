@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>ClearGlass Intelligence | Governed AI, Cyber Defense &amp; OSINT Systems</title>
+<meta name="description" content="ClearGlass Intelligence helps serious builders understand governed AI, cyber defense, OSINT, autonomy, and security playbooks through tactical intelligence briefs and professional-grade systems thinking."/>
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"/>
+<meta name="author" content="ClearGlass Inc."/>
+<link rel="canonical" href="https://www.clearglassinc.com/blog/"/>
+<link rel="alternate" type="application/rss+xml" title="ClearGlass Insights RSS" href="https://www.clearglassinc.com/blog/feed.xml"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="ClearGlass Inc."/>
+<meta property="og:title" content="ClearGlass Intelligence | Governed AI, Cyber Defense &amp; OSINT Systems"/>
+<meta property="og:description" content="Governed AI, cyber defense, OSINT, autonomy, and security playbooks for serious builders."/>
+<meta property="og:url" content="https://www.clearglassinc.com/blog/"/>
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-holographic-seal.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="ClearGlass Intelligence | Governed AI, Cyber Defense &amp; OSINT Systems"/>
+<meta name="twitter:description" content="Governed AI, cyber defense, OSINT, autonomy, and security playbooks for serious builders."/>
+<meta name="twitter:image" content="https://www.clearglassinc.com/assets/images/clearglass-holographic-seal.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="insights.css"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {"@type":"WebSite","@id":"https://www.clearglassinc.com/#website","name":"ClearGlass Inc.","url":"https://www.clearglassinc.com/","publisher":{"@id":"https://www.clearglassinc.com/#org"},"potentialAction":{"@type":"SearchAction","target":"https://www.clearglassinc.com/blog/?q={search_term_string}","query-input":"required name=search_term_string"}},
+    {"@type":"Organization","@id":"https://www.clearglassinc.com/#org","name":"ClearGlass Inc.","url":"https://www.clearglassinc.com/","logo":"https://www.clearglassinc.com/assets/images/clearglass-holographic-seal.png"},
+    {"@type":"Blog","@id":"https://www.clearglassinc.com/blog/#blog","name":"ClearGlass Insights","description":"Governed AI, cybersecurity, autonomy, OSINT, and high-trust software systems.","url":"https://www.clearglassinc.com/blog/","publisher":{"@id":"https://www.clearglassinc.com/#org"},"blogPost":[{"@id":"https://www.clearglassinc.com/blog/canada-digital-control-architecture-charter.html#article"},{"@id":"https://www.clearglassinc.com/blog/ai-generated-phishing-54-percent-click-rate.html#article"},{"@id":"https://www.clearglassinc.com/blog/ontario-accountability-sealed-evidence.html#article"},{"@id":"https://www.clearglassinc.com/blog/coffee-and-technology-digital-revolution.html#article"},{"@id":"https://www.clearglassinc.com/blog/clearglassinc-artemis-palantir-self-evolving-ai-intelligence-platform.html#article"},{"@id":"https://www.clearglassinc.com/blog/post-quantum-security-advisor-clearglass-artemis.html#article"},{"@id":"https://www.clearglassinc.com/blog/clearglass-secure-deployment-agent.html#article"},{"@id":"https://www.clearglassinc.com/blog/clearglassinc-0-to-1m-corporate-execution-plan.html#article"},{"@id":"https://www.clearglassinc.com/blog/ethical-sales-system-100k-revenue-prompt.html#article"},{"@id":"https://www.clearglassinc.com/blog/clearglass-agentops-microsoft-foundry-future-stack.html#article"},{"@id":"https://www.clearglassinc.com/blog/clearglassinc-artemis-resume-builder-self-evolving-intelligence-platform.html#article"},{"@id":"https://www.clearglassinc.com/blog/ai-agent-governance-governed-autonomy.html#article"},{"@id":"https://www.clearglassinc.com/blog/clearglassinc-artemis-self-evolving-ai-intelligence-platform.html#article"},{"@id":"https://www.clearglassinc.com/blog/ai-agents-insider-threat.html#article"},{"@id":"https://www.clearglassinc.com/blog/zero-trust-is-outdated.html#article"},{"@id":"https://www.clearglassinc.com/blog/osint-workflow-that-survives-contact-with-reality.html#article"},{"@id":"https://www.clearglassinc.com/blog/cybersecurity-architecture-for-agentic-software.html#article"}]},
+    {"@type":"VideoObject","@id":"https://www.clearglassinc.com/blog/#desk-film","name":"Inside a ClearGlass intelligence desk","description":"A cinematic illustration of an analyst reviewing holographic panels — a global network grid, a cyber threat map, financial models, and actor telemetry — in a dark glass operations room. Rendered scene, not a recording of live systems or customer data.","thumbnailUrl":["https://www.clearglassinc.com/assets/video/insights-intelligence-desk-poster.jpg"],"contentUrl":"https://www.clearglassinc.com/assets/video/insights-intelligence-desk.mp4","uploadDate":"2026-08-02","duration":"PT6S","isFamilyFriendly":true,"publisher":{"@id":"https://www.clearglassinc.com/#org"}},
+    {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"url":"https://www.clearglassinc.com/blog/clearglassinc-artemis-palantir-self-evolving-ai-intelligence-platform.html"},{"@type":"ListItem","position":1,"name":"Home","item":"https://www.clearglassinc.com/"},{"@type":"ListItem","position":2,"name":"Insights","item":"https://www.clearglassinc.com/blog/"}]},
+    {"@type":"ItemList","@id":"https://www.clearglassinc.com/blog/#postlist","name":"ClearGlass Insights — latest briefs","itemListOrder":"https://schema.org/ItemListOrderDescending","itemListElement":[{"@type":"ListItem","position":1,"url":"https://www.clearglassinc.com/blog/clearglass-workplace-surveillance-intelligence-defense-system.html"},{"@type":"ListItem","position":1,"url":"https://www.clearglassinc.com/blog/canada-digital-control-architecture-charter.html"},{"@type":"ListItem","position":1,"url":"https://www.clearglassinc.com/blog/post-quantum-security-advisor-clearglass-artemis.html"},{"@type":"ListItem","position":2,"url":"https://www.clearglassinc.com/blog/clearglassinc-0-to-1m-corporate-execution-plan.html"},{"@type":"ListItem","position":3,"url":"https://www.clearglassinc.com/blog/ethical-sales-system-100k-revenue-prompt.html"},{"@type":"ListItem","position":4,"url":"https://www.clearglassinc.com/blog/clearglass-agentops-microsoft-foundry-future-stack.html"},{"@type":"ListItem","position":5,"url":"https://www.clearglassinc.com/blog/clearglassinc-artemis-resume-builder-self-evolving-intelligence-platform.html"},{"@type":"ListItem","position":6,"url":"https://www.clearglassinc.com/blog/artemis-governed-ai-gtm-visual-growth-engine.html"},{"@type":"ListItem","position":7,"url":"https://www.clearglassinc.com/blog/cybersecurity-architecture-for-agentic-software.html"},{"@type":"ListItem","position":8,"url":"https://www.clearglassinc.com/blog/ai-agents-insider-threat.html"},{"@type":"ListItem","position":9,"url":"https://www.clearglassinc.com/blog/zero-trust-is-outdated.html"},{"@type":"ListItem","position":10,"url":"https://www.clearglassinc.com/blog/osint-workflow-that-survives-contact-with-reality.html"},{"@type":"ListItem","position":11,"url":"https://www.clearglassinc.com/blog/clearglassinc-artemis-self-evolving-ai-intelligence-platform.html"}]}
+  ]
+}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#05070d;--bg2:#09101c;
+  --panel:rgba(255,255,255,.055);--panel2:rgba(255,255,255,.09);--panel3:rgba(255,255,255,.14);
+  --line:rgba(180,214,255,.16);--line2:rgba(255,255,255,.26);
+  --text:#f8fbff;--muted:#a8b4c7;--soft:#dbe7ff;
+  --cyan:#39d8ff;--violet:#9d7bff;--green:#55f2a6;--amber:#ffd166;--red:#ff5c7a;--ink:#070a12;
+  --mono:'IBM Plex Mono',monospace;--sans:'Inter',system-ui,sans-serif;--serif:'Cormorant Garamond',Georgia,serif;
+  --glow:0 0 42px rgba(57,216,255,.28);--glow-violet:0 0 46px rgba(157,123,255,.26);
+  --max:1180px;
+  --ease-liquid:cubic-bezier(.16,1,.3,1);--ease-soft:cubic-bezier(.22,.61,.36,1);
+  --mx:50%;--my:35%;
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);color:var(--text);
+  background:
+    radial-gradient(650px 500px at var(--mx) var(--my),rgba(57,216,255,.10),transparent 60%),
+    radial-gradient(circle at 8% -10%,rgba(57,216,255,.22),transparent 34%),
+    radial-gradient(circle at 92% 0%,rgba(157,123,255,.22),transparent 30%),
+    linear-gradient(180deg,#05070d 0%,#08111d 48%,#05070d 100%);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative
+}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.22;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:56px 56px;mask-image:linear-gradient(to bottom,#000,transparent 78%)}
+a{color:inherit}
+.wrap{width:min(var(--max),calc(100% - 40px));margin-inline:auto;position:relative;z-index:2}
+
+/* particle field — fixed, cheap, GPU-composited canvas */
+#field{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55}
+
+.class-banner,.unclass-banner{position:relative;z-index:2;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-align:center;padding:7px 16px;color:#b9ffe0;background:#07140f;border-bottom:1px solid rgba(85,242,166,.18)}
+.class-banner span{opacity:.5;margin:0 8px}
+
+/* nav — floating glass, holographic bottom edge */
+.nav{position:sticky;top:0;z-index:50;border-bottom:1px solid var(--line);background:rgba(5,7,13,.72);backdrop-filter:blur(22px) saturate(1.3);transition:padding .4s var(--ease-soft),background .4s var(--ease-soft);isolation:isolate}
+.nav::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),var(--green),var(--violet),transparent);background-size:200% 100%;animation:holo-sweep 7s linear infinite;opacity:.55}
+.nav.scrolled{background:rgba(5,7,13,.92)}
+.nav.scrolled .nav-inner{height:60px}
+@keyframes holo-sweep{to{background-position:-200% 0}}
+.nav-inner{height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px;transition:height .35s var(--ease-soft)}
+.nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.nav-mark{width:42px;height:42px;border:1px solid var(--line2);border-radius:14px;overflow:hidden;background:#fff;box-shadow:var(--glow)}
+.nav-mark img{width:100%;height:100%;object-fit:cover}
+.nav-name{font-family:var(--serif);font-size:24px;font-weight:700;letter-spacing:-.02em}
+.nav-name em{font-style:italic;color:var(--cyan);font-weight:500}
+.nav-links{display:flex;align-items:center;gap:3px}
+.nav-links a{font-size:13px;font-weight:800;color:var(--muted);text-decoration:none;padding:10px 12px;border-radius:999px;transition:color .2s,background .2s}
+.nav-links a:hover{color:#fff;background:var(--panel2)}
+.nav-cta{color:#031016!important;background:linear-gradient(135deg,var(--cyan),var(--green));box-shadow:0 0 28px rgba(57,216,255,.25)}
+
+/* buttons — magnetic, luminous */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:46px;padding:0 18px;border-radius:999px;font-weight:900;font-size:14px;text-decoration:none;border:1px solid var(--line2);background:var(--panel);color:#fff;position:relative;transition:transform .35s var(--ease-liquid),box-shadow .35s var(--ease-soft),border-color .3s;will-change:transform}
+.btn.primary{background:linear-gradient(135deg,var(--cyan),var(--green));color:#031016;border:0}
+.btn:hover{box-shadow:0 10px 34px rgba(57,216,255,.22)}
+.hero-actions,.section-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+
+.hero{padding:74px 0 34px;position:relative}
+.hero-aura{position:absolute;left:50%;top:10%;width:640px;height:640px;transform:translateX(-50%);background:radial-gradient(circle,rgba(57,216,255,.24),rgba(157,123,255,.14) 45%,transparent 70%);filter:blur(10px);pointer-events:none;z-index:0;animation:breathe 8s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.55;transform:translateX(-50%) scale(1)}50%{opacity:.85;transform:translateX(-50%) scale(1.08)}}
+.hero-grid{display:grid;grid-template-columns:1.04fr .96fr;gap:36px;align-items:center;position:relative;z-index:1}
+.eyebrow,.kicker{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);font-weight:800}
+.eyebrow::before,.kicker::before{content:"";width:26px;height:1px;background:linear-gradient(90deg,var(--cyan),var(--green))}
+.hero h1{font-family:var(--serif);font-size:clamp(50px,7.5vw,92px);line-height:.9;letter-spacing:-.055em;margin:18px 0}
+.gradient{background:linear-gradient(120deg,#fff 0%,#b7f1ff 30%,#bfaaff 60%,#baffdd 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:hue-drift 10s ease-in-out infinite}
+@keyframes hue-drift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.hero p{max-width:62ch;font-size:clamp(17px,2vw,21px);line-height:1.65;color:var(--soft)}
+
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:28px}
+.metric{padding:16px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.045);position:relative;overflow:hidden;transition:transform .4s var(--ease-liquid),border-color .3s}
+.metric:hover{transform:translateY(-3px);border-color:rgba(57,216,255,.4)}
+.metric strong{display:block;font-size:24px;font-variant-numeric:tabular-nums}
+.metric span{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+
+/* command console — holographic conic border + specular sheen */
+.command{position:relative;border:1px solid var(--line);border-radius:30px;padding:18px;background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.035));box-shadow:0 28px 90px rgba(0,0,0,.45),var(--glow);overflow:hidden}
+.command::before{content:"";position:absolute;inset:-30%;background:conic-gradient(from 180deg,transparent,var(--cyan),transparent,var(--violet),transparent);opacity:.13;animation:spin 9s linear infinite}
+.command::after{content:"";position:absolute;inset:0;background:radial-gradient(320px 220px at var(--sx,50%) var(--sy,20%),rgba(255,255,255,.16),transparent 60%);mix-blend-mode:screen;pointer-events:none;transition:opacity .4s}
+@keyframes spin{to{transform:rotate(1turn)}}
+.screen{position:relative;border-radius:22px;background:#050914;border:1px solid rgba(255,255,255,.14);padding:18px;z-index:1}
+.screen-top{display:flex;justify-content:space-between;color:var(--muted);font-family:var(--mono);font-size:11px;margin-bottom:18px}
+.live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1.6s ease-in-out infinite;margin-right:6px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.radar{height:255px;border-radius:20px;background:radial-gradient(circle,rgba(57,216,255,.22) 0 2px,transparent 3px),radial-gradient(circle at center,transparent 0 22%,rgba(57,216,255,.12) 22.5% 23%,transparent 23.5% 43%,rgba(85,242,166,.13) 43.5% 44%,transparent 44.5%),linear-gradient(135deg,rgba(57,216,255,.12),rgba(157,123,255,.1));position:relative;overflow:hidden}
+.radar-seal{width:100%;height:100%;display:block;object-fit:cover;filter:saturate(1.12) contrast(1.06);transform:scale(1.02)}
+.radar::before{content:"";position:absolute;inset:0;z-index:1;background:radial-gradient(circle at center,transparent 0 24%,rgba(57,216,255,.18) 24.5% 25%,transparent 25.5% 44%,rgba(85,242,166,.16) 44.5% 45%,transparent 45.5%),linear-gradient(90deg,transparent 49.7%,rgba(57,216,255,.2) 50%,transparent 50.3%),linear-gradient(transparent 49.7%,rgba(57,216,255,.2) 50%,transparent 50.3%);pointer-events:none}
+.radar::after{content:"";position:absolute;inset:50% 0 0 50%;background:linear-gradient(45deg,rgba(85,242,166,.42),transparent 55%);transform-origin:0 0;animation:sweep 4s linear infinite}
+@keyframes sweep{to{transform:rotate(1turn)}}
+.intel-line{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);padding:12px 0;color:var(--soft);font-size:13px}
+.intel-line code{font-family:var(--mono);color:var(--green)}
+
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:30px 0 46px}
+.chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:10px 13px;text-decoration:none;color:var(--soft);font-family:var(--mono);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;transition:border-color .25s,box-shadow .25s,transform .3s var(--ease-liquid);cursor:pointer}
+.chip:hover{border-color:var(--cyan);box-shadow:var(--glow);transform:translateY(-2px)}
+.chip.active{border-color:var(--cyan);color:#031016;background:linear-gradient(135deg,var(--cyan),var(--green));box-shadow:var(--glow)}
+
+section{padding:42px 0}
+.section-head{display:flex;justify-content:space-between;gap:24px;align-items:end;margin-bottom:20px}
+.section-head h2{font-family:var(--serif);font-size:clamp(34px,4.8vw,58px);line-height:.96;letter-spacing:-.04em}
+.section-head p{max-width:56ch;color:var(--muted);line-height:1.7}
+.feature{display:grid;grid-template-columns:1.12fr .88fr;gap:20px}
+
+/* glass cards — tilt + moving specular highlight, holographic edge on hover */
+.article-card,.panel{border:1px solid var(--line);border-radius:26px;background:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.035));box-shadow:0 24px 70px rgba(0,0,0,.24);overflow:hidden;position:relative}
+.article-card{display:flex;flex-direction:column;text-decoration:none;transform-style:preserve-3d;transition:transform .5s var(--ease-liquid),border-color .3s,box-shadow .4s}
+.article-card::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;background:linear-gradient(120deg,transparent,rgba(57,216,255,.55),transparent 40%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .35s}
+.article-card::after{content:"";position:absolute;inset:0;background:radial-gradient(280px 200px at var(--sx,50%) var(--sy,0%),rgba(255,255,255,.14),transparent 60%);mix-blend-mode:screen;opacity:0;transition:opacity .35s;pointer-events:none}
+.article-card:hover{border-color:rgba(57,216,255,.45);box-shadow:0 30px 90px rgba(0,0,0,.4),var(--glow)}
+.article-card:hover::before,.article-card:hover::after{opacity:1}
+.card-art{min-height:170px;background:radial-gradient(circle at 30% 20%,rgba(85,242,166,.42),transparent 28%),radial-gradient(circle at 70% 30%,rgba(157,123,255,.42),transparent 30%),linear-gradient(135deg,#07172b,#0b0718);display:grid;place-items:center;text-align:center;padding:20px}
+.quote{font-family:var(--serif);font-style:italic;font-size:clamp(26px,3vw,38px);line-height:1.05}
+.card-body{padding:24px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.meta span{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--green);border:1px solid rgba(85,242,166,.22);padding:6px 8px;border-radius:999px}
+.article-card h3{font-family:var(--serif);font-size:clamp(28px,3.5vw,44px);line-height:1;letter-spacing:-.03em;margin-bottom:12px}
+.article-card p,.panel p{color:var(--muted);line-height:1.65}
+.read{display:inline-flex;margin-top:20px;color:#fff;font-weight:900}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.grid .article-card h3{font-size:27px}
+.grid .card-art{min-height:96px}
+.panel{padding:24px}
+.panel h3{font-family:var(--serif);font-size:32px;line-height:1;margin-bottom:10px}
+.list{display:grid;gap:12px;margin-top:18px}
+.list li{list-style:none;padding:14px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.035);color:var(--soft);line-height:1.5}
+.search{display:flex;gap:10px;margin:16px 0}
+.search input{width:100%;min-height:48px;border-radius:999px;border:1px solid var(--line);background:#07101d;color:#fff;padding:0 16px;font:600 14px var(--sans);outline:none;transition:border-color .25s,box-shadow .25s}
+.search input:focus{border-color:var(--cyan);box-shadow:var(--glow)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.blueprint{counter-reset:item}
+.blueprint li{counter-increment:item}
+.blueprint li::before{content:"0" counter(item);display:block;font-family:var(--mono);color:var(--cyan);font-weight:900;margin-bottom:4px}
+.power{background:linear-gradient(135deg,rgba(57,216,255,.12),rgba(157,123,255,.12));border:1px solid rgba(57,216,255,.24);border-radius:32px;padding:28px}
+.code{font-family:var(--mono);font-size:12px;line-height:1.55;color:#ccffe5;background:#030711;border:1px solid rgba(85,242,166,.2);border-radius:18px;padding:18px;overflow:auto;margin-top:16px}
+
+.newsletter{display:grid;grid-template-columns:1fr .86fr;gap:22px;align-items:center;border:1px solid rgba(85,242,166,.28);border-radius:34px;padding:clamp(24px,5vw,42px);background:radial-gradient(circle at 0 0,rgba(85,242,166,.16),transparent 34%),linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.035))}
+.newsletter h2{font-family:var(--serif);font-size:clamp(36px,5vw,64px);line-height:.95}
+.form{display:grid;gap:12px}
+.form input{min-height:52px;border-radius:16px;border:1px solid var(--line);background:#06101c;color:#fff;padding:0 16px;font-weight:700;transition:border-color .25s,box-shadow .25s}
+.form input:focus{outline:none;border-color:var(--cyan);box-shadow:var(--glow)}
+
+/* finale — premium launch screen */
+.finale{position:relative;border-radius:36px;padding:clamp(40px,8vw,90px) clamp(24px,6vw,60px);text-align:center;overflow:hidden;border:1px solid rgba(157,123,255,.3);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02))}
+.finale::before{content:"";position:absolute;inset:-40%;background:conic-gradient(from 0deg,transparent 0deg,rgba(57,216,255,.35) 60deg,transparent 140deg,rgba(157,123,255,.35) 230deg,transparent 320deg);animation:spin 14s linear infinite;opacity:.5}
+.finale::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 20%,rgba(5,7,13,0),rgba(5,7,13,.85) 72%)}
+.finale-inner{position:relative;z-index:1}
+.finale .kicker{justify-content:center}
+.finale h2{font-family:var(--serif);font-size:clamp(40px,7vw,84px);line-height:.95;letter-spacing:-.04em;margin:16px 0}
+.finale p{max-width:56ch;margin-inline:auto;color:var(--soft);line-height:1.7;font-size:clamp(15px,1.6vw,18px)}
+.finale .hero-actions{justify-content:center}
+.finale .btn.primary{padding:0 30px;min-height:54px;font-size:15px;box-shadow:0 0 50px rgba(85,242,166,.35)}
+
+.footer{padding:54px 0 30px;border-top:1px solid var(--line);color:var(--muted)}
+.footer-grid{display:grid;grid-template-columns:1.2fr repeat(3,1fr);gap:24px}
+.footer h4{color:#fff;margin-bottom:10px}
+.footer a{display:block;color:var(--muted);text-decoration:none;margin:8px 0;transition:color .2s}
+.footer a:hover{color:#fff}
+.ft{font-family:var(--serif);font-style:italic;color:#fff;margin-top:22px}
+
+/* scroll-reveal */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .9s var(--ease-soft),transform .9s var(--ease-soft)}
+.reveal.in{opacity:1;transform:translateY(0)}
+.stagger>*{opacity:0;transform:translateY(22px);transition:opacity .8s var(--ease-soft),transform .8s var(--ease-soft)}
+.stagger.in>*{opacity:1;transform:translateY(0)}
+.stagger.in>*:nth-child(1){transition-delay:.03s}
+.stagger.in>*:nth-child(2){transition-delay:.12s}
+.stagger.in>*:nth-child(3){transition-delay:.21s}
+.stagger.in>*:nth-child(4){transition-delay:.30s}
+.stagger.in>*:nth-child(5){transition-delay:.39s}
+.stagger.in>*:nth-child(6){transition-delay:.48s}
+
+@media(max-width:920px){.hero-grid,.feature,.two,.newsletter,.footer-grid{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}.nav-links a:not(.nav-cta){display:none}}
+@media(max-width:640px){.wrap{width:min(100% - 28px,var(--max))}.grid,.metrics{grid-template-columns:1fr}.hero{padding-top:46px}.nav-name{font-size:20px}.section-head{display:block}.command{padding:10px}.radar{height:190px}#field{opacity:.35}}
+
+/* insight atlas — living intelligence-graph panel */
+.atlas-shell{position:relative;height:clamp(500px,66vh,740px);border:1px solid rgba(255,214,150,.16);border-radius:36px;overflow:hidden;isolation:isolate;
+  background:radial-gradient(130% 120% at 50% -10%,#0b1526 0%,#050810 46%,#03040a 100%);
+  box-shadow:0 44px 130px rgba(0,0,0,.55),inset 0 0 140px rgba(3,6,14,.85),0 0 60px rgba(255,196,120,.05)}
+.atlas-shell::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.13;
+  background-image:linear-gradient(rgba(160,196,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(160,196,255,.08) 1px,transparent 1px);
+  background-size:64px 64px;mask-image:radial-gradient(80% 80% at 50% 50%,#000 30%,transparent 100%)}
+.atlas-shell::after{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,214,150,.09),transparent 22%,transparent 78%,rgba(57,216,255,.06));mix-blend-mode:screen}
+#atlasCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.atlas-hud{position:absolute;z-index:6;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);pointer-events:none}
+.atlas-brand{top:18px;left:22px;display:flex;align-items:center;gap:9px;color:#ffe3b0}
+.atlas-brand em{font-style:normal;color:var(--muted);letter-spacing:.14em}
+.atlas-dot{width:7px;height:7px;border-radius:50%;background:#ffd9a0;box-shadow:0 0 12px #ffcf8a;animation:pulse 1.8s ease-in-out infinite}
+.atlas-mode{top:20px;right:22px;text-align:right;color:#9fe8c8;max-width:44ch}
+.atlas-controls{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:7;display:flex;gap:8px}
+.atlas-btn{width:34px;height:30px;border-radius:10px;border:1px solid var(--line);background:rgba(10,18,32,.72);color:var(--soft);
+  font:700 12px var(--mono);cursor:pointer;backdrop-filter:blur(8px);transition:border-color .2s,color .2s}
+.atlas-btn:hover{border-color:rgba(255,214,150,.5);color:#ffe3b0}
+.atlas-timeline{position:absolute;left:16px;top:50%;transform:translateY(-50%);z-index:7;display:grid;gap:7px}
+.atlas-year{display:flex;align-items:center;gap:8px;border:0;background:transparent;color:var(--muted);cursor:pointer;
+  font:700 10.5px var(--mono);letter-spacing:.12em;padding:5px 8px;border-radius:999px;transition:color .25s,background .25s}
+.atlas-year i{width:14px;height:1px;background:currentColor;opacity:.5;transition:width .25s}
+.atlas-year:hover{color:var(--soft)}
+.atlas-year.on{color:#ffd9a0;background:rgba(255,214,150,.08)}
+.atlas-year.on i{width:24px;opacity:1;box-shadow:0 0 8px rgba(255,214,150,.8)}
+.atlas-labels{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden}
+.atlas-label{position:absolute;top:0;left:0;pointer-events:auto;display:flex;align-items:center;gap:7px;border:0;background:transparent;
+  color:#eef4ff;cursor:pointer;padding:2px 4px;font:700 11.5px/1.2 var(--sans);text-shadow:0 2px 14px rgba(0,0,0,.9),0 0 24px rgba(0,0,0,.6);
+  white-space:nowrap;transition:opacity .5s,color .2s;will-change:transform}
+.atlas-label:hover{color:#fff}
+.atlas-label.dim{opacity:.32}
+.atlas-label .pill{font:700 9px var(--mono);letter-spacing:.06em;color:var(--muted);border:1px solid rgba(255,255,255,.22);
+  border-radius:999px;padding:1.5px 6px;background:rgba(6,10,20,.66)}
+.atlas-label.core{pointer-events:none;color:#ffe6b8;font-size:11px}
+.atlas-label.core .pill{border-color:rgba(255,214,150,.35);color:#e8c58a}
+.atlas-tip{position:absolute;top:0;left:0;z-index:9;pointer-events:none;max-width:240px;padding:11px 14px;border-radius:14px;
+  border:1px solid rgba(255,214,150,.28);background:rgba(7,11,20,.92);backdrop-filter:blur(10px);box-shadow:0 18px 50px rgba(0,0,0,.6);
+  will-change:transform}
+.atlas-tip b{display:block;font-size:13px;color:#fff;margin-bottom:3px}
+.atlas-tip span{display:block;font:600 10.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.atlas-tip em{display:block;font:600 9.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#9fe8c8;margin-top:6px;font-style:normal}
+.atlas-legend{position:absolute;left:20px;bottom:18px;z-index:6;display:grid;gap:6px;padding:12px 14px;border-radius:14px;
+  border:1px solid var(--line);background:rgba(6,10,20,.6);backdrop-filter:blur(8px)}
+.atlas-legend b{font:700 9px var(--mono);letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:2px}
+.atlas-legend span{display:flex;align-items:center;gap:8px;font:600 10.5px var(--mono);letter-spacing:.08em;color:var(--soft)}
+.atlas-legend i{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.atlas-console{position:absolute;right:18px;bottom:16px;z-index:7;width:min(430px,calc(100% - 36px))}
+.atlas-stats{display:flex;gap:8px;justify-content:flex-end}
+.atlas-stat{flex:1;text-align:center;padding:9px 6px;border-radius:12px;border:1px solid var(--line);background:rgba(8,13,24,.72);backdrop-filter:blur(8px)}
+.atlas-stat strong{display:block;font-size:17px;font-variant-numeric:tabular-nums;color:#fff}
+.atlas-stat span{font:600 8.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.atlas-ask{display:flex;align-items:center;gap:8px;margin-top:9px;padding:5px 5px 5px 16px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.16);background:rgba(9,14,26,.82);backdrop-filter:blur(10px)}
+.atlas-ask input{flex:1;min-width:0;border:0;background:transparent;color:#fff;font:600 12.5px var(--sans);outline:none}
+.atlas-ask input::placeholder{color:var(--muted)}
+.atlas-ask button{width:34px;height:34px;border-radius:50%;border:0;cursor:pointer;font:800 15px var(--sans);color:#031016;
+  background:linear-gradient(135deg,#ffd9a0,#ffb56b);box-shadow:0 0 20px rgba(255,196,120,.35);transition:transform .25s var(--ease-liquid)}
+.atlas-ask button:hover{transform:scale(1.08)}
+.atlas-noscript{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);padding:30px;text-align:center}
+@media(max-width:920px){.atlas-mode{display:none}.atlas-console{left:18px;width:auto}}
+@media(max-width:760px){.atlas-timeline{display:none}.atlas-shell{height:520px;border-radius:26px}}
+@media(max-width:560px){.atlas-legend{display:none}.atlas-stat span{font-size:7.5px}.atlas-label{font-size:10.5px}}
+@media(prefers-reduced-motion:reduce){.atlas-dot{animation:none}}
+
+/* desk signals — trending rail, author trust, proof of work */
+.trend{list-style:none;display:grid;gap:12px;margin-top:18px}
+.trend li{display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:center;padding:14px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.035);transition:border-color .25s,transform .3s var(--ease-liquid)}
+.trend li:hover{border-color:rgba(157,123,255,.45);transform:translateX(4px)}
+.trend .rank{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--violet);text-align:center}
+.trend a{color:#fff;font-weight:800;text-decoration:none;line-height:1.35}
+.trend .why{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:5px}
+.author-card{display:flex;gap:16px;align-items:flex-start}
+.author-av{width:56px;height:56px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:var(--serif);font-size:26px;font-weight:700;color:#031016;background:linear-gradient(135deg,var(--cyan),var(--green));box-shadow:var(--glow)}
+.author-card b{font-size:17px}
+.author-card .role{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin:4px 0 10px}
+.author-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.author-links a{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:7px 11px;transition:border-color .25s}
+.author-links a:hover{border-color:var(--cyan)}
+.proof{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}
+.proof .panel{padding:18px}
+.proof h3{font-size:24px}
+.proof p{font-size:13.5px}
+@media(max-width:920px){.proof{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.proof{grid-template-columns:1fr}}
+
+/* ===== Quantum Command Interface — enterprise mission-control deck =====
+   Tactical-HUD language: data readouts, live gauges, scanline, breathing
+   edge-light. Reuses .reveal/.stagger/.tilt-card/[data-count]/.btn-magnet.
+   Palette extends the brand with a tactical-green + ruby command accent. */
+:root{--ruby:#ff466e;--tac:#6effb0;--qci-line:rgba(110,255,176,.18)}
+.qci{position:relative;border:1px solid var(--qci-line);border-radius:30px;
+  background:linear-gradient(180deg,rgba(10,20,16,.86),rgba(6,11,18,.92));
+  box-shadow:0 40px 120px rgba(0,0,0,.55),inset 0 0 120px rgba(2,10,8,.7),0 0 60px rgba(110,255,176,.05);
+  overflow:hidden;isolation:isolate;transform-style:preserve-3d;transition:transform .5s var(--ease-liquid),box-shadow .4s}
+.qci::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;z-index:0;
+  background-image:linear-gradient(rgba(110,255,176,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(110,255,176,.05) 1px,transparent 1px);
+  background-size:38px 38px;mask-image:radial-gradient(120% 90% at 50% 0,#000 40%,transparent 100%)}
+.qci::after{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;z-index:6;
+  background:linear-gradient(120deg,transparent,rgba(110,255,176,.5),transparent 40%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
+  padding:1px;opacity:.55;animation:qci-edge 6s ease-in-out infinite}
+@keyframes qci-edge{0%,100%{opacity:.28}50%{opacity:.7}}
+.qci-scan{position:absolute;left:0;right:0;top:0;height:120px;z-index:5;pointer-events:none;
+  background:linear-gradient(180deg,rgba(110,255,176,.14),transparent);animation:qci-scan 6.5s linear infinite;mix-blend-mode:screen}
+@keyframes qci-scan{0%{transform:translateY(-120px)}100%{transform:translateY(760px)}}
+.qci-bezel{position:relative;z-index:2;padding:clamp(14px,2.4vw,24px)}
+.qci-topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;
+  padding-bottom:14px;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.qci-id{display:inline-flex;align-items:center;color:#bff6d8}
+.qci-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.qci-tab{border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);
+  border-radius:8px;padding:6px 11px;font:700 10px var(--mono);letter-spacing:.12em;cursor:pointer;
+  transition:border-color .2s,color .2s,background .2s}
+.qci-tab:hover{color:#eafff4;border-color:var(--qci-line)}
+.qci-tab.on{color:#031a12;background:linear-gradient(135deg,var(--tac),var(--green));border-color:transparent;box-shadow:0 0 20px rgba(110,255,176,.3)}
+.qci-clock{color:#9fe8c8;font-variant-numeric:tabular-nums}
+.qci-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.qci-card{grid-column:span 2;position:relative;border:1px solid var(--line);border-radius:18px;
+  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02));
+  padding:16px;overflow:hidden;transition:border-color .3s,box-shadow .35s,transform .4s var(--ease-liquid)}
+.qci-card:hover{border-color:var(--qci-line);box-shadow:0 18px 50px rgba(0,0,0,.4),0 0 30px rgba(110,255,176,.1);transform:translateY(-3px)}
+.qci-card.wide{grid-column:span 3}
+.qci-card.full{grid-column:1/-1}
+.qci-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.qci-head h3{font:700 10.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--soft)}
+.qci-tag{font:700 9px var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:4px 8px;border-radius:999px;
+  border:1px solid rgba(110,255,176,.28);color:var(--tac);background:rgba(110,255,176,.06)}
+.qci-tag.alert{border-color:rgba(255,70,110,.34);color:var(--ruby);background:rgba(255,70,110,.07)}
+.qci-big{font:800 34px/1 var(--sans);font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:#fff}
+.qci-big small{font:700 12px var(--mono);color:var(--muted);letter-spacing:.1em;margin-left:6px}
+.qci-sub{margin-top:6px;font:600 11px var(--mono);letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+/* equalizer — global threat activity */
+.qci-eq{display:flex;align-items:flex-end;gap:4px;height:64px;margin-top:4px}
+.qci-eq i{flex:1;height:100%;border-radius:3px 3px 0 0;transform-origin:bottom;box-shadow:0 0 8px rgba(110,255,176,.35);
+  background:linear-gradient(180deg,rgba(110,255,176,.35),var(--tac));animation:qci-eqp 1.5s ease-in-out infinite}
+.qci-eq i:nth-child(3n){background:linear-gradient(180deg,rgba(57,216,255,.35),var(--cyan));box-shadow:0 0 8px rgba(57,216,255,.35)}
+.qci-eq i:nth-child(5n){background:linear-gradient(180deg,rgba(255,70,110,.35),var(--ruby));box-shadow:0 0 8px rgba(255,70,110,.35)}
+.qci-eq i:nth-child(2){animation-delay:-.2s}.qci-eq i:nth-child(3){animation-delay:-.5s}
+.qci-eq i:nth-child(4){animation-delay:-.9s}.qci-eq i:nth-child(5){animation-delay:-1.2s}
+.qci-eq i:nth-child(6){animation-delay:-.3s}.qci-eq i:nth-child(7){animation-delay:-.7s}
+.qci-eq i:nth-child(8){animation-delay:-1.1s}.qci-eq i:nth-child(9){animation-delay:-.4s}
+.qci-eq i:nth-child(10){animation-delay:-.8s}.qci-eq i:nth-child(11){animation-delay:-1.3s}
+.qci-eq i:nth-child(12){animation-delay:-.6s}.qci-eq i:nth-child(13){animation-delay:-1s}
+.qci-eq i:nth-child(14){animation-delay:-.15s}
+@keyframes qci-eqp{0%,100%{transform:scaleY(.36)}50%{transform:scaleY(1)}}
+/* ring gauges — api health / compliance */
+.qci-rings{display:flex;gap:18px;align-items:center;justify-content:space-around;flex-wrap:wrap}
+.qci-ring{--p:0;--c:var(--tac);width:98px;height:98px;border-radius:50%;position:relative;display:grid;place-items:center;
+  background:conic-gradient(var(--c) calc(var(--p)*1%),rgba(255,255,255,.07) 0);
+  filter:drop-shadow(0 0 9px rgba(110,255,176,.3));transition:filter .3s}
+.qci-ring.cy{--c:var(--cyan);filter:drop-shadow(0 0 9px rgba(57,216,255,.35))}
+.qci-ring.vi{--c:var(--violet);filter:drop-shadow(0 0 9px rgba(157,123,255,.35))}
+.qci-ring::before{content:"";position:absolute;inset:8px;border-radius:50%;background:#050b12;border:1px solid rgba(255,255,255,.07)}
+.qci-ring b{position:relative;z-index:1;font:800 20px/1 var(--sans);font-variant-numeric:tabular-nums;color:#fff}
+.qci-ring b i{font-style:normal;font-size:10px;color:var(--muted)}
+.qci-ring+.qci-sub,.qci-ringlabel{text-align:center}
+.qci-ringwrap{display:grid;justify-items:center;gap:8px}
+.qci-ringlabel{font:700 9.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+/* node matrix — agents online */
+.qci-nodes{display:grid;grid-template-columns:repeat(8,1fr);gap:7px;margin-top:12px}
+.qci-nodes i{aspect-ratio:1;border-radius:50%;background:rgba(57,216,255,.16);box-shadow:inset 0 0 5px rgba(57,216,255,.28)}
+.qci-nodes i.on{background:var(--cyan);box-shadow:0 0 8px var(--cyan);animation:pulse 2.4s ease-in-out infinite}
+.qci-nodes i.busy{background:var(--tac);box-shadow:0 0 8px var(--tac);animation:pulse 1.6s ease-in-out infinite}
+/* automations + timeline feeds */
+.qci-list{list-style:none;display:grid;gap:9px;margin-top:2px}
+.qci-list li{display:grid;grid-template-columns:9px 1fr auto;gap:10px;align-items:center;
+  padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.028);
+  font:600 12.5px var(--sans);color:var(--soft);transition:border-color .25s,transform .3s var(--ease-liquid)}
+.qci-list li:hover{border-color:var(--qci-line);transform:translateX(3px)}
+.qci-list .d{width:8px;height:8px;border-radius:50%;background:var(--tac);box-shadow:0 0 8px var(--tac);animation:pulse 2s ease-in-out infinite}
+.qci-list .d.cy{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.qci-list .d.vi{background:var(--violet);box-shadow:0 0 8px var(--violet)}
+.qci-list .d.rb{background:var(--ruby);box-shadow:0 0 8px var(--ruby)}
+.qci-list time,.qci-list .st{font:700 10px var(--mono);letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.qci-list .st.ok{color:var(--tac)}.qci-list .st.warn{color:var(--amber)}
+/* build pipeline */
+.qci-pipe{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap}
+.qci-stage{flex:1;min-width:120px;position:relative;border:1px solid var(--line);border-radius:14px;padding:13px 14px;overflow:hidden;
+  background:rgba(255,255,255,.03)}
+.qci-stage b{display:block;font:700 12px var(--sans);color:#fff}
+.qci-stage span{font:700 9.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.qci-stage.done{border-color:rgba(110,255,176,.35)}.qci-stage.done span{color:var(--tac)}
+.qci-stage.run{border-color:rgba(57,216,255,.4)}.qci-stage.run span{color:var(--cyan)}
+.qci-stage.run::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(57,216,255,.22),transparent);
+  animation:qci-run 1.8s linear infinite}
+@keyframes qci-run{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.qci-bar{height:4px;border-radius:999px;margin-top:9px;background:rgba(255,255,255,.08);overflow:hidden}
+.qci-bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--cyan),var(--tac))}
+.qci-disclaimer{display:block;margin-top:8px;font:600 11px var(--mono);letter-spacing:.04em;color:var(--muted);font-style:normal;text-transform:none}
+@media(max-width:1040px){.qci-grid{grid-template-columns:repeat(4,1fr)}.qci-card.wide{grid-column:span 2}}
+@media(max-width:720px){.qci-grid{grid-template-columns:repeat(2,1fr)}.qci-card,.qci-card.wide{grid-column:span 2}.qci-card.full{grid-column:1/-1}.qci-nodes{grid-template-columns:repeat(10,1fr)}}
+@media(max-width:480px){.qci-grid{grid-template-columns:1fr}.qci-card,.qci-card.wide,.qci-card.full{grid-column:1/-1}}
+@media(prefers-reduced-motion:reduce){.qci-scan,.qci-eq i,.qci-stage.run::after{animation:none}.qci-scan{display:none}}
+
+/* ── Desk film: cinematic clip of the analyst deck ─────────────────────── */
+.desk-film{--desk-seal:clamp(84px,9vw,124px);display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:center}
+.desk-stage{position:relative;border-radius:clamp(22px,2.4vw,32px);padding:10px;background:linear-gradient(150deg,rgba(57,216,255,.22),rgba(157,123,255,.16) 46%,rgba(255,255,255,.04));box-shadow:var(--glow),0 26px 70px rgba(0,0,0,.5)}
+.desk-frame{position:relative;overflow:hidden;border-radius:clamp(16px,1.8vw,24px);border:1px solid var(--line);background:#03060c;aspect-ratio:3/2}
+.desk-frame video,.desk-frame img{display:block;width:100%;height:100%;object-fit:cover}
+.desk-frame::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(3,6,12,0) 58%,rgba(3,6,12,.72));mix-blend-mode:normal}
+.desk-scan{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(180deg,rgba(255,255,255,.045) 0 1px,transparent 1px 3px);opacity:.5}
+.desk-tag{position:absolute;z-index:2;font:600 10.5px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--soft);background:rgba(5,9,18,.72);border:1px solid var(--line);border-radius:999px;padding:7px 11px;backdrop-filter:blur(8px)}
+.desk-tag.t1{top:18px;left:18px;color:var(--cyan)}
+.desk-toggle{position:absolute;z-index:3;top:14px;right:14px;display:inline-flex;align-items:center;gap:7px;font:600 10.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text);background:rgba(5,9,18,.78);border:1px solid var(--line2);border-radius:999px;padding:8px 13px;cursor:pointer;backdrop-filter:blur(8px);transition:background .16s var(--ease-soft),border-color .16s var(--ease-soft)}
+.desk-toggle:hover{background:rgba(57,216,255,.18);border-color:var(--cyan)}
+.desk-toggle:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+.desk-toggle-icon{font-size:9px;line-height:1}
+.desk-tag.t2{bottom:18px;left:18px}
+.desk-tag.t3{bottom:18px;right:18px;color:var(--violet)}
+/* Seal medallion straddling the picture's bottom edge — the homepage hero
+   treatment. The seal artwork is a full square scene and the eagle emblem only
+   fills the middle ~60%, so the circular frame crops into that region (140%
+   inset) instead of showing the outer ring lettering and backdrop. `bottom` is
+   the stage's 10px padding, which puts the medallion's own bottom edge level
+   with the picture's; the 42% translate then hangs that share below the edge,
+   leaving ~58% of the medallion over the picture at every width. */
+.desk-seal{position:absolute;z-index:4;left:50%;bottom:10px;width:var(--desk-seal);aspect-ratio:1;border-radius:50%;overflow:hidden;transform:translate(-50%,42%);box-shadow:0 0 0 1px rgba(182,236,255,.55),0 0 0 6px rgba(101,77,255,.14),0 14px 38px rgba(22,211,255,.36);animation:deskSealFloat 7s ease-in-out infinite}
+.desk-seal img{position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:cover;filter:saturate(1.12) contrast(1.06)}
+@keyframes deskSealFloat{0%,100%{transform:translate(-50%,42%) rotate(-1deg)}50%{transform:translate(-50%,calc(42% - 9px)) rotate(1deg)}}
+@media(prefers-reduced-motion:reduce){.desk-seal{animation:none}}
+/* Clear the medallion's overhang so the caption never runs under it. */
+.desk-caption{margin-top:calc(14px + var(--desk-seal) * .42);font:500 12px/1.5 var(--mono);letter-spacing:.03em;color:var(--muted)}
+.desk-film .list{margin-top:16px}
+@media(max-width:900px){.desk-film{grid-template-columns:1fr;gap:24px}.desk-tag.t2,.desk-tag.t3{display:none}}
+</style>
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/glass.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="../brand-system.css">
+  <link rel="stylesheet" href="future-editorial.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body data-ix-page="hub" data-ix-theme="dark">
+<div class="future-progress" aria-hidden="true"><span id="futureProgress"></span></div>
+<aside class="future-controls" aria-label="Reading display controls">
+  <button id="futureTheme" type="button" aria-pressed="false" title="Toggle contrast mode"><span aria-hidden="true">◐</span><span class="future-control-label">Contrast</span></button>
+  <button id="futureFocus" type="button" aria-pressed="false" title="Toggle focus mode"><span aria-hidden="true">◎</span><span class="future-control-label">Focus</span></button>
+</aside>
+<canvas id="field" aria-hidden="true"></canvas>
+<div class="class-banner">UNCLASSIFIED / NON-CLASSIFIÉ <span>·</span> CLEARGLASS INTELLIGENCE DESK <span>·</span> OPEN PUBLICATION</div>
+<nav class="nav" id="nav" aria-label="Primary navigation"><div class="wrap nav-inner">
+  <a href="../index.html" class="nav-brand"><div class="nav-mark"><img src="../assets/images/clearglass-holographic-seal.png" alt="ClearGlass holographic seal"></div><div class="nav-name">ClearGlassInc. <em>Insights</em></div></a>
+  <div class="nav-links"><a href="#command">Command</a><a href="#atlas">Atlas</a><a href="#series">Series</a><a href="#latest">Latest</a><a href="#pipeline">Pipeline</a><a href="#blueprint">Blueprint</a><a href="#power">Power User</a><a href="#engine">Engine</a><a href="resume-builder.html">Resume PDF</a><a href="#access">Access</a><a href="../index.html#contact" class="nav-cta btn-magnet">Book a briefing →</a></div>
+</div></nav>
+<header class="hero wrap">
+  <div class="hero-aura" id="aura"></div>
+  <div class="hero-grid">
+    <div class="reveal in">
+      <div class="eyebrow">Premium editorial hub · governed intelligence</div>
+      <h1>Where serious builders learn what is next in <span class="gradient">governed AI, cyber defense, autonomy, and OSINT.</span></h1>
+      <p>ClearGlass Insights is the founder-led field journal for operators, engineers, and executives building high-trust intelligent systems. No hype cycles. Just architectures, threat models, playbooks, and research notes you can cite.</p>
+      <div class="hero-actions"><a class="btn primary btn-magnet" href="#latest">Read the latest brief →</a><a class="btn btn-magnet" href="#newsletter">Join the intelligence list</a><a class="btn btn-magnet" href="../index.html#contact">Request advisory</a></div>
+      <div class="metrics" aria-label="Editorial promises"><div class="metric"><strong data-count="10">0</strong><span>Core topic clusters</span></div><div class="metric"><strong data-count="24">0</strong><span>Advanced content blocks</span></div><div class="metric"><strong data-count="0">0</strong><span>Generic thought leadership</span></div></div>
+    </div>
+    <div class="command tilt-card" aria-label="Cinematic intelligence console"><div class="screen"><div class="screen-top"><span><i class="live-dot"></i>ARTEMIS//EDITORIAL_RADAR</span><span>LIVE</span></div><div class="radar"><img class="radar-seal" src="../assets/images/clearglass-holographic-seal.png" alt="ClearGlass holographic eagle seal" width="1024" height="1024" decoding="async" fetchpriority="high"></div><div class="intel-line"><span>Governed autonomy</span><code>risk-router</code></div><div class="intel-line"><span>OSINT workflows</span><code>source-lineage</code></div><div class="intel-line"><span>High-trust software</span><code>audit-first</code></div></div></div>
+  </div>
+  <div class="chips" id="topics" role="toolbar" aria-label="Filter briefs by topic"><a class="chip on" href="?" data-topic="all">All briefs</a><a class="chip" href="?topic=governed-ai" data-topic="governed-ai">Governed AI</a><a class="chip" href="?topic=agents" data-topic="agents">Autonomous agents</a><a class="chip" href="?topic=cyber" data-topic="cyber">Cyber architecture</a><a class="chip" href="?topic=osint" data-topic="osint">OSINT workflows</a><a class="chip" href="?topic=automation" data-topic="automation">AI automation</a><a class="chip" href="?topic=fincrime" data-topic="fincrime">Financial crime detection</a><a class="chip" href="?topic=systems" data-topic="systems">High-trust systems</a><a class="chip" href="?topic=saved" data-topic="saved">★ Saved</a></div>
+</header>
+<main>
+  <section class="wrap" id="desk" aria-labelledby="desk-title">
+    <div class="section-head reveal">
+      <div><div class="kicker">The desk, in motion</div><h2 id="desk-title">Six seconds inside an intelligence desk.</h2></div>
+      <p>Every brief on this hub is written from the same posture the clip shows: an analyst standing in front of the evidence, reading the surfaces before touching anything.<em class="qci-disclaimer">Cinematic illustration — a rendered scene, not a recording of live systems or customer data.</em></p>
+    </div>
+    <div class="desk-film reveal">
+      <div>
+        <div class="desk-stage tilt-card">
+          <div class="desk-frame">
+            <video muted loop playsinline preload="metadata"
+                   poster="/assets/video/insights-intelligence-desk-poster.jpg"
+                   aria-label="An analyst in a dark glass operations room reviewing holographic panels: a global network grid, a cyber threat map, financial models, and a rising trend chart.">
+              <source src="/assets/video/insights-intelligence-desk.mp4" type="video/mp4">
+              <img src="/assets/video/insights-intelligence-desk-poster.jpg" alt="An analyst reviewing holographic network, threat-map, and financial panels in a dark operations room.">
+            </video>
+            <div class="desk-scan" aria-hidden="true"></div>
+            <button class="desk-toggle" id="deskToggle" type="button" data-state="paused">
+              <span class="desk-toggle-icon" aria-hidden="true">▶</span>
+              <span class="desk-toggle-label">Play the clip</span>
+            </button>
+            <span class="desk-tag t1" aria-hidden="true"><i class="live-dot"></i>Global network grid</span>
+            <span class="desk-tag t2" aria-hidden="true">Cyber threat map</span>
+            <span class="desk-tag t3" aria-hidden="true">Financial models</span>
+          </div>
+          <span class="desk-seal" aria-hidden="true"><img src="../assets/images/clearglass-holographic-seal.png" alt="" width="512" height="512" decoding="async" loading="lazy"></span>
+        </div>
+        <p class="desk-caption">H.264 · 672×448 · muted, looped, poster-first · ~500&nbsp;KB</p>
+      </div>
+      <div class="panel">
+        <h3>What the frame is actually saying</h3>
+        <ul class="list">
+          <li><strong>Four surfaces, one operator.</strong> Network topology, threat geography, financial models, and actor telemetry belong on the same wall — the correlations live in the gaps between them, not inside any single dashboard.</li>
+          <li><strong>Reading precedes acting.</strong> Nothing in the scene is executing. That is the governed-autonomy default: analysis and drafting run free, consequential moves wait for a human at the boundary.</li>
+          <li><strong>The human is in the shot on purpose.</strong> Accountability does not survive being abstracted into a pipeline. Someone has to be standing there when the call is made.</li>
+        </ul>
+        <div class="section-actions"><a class="btn primary btn-magnet" href="#latest">Read the latest brief →</a><a class="btn btn-magnet" href="#command">Open the command deck</a></div>
+      </div>
+    </div>
+  </section>
+  <section class="wrap future-briefing" id="briefing" aria-labelledby="briefing-title">
+    <div class="future-briefing-copy reveal">
+      <div class="kicker">Adaptive editorial briefing</div>
+      <h2 id="briefing-title">A faster path into the intelligence that matters.</h2>
+      <p class="future-synopsis">ClearGlass Insights turns deep technical reporting into governed, scan-ready intelligence. This briefing uses published post metadata—not remote profiling—to surface concise takeaways and relevant reading paths on this device.</p>
+      <div class="future-takeaways" aria-label="Key takeaways">
+        <span>01 · Human approval stays at consequential boundaries</span>
+        <span>02 · Provenance outranks persuasive output</span>
+        <span>03 · Architecture is an operational control</span>
+      </div>
+    </div>
+    <div class="future-profile reveal" aria-labelledby="profile-title">
+      <div class="future-profile-head"><span id="profile-title">Tune your desk</span><span class="future-local">LOCAL ONLY</span></div>
+      <p>Choose a lens. Your selection stays in this browser and re-ranks the recommendations below.</p>
+      <div class="future-lenses" role="group" aria-label="Preferred editorial lens">
+        <button type="button" data-lens="governed-ai" aria-pressed="false">AI governor</button>
+        <button type="button" data-lens="cyber" aria-pressed="false">Cyber defender</button>
+        <button type="button" data-lens="systems" aria-pressed="false">Systems builder</button>
+        <button type="button" data-lens="osint" aria-pressed="false">OSINT analyst</button>
+      </div>
+      <div class="future-profile-status" id="futureProfileStatus" role="status">No lens selected · showing desk-ranked intelligence</div>
+    </div>
+  </section>
+  <section class="wrap future-for-you" id="for-you" aria-labelledby="for-you-title">
+    <div class="section-head reveal"><div><div class="kicker">Intelligent reading path</div><h2 id="for-you-title">Selected for your mission.</h2></div><p>Related briefs are ranked transparently from topic overlap, freshness, and editorial desk rank. No opaque behavioral profile and no fabricated engagement signals.</p></div>
+    <div class="future-recommendations" id="futureRecommendations" aria-live="polite">
+      <p class="future-loading">Loading the published post index…</p>
+    </div>
+    <noscript><p class="future-noscript">Personalized ranking requires JavaScript. Every published brief remains available in the Latest section and the <a href="posts.json">static post index</a>.</p></noscript>
+  </section>
+  <section class="wrap" id="command" aria-labelledby="qci-title">
+    <div class="section-head reveal">
+      <div><div class="kicker">Quantum Command Interface</div><h2 id="qci-title">The ClearGlass mission-control deck.</h2></div>
+      <p>A layered, military-grade command surface for governed AI, zero-trust security posture, and autonomous operations — the same design language that runs through every ClearGlass platform.<em class="qci-disclaimer">Illustrative interface — figures are design placeholders, not live production telemetry.</em></p>
+    </div>
+    <div class="qci reveal tilt-card" role="group" aria-label="ClearGlass Quantum Command Interface — illustrative mission-control dashboard">
+      <div class="qci-bezel">
+        <div class="qci-topbar">
+          <span class="qci-id"><i class="live-dot"></i>CLEARGLASS // QUANTUM COMMAND</span>
+          <span class="qci-tabs" role="tablist" aria-label="Command deck views">
+            <button class="qci-tab on" type="button" role="tab" aria-selected="true">OVERVIEW</button>
+            <button class="qci-tab" type="button" role="tab" aria-selected="false">SECURITY</button>
+            <button class="qci-tab" type="button" role="tab" aria-selected="false">AGENTS</button>
+            <button class="qci-tab" type="button" role="tab" aria-selected="false">PIPELINE</button>
+          </span>
+          <span class="qci-clock" id="qciClock" aria-hidden="true">--:--:-- UTC</span>
+        </div>
+        <div class="qci-grid stagger reveal">
+          <div class="qci-card wide" data-view="overview security">
+            <div class="qci-head"><h3>Global threat activity</h3><span class="qci-tag alert">DEFENDED</span></div>
+            <div class="qci-eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="qci-sub"><strong data-count="1284" id="qciBlocked" style="color:#fff">0</strong> events auto-triaged · <strong style="color:var(--tac)">0</strong> reached production</div>
+          </div>
+          <div class="qci-card" data-view="overview agents">
+            <div class="qci-head"><h3>AI agents online</h3><span class="qci-tag">ACTIVE</span></div>
+            <div class="qci-big"><span data-count="128" id="qciAgents">0</span><small>orchestrated</small></div>
+            <div class="qci-nodes" id="qciNodes" aria-hidden="true"></div>
+          </div>
+          <div class="qci-card" data-view="overview security">
+            <div class="qci-head"><h3>Security posture</h3><span class="qci-tag">ZERO-TRUST</span></div>
+            <div class="qci-rings">
+              <div class="qci-ringwrap"><div class="qci-ring cy" style="--p:99.98"><b>99.98<i>%</i></b></div><div class="qci-ringlabel">Service uptime</div></div>
+              <div class="qci-ringwrap"><div class="qci-ring vi" style="--p:96"><b>96</b></div><div class="qci-ringlabel">Compliance score</div></div>
+            </div>
+          </div>
+          <div class="qci-card wide" data-view="overview agents">
+            <div class="qci-head"><h3>Active automations</h3><span class="qci-tag">GOVERNED</span></div>
+            <ul class="qci-list">
+              <li><span class="d"></span>Risk router · policy-as-code evaluation<span class="st ok">RUN</span></li>
+              <li><span class="d cy"></span>OSINT source-lineage reconciliation<span class="st ok">RUN</span></li>
+              <li><span class="d vi"></span>Approval queue · high-impact actions<span class="st warn">HOLD</span></li>
+              <li><span class="d rb"></span>Audit ledger · append-only commit<span class="st ok">RUN</span></li>
+            </ul>
+          </div>
+          <div class="qci-card" data-view="overview security">
+            <div class="qci-head"><h3>Secure API health</h3><span class="qci-tag">NOMINAL</span></div>
+            <div class="qci-big"><span data-count="1240" id="qciReq">0</span><small>req/s</small></div>
+            <div class="qci-sub">p99 latency <strong style="color:var(--tac)">38 ms</strong> · error rate <strong style="color:var(--tac)">0.01%</strong></div>
+          </div>
+          <div class="qci-card" data-view="overview">
+            <div class="qci-head"><h3>Event timeline</h3><span class="qci-tag">LIVE</span></div>
+            <ul class="qci-list">
+              <li><span class="d"></span>Deploy · insights-hub<time>NOW</time></li>
+              <li><span class="d cy"></span>Eval pass · risk-router v9<time>2m</time></li>
+              <li><span class="d vi"></span>Approval granted · pricing<time>6m</time></li>
+            </ul>
+          </div>
+          <div class="qci-card full" data-view="overview pipeline">
+            <div class="qci-head"><h3>Build &amp; deployment pipeline</h3><span class="qci-tag">CONTINUOUS</span></div>
+            <div class="qci-pipe">
+              <div class="qci-stage done"><b>Lint</b><span>ruff · passed</span><div class="qci-bar"><i style="width:100%"></i></div></div>
+              <div class="qci-stage done"><b>Test</b><span>pytest · 21 passed</span><div class="qci-bar"><i style="width:100%"></i></div></div>
+              <div class="qci-stage done"><b>Build</b><span>static · optimized</span><div class="qci-bar"><i style="width:100%"></i></div></div>
+              <div class="qci-stage run"><b>Deploy</b><span>github pages · shipping</span><div class="qci-bar"><i style="width:72%"></i></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="qci-scan" aria-hidden="true"></div>
+    </div>
+  </section>
+  <section class="wrap" id="atlas">
+    <div class="section-head reveal"><div><div class="kicker">Insight atlas</div><h2>The desk, mapped as a living intelligence graph.</h2></div><p>Every cluster is a real topic on the desk, radiating from the governed editorial core. Hover a node to inspect it, click a cluster to filter the briefs below, or scrub the roadmap eras on the left. Editorial roadmap view — content structure, not measured telemetry.</p></div>
+    <div class="atlas-shell reveal" id="atlasStage">
+      <canvas id="atlasCanvas" role="img" aria-label="Animated constellation map: seven ClearGlass Insights topic clusters orbiting a golden governed editorial core, connected by luminous beams with travelling light pulses"></canvas>
+      <div class="atlas-hud atlas-brand"><span class="atlas-dot"></span>INSIGHT ATLAS <em>// governed-intelligence map</em></div>
+      <div class="atlas-hud atlas-mode" id="atlasMode">ROADMAP ERA 2026 — INSIGHTS DESK LIVE</div>
+      <div class="atlas-controls"><button class="atlas-btn" id="atlasPause" type="button" aria-label="Pause animation">❚❚</button><button class="atlas-btn" id="atlasSeed" type="button" aria-label="Reshuffle constellation">↻</button></div>
+      <div class="atlas-timeline" id="atlasTimeline" aria-label="Editorial roadmap timeline"></div>
+      <div class="atlas-labels" id="atlasLabels"></div>
+      <div class="atlas-tip" id="atlasTip" role="status" hidden></div>
+      <div class="atlas-legend" aria-label="Atlas legend">
+        <b>Legend</b>
+        <span><i style="background:#e9b95e;box-shadow:0 0 8px rgba(255,214,150,.8)"></i>Editorial core</span>
+        <span><i style="background:#ff9ec7;box-shadow:0 0 8px rgba(255,158,199,.7)"></i>Flagship cluster</span>
+        <span><i style="background:#b9a3ff;box-shadow:0 0 8px rgba(157,123,255,.7)"></i>Systems cluster</span>
+        <span><i style="background:#8bf0dc;box-shadow:0 0 8px rgba(85,242,166,.7)"></i>Forming series</span>
+        <span><i style="background:#ffecbe;box-shadow:0 0 10px rgba(255,214,150,.9)"></i>Live signal pulse</span>
+      </div>
+      <div class="atlas-console">
+        <div class="atlas-stats" id="atlasStats" aria-label="Desk statistics"></div>
+        <form class="atlas-ask" id="atlasAsk"><input type="search" placeholder="Ask the atlas: risk router, OSINT lineage, audit ledger…" aria-label="Search the insight atlas"/><button type="submit" aria-label="Search">→</button></form>
+      </div>
+      <noscript><p class="atlas-noscript">The interactive atlas needs JavaScript — browse the same topics with the filter chips above.</p></noscript>
+    </div>
+  </section>
+  <section class="wrap" id="latest">
+    <div class="section-head reveal"><div><div class="kicker">Featured spotlight</div><h2>Start with the playbooks that define the ClearGlass point of view.</h2></div><p>Each piece is designed to be shareable, quotable, and useful: a sharp thesis, a strong visual hierarchy, an implementation lens, and next-step reading paths.</p></div>
+    <div class="feature stagger reveal">
+      <a class="article-card tilt-card" href="clearglass-workplace-surveillance-intelligence-defense-system.html" data-title="ClearGlass Workplace Surveillance Intelligence and Defense System WSIDS" data-tags="workplace surveillance worker rights labor organizing privacy nlra compliance defensive intelligence bossware" data-slug="clearglass-workplace-surveillance-intelligence-defense-system" data-topics="osint systems cyber governed-ai"><div class="card-art"><div class="quote">Transparency over concealment.</div></div><div class="card-body"><div class="meta"><span>New</span><span>Worker Rights</span><span>12 min</span></div><h3>ClearGlass Workplace Surveillance Intelligence &amp; Defense System</h3><p>A defensive, investigative, educational, and compliance framework for examining workplace surveillance while protecting lawful organizing, privacy, and worker safety.</p><span class="read">Read the WSIDS brief →</span></div></a>
+      <a class="article-card tilt-card" href="canada-digital-control-architecture-charter.html" data-title="Canada’s New Digital-Control Architecture Safety Surveillance and the Charter" data-tags="canada bill c-34 c-22 digital safety lawful access encryption charter civil liberties surveillance age assurance" data-slug="canada-digital-control-architecture-charter" data-topics="systems cyber osint"><div class="card-art"><div class="quote">Safety. Surveillance. The Charter.</div></div><div class="card-body"><div class="meta"><span>New</span><span>Law &amp; Technology</span><span>15 min</span></div><h3>Canada’s New Digital-Control Architecture</h3><p>A source-led systems analysis of Bill C-34, Bill C-22, age assurance, encryption, streaming regulation and the Charter safeguards Parliament should require.</p><span class="read">Open the systems brief →</span></div></a>
+      <a class="article-card tilt-card" href="ai-generated-phishing-54-percent-click-rate.html" data-title="This Week's Long Read AI-Generated Phishing Achieves a 54 Percent Click Rate" data-tags="ai phishing social engineering identity security phishing resistant mfa zero trust least privilege credential theft long read watchguard" data-slug="ai-generated-phishing-54-percent-click-rate" data-topics="cyber governed-ai systems"><div class="card-art"><div class="quote">&ldquo;Assume the click. Design so the click is survivable.&rdquo;</div></div><div class="card-body"><div class="meta"><span>Long read</span><span>Cyber Defense</span><span>8 min</span></div><h3>This Week&rsquo;s Long Read: AI-Generated Phishing Achieves a 54% Click Rate</h3><p>WatchGuard reports a measured 54% click rate on AI-generated lures against 12% for conventional ones. Includes an interactive blast-radius model: identity posture, not click rate, is the lever that moves.</p><span class="read">Read the brief &rarr;</span></div></a>
+      <a class="article-card tilt-card" href="ontario-accountability-sealed-evidence.html" data-title="They Sealed the Evidence Ontario Accountability in the Public Record" data-tags="ontario fippa section 14 ipc appeal law enforcement forensic audit freedom information accountability public records" data-slug="ontario-accountability-sealed-evidence" data-topics="osint systems"><div class="card-art"><div class="quote">What the record says. What remains sealed.</div></div><div class="card-body"><div class="meta"><span>New</span><span>OSINT &amp; Accountability</span><span>20 min</span></div><h3>They Sealed the Evidence: Ontario Accountability in the Public Record</h3><p>A primary-source guide to Ontario FIPPA section 14 denials: the legal threshold, 30-day IPC appeal path, evidence checklist, severing, discretion, and practical next steps.</p><span class="read">Open the appeal guide →</span></div></a>
+      <a class="article-card tilt-card" href="coffee-and-technology-digital-revolution.html" data-title="Coffee and Technology The Fuel Behind the Digital Revolution" data-tags="coffee technology smart coffee internet of things artificial intelligence farming supply chain cybersecurity sustainability remote work" data-slug="coffee-and-technology-digital-revolution" data-topics="culture systems automation"><div class="card-art"><div class="quote">From the coffeehouse to the cloud.</div></div><div class="card-body"><div class="meta"><span>New</span><span>Technology Culture</span><span>11 min</span></div><h3>Coffee &amp; Technology: The Fuel Behind the Digital Revolution</h3><p>How a daily ritual connects historic coffeehouses, remote work, IoT brewing, AI-assisted farming, cyber resilience, and a more transparent coffee economy.</p><span class="read">Brew the story →</span></div></a>
+      <a class="article-card tilt-card" href="greenbelt-92-percent-access-beats-process.html" data-title="92 Percent When Access Beats Process Ontario Greenbelt" data-tags="ontario greenbelt auditor general freedom of information foi accountability osint provenance" data-slug="greenbelt-92-percent-access-beats-process" data-topics="osint systems"><div class="card-art"><div class="quote">92%. Access beat process.</div></div><div class="card-body"><div class="meta"><span>New</span><span>OSINT &amp; Accountability</span><span>4 min</span></div><h3>92%: When Access Beats Process</h3><p>A screenshot-ready, source-led brief on Ontario’s Greenbelt record: 92%, an estimated $8.3 billion, the housing-need finding, and the later FOI restriction.</p><span class="read">Inspect the evidence →</span></div></a>
+      <a class="article-card tilt-card" href="clearglassinc-artemis-palantir-self-evolving-ai-intelligence-platform.html" data-title="ClearGlassInc Artemis: Palantir Blueprint for a Self-Evolving AI Intelligence Platform" data-tags="palantir gotham foundry aip apollo self improving ai intelligence platform ontology policy as code evals python" data-slug="clearglassinc-artemis-palantir-self-evolving-ai-intelligence-platform" data-topics="governed-ai agents automation systems cyber"><div class="card-art"><div class="quote">Human-approved self-evolution</div></div><div class="card-body"><div class="meta"><span>New</span><span>AI Architecture</span><span>24 min</span></div><h3>ClearGlassInc Artemis: Palantir Blueprint for a Self-Evolving AI Intelligence Platform</h3><p>A full-stack implementation blueprint for ClearGlassInc Artemis on Gotham, Foundry, AIP, and Apollo: ontology-driven data fusion, governed agents, evals, policy-as-code, deployment control, and human-approved self-improvement.</p><span class="read">Read the blueprint →</span></div></a>
+      <a class="article-card tilt-card" href="clearglassinc-artemis-full-stack-ai-intelligence-platform-blueprint.html" data-title="ClearGlassInc Artemis Full-Stack Blueprint for a Self-Evolving AI Intelligence Platform" data-tags="artemis full stack blueprint gotham foundry aip apollo self evolving governed ai intelligence platform architecture implementation" data-slug="clearglassinc-artemis-full-stack-ai-intelligence-platform-blueprint" data-topics="governed-ai agents systems cyber"><div class="card-art"><div class="quote">Architecture, end to end</div></div><div class="card-body"><div class="meta"><span>New</span><span>AI Architecture</span><span>34 min</span></div><h3>ClearGlassInc Artemis: Full-Stack Blueprint for a Self-Evolving AI Intelligence Platform</h3><p>A production-grade architecture and implementation blueprint for ClearGlassInc Artemis: a self-evolving, governed AI intelligence platform on Gotham, Foundry, AIP, and Apollo.</p><span class="read">Read the blueprint →</span></div></a>
+      <a class="article-card tilt-card" href="post-quantum-security-advisor-clearglass-artemis.html" data-title="Post-Quantum Security Advisor Commercial Quantum Wedge ClearGlassInc Artemis" data-tags="post quantum cryptography pqc migration nist ml-kem ml-dsa rsa ecc cryptographic inventory quantum readiness scanner" data-slug="post-quantum-security-advisor-clearglass-artemis" data-topics="frontier cyber systems governed-ai"><div class="card-art"><div class="quote">"Security readiness is the quantum wedge."</div></div><div class="card-body"><div class="meta"><span>New</span><span>Frontier Security</span><span>14 min</span></div><h3>Post-Quantum Security Advisor: The Commercial Quantum Wedge</h3><p>A ClearGlassInc Artemis product thesis for selling PQC readiness now: crypto inventory, RSA/ECC exposure scoring, NIST-aligned migration roadmaps, and a four-module quantum intelligence platform.</p><span class="read">Read the thesis →</span></div></a>
+      <a class="article-card tilt-card" href="clearglass-secure-deployment-agent.html" data-title="The Secure Deployment Agent Governed Authorization for Every Production Change" data-tags="secure deployment authorization boundary least privilege scope contract permission matrix oidc short-lived credentials rollback secret management supply chain audit log" data-slug="clearglass-secure-deployment-agent" data-topics="cyber agents automation systems governed-ai"><div class="card-art"><div class="quote">"Access is not authorization."</div></div><div class="card-body"><div class="meta"><span>New</span><span>Secure Deployment</span><span>13 min</span></div><h3>The Secure Deployment Agent: Governed Authorization for Every Change</h3><p>A deploy button is a loaded verb. The five-state operating model — scope contract, permission matrix, least-privilege secrets, pinned supply chain, and a rollback for every change — that lets an autonomous agent ship real infrastructure safely.</p><span class="read">Read the model →</span></div></a>
+      <a class="article-card tilt-card" href="clearglassinc-0-to-1m-corporate-execution-plan.html" data-title="ClearGlassInc 0 to 1 Million Corporate Execution Plan Revenue Strategy" data-tags="corporate strategy revenue engine governance procurement intelligence compliance managed services offer ladder recurring revenue founder led sales" data-slug="clearglassinc-0-to-1m-corporate-execution-plan" data-topics="growth systems governed-ai"><div class="card-art"><div class="quote">"Cash collected, not vanity."</div></div><div class="card-body"><div class="meta"><span>New</span><span>Revenue</span><span>16 min</span></div><h3>ClearGlassInc: The $0-to-$1,000,000 Corporate Execution Plan</h3><p>An 18-month operating plan to $1M CAD in collected revenue: eight phases, a four-tier offer ladder from a $10K diagnostic to $100K managed oversight, financial controls, a monthly scorecard, and a 30-day command sequence.</p><span class="read">Read the plan →</span></div></a>
+      <a class="article-card tilt-card" href="frontier-intelligence-briefing-quantum-gravity-asi-biosecurity.html" data-title="Frontier Intelligence Briefing Quantum Gravity ASI Timelines Biosecurity Economic Singularity Time Travel" data-tags="quantum gravity asi timelines superintelligence risk biosecurity economic singularity time travel recursive self-improvement ai governance frontier briefing" data-slug="frontier-intelligence-briefing-quantum-gravity-asi-biosecurity" data-topics="frontier governed-ai systems"><div class="card-art"><div class="quote">"Watch the intersections, not the headlines."</div></div><div class="card-body"><div class="meta"><span>New</span><span>Frontier Intelligence</span><span>12 min</span></div><h3>Frontier Intelligence Briefing: Quantum Gravity, ASI, Biosecurity &amp; the Economic Singularity</h3><p>An EYES-ONLY styled field briefing across five frontier vectors — quantum gravity, near-term ASI timelines and risks, the biosecurity landscape, economic-singularity scenarios, and the truth about time-travel claims — with a sober assessment on each.</p><span class="read">Open the briefing →</span></div></a>
+      <a class="article-card tilt-card" href="ethical-sales-system-100k-revenue-prompt.html" data-title="Ethical Sales Psychology 100K Revenue System Prompt ClearGlassInc Artemis" data-tags="sales psychology ethical persuasion revenue engine conversion prompt system reciprocity social proof authority scarcity kpis" data-slug="ethical-sales-system-100k-revenue-prompt" data-topics="automation systems governed-ai growth"><div class="card-art"><div class="quote">Ethical revenue architecture</div></div><div class="card-body"><div class="meta"><span>New</span><span>Revenue</span><span>14 min</span></div><h3>Ethical Sales Psychology: A 100K Revenue System Prompt</h3><p>A ClearGlassInc Artemis-ready prompt for building persuasive sales systems with proof, authority, urgency, risk reversal, follow-up, KPIs, and human-trust guardrails.</p><span class="read">Read the prompt system →</span></div></a>
+      <a class="article-card tilt-card" href="clearglass-agentops-microsoft-foundry-future-stack.html" data-title="ClearGlass AgentOps Microsoft Foundry Future Stack" data-tags="microsoft foundry agent service agent framework copilot studio entra identity observability governance" data-slug="clearglass-agentops-microsoft-foundry-future-stack" data-topics="governed-ai agents cyber automation systems"><div class="card-art"><div class="quote">"AgentOps is the control plane for intelligent work."</div></div><div class="card-body"><div class="meta"><span>Flagship</span><span>AgentOps</span><span>22 min</span></div><h3>ClearGlass AgentOps: Microsoft Foundry Future Stack</h3><p>A cinematic, practical content pack: twelve Microsoft-aligned briefs for secure agent deployment, enterprise automation, zero-trust governance, observability, Copilot Studio workflows, OSINT, SOC operations, and next-generation decision systems.</p><span class="read">Read the future stack →</span></div></a>
+      <a class="article-card tilt-card" href="ai-agent-governance-governed-autonomy.html" data-title="AI Agent Governance The Governed Autonomy Playbook" data-tags="governed ai autonomous agents risk router policy" data-slug="ai-agent-governance-governed-autonomy" data-topics="governed-ai agents cyber"><div class="card-art"><div class="quote">"The bottleneck is not intelligence. It is accountability."</div></div><div class="card-body"><div class="meta"><span>Flagship</span><span>AI &amp; Autonomy</span><span>11 min</span></div><h3>AI Agent Governance: The Governed Autonomy Playbook</h3><p>Everyone is racing to make AI agents more autonomous. The winners of the agentic era will govern them first — with gates, routing, approvals, and measurable accountability.</p><span class="read">Read the playbook →</span></div></a>
+      <div class="panel"><h3>Founder-led editorial promise</h3><p>ClearGlass Insights turns advanced AI, cybersecurity, and autonomy into repeatable mental models for buyers and builders.</p><ul class="list"><li><strong>Precise:</strong> every essay opens with a defensible thesis.</li><li><strong>Operational:</strong> frameworks are written like systems you can implement.</li><li><strong>Citable:</strong> concepts, diagrams, code blocks, and research notes are structured for reuse.</li><li><strong>Conversion-aware:</strong> advisory, demo, and newsletter paths appear only when contextually useful.</li></ul></div>
+    </div>
+  </section>
+  <section class="wrap">
+    <div class="search reveal" role="search"><input id="smartSearch" type="search" placeholder="Search the hub: governed AI, OSINT, agents, financial crime, policy-as-code…" aria-label="Search ClearGlass Insights"></div>
+    <div class="grid stagger reveal" id="postGrid">
+      <a class="article-card tilt-card" href="clearglass-workplace-surveillance-intelligence-defense-system.html" data-title="ClearGlass Workplace Surveillance Intelligence and Defense System WSIDS" data-tags="workplace surveillance worker rights labor organizing privacy nlra compliance defensive intelligence bossware" data-slug="clearglass-workplace-surveillance-intelligence-defense-system" data-topics="osint systems cyber governed-ai"><div class="card-art"><div class="quote">Transparency over concealment.</div></div><div class="card-body"><div class="meta"><span>New</span><span>Worker Rights</span><span>12 min</span></div><h3>ClearGlass Workplace Surveillance Intelligence &amp; Defense System</h3><p>A defensive, investigative, educational, and compliance framework for examining workplace surveillance while protecting lawful organizing, privacy, and worker safety.</p><span class="read">Read the WSIDS brief →</span></div></a>
+      <a class="article-card tilt-card" href="canada-digital-control-architecture-charter.html" data-title="Canada’s New Digital-Control Architecture Safety Surveillance and the Charter" data-tags="canada bill c-34 c-22 digital safety lawful access encryption charter civil liberties surveillance age assurance" data-slug="canada-digital-control-architecture-charter" data-topics="systems cyber osint"><div class="card-art"><div class="quote">Safety. Surveillance. The Charter.</div></div><div class="card-body"><div class="meta"><span>New</span><span>Law &amp; Technology</span><span>15 min</span></div><h3>Canada’s New Digital-Control Architecture</h3><p>A source-led systems analysis of Bill C-34, Bill C-22, age assurance, encryption, streaming regulation and the Charter safeguards Parliament should require.</p><span class="read">Open the systems brief →</span></div></a>
+      <a class="article-card tilt-card" href="ai-generated-phishing-54-percent-click-rate.html" data-title="This Week's Long Read AI-Generated Phishing Achieves a 54 Percent Click Rate" data-tags="ai phishing social engineering identity security phishing resistant mfa zero trust least privilege credential theft long read watchguard" data-slug="ai-generated-phishing-54-percent-click-rate" data-topics="cyber governed-ai systems"><div class="card-art"><div class="quote">&ldquo;Assume the click. Design so the click is survivable.&rdquo;</div></div><div class="card-body"><div class="meta"><span>Long read</span><span>Cyber Defense</span><span>8 min</span></div><h3>This Week&rsquo;s Long Read: AI-Generated Phishing Achieves a 54% Click Rate</h3><p>WatchGuard reports a measured 54% click rate on AI-generated lures against 12% for conventional ones. Includes an interactive blast-radius model: identity posture, not click rate, is the lever that moves.</p><span class="read">Read the brief &rarr;</span></div></a>
+      <a class="article-card tilt-card" href="ontario-accountability-sealed-evidence.html" data-title="They Sealed the Evidence Ontario Accountability in the Public Record" data-tags="ontario fippa section 14 ipc appeal law enforcement forensic audit freedom information accountability public records" data-slug="ontario-accountability-sealed-evidence" data-topics="osint systems"><div class="card-art"><div class="quote">What the record says. What remains sealed.</div></div><div class="card-body"><div class="meta"><span>New</span><span>OSINT &amp; Accountability</span><span>20 min</span></div><h3>They Sealed the Evidence: Ontario Accountability in the Public Record</h3><p>A primary-source guide to Ontario FIPPA section 14 denials: the legal threshold, 30-day IPC appeal path, evidence checklist, severing, discretion, and practical next steps.</p><span class="read">Open the appeal guide →</span></div></a>
+      <a class="article-card tilt-card" href="coffee-and-technology-digital-revolution.html" data-title="Coffee and Technology The Fuel Behind the Digital Revolution" data-tags="coffee technology smart coffee internet of things artificial intelligence farming supply chain cybersecurity sustainability remote work" data-slug="coffee-and-technology-digital-revolution" data-topics="culture systems automation"><div class="card-art"><div class="quote">From the coffeehouse to the cloud.</div></div><div class="card-body"><div class="meta"><span>New</span><span>Technology Culture</span><span>11 min</span></div><h3>Coffee &amp; Technology: The Fuel Behind the Digital Revolution</h3><p>How a daily ritual connects historic coffeehouses, remote work, IoT brewing, AI-assisted farming, cyber resilience, and a more transparent coffee economy.</p><span class="read">Brew the story →</span></div></a>
+      <a class="article-card tilt-card" href="clearglassinc-artemis-palantir-self-evolving-ai-intelligence-platform.html" data-title="ClearGlassInc Artemis: Palantir Blueprint for a Self-Evolving AI Intelligence Platform" data-tags="palantir gotham foundry aip apollo self improving ai intelligence platform ontology policy as code evals python" data-slug="clearglassinc-artemis-palantir-self-evolving-ai-intelligence-platform" data-topics="governed-ai agents automation systems cyber"><div class="card-art"><div class="quote">Human-approved self-evolution</div></div><div class="card-body"><div class="meta"><span>New</span><span>AI Architecture</span><span>24 min</span></div><h3>ClearGlassInc Artemis: Palantir Blueprint for a Self-Evolving AI Intelligence Platform</h3><p>A full-stack implementation blueprint for ClearGlassInc Artemis on Gotham, Foundry, AIP, and Apollo: ontology-driven data fusion, governed agents, evals, policy-as-code, deployment control, and human-approved self-improvement.</p><span class="read">Read the blueprint →</span></div></a>
+      <a class="article-card tilt-card" href="clearglass-platform-audit-2026.html" data-title="The ClearGlass Platform Audit Upgrading a Governed Monorepo Into a Future-Tech Platform" data-tags="platform audit platform engineering observability rate limiting circuit breakers feature flags rollback retrieval layer audit ledger governed operations monorepo" data-slug="clearglass-platform-audit-2026" data-topics="systems governed-ai agents automation"><div class="card-art"><div class="quote">"Audit the verbs, not the vibes."</div></div><div class="card-body"><div class="meta"><span>New</span><span>Platform Engineering</span><span>14 min</span></div><h3>The ClearGlass Platform Audit: Upgrading a Governed Monorepo Into a Future-Tech Platform</h3><p>What the platform already gets right, the seven highest-leverage upgrades ranked, the keep/simplify/gate/build refactor map, and the rollout order that never breaks production.</p><span class="read">Read the doctrine →</span></div></a>
+      <a class="article-card tilt-card" href="post-quantum-security-advisor-clearglass-artemis.html" data-title="Post-Quantum Security Advisor Commercial Quantum Wedge ClearGlassInc Artemis" data-tags="post quantum cryptography pqc migration nist ml-kem ml-dsa rsa ecc cryptographic inventory quantum readiness scanner" data-slug="post-quantum-security-advisor-clearglass-artemis" data-topics="frontier cyber systems governed-ai"><div class="card-art"><div class="quote">"Security readiness is the quantum wedge."</div></div><div class="card-body"><div class="meta"><span>New</span><span>Frontier Security</span><span>14 min</span></div><h3>Post-Quantum Security Advisor: The Commercial Quantum Wedge</h3><p>A ClearGlassInc Artemis product thesis for selling PQC readiness now: crypto inventory, RSA/ECC exposure scoring, NIST-aligned migration roadmaps, and a four-module quantum intelligence platform.</p><span class="read">Read the thesis →</span></div></a>
+      <a class="article-card tilt-card" href="clearglass-secure-deployment-agent.html" data-title="The Secure Deployment Agent Governed Authorization for Every Production Change" data-tags="secure deployment authorization boundary least privilege scope contract permission matrix oidc short-lived credentials rollback secret management supply chain pinned actions audit log" data-slug="clearglass-secure-deployment-agent" data-topics="cyber agents automation systems governed-ai"><div class="card-art"><div class="quote">Governor on the deploy button</div></div><div class="card-body"><div class="meta"><span>New</span><span>Secure Deployment</span><span>13 min</span></div><h3>The Secure Deployment Agent: Governed Authorization for Every Change</h3><p>Five operating states, a scope contract, a risk-routed permission matrix, least-privilege OIDC secrets, a pinned supply chain, and a rollback for every change — the model for an authorization-bound agent that never ships what you didn't approve.</p><span class="read">Read the model →</span></div></a>
+      <a class="article-card tilt-card" href="clearglassinc-0-to-1m-corporate-execution-plan.html" data-title="ClearGlassInc 0 to 1 Million Corporate Execution Plan Revenue Strategy" data-tags="corporate strategy revenue engine governance procurement intelligence compliance managed services offer ladder recurring revenue founder led sales" data-slug="clearglassinc-0-to-1m-corporate-execution-plan" data-topics="growth systems governed-ai"><div class="card-art"><div class="quote">$1M in 18 months</div></div><div class="card-body"><div class="meta"><span>New</span><span>Revenue</span><span>16 min</span></div><h3>ClearGlassInc: The $0-to-$1,000,000 Corporate Execution Plan</h3><p>The 18-month path to $1M CAD in collected revenue — corporate foundation, positioning, a four-tier offer ladder, proof system, founder-led sales, recurring contracts, financial controls, and a monthly scorecard.</p><span class="read">Read the plan →</span></div></a>
+      <a class="article-card tilt-card" href="frontier-intelligence-briefing-quantum-gravity-asi-biosecurity.html" data-title="Frontier Intelligence Briefing Quantum Gravity ASI Timelines Biosecurity Economic Singularity Time Travel" data-tags="quantum gravity asi timelines superintelligence risk biosecurity economic singularity time travel closed timelike curves recursive self-improvement ai governance frontier briefing" data-slug="frontier-intelligence-briefing-quantum-gravity-asi-biosecurity" data-topics="frontier governed-ai systems"><div class="card-art"><div class="quote">Frontier field briefing</div></div><div class="card-body"><div class="meta"><span>New</span><span>Frontier Intelligence</span><span>12 min</span></div><h3>Frontier Intelligence Briefing: Quantum Gravity, ASI, Biosecurity &amp; the Economic Singularity</h3><p>Five frontier vectors, one field briefing: quantum gravity, near-term ASI risk, biosecurity, the economic singularity, and the truth about time-travel and future-prediction claims.</p><span class="read">Open the briefing →</span></div></a>
+      <a class="article-card tilt-card" href="ethical-sales-system-100k-revenue-prompt.html" data-title="Ethical Sales Psychology 100K Revenue System Prompt ClearGlassInc Artemis" data-tags="sales psychology ethical persuasion revenue engine conversion prompt system reciprocity social proof authority scarcity kpis" data-slug="ethical-sales-system-100k-revenue-prompt" data-topics="automation systems governed-ai growth"><div class="card-art"><div class="quote">Ethical revenue architecture</div></div><div class="card-body"><div class="meta"><span>New</span><span>Revenue</span><span>14 min</span></div><h3>Ethical Sales Psychology: A 100K Revenue System Prompt</h3><p>A ClearGlassInc Artemis-ready prompt for building persuasive sales systems with proof, authority, urgency, risk reversal, follow-up, KPIs, and human-trust guardrails.</p><span class="read">Read the prompt system →</span></div></a>
+      <a class="article-card tilt-card" href="clearglass-agentops-microsoft-foundry-future-stack.html" data-title="ClearGlass AgentOps Microsoft Foundry Future Stack" data-tags="microsoft foundry agent service agent framework copilot studio entra identity observability agentops governance zero trust" data-slug="clearglass-agentops-microsoft-foundry-future-stack" data-topics="governed-ai agents cyber automation systems"><div class="card-art"><div class="quote">Microsoft-aligned AgentOps</div></div><div class="card-body"><div class="meta"><span>New</span><span>AgentOps</span><span>22 min</span></div><h3>ClearGlass AgentOps: Microsoft Foundry Future Stack</h3><p>Twelve enterprise-grade briefs for deploying governed agents with Microsoft Foundry Agent Service, Agent Framework, Copilot Studio, Entra identity, tracing, private networking, and approval gates.</p><span class="read">Open the future stack →</span></div></a>
+      <a class="article-card tilt-card" href="clearglassinc-artemis-resume-builder-self-evolving-intelligence-platform.html" data-title="ClearGlassInc Artemis Resume Builder Self-Evolving AI Intelligence Platform Blueprint" data-tags="palantir gotham foundry aip apollo self improving agents ontology evals resume builder" data-slug="clearglassinc-artemis-resume-builder-self-evolving-intelligence-platform" data-topics="governed-ai agents automation systems"><div class="card-art"><div class="quote">Artemis resume builder</div></div><div class="card-body"><div class="meta"><span>New</span><span>AI Architecture</span><span>28 min</span></div><h3>ClearGlassInc Artemis Resume Builder: Self-Evolving Intelligence Blueprint</h3><p>A premium full-stack design document for mission-grade intelligence: Gotham, Foundry, AIP, Apollo, ontology-driven agents, safe self-improvement, policy-as-code, and eval loops.</p><span class="read">Read the blueprint →</span></div></a>
+      <a class="article-card tilt-card" href="ai-agents-insider-threat.html" data-title="AI Agents Are the New Insider Threat AIRF" data-tags="ai agent security insider threat non-human identity blast radius ledger airf" data-slug="ai-agents-insider-threat" data-topics="agents cyber governed-ai"><div class="card-art"><div class="quote">"The newest insider isn't human."</div></div><div class="card-body"><div class="meta"><span>New</span><span>AI &amp; Security</span><span>12 min</span></div><h3>AI Agents Are the New Insider Threat</h3><p>Agents hold credentials, access, and goals — the textbook insider profile — and behavioral tooling can't see them. The AIRF framework: Identity, Intent, Blast Radius, Ledger.</p><span class="read">Read the framework →</span></div></a>
+      <a class="article-card tilt-card" href="zero-trust-is-outdated.html" data-title="Zero Trust Is Outdated Adaptive Trust Systems" data-tags="zero trust adaptive trust action trust intent verification learning policy trust economics" data-slug="zero-trust-is-outdated" data-topics="cyber systems agents"><div class="card-art"><div class="quote">"Authentication is not alignment."</div></div><div class="card-body"><div class="meta"><span>New</span><span>Cyber Architecture</span><span>12 min</span></div><h3>Zero Trust Is Outdated</h3><p>Zero trust answered "who are you?" The agentic era asks "should this action happen, and at what cost?" The Adaptive Trust Systems Model: action trust, intent, learning policy, trust economics.</p><span class="read">Read the doctrine →</span></div></a>
+      <a class="article-card tilt-card" href="clearglassinc-artemis-self-evolving-ai-intelligence-platform.html" data-title="ClearGlassInc Artemis Self-Evolving AI Intelligence Platform" data-tags="palantir foundry aip apollo self improving agents governance" data-slug="clearglassinc-artemis-self-evolving-ai-intelligence-platform" data-topics="governed-ai automation systems"><div class="card-art"><div class="quote">Artemis systems blueprint</div></div><div class="card-body"><div class="meta"><span>AI Architecture</span><span>16 min</span></div><h3>ClearGlassInc Artemis: The Self-Evolving AI Intelligence Platform</h3><p>A full-stack blueprint for mission-speed intelligence with ontology-driven agents, evals, policy-as-code, safe self-improvement, copyable code, and a power-user prompt system.</p><span class="read">Read the architecture →</span></div></a>
+      <a class="article-card tilt-card" href="osint-workflow-that-survives-contact-with-reality.html" data-title="The OSINT Workflow That Survives Contact With Reality" data-tags="osint workflows source grading admiralty entity resolution provenance claim lineage" data-slug="osint-workflow-that-survives-contact-with-reality" data-topics="osint systems"><div class="card-art"><div class="quote">OSINT with provenance</div></div><div class="card-body"><div class="meta"><span>New</span><span>OSINT</span><span>14 min</span></div><h3>The OSINT Workflow That Survives Contact With Reality</h3><p>Collection planning, machine-enforceable source grading, entity resolution without hallucinated merges, claim lineage, and analyst review loops.</p><span class="read">Read brief 01 →</span></div></a>
+      <a class="article-card tilt-card" href="cybersecurity-architecture-for-agentic-software.html" data-title="Cybersecurity Architecture for Agentic Software" data-tags="cybersecurity architecture agents zero trust audit kill switch prompt injection policy" data-slug="cybersecurity-architecture-for-agentic-software" data-topics="cyber agents systems"><div class="card-art"><div class="quote">Zero-trust agents</div></div><div class="card-body"><div class="meta"><span>New</span><span>Cyber</span><span>15 min</span></div><h3>Cybersecurity Architecture for Agentic Software</h3><p>The command-control patterns, permissions, logs, and kill switches required before AI agents touch real infrastructure.</p><span class="read">Read brief 01 →</span></div></a>
+      <a class="article-card tilt-card" href="resume-builder.html" data-title="Resume Builder PDF Export" data-tags="resume pdf export print css github pages client side" data-slug="resume-builder" data-topics="systems automation"><div class="card-art"><div class="quote">Print-safe resume export</div></div><div class="card-body"><div class="meta"><span>Tool</span><span>PDF Export</span><span>Client-side</span></div><h3>Resume Builder PDF Export</h3><p>A GitHub Pages-safe resume builder that isolates the live preview from editing controls and exports through native browser PDF with print CSS.</p><span class="read">Open the builder →</span></div></a>
+    </div>
+    <nav class="future-pagination" id="postPagination" aria-label="Article archive pages">
+      <p id="postPageStatus" aria-live="polite">Showing the first briefs.</p>
+      <div class="future-page-links">
+        <a href="?page=1#postGrid" data-page="1" aria-current="page">1</a>
+        <a href="?page=2#postGrid" data-page="2">2</a>
+        <a href="?page=3#postGrid" data-page="3">3</a>
+        <button id="loadMorePosts" type="button">Load the next briefing page <span aria-hidden="true">↓</span></button>
+      </div>
+      <span class="future-scroll-sentinel" id="postScrollSentinel" aria-hidden="true"></span>
+    </nav>
+  </section>
+  <section class="wrap" id="ai-readiness" aria-labelledby="ai-readiness-title">
+    <div class="section-head reveal"><div><div class="kicker">2026 AI content readiness</div><h2 id="ai-readiness-title">Readable by people. Legible to machines. Verifiable by both.</h2></div><p>A practical publishing contract for search engines, answer engines, and permissioned LLM agents—without hiding primary content behind JavaScript.</p></div>
+    <div class="future-readiness-grid stagger reveal">
+      <article class="panel"><div class="meta"><span>01</span><span>Machine-readable</span></div><h3>Entity-rich publishing</h3><ul class="list"><li>Unique title, description, canonical URL, author, dates, and semantic heading order.</li><li><code>BlogPosting</code>, <code>BreadcrumbList</code>, <code>FAQPage</code>, and visible author provenance.</li><li>Static HTML article bodies, descriptive links, sitemap entries, RSS, and a public JSON post index.</li></ul></article>
+      <article class="panel"><div class="meta"><span>02</span><span>Citation-ready</span></div><h3>Answerable evidence</h3><ul class="list"><li>Concise synopsis and key takeaways before every deep technical article.</li><li>Claim-level source links, stable section IDs, explicit dates, and original pull quotes.</li><li>FAQ answers that mirror visible page content—never schema-only or fabricated claims.</li></ul></article>
+      <article class="panel"><div class="meta"><span>03</span><span>Agent-compatible</span></div><h3>Bounded interaction</h3><ul class="list"><li>Widgets expose typed inputs, clear output provenance, timeouts, and deterministic fallbacks.</li><li>Model output remains untrusted; consequential actions require policy checks and human approval.</li><li>No agent receives secrets, expanded scope, or write authority from page content.</li></ul></article>
+    </div>
+    <div class="future-variants reveal" aria-label="Editorial experience variants">
+      <div><span>Developer blog</span><strong>Code-first field notes</strong><p>Emphasize runnable examples, architecture diffs, complexity labels, changelogs, and copyable implementation blocks.</p></div>
+      <div><span>Corporate blog</span><strong>Executive evidence room</strong><p>Prioritize author credentials, outcome-led briefs, governance notes, sector pathways, and restrained conversion surfaces.</p></div>
+      <div><span>Viral hybrid</span><strong>Shareable intelligence stream</strong><p>Lead with original hooks, visual takeaways, quotable cards, and fast topic discovery while preserving permanent article URLs.</p></div>
+    </div>
+  </section>
+  <section class="wrap" id="pipeline">
+    <div class="section-head reveal"><div><div class="kicker">Editorial pipeline</div><h2>Ten flagship briefs in production — engineered to challenge assumptions and define categories.</h2></div><p>The next wave from the desk: authority-building theses across AI security, autonomous defense, workflow risk, OSINT, and architecture strategy. Each ships as a flagship article, then repurposes into LinkedIn authority posts, X threads, and email insights. Tracked in the <a href="posts.json" style="color:var(--cyan);text-decoration:none">post index (JSON)</a> under <code style="font-family:var(--mono);font-size:.9em">pipeline</code>.</p></div>
+    <div class="grid stagger reveal">
+      <div class="panel"><div class="meta"><span>01</span><span>AI security</span></div><h3>The Illusion of AI Security</h3><p>Why most "secure" systems are already compromised. Most AI systems are vulnerable at the orchestration layer, not the model layer. "Your AI isn't secure. It just hasn't been tested properly."</p></div>
+      <div class="panel"><div class="meta"><span>02</span><span>zero trust security</span></div><h3>Zero-Trust Is Not Enough</h3><p>The rise of autonomous threat environments. Zero-trust architectures fail against adaptive, AI-driven attackers — trust boundaries are static; attackers are not. Framework: the Autonomous Defense Stack (ADS).</p></div>
+      <div class="panel"><div class="meta"><span>03</span><span>cybersecurity automation</span></div><h3>The Death of Manual Cybersecurity</h3><p>Why human-led defense cannot scale against machine-speed threats. "If your defense requires human reaction time, you've already lost."</p></div>
+      <div class="panel"><div class="meta"><span>04</span><span>AI agents security</span></div><h3>AI Agents Are the New Workforce — and Your Biggest Attack Surface</h3><p>Every AI agent is both a productivity multiplier and a vulnerability node. Framework: the Agent Attack Surface Index (AASI).</p></div>
+      <div class="panel"><div class="meta"><span>05</span><span>workflow automation security</span></div><h3>The Hidden Layer of Cyber Risk</h3><p>Workflow automation is the new exploit vector. Zapier-style automation, APIs, and pipelines are massively under-secured. The system isn't hacked — the workflow is.</p></div>
+      <div class="panel"><div class="meta"><span>06</span><span>software architecture strategy</span></div><h3>From Code to Control</h3><p>Why software architecture now defines organizational power — revenue, security, and dominance. "Your architecture is your strategy — whether you designed it that way or not."</p></div>
+      <div class="panel"><div class="meta"><span>07</span><span>OSINT AI</span></div><h3>OSINT + AI: The New Intelligence Stack</h3><p>AI-powered intelligence pipelines are redefining investigations across government and finance — fraud detection, sanctions tracking, network analysis.</p></div>
+      <div class="panel"><div class="meta"><span>08</span><span>business automation strategy</span></div><h3>The Automation Divide</h3><p>Companies that scale vs. companies that stall. Automation maturity is becoming the #1 differentiator in growth. Framework: the Automation Maturity Curve (AMC).</p></div>
+      <div class="panel"><div class="meta"><span>09</span><span>AI implementation strategy</span></div><h3>Why Most AI Implementations Fail Before They Start</h3><p>Failure happens at system design, not model choice. AI is not a tool — it's an ecosystem. And that's fixable.</p></div>
+      <div class="panel"><div class="meta"><span>10</span><span>API security</span></div><h3>The New Cyber Battlefield</h3><p>APIs, agents, and invisible infrastructure. Traditional perimeter security is obsolete — the attack surface is now composable and dynamic.</p></div>
+    </div>
+  </section>
+  <section class="wrap" id="series"><div class="section-head reveal"><div><div class="kicker">Information architecture</div><h2>Topic clusters built for authority, return visits, and internal links.</h2></div><p>Top 10 categories: Governed AI, Autonomous Agents, Cybersecurity Architecture, OSINT Workflows, AI Automation, Financial Crime Detection, High-Trust Software Engineering, Policy-as-Code, Intelligence Operations, and Founder Field Notes.</p></div><div class="two stagger reveal"><div class="panel"><h3>Featured series labels</h3><ul class="list"><li>Governed Autonomy Playbooks</li><li>Artemis Engineering Notes</li><li>OSINT Tradecraft Briefs</li><li>Financial Crime Detection Lab</li><li>High-Trust Systems Patterns</li></ul></div><div class="panel"><h3>Viral headline system</h3><ul class="list"><li><strong>Contrarian thesis:</strong> "The AI Agent Problem Is Not Intelligence — It Is Accountability."</li><li><strong>Blueprint hook:</strong> "The Risk Router Pattern for Enterprise AI Agents."</li><li><strong>Save-worthy list:</strong> "12 Controls Every Autonomous Workflow Needs."</li><li><strong>Founder note:</strong> "What We Would Never Let an Agent Do Without Approval."</li></ul></div></div></section>
+  <section class="wrap" id="blueprint"><div class="section-head reveal"><div><div class="kicker">SEO blueprint</div><h2>Fast static publishing with machine-readable authority.</h2></div><p>GitHub Pages and Jekyll can support the full hub through Markdown posts, front matter, reusable includes, static JSON indexes, and lightweight client-side filtering.</p></div><ol class="grid blueprint stagger reveal"><li class="panel"><h3>Metadata</h3><p>Use unique titles, descriptions, canonical URLs, Open Graph, Twitter cards, and `jekyll-seo-tag` for every post.</p></li><li class="panel"><h3>Schema</h3><p>Emit `Blog`, `BlogPosting`, `BreadcrumbList`, `Organization`, `FAQPage`, and `ItemList` JSON-LD where relevant.</p></li><li class="panel"><h3>Internal links</h3><p>Every article links to a pillar, a series page, two related posts, and one conversion path.</p></li><li class="panel"><h3>Topic clusters</h3><p>Organize posts around governed AI, agents, cyber, OSINT, automation, financial crime, and high-trust systems.</p></li><li class="panel"><h3>Share surfaces</h3><p>Add quotable pull quotes, social preview copy, copy-link actions, and section anchors for citation.</p></li><li class="panel"><h3>Performance</h3><p>Static HTML/CSS, no heavy frameworks, font preconnects, compressed images, and progressive enhancement only.</p></li></ol></section>
+  <section class="wrap" id="power"><div class="power reveal"><div class="section-head"><div><div class="kicker">Power user mode</div><h2>Deep-dive blocks for engineers, analysts, and security professionals.</h2></div><p>Posts can expand beyond essays into diagrams, code snippets, eval tables, threat models, source notes, and implementation checklists.</p></div><div class="code"><pre>---
+layout: post
+title: "Risk Router Pattern for Governed AI Agents"
+categories: [governed-ai, autonomous-agents]
+tags: [policy-as-code, evals, approvals, audit]
+series: "Governed Autonomy Playbooks"
+excerpt: "A practical design for routing AI actions by risk, confidence, and approval state."
+---
+
+{% include callout.html type="research-note" %}
+Confidence is not permission. Route high-impact actions through human approval.
+{% include diagram.html id="risk-router" %}
+```python
+if action.impact >= HIGH or confidence < 0.82:
+    require_human_approval(action)
+else:
+    execute_with_audit(action)
+```</pre></div></div></section>
+  <section class="wrap" id="engine"><div class="power reveal"><div class="section-head"><div><div class="kicker">Editorial engine</div><h2>The system prompt that writes like the desk thinks.</h2></div><p>Every Insights post is generated against a version-controlled editorial contract: E-E-A-T voice rules, a viral headline system, mandatory content architecture, SEO and JSON-LD requirements, Artemis platform integration, a strict output protocol, and refusal rules. The full prompt is versioned in the repo.</p></div><div class="two"><div class="panel"><h3>Mandatory content architecture</h3><ul class="list"><li>Defensible thesis in the first two sentences; quotable TL;DR block.</li><li>At least one system diagram and one implementation block (code, config, schema, or checklist).</li><li>A governance lens: what must be gated, logged, approved, or refused.</li><li>Two citation-ready pull quotes; internal links to one pillar, one series, two related posts, exactly one conversion path.</li></ul></div><div class="panel"><h3>Output protocol &amp; refusal rules</h3><ul class="list"><li><strong>Strict order:</strong> front matter → TL;DR → body → pull quotes → JSON-LD → social pack → internal-link map.</li><li><strong>Refuse thin topics:</strong> if a request can't support deep technical value or clear governance implications, propose a stronger adjacent topic instead.</li><li><strong>Never fabricate</strong> benchmarks, incidents, customer stories, or statistics.</li><li><strong>Defensive framing only</strong>, consistent with the SENTINEL charter.</li></ul></div></div><div class="code"><pre>You are the ClearGlass Insights Editorial Engine — a research-led technical
+content system for ClearGlass Inc. Every claim must be defensible, sourced,
+and implementable.
+
+VIRAL HEADLINE SYSTEM (choose or blend ONE primary)
+  contrarian thesis · blueprint hook · save-worthy list · founder note
+
+ARTEMIS PLATFORM INTEGRATION
+  When relevant, connect the post to the Artemis Self-Evolving AI
+  Intelligence Platform: ontology-driven agents, continuous evals,
+  policy-as-code enforcement, safe self-improvement loops, and
+  mission-speed intelligence with provenance.
+
+You are building a permanent technical asset. Every post must be worthy
+of citation by other serious practitioners in 2027–2030.
+
+# full contract: prompts/clearglass_insights_editorial_system_prompt.md</pre></div></section>
+  <section class="wrap" id="newsletter"><div class="newsletter reveal"><div><div class="kicker">Conversion layer</div><h2>Get the ClearGlass intelligence brief.</h2><p>Join the list for governed AI playbooks, OSINT workflows, cybersecurity architecture notes, and founder briefings. Built for enterprise buyers, engineers, and security leaders.</p><div class="section-actions"><a class="btn primary btn-magnet" href="../index.html#contact">Request a strategy briefing →</a><a class="btn btn-magnet" href="mailto:desmondotieno@icloud.com?subject=ClearGlass%20Insights%20newsletter">Subscribe by email</a></div></div><form class="form" action="mailto:desmondotieno@icloud.com" method="post" enctype="text/plain"><input name="email" type="email" placeholder="work email" aria-label="Email address"><input name="interest" type="text" placeholder="topic: governed AI, OSINT, cyber…" aria-label="Topic interest"><button class="btn primary" type="submit">Join the brief</button></form></div></section>
+  <section class="wrap" id="access">
+    <div class="finale reveal"><div class="finale-inner">
+      <div class="kicker">The desk is open</div>
+      <h2>Governed intelligence, <span class="gradient">delivered like it's 2050.</span></h2>
+      <p>One list for architecture teardown, threat models, and governed-autonomy patterns before they hit the mainstream feed.</p>
+      <div class="hero-actions"><a class="btn primary btn-magnet" href="#newsletter">Join the intelligence list →</a><a class="btn btn-magnet" href="../index.html#contact">Request a briefing</a></div>
+    </div></div>
+  </section>
+</main>
+<footer class="footer"><div class="wrap footer-grid"><div><h4>ClearGlass Insights</h4><p>A premium research-led content engine for governed AI, cybersecurity, autonomy, OSINT, financial crime detection, and high-trust software systems.</p><div class="ft">"Clarity Is Power."</div></div><div><h4>Navigate</h4><a href="#latest">Latest</a><a href="#pipeline">Pipeline</a><a href="#series">Series</a><a href="#blueprint">SEO Blueprint</a></div><div><h4>Platforms</h4><a href="../ai-operator.html">AI Operator</a><a href="../guardian.html">Guardian</a><a href="../government.html">Government</a></div><div><h4>Trust</h4><a href="../index.html#contact">Contact</a><a href="feed.xml">RSS feed</a><a href="posts.json">Post index (JSON)</a><a href="../sitemap.xml">Sitemap</a></div></div><div class="wrap" style="margin-top:28px">© <span id="year"></span> ClearGlass Inc. · Ontario, Canada · Open publication</div></footer>
+<div class="unclass-banner">UNCLASSIFIED / NON-CLASSIFIÉ — END OF DOCUMENT</div>
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+
+/* search + topic filtering is owned by insights.js (shared advanced layer) */
+
+const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const root=document.documentElement;
+
+/* nav shrink-on-scroll */
+const nav=document.getElementById('nav');
+addEventListener('scroll',()=>{nav.classList.toggle('scrolled',scrollY>10)},{passive:true});
+
+/* hero aura + ambient background follow cursor */
+if(!reduceMotion){
+  let tx=innerWidth/2,ty=innerHeight*.35,cx=tx,cy=ty;
+  addEventListener('pointermove',e=>{tx=e.clientX;ty=e.clientY;},{passive:true});
+  (function loop(){cx+=(tx-cx)*.06;cy+=(ty-cy)*.06;root.style.setProperty('--mx',cx+'px');root.style.setProperty('--my',cy+'px');requestAnimationFrame(loop);})();
+}
+
+/* desk film — the clip has no declarative autoplay, so nothing moves until
+   this runs: reduced-motion visitors keep the poster frame, everyone else
+   gets the loop while it is on screen. The toggle is the WCAG 2.2.2 escape
+   hatch (>5s of looping motion needs a pause control), and an explicit pause
+   sticks — scrolling back must not restart what the reader stopped. */
+const deskFilm=document.querySelector('#desk video');
+const deskToggle=document.getElementById('deskToggle');
+if(deskFilm&&deskToggle){
+  let userPaused=reduceMotion;
+  const setToggle=playing=>{
+    deskToggle.dataset.state=playing?'playing':'paused';
+    deskToggle.querySelector('.desk-toggle-icon').textContent=playing?'❚❚':'▶';
+    deskToggle.querySelector('.desk-toggle-label').textContent=playing?'Pause the clip':'Play the clip';
+  };
+  const start=()=>{const p=deskFilm.play();if(p&&p.catch)p.catch(()=>{});};
+  deskFilm.addEventListener('play',()=>setToggle(true));
+  deskFilm.addEventListener('pause',()=>setToggle(false));
+  deskToggle.addEventListener('click',()=>{
+    if(deskFilm.paused){userPaused=false;start();}
+    else{userPaused=true;deskFilm.pause();}
+  });
+  new IntersectionObserver(entries=>{entries.forEach(en=>{
+    if(en.isIntersecting){if(!userPaused)start();}
+    else deskFilm.pause();
+  })},{threshold:.2}).observe(deskFilm);
+  setToggle(false);
+}
+
+/* scroll-reveal */
+const io=new IntersectionObserver(entries=>{entries.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}})},{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* count-up stat pills */
+const counters=[...document.querySelectorAll('[data-count]')];
+const cio=new IntersectionObserver(entries=>{entries.forEach(en=>{if(!en.isIntersecting)return;cio.unobserve(en.target);const el=en.target,target=+el.dataset.count,dur=900,start=performance.now();
+  (function tick(now){const p=Math.min((now-start)/dur,1);el.textContent=Math.round(target*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(tick);})(start);
+});},{threshold:.6});
+counters.forEach(el=>cio.observe(el));
+
+/* magnetic buttons */
+if(!reduceMotion){
+  document.querySelectorAll('.btn-magnet').forEach(btn=>{
+    btn.addEventListener('pointermove',e=>{const r=btn.getBoundingClientRect();const relX=e.clientX-(r.left+r.width/2);const relY=e.clientY-(r.top+r.height/2);btn.style.transform=`translate(${relX*.28}px,${relY*.4}px)`;});
+    btn.addEventListener('pointerleave',()=>{btn.style.transform='translate(0,0)';});
+  });
+}
+
+/* tilt + specular reflection on glass cards */
+if(!reduceMotion){
+  document.querySelectorAll('.tilt-card').forEach(card=>{
+    card.addEventListener('pointermove',e=>{
+      const r=card.getBoundingClientRect();const px=(e.clientX-r.left)/r.width;const py=(e.clientY-r.top)/r.height;
+      const rx=(py-.5)*-6;const ry=(px-.5)*8;
+      card.style.transform=`perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(0)`;
+      card.style.setProperty('--sx',(px*100)+'%');card.style.setProperty('--sy',(py*100)+'%');
+    });
+    card.addEventListener('pointerleave',()=>{card.style.transform='perspective(900px) rotateX(0) rotateY(0)';});
+  });
+}
+
+/* ambient particle field */
+(function(){
+  const canvas=document.getElementById('field');const ctx=canvas.getContext('2d');
+  let w,h,dpr=Math.min(devicePixelRatio||1,2);
+  function resize(){w=canvas.width=innerWidth*dpr;h=canvas.height=innerHeight*dpr;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';}
+  resize();addEventListener('resize',resize,{passive:true});
+  const colors=['57,216,255','157,123,255','85,242,166'];
+  const count=reduceMotion?0:Math.min(60,Math.floor((innerWidth*innerHeight)/26000));
+  const pts=Array.from({length:count},()=>({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.15*dpr,vy:(Math.random()-.5)*.15*dpr,r:(Math.random()*1.6+.6)*dpr,c:colors[Math.floor(Math.random()*colors.length)]}));
+  let visible=true,running=false;
+  new IntersectionObserver(es=>{visible=es[0].isIntersecting;if(visible)start();},{threshold:0}).observe(canvas);
+  function frame(){
+    if(!visible){running=false;return;}
+    ctx.clearRect(0,0,w,h);
+    for(const p of pts){
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(${p.c},.55)`;ctx.fill();
+    }
+    requestAnimationFrame(frame);
+  }
+  function start(){if(!running&&pts.length){running=true;requestAnimationFrame(frame);}}
+  start();
+})();
+
+/* ===== Quantum Command Interface wiring ===== */
+(function(){
+  const deck=document.querySelector('.qci');if(!deck)return;
+
+  /* AI node matrix — deterministic-ish fill, some live/busy */
+  const nodes=document.getElementById('qciNodes');
+  if(nodes){let html='';for(let i=0;i<40;i++){const r=Math.random();const cls=r>.82?' busy':r>.42?' on':'';html+='<i class="'+cls.trim()+'"'+(cls?' style="animation-delay:'+(-(Math.random()*2).toFixed(2))+'s"':'')+'></i>';}nodes.innerHTML=html;}
+
+  /* live UTC clock (text, not motion — always on) */
+  const clock=document.getElementById('qciClock');
+  if(clock){const tick=()=>{clock.textContent=new Date().toISOString().slice(11,19)+' UTC';};tick();setInterval(tick,1000);}
+
+  /* tab views — filter cards by data-view */
+  const tabs=[...deck.querySelectorAll('.qci-tab')];
+  const cards=[...deck.querySelectorAll('.qci-card')];
+  tabs.forEach(tab=>tab.addEventListener('click',()=>{
+    const view=tab.textContent.trim().toLowerCase();
+    tabs.forEach(t=>{const on=t===tab;t.classList.toggle('on',on);t.setAttribute('aria-selected',on);});
+    cards.forEach(c=>{const show=view==='overview'||(c.dataset.view||'').split(' ').includes(view);c.style.display=show?'':'none';});
+  }));
+
+  /* subtle live drift on a couple of readouts — honest placeholder motion */
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const req=document.getElementById('qciReq');
+    const blocked=document.getElementById('qciBlocked');
+    let b=1284;
+    const io2=new IntersectionObserver(es=>es.forEach(en=>{
+      if(!en.isIntersecting){en.target._t&&clearInterval(en.target._t);return;}
+      en.target._t=setInterval(()=>{
+        if(req)req.textContent=(1180+Math.floor(Math.random()*140)).toLocaleString();
+        if(blocked&&Math.random()>.55){b+=Math.floor(Math.random()*3);blocked.textContent=b.toLocaleString();}
+      },2600);
+    }),{threshold:.2});
+    io2.observe(deck);
+  }
+})();
+</script>
+<script defer src="insights.js"></script>
+<script defer src="future-editorial.js"></script>
+<script defer src="atlas.js"></script>
+<script defer src="/logo-badge.js"></script>
+<script defer src="assistant/writing-help.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › ClearGlass Intelligence · Insights</p>
+    <h2>Inside ClearGlass Intelligence · Insights</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="shadow-ai-incident-response-logs-gone.html"><span><b>Previous</b>Shadow AI Incident Response</span></a>
+      <a href="index.html"><span><b>Topic hub</b>ClearGlass Intelligence</span></a>
+      <a href="autonomous-threat-modeling-2026.html"><span><b>Next in journey</b>Autonomous Threat Modeling in 2026</span></a>
+    </div>
+    <ul>
+      <li><a href="autonomous-threat-modeling-2026.html"><b>Autonomous Threat Modeling in 2026</b> — continuous architecture-grounded security for agentic and cyber-physical systems</a></li>
+      <li><a href="ai-agent-governance-governed-autonomy.html"><b>AI Agent Governance</b> — the governed-autonomy playbook</a></li>
+      <li><a href="clearglass-platform-audit-2026.html"><b>The ClearGlass Platform Audit</b> — keep, simplify, gate, build — the platform upgrade doctrine</a></li>
+      <li><a href="ai-agents-insider-threat.html"><b>AI Agents Are the New Insider Threat</b> — why agent identity is a security boundary</a></li>
+      <li><a href="cybersecurity-architecture-for-agentic-software.html"><b>Security Architecture for Agentic Software</b> — designing defenses for autonomous systems</a></li>
+      <li><a href="zero-trust-is-outdated-adaptive-trust.html"><b>The Case for Adaptive Trust</b> — zero trust, revisited for agentic systems</a></li>
+      <li><a href="rethinking-security-age-of-ai-cyber-stack.html"><b>Rethinking Security for the AI Cyber Stack</b> — a long read on defending AI-era infrastructure</a></li>
+      <li><a href="shadow-ai-enterprise-security-blind-spot.html"><b>Shadow AI: Enterprise Security’s Biggest Blind Spot</b> — the unsanctioned-AI exposure most estates cannot see</a></li>
+      <li><a href="zero-trust-is-outdated.html"><b>Zero Trust Is Outdated</b> — the original argument</a></li>
+      <li><a href="clearglass-secure-deployment-agent.html"><b>The Secure Deployment Agent</b> — governed authorization for every production push</a></li>
+      <li><a href="../index.html"><b>ClearGlass Inc.</b> — governed intelligent systems — home</a></li>
+      <li><a href="../cyber-defense-console.html"><b>Cyber Defense Console</b> — the ClearGlass command center for defensive operations</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="../nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

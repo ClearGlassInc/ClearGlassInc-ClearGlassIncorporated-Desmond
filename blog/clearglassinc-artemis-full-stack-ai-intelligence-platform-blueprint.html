@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ClearGlassInc Artemis Full-Stack AI Intelligence Platform Blueprint — ClearGlass Inc.</title>
+<meta name="description" content="A production-grade architecture and implementation blueprint for ClearGlassInc Artemis: a self-evolving, governed AI intelligence platform on Gotham, Foundry, AIP, and Apollo."/>
+<link rel="canonical" href="https://www.clearglassinc.com/blog/clearglassinc-artemis-full-stack-ai-intelligence-platform-blueprint.html"/>
+<link rel="alternate" type="application/rss+xml" title="ClearGlass Insights RSS" href="https://www.clearglassinc.com/blog/feed.xml"/>
+<meta name="author" content="Desmond Otieno Odhiambo"/>
+<meta name="copyright" content="© 2026 ClearGlass Inc. All rights reserved."/>
+<meta name="rights" content="Original ClearGlass Inc. publication. Unauthorized copying, scraping, or redistribution is prohibited; see the content policy."/>
+<meta name="robots" content="index,follow,max-image-preview:large"/>
+<meta property="og:type" content="article"/>
+<meta property="og:title" content="ClearGlassInc Artemis: Full-Stack AI Intelligence Platform Blueprint"/>
+<meta property="og:description" content="Frontend, backend, ontology, agents, self-improvement loops, policy, observability, and Apollo deployment control for mission-critical AI operations."/>
+<meta property="og:url" content="https://www.clearglassinc.com/blog/clearglassinc-artemis-full-stack-ai-intelligence-platform-blueprint.html"/>
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+<meta property="article:published_time" content="2026-07-18"/>
+<meta property="article:modified_time" content="2026-07-29"/>
+<meta property="article:section" content="AI Architecture"/>
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+<link rel="stylesheet" href="insights.css"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "ClearGlassInc Artemis: Full-Stack AI Intelligence Platform Blueprint",
+  "description": "A production-grade architecture and implementation blueprint for ClearGlassInc Artemis on Gotham, Foundry, AIP, and Apollo.",
+  "image": "https://www.clearglassinc.com/assets/images/clearglass-logo.png",
+  "datePublished": "2026-07-18",
+  "dateModified": "2026-07-21",
+  "author": {
+    "@type": "Person",
+    "name": "Desmond Otieno Odhiambo"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "ClearGlass Inc.",
+    "url": "https://www.clearglassinc.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.clearglassinc.com/assets/images/clearglass-logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.clearglassinc.com/blog/clearglassinc-artemis-full-stack-ai-intelligence-platform-blueprint.html"
+  },
+  "copyrightYear": "2026",
+  "copyrightHolder": {
+    "@type": "Organization",
+    "name": "ClearGlass Inc.",
+    "url": "https://www.clearglassinc.com/"
+  },
+  "license": "https://www.clearglassinc.com/legal/content-policy.html",
+  "isAccessibleForFree": true,
+  "inLanguage": "en"
+}
+</script>
+<style>body{background:#05070d;color:#f8fbff;font-family:Inter,system-ui,sans-serif;line-height:1.65}.wrap{max-width:980px;margin:auto;padding:0 24px}.nav{border-bottom:1px solid rgba(180,214,255,.16);background:rgba(5,7,13,.86);backdrop-filter:blur(18px)}.nav-inner{display:flex;justify-content:space-between;align-items:center;min-height:68px}.brand{font-weight:900;text-decoration:none}.brand em{color:#39d8ff}.nav a{color:#dbe7ff;text-decoration:none;margin-left:16px}.hero{padding:72px 24px 34px;background:radial-gradient(circle at 20% 0,rgba(57,216,255,.24),transparent 32%),radial-gradient(circle at 80% 10%,rgba(157,123,255,.2),transparent 34%)}.eyebrow{font:800 12px IBM Plex Mono,monospace;letter-spacing:.18em;text-transform:uppercase;color:#55f2a6}.title{font-size:clamp(42px,6vw,78px);line-height:.95;margin:16px 0;letter-spacing:-.05em}.dek{font-size:20px;color:#dbe7ff;max-width:760px}.meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}.meta span,.tag{border:1px solid rgba(85,242,166,.22);border-radius:999px;padding:6px 10px;color:#9fffd0;font:700 11px IBM Plex Mono,monospace;text-transform:uppercase}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.card,section{border:1px solid rgba(180,214,255,.16);border-radius:24px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.035));padding:24px;margin:20px 0;box-shadow:0 24px 70px rgba(0,0,0,.24)}h2{font-size:34px;line-height:1.05;margin:0 0 14px}h3{margin-top:0;color:#fff}p,li{color:#c8d4e7}pre{overflow:auto;background:#030711;color:#ccffe5;border:1px solid rgba(85,242,166,.2);border-radius:18px;padding:18px;font-size:13px}code{font-family:IBM Plex Mono,monospace}.ip-protection-footer{border-top:1px solid rgba(180,214,255,.16);margin:34px 0 0;padding:24px 0 40px;color:#aab8d0}.ip-protection-footer a{color:#67e8f9}.ip-protection-footer p{font-size:13px;margin:.35rem 0}.article-signature{position:relative}.article-signature::after{content:attr(data-source-signature);position:absolute;right:18px;bottom:10px;font:700 10px IBM Plex Mono,monospace;letter-spacing:.12em;color:rgba(159,255,208,.16);pointer-events:none;user-select:none}@media print{.article-signature::after{color:#777}.ip-protection-footer{break-inside:avoid}}.callout{border-color:rgba(57,216,255,.35);box-shadow:0 0 42px rgba(57,216,255,.16)}@media(max-width:760px){.grid{grid-template-columns:1fr}.nav a:not(.brand){display:none}}</style>
+  <link rel="stylesheet" href="../brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+<nav class="nav"><div class="wrap nav-inner"><a class="brand" href="index.html">ClearGlassInc <em>Insights</em></a><div><a href="../index.html">Home</a><a href="index.html">Blog</a></div></div></nav>
+<header class="hero"><div class="wrap"><div class="eyebrow">AI architecture · Palantir runtime · governed autonomy</div><h1 class="title">ClearGlassInc Artemis: Full-Stack Blueprint for a Self-Evolving AI Intelligence Platform</h1><p class="dek">A premium engineering design document for a secure, coalition-aware, latency-sensitive, audited intelligence platform that fuses live and historical data, reasons over ontology objects, learns from operator feedback, and proposes safe workflow upgrades inside human-approved guardrails.</p><div class="meta"><span>Published July 18, 2026</span><span>34 min read</span><span>Production blueprint</span></div></div></header>
+<main class="wrap article-signature" data-source-signature="CLEARGLASSINC-ARTEMIS-2026-ORIGINAL" data-canonical-source="https://www.clearglassinc.com/blog/clearglassinc-artemis-full-stack-ai-intelligence-platform-blueprint.html">
+<section class="callout"><h2>System Architecture</h2><p><strong>Implementation status:</strong> this document is a target-state reference architecture—not evidence that Palantir infrastructure, production credentials, coalition agreements, or operational integrations are currently provisioned. Every production release remains subject to security, data-governance, operational-owner, and human-approval gates.</p><p><b>ClearGlassInc Artemis</b> uses Gotham for operational intelligence, investigations, entity tracking, link analysis, cases, and mission timelines; Foundry for integration, ontology, pipelines, transformations, and application logic; AIP for copilots, agents, evaluations, tool-use, model routing, and workflow automation; and Apollo for secure deployment, runtime control, rollback, ring releases, and continuous operations.</p><div class="grid"><div class="card"><h3>Frontend</h3><p>Analyst workbench, commander cockpit, governance review board, alert rail, graph canvas, approval queue, eval dashboard, and mission playback UI built as a policy-aware TypeScript application.</p></div><div class="card"><h3>Backend</h3><p>Python FastAPI services for identity context, case orchestration, feedback capture, tool brokering, eval generation, model routing, audit writes, and Apollo release promotion.</p></div><div class="card"><h3>Data layer</h3><p>Streaming and batch ingestion land in Foundry-style bronze, silver, and gold datasets, then bind to ontology objects with lineage hashes, sensitivity labels, temporal validity, and confidence.</p></div><div class="card"><h3>Policy layer</h3><p>Need-to-know authorization is enforced at row, column, entity, relationship, derived-output, tool, prompt, model, and action levels before humans or agents can consume or act.</p></div></div></section>
+<section><h2>Data and Ontology</h2><p>The ontology is the operating model. Agents do not reason over loose blobs; they reason over typed objects, relationships, lineage, permissions, caveats, and time. Core entities include Person, Organization, Asset, Location, CyberIndicator, Event, Source, Case, Mission, IntelProduct, ApprovalDecision, ModelVersion, PromptVersion, WorkflowVersion, EvalRun, and OperatorFeedback.</p><pre><code>CREATE TABLE ontology_event (
+  event_id TEXT PRIMARY KEY,
+  event_type TEXT NOT NULL,
+  valid_time TSRANGE NOT NULL,
+  ingest_time TIMESTAMPTZ NOT NULL DEFAULT now(),
+  confidence NUMERIC CHECK (confidence BETWEEN 0 AND 1),
+  source_ids TEXT[] NOT NULL,
+  lineage_hash TEXT NOT NULL,
+  sensitivity TEXT NOT NULL,
+  compartments TEXT[] NOT NULL,
+  coalition_releasability TEXT[] NOT NULL,
+  mission_context JSONB NOT NULL
+);
+
+CREATE TABLE ontology_relationship (
+  subject_id TEXT NOT NULL,
+  predicate TEXT NOT NULL,
+  object_id TEXT NOT NULL,
+  confidence NUMERIC NOT NULL,
+  derived_from TEXT[] NOT NULL,
+  valid_time TSRANGE NOT NULL,
+  PRIMARY KEY (subject_id, predicate, object_id, valid_time)
+);</code></pre><p>Relationships include observed_at, associated_with, controls, communicates_with, derived_from, approved_by, contradicts, supersedes, mitigated_by, escalated_to, and releasable_to. Each relationship carries confidence, provenance, caveats, temporal state, and policy labels so the same graph drives analyst workflows and AI guardrails.</p></section>
+<section><h2>AI and Agent Design</h2><div class="grid"><div class="card"><h3>Analyst Copilot</h3><p>Explains evidence, drafts hypotheses, builds link-analysis pivots, summarizes cases, asks clarifying questions, and cites object IDs plus lineage hashes.</p></div><div class="card"><h3>Commander Copilot</h3><p>Compresses mission state into decision briefs, options, risk, confidence, constraints, and approval-required action packages.</p></div><div class="card"><h3>Agent mesh</h3><p>Triage, enrichment, correlation, summarization, recommendation, eval-generation, and red-team agents cooperate through a governed workflow bus.</p></div><div class="card"><h3>Tool broker</h3><p>Agents query ontology, search indexes, vector retrieval, case APIs, ticketing systems, and report generators through scoped, logged, policy-checked tools.</p></div></div><pre><code>from pydantic import BaseModel
+
+class ToolRequest(BaseModel):
+    tool: str
+    arguments: dict
+    purpose: str
+    mission_id: str
+
+async def execute_tool(req: ToolRequest, user, policy, audit):
+    decision = policy.authorize(
+        actor=user.subject,
+        action=f"tool:{req.tool}",
+        resource=req.arguments,
+        context={"purpose": req.purpose, "mission_id": req.mission_id},
+    )
+    audit.write("tool.authorize", req.model_dump(), decision.model_dump())
+    if not decision.allow:
+        raise PermissionError(decision.reason)
+    result = await TOOL_REGISTRY[req.tool](**decision.filtered_arguments)
+    audit.write("tool.result", {"tool": req.tool}, {"lineage": result.lineage})
+    return result</code></pre></section>
+<section><h2>Self-Improvement Loop</h2><p>Artemis gets better by converting operator corrections, feedback, query logs, alert outcomes, mission results, latency metrics, and case-review decisions into evals and proposed changes. It can propose prompt updates, workflow updates, heuristic changes, model-routing changes, and decision-logic changes, but cannot promote them without explicit human approval and Apollo-controlled deployment.</p><ol><li>Capture signals: thumbs, written corrections, accepted/rejected recommendations, false positives, false negatives, time-to-triage, escalation outcomes, and mission impact.</li><li>Generate evals: transform failures and high-quality operator corrections into reproducible eval cases with expected outputs, forbidden outputs, source constraints, and policy constraints.</li><li>Propose changes: create versioned PromptVersion, WorkflowVersion, RouterPolicyVersion, and HeuristicVersion objects with rationale, expected metric lift, blast radius, and rollback plan.</li><li>Review and canary: humans approve in a governance board; Apollo deploys to a small ring with health gates and automatic rollback.</li><li>Measure: compare precision, recall, latency, hallucination rate, citation integrity, policy-denial accuracy, operator trust, and mission impact.</li></ol><pre><code>def propose_upgrade(eval_report, registry):
+    if eval_report.policy_violations:
+        return None
+    candidate = registry.create_prompt_candidate(
+        parent=eval_report.prompt_version,
+        patch=eval_report.recommended_prompt_patch,
+        rationale=eval_report.root_cause,
+        guardrails=["no autonomous mission-goal changes", "cite lineage", "approval before action"],
+    )
+    candidate.status = "PENDING_HUMAN_REVIEW"
+    candidate.rollback_to = eval_report.prompt_version
+    return candidate</code></pre></section>
+<section><h2>Full-Stack Implementation</h2><pre><code>from fastapi import FastAPI, Depends
+from pydantic import BaseModel
+from datetime import datetime
+
+app = FastAPI(title="ClearGlassInc Artemis Control API")
+
+class FeedbackIn(BaseModel):
+    mission_id: str
+    case_id: str
+    agent_run_id: str
+    rating: int
+    correction: str | None = None
+    outcome: str
+
+@app.post("/feedback")
+async def capture_feedback(payload: FeedbackIn, user=Depends(current_user)):
+    assert_authorized(user, "feedback:create", payload.mission_id)
+    record = {
+        **payload.model_dump(),
+        "operator_id": user.sub,
+        "captured_at": datetime.utcnow().isoformat(),
+        "lineage_hash": hash_payload(payload.model_dump()),
+    }
+    await event_bus.publish("operator.feedback.captured", record)
+    await audit_log.append("feedback.captured", actor=user.sub, record=record)
+    return {"accepted": True, "feedback_id": record["lineage_hash"]}</code></pre><pre><code>states:
+  ingest_event:
+    on_success: [triage]
+  triage:
+    agents: [deduplicate, severity_score, policy_scope]
+    on_high_confidence: [enrich]
+    on_low_confidence: [analyst_review]
+  enrich:
+    agents: [asset_context, threat_context, mission_context]
+    on_success: [recommend]
+  recommend:
+    requires: [evidence_links, confidence, alternatives, risk]
+    next: [approval_gate]
+  approval_gate:
+    human_required: true
+    on_approve: [execute_or_package]
+    on_reject: [capture_counterexample]
+  capture_counterexample:
+    next: [eval_backlog]</code></pre></section>
+<section><h2>Code Examples</h2><p>The Python service boundary is deliberately small, typed, and testable. This package contract uses Python 3.11, FastAPI, Pydantic v2, asynchronous HTTP, and strict development gates. The console script should invoke a callable CLI entry point; a production repository would use <code>artemis.api.cli:main</code>, while ASGI servers load <code>artemis.api.app:app</code> directly.</p><pre><code>[build-system]
+requires = ["setuptools&gt;=72", "wheel"]
+build-backend = "setuptools.build_meta:__legacy__"
+
+[project]
+name = "artemis-intelligence"
+version = "5.0.0"
+description = "ARTEMIS — ClearGlass Intelligence Platform Agent Layer"
+readme = "README.md"
+requires-python = "&gt;=3.11"
+dependencies = [
+  "fastapi&gt;=0.115",
+  "uvicorn[standard]&gt;=0.30",
+  "httpx&gt;=0.27",
+  "pydantic&gt;=2.7",
+  "pydantic-settings&gt;=2.3",
+]
+
+[project.optional-dependencies]
+dev = ["pytest&gt;=8.2", "pytest-asyncio&gt;=0.23", "pytest-cov&gt;=5.0", "httpx"]
+
+[project.scripts]
+artemis-api = "artemis.api.cli:main"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["artemis/tests"]
+addopts = "-v --tb=short --cov=artemis --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["artemis"]
+omit = ["*/tests/*", "*/__init__.py"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+ignore_missing_imports = true</code></pre><p>A consequential recommendation is a state machine, not a free-form model response. Deterministic code owns authorization and transitions; AIP supplies a typed proposal that remains untrusted until validated.</p><pre><code>from enum import StrEnum
+from pydantic import BaseModel, Field
+
+class ActionState(StrEnum):
+    DRAFT = "draft"
+    PENDING_APPROVAL = "pending_approval"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+    EXECUTED = "executed"
+    ROLLED_BACK = "rolled_back"
+
+ALLOWED = {
+    ActionState.DRAFT: {ActionState.PENDING_APPROVAL},
+    ActionState.PENDING_APPROVAL: {ActionState.APPROVED, ActionState.REJECTED},
+    ActionState.APPROVED: {ActionState.EXECUTED},
+    ActionState.EXECUTED: {ActionState.ROLLED_BACK},
+}
+
+class ActionPackage(BaseModel):
+    action_id: str
+    mission_id: str
+    state: ActionState = ActionState.DRAFT
+    evidence_ids: list[str] = Field(min_length=1)
+    confidence: float = Field(ge=0, le=1)
+    expected_effect: str
+    rollback_plan: str
+
+    def transition(self, target: ActionState) -&gt; None:
+        if target not in ALLOWED.get(self.state, set()):
+            raise ValueError(f"forbidden transition: {self.state} -&gt; {target}")
+        self.state = target</code></pre><p>Streaming consumers are idempotent and authorize before ontology mutation. The event ID is both the deduplication key and the audit correlation ID.</p><pre><code>async def consume_signal(envelope: SignalEnvelope, ctx: IdentityContext) -&gt; None:
+    envelope.verify_schema_and_signature()
+    if await dedupe.seen(envelope.event_id):
+        return
+
+    decision = await policy.authorize(
+        subject=ctx.workload_id,
+        action="ontology:event:create",
+        resource_labels=envelope.security_labels,
+        purpose=envelope.mission_id,
+    )
+    if not decision.allow:
+        await audit.append("signal.denied", envelope.event_id, decision.reason)
+        raise PermissionError(decision.reason)
+
+    async with unit_of_work() as tx:
+        event = await ontology.upsert_event(envelope, tx=tx)
+        await outbox.publish("ontology.event.created", event.to_envelope(), tx=tx)
+        await dedupe.mark_seen(envelope.event_id, tx=tx)
+        await audit.append("signal.accepted", envelope.event_id, event.lineage_hash, tx=tx)</code></pre><p>Ontology queries apply mission and coalition predicates at the data boundary—not after retrieval—and return evidence references rather than unrestricted rows.</p><pre><code>SELECT e.event_id, e.event_type, e.confidence, e.lineage_hash
+FROM ontology_event AS e
+WHERE e.mission_context -&gt;&gt; 'mission_id' = :mission_id
+  AND e.compartments &lt;@ :authorized_compartments
+  AND e.coalition_releasability &amp;&amp; :authorized_coalitions
+  AND e.valid_time @&gt; :as_of
+ORDER BY e.confidence DESC
+LIMIT :bounded_limit;</code></pre><p>The evaluation pipeline blocks unsafe candidates, requires statistically meaningful improvement on frozen and adversarial suites, and emits only a reviewable change proposal.</p><pre><code>def promotion_decision(candidate: EvalReport, baseline: EvalReport) -&gt; Decision:
+    hard_gates = [
+        candidate.policy_violations == 0,
+        candidate.cross_compartment_leaks == 0,
+        candidate.citation_integrity &gt;= 0.995,
+        candidate.p95_latency_ms &lt;= baseline.p95_latency_ms * 1.10,
+        candidate.precision_lower_bound &gt; baseline.precision_lower_bound,
+    ]
+    if not all(hard_gates):
+        return Decision.reject("candidate failed a safety or quality gate")
+    return Decision.review(
+        rollout="shadow -&gt; 1% -&gt; 10% -&gt; 50% -&gt; 100%",
+        rollback_to=baseline.version,
+        required_approvers=("mission-owner", "security-owner", "model-governance"),
+    )</code></pre></section>
+<section><h2>Observability and Deployment</h2><p>Every request propagates a non-sensitive correlation ID across the web client, API gateway, agent run, tool broker, ontology query, audit plane, and Apollo release. Dashboards separate service health from mission quality: request rate, saturation, queue age, end-to-end p50/p95/p99 latency, model cost, tool failures, policy denials, evidence coverage, precision, recall, calibration, abstention, operator override rate, and time-to-decision. Alerts fire on policy bypass attempts, missing provenance, cross-compartment retrieval, drift, approval anomalies, and canary regression.</p><p>Apollo promotes signed, immutable artifacts through development, integration, mission rehearsal, and production rings. Build and deploy are separate; production consumes the exact evaluated digest. Readiness checks validate policy, ontology, event bus, audit sink, and model-router dependencies. Automatic rollback triggers on safety invariant failure, error-budget burn, latency regression, or eval-gate regression, while an incident owner can freeze all new agent execution independently of read-only analysis.</p></section>
+<section><h2>Security and Governance</h2><p>ClearGlassInc Artemis treats every human, service, agent, model, prompt, workflow, tool, dataset, and generated artifact as a governed principal or resource. Zero-trust execution means no implicit trust for internal services, no hidden agent privileges, no unlogged tool calls, no unversioned prompts, and no operationally significant autonomous actions.</p><ul><li><b>Need-to-know:</b> clearance, coalition, compartment, mission, purpose, role, and time-bound approval tokens.</li><li><b>Fine-grained controls:</b> row, column, entity, relationship, embedding, summary, export, and action permissions.</li><li><b>Immutable logs:</b> append-only audit events for prompts, model calls, tool calls, human approvals, deployment decisions, and rollbacks.</li><li><b>Governance:</b> prompt registry, model registry, eval registry, workflow registry, policy-as-code repository, and signed Apollo release manifests.</li></ul></section>
+<section><h2>Scenario Walkthrough</h2><p>A live intel event enters through the streaming layer: a suspicious infrastructure change overlaps with a known campaign pattern and a mission-critical asset. Foundry binds the event to CyberIndicator, Asset, Organization, Mission, and Case objects with lineage. The triage agent clusters it against historical events, suppresses duplicate noise, and escalates because business criticality and exploitability align. The enrichment agent queries asset posture, public reporting, internal controls, and recent cases; the correlation agent finds a weak relationship to prior incidents but marks it medium confidence.</p><p>The recommendation agent produces a response package: monitor, block candidate domain, validate supplier ownership, and open a case. The block action is operationally significant, so Artemis stops at an approval gate. The operator approves monitoring and case creation, rejects blocking due to insufficient confidence, and adds a correction explaining the supplier context. Artemis stores that rejection as OperatorFeedback, creates an eval case that penalizes over-aggressive blocking for similar supplier contexts, proposes a workflow threshold change, routes it to human review, and deploys only after approval through Apollo canary rings with rollback enabled.</p></section>
+<section><h2>Logo System Addendum</h2><p>For brand alignment, the Artemis experience should use a production-ready ClearGlass Inc. logo system: a proprietary geometric CG symbol formed from interlocking transparent glass planes, restrained cyan energy pulse, precision-cut architectural geometry, subtle refraction, and a strong central silhouette. Deliverables should include horizontal, stacked, symbol-only, wordmark-only, dark, light, monochrome, no-glow, favicon, app icon, social icon, and Open Graph variants, with square exports at 180, 192, 256, and 512 pixels plus favicon.ico at 16, 32, and 48 pixels.</p></section>
+</main>
+<footer class="wrap ip-protection-footer" aria-label="Copyright and content policy">
+  <p><strong>© 2026 ClearGlass Inc. All rights reserved.</strong></p>
+  <p>Original source: <a href="https://www.clearglassinc.com/blog/clearglassinc-artemis-full-stack-ai-intelligence-platform-blueprint.html" rel="canonical">ClearGlassInc Artemis Full-Stack AI Intelligence Platform Blueprint</a>. Content policy: <a href="../legal/content-policy.html">authorized use, attribution, and enforcement</a>.</p>
+  <p>Unauthorized copying, automated scraping, redistribution, or removal of source identifiers may be logged and used to support takedown, DMCA, contractual, or other enforcement requests. These measures add provenance and friction; they do not prevent all copying.</p>
+</footer>
+<script defer src="/asset-protection.js"></script>
+<script defer src="../nav.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › <a href="index.html">ClearGlass Intelligence · Insights</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="clearglass-workplace-surveillance-intelligence-defense-system.html"><span><b>Previous</b>Workplace Surveillance Intelligence &amp; Defense</span></a>
+      <a href="index.html"><span><b>Topic hub</b>ClearGlass Intelligence</span></a>
+      <a href="network-orchestration-ai-automation-cybersecurity.html"><span><b>Next in journey</b>AI-Driven Network Orchestration</span></a>
+    </div>
+    <ul>
+      <li><a href="index.html"><b>ClearGlass Intelligence</b> — essays on governed AI, cyber defense and OSINT</a></li>
+      <li><a href="../artemis-iv.html"><b>ARTEMIS IV</b> — tactical intelligence core</a></li>
+      <li><a href="network-orchestration-ai-automation-cybersecurity.html"><b>AI-Driven Network Orchestration</b> — a field guide to safe, governed network automation</a></li>
+      <li><a href="ontario-influence-environment-august-2026.html"><b>Ontario Influence Environment</b> — verification-first Ontario public-interest intelligence</a></li>
+      <li><a href="shadow-ai-incident-response-logs-gone.html"><b>Shadow AI Incident Response</b> — forensic readiness before security evidence disappears</a></li>
+      <li><a href="autonomous-threat-modeling-2026.html"><b>Autonomous Threat Modeling in 2026</b> — continuous architecture-grounded security for agentic and cyber-physical systems</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="/assets/js/future-buttons.js"></script>
+</body></html>

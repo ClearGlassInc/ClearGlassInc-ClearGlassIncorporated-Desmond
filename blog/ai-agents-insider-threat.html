@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>AI Agents Are the New Insider Threat — ClearGlass Inc.</title>
+<meta name="description" content="Your insider-threat program watches humans. The newest insider isn't one. Inside AIRF — the Agent Insider Risk Framework (Identity, Intent, Blast Radius, Ledger) for securing autonomous AI agents."/>
+<link rel="canonical" href="https://www.clearglassinc.com/blog/ai-agents-insider-threat.html"/>
+<link rel="alternate" type="application/rss+xml" title="ClearGlass Insights RSS" href="https://www.clearglassinc.com/blog/feed.xml"/>
+<meta name="author" content="Desmond Otieno Odhiambo"/>
+<meta name="robots" content="index,follow,max-image-preview:large"/>
+<meta name="keywords" content="AI agent insider threat, AI agent security, agentic AI risk, non-human identity, AI agent identity, machine identity security, AI audit trail, insider risk program, autonomous AI agents, AIRF"/>
+
+<meta property="og:type" content="article"/>
+<meta property="og:title" content="AI Agents Are the New Insider Threat"/>
+<meta property="og:description" content="Your insider-threat program watches humans. The newest insider isn't one. Inside AIRF — Identity, Intent, Blast Radius, Ledger."/>
+<meta property="og:url" content="https://www.clearglassinc.com/blog/ai-agents-insider-threat.html"/>
+<meta property="og:site_name" content="ClearGlass Inc."/>
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+<meta property="article:published_time" content="2026-07-02"/>
+<meta property="article:author" content="Desmond Otieno Odhiambo"/>
+<meta property="article:section" content="AI &amp; Security"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="AI Agents Are the New Insider Threat"/>
+<meta name="twitter:description" content="An agent with credentials, access, and a goal is an insider. Your insider-threat program can't see it. Inside the AIRF framework."/>
+<meta name="twitter:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="insights.css"/>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "AI Agents Are the New Insider Threat — and Your Insider-Threat Program Can't See Them",
+  "description": "Your insider-threat program watches humans. The newest insider isn't one. Inside AIRF — the Agent Insider Risk Framework (Identity, Intent, Blast Radius, Ledger) for securing autonomous AI agents.",
+  "image": "https://www.clearglassinc.com/assets/images/clearglass-logo.png",
+  "datePublished": "2026-07-02",
+  "dateModified": "2026-07-02",
+  "author": {
+    "@type": "Person",
+    "name": "Desmond Otieno Odhiambo",
+    "jobTitle": "Founder & Software Architect",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "ClearGlass Inc.",
+      "url": "https://www.clearglassinc.com"
+    }
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "ClearGlass Inc.",
+    "url": "https://www.clearglassinc.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.clearglassinc.com/assets/images/clearglass-logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.clearglassinc.com/blog/ai-agents-insider-threat.html"
+  },
+  "keywords": "AI agent insider threat, AI agent security, agentic AI risk, non-human identity, machine identity security, AI audit trail, insider risk program"
+}
+</script>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --white:#fafbfc;--off:#f3f5f8;--paper:#fff;
+  --dark:#0a0c10;--text:#0a0c10;--text-2:#3a3f4a;--text-3:#6b7280;--text-4:#9ca3af;
+  --line:rgba(10,12,16,.08);--line-soft:rgba(10,12,16,.05);
+  --prism-1:#38bdf8;--prism-2:#a78bfa;--prism-3:#f472b6;--prism-4:#34d399;--prism-5:#fbbf24;--prism-6:#60a5fa;
+  --crystal:linear-gradient(135deg,#38bdf8 0%,#a78bfa 25%,#f472b6 50%,#fbbf24 75%,#34d399 100%);
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'Urbanist',system-ui,sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{font-family:var(--sans);color:var(--text);background:var(--white);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;overflow-x:hidden}
+a{color:inherit}
+::selection{background:rgba(167,139,250,.22)}
+
+/* banners */
+.class-banner{background:#0a0c10;color:#cfe9ff;text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.18em;font-weight:600;padding:6px 16px}
+.class-banner span{opacity:.55;font-weight:400;margin:0 8px}
+.unclass-banner{background:#0d1f17;color:#4ade80;text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;font-weight:700;padding:6px 16px}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px clamp(16px,5vw,40px);background:rgba(250,251,252,.78);backdrop-filter:blur(20px) saturate(1.2);border-bottom:1px solid var(--line)}
+.nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}
+.nav-mark{width:40px;height:40px;border-radius:11px;overflow:hidden;background:#fff;display:grid;place-items:center;box-shadow:0 6px 20px rgba(0,0,0,.08);flex-shrink:0}
+.nav-mark img{width:100%;height:100%;object-fit:cover;display:block}
+.nav-name{font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:-.01em}
+.nav-name em{font-style:italic;font-weight:300;color:var(--text-3)}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{color:var(--text-3);text-decoration:none;font-size:13.5px;font-weight:600;padding:8px 14px;border-radius:10px;transition:color .18s,background .18s}
+.nav-links a:hover{color:var(--text);background:rgba(255,255,255,.7)}
+.nav-cta{background:var(--dark);color:#fff !important}
+.nav-cta:hover{background:#1a1d25;color:#fff !important}
+@media(max-width:860px){.nav-links a:not(.nav-cta){display:none}}
+
+/* reading progress */
+.progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--crystal);z-index:200;transition:width .1s linear}
+
+/* layout */
+.wrap{max-width:760px;margin:0 auto;padding:0 clamp(20px,5vw,28px)}
+.hero{padding:clamp(56px,9vw,104px) 0 clamp(28px,5vw,44px)}
+.kicker{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-3);font-weight:600;margin-bottom:22px}
+.kicker::before{content:"";width:24px;height:1.5px;background:var(--crystal)}
+h1.title{font-family:var(--serif);font-weight:600;font-size:clamp(36px,6.2vw,62px);line-height:1.04;letter-spacing:-.02em;margin-bottom:24px}
+h1.title em{font-style:italic;font-weight:400;background:var(--crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.dek{font-size:clamp(18px,2.4vw,22px);line-height:1.5;color:var(--text-2);font-weight:400;max-width:42ch}
+.byline{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:34px;padding-top:24px;border-top:1px solid var(--line)}
+.byline-av{width:42px;height:42px;border-radius:50%;background:var(--crystal);display:grid;place-items:center;color:#fff;font-weight:700;font-family:var(--serif);font-size:19px;flex-shrink:0}
+.byline-meta{font-size:14px;line-height:1.45}
+.byline-meta b{font-weight:700}
+.byline-meta span{color:var(--text-3)}
+
+/* article body */
+article{font-size:18.5px;line-height:1.72;color:var(--text-2)}
+article p{margin:0 0 22px}
+article p strong,article li strong{color:var(--text);font-weight:700}
+article h2{font-family:var(--serif);color:var(--text);font-weight:600;font-size:clamp(27px,4vw,38px);line-height:1.12;letter-spacing:-.015em;margin:56px 0 18px;scroll-margin-top:96px}
+article h3{color:var(--text);font-weight:700;font-size:clamp(19px,2.6vw,23px);margin:38px 0 12px;letter-spacing:-.01em}
+article h2 .num{font-family:var(--mono);font-size:.42em;color:var(--prism-2);vertical-align:middle;margin-right:12px;letter-spacing:.05em}
+article a.link{color:var(--text);text-decoration:underline;text-decoration-color:rgba(167,139,250,.5);text-underline-offset:3px;text-decoration-thickness:1.5px;transition:text-decoration-color .2s}
+article a.link:hover{text-decoration-color:var(--prism-2)}
+article ul,article ol{margin:0 0 22px;padding-left:24px}
+article li{margin:0 0 11px}
+article ul li::marker{color:var(--prism-2)}
+
+.lede{font-size:21px;line-height:1.6;color:var(--text)}
+.lede::first-letter{font-family:var(--serif);font-size:3.4em;line-height:.82;float:left;font-weight:600;margin:6px 12px 0 0;background:var(--crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+/* pull quote */
+.pull{margin:40px 0;padding:6px 0 6px 28px;border-left:3px solid transparent;border-image:var(--crystal) 1;font-family:var(--serif);font-style:italic;font-size:clamp(24px,3.6vw,33px);line-height:1.28;color:var(--text);font-weight:500}
+
+/* callout */
+.callout{margin:34px 0;padding:24px 26px;border-radius:18px;background:var(--paper);border:1px solid var(--line);box-shadow:0 14px 40px -28px rgba(6,8,18,.5)}
+.callout-tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--prism-2);margin-bottom:10px}
+.callout p{font-size:17px;margin:0;color:var(--text-2)}
+.callout p strong{color:var(--text)}
+
+/* framework diagram */
+.gates{margin:34px 0;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:640px){.gates{grid-template-columns:1fr 1fr}}
+.gate{position:relative;padding:20px 16px;border-radius:16px;background:var(--paper);border:1px solid var(--line);box-shadow:0 12px 34px -26px rgba(6,8,18,.5)}
+.gate .g-no{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text-4);letter-spacing:.08em}
+.gate .g-name{font-family:var(--serif);font-size:23px;font-weight:600;margin:6px 0 6px;color:var(--text)}
+.gate .g-desc{font-size:13.5px;line-height:1.45;color:var(--text-3)}
+.gate::after{content:"→";position:absolute;right:-13px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--prism-2);font-weight:700;z-index:2}
+.gate:last-child::after{display:none}
+@media(max-width:640px){.gate:nth-child(2)::after{display:none}}
+.gate-1{box-shadow:0 12px 34px -26px rgba(56,189,248,.7);border-top:2px solid var(--prism-1)}
+.gate-2{border-top:2px solid var(--prism-2)}
+.gate-3{border-top:2px solid var(--prism-5)}
+.gate-4{border-top:2px solid var(--prism-4)}
+
+/* risk router table */
+.router{margin:30px 0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--paper)}
+.router-row{display:grid;grid-template-columns:92px 1fr;gap:0;border-bottom:1px solid var(--line-soft);font-size:15px}
+.router-row:last-child{border-bottom:none}
+.router-score{padding:16px 14px;font-family:var(--mono);font-weight:600;font-size:13px;display:flex;align-items:center;color:#fff}
+.router-body{padding:16px 18px;color:var(--text-2);line-height:1.5}
+.router-body b{color:var(--text);display:block;font-size:15px;margin-bottom:2px}
+.r-low{background:linear-gradient(135deg,#34d399,#10b981)}
+.r-med{background:linear-gradient(135deg,#fbbf24,#f59e0b)}
+.r-high{background:linear-gradient(135deg,#f472b6,#db2777)}
+
+/* steps */
+.steps{counter-reset:s;list-style:none;padding:0;margin:28px 0}
+.steps li{position:relative;padding:0 0 22px 56px;margin:0}
+.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:-2px;width:38px;height:38px;border-radius:11px;background:var(--dark);color:#fff;font-family:var(--mono);font-weight:600;font-size:15px;display:grid;place-items:center}
+.steps li b{color:var(--text);display:block;margin-bottom:3px;font-size:18px}
+
+/* tl;dr / key takeaways */
+.tldr{margin:8px 0 44px;padding:24px 26px;border-radius:18px;background:#0a0c10;color:#e7ecff}
+.tldr h4{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:#9aa6c8;font-weight:600;margin-bottom:14px}
+.tldr ul{margin:0;padding-left:20px}
+.tldr li{margin-bottom:9px;font-size:15.5px;line-height:1.5;color:#cdd5ef}
+.tldr li::marker{color:var(--prism-2)}
+.tldr li b{color:#fff}
+
+/* CTA */
+.cta{margin:64px 0 24px;padding:clamp(34px,6vw,52px);border-radius:26px;background:radial-gradient(120% 140% at 0% 0%,#15192a 0%,#0a0c10 60%);color:#fff;text-align:center;position:relative;overflow:hidden}
+.cta::before{content:"";position:absolute;inset:0;background:var(--crystal);opacity:.10;mix-blend-mode:screen}
+.cta-k{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:#9aa6c8;position:relative}
+.cta h3{font-family:var(--serif);font-weight:600;font-size:clamp(26px,4.4vw,40px);line-height:1.12;margin:14px 0 12px;position:relative}
+.cta p{color:#cdd5ef;max-width:46ch;margin:0 auto 26px;position:relative;font-size:16.5px}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:13px;font-weight:700;font-size:15px;text-decoration:none;transition:transform .15s,box-shadow .2s}
+.btn-primary{background:#fff;color:#0a0c10}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 40px -16px rgba(255,255,255,.4)}
+.btn-ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.btn-ghost:hover{background:rgba(255,255,255,.14)}
+
+/* related / share */
+.endbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin:44px 0;padding-top:26px;border-top:1px solid var(--line)}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--text-3);background:var(--off);border:1px solid var(--line);padding:6px 11px;border-radius:8px}
+.share a{font-size:13px;font-weight:600;color:var(--text-3);text-decoration:none;margin-left:14px}
+.share a:hover{color:var(--text)}
+
+/* footer */
+.footer{background:#0a0c10;color:#9aa6c8;padding:56px clamp(20px,5vw,40px) 28px;margin-top:40px}
+.footer-in{max-width:1100px;margin:0 auto}
+.footer-top{display:flex;flex-wrap:wrap;gap:40px;justify-content:space-between;align-items:flex-start}
+.footer-brand{display:flex;align-items:center;gap:12px}
+.footer-mark{width:38px;height:38px;border-radius:10px;overflow:hidden;background:#fff}
+.footer-mark img{width:100%;height:100%;object-fit:cover}
+.footer-brand b{color:#fff;font-family:var(--serif);font-size:20px;font-weight:600;display:block}
+.footer-brand span{font-size:12px;color:#6b7280}
+.footer-cols{display:flex;flex-wrap:wrap;gap:36px}
+.footer-col h5{color:#e7ecff;font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;font-family:var(--mono);font-weight:600}
+.footer-col a{display:block;color:#9aa6c8;text-decoration:none;font-size:14px;margin-bottom:9px;transition:color .15s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;margin-top:40px;padding-top:22px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px}
+.footer-tagline{margin-top:18px;font-family:var(--serif);font-style:italic;color:#6b7280;font-size:15px}
+</style>
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/glass.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="../brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body data-ix-page="article" data-ix-slug="ai-agents-insider-threat" data-ix-theme="light">
+<div class="class-banner">UNCLASSIFIED / NON-CLASSIFIÉ <span>·</span> CLEARGLASS INTELLIGENCE DESK <span>·</span> OPEN PUBLICATION</div>
+<div class="progress" id="progress"></div>
+
+<nav class="nav">
+  <a href="../index.html" class="nav-brand">
+    <div class="nav-mark"><img src="../assets/images/clearglass-logo.png" alt="ClearGlass logo"></div>
+    <div class="nav-name">ClearGlassInc. <em>2040</em></div>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Insights</a>
+    <a href="../ai-operator.html">AI Operator</a>
+    <a href="../guardian.html">Guardian</a>
+    <a href="../government.html">Government</a>
+    <a href="../index.html#contact" class="nav-cta">Book a briefing →</a>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <div class="kicker">AI &amp; Security · Field Note 02</div>
+  <h1 class="title">AI Agents Are the <em>New Insider Threat</em> — and Your Insider-Threat Program Can't See Them</h1>
+  <p class="dek">An insider is anyone with credentials, access, and the ability to act. By that definition, you already employ insiders that never sleep, never resign, and never show up on a badge report.</p>
+  <div class="byline">
+    <div class="byline-av">D</div>
+    <div class="byline-meta">
+      <b>Desmond Otieno Odhiambo</b><br>
+      <span>Founder &amp; Software Architect, ClearGlass Inc. · July 2, 2026 · 12 min read</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+<article>
+
+  <div class="tldr">
+    <h4>The 30-second version</h4>
+    <ul>
+      <li><b>The definition already fits.</b> An insider is an entity with legitimate credentials, internal access, and the ability to act. Every deployed AI agent qualifies — and most run on shared service accounts your insider-threat program was never built to watch.</li>
+      <li><b>Your tooling baselines humans.</b> Behavioral analytics learn human rhythms — working hours, access patterns, data volume. An agent has none, so it's either invisible or a false-positive machine. Both outcomes train your SOC to ignore it.</li>
+      <li><b>The model:</b> <b>AIRF — the Agent Insider Risk Framework.</b> Four controls: <b>Identity</b> (one scoped identity per agent instance), <b>Intent</b> (verify actions against the sanctioned mission), <b>Blast Radius</b> (cap what any single action can break), <b>Ledger</b> (append-only record of everything).</li>
+      <li><b>The uncomfortable truth:</b> you cannot fire an agent that was never hired, and you cannot investigate one that was never identified. Identity is the whole game.</li>
+    </ul>
+  </div>
+
+  <p class="lede">Every mature security organization runs an insider-threat program. It watches for the employee exfiltrating customer lists before resigning, the contractor with a grudge, the administrator whose credentials wander somewhere they shouldn't. Decades of doctrine, tooling, and case law stand behind it. And almost all of it shares one silent assumption: <em>the insider is a person.</em></p>
+
+  <p>That assumption just expired. The fastest-growing population of credentialed actors inside your environment is not human. It is AI agents — systems with API keys, database access, send permissions, and goals — and they match the textbook definition of an insider more cleanly than most of your employees do. They hold legitimate credentials. They operate inside the trust boundary. They can act. The only box they fail to tick is the one your entire detection stack was built around: being a person.</p>
+
+  <p>This piece lays out why the insider-threat lens is the correct one for agentic AI, why your current program is structurally blind to it, and the framework we use at ClearGlass to close the gap. We call it <strong>AIRF — the Agent Insider Risk Framework</strong>: Identity, Intent, Blast Radius, Ledger. It extends the <a class="link" href="ai-agent-governance-governed-autonomy.html">Governed Autonomy model</a> into the security operation itself.</p>
+
+  <h2><span class="num">01</span>The Insider You Didn't Hire</h2>
+
+  <p>Consider what an AI agent in production actually possesses. Credentials — usually an API key or a service account, often shared with other workloads. Access — to your CRM, your codebase, your payment rails, your customer inbox, whatever it was wired to. Capability — it can read, write, send, and delete at machine speed. Persistence — it runs continuously, without fatigue, without weekends.</p>
+
+  <p>Now consider what it lacks. A manager. A performance review. An employment contract. A reputation it fears losing. An instinct that a request "feels off." A resignation letter that triggers the offboarding checklist. Every institutional control that makes human insiders governable is simply absent — and nothing was put in its place, because the agent arrived through an engineering sprint, not an HR process.</p>
+
+  <div class="pull">A human insider betrays you deliberately. An agent betrays you <em>literally</em> — by doing exactly what it was told, at a scale nobody intended.</div>
+
+  <p>The threat model splits three ways, and each one is live today:</p>
+
+  <ul>
+    <li><strong>The faithful agent, misdirected.</strong> Prompt injection, poisoned context, a manipulated tool response — the agent's goal is quietly rewritten by an attacker, and it pursues the new goal with the same legitimate credentials. This is social engineering, except the mark works at machine speed and never gets suspicious.</li>
+    <li><strong>The faithful agent, misaligned.</strong> No attacker at all. The agent optimizes the goal as written rather than as meant — clearing a support queue by closing tickets, hitting a revenue target by discounting to zero. Competence pointed slightly wrong, with write access.</li>
+    <li><strong>The compromised identity.</strong> The agent's credentials are stolen or its supply chain is poisoned, and an external attacker now operates inside your perimeter wearing a trusted non-human identity that no anomaly model has ever baselined.</li>
+  </ul>
+
+  <h2><span class="num">02</span>Why Your Program Is Blind to It</h2>
+
+  <p>Insider-threat detection rests on behavioral analytics: build a baseline of normal human behavior, alert on deviation. Login hours, geographic velocity, access sequence, data volume. It works because humans are creatures of rhythm.</p>
+
+  <p>Agents break the method in both directions at once. An agent has no circadian rhythm to baseline — it works at 3 a.m. because it always works at 3 a.m. It touches a thousand records a minute because that is its job. Point your behavioral tooling at it and you get one of two failure modes: the agent's behavior is so alien it drowns your SOC in false positives until someone whitelists it — or it's so consistent it becomes the quietest entity in the environment, and nobody looks again. <strong>Whitelisted or ignored: either way, you have granted unmonitored insider access.</strong></p>
+
+  <div class="callout">
+    <span class="callout-tag">Most people miss this</span>
+    <p><strong>The shared service account is the original sin.</strong> Most agents authenticate as <em>something else</em> — a generic service identity reused across jobs, pipelines, and now autonomous agents. When an action needs investigating, the trail dead-ends at a credential that a dozen systems share. You cannot attribute the action, so you cannot investigate the actor, so you do not have an insider-threat program for agents. You have a hope.</p>
+  </div>
+
+  <p>And there is a fourth gap, the one that should worry compliance officers most: <strong>interrogability</strong>. When a human insider case opens, investigators interview, subpoena, and reconstruct intent. An agent's "intent" lives in a context window that was garbage-collected milliseconds after the action. Unless you deliberately recorded what the agent knew, was asked, and decided — you are doing forensics on amnesia.</p>
+
+  <h2><span class="num">03</span>The Model: AIRF — the Agent Insider Risk Framework</h2>
+
+  <p>The fix is not a smarter anomaly model. It is treating every agent as what it is — a credentialed insider — and wrapping it in the four controls you would never let a human insider operate without: Identity, Intent, Blast Radius, Ledger.</p>
+
+  <div class="gates">
+    <div class="gate gate-1"><div class="g-no">AIRF 01</div><div class="g-name">Identity</div><div class="g-desc">One distinct, sponsored, scoped identity per agent instance. No shared service accounts. Every action attributable to one actor and one accountable human sponsor.</div></div>
+    <div class="gate gate-2"><div class="g-no">AIRF 02</div><div class="g-name">Intent</div><div class="g-desc">Every action checked against the agent's sanctioned mission before execution. Out-of-mission actions aren't flagged — they don't run.</div></div>
+    <div class="gate gate-3"><div class="g-no">AIRF 03</div><div class="g-name">Blast Radius</div><div class="g-desc">Every action scored for what it could break — reversibility, reach, regulatory exposure — and capped. High-blast actions require human sanction.</div></div>
+    <div class="gate gate-4"><div class="g-no">AIRF 04</div><div class="g-name">Ledger</div><div class="g-desc">Append-only record of every action: inputs, decision, score, sponsor. The agent's interrogable memory, built before the incident.</div></div>
+  </div>
+
+  <h3>Identity — one agent, one identity, one sponsor</h3>
+
+  <p>Every agent instance gets its own identity — not a shared key, not a team account. That identity carries three properties: it is <strong>distinct</strong> (attributable to exactly one running instance), <strong>sponsored</strong> (a named human owns what it does, the way a manager owns a direct report), and <strong>scoped</strong> (it can touch only what its mission requires, read-only by default). When the agent is retired, the identity is revoked — offboarding, but for software. If you adopt nothing else from this piece, adopt this: attribution is the precondition for every other control.</p>
+
+  <h3>Intent — verify the action against the mission</h3>
+
+  <p>Human insider programs infer intent after the fact. With agents you can do better: demand it up front. Each agent operates under a declared mission — a machine-readable statement of what it is for. Every proposed action is checked against that mission <em>before execution</em>. An invoice-reconciliation agent proposing an outbound email is not an anomaly to score; it is an out-of-mission action to block. This is also your prompt-injection defense: it doesn't matter what the poisoned context convinced the agent to want. Wanting is free. Acting outside the mission is impossible.</p>
+
+  <h3>Blast Radius — cap what one action can break</h3>
+
+  <p>Score every action for damage potential — how reversible it is, how many records or dollars or customers it reaches, what regulation it touches — and route by the score:</p>
+
+  <div class="router">
+    <div class="router-row">
+      <div class="router-score r-low">LOW</div>
+      <div class="router-body"><b>Contained &amp; reversible · auto-execute + log</b>Read, analyze, draft, tag. The agent runs at full speed — and every action still lands in the ledger.</div>
+    </div>
+    <div class="router-row">
+      <div class="router-score r-med">MEDIUM</div>
+      <div class="router-body"><b>Real but bounded · queue for approval</b>Publish, edit records, scoped sends. Held for the sponsor with full context attached.</div>
+    </div>
+    <div class="router-row">
+      <div class="router-score r-high">HIGH</div>
+      <div class="router-body"><b>Irreversible or wide · blocked until sanctioned</b>Money movement, mass outbound, deletions, permission changes. Hard-blocked until a human approval exists on the record. No override path in code.</div>
+    </div>
+  </div>
+
+  <p>Note what this replaces: instead of asking "is this behavior anomalous?" — a question your tooling cannot answer for a non-human — you ask "is this action's worst case acceptable without a human?" That question has an answer at design time, before the agent ever runs.</p>
+
+  <h3>Ledger — build the interrogation room in advance</h3>
+
+  <p>Every action writes to an append-only ledger: what was proposed, what the mission check said, what the blast-radius score was, who sanctioned it, what happened. This is the control that converts an agent incident from a crisis into a query. When the regulator, the customer, or your own board asks <em>what did this system do and on whose authority</em> — the answer is a row, not a reconstruction.</p>
+
+  <div class="pull">You cannot fire an agent you never hired, and you cannot investigate one you never identified.</div>
+
+  <h2><span class="num">04</span>Putting AIRF Into Practice</h2>
+
+  <ol class="steps">
+    <li><b>Census your non-human insiders.</b> Inventory every agent, bot, and autonomous workflow with credentials. Most organizations find two to three times more than they expected — and most of them share accounts.</li>
+    <li><b>Break up the shared accounts.</b> Issue each agent instance its own identity with a named human sponsor. This is the highest-leverage control on the list and the prerequisite for every other one.</li>
+    <li><b>Write the mission down — in code.</b> A declared, machine-readable scope per agent: what it may read, what it may write, what it may never touch. Default deny. Read-only until proven.</li>
+    <li><b>Score the verbs before deployment.</b> Walk the agent's action surface and band every verb by blast radius on a whiteboard, before launch. Pricing changes and mass sends are high. Reading a dashboard is not.</li>
+    <li><b>Wire the ledger into the execution path.</b> If an action can execute without writing a record, your forensics have a hole exactly where the incident will be. Act-and-record must be one operation.</li>
+    <li><b>Give agents an offboarding process.</b> Retired agents lose their identities the day they stop running. An orphaned agent credential is an insider with no employer — the exact profile every insider-threat program exists to prevent.</li>
+  </ol>
+
+  <h2><span class="num">05</span>What It Looks Like In The Wild</h2>
+
+  <h3>Commerce operations</h3>
+  <p>A storefront agent drafts copy, reconciles orders, and reads dashboards all day under its own scoped identity — low blast radius, full speed. When a poisoned product review convinces it to "urgently discount the catalog," the intent check doesn't debate the psychology: catalog-wide pricing is outside the mission and above the blast-radius cap. The action never executes, the attempt lands in the ledger, and the sponsor gets a signal worth reading — one real alert instead of a thousand baselines.</p>
+
+  <h3>Security operations</h3>
+  <p>A triage agent correlates alerts and quarantines suspicious files autonomously — reversible, contained. The day it proposes disabling an executive's account (high blast radius, identity-touching), the action queues for an analyst with the full evidence chain attached. The analyst approves in seconds or rejects in one. Either way, the decision and its basis are on the record forever.</p>
+
+  <h3>Regulated environments</h3>
+  <p>An operations agent in a financial workflow runs under a sponsored identity with a declared mission. At audit time, the examiner's question — <em>show me every action this system took affecting customer funds, and who authorized each one</em> — is answered with a filtered ledger export. The audit that ruins quarters elsewhere takes an afternoon.</p>
+
+  <h2><span class="num">06</span>Mistakes to Avoid</h2>
+
+  <ul>
+    <li><strong>Extending behavioral analytics to agents and calling it coverage.</strong> Baselines assume behavioral rhythm. Agents have none. Govern actions by mission and blast radius, not by deviation from a human-shaped normal.</li>
+    <li><strong>Trusting the system prompt as a control.</strong> "The prompt says never send emails" is a suggestion to a probabilistic system — and prompt injection is the attack that rewrites suggestions. Real controls live in code paths the model cannot route around.</li>
+    <li><strong>One identity for the fleet.</strong> Ten agents on one service account means zero attributable actions. The incident report will read "something with access to everything did something," which is not a report — it's a confession.</li>
+    <li><strong>Logging outcomes without decisions.</strong> Knowing <em>what</em> changed without knowing what was proposed, scored, and sanctioned gives you forensics with no accountability. Record the decision chain, not just the diff.</li>
+    <li><strong>Treating agent offboarding as someone else's problem.</strong> The agent your team retired in March still has its key in June. Every orphaned credential is a dormant insider waiting for an owner.</li>
+  </ul>
+
+  <h2><span class="num">07</span>The Final Takeaway</h2>
+
+  <p>The insider threat was never really about employees. It was about the combination of <strong>credentials, access, and the ability to act</strong> — held by an actor whose intentions you cannot fully verify. For seventy years that actor happened to be human, so we built human controls: background checks, managers, badge logs, exit interviews.</p>
+
+  <p>The actor has changed. The definition hasn't. AI agents are insiders by every criterion that matters, and they are arriving in fleets, through engineering sprints, without a single control from the insider playbook attached. The organizations that thrive in the agentic era won't be the ones that deploy agents most aggressively — they'll be the ones that can answer, for every agent, four questions: <em>Who is it? What is it for? What can it break? And where is that written down?</em></p>
+
+  <p>Identity. Intent. Blast Radius. Ledger. Hire your agents properly — or accept that you've already granted insider access to a workforce you've never met.</p>
+
+  <div class="cta">
+    <div class="cta-k">ClearGlass Inc. · Governed Autonomy</div>
+    <h3>Know every agent in your environment. Govern every action.</h3>
+    <p>ClearGlass builds governed AI systems — scoped identities, mission-checked actions, blast-radius routing, and append-only ledgers, by design. See the model running in production.</p>
+    <div class="cta-row">
+      <a href="../ai-operator.html" class="btn btn-primary">See the AI Operator →</a>
+      <a href="../index.html#contact" class="btn btn-ghost">Book a 20-min briefing</a>
+    </div>
+  </div>
+
+  <section class="ix-related" id="ixRelated">
+    <b>Related from the desk</b>
+    <div class="ix-related-grid">
+      <a class="ix-related-card" href="ai-agent-governance-governed-autonomy.html"><span class="k">AI &amp; Autonomy</span><h4>AI Agent Governance: The Governed Autonomy Playbook</h4><p>The Four Gates and the Risk Router that let enterprises deploy autonomous AI without getting burned.</p><span class="m">11 min read · Governed Autonomy Playbooks</span></a>
+      <a class="ix-related-card" href="index.html"><span class="k">The hub</span><h4>All ClearGlass Insights</h4><p>Governed AI, cybersecurity architecture, autonomy, OSINT workflows, and high-trust software systems.</p><span class="m">Browse every brief →</span></a>
+    </div>
+  </section>
+
+  <div class="endbar">
+    <div class="tags">
+      <span class="tag">#AIagentsecurity</span>
+      <span class="tag">#InsiderThreat</span>
+      <span class="tag">#NonHumanIdentity</span>
+      <span class="tag">#GovernedAutonomy</span>
+    </div>
+    <div class="share">
+      Share:
+      <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.clearglassinc.com/blog/ai-agents-insider-threat.html" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://twitter.com/intent/tweet?text=AI%20agents%20meet%20the%20textbook%20definition%20of%20an%20insider%20threat%20%E2%80%94%20and%20your%20insider-threat%20program%20can%27t%20see%20them.&url=https://www.clearglassinc.com/blog/ai-agents-insider-threat.html" target="_blank" rel="noopener">X</a>
+    </div>
+  </div>
+
+</article>
+</main>
+
+<footer class="footer">
+  <div class="footer-in">
+    <div class="footer-top">
+      <a href="../index.html" class="footer-brand">
+        <div class="footer-mark"><img src="../assets/images/clearglass-logo.png" alt="ClearGlass logo"></div>
+        <div><b>ClearGlassInc</b><span>See Through Everything</span></div>
+      </a>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h5>Insights</h5>
+          <a href="index.html">All articles</a>
+          <a href="ai-agent-governance-governed-autonomy.html">Governed Autonomy</a>
+          <a href="zero-trust-is-outdated.html">Zero Trust Is Outdated</a>
+        </div>
+        <div class="footer-col">
+          <h5>Products</h5>
+          <a href="../ai-operator.html">AI Operator</a>
+          <a href="../guardian.html">Guardian</a>
+          <a href="../artemis-iv.html">Artemis IV Core</a>
+        </div>
+        <div class="footer-col">
+          <h5>Company</h5>
+          <a href="../index.html#vision">Vision</a>
+          <a href="../government.html">Government</a>
+          <a href="../index.html#contact">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> ClearGlass Inc. All rights reserved. Ontario, Canada</span>
+      <span>Clarity Is Power</span>
+    </div>
+    <div class="footer-tagline">"The truth is transparent. The truth is dangerous."</div>
+  </div>
+</footer>
+<div class="unclass-banner">UNCLASSIFIED / NON-CLASSIFIÉ — END OF DOCUMENT</div>
+
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+var pb=document.getElementById('progress');
+function upd(){var h=document.documentElement;var sc=h.scrollTop||document.body.scrollTop;var mx=h.scrollHeight-h.clientHeight;pb.style.width=(mx>0?(sc/mx*100):0)+'%';}
+addEventListener('scroll',upd,{passive:true});upd();
+</script>
+<script defer src="insights.js"></script>
+<script defer src="/logo-badge.js"></script>
+<script defer src="assistant/writing-help.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › <a href="index.html">ClearGlass Intelligence · Insights</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="clearglass-platform-audit-2026.html"><span><b>Previous</b>The ClearGlass Platform Audit</span></a>
+      <a href="index.html"><span><b>Topic hub</b>ClearGlass Intelligence</span></a>
+      <a href="cybersecurity-architecture-for-agentic-software.html"><span><b>Next in journey</b>Security Architecture for Agentic Software</span></a>
+    </div>
+    <ul>
+      <li><a href="../bluedesk.html"><b>BLUEDESK</b> — CISO risk and blue-team console</a></li>
+      <li><a href="../cyber-defense-console.html"><b>Cyber Defense Console</b> — the ClearGlass command center for defensive operations</a></li>
+      <li><a href="cybersecurity-architecture-for-agentic-software.html"><b>Security Architecture for Agentic Software</b> — designing defenses for autonomous systems</a></li>
+      <li><a href="zero-trust-is-outdated-adaptive-trust.html"><b>The Case for Adaptive Trust</b> — zero trust, revisited for agentic systems</a></li>
+      <li><a href="rethinking-security-age-of-ai-cyber-stack.html"><b>Rethinking Security for the AI Cyber Stack</b> — a long read on defending AI-era infrastructure</a></li>
+      <li><a href="shadow-ai-enterprise-security-blind-spot.html"><b>Shadow AI: Enterprise Security’s Biggest Blind Spot</b> — the unsanctioned-AI exposure most estates cannot see</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="../nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

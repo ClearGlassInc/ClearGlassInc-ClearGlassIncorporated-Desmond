@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>The ClearGlass Platform Audit: Upgrading a Governed Monorepo Into a Future-Tech Platform — ClearGlass Inc.</title>
+<meta name="description" content="The full ClearGlass platform audit method: what a governed monorepo already does right, the seven highest-leverage upgrades, a keep/simplify/build refactor map, and the implementation doctrine for a secure, observable, AI-enabled production platform."/>
+<link rel="canonical" href="https://www.clearglassinc.com/blog/clearglass-platform-audit-2026.html"/>
+<link rel="alternate" type="application/rss+xml" title="ClearGlass Insights RSS" href="https://www.clearglassinc.com/blog/feed.xml"/>
+<meta name="author" content="Desmond Otieno Odhiambo"/>
+<meta name="robots" content="index,follow,max-image-preview:large"/>
+<meta name="keywords" content="platform audit, platform engineering, governed AI platform, monorepo architecture, observability, resilience engineering, feature flags, circuit breakers, audit ledger, AI agent platform, production readiness"/>
+
+<meta property="og:type" content="article"/>
+<meta property="og:title" content="The ClearGlass Platform Audit: Upgrading a Governed Monorepo Into a Future-Tech Platform"/>
+<meta property="og:description" content="Most platform audits produce a wishlist. This one produces a doctrine: what to keep, what to simplify, the seven upgrades that actually compound, and the rollout order that never breaks production."/>
+<meta property="og:url" content="https://www.clearglassinc.com/blog/clearglass-platform-audit-2026.html"/>
+<meta property="og:site_name" content="ClearGlass Inc."/>
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+<meta property="article:published_time" content="2026-07-21"/>
+<meta property="article:author" content="Desmond Otieno Odhiambo"/>
+<meta property="article:section" content="Platform Engineering"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="The ClearGlass Platform Audit: Upgrading a Governed Monorepo Into a Future-Tech Platform"/>
+<meta name="twitter:description" content="What to keep, what to simplify, the seven upgrades that compound, and the rollout order that never breaks production. The full ClearGlass platform audit doctrine."/>
+<meta name="twitter:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="insights.css"/>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "The ClearGlass Platform Audit: Upgrading a Governed Monorepo Into a Future-Tech Platform",
+  "description": "The full ClearGlass platform audit method: what a governed monorepo already does right, the seven highest-leverage upgrades, a keep/simplify/build refactor map, and the implementation doctrine for a secure, observable, AI-enabled production platform.",
+  "image": "https://www.clearglassinc.com/assets/images/clearglass-logo.png",
+  "datePublished": "2026-07-21",
+  "dateModified": "2026-07-21",
+  "author": {
+    "@type": "Person",
+    "name": "Desmond Otieno Odhiambo",
+    "jobTitle": "Founder & Software Architect",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "ClearGlass Inc.",
+      "url": "https://www.clearglassinc.com"
+    }
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "ClearGlass Inc.",
+    "url": "https://www.clearglassinc.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.clearglassinc.com/assets/images/clearglass-logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.clearglassinc.com/blog/clearglass-platform-audit-2026.html"
+  },
+  "keywords": "platform audit, platform engineering, governed AI platform, monorepo architecture, observability, resilience engineering, production readiness"
+}
+</script>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --white:#fafbfc;--off:#f3f5f8;--paper:#fff;
+  --dark:#0a0c10;--text:#0a0c10;--text-2:#3a3f4a;--text-3:#6b7280;--text-4:#9ca3af;
+  --line:rgba(10,12,16,.08);--line-soft:rgba(10,12,16,.05);
+  --prism-1:#38bdf8;--prism-2:#a78bfa;--prism-3:#f472b6;--prism-4:#34d399;--prism-5:#fbbf24;--prism-6:#60a5fa;
+  --crystal:linear-gradient(135deg,#38bdf8 0%,#a78bfa 25%,#f472b6 50%,#fbbf24 75%,#34d399 100%);
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'Urbanist',system-ui,sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{font-family:var(--sans);color:var(--text);background:var(--white);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;overflow-x:hidden}
+a{color:inherit}
+::selection{background:rgba(167,139,250,.22)}
+
+/* banners */
+.class-banner{background:#0a0c10;color:#cfe9ff;text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.18em;font-weight:600;padding:6px 16px}
+.class-banner span{opacity:.55;font-weight:400;margin:0 8px}
+.unclass-banner{background:#0d1f17;color:#4ade80;text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;font-weight:700;padding:6px 16px}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px clamp(16px,5vw,40px);background:rgba(250,251,252,.78);backdrop-filter:blur(20px) saturate(1.2);border-bottom:1px solid var(--line)}
+.nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}
+.nav-mark{width:40px;height:40px;border-radius:11px;overflow:hidden;background:#fff;display:grid;place-items:center;box-shadow:0 6px 20px rgba(0,0,0,.08);flex-shrink:0}
+.nav-mark img{width:100%;height:100%;object-fit:cover;display:block}
+.nav-name{font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:-.01em}
+.nav-name em{font-style:italic;font-weight:300;color:var(--text-3)}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{color:var(--text-3);text-decoration:none;font-size:13.5px;font-weight:600;padding:8px 14px;border-radius:10px;transition:color .18s,background .18s}
+.nav-links a:hover{color:var(--text);background:rgba(255,255,255,.7)}
+.nav-cta{background:var(--dark);color:#fff !important}
+.nav-cta:hover{background:#1a1d25;color:#fff !important}
+@media(max-width:860px){.nav-links a:not(.nav-cta){display:none}}
+
+/* reading progress */
+.progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--crystal);z-index:200;transition:width .1s linear}
+
+/* layout */
+.wrap{max-width:760px;margin:0 auto;padding:0 clamp(20px,5vw,28px)}
+.hero{padding:clamp(56px,9vw,104px) 0 clamp(28px,5vw,44px)}
+.kicker{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-3);font-weight:600;margin-bottom:22px}
+.kicker::before{content:"";width:24px;height:1.5px;background:var(--crystal)}
+h1.title{font-family:var(--serif);font-weight:600;font-size:clamp(36px,6.2vw,62px);line-height:1.04;letter-spacing:-.02em;margin-bottom:24px}
+h1.title em{font-style:italic;font-weight:400;background:var(--crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.dek{font-size:clamp(18px,2.4vw,22px);line-height:1.5;color:var(--text-2);font-weight:400;max-width:42ch}
+.byline{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:34px;padding-top:24px;border-top:1px solid var(--line)}
+.byline-av{width:42px;height:42px;border-radius:50%;background:var(--crystal);display:grid;place-items:center;color:#fff;font-weight:700;font-family:var(--serif);font-size:19px;flex-shrink:0}
+.byline-meta{font-size:14px;line-height:1.45}
+.byline-meta b{font-weight:700}
+.byline-meta span{color:var(--text-3)}
+
+/* article body */
+article{font-size:18.5px;line-height:1.72;color:var(--text-2)}
+article p{margin:0 0 22px}
+article p strong,article li strong{color:var(--text);font-weight:700}
+article h2{font-family:var(--serif);color:var(--text);font-weight:600;font-size:clamp(27px,4vw,38px);line-height:1.12;letter-spacing:-.015em;margin:56px 0 18px;scroll-margin-top:96px}
+article h3{color:var(--text);font-weight:700;font-size:clamp(19px,2.6vw,23px);margin:38px 0 12px;letter-spacing:-.01em}
+article h2 .num{font-family:var(--mono);font-size:.42em;color:var(--prism-2);vertical-align:middle;margin-right:12px;letter-spacing:.05em}
+article a.link{color:var(--text);text-decoration:underline;text-decoration-color:rgba(167,139,250,.5);text-underline-offset:3px;text-decoration-thickness:1.5px;transition:text-decoration-color .2s}
+article a.link:hover{text-decoration-color:var(--prism-2)}
+article ul,article ol{margin:0 0 22px;padding-left:24px}
+article li{margin:0 0 11px}
+article ul li::marker{color:var(--prism-2)}
+
+.lede{font-size:21px;line-height:1.6;color:var(--text)}
+.lede::first-letter{font-family:var(--serif);font-size:3.4em;line-height:.82;float:left;font-weight:600;margin:6px 12px 0 0;background:var(--crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+/* pull quote */
+.pull{margin:40px 0;padding:6px 0 6px 28px;border-left:3px solid transparent;border-image:var(--crystal) 1;font-family:var(--serif);font-style:italic;font-size:clamp(24px,3.6vw,33px);line-height:1.28;color:var(--text);font-weight:500}
+
+/* callout */
+.callout{margin:34px 0;padding:24px 26px;border-radius:18px;background:var(--paper);border:1px solid var(--line);box-shadow:0 14px 40px -28px rgba(6,8,18,.5)}
+.callout-tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--prism-2);margin-bottom:10px}
+.callout p{font-size:17px;margin:0;color:var(--text-2)}
+.callout p strong{color:var(--text)}
+
+/* verdict grid (keep / simplify / gate / build) */
+.gates{margin:34px 0;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:640px){.gates{grid-template-columns:1fr 1fr}}
+.gate{position:relative;padding:20px 16px;border-radius:16px;background:var(--paper);border:1px solid var(--line);box-shadow:0 12px 34px -26px rgba(6,8,18,.5)}
+.gate .g-no{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text-4);letter-spacing:.08em}
+.gate .g-name{font-family:var(--serif);font-size:23px;font-weight:600;margin:6px 0 6px;color:var(--text)}
+.gate .g-desc{font-size:13.5px;line-height:1.45;color:var(--text-3)}
+.gate-1{box-shadow:0 12px 34px -26px rgba(56,189,248,.7);border-top:2px solid var(--prism-1)}
+.gate-2{border-top:2px solid var(--prism-2)}
+.gate-3{border-top:2px solid var(--prism-5)}
+.gate-4{border-top:2px solid var(--prism-4)}
+
+/* ranked upgrade table */
+.router{margin:30px 0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--paper)}
+.router-row{display:grid;grid-template-columns:92px 1fr;gap:0;border-bottom:1px solid var(--line-soft);font-size:15px}
+.router-row:last-child{border-bottom:none}
+.router-score{padding:16px 14px;font-family:var(--mono);font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:center;color:#fff}
+.router-body{padding:16px 18px;color:var(--text-2);line-height:1.5}
+.router-body b{color:var(--text);display:block;font-size:15px;margin-bottom:2px}
+.r-low{background:linear-gradient(135deg,#34d399,#10b981)}
+.r-med{background:linear-gradient(135deg,#fbbf24,#f59e0b)}
+.r-high{background:linear-gradient(135deg,#f472b6,#db2777)}
+
+/* steps */
+.steps{counter-reset:s;list-style:none;padding:0;margin:28px 0}
+.steps li{position:relative;padding:0 0 22px 56px;margin:0}
+.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:-2px;width:38px;height:38px;border-radius:11px;background:var(--dark);color:#fff;font-family:var(--mono);font-weight:600;font-size:15px;display:grid;place-items:center}
+.steps li b{color:var(--text);display:block;margin-bottom:3px;font-size:18px}
+
+/* tl;dr */
+.tldr{margin:8px 0 44px;padding:24px 26px;border-radius:18px;background:#0a0c10;color:#e7ecff}
+.tldr h4{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:#9aa6c8;font-weight:600;margin-bottom:14px}
+.tldr ul{margin:0;padding-left:20px}
+.tldr li{margin-bottom:9px;font-size:15.5px;line-height:1.5;color:#cdd5ef}
+.tldr li::marker{color:var(--prism-2)}
+.tldr li b{color:#fff}
+
+/* CTA */
+.cta{margin:64px 0 24px;padding:clamp(34px,6vw,52px);border-radius:26px;background:radial-gradient(120% 140% at 0% 0%,#15192a 0%,#0a0c10 60%);color:#fff;text-align:center;position:relative;overflow:hidden}
+.cta::before{content:"";position:absolute;inset:0;background:var(--crystal);opacity:.10;mix-blend-mode:screen}
+.cta-k{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:#9aa6c8;position:relative}
+.cta h3{font-family:var(--serif);font-weight:600;font-size:clamp(26px,4.4vw,40px);line-height:1.12;margin:14px 0 12px;position:relative}
+.cta p{color:#cdd5ef;max-width:46ch;margin:0 auto 26px;position:relative;font-size:16.5px}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:13px;font-weight:700;font-size:15px;text-decoration:none;transition:transform .15s,box-shadow .2s}
+.btn-primary{background:#fff;color:#0a0c10}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 40px -16px rgba(255,255,255,.4)}
+.btn-ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.btn-ghost:hover{background:rgba(255,255,255,.14)}
+
+/* related / share */
+.endbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin:44px 0;padding-top:26px;border-top:1px solid var(--line)}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--text-3);background:var(--off);border:1px solid var(--line);padding:6px 11px;border-radius:8px}
+.share a{font-size:13px;font-weight:600;color:var(--text-3);text-decoration:none;margin-left:14px}
+.share a:hover{color:var(--text)}
+
+/* footer */
+.footer{background:#0a0c10;color:#9aa6c8;padding:56px clamp(20px,5vw,40px) 28px;margin-top:40px}
+.footer-in{max-width:1100px;margin:0 auto}
+.footer-top{display:flex;flex-wrap:wrap;gap:40px;justify-content:space-between;align-items:flex-start}
+.footer-brand{display:flex;align-items:center;gap:12px}
+.footer-mark{width:38px;height:38px;border-radius:10px;overflow:hidden;background:#fff}
+.footer-mark img{width:100%;height:100%;object-fit:cover}
+.footer-brand b{color:#fff;font-family:var(--serif);font-size:20px;font-weight:600;display:block}
+.footer-brand span{font-size:12px;color:#6b7280}
+.footer-cols{display:flex;flex-wrap:wrap;gap:36px}
+.footer-col h5{color:#e7ecff;font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;font-family:var(--mono);font-weight:600}
+.footer-col a{display:block;color:#9aa6c8;text-decoration:none;font-size:14px;margin-bottom:9px;transition:color .15s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;margin-top:40px;padding-top:22px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px}
+.footer-tagline{margin-top:18px;font-family:var(--serif);font-style:italic;color:#6b7280;font-size:15px}
+</style>
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/glass.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="../brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body data-ix-page="article" data-ix-slug="clearglass-platform-audit-2026" data-ix-theme="light">
+<div class="class-banner">UNCLASSIFIED / NON-CLASSIFIÉ <span>·</span> CLEARGLASS INTELLIGENCE DESK <span>·</span> OPEN PUBLICATION</div>
+<div class="progress" id="progress"></div>
+
+<nav class="nav">
+  <a href="../index.html" class="nav-brand">
+    <div class="nav-mark"><img src="../assets/images/clearglass-logo.png" alt="ClearGlass logo"></div>
+    <div class="nav-name">ClearGlassInc. <em>2040</em></div>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Insights</a>
+    <a href="../ai-operator.html">AI Operator</a>
+    <a href="../guardian.html">Guardian</a>
+    <a href="../government.html">Government</a>
+    <a href="../index.html#contact" class="nav-cta">Book a briefing →</a>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <div class="kicker">Platform Engineering · Field Note</div>
+  <h1 class="title">The ClearGlass Platform Audit: Upgrading a Governed Monorepo Into a <em>Future-Tech Platform</em></h1>
+  <p class="dek">Most platform audits produce a wishlist. A real one produces a doctrine: what to keep, what to simplify, which upgrades compound, and the rollout order that never breaks production.</p>
+  <div class="byline">
+    <div class="byline-av">D</div>
+    <div class="byline-meta">
+      <b>Desmond Otieno Odhiambo</b><br>
+      <span>Founder &amp; Software Architect, ClearGlass Inc. · July 21, 2026 · 14 min read</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+<article>
+
+  <div class="tldr">
+    <h4>The 30-second version</h4>
+    <ul>
+      <li><b>Audit the verbs, not the vibes.</b> A platform audit starts from what the system can <em>do</em> — every workflow, every agent, every state mutation — and scores each path for governance, observability, and blast radius.</li>
+      <li><b>Protect the crown jewels.</b> In our stack that is the governance core: risk-scored actions, hard approval gates on money movement, and an append-only audit ledger enforced by CI. Nothing ships that weakens it.</li>
+      <li><b>Rank upgrades by leverage.</b> Live health signals, rate controls and circuit breakers, a retrieval layer over platform knowledge, flag-controlled autonomy thresholds, and rehearsed rollback — in that order.</li>
+      <li><b>Additive first.</b> Every upgrade lands as a new, independently deployable layer. Consolidation is proposed, evidenced, and approved — never done as a drive-by delete.</li>
+    </ul>
+  </div>
+
+  <p class="lede">Every ambitious codebase eventually reaches the same moment: the demos work, the automation hums, the pages ship — and someone asks the only question that matters. <em>Would this survive production pressure, a bad deploy, a hostile input, and a 3&nbsp;a.m. failure — and could we prove what happened afterward?</em> That question is what a platform audit exists to answer.</p>
+
+  <p>This field note documents how we run that audit at ClearGlass on our own monorepo — the repository that carries the public site, the governed <a class="link" href="../ai-operator.html">Autonomous E-Commerce Operator</a>, the <a class="link" href="../percival-os.html">PERCIVAL</a> command stack, the SENTINEL defensive agents, and roughly forty scheduled automation workflows. The method generalizes to any serious system: assess honestly, rank by leverage, refactor by doctrine, implement in additive layers, and keep the direction of travel explicit.</p>
+
+  <h2><span class="num">01</span>Repository Assessment: What the Platform Already Gets Right</h2>
+
+  <p>An honest audit starts with what is working, because the strongest existing patterns are the template for everything you add next.</p>
+
+  <h3>The load-bearing strengths</h3>
+
+  <ul>
+    <li><strong>A real governance core, enforced in code.</strong> The commerce control plane scores every proposed action 0–100 and routes it through a risk router: low-risk work auto-executes and logs, medium-risk work queues for review, and anything touching pricing, payments, tax, refunds, fulfillment, or mass outbound is hard-blocked until an approval record reaches <em>approved</em>. An always-escalate list backstops the scores, so a misconfigured weight can never quietly free a dangerous verb.</li>
+    <li><strong>An append-only audit ledger.</strong> Every material change writes an event with its risk score. When something goes wrong, "what happened and who sanctioned it" is a query, not a crisis.</li>
+    <li><strong>Governance verified by the pipeline.</strong> A daily self-check and a dedicated test suite fail the build if any code path lets a high-risk action execute without approval. The safety model is not a document — it is a CI gate.</li>
+    <li><strong>Fail-closed, dependency-free agents.</strong> The SENTINEL and PERCIVAL agents are keyless, stdlib-only Python that fails closed. Minimal dependencies mean minimal supply-chain surface and no silent degradation when a package registry has a bad day.</li>
+    <li><strong>Deep automation.</strong> Scheduled workflows already run smoke tests, health monitoring, dependency updates, content pipelines, security scans, and a workflow-doctor loop that watches the other workflows. The platform maintains itself more than most teams' products do.</li>
+    <li><strong>A deliberate information architecture.</strong> The static site's pillar-and-cluster internal-linking system is generated, idempotent, and checkable — the site graph is code, with a freshness gate.</li>
+    <li><strong>Safe-by-default payments.</strong> With no live key present, the store runs in mock mode. The dangerous configuration is the one that requires explicit action.</li>
+  </ul>
+
+  <div class="pull">The strongest thing a platform can own is not a feature — it is an invariant the pipeline refuses to let you break.</div>
+
+  <h3>What is missing or blocking top-tier status</h3>
+
+  <ul>
+    <li><strong>Observability is report-shaped, not signal-shaped.</strong> Health arrives as scheduled reports and committed artifacts. That is auditable but slow: there is no single live surface answering "is everything green <em>right now</em>," and no alerting path with defined severity levels between report runs.</li>
+    <li><strong>Edges lack backpressure.</strong> The control plane trusts its callers. There is no rate limiting, request budget, or circuit breaker between the API surface and the database, so a misbehaving client or a runaway automation loop degrades everyone.</li>
+    <li><strong>Two control planes overlap.</strong> An earlier autostore control plane coexists with the flagship commerce OS. Nothing is broken, but every duplicated concept is a future divergence bug and a tax on every new contributor.</li>
+    <li><strong>Blueprint gravity.</strong> The repo carries many target-state architecture documents alongside running systems. Each is clearly bannered, but the ratio of described-to-provisioned systems must keep trending toward provisioned, or the docs become the product.</li>
+    <li><strong>Autonomy thresholds are compile-time.</strong> Risk bands and escalation lists live in code. That is safe, but tuning them — the single most important operational dial in a governed platform — currently requires a deploy rather than a flagged, audited, reversible runtime change.</li>
+    <li><strong>Rollback is implicit.</strong> Deploys are automated; <em>un</em>-deploys are ad hoc. A production platform needs the reverse gear rehearsed, not improvised.</li>
+  </ul>
+
+  <h2><span class="num">02</span>Best Upgrades: Ranked by Leverage, Not by Glamour</h2>
+
+  <p>We score candidate upgrades the same way the governance core scores actions: by blast radius and reversibility — except here, the question is how much <em>capability per unit of complexity</em> each one buys. Seven made the cut.</p>
+
+  <div class="router">
+    <div class="router-row">
+      <div class="router-score r-high">RANK 1</div>
+      <div class="router-body"><b>Unified live health surface</b>One endpoint and one page that aggregate every subsystem's freshness, last-run status, and error state — fed by the artifacts the workflows already produce. Highest value because it converts existing telemetry into operational sight, with near-zero new machinery.</div>
+    </div>
+    <div class="router-row">
+      <div class="router-score r-high">RANK 2</div>
+      <div class="router-body"><b>Rate limiting + circuit breakers at the control-plane edge</b>Token-bucket limits per caller, a breaker around the database and Stripe boundaries, and explicit 429/503 semantics. Cheap to add, and it is the difference between "one bad loop" and "everything is down."</div>
+    </div>
+    <div class="router-row">
+      <div class="router-score r-high">RANK 3</div>
+      <div class="router-body"><b>Retrieval layer over platform knowledge</b>The repo's blueprints, runbooks, and prompts are a knowledge asset locked in files. A lightweight index that the agents (and the founder) can query turns institutional memory into an operational tool — context-aware workflows start here.</div>
+    </div>
+    <div class="router-row">
+      <div class="router-score r-med">RANK 4</div>
+      <div class="router-body"><b>Flag-controlled autonomy thresholds</b>Move risk-band boundaries and escalation additions (never removals) behind a feature-flag file with an audit trail. Tightening is always allowed at runtime; loosening requires the same approval path as a high-risk action.</div>
+    </div>
+    <div class="router-row">
+      <div class="router-score r-med">RANK 5</div>
+      <div class="router-body"><b>Rehearsed rollback + incident runbooks</b>A documented, tested reverse path for each deploy target — Pages, control plane, storefront — plus a quarterly game-day that actually executes one. Resilience you have not rehearsed is a hypothesis.</div>
+    </div>
+    <div class="router-row">
+      <div class="router-score r-med">RANK 6</div>
+      <div class="router-body"><b>Evaluation harness for agent prompts</b>Version-controlled evals that score every agent prompt change against golden cases before merge — the same gate discipline the governance tests apply to code, extended to the prompts that steer the agents.</div>
+    </div>
+    <div class="router-row">
+      <div class="router-score r-low">RANK 7</div>
+      <div class="router-body"><b>Control-plane consolidation (proposal-first)</b>Retire the superseded autostore plane after a traffic-and-dependency census proves nothing routes through it. Ranked last not because it matters least, but because it is the only item on this list that removes something — and removal is a governed action.</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <span class="callout-tag">Most people miss this</span>
+    <p><strong>The best upgrade list is mostly boring.</strong> Nothing above is a new AI capability — because the platform already has agents, governance, and automation. What it buys is <em>sight, backpressure, memory, control, and reversibility</em>: the five properties that decide whether capability survives contact with production.</p>
+  </div>
+
+  <h2><span class="num">03</span>Refactor Plan: Keep, Simplify, Gate, Build</h2>
+
+  <p>Every module in the audit gets exactly one of four verdicts. The discipline is that "remove" is never a verdict an audit can issue unilaterally — anything slated for removal first passes through <em>gate</em>: evidence, proposal, approval.</p>
+
+  <div class="gates">
+    <div class="gate gate-1"><div class="g-no">VERDICT</div><div class="g-name">Keep</div><div class="g-desc">Governance core, audit ledger, CI gates, internal-link generator, fail-closed agents, mock-mode payments. These are the platform's identity. Changes here are high-risk by definition.</div></div>
+    <div class="gate gate-2"><div class="g-no">VERDICT</div><div class="g-name">Simplify</div><div class="g-desc">The root-level page sprawl and blueprint corpus: cluster, index, and banner them so running systems and target-state docs are impossible to confuse. Organize — don't delete.</div></div>
+    <div class="gate gate-3"><div class="g-no">VERDICT</div><div class="g-name">Gate</div><div class="g-desc">The duplicate autostore control plane and any unreferenced workflow: census first, deprecation notice second, removal only with an approved proposal and a revert path.</div></div>
+    <div class="gate gate-4"><div class="g-no">VERDICT</div><div class="g-name">Build</div><div class="g-desc">The seven ranked upgrades — each as an additive, independently deployable layer that reuses existing patterns (stdlib-only modules, CI self-checks, generated artifacts).</div></div>
+  </div>
+
+  <p>The simplification principle deserves emphasis, because it is where audits usually do damage: <strong>in a platform with an append-only ethos, refactoring means adding clearer structure, not subtracting history.</strong> Superseded systems get a banner and a pointer to their successor. Working systems get left alone until their replacement is proven in production. The repo's job is to make the current truth unmistakable — not to pretend the past didn't happen.</p>
+
+  <h2><span class="num">04</span>Implementation Doctrine: How Each Upgrade Actually Lands</h2>
+
+  <p>Every upgrade follows the same six-field contract before a line is written. Here is the contract applied to the top three.</p>
+
+  <h3>Upgrade 1 — Unified live health surface</h3>
+  <ul>
+    <li><strong>Purpose:</strong> one glance answers "is the platform green," across site, commerce, agents, and workflows.</li>
+    <li><strong>Architecture:</strong> a stdlib-only aggregator that reads the health artifacts existing workflows already emit, publishes a single JSON feed plus a static status page, and stamps every entry with freshness. No new services; the signal rides the same Pages deploy as everything else.</li>
+    <li><strong>Dependencies:</strong> none beyond what CI already runs — that is the point.</li>
+    <li><strong>Risks:</strong> stale-but-green is worse than red; every signal therefore carries a max-age and degrades to <em>unknown</em>, never to <em>ok</em>.</li>
+    <li><strong>Testing:</strong> unit tests for the aggregator, plus a CI check that the feed regenerates and validates on every run.</li>
+    <li><strong>Rollout:</strong> ship reading-only first; wire alerting only after two weeks of trustworthy signal.</li>
+  </ul>
+
+  <h3>Upgrade 2 — Rate limits and circuit breakers</h3>
+  <ul>
+    <li><strong>Purpose:</strong> a misbehaving caller degrades gracefully instead of taking the control plane down.</li>
+    <li><strong>Architecture:</strong> middleware token buckets per API key at the FastAPI edge; a small breaker wrapping the DB session factory and the Stripe client with half-open probing; explicit 429/503 with retry-after semantics.</li>
+    <li><strong>Dependencies:</strong> stdlib-implementable, keeping the control plane's minimal-CI property intact.</li>
+    <li><strong>Risks:</strong> a breaker that trips on the approvals path could block a legitimate human approval — so approval reads are exempted and the breaker fails <em>open for reads, closed for writes</em>.</li>
+    <li><strong>Testing:</strong> load-shaped unit tests (burst, sustained, recovery) plus a governance regression run proving no approval path changed behavior.</li>
+    <li><strong>Rollout:</strong> log-only ("would have limited") for a week, then enforce.</li>
+  </ul>
+
+  <h3>Upgrade 3 — Retrieval layer over platform knowledge</h3>
+  <ul>
+    <li><strong>Purpose:</strong> agents and operators query the platform's accumulated doctrine — runbooks, blueprints, prompts, past reports — instead of rediscovering it.</li>
+    <li><strong>Architecture:</strong> a build-time indexer over the repo's markdown and report corpus producing a static, versioned index; agents consume it read-only. Retrieval is a <em>sense</em>-gate activity in the governance model, so it needs no new approval machinery.</li>
+    <li><strong>Dependencies:</strong> indexer runs in CI; no runtime service required to start.</li>
+    <li><strong>Risks:</strong> retrieving superseded blueprints as if current — mitigated by the same status banners the simplification pass standardizes, carried into the index as metadata.</li>
+    <li><strong>Testing:</strong> golden-query evals ("what gates a refund?" must retrieve the governance doc, not a vision doc).</li>
+    <li><strong>Rollout:</strong> founder-facing search first, agent consumption second, write-back never.</li>
+  </ul>
+
+  <p>Upgrades 4–7 follow the identical contract; their defining constraints are already stated in the ranking: flags may loosen autonomy only through the approval path, rollback exists only once rehearsed, evals gate prompts the way tests gate code, and consolidation happens proposal-first or not at all.</p>
+
+  <h2><span class="num">05</span>Future Direction: What "Future-Tech" Actually Means Here</h2>
+
+  <p>The destination is not more dashboards or a bigger model. It is a platform where <strong>capability, control, and evidence scale together</strong> — where every new agent inherits governance by default, every subsystem is visible on one health surface, every risky dial is flagged and audited, and every deploy carries its own reverse gear.</p>
+
+  <ol class="steps">
+    <li><b>Sight before speed.</b> The health surface and alerting land first, because every later upgrade is safer when you can watch it misbehave.</li>
+    <li><b>Backpressure before scale.</b> Rate controls and breakers go in before traffic makes them urgent.</li>
+    <li><b>Memory before autonomy.</b> The retrieval layer gives agents institutional context before their thresholds are made tunable.</li>
+    <li><b>Control before expansion.</b> Flagged autonomy and rehearsed rollback precede any new high-risk agent capability.</li>
+    <li><b>Consolidation last, and governed.</b> Only when the platform can see, brake, remember, and reverse does it earn the right to remove its own redundancy.</li>
+  </ol>
+
+  <p>That ordering is the whole doctrine. A platform becomes "defense-grade" not by accumulating impressive components but by guaranteeing boring properties under pressure: it degrades gracefully, it recovers cleanly, it remembers everything, and it can always prove what it did. The governance core already made that promise for money movement. The audit's job — this audit's job — is to extend the same promise to every layer of the stack.</p>
+
+  <div class="pull">A future-tech platform is one whose safety model scales as fast as its ambition.</div>
+
+  <div class="cta">
+    <div class="cta-k">ClearGlass Inc. · Platform Engineering</div>
+    <h3>Want this audit run on your platform?</h3>
+    <p>ClearGlass builds and audits governed AI systems — risk-scored, human-sanctioned, observable, and reversible by design — for commerce, security, and government workloads.</p>
+    <div class="cta-row">
+      <a href="../store.html" class="btn btn-primary">Book a security engagement →</a>
+      <a href="../index.html#contact" class="btn btn-ghost">Request a platform audit briefing</a>
+    </div>
+  </div>
+
+  <section class="ix-related" id="ixRelated">
+    <b>Related from the desk</b>
+    <div class="ix-related-grid">
+      <a class="ix-related-card" href="ai-agent-governance-governed-autonomy.html"><span class="k">AI &amp; Autonomy</span><h4>AI Agent Governance: The Governed Autonomy Playbook</h4><p>The Four Gates and the Risk Router that let enterprises deploy autonomous AI without getting burned.</p><span class="m">11 min read · Governed Autonomy Playbooks</span></a>
+      <a class="ix-related-card" href="clearglass-secure-deployment-agent.html"><span class="k">Secure Deployment</span><h4>The Secure Deployment Agent</h4><p>Governed authorization for every production change: scope contracts, permission matrices, and a rollback for every deploy.</p><span class="m">13 min read · High-Trust Systems Patterns</span></a>
+    </div>
+  </section>
+
+  <div class="endbar">
+    <div class="tags">
+      <span class="tag">#PlatformAudit</span>
+      <span class="tag">#PlatformEngineering</span>
+      <span class="tag">#GovernedAI</span>
+      <span class="tag">#Resilience</span>
+      <span class="tag">#Observability</span>
+    </div>
+    <div class="share">
+      Share:
+      <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.clearglassinc.com/blog/clearglass-platform-audit-2026.html" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://twitter.com/intent/tweet?text=Most%20platform%20audits%20produce%20a%20wishlist.%20A%20real%20one%20produces%20a%20doctrine.&url=https://www.clearglassinc.com/blog/clearglass-platform-audit-2026.html" target="_blank" rel="noopener">X</a>
+    </div>
+  </div>
+
+</article>
+</main>
+
+<footer class="footer">
+  <div class="footer-in">
+    <div class="footer-top">
+      <a href="../index.html" class="footer-brand">
+        <div class="footer-mark"><img src="../assets/images/clearglass-logo.png" alt="ClearGlass logo"></div>
+        <div><b>ClearGlassInc</b><span>See Through Everything</span></div>
+      </a>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h5>Insights</h5>
+          <a href="index.html">All articles</a>
+          <a href="ai-agent-governance-governed-autonomy.html">Governed Autonomy</a>
+          <a href="clearglass-secure-deployment-agent.html">Secure Deployment Agent</a>
+          <a href="cybersecurity-architecture-for-agentic-software.html">Agentic Cyber Architecture</a>
+        </div>
+        <div class="footer-col">
+          <h5>Products</h5>
+          <a href="../ai-operator.html">AI Operator</a>
+          <a href="../guardian.html">Guardian</a>
+          <a href="../artemis-iv.html">Artemis IV Core</a>
+        </div>
+        <div class="footer-col">
+          <h5>Company</h5>
+          <a href="../index.html#vision">Vision</a>
+          <a href="../government.html">Government</a>
+          <a href="../index.html#contact">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> ClearGlass Inc. All rights reserved. Ontario, Canada</span>
+      <span>Clarity Is Power</span>
+    </div>
+    <div class="footer-tagline">"The truth is transparent. The truth is dangerous."</div>
+  </div>
+</footer>
+<div class="unclass-banner">UNCLASSIFIED / NON-CLASSIFIÉ — END OF DOCUMENT</div>
+
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+var pb=document.getElementById('progress');
+function upd(){var h=document.documentElement;var sc=h.scrollTop||document.body.scrollTop;var mx=h.scrollHeight-h.clientHeight;pb.style.width=(mx>0?(sc/mx*100):0)+'%';}
+addEventListener('scroll',upd,{passive:true});upd();
+</script>
+<script defer src="insights.js"></script>
+<script defer src="/logo-badge.js"></script>
+<script defer src="assistant/writing-help.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › <a href="index.html">ClearGlass Intelligence · Insights</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="ai-agent-governance-governed-autonomy.html"><span><b>Previous</b>AI Agent Governance</span></a>
+      <a href="index.html"><span><b>Topic hub</b>ClearGlass Intelligence</span></a>
+      <a href="ai-agents-insider-threat.html"><span><b>Next in journey</b>AI Agents Are the New Insider Threat</span></a>
+    </div>
+    <ul>
+      <li><a href="../ai-operator.html"><b>AI Operator Workspace</b> — human-in-the-loop agent operations</a></li>
+      <li><a href="../advanced-features-tools-systems.html"><b>Advanced Features, Tools &amp; Systems</b> — the governed systems, agent and audit architecture catalog</a></li>
+      <li><a href="ai-agent-governance-governed-autonomy.html"><b>AI Agent Governance</b> — the governed-autonomy playbook</a></li>
+      <li><a href="ai-agents-insider-threat.html"><b>AI Agents Are the New Insider Threat</b> — why agent identity is a security boundary</a></li>
+      <li><a href="cybersecurity-architecture-for-agentic-software.html"><b>Security Architecture for Agentic Software</b> — designing defenses for autonomous systems</a></li>
+      <li><a href="zero-trust-is-outdated-adaptive-trust.html"><b>The Case for Adaptive Trust</b> — zero trust, revisited for agentic systems</a></li>
+      <li><a href="rethinking-security-age-of-ai-cyber-stack.html"><b>Rethinking Security for the AI Cyber Stack</b> — a long read on defending AI-era infrastructure</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="../nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

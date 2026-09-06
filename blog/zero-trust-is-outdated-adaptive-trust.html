@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<!-- Browser Tab Icons -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="shortcut icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>Zero Trust Is Outdated: The Case for Adaptive Trust Systems — ClearGlass Inc.</title>
+<meta name="description" content="Zero Trust was built for a world where the dangerous actor was a stolen laptop. In a world of AI agents, 'never trust, always verify' verifies the wrong thing. Inside the Adaptive Trust Systems model: action trust, intent verification, learning policy, trust economics."/>
+<link rel="canonical" href="https://www.clearglassinc.com/blog/zero-trust-is-outdated-adaptive-trust.html"/>
+<meta name="author" content="Desmond Otieno Odhiambo"/>
+<meta name="robots" content="index,follow,max-image-preview:large"/>
+<meta name="keywords" content="zero trust outdated, adaptive trust, zero trust AI agents, action trust, intent verification, trust economics, learning security policy, post zero trust architecture, agentic AI security"/>
+
+<meta property="og:type" content="article"/>
+<meta property="og:title" content="Zero Trust Is Outdated: The Case for Adaptive Trust Systems"/>
+<meta property="og:description" content="'Never trust, always verify' verifies the wrong thing in a world of AI agents. The doctrine that replaces it: action trust, intent verification, learning policy, trust economics."/>
+<meta property="og:url" content="https://www.clearglassinc.com/blog/zero-trust-is-outdated-adaptive-trust.html"/>
+<meta property="og:site_name" content="ClearGlass Inc."/>
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+<meta property="article:published_time" content="2026-07-02"/>
+<meta property="article:author" content="Desmond Otieno Odhiambo"/>
+<meta property="article:section" content="Cybersecurity Architecture"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Zero Trust Is Outdated: The Case for Adaptive Trust Systems"/>
+<meta name="twitter:description" content="Zero Trust authenticates identities. Your losses now come from authenticated actors doing authorized damage. The replacement doctrine, inside."/>
+<meta name="twitter:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Zero Trust Is Outdated: The Case for Adaptive Trust Systems",
+  "description": "Zero Trust was built for a world where the dangerous actor was a stolen laptop. In a world of AI agents, 'never trust, always verify' verifies the wrong thing. Inside the Adaptive Trust Systems model.",
+  "image": "https://www.clearglassinc.com/assets/images/clearglass-logo.png",
+  "datePublished": "2026-07-02",
+  "author": {
+    "@type": "Person",
+    "name": "Desmond Otieno Odhiambo",
+    "jobTitle": "Founder & Software Architect",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "ClearGlass Inc.",
+      "url": "https://www.clearglassinc.com"
+    }
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "ClearGlass Inc.",
+    "url": "https://www.clearglassinc.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.clearglassinc.com/assets/images/clearglass-logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.clearglassinc.com/blog/zero-trust-is-outdated-adaptive-trust.html"
+  },
+  "keywords": "zero trust outdated, adaptive trust systems, action trust, intent verification, trust economics, agentic AI security"
+}
+</script>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --white:#fafbfc;--off:#f3f5f8;--paper:#fff;
+  --dark:#0a0c10;--text:#0a0c10;--text-2:#3a3f4a;--text-3:#6b7280;--text-4:#9ca3af;
+  --line:rgba(10,12,16,.08);--line-soft:rgba(10,12,16,.05);
+  --prism-1:#38bdf8;--prism-2:#a78bfa;--prism-3:#f472b6;--prism-4:#34d399;--prism-5:#fbbf24;--prism-6:#60a5fa;
+  --crystal:linear-gradient(135deg,#38bdf8 0%,#a78bfa 25%,#f472b6 50%,#fbbf24 75%,#34d399 100%);
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'Urbanist',system-ui,sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{font-family:var(--sans);color:var(--text);background:var(--white);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;overflow-x:hidden}
+a{color:inherit}
+::selection{background:rgba(167,139,250,.22)}
+
+/* banners */
+.class-banner{background:#0a0c10;color:#cfe9ff;text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.18em;font-weight:600;padding:6px 16px}
+.class-banner span{opacity:.55;font-weight:400;margin:0 8px}
+.unclass-banner{background:#0d1f17;color:#4ade80;text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;font-weight:700;padding:6px 16px}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px clamp(16px,5vw,40px);background:rgba(250,251,252,.78);backdrop-filter:blur(20px) saturate(1.2);border-bottom:1px solid var(--line)}
+.nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}
+.nav-mark{width:40px;height:40px;border-radius:11px;overflow:hidden;background:#fff;display:grid;place-items:center;box-shadow:0 6px 20px rgba(0,0,0,.08);flex-shrink:0}
+.nav-mark img{width:100%;height:100%;object-fit:cover;display:block}
+.nav-name{font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:-.01em}
+.nav-name em{font-style:italic;font-weight:300;color:var(--text-3)}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{color:var(--text-3);text-decoration:none;font-size:13.5px;font-weight:600;padding:8px 14px;border-radius:10px;transition:color .18s,background .18s}
+.nav-links a:hover{color:var(--text);background:rgba(255,255,255,.7)}
+.nav-cta{background:var(--dark);color:#fff !important}
+.nav-cta:hover{background:#1a1d25;color:#fff !important}
+@media(max-width:860px){.nav-links a:not(.nav-cta){display:none}}
+
+/* reading progress */
+.progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--crystal);z-index:200;transition:width .1s linear}
+
+/* layout */
+.wrap{max-width:760px;margin:0 auto;padding:0 clamp(20px,5vw,28px)}
+.hero{padding:clamp(56px,9vw,104px) 0 clamp(28px,5vw,44px)}
+.kicker{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-3);font-weight:600;margin-bottom:22px}
+.kicker::before{content:"";width:24px;height:1.5px;background:var(--crystal)}
+h1.title{font-family:var(--serif);font-weight:600;font-size:clamp(36px,6.2vw,62px);line-height:1.04;letter-spacing:-.02em;margin-bottom:24px}
+h1.title em{font-style:italic;font-weight:400;background:var(--crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.dek{font-size:clamp(18px,2.4vw,22px);line-height:1.5;color:var(--text-2);font-weight:400;max-width:42ch}
+.byline{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:34px;padding-top:24px;border-top:1px solid var(--line)}
+.byline-av{width:42px;height:42px;border-radius:50%;background:var(--crystal);display:grid;place-items:center;color:#fff;font-weight:700;font-family:var(--serif);font-size:19px;flex-shrink:0}
+.byline-meta{font-size:14px;line-height:1.45}
+.byline-meta b{font-weight:700}
+.byline-meta span{color:var(--text-3)}
+
+/* article body */
+article{font-size:18.5px;line-height:1.72;color:var(--text-2)}
+article p{margin:0 0 22px}
+article p strong,article li strong{color:var(--text);font-weight:700}
+article h2{font-family:var(--serif);color:var(--text);font-weight:600;font-size:clamp(27px,4vw,38px);line-height:1.12;letter-spacing:-.015em;margin:56px 0 18px;scroll-margin-top:96px}
+article h3{color:var(--text);font-weight:700;font-size:clamp(19px,2.6vw,23px);margin:38px 0 12px;letter-spacing:-.01em}
+article h2 .num{font-family:var(--mono);font-size:.42em;color:var(--prism-2);vertical-align:middle;margin-right:12px;letter-spacing:.05em}
+article a.link{color:var(--text);text-decoration:underline;text-decoration-color:rgba(167,139,250,.5);text-underline-offset:3px;text-decoration-thickness:1.5px;transition:text-decoration-color .2s}
+article a.link:hover{text-decoration-color:var(--prism-2)}
+article ul,article ol{margin:0 0 22px;padding-left:24px}
+article li{margin:0 0 11px}
+article ul li::marker{color:var(--prism-2)}
+
+.lede{font-size:21px;line-height:1.6;color:var(--text)}
+.lede::first-letter{font-family:var(--serif);font-size:3.4em;line-height:.82;float:left;font-weight:600;margin:6px 12px 0 0;background:var(--crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+/* pull quote */
+.pull{margin:40px 0;padding:6px 0 6px 28px;border-left:3px solid transparent;border-image:var(--crystal) 1;font-family:var(--serif);font-style:italic;font-size:clamp(24px,3.6vw,33px);line-height:1.28;color:var(--text);font-weight:500}
+
+/* callout */
+.callout{margin:34px 0;padding:24px 26px;border-radius:18px;background:var(--paper);border:1px solid var(--line);box-shadow:0 14px 40px -28px rgba(6,8,18,.5)}
+.callout-tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--prism-2);margin-bottom:10px}
+.callout p{font-size:17px;margin:0;color:var(--text-2)}
+.callout p strong{color:var(--text)}
+
+/* framework diagram */
+.gates{margin:34px 0;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:640px){.gates{grid-template-columns:1fr 1fr}}
+.gate{position:relative;padding:20px 16px;border-radius:16px;background:var(--paper);border:1px solid var(--line);box-shadow:0 12px 34px -26px rgba(6,8,18,.5)}
+.gate .g-no{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text-4);letter-spacing:.08em}
+.gate .g-name{font-family:var(--serif);font-size:23px;font-weight:600;margin:6px 0 6px;color:var(--text)}
+.gate .g-desc{font-size:13.5px;line-height:1.45;color:var(--text-3)}
+.gate::after{content:"→";position:absolute;right:-13px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--prism-2);font-weight:700;z-index:2}
+.gate:last-child::after{display:none}
+@media(max-width:640px){.gate:nth-child(2)::after{display:none}}
+.gate-1{box-shadow:0 12px 34px -26px rgba(56,189,248,.7);border-top:2px solid var(--prism-1)}
+.gate-2{border-top:2px solid var(--prism-2)}
+.gate-3{border-top:2px solid var(--prism-5)}
+.gate-4{border-top:2px solid var(--prism-4)}
+
+/* risk router table */
+.router{margin:30px 0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--paper)}
+.router-row{display:grid;grid-template-columns:92px 1fr;gap:0;border-bottom:1px solid var(--line-soft);font-size:15px}
+.router-row:last-child{border-bottom:none}
+.router-score{padding:16px 14px;font-family:var(--mono);font-weight:600;font-size:13px;display:flex;align-items:center;color:#fff}
+.router-body{padding:16px 18px;color:var(--text-2);line-height:1.5}
+.router-body b{color:var(--text);display:block;font-size:15px;margin-bottom:2px}
+.r-low{background:linear-gradient(135deg,#34d399,#10b981)}
+.r-med{background:linear-gradient(135deg,#fbbf24,#f59e0b)}
+.r-high{background:linear-gradient(135deg,#f472b6,#db2777)}
+
+/* steps */
+.steps{counter-reset:s;list-style:none;padding:0;margin:28px 0}
+.steps li{position:relative;padding:0 0 22px 56px;margin:0}
+.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:-2px;width:38px;height:38px;border-radius:11px;background:var(--dark);color:#fff;font-family:var(--mono);font-weight:600;font-size:15px;display:grid;place-items:center}
+.steps li b{color:var(--text);display:block;margin-bottom:3px;font-size:18px}
+
+/* tl;dr / key takeaways */
+.tldr{margin:8px 0 44px;padding:24px 26px;border-radius:18px;background:#0a0c10;color:#e7ecff}
+.tldr h4{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:#9aa6c8;font-weight:600;margin-bottom:14px}
+.tldr ul{margin:0;padding-left:20px}
+.tldr li{margin-bottom:9px;font-size:15.5px;line-height:1.5;color:#cdd5ef}
+.tldr li::marker{color:var(--prism-2)}
+.tldr li b{color:#fff}
+
+/* CTA */
+.cta{margin:64px 0 24px;padding:clamp(34px,6vw,52px);border-radius:26px;background:radial-gradient(120% 140% at 0% 0%,#15192a 0%,#0a0c10 60%);color:#fff;text-align:center;position:relative;overflow:hidden}
+.cta::before{content:"";position:absolute;inset:0;background:var(--crystal);opacity:.10;mix-blend-mode:screen}
+.cta-k{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:#9aa6c8;position:relative}
+.cta h3{font-family:var(--serif);font-weight:600;font-size:clamp(26px,4.4vw,40px);line-height:1.12;margin:14px 0 12px;position:relative}
+.cta p{color:#cdd5ef;max-width:46ch;margin:0 auto 26px;position:relative;font-size:16.5px}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:13px;font-weight:700;font-size:15px;text-decoration:none;transition:transform .15s,box-shadow .2s}
+.btn-primary{background:#fff;color:#0a0c10}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 40px -16px rgba(255,255,255,.4)}
+.btn-ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.btn-ghost:hover{background:rgba(255,255,255,.14)}
+
+/* related / share */
+.endbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin:44px 0;padding-top:26px;border-top:1px solid var(--line)}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--text-3);background:var(--off);border:1px solid var(--line);padding:6px 11px;border-radius:8px}
+.share a{font-size:13px;font-weight:600;color:var(--text-3);text-decoration:none;margin-left:14px}
+.share a:hover{color:var(--text)}
+
+/* footer */
+.footer{background:#0a0c10;color:#9aa6c8;padding:56px clamp(20px,5vw,40px) 28px;margin-top:40px}
+.footer-in{max-width:1100px;margin:0 auto}
+.footer-top{display:flex;flex-wrap:wrap;gap:40px;justify-content:space-between;align-items:flex-start}
+.footer-brand{display:flex;align-items:center;gap:12px}
+.footer-mark{width:38px;height:38px;border-radius:10px;overflow:hidden;background:#fff}
+.footer-mark img{width:100%;height:100%;object-fit:cover}
+.footer-brand b{color:#fff;font-family:var(--serif);font-size:20px;font-weight:600;display:block}
+.footer-brand span{font-size:12px;color:#6b7280}
+.footer-cols{display:flex;flex-wrap:wrap;gap:36px}
+.footer-col h5{color:#e7ecff;font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;font-family:var(--mono);font-weight:600}
+.footer-col a{display:block;color:#9aa6c8;text-decoration:none;font-size:14px;margin-bottom:9px;transition:color .15s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;margin-top:40px;padding-top:22px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px}
+.footer-tagline{margin-top:18px;font-family:var(--serif);font-style:italic;color:#6b7280;font-size:15px}
+</style>
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/glass.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="../brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+<div class="class-banner">UNCLASSIFIED / NON-CLASSIFIÉ <span>·</span> CLEARGLASS INTELLIGENCE DESK <span>·</span> OPEN PUBLICATION</div>
+<div class="progress" id="progress"></div>
+
+<nav class="nav">
+  <a href="../index.html" class="nav-brand">
+    <div class="nav-mark"><img src="../assets/images/clearglass-logo.png" alt="ClearGlass logo"></div>
+    <div class="nav-name">ClearGlassInc. <em>2040</em></div>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Insights</a>
+    <a href="../ai-operator.html">AI Operator</a>
+    <a href="../guardian.html">Guardian</a>
+    <a href="../government.html">Government</a>
+    <a href="../index.html#contact" class="nav-cta">Book a briefing →</a>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <div class="kicker">Cyber Doctrine · Brief 01</div>
+  <h1 class="title">Zero Trust Is <em>Outdated.</em> Here's the Doctrine That Replaces It.</h1>
+  <p class="dek">Zero Trust answered the question of its era: "should this identity be on this network?" But your losses no longer come from unauthenticated actors. They come from authenticated ones — human and machine — doing authorized damage.</p>
+  <div class="byline">
+    <div class="byline-av">D</div>
+    <div class="byline-meta">
+      <b>Desmond Otieno Odhiambo</b><br>
+      <span>Founder &amp; Software Architect, ClearGlass Inc. · July 2, 2026 · 10 min read</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+<article>
+
+  <div class="tldr">
+    <h4>TL;DR</h4>
+    <ul>
+      <li><b>Zero Trust won its war.</b> Identity-centric, perimeter-free verification was the right answer to stolen laptops and flat networks. That war is over.</li>
+      <li><b>The new losses are post-authentication.</b> Session hijacking, confused-deputy agents, over-permissioned automation: the actor verifies fine, and the damage is authorized.</li>
+      <li><b>"Never trust, always verify" verifies the wrong unit.</b> It interrogates the <em>actor</em> at the door, then trusts every <em>action</em> inside the session.</li>
+      <li><b>Adaptive Trust Systems shift the unit of trust from identity to action</b> — four components: action trust, intent verification, learning policy, trust economics.</li>
+    </ul>
+  </div>
+
+  <p class="lede">Let's give Zero Trust its due before we bury it. Fifteen years ago, the dangerous actor was a stolen laptop on a flat corporate network, and the doctrine that answered it — never trust the network, always verify the identity — was genuinely revolutionary. It killed the perimeter, mainstreamed MFA and micro-segmentation, and made "assume breach" a board-level phrase. Zero Trust won.</p>
+
+  <p>And that's exactly the problem. Doctrines calcify at the moment of victory. Ask where enterprise losses actually come from now: <strong>the actor authenticates perfectly.</strong> The MFA passed. The device was compliant. The session was valid. Then the authenticated actor — a phished employee, a hijacked session token, or increasingly an AI agent with legitimate credentials — did something catastrophic that it was technically authorized to do.</p>
+
+  <p>Zero Trust has no answer to this, because Zero Trust interrogates the actor at the door and then <strong>trusts every action inside the session</strong>. It moved the perimeter from the network to the identity — but it's still a perimeter, and everything inside it is still implicitly trusted.</p>
+
+  <div class="pull">"Zero Trust verifies who you are, once. The damage happens after — action by authorized action."</div>
+
+  <h2><span class="num">01</span>Why agents break the doctrine for good</h2>
+
+  <p>AI agents don't just strain Zero Trust — they invalidate its core assumption. Zero Trust assumes that verifying the identity tells you something about the actions that follow, because human identities have stable intentions. Agents sever that link:</p>
+
+  <ul>
+    <li><strong>The identity is real, the instruction isn't.</strong> A prompt-injected agent authenticates flawlessly while executing an attacker's intent. Every Zero Trust check passes; the confused deputy walks through the front door with valid papers.</li>
+    <li><strong>One identity, a thousand intents.</strong> A human's session might contain dozens of actions with one purpose. An agent's session contains thousands of actions whose purposes are set per-task, per-prompt, per-upstream-input. Verifying the identity once tells you almost nothing about action #7,412.</li>
+    <li><strong>Machine speed inverts the economics.</strong> Zero Trust's residual risk was survivable at human speed: a compromised account does damage at the rate a human can click. A compromised agent does authorized damage at the rate an API can accept it.</li>
+  </ul>
+
+  <p>The conclusion isn't that verification was wrong. It's that <strong>the unit of verification is wrong.</strong> Identity was the right unit when actors were people. Now that actors are processes, the unit has to be the <em>action</em>.</p>
+
+  <h2><span class="num">02</span>Adaptive Trust Systems: the model</h2>
+
+  <p>Adaptive Trust is the doctrine we design to at ClearGlass: trust is not a gate you pass, it's a <strong>quantity that is computed per action, spent by actions, earned by track record, and priced by consequence.</strong> Four components:</p>
+
+  <div class="gates">
+    <div class="gate gate-1"><div class="g-no">ATS / 01</div><div class="g-name">Action Trust</div><div class="g-desc">Trust is scored per action, not per session. Who is acting matters less than what is being attempted.</div></div>
+    <div class="gate gate-2"><div class="g-no">ATS / 02</div><div class="g-name">Intent Verification</div><div class="g-desc">Actions are checked against declared purpose. Authorization without alignment is denial.</div></div>
+    <div class="gate gate-3"><div class="g-no">ATS / 03</div><div class="g-name">Learning Policy</div><div class="g-desc">Policy adapts from the ledger: track records widen autonomy, incidents shrink it — automatically.</div></div>
+    <div class="gate gate-4"><div class="g-no">ATS / 04</div><div class="g-name">Trust Economics</div><div class="g-desc">Trust is a budget. High-consequence actions cost more than a new actor's balance can pay.</div></div>
+  </div>
+
+  <h3>1. Action trust — score the verb, not the noun</h3>
+  <p>Every action gets a trust decision computed from three inputs: the actor's track record, the action's consequence class, and the context (source of instruction, time, target). Reading a record and deleting ten thousand records are different trust events <em>even inside the same authenticated session</em>. Zero Trust asks "is this actor verified?" Adaptive Trust asks "does this specific action, right now, deserve to execute without a human?"</p>
+
+  <h3>2. Intent verification — authorized isn't aligned</h3>
+  <p>Each actor — human role or agent — carries a declared purpose. Actions that are <em>permitted</em> but <em>misaligned</em> with that purpose don't execute; they escalate. The support agent exporting the full contact table has valid credentials and an invalid intent, and the intent check is the only one of the two an attacker can't hijack from the outside. This is the control that turns prompt injection from a breach into a logged, denied request.</p>
+
+  <h3>3. Learning policy — the doctrine that updates itself</h3>
+  <p>Static policy is dead policy: it's wrong the day after it's written and nobody amends it until an incident. In an adaptive system, policy consumes its own audit ledger. An agent with a six-month clean track record in WRITE-tier actions earns wider rate limits — automatically and reviewably. An actor implicated in an anomaly gets its autonomy shrunk to READ until a human re-expands it. Trust becomes an asset with a history, not a checkbox set at provisioning.</p>
+
+  <h3>4. Trust economics — make catastrophe unaffordable</h3>
+  <p>The most practical component: give every actor a <strong>trust budget</strong> and every action class a <strong>price</strong>. Low-consequence actions are nearly free. Irreversible ones — money movement, mass deletion, external sends, credential changes — are priced above any single actor's balance, so they structurally require a co-signer: a human approval or a second independent system. Nobody, human or machine, can afford a catastrophe alone. Budgets replenish with track record and drain with anomalies, which means the system's generosity is always collateralized by history.</p>
+
+  <div class="callout">
+    <span class="callout-tag">Design rule</span>
+    <p><strong>If your policy can't tell the difference between an agent's first day and its five-hundredth clean day, you don't have a trust system — you have a permissions file.</strong> Adaptive Trust makes tenure, track record, and consequence all first-class inputs to every decision.</p>
+  </div>
+
+  <h2><span class="num">03</span>What this looks like in practice</h2>
+
+  <div class="router">
+    <div class="router-row"><div class="router-score r-low">EARN</div><div class="router-body"><b>New actors start narrow</b>Fresh agents and roles begin with READ scope and a small trust budget. Autonomy is earned from the ledger, not granted at provisioning.</div></div>
+    <div class="router-row"><div class="router-score r-med">SPEND</div><div class="router-body"><b>Every action is priced</b>Bounded writes debit the budget; anomalies drain it. A draining budget throttles the actor before an incident, not after.</div></div>
+    <div class="router-row"><div class="router-score r-high">CO-SIGN</div><div class="router-body"><b>Catastrophe requires two</b>Irreversible actions are priced above any single balance. Human approval or an independent second system must co-sign — always.</div></div>
+  </div>
+
+  <p>If this sounds familiar, it should: it's how mature societies handle every other dangerous capability. New drivers get provisional licenses. Junior traders get small books. Nobody launches alone. Security is the last discipline still pretending that a one-time identity check at the door is a theory of trust.</p>
+
+  <div class="pull">"Trust is not a gate you pass. It's a budget you spend, a record you build, and a price you pay — per action."</div>
+
+  <h2><span class="num">04</span>Migrating without ripping anything out</h2>
+
+  <ol class="steps">
+    <li><b>Keep Zero Trust as the floor.</b> Identity verification, MFA, micro-segmentation stay. Adaptive Trust is a layer above them, not a replacement for authentication.</li>
+    <li><b>Classify actions by consequence.</b> READ / WRITE / IRREVERSIBLE across your top systems. This taxonomy is the price list for everything that follows.</li>
+    <li><b>Declare purposes.</b> Every role and agent gets a one-sentence purpose. You can't verify intent that was never declared.</li>
+    <li><b>Stand up the ledger.</b> Append-only, action-level, with the triggering instruction. The learning policy is only as good as the history it learns from.</li>
+    <li><b>Price the irreversible tier first.</b> Co-signing on money movement, mass deletion, and external sends delivers most of the risk reduction for a fraction of the effort.</li>
+  </ol>
+
+  <p>Zero Trust was the right doctrine for the identity era, and the industry owes it a debt. But doctrines are answers to questions, and the question has changed. It's no longer "should this identity be here?" It's <strong>"should this action happen?"</strong> — asked millions of times a day, mostly about actors that were never born. The organizations that answer it systemically will run agents their competitors can't afford to trust.</p>
+
+  <div class="cta">
+    <div class="cta-k">ClearGlass advisory</div>
+    <h3>Design your trust system before your agents outgrow your permissions file.</h3>
+    <p>ClearGlass designs Adaptive Trust architectures for enterprises deploying AI agents on real infrastructure: action taxonomies, intent verification, trust budgets, and learning policy loops.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="../index.html#contact">Book a briefing →</a>
+      <a class="btn btn-ghost" href="ai-agents-insider-threat.html">Read: AI Agents Are the New Insider Threat</a>
+    </div>
+  </div>
+
+  <div class="endbar">
+    <div class="tags">
+      <span class="tag">#ZeroTrust</span>
+      <span class="tag">#AdaptiveTrust</span>
+      <span class="tag">#AgenticAI</span>
+      <span class="tag">#SecurityArchitecture</span>
+    </div>
+    <div class="share">
+      Share:
+      <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.clearglassinc.com/blog/zero-trust-is-outdated-adaptive-trust.html" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://twitter.com/intent/tweet?text=Zero%20Trust%20verifies%20who%20you%20are%2C%20once.%20The%20damage%20happens%20after%20%E2%80%94%20action%20by%20authorized%20action.&url=https://www.clearglassinc.com/blog/zero-trust-is-outdated-adaptive-trust.html" target="_blank" rel="noopener">X</a>
+    </div>
+  </div>
+
+</article>
+</main>
+
+<footer class="footer">
+  <div class="footer-in">
+    <div class="footer-top">
+      <a href="../index.html" class="footer-brand">
+        <div class="footer-mark"><img src="../assets/images/clearglass-logo.png" alt="ClearGlass logo"></div>
+        <div><b>ClearGlassInc</b><span>See Through Everything</span></div>
+      </a>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h5>Insights</h5>
+          <a href="index.html">All articles</a>
+          <a href="ai-agent-governance-governed-autonomy.html">Governed Autonomy</a>
+          <a href="ai-agents-insider-threat.html">Agent Insider Threat</a>
+          <a href="zero-trust-is-outdated-adaptive-trust.html">Adaptive Trust</a>
+        </div>
+        <div class="footer-col">
+          <h5>Products</h5>
+          <a href="../ai-operator.html">AI Operator</a>
+          <a href="../guardian.html">Guardian</a>
+          <a href="../artemis-iv.html">Artemis IV Core</a>
+        </div>
+        <div class="footer-col">
+          <h5>Company</h5>
+          <a href="../index.html#vision">Vision</a>
+          <a href="../government.html">Government</a>
+          <a href="../index.html#contact">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> ClearGlass Inc. All rights reserved. Ontario, Canada</span>
+      <span>Clarity Is Power</span>
+    </div>
+    <div class="footer-tagline">"The truth is transparent. The truth is dangerous."</div>
+  </div>
+</footer>
+<div class="unclass-banner">UNCLASSIFIED / NON-CLASSIFIÉ — END OF DOCUMENT</div>
+
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+var pb=document.getElementById('progress');
+function upd(){var h=document.documentElement;var sc=h.scrollTop||document.body.scrollTop;var mx=h.scrollHeight-h.clientHeight;pb.style.width=(mx>0?(sc/mx*100):0)+'%';}
+addEventListener('scroll',upd,{passive:true});upd();
+</script>
+<script defer src="/logo-badge.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › <a href="index.html">ClearGlass Intelligence · Insights</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="cybersecurity-architecture-for-agentic-software.html"><span><b>Previous</b>Security Architecture for Agentic Software</span></a>
+      <a href="index.html"><span><b>Topic hub</b>ClearGlass Intelligence</span></a>
+      <a href="rethinking-security-age-of-ai-cyber-stack.html"><span><b>Next in journey</b>Rethinking Security for the AI Cyber Stack</span></a>
+    </div>
+    <ul>
+      <li><a href="../cyber-defense-console.html"><b>Cyber Defense Console</b> — the ClearGlass command center for defensive operations</a></li>
+      <li><a href="rethinking-security-age-of-ai-cyber-stack.html"><b>Rethinking Security for the AI Cyber Stack</b> — a long read on defending AI-era infrastructure</a></li>
+      <li><a href="shadow-ai-enterprise-security-blind-spot.html"><b>Shadow AI: Enterprise Security’s Biggest Blind Spot</b> — the unsanctioned-AI exposure most estates cannot see</a></li>
+      <li><a href="zero-trust-is-outdated.html"><b>Zero Trust Is Outdated</b> — the original argument</a></li>
+      <li><a href="clearglass-secure-deployment-agent.html"><b>The Secure Deployment Agent</b> — governed authorization for every production push</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="../nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

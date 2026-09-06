@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>The Secure Deployment Agent: Governed Authorization for Every Production Change — ClearGlass Inc.</title>
+<meta name="description" content="A deploy button is a loaded verb. The ClearGlass Secure Deployment Agent turns shipping software into a governed, authorization-bound process: five operating states, a scope contract, a permission matrix, least-privilege secrets, and a rollback plan for every change."/>
+<link rel="canonical" href="https://www.clearglassinc.com/blog/clearglass-secure-deployment-agent.html"/>
+<link rel="alternate" type="application/rss+xml" title="ClearGlass Insights RSS" href="https://www.clearglassinc.com/blog/feed.xml"/>
+<meta name="author" content="Desmond Otieno Odhiambo"/>
+<meta name="robots" content="index,follow,max-image-preview:large"/>
+<meta name="keywords" content="secure deployment, deployment automation security, least privilege CI/CD, authorization-bound agent, scope contract, permission matrix, OIDC deployment, short-lived credentials, rollback plan, secret management, protected environments, audit log"/>
+
+<meta property="og:type" content="article"/>
+<meta property="og:title" content="The Secure Deployment Agent: Governed Authorization for Every Production Change"/>
+<meta property="og:description" content="Analyze aggressively. Plan comprehensively. Validate precisely. Execute narrowly. The operating model for an authorization-bound deployment agent that never ships anything you didn't approve."/>
+<meta property="og:url" content="https://www.clearglassinc.com/blog/clearglass-secure-deployment-agent.html"/>
+<meta property="og:site_name" content="ClearGlass Inc."/>
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+<meta property="article:published_time" content="2026-07-17"/>
+<meta property="article:author" content="Desmond Otieno Odhiambo"/>
+<meta property="article:section" content="Secure Deployment"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="The Secure Deployment Agent: Governed Authorization for Every Production Change"/>
+<meta name="twitter:description" content="Never infer authorization from access availability. The five-state operating model that makes an autonomous deployment agent safe to run against real infrastructure."/>
+<meta name="twitter:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="insights.css"/>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "The Secure Deployment Agent: Governed Authorization for Every Production Change",
+  "description": "A deploy button is a loaded verb. The ClearGlass Secure Deployment Agent turns shipping software into a governed, authorization-bound process: five operating states, a scope contract, a permission matrix, least-privilege secrets, and a rollback plan for every change.",
+  "image": "https://www.clearglassinc.com/assets/images/clearglass-logo.png",
+  "datePublished": "2026-07-17",
+  "dateModified": "2026-07-17",
+  "author": {
+    "@type": "Person",
+    "name": "Desmond Otieno Odhiambo",
+    "jobTitle": "Founder & Software Architect",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "ClearGlass Inc.",
+      "url": "https://www.clearglassinc.com"
+    }
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "ClearGlass Inc.",
+    "url": "https://www.clearglassinc.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.clearglassinc.com/assets/images/clearglass-logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.clearglassinc.com/blog/clearglass-secure-deployment-agent.html"
+  },
+  "keywords": "secure deployment, least privilege CI/CD, authorization-bound agent, scope contract, permission matrix, OIDC deployment, short-lived credentials, rollback plan, secret management, protected environments"
+}
+</script>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --white:#fafbfc;--off:#f3f5f8;--paper:#fff;
+  --dark:#0a0c10;--text:#0a0c10;--text-2:#3a3f4a;--text-3:#6b7280;--text-4:#9ca3af;
+  --line:rgba(10,12,16,.08);--line-soft:rgba(10,12,16,.05);
+  --prism-1:#38bdf8;--prism-2:#a78bfa;--prism-3:#f472b6;--prism-4:#34d399;--prism-5:#fbbf24;--prism-6:#60a5fa;
+  --crystal:linear-gradient(135deg,#38bdf8 0%,#a78bfa 25%,#f472b6 50%,#fbbf24 75%,#34d399 100%);
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'Urbanist',system-ui,sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{font-family:var(--sans);color:var(--text);background:var(--white);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;overflow-x:hidden}
+a{color:inherit}
+::selection{background:rgba(167,139,250,.22)}
+
+/* banners */
+.class-banner{background:#0a0c10;color:#cfe9ff;text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.18em;font-weight:600;padding:6px 16px}
+.class-banner span{opacity:.55;font-weight:400;margin:0 8px}
+.unclass-banner{background:#0d1f17;color:#4ade80;text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;font-weight:700;padding:6px 16px}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px clamp(16px,5vw,40px);background:rgba(250,251,252,.78);backdrop-filter:blur(20px) saturate(1.2);border-bottom:1px solid var(--line)}
+.nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}
+.nav-mark{width:40px;height:40px;border-radius:11px;overflow:hidden;background:#fff;display:grid;place-items:center;box-shadow:0 6px 20px rgba(0,0,0,.08);flex-shrink:0}
+.nav-mark img{width:100%;height:100%;object-fit:cover;display:block}
+.nav-name{font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:-.01em}
+.nav-name em{font-style:italic;font-weight:300;color:var(--text-3)}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{color:var(--text-3);text-decoration:none;font-size:13.5px;font-weight:600;padding:8px 14px;border-radius:10px;transition:color .18s,background .18s}
+.nav-links a:hover{color:var(--text);background:rgba(255,255,255,.7)}
+.nav-cta{background:var(--dark);color:#fff !important}
+.nav-cta:hover{background:#1a1d25;color:#fff !important}
+@media(max-width:860px){.nav-links a:not(.nav-cta){display:none}}
+
+/* reading progress */
+.progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--crystal);z-index:200;transition:width .1s linear}
+
+/* layout */
+.wrap{max-width:760px;margin:0 auto;padding:0 clamp(20px,5vw,28px)}
+.hero{padding:clamp(56px,9vw,104px) 0 clamp(28px,5vw,44px)}
+.kicker{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-3);font-weight:600;margin-bottom:22px}
+.kicker::before{content:"";width:24px;height:1.5px;background:var(--crystal)}
+h1.title{font-family:var(--serif);font-weight:600;font-size:clamp(36px,6.2vw,62px);line-height:1.04;letter-spacing:-.02em;margin-bottom:24px}
+h1.title em{font-style:italic;font-weight:400;background:var(--crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.dek{font-size:clamp(18px,2.4vw,22px);line-height:1.5;color:var(--text-2);font-weight:400;max-width:42ch}
+.byline{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:34px;padding-top:24px;border-top:1px solid var(--line)}
+.byline-av{width:42px;height:42px;border-radius:50%;background:var(--crystal);display:grid;place-items:center;color:#fff;font-weight:700;font-family:var(--serif);font-size:19px;flex-shrink:0}
+.byline-meta{font-size:14px;line-height:1.45}
+.byline-meta b{font-weight:700}
+.byline-meta span{color:var(--text-3)}
+
+/* article body */
+article{font-size:18.5px;line-height:1.72;color:var(--text-2)}
+article p{margin:0 0 22px}
+article p strong,article li strong{color:var(--text);font-weight:700}
+article h2{font-family:var(--serif);color:var(--text);font-weight:600;font-size:clamp(27px,4vw,38px);line-height:1.12;letter-spacing:-.015em;margin:56px 0 18px;scroll-margin-top:96px}
+article h3{color:var(--text);font-weight:700;font-size:clamp(19px,2.6vw,23px);margin:38px 0 12px;letter-spacing:-.01em}
+article h2 .num{font-family:var(--mono);font-size:.42em;color:var(--prism-2);vertical-align:middle;margin-right:12px;letter-spacing:.05em}
+article a.link{color:var(--text);text-decoration:underline;text-decoration-color:rgba(167,139,250,.5);text-underline-offset:3px;text-decoration-thickness:1.5px;transition:text-decoration-color .2s}
+article a.link:hover{text-decoration-color:var(--prism-2)}
+article ul,article ol{margin:0 0 22px;padding-left:24px}
+article li{margin:0 0 11px}
+article ul li::marker{color:var(--prism-2)}
+
+.lede{font-size:21px;line-height:1.6;color:var(--text)}
+.lede::first-letter{font-family:var(--serif);font-size:3.4em;line-height:.82;float:left;font-weight:600;margin:6px 12px 0 0;background:var(--crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+/* pull quote */
+.pull{margin:40px 0;padding:6px 0 6px 28px;border-left:3px solid transparent;border-image:var(--crystal) 1;font-family:var(--serif);font-style:italic;font-size:clamp(24px,3.6vw,33px);line-height:1.28;color:var(--text);font-weight:500}
+
+/* callout */
+.callout{margin:34px 0;padding:24px 26px;border-radius:18px;background:var(--paper);border:1px solid var(--line);box-shadow:0 14px 40px -28px rgba(6,8,18,.5)}
+.callout-tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--prism-2);margin-bottom:10px}
+.callout p{font-size:17px;margin:0;color:var(--text-2)}
+.callout p strong{color:var(--text)}
+
+/* framework diagram */
+.gates{margin:34px 0;display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media(max-width:640px){.gates{grid-template-columns:1fr 1fr}}
+.gate{position:relative;padding:20px 16px;border-radius:16px;background:var(--paper);border:1px solid var(--line);box-shadow:0 12px 34px -26px rgba(6,8,18,.5)}
+.gate .g-no{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text-4);letter-spacing:.08em}
+.gate .g-name{font-family:var(--serif);font-size:21px;font-weight:600;margin:6px 0 6px;color:var(--text)}
+.gate .g-desc{font-size:13px;line-height:1.42;color:var(--text-3)}
+.gate::after{content:"→";position:absolute;right:-13px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--prism-2);font-weight:700;z-index:2}
+.gate:last-child::after{display:none}
+@media(max-width:640px){.gate:nth-child(2)::after{display:none}}
+.gate-1{box-shadow:0 12px 34px -26px rgba(56,189,248,.7);border-top:2px solid var(--prism-1)}
+.gate-2{border-top:2px solid var(--prism-6)}
+.gate-3{border-top:2px solid var(--prism-2)}
+.gate-4{border-top:2px solid var(--prism-5)}
+.gate-5{border-top:2px solid var(--prism-4)}
+
+/* risk router table */
+.router{margin:30px 0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--paper)}
+.router-row{display:grid;grid-template-columns:92px 1fr;gap:0;border-bottom:1px solid var(--line-soft);font-size:15px}
+.router-row:last-child{border-bottom:none}
+.router-score{padding:16px 14px;font-family:var(--mono);font-weight:600;font-size:13px;display:flex;align-items:center;color:#fff}
+.router-body{padding:16px 18px;color:var(--text-2);line-height:1.5}
+.router-body b{color:var(--text);display:block;font-size:15px;margin-bottom:2px}
+.r-low{background:linear-gradient(135deg,#34d399,#10b981)}
+.r-med{background:linear-gradient(135deg,#fbbf24,#f59e0b)}
+.r-high{background:linear-gradient(135deg,#f472b6,#db2777)}
+
+/* matrix table */
+.matrix{margin:30px 0;overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--paper)}
+.matrix table{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}
+.matrix th{text-align:left;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);font-weight:600;padding:14px 16px;border-bottom:1px solid var(--line);background:var(--off)}
+.matrix td{padding:13px 16px;border-bottom:1px solid var(--line-soft);color:var(--text-2);line-height:1.4;vertical-align:top}
+.matrix tr:last-child td{border-bottom:none}
+.matrix td b{color:var(--text)}
+.matrix code{font-family:var(--mono);font-size:12.5px;background:var(--off);padding:2px 6px;border-radius:6px;color:var(--text)}
+
+/* steps */
+.steps{counter-reset:s;list-style:none;padding:0;margin:28px 0}
+.steps li{position:relative;padding:0 0 22px 56px;margin:0}
+.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:-2px;width:38px;height:38px;border-radius:11px;background:var(--dark);color:#fff;font-family:var(--mono);font-weight:600;font-size:15px;display:grid;place-items:center}
+.steps li b{color:var(--text);display:block;margin-bottom:3px;font-size:18px}
+
+/* tl;dr / key takeaways */
+.tldr{margin:8px 0 44px;padding:24px 26px;border-radius:18px;background:#0a0c10;color:#e7ecff}
+.tldr h4{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:#9aa6c8;font-weight:600;margin-bottom:14px}
+.tldr ul{margin:0;padding-left:20px}
+.tldr li{margin-bottom:9px;font-size:15.5px;line-height:1.5;color:#cdd5ef}
+.tldr li::marker{color:var(--prism-2)}
+.tldr li b{color:#fff}
+
+/* CTA */
+.cta{margin:64px 0 24px;padding:clamp(34px,6vw,52px);border-radius:26px;background:radial-gradient(120% 140% at 0% 0%,#15192a 0%,#0a0c10 60%);color:#fff;text-align:center;position:relative;overflow:hidden}
+.cta::before{content:"";position:absolute;inset:0;background:var(--crystal);opacity:.10;mix-blend-mode:screen}
+.cta-k{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:#9aa6c8;position:relative}
+.cta h3{font-family:var(--serif);font-weight:600;font-size:clamp(26px,4.4vw,40px);line-height:1.12;margin:14px 0 12px;position:relative}
+.cta p{color:#cdd5ef;max-width:46ch;margin:0 auto 26px;position:relative;font-size:16.5px}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:13px;font-weight:700;font-size:15px;text-decoration:none;transition:transform .15s,box-shadow .2s}
+.btn-primary{background:#fff;color:#0a0c10}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 40px -16px rgba(255,255,255,.4)}
+.btn-ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.btn-ghost:hover{background:rgba(255,255,255,.14)}
+
+/* related / share */
+.endbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin:44px 0;padding-top:26px;border-top:1px solid var(--line)}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--text-3);background:var(--off);border:1px solid var(--line);padding:6px 11px;border-radius:8px}
+.share a{font-size:13px;font-weight:600;color:var(--text-3);text-decoration:none;margin-left:14px}
+.share a:hover{color:var(--text)}
+
+/* footer */
+.footer{background:#0a0c10;color:#9aa6c8;padding:56px clamp(20px,5vw,40px) 28px;margin-top:40px}
+.footer-in{max-width:1100px;margin:0 auto}
+.footer-top{display:flex;flex-wrap:wrap;gap:40px;justify-content:space-between;align-items:flex-start}
+.footer-brand{display:flex;align-items:center;gap:12px}
+.footer-mark{width:38px;height:38px;border-radius:10px;overflow:hidden;background:#fff}
+.footer-mark img{width:100%;height:100%;object-fit:cover}
+.footer-brand b{color:#fff;font-family:var(--serif);font-size:20px;font-weight:600;display:block}
+.footer-brand span{font-size:12px;color:#6b7280}
+.footer-cols{display:flex;flex-wrap:wrap;gap:36px}
+.footer-col h5{color:#e7ecff;font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;font-family:var(--mono);font-weight:600}
+.footer-col a{display:block;color:#9aa6c8;text-decoration:none;font-size:14px;margin-bottom:9px;transition:color .15s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;margin-top:40px;padding-top:22px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px}
+.footer-tagline{margin-top:18px;font-family:var(--serif);font-style:italic;color:#6b7280;font-size:15px}
+</style>
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/glass.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="../brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body data-ix-page="article" data-ix-slug="clearglass-secure-deployment-agent" data-ix-theme="light">
+<div class="class-banner">UNCLASSIFIED / NON-CLASSIFIÉ <span>·</span> CLEARGLASS INTELLIGENCE DESK <span>·</span> OPEN PUBLICATION</div>
+<div class="progress" id="progress"></div>
+
+<nav class="nav">
+  <a href="../index.html" class="nav-brand">
+    <div class="nav-mark"><img src="../assets/images/clearglass-logo.png" alt="ClearGlass logo"></div>
+    <div class="nav-name">ClearGlassInc. <em>2040</em></div>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Insights</a>
+    <a href="../ai-operator.html">AI Operator</a>
+    <a href="../guardian.html">Guardian</a>
+    <a href="../government.html">Government</a>
+    <a href="../index.html#contact" class="nav-cta">Book a briefing →</a>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <div class="kicker">Secure Deployment · High-Trust Systems Patterns</div>
+  <h1 class="title">The Secure Deployment Agent: <em>Governed Authorization</em> for Every Production Change</h1>
+  <p class="dek">A deploy button is a loaded verb. This is the operating model that lets an autonomous agent design, validate, and ship real infrastructure — without ever acting outside what you explicitly approved.</p>
+  <div class="byline">
+    <div class="byline-av">D</div>
+    <div class="byline-meta">
+      <b>Desmond Otieno Odhiambo</b><br>
+      <span>Founder &amp; Software Architect, ClearGlass Inc. · July 17, 2026 · 13 min read</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+<article>
+
+  <div class="tldr">
+    <h4>The 30-second version</h4>
+    <ul>
+      <li><b>Access is not authorization.</b> An agent holding a token, a repo, and a deploy hook has the <em>ability</em> to ship. Whether it <em>may</em> is a separate decision that must be made explicitly, every time.</li>
+      <li><b>Five states, one direction.</b> The agent moves through <b>Discovery → Planning → Awaiting Authorization → Authorized Execution → Verification &amp; Closure</b>. Only one of those states is allowed to change anything.</li>
+      <li><b>A scope contract is the unit of trust.</b> Approved org, repo, branch, environment, secrets, permissions, deployment target, maintenance window, rollback authority — and explicit exclusions. Anything not in the contract is out of scope.</li>
+      <li><b>Least privilege, short-lived, and reversible.</b> OIDC over long-lived keys, environment-scoped secrets, pinned actions, protected environments, and a documented rollback for every change.</li>
+      <li><b>The mantra:</b> <em>Analyze aggressively. Plan comprehensively. Validate precisely. Execute narrowly.</em></li>
+    </ul>
+  </div>
+
+  <p class="lede">Every serious outage I have ever cleaned up had the same root cause hiding under the incident report: something with the <em>power</em> to change production changed production, and no one had explicitly decided it should. Not malice. Not incompetence. Just capability meeting opportunity with no gate in between. The deploy pipeline is the single most dangerous piece of software most companies run, because it is the one program whose entire job is to make irreversible changes to the systems that pay the bills.</p>
+
+  <p>Now hand that pipeline to an autonomous agent, and the stakes do not change — the <em>speed</em> does. An agent can plan a migration, wire the secrets, and push to production faster than you can read the diff. That is exactly why the agent that operates ClearGlass deployments is not built to be autonomous. It is built to be <strong>authorization-bound</strong>: it may analyze, design, validate, and prepare freely, and it may not connect an account, touch a repository, expose a credential, or start a deploy until a human names the exact target and says yes.</p>
+
+  <p>This piece is the operating model behind that agent — the <strong>Secure Deployment Agent</strong>. It is a governance pattern, not a product pitch: five states, a scope contract, a permission matrix, a threat-and-privacy pass, and a closure ritual. Steal it for your own pipelines, human-run or agent-run. The discipline is identical either way.</p>
+
+  <h2><span class="num">01</span>Access Is Not Authorization</h2>
+
+  <p>The most expensive assumption in modern DevOps is that if a credential can do a thing, doing that thing is fine. It is baked into how we build: the CI runner has a deploy key, so CI deploys; the agent has repo write, so the agent commits. The permission <em>is</em> the intent. That collapse is where accidents live.</p>
+
+  <p>Authorization is a distinct act. It names a target, an environment, a permission, and an impact — and it is given by someone with the authority to give it, at the moment the action is about to happen. Silence is not authorization. A thumbs-up on last week's unrelated change is not authorization. The fact that the token happens to work is <em>especially</em> not authorization.</p>
+
+  <div class="pull">Never infer authorization from access availability. The token working is a fact about your permissions, not a decision about your intent.</div>
+
+  <p>An authorization-bound agent internalizes this as a hard boundary. It will happily spend an hour producing an architecture, a permission matrix, and a rollback plan for a production migration — and then stop cold at the edge of execution and present the exact actions it needs approved. The analysis is free. The <em>doing</em> is gated. That asymmetry is the whole design.</p>
+
+  <h2><span class="num">02</span>Five States, One Direction</h2>
+
+  <p>The agent is always in exactly one of five explicit states, and it announces which. The states are a ratchet: read-only until the moment of sanctioned execution, then back to read-only to verify and close out.</p>
+
+  <div class="gates">
+    <div class="gate gate-1"><div class="g-no">STATE 01</div><div class="g-name">Discovery</div><div class="g-desc">Identify the systems, repos, environments, services, and intended outcomes. No changes permitted.</div></div>
+    <div class="gate gate-2"><div class="g-no">STATE 02</div><div class="g-name">Planning</div><div class="g-desc">Produce architecture, permission matrix, secret inventory, risk analysis, validation criteria, rollback. No changes.</div></div>
+    <div class="gate gate-3"><div class="g-no">STATE 03</div><div class="g-name">Awaiting Auth</div><div class="g-desc">Present the exact proposed actions and the target, permission, and impact of each. Wait for explicit approval.</div></div>
+    <div class="gate gate-4"><div class="g-no">STATE 04</div><div class="g-name">Execution</div><div class="g-desc">Perform only the approved actions, one at a time, validating each. Anything outside scope needs new approval.</div></div>
+    <div class="gate gate-5"><div class="g-no">STATE 05</div><div class="g-name">Verify &amp; Close</div><div class="g-desc">Validate state, permissions, logs, controls, and rollback readiness. Produce a final audit record.</div></div>
+  </div>
+
+  <p>Notice what the boundaries buy you. Four of the five states cannot mutate anything — the agent can think, design, and validate as aggressively as it likes with zero blast radius. Only <strong>Authorized Execution</strong> is allowed to write, and it is entered <em>only</em> from an explicit approval that names the target. The dangerous verb has exactly one door, and a human holds the key.</p>
+
+  <div class="callout">
+    <span class="callout-tag">Most people miss this</span>
+    <p><strong>The point of separating "Planning" from "Awaiting Authorization" is that a plan is not a request.</strong> A plan is an artifact you can review calmly. A request is a specific, narrowed ask — "grant this identity <code>deploy</code> on this environment for this window." Collapsing the two is how teams end up approving a vague direction and getting a broad, surprising change. Keep the plan and the ask as separate objects.</p>
+  </div>
+
+  <h2><span class="num">03</span>The Scope Contract</h2>
+
+  <p>Before anything ships, the agent writes a <strong>scope contract</strong> — the explicit boundary of what this engagement is allowed to touch. It is the single artifact that turns "deploy the thing" into a governable operation. Everything not named in it is, by definition, out of scope.</p>
+
+  <div class="matrix">
+    <table>
+      <thead><tr><th>Contract field</th><th>What it pins down</th></tr></thead>
+      <tbody>
+        <tr><td><b>Organization &amp; account</b></td><td>The exact GitHub org and identity acting. No sibling orgs, no personal accounts.</td></tr>
+        <tr><td><b>Repository &amp; branch</b></td><td>One repo, one branch (e.g. <code>clearglass/commerce</code> @ <code>release</code>). No cross-repo reach.</td></tr>
+        <tr><td><b>Cloud / hosting &amp; environment</b></td><td>The provider and the specific environment — <code>staging</code> is not <code>production</code>.</td></tr>
+        <tr><td><b>Workflow &amp; deployment target</b></td><td>Which pipeline runs, and what it deploys to. Named, not implied.</td></tr>
+        <tr><td><b>Secrets &amp; permissions</b></td><td>The exact secret <em>names</em> (never values) and the minimal scopes each identity needs.</td></tr>
+        <tr><td><b>Maintenance window &amp; rollback authority</b></td><td>When the change may land, and who is authorized to trigger a rollback.</td></tr>
+        <tr><td><b>Explicit exclusions</b></td><td>What is deliberately off-limits — production data, unrelated services, account linking.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>The exclusions row is the one people skip and the one that saves them. Writing down what you will <em>not</em> touch — "does not modify production pricing," "does not link any new account," "does not change DNS" — converts a fuzzy engagement into a fenced one. When the agent later encounters a tempting shortcut that crosses a fence, the contract has already answered it: no.</p>
+
+  <div class="pull">Anything not in the scope contract is out of scope. A boundary you did not write down is a boundary you do not have.</div>
+
+  <h2><span class="num">04</span>Routing Every Action By Risk</h2>
+
+  <p>Not every deployment action deserves the same friction. Regenerating a preview build is not the same as rotating a payment key. So the agent scores each proposed action on reversibility, blast radius, and exposure, and routes it — the same risk-router pattern ClearGlass uses across its <a class="link" href="ai-agent-governance-governed-autonomy.html">governed-autonomy stack</a>.</p>
+
+  <div class="router">
+    <div class="router-row">
+      <div class="router-score r-low">LOW</div>
+      <div class="router-body"><b>Auto-execute &amp; log</b>Read-only analysis, dependency scans, lint, build a plan, generate a preview/ephemeral environment, dry-run a migration. Reversible and contained — the agent runs free, but every action is written to the audit log.</div>
+    </div>
+    <div class="router-row">
+      <div class="router-score r-med">MEDIUM</div>
+      <div class="router-body"><b>Queue for approval</b>Deploy to staging, apply non-destructive config, open a change against a protected branch, rotate a low-sensitivity credential. Real but bounded — held until a reviewer approves with full context attached.</div>
+    </div>
+    <div class="router-row">
+      <div class="router-score r-high">HIGH / CRITICAL</div>
+      <div class="router-body"><b>Blocked until approved</b>Production deploy, privileged IAM change, access to sensitive secrets, destructive migration, DNS or network change, anything touching payment / data-retention. Hard-blocked until a named approver signs off. No override path in code.</div>
+    </div>
+  </div>
+
+  <h3>The permission matrix</h3>
+
+  <p>Underneath the routing sits a permission matrix — every identity, every resource, every scope, with a documented reason. If a row has no operational justification, the permission does not exist. The default is read-only; write and deploy are earned per-resource, per-environment, and time-boxed.</p>
+
+  <div class="matrix">
+    <table>
+      <thead><tr><th>Identity</th><th>Resource</th><th>Permission</th><th>Environment</th><th>Duration</th></tr></thead>
+      <tbody>
+        <tr><td>Deploy agent (OIDC)</td><td>Repo <code>commerce</code></td><td><code>contents:read</code></td><td>all</td><td>per-run token</td></tr>
+        <tr><td>Deploy workflow</td><td>Staging service</td><td><code>deploy</code></td><td>staging</td><td>run-scoped</td></tr>
+        <tr><td>Deploy workflow</td><td>Prod service</td><td><code>deploy</code></td><td>production</td><td>window + required reviewer</td></tr>
+        <tr><td>Reviewer (human)</td><td>Environment gate</td><td><code>approve</code></td><td>production</td><td>standing</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Two rules make the matrix real rather than decorative. First, <strong>separate identities per stage</strong> — development, staging, and production never share a credential, so a leaked staging token cannot touch production. Second, <strong>prefer federation to secrets</strong>: OpenID Connect or workload identity means the pipeline mints a short-lived token scoped to exactly this run, and there is no long-lived key sitting in a settings page waiting to leak.</p>
+
+  <h2><span class="num">05</span>Secrets, Supply Chain, and the Threat Pass</h2>
+
+  <p>Before execution, the agent runs an explicit threat-and-privacy review and classifies each finding <em>Critical / High / Moderate / Low / Accepted</em>. Three failure modes dominate real pipelines, so they get named controls:</p>
+
+  <ul>
+    <li><strong>Secret exposure.</strong> Secrets live in environment or organization secret stores, referenced by name, masked in logs, and rotated on a schedule. They never appear in source, workflow files, build output, command history, or generated artifacts. If a value would be printed, that is a bug, not a convenience.</li>
+    <li><strong>Supply-chain compromise.</strong> Every third-party action and dependency is pinned to an immutable commit hash or a reviewed version — never a floating tag like <code>@main</code> that an upstream owner can silently repoint at malicious code. Dependency review and secret scanning run in the gate.</li>
+    <li><strong>Identity correlation &amp; recovery coupling.</strong> Account linking is treated as a privacy and recovery-path risk, not a convenience. The agent will not broaden org, cloud, or identity access to make a task easier, and it flags any linkage that couples one system's recovery to another's.</li>
+  </ul>
+
+  <div class="callout">
+    <span class="callout-tag">Field rule</span>
+    <p><strong>A floating tag is a trust decision you have delegated to a stranger.</strong> <code>uses: some/action@v3</code> means "run whatever the maintainer decides <code>v3</code> is, whenever CI runs." Pin the hash — <code>@a1b2c3d…</code> — and you run the exact reviewed code, forever, until <em>you</em> choose to move. In an agentic pipeline where the runner holds deploy credentials, that difference is the difference between a build step and a breach.</p>
+  </div>
+
+  <h2><span class="num">06</span>Putting It Into Practice</h2>
+
+  <p>The model is only worth anything if it survives contact with a real pipeline. Here is the sequence the agent runs from a cold request to a closed-out deploy.</p>
+
+  <ol class="steps">
+    <li><b>Inventory before you touch.</b> Enumerate the systems, owners, repos, branches, environments, secret stores, auth methods, and existing rollback mechanisms. You cannot govern what you have not listed.</li>
+    <li><b>Map every workflow's verbs.</b> For each pipeline, define its trigger, inputs, outputs, required permissions and secrets, environment, approval gate, failure behavior, rollback procedure, and success criteria. Govern the verbs, not the use cases.</li>
+    <li><b>Draft the scope contract and permission matrix.</b> Name the org, repo, branch, environment, secrets, target, window, rollback authority, and exclusions. Every permission gets a written justification or it is deleted.</li>
+    <li><b>Present the authorization gate.</b> One block: proposed action, exact target, permissions required, secrets involved, production impact, privacy impact, rollback method, residual risk. Then stop and wait for an explicit yes.</li>
+    <li><b>Execute one operation at a time.</b> Run the approved action, validate it, record the timestamp and outcome, then proceed. Halt on any target mismatch, unexpected permission, or secret exposure — never auto-escalate, never substitute a different repo, region, or environment.</li>
+    <li><b>Verify, then close with an audit record.</b> Confirm workflow syntax, auth, permissions, deploy output, environment protections, secret masking, logging, and rollback readiness. Publish what changed, what was skipped, what failed, residual risks, and a credential-rotation date.</li>
+  </ol>
+
+  <p>The closure step is the one teams treat as optional and the one auditors treat as the whole point. A deploy that succeeded but produced no record is, from a governance standpoint, indistinguishable from one that failed — you cannot prove what happened. The final audit record is not paperwork; it is the evidence that the deploy was <em>governed</em>, not merely completed.</p>
+
+  <h2><span class="num">07</span>Measuring Whether It Works</h2>
+
+  <p>Governance that isn't measured decays. The agent tracks a small, honest KPI set, and the targets are deliberately uncompromising because the failure modes are expensive:</p>
+
+  <ul>
+    <li><strong>Production approval compliance: 100%.</strong> Every production change traces to a named approval. Not "mostly." Every one.</li>
+    <li><strong>Pinned third-party actions: 100%</strong>, and <strong>plaintext secrets: 0.</strong> These are binary. One floating action or one leaked key is a finding, not a rounding error.</li>
+    <li><strong>Unapproved production changes: 0</strong> and <strong>excessive-permission findings: 0.</strong> The whole model exists to hold these at zero; a nonzero reading is an incident.</li>
+    <li><strong>Rollback documentation coverage: 100%.</strong> If a change has no written path back, it should not have shipped.</li>
+    <li><strong>Deployment success rate, MTTR, change-failure rate.</strong> The operational health numbers — because a safe pipeline that never ships is also a failure.</li>
+  </ul>
+
+  <div class="pull">A deploy that succeeded but left no record is, to an auditor, indistinguishable from one that failed. Evidence is the deliverable.</div>
+
+  <h2><span class="num">08</span>Mistakes to Avoid</h2>
+
+  <ul>
+    <li><strong>Treating a working token as a green light.</strong> The credential's capability is not a decision. Re-derive authorization at the moment of action, against the scope contract.</li>
+    <li><strong>Approving a plan instead of an action.</strong> A reviewer who signs off on "the migration" has approved a direction, not a diff. Gate the specific, narrowed action — target, permission, impact.</li>
+    <li><strong>Sharing one identity across environments.</strong> A single credential that works in staging and production means a staging leak is a production breach. Separate them, always.</li>
+    <li><strong>Pinning dependencies to floating tags.</strong> <code>@latest</code> and <code>@v3</code> hand code execution to whoever controls upstream. Pin hashes; upgrade deliberately.</li>
+    <li><strong>Logging the outcome but not the sanction.</strong> Recording that a deploy happened, without recording who approved it and on what basis, gives you forensics with no accountability. Log the approval, every time.</li>
+    <li><strong>Calling a partial deploy a success.</strong> If a step failed or was skipped, say so, preserve the evidence, and recover. Never describe a partial state as done.</li>
+  </ul>
+
+  <h2><span class="num">09</span>The Final Takeaway</h2>
+
+  <p>The instinct in the agentic era is to measure a deployment system by how much it can do on its own. That is the wrong axis. The system worth building is the one that can be <em>trusted with production</em>, and trust is not a function of autonomy — it is a function of restraint that can be proven after the fact.</p>
+
+  <p>An authorization-bound deployment agent gives you both speed and safety without trading one for the other. It analyzes and plans at machine speed, because analysis is free. It stops at the exact edge where a change becomes irreversible, because that edge is where humans belong. And it closes every engagement with a record you could hand to an auditor, a regulator, or your future self at 3 a.m. during an incident.</p>
+
+  <p>Operate as a controlled agent, not an unrestricted actor. <strong>Analyze aggressively. Plan comprehensively. Validate precisely. Execute narrowly.</strong> That is how you earn the right to touch production — and keep it.</p>
+
+  <div class="cta">
+    <div class="cta-k">ClearGlass Inc. · Secure Deployment</div>
+    <h3>Ship to production with a governor on the deploy button.</h3>
+    <p>ClearGlass designs authorization-bound deployment pipelines — least-privilege, OIDC-federated, approval-gated, and audited by design — for commerce, security, and government workloads. See the model running.</p>
+    <div class="cta-row">
+      <a href="../ai-operator.html" class="btn btn-primary">See the AI Operator →</a>
+      <a href="../index.html#contact" class="btn btn-ghost">Book a 20-min briefing</a>
+    </div>
+  </div>
+
+  <section class="ix-related" id="ixRelated">
+    <b>Related from the desk</b>
+    <div class="ix-related-grid">
+      <a class="ix-related-card" href="ai-agent-governance-governed-autonomy.html"><span class="k">AI &amp; Autonomy</span><h4>AI Agent Governance: The Governed Autonomy Playbook</h4><p>The Four Gates and the Risk Router that let enterprises deploy autonomous AI without getting burned.</p><span class="m">11 min read · Governed Autonomy Playbooks</span></a>
+      <a class="ix-related-card" href="cybersecurity-architecture-for-agentic-software.html"><span class="k">Cyber Architecture</span><h4>Cybersecurity Architecture for Agentic Software</h4><p>The command-control patterns, permissions, logs, and kill switches required before AI agents touch real infrastructure.</p><span class="m">15 min read · High-Trust Systems Patterns</span></a>
+    </div>
+  </section>
+
+  <div class="endbar">
+    <div class="tags">
+      <span class="tag">#SecureDeployment</span>
+      <span class="tag">#LeastPrivilege</span>
+      <span class="tag">#OIDC</span>
+      <span class="tag">#ScopeContract</span>
+      <span class="tag">#ApprovalGates</span>
+    </div>
+    <div class="share">
+      Share:
+      <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.clearglassinc.com/blog/clearglass-secure-deployment-agent.html" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://twitter.com/intent/tweet?text=Never%20infer%20authorization%20from%20access%20availability.&url=https://www.clearglassinc.com/blog/clearglass-secure-deployment-agent.html" target="_blank" rel="noopener">X</a>
+    </div>
+  </div>
+
+</article>
+</main>
+
+<footer class="footer">
+  <div class="footer-in">
+    <div class="footer-top">
+      <a href="../index.html" class="footer-brand">
+        <div class="footer-mark"><img src="../assets/images/clearglass-logo.png" alt="ClearGlass logo"></div>
+        <div><b>ClearGlassInc</b><span>See Through Everything</span></div>
+      </a>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h5>Insights</h5>
+          <a href="index.html">All articles</a>
+          <a href="ai-agent-governance-governed-autonomy.html">Governed Autonomy</a>
+          <a href="cybersecurity-architecture-for-agentic-software.html">Agentic Cyber Architecture</a>
+          <a href="clearglass-agentops-microsoft-foundry-future-stack.html">ClearGlass AgentOps</a>
+        </div>
+        <div class="footer-col">
+          <h5>Products</h5>
+          <a href="../ai-operator.html">AI Operator</a>
+          <a href="../guardian.html">Guardian</a>
+          <a href="../artemis-iv.html">Artemis IV Core</a>
+        </div>
+        <div class="footer-col">
+          <h5>Company</h5>
+          <a href="../index.html#vision">Vision</a>
+          <a href="../government.html">Government</a>
+          <a href="../index.html#contact">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> ClearGlass Inc. All rights reserved. Ontario, Canada</span>
+      <span>Clarity Is Power</span>
+    </div>
+    <div class="footer-tagline">"The truth is transparent. The truth is dangerous."</div>
+  </div>
+</footer>
+<div class="unclass-banner">UNCLASSIFIED / NON-CLASSIFIÉ — END OF DOCUMENT</div>
+
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+var pb=document.getElementById('progress');
+function upd(){var h=document.documentElement;var sc=h.scrollTop||document.body.scrollTop;var mx=h.scrollHeight-h.clientHeight;pb.style.width=(mx>0?(sc/mx*100):0)+'%';}
+addEventListener('scroll',upd,{passive:true});upd();
+</script>
+<script defer src="insights.js"></script>
+<script defer src="/logo-badge.js"></script>
+<script defer src="assistant/writing-help.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › <a href="index.html">ClearGlass Intelligence · Insights</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="zero-trust-is-outdated.html"><span><b>Previous</b>Zero Trust Is Outdated</span></a>
+      <a href="index.html"><span><b>Topic hub</b>ClearGlass Intelligence</span></a>
+      <a href="clearglass-command-center-cyber-defense-console.html"><span><b>Next in journey</b>Inside the Command Center</span></a>
+    </div>
+    <ul>
+      <li><a href="../percival-os.html"><b>PERCIVAL OS</b> — mission-ready governed command center</a></li>
+      <li><a href="clearglass-platform-audit-2026.html"><b>The ClearGlass Platform Audit</b> — keep, simplify, gate, build — the platform upgrade doctrine</a></li>
+      <li><a href="clearglass-command-center-cyber-defense-console.html"><b>Inside the Command Center</b> — designing a cyber defense console</a></li>
+      <li><a href="clearglass-agentops-microsoft-foundry-future-stack.html"><b>ClearGlass AgentOps</b> — the Microsoft Foundry future stack</a></li>
+      <li><a href="osint-workflow-that-survives-contact-with-reality.html"><b>The OSINT Workflow That Survives Contact With Reality</b> — field-tested investigation practice</a></li>
+      <li><a href="ontario-accountability-sealed-evidence.html"><b>They Sealed the Evidence</b> — a source-led Ontario accountability brief</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="../nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

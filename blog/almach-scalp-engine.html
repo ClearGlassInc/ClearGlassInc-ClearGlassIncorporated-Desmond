@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>ALMACH Scalp Engine · Directional Neural Mesh | ClearGlass Insights</title>
+<meta name="description" content="A cinematic AI trading dashboard concept: the ALMACH Scalp Engine — a governed, read-only visualization of a Polymarket settlement scalper, directional neural mesh, and fair-value model. Illustrative UI, not investment advice."/>
+<meta name="robots" content="index,follow,max-image-preview:large"/>
+<meta name="author" content="ClearGlass Inc."/>
+<link rel="canonical" href="https://www.clearglassinc.com/blog/almach-scalp-engine.html"/>
+<meta property="og:type" content="article"/>
+<meta property="og:site_name" content="ClearGlass Inc."/>
+<meta property="og:title" content="ALMACH Scalp Engine · Directional Neural Mesh"/>
+<meta property="og:description" content="A cinematic AI trading dashboard concept — governed, read-only visualization. Illustrative UI, not investment advice."/>
+<meta property="og:url" content="https://www.clearglassinc.com/blog/almach-scalp-engine.html"/>
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="insights.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#05070d;--bg2:#09101c;
+  --panel:rgba(255,255,255,.055);--panel2:rgba(255,255,255,.09);--panel3:rgba(255,255,255,.14);
+  --line:rgba(180,214,255,.16);--line2:rgba(255,255,255,.26);
+  --text:#f8fbff;--muted:#a8b4c7;--soft:#dbe7ff;
+  --cyan:#39d8ff;--violet:#9d7bff;--green:#55f2a6;--amber:#ffd166;--red:#ff5c7a;--ink:#070a12;
+  --mono:'IBM Plex Mono',monospace;--sans:'Inter',system-ui,sans-serif;--serif:'Cormorant Garamond',Georgia,serif;
+  --glow:0 0 42px rgba(57,216,255,.28);--glow-violet:0 0 46px rgba(157,123,255,.26);--glow-green:0 0 42px rgba(85,242,166,.3);
+  --max:1180px;
+  --ease-liquid:cubic-bezier(.16,1,.3,1);--ease-soft:cubic-bezier(.22,.61,.36,1);
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);color:var(--text);
+  background:
+    radial-gradient(650px 500px at 50% 30%,rgba(57,216,255,.10),transparent 60%),
+    radial-gradient(circle at 8% -10%,rgba(85,242,166,.20),transparent 34%),
+    radial-gradient(circle at 92% 0%,rgba(157,123,255,.22),transparent 30%),
+    linear-gradient(180deg,#05070d 0%,#08111d 48%,#05070d 100%);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative
+}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.22;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:56px 56px;mask-image:linear-gradient(to bottom,#000,transparent 84%)}
+a{color:inherit}
+.wrap{width:min(var(--max),calc(100% - 40px));margin-inline:auto;position:relative;z-index:2}
+
+.class-banner{position:relative;z-index:2;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-align:center;padding:7px 16px;color:#b9ffe0;background:#07140f;border-bottom:1px solid rgba(85,242,166,.18)}
+.class-banner span{opacity:.5;margin:0 8px}
+
+/* nav (mirrors blog theme) */
+.nav{position:sticky;top:0;z-index:50;border-bottom:1px solid var(--line);background:rgba(5,7,13,.72);backdrop-filter:blur(22px) saturate(1.3)}
+.nav::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),var(--green),var(--violet),transparent);background-size:200% 100%;animation:holo-sweep 7s linear infinite;opacity:.55}
+@keyframes holo-sweep{to{background-position:-200% 0}}
+.nav-inner{height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.nav-mark{width:42px;height:42px;border:1px solid var(--line2);border-radius:14px;overflow:hidden;background:#fff;box-shadow:var(--glow)}
+.nav-mark img{width:100%;height:100%;object-fit:cover}
+.nav-name{font-family:var(--serif);font-size:24px;font-weight:700;letter-spacing:-.02em}
+.nav-name em{font-style:italic;color:var(--cyan);font-weight:500}
+.nav-links{display:flex;align-items:center;gap:3px}
+.nav-links a{font-size:13px;font-weight:800;color:var(--muted);text-decoration:none;padding:10px 12px;border-radius:999px;transition:color .2s,background .2s}
+.nav-links a:hover{color:#fff;background:var(--panel2)}
+.nav-cta{color:#031016!important;background:linear-gradient(135deg,var(--cyan),var(--green));box-shadow:0 0 28px rgba(57,216,255,.25)}
+
+/* hero */
+.dh-hero{padding:52px 0 12px;position:relative}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);font-weight:800}
+.eyebrow::before{content:"";width:26px;height:1px;background:linear-gradient(90deg,var(--cyan),var(--green))}
+.dh-hero h1{font-family:var(--serif);font-size:clamp(40px,6.4vw,78px);line-height:.92;letter-spacing:-.05em;margin:16px 0 12px}
+.gradient{background:linear-gradient(120deg,#fff 0%,#b7f1ff 30%,#bfaaff 60%,#baffdd 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:hue-drift 10s ease-in-out infinite}
+@keyframes hue-drift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.dh-hero p{max-width:64ch;font-size:clamp(15px,1.7vw,18px);line-height:1.65;color:var(--soft)}
+.dh-live{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--green);border:1px solid rgba(85,242,166,.28);border-radius:999px;padding:7px 12px;background:rgba(85,242,166,.06)}
+.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* ===== dashboard deck ===== */
+section{padding:26px 0}
+.deck{position:relative;border:1px solid rgba(85,242,166,.16);border-radius:30px;overflow:hidden;isolation:isolate;
+  background:linear-gradient(180deg,rgba(10,20,16,.72),rgba(6,11,18,.9));
+  box-shadow:0 40px 120px rgba(0,0,0,.55),inset 0 0 130px rgba(2,10,8,.6),0 0 60px rgba(85,242,166,.05)}
+.deck::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;z-index:0;
+  background-image:linear-gradient(rgba(85,242,166,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(85,242,166,.05) 1px,transparent 1px);
+  background-size:40px 40px;mask-image:radial-gradient(120% 90% at 50% 0,#000 40%,transparent 100%)}
+.deck::after{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;z-index:6;
+  background:linear-gradient(120deg,transparent,rgba(85,242,166,.5),transparent 40%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
+  padding:1px;opacity:.5;animation:qci-edge 6s ease-in-out infinite}
+@keyframes qci-edge{0%,100%{opacity:.24}50%{opacity:.66}}
+.deck-scan{position:absolute;left:0;right:0;top:0;height:120px;z-index:5;pointer-events:none;
+  background:linear-gradient(180deg,rgba(85,242,166,.10),transparent);animation:deck-scan 7s linear infinite;mix-blend-mode:screen}
+@keyframes deck-scan{0%{transform:translateY(-120px)}100%{transform:translateY(1400px)}}
+.deck-bezel{position:relative;z-index:2;padding:clamp(14px,2.2vw,22px)}
+.deck-top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;
+  padding-bottom:14px;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.deck-id{display:inline-flex;align-items:center;gap:9px;color:#bff6d8;font-weight:700}
+.deck-badges{display:flex;gap:6px;flex-wrap:wrap}
+.badge{border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);border-radius:8px;padding:6px 10px;font:700 10px var(--mono);letter-spacing:.12em}
+.badge.g{border-color:rgba(85,242,166,.3);color:var(--green);background:rgba(85,242,166,.06)}
+.badge.v{border-color:rgba(157,123,255,.32);color:var(--violet);background:rgba(157,123,255,.06)}
+.deck-clock{color:#9fe8c8;font-variant-numeric:tabular-nums}
+
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.card{position:relative;border:1px solid var(--line);border-radius:18px;
+  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02));
+  padding:16px;overflow:hidden;transition:border-color .3s,box-shadow .35s,transform .4s var(--ease-liquid)}
+.card:hover{border-color:rgba(85,242,166,.3);box-shadow:0 18px 50px rgba(0,0,0,.4),0 0 30px rgba(85,242,166,.1);transform:translateY(-3px)}
+.card.c2{grid-column:span 2}.card.c3{grid-column:span 3}.card.c4{grid-column:span 4}.card.c6{grid-column:1/-1}
+.chead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.chead h3{font:700 10.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--soft)}
+.tag{font:700 9px var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:4px 8px;border-radius:999px;border:1px solid rgba(85,242,166,.28);color:var(--green);background:rgba(85,242,166,.06)}
+.tag.alert{border-color:rgba(255,92,122,.34);color:var(--red);background:rgba(255,92,122,.07)}
+.tag.vi{border-color:rgba(157,123,255,.34);color:var(--violet);background:rgba(157,123,255,.07)}
+
+.big{font:800 40px/1 var(--sans);font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:#fff}
+.big.up{color:var(--green);text-shadow:0 0 30px rgba(85,242,166,.45)}
+.big small{font:700 13px var(--mono);color:var(--muted);letter-spacing:.08em;margin-left:8px}
+.sub{margin-top:6px;font:600 11px var(--mono);letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+
+/* stat rows */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.stat{padding:12px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03)}
+.stat b{display:block;font:800 20px/1 var(--sans);font-variant-numeric:tabular-nums;color:#fff}
+.stat b.g{color:var(--green)}.stat b.v{color:var(--violet)}.stat b.c{color:var(--cyan)}
+.stat span{font:700 9px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+/* svg charts */
+.chart{width:100%;display:block;border-radius:12px}
+.chart-wrap{position:relative;border-radius:14px;background:linear-gradient(180deg,rgba(3,9,20,.6),rgba(3,7,14,.7));border:1px solid rgba(255,255,255,.06);padding:10px;overflow:hidden}
+.grid-lines line{stroke:rgba(255,255,255,.06);stroke-width:1}
+
+/* multiplier trade entries */
+.entries{list-style:none;display:grid;gap:8px;margin-top:12px}
+.entries li{display:grid;grid-template-columns:8px 1fr auto;gap:10px;align-items:center;padding:9px 11px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.028);font:600 12px var(--sans);color:var(--soft);transition:border-color .25s,transform .3s var(--ease-liquid)}
+.entries li:hover{border-color:rgba(85,242,166,.3);transform:translateX(3px)}
+.entries .d{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.entries .d.rb{background:var(--red);box-shadow:0 0 8px var(--red)}
+.entries .d.cy{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.entries .px{font:700 11px var(--mono);color:var(--muted);letter-spacing:.04em}
+.entries .px.g{color:var(--green)}.entries .px.r{color:var(--red)}
+
+/* neural mesh */
+.mesh-wrap{position:relative;border-radius:16px;overflow:hidden;border:1px solid rgba(157,123,255,.16);background:radial-gradient(120% 120% at 50% 20%,#0b0f22 0%,#05060f 60%,#03040a 100%);height:clamp(300px,42vh,460px)}
+#meshCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.mesh-hud{position:absolute;z-index:3;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);pointer-events:none}
+.mesh-hud.tl{top:14px;left:16px;color:#c9b8ff}
+.mesh-hud.tr{top:14px;right:16px;text-align:right;color:#9fe8c8}
+.mesh-legend{position:absolute;left:16px;bottom:14px;z-index:3;display:grid;gap:5px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(6,10,20,.55);backdrop-filter:blur(8px)}
+.mesh-legend span{display:flex;align-items:center;gap:8px;font:600 10px var(--mono);letter-spacing:.08em;color:var(--soft)}
+.mesh-legend i{width:16px;height:2px;border-radius:2px;flex-shrink:0}
+
+/* decision tree */
+.tree{position:relative;padding:8px 4px 4px}
+.tree-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.tree-rows{position:relative;z-index:1;display:grid;gap:26px}
+.tree-row{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.node{position:relative;border:1px solid var(--line);border-radius:14px;padding:11px 16px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));font:700 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);text-align:center;min-width:130px;transition:border-color .25s,box-shadow .3s,transform .3s var(--ease-liquid)}
+.node small{display:block;font:600 9px var(--mono);color:var(--muted);letter-spacing:.06em;margin-top:4px;text-transform:none}
+.node.g{border-color:rgba(85,242,166,.35);color:#d6ffe9;box-shadow:0 0 24px rgba(85,242,166,.12)}
+.node.c{border-color:rgba(57,216,255,.35);color:#d6f6ff;box-shadow:0 0 24px rgba(57,216,255,.12)}
+.node.r{border-color:rgba(255,92,122,.35);color:#ffd8e0;box-shadow:0 0 24px rgba(255,92,122,.12)}
+.node:hover{transform:translateY(-2px)}
+.engine-btn{cursor:pointer;border:0;font-family:var(--mono);letter-spacing:.14em;text-transform:uppercase;font-weight:800;font-size:13px;color:#fff;
+  padding:18px 30px;border-radius:18px;position:relative;
+  background:radial-gradient(circle at 50% 30%,#c6a3ff,#7b4dff 55%,#5a2bd6 100%);
+  box-shadow:0 0 60px rgba(157,123,255,.55),0 12px 40px rgba(90,43,214,.5),inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .3s var(--ease-liquid),box-shadow .3s}
+.engine-btn::after{content:"";position:absolute;inset:-3px;border-radius:20px;background:conic-gradient(from 0deg,transparent,rgba(157,123,255,.8),transparent 40%,rgba(198,163,255,.7),transparent);opacity:.6;z-index:-1;animation:spin 5s linear infinite}
+@keyframes spin{to{transform:rotate(1turn)}}
+.engine-btn:hover{transform:scale(1.04);box-shadow:0 0 80px rgba(157,123,255,.7),0 16px 50px rgba(90,43,214,.6),inset 0 1px 0 rgba(255,255,255,.4)}
+.engine-btn small{display:block;font:700 8.5px var(--mono);letter-spacing:.2em;color:rgba(255,255,255,.75);margin-top:5px}
+.engine-status{text-align:center;margin-top:14px;font:700 10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);min-height:14px}
+.engine-status.on{color:var(--green)}
+
+/* histogram + fair value */
+.legend-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px}
+.legend-row span{display:flex;align-items:center;gap:7px;font:600 10px var(--mono);letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.legend-row i{width:12px;height:12px;border-radius:3px}
+
+.disclaimer{display:block;margin-top:22px;font:600 11px var(--mono);letter-spacing:.03em;color:var(--muted);text-align:center;line-height:1.7}
+
+/* footer */
+.footer{padding:54px 0 30px;border-top:1px solid var(--line);color:var(--muted);margin-top:30px}
+.footer-grid{display:grid;grid-template-columns:1.2fr repeat(3,1fr);gap:24px}
+.footer h4{color:#fff;margin-bottom:10px}
+.footer a{display:block;color:var(--muted);text-decoration:none;margin:8px 0;transition:color .2s}
+.footer a:hover{color:#fff}
+.ft{font-family:var(--serif);font-style:italic;color:#fff;margin-top:22px}
+
+@media(max-width:1040px){.grid{grid-template-columns:repeat(4,1fr)}.card.c3{grid-column:span 2}.card.c4{grid-column:span 4}}
+@media(max-width:820px){.nav-links a:not(.nav-cta){display:none}.footer-grid{grid-template-columns:1fr}}
+@media(max-width:720px){.grid{grid-template-columns:repeat(2,1fr)}.card,.card.c2,.card.c3,.card.c4{grid-column:1/-1}.stats{grid-template-columns:1fr 1fr}}
+@media(prefers-reduced-motion:reduce){.deck-scan,.engine-btn::after{animation:none}.deck-scan{display:none}}
+</style>
+<link rel="stylesheet" href="/assets/css/glass.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <link rel="stylesheet" href="../brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body data-ix-page="article" data-ix-theme="dark">
+<div class="class-banner">UNCLASSIFIED / NON-CLASSIFIÉ <span>·</span> CLEARGLASS INTELLIGENCE DESK <span>·</span> ILLUSTRATIVE UI — NOT INVESTMENT ADVICE</div>
+<nav class="nav" id="nav" aria-label="Primary navigation"><div class="wrap nav-inner">
+  <a href="index.html" class="nav-brand"><div class="nav-mark"><img src="../assets/images/clearglass-logo.png" alt="ClearGlass logo"></div><div class="nav-name">ClearGlassInc. <em>Insights</em></div></a>
+  <div class="nav-links"><a href="index.html">Insights</a><a href="#profit">Profit</a><a href="#mesh">Neural Mesh</a><a href="#tree">Decision Tree</a><a href="#models">Models</a><a href="../index.html#contact" class="nav-cta">Book a briefing →</a></div>
+</div></nav>
+
+<header class="dh-hero wrap">
+  <div class="eyebrow">ALMACH · Directional Neural Mesh</div>
+  <h1><span class="gradient">ALMACH Scalp Engine</span></h1>
+  <p>A cinematic control surface for a governed, high-frequency market-scalping concept — profit analytics, a directional neural mesh, a strategy decision tree, and a fair-value model, rendered live in the ClearGlass holographic language. Every number below is illustrative simulation, not a live account.</p>
+  <div style="margin-top:18px"><span class="dh-live"><span class="live-dot"></span> Live simulation feed · read-only</span></div>
+</header>
+
+<!-- ===================== PROFIT + MULTIPLIER ===================== -->
+<section id="profit" class="wrap">
+  <div class="deck">
+    <div class="deck-scan" aria-hidden="true"></div>
+    <div class="deck-bezel">
+      <div class="deck-top">
+        <span class="deck-id"><span class="live-dot"></span> ALMACH · POLYMARKET SETTLEMENT SCALPER</span>
+        <div class="deck-badges">
+          <span class="badge g">GOVERNED</span>
+          <span class="badge v">NEURAL MESH v9</span>
+          <span class="badge">PAPER MODE</span>
+        </div>
+        <span class="deck-clock" id="clock">--:--:-- UTC</span>
+      </div>
+
+      <div class="grid">
+        <!-- profit hero -->
+        <div class="card c4">
+          <div class="chead"><h3>Net Realized Profit · 30D</h3><span class="tag">+61.4% ROI</span></div>
+          <div class="big up" id="profitNum">+$68,443</div>
+          <div class="sub">Polymarket Settlement Scalper · 2,914 fills</div>
+          <div class="chart-wrap" style="margin-top:14px">
+            <svg class="chart" viewBox="0 0 720 220" preserveAspectRatio="none" role="img" aria-label="Cumulative profit curve trending upward">
+              <defs>
+                <linearGradient id="pfill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="rgba(85,242,166,.42)"/>
+                  <stop offset="1" stop-color="rgba(85,242,166,0)"/>
+                </linearGradient>
+                <linearGradient id="pline" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stop-color="#39d8ff"/><stop offset="1" stop-color="#55f2a6"/>
+                </linearGradient>
+                <filter id="pglow"><feGaussianBlur stdDeviation="3.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              </defs>
+              <g class="grid-lines"><line x1="0" y1="55" x2="720" y2="55"/><line x1="0" y1="110" x2="720" y2="110"/><line x1="0" y1="165" x2="720" y2="165"/></g>
+              <path id="profitArea" fill="url(#pfill)"></path>
+              <path id="profitLine" fill="none" stroke="url(#pline)" stroke-width="2.6" stroke-linecap="round" filter="url(#pglow)"></path>
+              <circle id="profitDot" r="4.5" fill="#baffdd" filter="url(#pglow)"></circle>
+            </svg>
+          </div>
+          <div class="stats">
+            <div class="stat"><b class="g">73.8%</b><span>Win Rate</span></div>
+            <div class="stat"><b class="c">1,412</b><span>BTC Trades</span></div>
+            <div class="stat"><b class="v">x2.31</b><span>Profit Factor</span></div>
+          </div>
+        </div>
+
+        <!-- multiplier panel -->
+        <div class="card c2">
+          <div class="chead"><h3>Performance Multiplier</h3><span class="tag vi">SESSION</span></div>
+          <div class="big" style="color:var(--violet);text-shadow:0 0 30px rgba(157,123,255,.45)">x4.1<small>equity</small></div>
+          <div class="chart-wrap" style="margin-top:12px">
+            <svg class="chart" viewBox="0 0 320 150" preserveAspectRatio="none" role="img" aria-label="Equity multiplier curve rising to 4.1x">
+              <defs>
+                <linearGradient id="mfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(157,123,255,.4)"/><stop offset="1" stop-color="rgba(157,123,255,0)"/></linearGradient>
+                <linearGradient id="mline" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9d7bff"/><stop offset="1" stop-color="#39d8ff"/></linearGradient>
+              </defs>
+              <path id="multArea" fill="url(#mfill)"></path>
+              <path id="multLine" fill="none" stroke="url(#mline)" stroke-width="2.4" stroke-linecap="round" filter="url(#pglow)"></path>
+            </svg>
+          </div>
+          <ul class="entries">
+            <li><span class="d"></span><span>BTC-PERP · LONG</span><span class="px g">+0.84%</span></li>
+            <li><span class="d cy"></span><span>ETH-PERP · LONG</span><span class="px g">+0.52%</span></li>
+            <li><span class="d rb"></span><span>SOL-PERP · SHORT</span><span class="px r">-0.19%</span></li>
+            <li><span class="d"></span><span>POLY · YES 0.61→0.68</span><span class="px g">+1.11%</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== NEURAL MESH ===================== -->
+<section id="mesh" class="wrap">
+  <div class="deck">
+    <div class="deck-bezel">
+      <div class="deck-top">
+        <span class="deck-id"><span class="live-dot"></span> DIRECTIONAL NEURAL MESH</span>
+        <div class="deck-badges"><span class="badge v">128 NODES</span><span class="badge g">CONVERGED</span></div>
+        <span class="deck-clock">INFERENCE · 4.2ms</span>
+      </div>
+      <div class="mesh-wrap">
+        <canvas id="meshCanvas" aria-label="Animated interconnected neural network visualization"></canvas>
+        <div class="mesh-hud tl">Directional Neural Mesh<br>Signal → Conviction → Sizing</div>
+        <div class="mesh-hud tr">Bias: <b style="color:#55f2a6">LONG 0.71</b><br>Entropy: 0.18</div>
+        <div class="mesh-legend">
+          <span><i style="background:#55f2a6"></i>Bullish weight</span>
+          <span><i style="background:#ff5c7a"></i>Bearish weight</span>
+          <span><i style="background:#eef4ff"></i>Neutral / gate</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DECISION TREE ===================== -->
+<section id="tree" class="wrap">
+  <div class="deck">
+    <div class="deck-bezel">
+      <div class="deck-top">
+        <span class="deck-id"><span class="live-dot"></span> STRATEGY DECISION TREE</span>
+        <div class="deck-badges"><span class="badge">GOVERNANCE-GATED</span><span class="badge g">AUTO ≤ LOW RISK</span></div>
+        <span class="deck-clock">DEPTH · 4</span>
+      </div>
+      <div class="tree">
+        <svg class="tree-svg" id="treeSvg" viewBox="0 0 1000 460" preserveAspectRatio="none" aria-hidden="true">
+          <defs><linearGradient id="branch" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(157,123,255,.7)"/><stop offset="1" stop-color="rgba(57,216,255,.35)"/></linearGradient></defs>
+        </svg>
+        <div class="tree-rows">
+          <div class="tree-row">
+            <button class="engine-btn" id="engineBtn" type="button">ALMACH SCALP ENGINE<small>Central Decision Core</small></button>
+          </div>
+          <div class="tree-row">
+            <div class="node c">WAIT FOR CERTAINTY<small>conviction ≥ 0.68</small></div>
+            <div class="node v" style="border-color:rgba(157,123,255,.35);color:#e6dcff">SIGNAL FUSION<small>mesh + order flow</small></div>
+            <div class="node r">HEDGE CHECK<small>exposure vs. VaR</small></div>
+          </div>
+          <div class="tree-row">
+            <div class="node g">LIMIT LADDER<small>5-rung maker grid</small></div>
+            <div class="node c">SPREAD GUARD<small>skip if &gt; 8 bps</small></div>
+            <div class="node r">KILL SWITCH<small>drawdown &gt; 2%</small></div>
+            <div class="node g">SETTLEMENT ARB<small>Polymarket YES/NO</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="engine-status" id="engineStatus">Engine armed · awaiting conviction threshold</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== STATISTICAL MODELS ===================== -->
+<section id="models" class="wrap">
+  <div class="deck">
+    <div class="deck-bezel">
+      <div class="deck-top">
+        <span class="deck-id"><span class="live-dot"></span> QUANT MODELS</span>
+        <div class="deck-badges"><span class="badge">MONTE CARLO · 50K</span><span class="badge g">FAIR VALUE</span></div>
+        <span class="deck-clock">REFRESH · 1s</span>
+      </div>
+      <div class="grid">
+        <!-- bell curve histogram -->
+        <div class="card c3">
+          <div class="chead"><h3>Trade P&amp;L Distribution</h3><span class="tag">σ 0.94%</span></div>
+          <div class="chart-wrap">
+            <svg class="chart" viewBox="0 0 480 240" role="img" aria-label="Bell curve histogram of trade outcomes, red losses and green gains">
+              <defs><linearGradient id="bell" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(255,255,255,.5)"/><stop offset="1" stop-color="rgba(255,255,255,0)"/></linearGradient></defs>
+              <g class="grid-lines"><line x1="0" y1="200" x2="480" y2="200"/></g>
+              <g id="histBars"></g>
+              <path id="bellCurve" fill="none" stroke="#eef4ff" stroke-width="2" opacity=".85" filter="url(#pglow)"></path>
+              <line x1="240" y1="16" x2="240" y2="200" stroke="rgba(255,255,255,.3)" stroke-dasharray="4 4"/>
+            </svg>
+          </div>
+          <div class="legend-row">
+            <span><i style="background:var(--red)"></i>Losses</span>
+            <span><i style="background:var(--green)"></i>Gains</span>
+            <span><i style="background:#eef4ff"></i>Fitted normal</span>
+          </div>
+        </div>
+
+        <!-- fair value deviation -->
+        <div class="card c3">
+          <div class="chead"><h3>Fair Value Model</h3><span class="tag vi">DEVIATION σ</span></div>
+          <div class="chart-wrap">
+            <svg class="chart" viewBox="0 0 480 240" preserveAspectRatio="none" role="img" aria-label="Price deviation from fair value oscillating around zero">
+              <defs>
+                <linearGradient id="fvPos" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(85,242,166,.3)"/><stop offset="1" stop-color="rgba(85,242,166,0)"/></linearGradient>
+              </defs>
+              <g class="grid-lines"><line x1="0" y1="60" x2="480" y2="60"/><line x1="0" y1="180" x2="480" y2="180"/></g>
+              <line x1="0" y1="120" x2="480" y2="120" stroke="rgba(157,123,255,.55)" stroke-width="1.4" stroke-dasharray="6 5"/>
+              <text x="8" y="114" fill="#9d7bff" font-family="IBM Plex Mono,monospace" font-size="10">FAIR VALUE</text>
+              <path id="fvArea" fill="url(#fvPos)"></path>
+              <path id="fvLine" fill="none" stroke="#39d8ff" stroke-width="2.2" stroke-linecap="round" filter="url(#pglow)"></path>
+              <circle id="fvDot" r="4" fill="#baffdd" filter="url(#pglow)"></circle>
+            </svg>
+          </div>
+          <div class="stats">
+            <div class="stat"><b class="c">-0.42σ</b><span>Current Dev</span></div>
+            <div class="stat"><b class="g">0.87</b><span>Mean Revert R²</span></div>
+            <div class="stat"><b class="v">62s</b><span>Half-Life</span></div>
+          </div>
+        </div>
+      </div>
+      <span class="disclaimer">Illustrative simulation for demonstration only. Figures, fills, and curves are synthetic and do not represent a live account, a solicitation, or investment advice. ALMACH operates under the ClearGlass governance model — read-only analysis → draft → human approval → execution.</span>
+    </div>
+  </div>
+</section>
+
+<footer class="footer"><div class="wrap footer-grid">
+  <div><h4>ClearGlass Insights</h4><p>A premium research-led content engine for governed AI, cybersecurity, autonomy, OSINT, financial crime detection, and high-trust software systems.</p><div class="ft">"Clarity Is Power."</div></div>
+  <div><h4>Navigate</h4><a href="index.html">Insights</a><a href="#profit">Profit</a><a href="#mesh">Neural Mesh</a><a href="#models">Models</a></div>
+  <div><h4>Platforms</h4><a href="../ai-operator.html">AI Operator</a><a href="../guardian.html">Guardian</a><a href="../government.html">Government</a></div>
+  <div><h4>Trust</h4><a href="../index.html#contact">Contact</a><a href="feed.xml">RSS feed</a><a href="../sitemap.xml">Sitemap</a></div>
+</div><div class="wrap" style="margin-top:28px">© <span id="year"></span> ClearGlass Inc. · Ontario, Canada · Illustrative UI — not investment advice</div></footer>
+
+<script>
+(function(){
+  var RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- UTC clock + year ---- */
+  var clock=document.getElementById('clock');
+  function tick(){ if(clock) clock.textContent=new Date().toISOString().slice(11,19)+' UTC'; }
+  tick(); setInterval(tick,1000);
+  var y=document.getElementById('year'); if(y) y.textContent=new Date().getFullYear();
+
+  /* ---- helpers: build a smooth path from points ---- */
+  function linePath(pts){ return pts.map(function(p,i){return (i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1);}).join(' '); }
+  function areaPath(pts,base){ return linePath(pts)+' L'+pts[pts.length-1][0].toFixed(1)+' '+base+' L'+pts[0][0].toFixed(1)+' '+base+' Z'; }
+
+  /* ---- profit curve (noisy uptrend) ---- */
+  (function(){
+    var W=720,base=200,n=64,pts=[],acc=0.12;
+    for(var j=0;j<n;j++){ acc += 0.013 + Math.max(-0.02,(Math.random()-0.45)*0.045); acc=Math.min(0.97,Math.max(0.06,acc)); pts.push([ (j/(n-1))*W, base-acc*(base-16) ]); }
+    document.getElementById('profitLine').setAttribute('d',linePath(pts));
+    document.getElementById('profitArea').setAttribute('d',areaPath(pts,base));
+    var dot=document.getElementById('profitDot'), last=pts[pts.length-1];
+    dot.setAttribute('cx',last[0]); dot.setAttribute('cy',last[1]);
+  })();
+
+  /* ---- multiplier curve (accelerating to 4.1x) ---- */
+  (function(){
+    var W=320,base=140,n=42,pts=[];
+    for(var i=0;i<n;i++){ var t=i/(n-1); var val=0.08+Math.pow(t,1.7)*0.86 + Math.sin(i*0.6)*0.02*(1-t); pts.push([t*W, base-val*(base-10)]); }
+    document.getElementById('multLine').setAttribute('d',linePath(pts));
+    document.getElementById('multArea').setAttribute('d',areaPath(pts,base));
+  })();
+
+  /* ---- animated count-up on profit ---- */
+  (function(){
+    var el=document.getElementById('profitNum'); if(!el||RM) return;
+    var target=68443, cur=0, seen=false;
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){
+      if(e.isIntersecting && !seen){ seen=true; var t0=performance.now();
+        (function step(now){ var p=Math.min(1,(now-t0)/1400); var e2=1-Math.pow(1-p,3); cur=Math.round(target*e2);
+          el.textContent='+$'+cur.toLocaleString(); if(p<1) requestAnimationFrame(step); })(t0);
+      }});},{threshold:.4});
+    io.observe(el);
+  })();
+
+  /* ---- bell curve histogram ---- */
+  (function(){
+    var g=document.getElementById('histBars'); if(!g) return;
+    var bars=26,W=480,H=200,bw=W/bars, html='';
+    for(var i=0;i<bars;i++){
+      var x=i*bw, mid=(i+0.5)/bars, z=(mid-0.5)*6;
+      var h=Math.exp(-0.5*z*z)*180 * (0.82+Math.random()*0.3);
+      h=Math.min(180,h);
+      var loss=mid<0.5;
+      var col=loss?'#ff5c7a':'#55f2a6';
+      html+='<rect x="'+(x+1.5).toFixed(1)+'" y="'+(H-h).toFixed(1)+'" width="'+(bw-3).toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2" fill="'+col+'" opacity="'+(0.55+0.35*(h/180)).toFixed(2)+'"/>';
+    }
+    g.innerHTML=html;
+    // fitted normal curve overlay
+    var pts=[]; for(var s=0;s<=120;s++){ var t=s/120; var zz=(t-0.5)*6; var yy=H-Math.exp(-0.5*zz*zz)*180; pts.push([t*W,yy]); }
+    document.getElementById('bellCurve').setAttribute('d',linePath(pts));
+  })();
+
+  /* ---- fair value deviation (mean-reverting) ---- */
+  var fvState=(function(){
+    var W=480,mid=120,n=80,pts=[],val=0;
+    function gen(){ pts=[]; val=0; for(var i=0;i<n;i++){ val += (Math.random()-0.5)*22 - val*0.14; val=Math.max(-95,Math.min(95,val)); pts.push([ (i/(n-1))*W, mid+val ]); } return pts; }
+    function draw(){ var p=gen();
+      document.getElementById('fvLine').setAttribute('d',linePath(p));
+      document.getElementById('fvArea').setAttribute('d',areaPath(p,mid));
+      var d=document.getElementById('fvDot'),l=p[p.length-1]; d.setAttribute('cx',l[0]); d.setAttribute('cy',l[1]);
+    }
+    draw();
+    return {draw:draw};
+  })();
+  if(!RM){ var fvIo=new IntersectionObserver(function(es){es.forEach(function(e){ if(e.isIntersecting){ e.target._t=setInterval(fvState.draw,2200);} else if(e.target._t){clearInterval(e.target._t);} });},{threshold:.2}); fvIo.observe(document.getElementById('fvLine')); }
+
+  /* ---- decision tree branch lines ---- */
+  (function(){
+    var svg=document.getElementById('treeSvg'); if(!svg) return;
+    // root at top center, fan to row2 (3 nodes), row2 to row3 (4 nodes)
+    var root=[500,44];
+    var r2=[[190,215],[500,215],[810,215]];
+    var r3=[[130,395],[380,395],[630,395],[880,395]];
+    var frag='';
+    r2.forEach(function(p){ frag+='<path d="M'+root[0]+' '+root[1]+' C'+root[0]+' '+((root[1]+p[1])/2)+' '+p[0]+' '+((root[1]+p[1])/2)+' '+p[0]+' '+p[1]+'" stroke="url(#branch)" stroke-width="1.6" fill="none" opacity=".55"/>'; });
+    // connect each r3 node up to nearest r2 node
+    r3.forEach(function(p){ var near=r2.reduce(function(a,b){return Math.abs(b[0]-p[0])<Math.abs(a[0]-p[0])?b:a;});
+      frag+='<path d="M'+near[0]+' '+near[1]+' C'+near[0]+' '+((near[1]+p[1])/2)+' '+p[0]+' '+((near[1]+p[1])/2)+' '+p[0]+' '+p[1]+'" stroke="url(#branch)" stroke-width="1.4" fill="none" opacity=".4"/>'; });
+    svg.insertAdjacentHTML('beforeend',frag);
+  })();
+
+  /* ---- engine button interaction ---- */
+  (function(){
+    var btn=document.getElementById('engineBtn'), st=document.getElementById('engineStatus');
+    if(!btn) return; var on=false;
+    var seq=['Fusing directional mesh signals…','Conviction 0.71 ≥ threshold 0.68','Laddering maker grid · 5 rungs','Hedge check passed · VaR within band','SCALP EXECUTED · +0.84% (paper)'];
+    btn.addEventListener('click',function(){
+      if(on) return; on=true; st.classList.add('on'); var i=0;
+      (function run(){ st.textContent=seq[i]; i++; if(i<seq.length){ setTimeout(run,700);} else { setTimeout(function(){ st.classList.remove('on'); st.textContent='Engine armed · awaiting conviction threshold'; on=false; },1600);} })();
+    });
+  })();
+
+  /* ---- directional neural mesh canvas ---- */
+  (function(){
+    var cv=document.getElementById('meshCanvas'); if(!cv) return;
+    var ctx=cv.getContext('2d'), w=0,h=0,dpr=Math.min(2,window.devicePixelRatio||1);
+    var nodes=[], links=[], layers=[6,9,11,9,6];
+    function resize(){ var r=cv.getBoundingClientRect(); w=r.width; h=r.height; cv.width=w*dpr; cv.height=h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); build(); }
+    function build(){
+      nodes=[]; links=[];
+      var padX=w*0.10, usable=w-padX*2;
+      for(var l=0;l<layers.length;l++){
+        var cnt=layers[l], lx=padX+ (layers.length===1?0:(usable*l/(layers.length-1)));
+        for(var i=0;i<cnt;i++){
+          var ly=h*0.14 + (h*0.72)*(cnt===1?0.5:i/(cnt-1));
+          nodes.push({x:lx,y:ly + (Math.random()-0.5)*14, l:l, ph:Math.random()*6.28, r:2.2+Math.random()*2.4});
+        }
+      }
+      // connect adjacent layers
+      var idx=0, starts=[];
+      for(var q=0;q<layers.length;q++){ starts.push(idx); idx+=layers[q]; }
+      for(var a=0;a<layers.length-1;a++){
+        for(var s=0;s<layers[a];s++){ var from=starts[a]+s;
+          for(var d=0;d<layers[a+1];d++){ if(Math.random()<0.55){ var to=starts[a+1]+d;
+            var kind=Math.random(); var col=kind<0.4?'85,242,166':kind<0.72?'255,92,122':'238,244,255';
+            links.push({a:from,b:to,c:col,w:0.4+Math.random()*0.9,ph:Math.random()*6.28}); } } }
+      }
+    }
+    var t=0;
+    function frame(){
+      t+=0.016; ctx.clearRect(0,0,w,h);
+      // links
+      for(var i=0;i<links.length;i++){ var lk=links[i], A=nodes[lk.a], B=nodes[lk.b];
+        var pulse=0.28+0.5*(0.5+0.5*Math.sin(t*1.6+lk.ph));
+        ctx.strokeStyle='rgba('+lk.c+','+(pulse*0.5).toFixed(3)+')';
+        ctx.lineWidth=lk.w; ctx.beginPath(); ctx.moveTo(A.x,A.y); ctx.lineTo(B.x,B.y); ctx.stroke();
+      }
+      // nodes
+      for(var n=0;n<nodes.length;n++){ var nd=nodes[n];
+        var g=0.6+0.4*Math.sin(t*2+nd.ph); var rad=nd.r*(1+0.15*Math.sin(t*3+nd.ph));
+        var grd=ctx.createRadialGradient(nd.x,nd.y,0,nd.x,nd.y,rad*4);
+        grd.addColorStop(0,'rgba(190,255,221,'+(0.7*g+0.3)+')'); grd.addColorStop(1,'rgba(85,242,166,0)');
+        ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(nd.x,nd.y,rad*4,0,6.2832); ctx.fill();
+        ctx.fillStyle='rgba(255,255,255,'+(0.75*g+0.25)+')'; ctx.beginPath(); ctx.arc(nd.x,nd.y,rad*0.8,0,6.2832); ctx.fill();
+      }
+      if(running) requestAnimationFrame(frame);
+    }
+    var running=false;
+    function draw1(){ ctx.clearRect(0,0,w,h); running=true; requestAnimationFrame(frame); }
+    if(RM){ resize(); running=false; frame(); running=false; }
+    else {
+      var io=new IntersectionObserver(function(es){es.forEach(function(e){ if(e.isIntersecting){ if(!running) draw1(); } else { running=false; } });},{threshold:.05});
+      resize(); io.observe(cv);
+    }
+    window.addEventListener('resize',function(){ resize(); });
+  })();
+})();
+</script>
+<script defer src="/logo-badge.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › <a href="index.html">ClearGlass Intelligence · Insights</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="ethical-sales-system-100k-revenue-prompt.html"><span><b>Previous</b>Ethical Sales Psychology</span></a>
+      <a href="index.html"><span><b>Topic hub</b>ClearGlass Intelligence</span></a>
+      <a href="digital-twin-simulation-tools-storm-adaptive-transit-2026.html"><span><b>Next in journey</b>Digital Twin Tools for Storm-Adaptive Transit</span></a>
+    </div>
+    <ul>
+      <li><a href="../revenue-engine.html"><b>Revenue Engine</b> — AI-driven business growth system</a></li>
+      <li><a href="digital-twin-simulation-tools-storm-adaptive-transit-2026.html"><b>Digital Twin Tools for Storm-Adaptive Transit</b> — the 2026 platform comparison and hybrid architecture</a></li>
+      <li><a href="coffee-and-technology-digital-revolution.html"><b>Coffee &amp; Technology</b> — how coffee culture and technology grew together</a></li>
+      <li><a href="chatgpt-prompt-shortcuts-supercharge-ai-results.html"><b>ChatGPT Prompt Shortcuts</b> — a practical field guide to clearer, faster AI prompts</a></li>
+      <li><a href="ai-generated-phishing-54-percent-click-rate.html"><b>AI-Generated Phishing Hits a 54% Click Rate</b> — this week&#x27;s long read on why identity beats detection</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="../nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

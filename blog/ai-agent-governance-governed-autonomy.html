@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>AI Agent Governance: The Governed Autonomy Playbook — ClearGlass Inc.</title>
+<meta name="description" content="AI agent governance is the real moat of the agentic era. Inside the Governed Autonomy model — the Four Gates and the Risk Router that let enterprises deploy autonomous AI without getting burned."/>
+<link rel="canonical" href="https://www.clearglassinc.com/blog/ai-agent-governance-governed-autonomy.html"/>
+<link rel="alternate" type="application/rss+xml" title="ClearGlass Insights RSS" href="https://www.clearglassinc.com/blog/feed.xml"/>
+<meta name="author" content="Desmond Otieno Odhiambo"/>
+<meta name="robots" content="index,follow,max-image-preview:large"/>
+<meta name="keywords" content="AI agent governance, governed autonomy, autonomous AI agents, agentic AI risk, human-in-the-loop AI, AI audit trail, enterprise AI security, AI approval workflow, AI accountability"/>
+
+<meta property="og:type" content="article"/>
+<meta property="og:title" content="AI Agent Governance: The Governed Autonomy Playbook"/>
+<meta property="og:description" content="Everyone is racing to make AI agents more autonomous. The winners of the agentic era will be the ones who govern them. Inside the Governed Autonomy model."/>
+<meta property="og:url" content="https://www.clearglassinc.com/blog/ai-agent-governance-governed-autonomy.html"/>
+<meta property="og:site_name" content="ClearGlass Inc."/>
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+<meta property="article:published_time" content="2026-06-26"/>
+<meta property="article:author" content="Desmond Otieno Odhiambo"/>
+<meta property="article:section" content="AI &amp; Autonomy"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="AI Agent Governance: The Governed Autonomy Playbook"/>
+<meta name="twitter:description" content="The bottleneck to deploying AI agents isn't intelligence. It's accountability. Inside the Governed Autonomy model — the Four Gates and the Risk Router."/>
+<meta name="twitter:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="insights.css"/>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "AI Agent Governance: The Governed Autonomy Playbook for Companies That Refuse to Get Burned",
+  "description": "AI agent governance is the real moat of the agentic era. Inside the Governed Autonomy model — the Four Gates and the Risk Router that let enterprises deploy autonomous AI without getting burned.",
+  "image": "https://www.clearglassinc.com/assets/images/clearglass-logo.png",
+  "datePublished": "2026-06-26",
+  "dateModified": "2026-06-26",
+  "author": {
+    "@type": "Person",
+    "name": "Desmond Otieno Odhiambo",
+    "jobTitle": "Founder & Software Architect",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "ClearGlass Inc.",
+      "url": "https://www.clearglassinc.com"
+    }
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "ClearGlass Inc.",
+    "url": "https://www.clearglassinc.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.clearglassinc.com/assets/images/clearglass-logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.clearglassinc.com/blog/ai-agent-governance-governed-autonomy.html"
+  },
+  "keywords": "AI agent governance, governed autonomy, autonomous AI agents, agentic AI risk, human-in-the-loop AI, AI audit trail, enterprise AI security"
+}
+</script>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --white:#fafbfc;--off:#f3f5f8;--paper:#fff;
+  --dark:#0a0c10;--text:#0a0c10;--text-2:#3a3f4a;--text-3:#6b7280;--text-4:#9ca3af;
+  --line:rgba(10,12,16,.08);--line-soft:rgba(10,12,16,.05);
+  --prism-1:#38bdf8;--prism-2:#a78bfa;--prism-3:#f472b6;--prism-4:#34d399;--prism-5:#fbbf24;--prism-6:#60a5fa;
+  --crystal:linear-gradient(135deg,#38bdf8 0%,#a78bfa 25%,#f472b6 50%,#fbbf24 75%,#34d399 100%);
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'Urbanist',system-ui,sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{font-family:var(--sans);color:var(--text);background:var(--white);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;overflow-x:hidden}
+a{color:inherit}
+::selection{background:rgba(167,139,250,.22)}
+
+/* banners */
+.class-banner{background:#0a0c10;color:#cfe9ff;text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.18em;font-weight:600;padding:6px 16px}
+.class-banner span{opacity:.55;font-weight:400;margin:0 8px}
+.unclass-banner{background:#0d1f17;color:#4ade80;text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;font-weight:700;padding:6px 16px}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px clamp(16px,5vw,40px);background:rgba(250,251,252,.78);backdrop-filter:blur(20px) saturate(1.2);border-bottom:1px solid var(--line)}
+.nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}
+.nav-mark{width:40px;height:40px;border-radius:11px;overflow:hidden;background:#fff;display:grid;place-items:center;box-shadow:0 6px 20px rgba(0,0,0,.08);flex-shrink:0}
+.nav-mark img{width:100%;height:100%;object-fit:cover;display:block}
+.nav-name{font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:-.01em}
+.nav-name em{font-style:italic;font-weight:300;color:var(--text-3)}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{color:var(--text-3);text-decoration:none;font-size:13.5px;font-weight:600;padding:8px 14px;border-radius:10px;transition:color .18s,background .18s}
+.nav-links a:hover{color:var(--text);background:rgba(255,255,255,.7)}
+.nav-cta{background:var(--dark);color:#fff !important}
+.nav-cta:hover{background:#1a1d25;color:#fff !important}
+@media(max-width:860px){.nav-links a:not(.nav-cta){display:none}}
+
+/* reading progress */
+.progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--crystal);z-index:200;transition:width .1s linear}
+
+/* layout */
+.wrap{max-width:760px;margin:0 auto;padding:0 clamp(20px,5vw,28px)}
+.hero{padding:clamp(56px,9vw,104px) 0 clamp(28px,5vw,44px)}
+.kicker{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-3);font-weight:600;margin-bottom:22px}
+.kicker::before{content:"";width:24px;height:1.5px;background:var(--crystal)}
+h1.title{font-family:var(--serif);font-weight:600;font-size:clamp(36px,6.2vw,62px);line-height:1.04;letter-spacing:-.02em;margin-bottom:24px}
+h1.title em{font-style:italic;font-weight:400;background:var(--crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.dek{font-size:clamp(18px,2.4vw,22px);line-height:1.5;color:var(--text-2);font-weight:400;max-width:42ch}
+.byline{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:34px;padding-top:24px;border-top:1px solid var(--line)}
+.byline-av{width:42px;height:42px;border-radius:50%;background:var(--crystal);display:grid;place-items:center;color:#fff;font-weight:700;font-family:var(--serif);font-size:19px;flex-shrink:0}
+.byline-meta{font-size:14px;line-height:1.45}
+.byline-meta b{font-weight:700}
+.byline-meta span{color:var(--text-3)}
+
+/* article body */
+article{font-size:18.5px;line-height:1.72;color:var(--text-2)}
+article p{margin:0 0 22px}
+article p strong,article li strong{color:var(--text);font-weight:700}
+article h2{font-family:var(--serif);color:var(--text);font-weight:600;font-size:clamp(27px,4vw,38px);line-height:1.12;letter-spacing:-.015em;margin:56px 0 18px;scroll-margin-top:96px}
+article h3{color:var(--text);font-weight:700;font-size:clamp(19px,2.6vw,23px);margin:38px 0 12px;letter-spacing:-.01em}
+article h2 .num{font-family:var(--mono);font-size:.42em;color:var(--prism-2);vertical-align:middle;margin-right:12px;letter-spacing:.05em}
+article a.link{color:var(--text);text-decoration:underline;text-decoration-color:rgba(167,139,250,.5);text-underline-offset:3px;text-decoration-thickness:1.5px;transition:text-decoration-color .2s}
+article a.link:hover{text-decoration-color:var(--prism-2)}
+article ul,article ol{margin:0 0 22px;padding-left:24px}
+article li{margin:0 0 11px}
+article ul li::marker{color:var(--prism-2)}
+
+.lede{font-size:21px;line-height:1.6;color:var(--text)}
+.lede::first-letter{font-family:var(--serif);font-size:3.4em;line-height:.82;float:left;font-weight:600;margin:6px 12px 0 0;background:var(--crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+/* pull quote */
+.pull{margin:40px 0;padding:6px 0 6px 28px;border-left:3px solid transparent;border-image:var(--crystal) 1;font-family:var(--serif);font-style:italic;font-size:clamp(24px,3.6vw,33px);line-height:1.28;color:var(--text);font-weight:500}
+
+/* callout */
+.callout{margin:34px 0;padding:24px 26px;border-radius:18px;background:var(--paper);border:1px solid var(--line);box-shadow:0 14px 40px -28px rgba(6,8,18,.5)}
+.callout-tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--prism-2);margin-bottom:10px}
+.callout p{font-size:17px;margin:0;color:var(--text-2)}
+.callout p strong{color:var(--text)}
+
+/* framework diagram */
+.gates{margin:34px 0;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:640px){.gates{grid-template-columns:1fr 1fr}}
+.gate{position:relative;padding:20px 16px;border-radius:16px;background:var(--paper);border:1px solid var(--line);box-shadow:0 12px 34px -26px rgba(6,8,18,.5)}
+.gate .g-no{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text-4);letter-spacing:.08em}
+.gate .g-name{font-family:var(--serif);font-size:23px;font-weight:600;margin:6px 0 6px;color:var(--text)}
+.gate .g-desc{font-size:13.5px;line-height:1.45;color:var(--text-3)}
+.gate::after{content:"→";position:absolute;right:-13px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--prism-2);font-weight:700;z-index:2}
+.gate:last-child::after{display:none}
+@media(max-width:640px){.gate:nth-child(2)::after{display:none}}
+.gate-1{box-shadow:0 12px 34px -26px rgba(56,189,248,.7);border-top:2px solid var(--prism-1)}
+.gate-2{border-top:2px solid var(--prism-2)}
+.gate-3{border-top:2px solid var(--prism-5)}
+.gate-4{border-top:2px solid var(--prism-4)}
+
+/* risk router table */
+.router{margin:30px 0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--paper)}
+.router-row{display:grid;grid-template-columns:92px 1fr;gap:0;border-bottom:1px solid var(--line-soft);font-size:15px}
+.router-row:last-child{border-bottom:none}
+.router-score{padding:16px 14px;font-family:var(--mono);font-weight:600;font-size:13px;display:flex;align-items:center;color:#fff}
+.router-body{padding:16px 18px;color:var(--text-2);line-height:1.5}
+.router-body b{color:var(--text);display:block;font-size:15px;margin-bottom:2px}
+.r-low{background:linear-gradient(135deg,#34d399,#10b981)}
+.r-med{background:linear-gradient(135deg,#fbbf24,#f59e0b)}
+.r-high{background:linear-gradient(135deg,#f472b6,#db2777)}
+
+/* steps */
+.steps{counter-reset:s;list-style:none;padding:0;margin:28px 0}
+.steps li{position:relative;padding:0 0 22px 56px;margin:0}
+.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:-2px;width:38px;height:38px;border-radius:11px;background:var(--dark);color:#fff;font-family:var(--mono);font-weight:600;font-size:15px;display:grid;place-items:center}
+.steps li b{color:var(--text);display:block;margin-bottom:3px;font-size:18px}
+
+/* tl;dr / key takeaways */
+.tldr{margin:8px 0 44px;padding:24px 26px;border-radius:18px;background:#0a0c10;color:#e7ecff}
+.tldr h4{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:#9aa6c8;font-weight:600;margin-bottom:14px}
+.tldr ul{margin:0;padding-left:20px}
+.tldr li{margin-bottom:9px;font-size:15.5px;line-height:1.5;color:#cdd5ef}
+.tldr li::marker{color:var(--prism-2)}
+.tldr li b{color:#fff}
+
+/* CTA */
+.cta{margin:64px 0 24px;padding:clamp(34px,6vw,52px);border-radius:26px;background:radial-gradient(120% 140% at 0% 0%,#15192a 0%,#0a0c10 60%);color:#fff;text-align:center;position:relative;overflow:hidden}
+.cta::before{content:"";position:absolute;inset:0;background:var(--crystal);opacity:.10;mix-blend-mode:screen}
+.cta-k{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:#9aa6c8;position:relative}
+.cta h3{font-family:var(--serif);font-weight:600;font-size:clamp(26px,4.4vw,40px);line-height:1.12;margin:14px 0 12px;position:relative}
+.cta p{color:#cdd5ef;max-width:46ch;margin:0 auto 26px;position:relative;font-size:16.5px}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:13px;font-weight:700;font-size:15px;text-decoration:none;transition:transform .15s,box-shadow .2s}
+.btn-primary{background:#fff;color:#0a0c10}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 40px -16px rgba(255,255,255,.4)}
+.btn-ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.btn-ghost:hover{background:rgba(255,255,255,.14)}
+
+/* related / share */
+.endbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin:44px 0;padding-top:26px;border-top:1px solid var(--line)}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--text-3);background:var(--off);border:1px solid var(--line);padding:6px 11px;border-radius:8px}
+.share a{font-size:13px;font-weight:600;color:var(--text-3);text-decoration:none;margin-left:14px}
+.share a:hover{color:var(--text)}
+
+/* footer */
+.footer{background:#0a0c10;color:#9aa6c8;padding:56px clamp(20px,5vw,40px) 28px;margin-top:40px}
+.footer-in{max-width:1100px;margin:0 auto}
+.footer-top{display:flex;flex-wrap:wrap;gap:40px;justify-content:space-between;align-items:flex-start}
+.footer-brand{display:flex;align-items:center;gap:12px}
+.footer-mark{width:38px;height:38px;border-radius:10px;overflow:hidden;background:#fff}
+.footer-mark img{width:100%;height:100%;object-fit:cover}
+.footer-brand b{color:#fff;font-family:var(--serif);font-size:20px;font-weight:600;display:block}
+.footer-brand span{font-size:12px;color:#6b7280}
+.footer-cols{display:flex;flex-wrap:wrap;gap:36px}
+.footer-col h5{color:#e7ecff;font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;font-family:var(--mono);font-weight:600}
+.footer-col a{display:block;color:#9aa6c8;text-decoration:none;font-size:14px;margin-bottom:9px;transition:color .15s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;margin-top:40px;padding-top:22px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px}
+.footer-tagline{margin-top:18px;font-family:var(--serif);font-style:italic;color:#6b7280;font-size:15px}
+</style>
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/glass.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="../brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body data-ix-page="article" data-ix-slug="ai-agent-governance-governed-autonomy" data-ix-theme="light">
+<div class="class-banner">UNCLASSIFIED / NON-CLASSIFIÉ <span>·</span> CLEARGLASS INTELLIGENCE DESK <span>·</span> OPEN PUBLICATION</div>
+<div class="progress" id="progress"></div>
+
+<nav class="nav">
+  <a href="../index.html" class="nav-brand">
+    <div class="nav-mark"><img src="../assets/images/clearglass-logo.png" alt="ClearGlass logo"></div>
+    <div class="nav-name">ClearGlassInc. <em>2040</em></div>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Insights</a>
+    <a href="../ai-operator.html">AI Operator</a>
+    <a href="../guardian.html">Guardian</a>
+    <a href="../government.html">Government</a>
+    <a href="../index.html#contact" class="nav-cta">Book a briefing →</a>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <div class="kicker">AI &amp; Autonomy · Field Note 01</div>
+  <h1 class="title">AI Agent Governance: The <em>Governed Autonomy</em> Playbook for Companies That Refuse to Get Burned</h1>
+  <p class="dek">Everyone is racing to make AI agents more autonomous. The companies that win the agentic era will be the ones who learn to govern them first.</p>
+  <div class="byline">
+    <div class="byline-av">D</div>
+    <div class="byline-meta">
+      <b>Desmond Otieno Odhiambo</b><br>
+      <span>Founder &amp; Software Architect, ClearGlass Inc. · June 26, 2026 · 11 min read</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+<article>
+
+  <div class="tldr">
+    <h4>The 30-second version</h4>
+    <ul>
+      <li><b>The race is mislabeled.</b> The bottleneck to deploying AI agents isn't intelligence. It's accountability.</li>
+      <li><b>Autonomy is a gradient, not a switch.</b> The right question isn't "how autonomous can this agent be?" — it's "what is it allowed to do without asking?"</li>
+      <li><b>The model:</b> <b>Governed Autonomy</b> — every agent action passes <b>Four Gates</b> (Sense → Draft → Sanction → Act) and is scored 0–100 by a <b>Risk Router</b> that decides what auto-executes, what queues for approval, and what is blocked outright.</li>
+      <li><b>The moat:</b> an append-only audit trail. You cannot deploy what you cannot explain after the fact.</li>
+    </ul>
+  </div>
+
+  <p class="lede">In 2026, the cost of a wrong answer from an AI model is an apology. The cost of a wrong <em>action</em> from an AI agent is a refund, a fine, a breach, or a headline. That single shift — from systems that <em>say</em> things to systems that <em>do</em> things — is the most underpriced risk in enterprise technology, and almost nobody is building for it.</p>
+
+  <p>We are pouring billions into making agents smarter and almost nothing into making them <strong>governable</strong>. That asymmetry is the whole story of the next five years. The labs are optimizing for capability. The market is about to discover it was the wrong variable.</p>
+
+  <p>This piece lays out the model we use at ClearGlass to put autonomous agents into production in commerce, security, and government workflows — environments where a single ungoverned action can move money, leak data, or break a regulation. We call it <strong>Governed Autonomy</strong>, and <strong>AI agent governance</strong> is the discipline that makes it real.</p>
+
+  <h2><span class="num">01</span>The Autonomy Trap</h2>
+
+  <p>Here is the trap, stated plainly: <strong>capability scales faster than control.</strong></p>
+
+  <p>A chatbot that hallucinates a fact wastes thirty seconds. An agent with API keys, a credit card, and a goal that hallucinates a <em>decision</em> can issue a refund, change a price, email ten thousand customers, or reorder inventory you didn't want — and it can do all of it in the time it takes you to refill your coffee.</p>
+
+  <p>The demos hide this. In a demo, the agent books the flight and everyone claps. In production, the agent books the flight, then re-books it three times because a flaky tool returned a timeout, and now you have four tickets and a chargeback dispute. The gap between "it works in the demo" and "I would let it touch my P&amp;L unsupervised" is not a gap in intelligence. It is a gap in <strong>governance</strong>.</p>
+
+  <div class="pull">An agent that can act is a liability the moment it can act <em>without a record.</em></div>
+
+  <p>Most organizations meet this trap and respond in one of two ways, both wrong. They either <strong>over-restrict</strong> — wrapping the agent in so many manual approvals that it's just a slower human — or they <strong>over-trust</strong>, handing it the keys because the demo was impressive and the board wants an "AI story." One kills the ROI. The other kills you slowly, one unlogged action at a time.</p>
+
+  <h2><span class="num">02</span>Why Most Companies Get This Wrong</h2>
+
+  <p>The dominant mental model for AI agents is the <strong>human employee</strong>. "Hire" an agent, give it a job, trust it to use judgment. It's an intuitive metaphor and it is quietly catastrophic, because it imports an assumption that does not hold: that the actor has skin in the game, a reputation, a manager, and a memory that can be cross-examined.</p>
+
+  <p>An agent has none of those. It has a context window and a goal. It will pursue the goal with superhuman literalism and zero institutional fear. Tell a human salesperson to "clear the warehouse" and they'll use judgment. Tell an agent to "clear the warehouse" and it may discount everything to zero, because that is, technically, the fastest path to an empty warehouse.</p>
+
+  <div class="callout">
+    <span class="callout-tag">Most people miss this</span>
+    <p><strong>The failure mode of AI agents is not malice or stupidity — it's competence pointed slightly wrong.</strong> The agent does exactly what you asked, at a scale and speed you didn't anticipate, with no instinct to stop and check whether "exactly what you asked" is what you meant. Governance is the institution that supplies the instinct the agent lacks.</p>
+  </div>
+
+  <p>So companies reach for the obvious fix — "human in the loop" — and apply it as a blunt instrument: <em>every</em> action needs a human click. This fails for a different reason. When everything requires approval, humans stop reading and start rubber-stamping. Approval fatigue turns your safety layer into a formality. The thirtieth "Approve?" dialog of the morning is not oversight. It's theater.</p>
+
+  <p>The real problem isn't <em>whether</em> to keep a human in the loop. It's <strong>where</strong>. And that question has a precise answer.</p>
+
+  <h2><span class="num">03</span>The Model: Governed Autonomy</h2>
+
+  <p>Governed Autonomy starts from a reframe that competitors are not making. Stop treating autonomy as a setting you turn up. Treat it as a <strong>permission gradient</strong> — a spectrum where every category of action is pre-assigned a level of trust, and the agent earns latitude in proportion to how reversible and how low-stakes its action is.</p>
+
+  <p>Low-stakes, reversible work runs unsupervised. High-stakes, irreversible work stops and asks. The art is drawing that line in the right place — and then <em>proving</em>, forever, where the line was when each action crossed it.</p>
+
+  <p>Concretely, every action an agent proposes passes through <strong>Four Gates</strong>:</p>
+
+  <div class="gates">
+    <div class="gate gate-1"><div class="g-no">GATE 01</div><div class="g-name">Sense</div><div class="g-desc">Read-only analysis. The agent observes, retrieves, and reasons — but cannot change state. Free to run.</div></div>
+    <div class="gate gate-2"><div class="g-no">GATE 02</div><div class="g-name">Draft</div><div class="g-desc">The agent proposes a concrete action as a structured artifact — never a live change. A reviewable object.</div></div>
+    <div class="gate gate-3"><div class="g-no">GATE 03</div><div class="g-name">Sanction</div><div class="g-desc">The Risk Router scores the draft 0–100 and routes it: auto-approve, queue for a human, or block.</div></div>
+    <div class="gate gate-4"><div class="g-no">GATE 04</div><div class="g-name">Act</div><div class="g-desc">Only sanctioned actions execute — and every execution writes to an append-only ledger with its score.</div></div>
+  </div>
+
+  <p><strong>Sense → Draft → Sanction → Act.</strong> The order is the safety property. An agent can think freely and propose freely; it simply cannot <em>act</em> freely. The dangerous verb — execute — is the only one gated by force.</p>
+
+  <h3>The Risk Router</h3>
+
+  <p>Gate 03 is where Governed Autonomy earns its name. The Risk Router scores every proposed action on a 0–100 scale based on reversibility, blast radius, and regulatory exposure, then routes it:</p>
+
+  <div class="router">
+    <div class="router-row">
+      <div class="router-score r-low">0–39</div>
+      <div class="router-body"><b>Low · Auto-execute &amp; log</b>Generate copy, read metrics, reconcile records, tag data. Reversible and contained. The agent runs free — but the action is still written to the ledger.</div>
+    </div>
+    <div class="router-row">
+      <div class="router-score r-med">40–69</div>
+      <div class="router-body"><b>Medium · Queue for approval</b>Publish content, edit non-price catalog fields, send scoped outreach. Real but bounded. Held until a human approves — with full context attached.</div>
+    </div>
+    <div class="router-row">
+      <div class="router-score r-high">70–100</div>
+      <div class="router-body"><b>High / Critical · Blocked until approved</b>Change pricing, move money, touch tax / payment / refund / fulfillment, mass outbound, reorder stock. Hard-blocked until an approval record reaches <em>approved</em>. No exceptions, no override path in code.</div>
+    </div>
+  </div>
+
+  <p>The genius of scoring is that it makes the human-in-the-loop question <em>quantitative</em>. You are no longer arguing about whether to trust "the AI." You are setting a threshold. Below it, velocity. Above it, a person. And because the threshold is explicit, you can tune it, audit it, and defend it to a regulator with a straight face.</p>
+
+  <div class="pull">You cannot deploy what you cannot explain after the fact. The audit trail isn't paperwork — it's the permission slip.</div>
+
+  <p>Which brings us to the part everyone treats as an afterthought and we treat as the foundation: the <strong>append-only audit ledger</strong>. Every material action — approved or auto-run — is written, immutably, with its risk score, its inputs, and its outcome. This is not compliance theater. It is the thing that makes autonomy <em>survivable</em>. When something goes wrong (and at scale, something always does), the question that determines whether you keep your license, your customer, or your job is: <em>can you show exactly what happened, why, and who sanctioned it?</em> With a ledger, that's a query. Without one, it's a crisis.</p>
+
+  <h2><span class="num">04</span>Putting It Into Practice</h2>
+
+  <p>The model is only as good as its installation. Here is the sequence we use to take an agent from sandbox to production without a leap of faith.</p>
+
+  <ol class="steps">
+    <li><b>Inventory the verbs, not the use cases.</b> List every <em>action</em> the agent can take — every API it can call, every state it can mutate. Use cases are marketing. Verbs are the attack surface. Govern the verbs.</li>
+    <li><b>Score each verb before you build.</b> Assign every action a risk band up front using reversibility × blast radius × regulatory exposure. Pricing changes are 90s. Reading a dashboard is a 5. Do this on a whiteboard before a single line of agent code.</li>
+    <li><b>Force the Draft gate architecturally.</b> The agent should be <em>incapable</em> of executing a high-risk verb directly — the only path to execution runs through a draft object and an approval check. Make the unsafe path impossible, not discouraged.</li>
+    <li><b>Make the ledger write non-optional.</b> If an action can execute without writing to the audit log, your governance has a hole. Wire logging into the execution path itself so "act" and "record" are one operation, not two.</li>
+    <li><b>Tune the threshold with data, not vibes.</b> Start conservative. Watch which queued actions humans approve 100% of the time with no edits — those are candidates to lower in risk. Let the agent earn autonomy by demonstrating it, band by band.</li>
+    <li><b>Run a governance self-check in CI.</b> Add an automated test that <em>fails the build</em> if any code path lets a high-risk action execute without an approval. Governance that isn't enforced by the pipeline is governance that erodes by the third sprint.</li>
+  </ol>
+
+  <h2><span class="num">05</span>What It Looks Like In The Wild</h2>
+
+  <h3>Autonomous commerce</h3>
+  <p>An agent runs a storefront end to end. It writes product copy, reconciles orders, and reads margin dashboards <em>all day, unsupervised</em> — Gate 01 and low-band Gate 03. But the moment it proposes a price change or a bulk reorder, it stops. The draft lands in a human's queue with the margin math attached. The operator approves in five seconds with full context, or rejects in one. The agent did 95% of the work autonomously and asked permission for exactly the 5% that could hurt. That ratio — <strong>high autonomy, surgical oversight</strong> — is the entire prize.</p>
+
+  <h3>Security operations</h3>
+  <p>A defensive agent triages alerts, correlates signals, and drafts incident reports continuously. It can quarantine a suspicious file (reversible, low-band) on its own. It cannot push a firewall rule to production or disable an account (high blast radius) without a human sanction. Analysts stop drowning in noise and spend their judgment only where judgment is load-bearing.</p>
+
+  <h3>Regulated &amp; government workflows</h3>
+  <p>This is where the audit ledger stops being a nice-to-have and becomes the reason you're allowed in the building. Every agent action carries a risk score, a timestamp, and a sanctioning identity. When an auditor asks "who approved this and on what basis," the answer is a row, not a meeting. Explainability isn't bolted on — it's the substrate.</p>
+
+  <h2><span class="num">06</span>Mistakes to Avoid</h2>
+
+  <ul>
+    <li><strong>Treating governance as a feature you add later.</strong> Retrofitting accountability onto an agent that already has unsupervised write access is like adding brakes after the car is on the highway. The gates are load-bearing architecture, not a settings panel.</li>
+    <li><strong>Confusing a system prompt with a control.</strong> "I told the agent in the prompt not to change prices" is not governance — it's a suggestion to a probabilistic system. Real controls live in code paths the model cannot route around.</li>
+    <li><strong>Scoring by intent instead of by impact.</strong> It doesn't matter why the agent wants to issue the refund. What matters is that "issue refund" moves money and is hard to reverse. Score the verb's blast radius, not the agent's stated reason.</li>
+    <li><strong>Logging outcomes but not decisions.</strong> Recording <em>what happened</em> without recording <em>what was sanctioned and why</em> gives you forensics with no accountability. Log the score and the approval, every time.</li>
+    <li><strong>Letting approval fatigue set your threshold.</strong> If humans are rubber-stamping, your line is in the wrong place — too much is queued. The fix is recalibrating the bands, not removing the human.</li>
+  </ul>
+
+  <h2><span class="num">07</span>The Final Takeaway</h2>
+
+  <p>The agentic era will not be won by whoever has the smartest model. Frontier capability is becoming a commodity; everyone will rent roughly the same intelligence from roughly the same labs. The durable advantage — the moat that compounds — is the <strong>trust architecture</strong> wrapped around that intelligence.</p>
+
+  <p><strong>AI agent governance</strong> is not a tax on autonomy. It is the precondition for it. The companies that figure this out won't deploy agents <em>despite</em> the risk — they'll deploy them <em>faster than everyone else</em>, because they alone can answer the only question that gates real-world deployment: <em>when this acts on its own, can you prove it acted within bounds?</em></p>
+
+  <p>Governed Autonomy is how you earn a "yes." Sense, Draft, Sanction, Act. Score the verb. Write the ledger. Then let the machine run.</p>
+
+  <div class="cta">
+    <div class="cta-k">ClearGlass Inc. · Governed Autonomy</div>
+    <h3>Deploy autonomous agents you can actually defend.</h3>
+    <p>ClearGlass builds governed AI systems — risk-scored, human-sanctioned, and audited by design — for commerce, security, and government. See the model running in production.</p>
+    <div class="cta-row">
+      <a href="../ai-operator.html" class="btn btn-primary">See the AI Operator →</a>
+      <a href="../index.html#contact" class="btn btn-ghost">Book a 20-min briefing</a>
+    </div>
+  </div>
+
+  <section class="ix-related" id="ixRelated">
+    <b>Related from the desk</b>
+    <div class="ix-related-grid">
+      <a class="ix-related-card" href="clearglassinc-artemis-self-evolving-ai-intelligence-platform.html"><span class="k">AI Architecture</span><h4>ClearGlassInc Artemis: The Self-Evolving AI Intelligence Platform</h4><p>A full-stack blueprint for mission-speed intelligence with ontology-driven agents, continuous evals, and policy-as-code.</p><span class="m">16 min read · Artemis Engineering Notes</span></a>
+      <a class="ix-related-card" href="index.html"><span class="k">The hub</span><h4>All ClearGlass Insights</h4><p>Governed AI, cybersecurity architecture, autonomy, OSINT workflows, and high-trust software systems.</p><span class="m">Browse every brief →</span></a>
+    </div>
+  </section>
+
+  <div class="endbar">
+    <div class="tags">
+      <span class="tag">#AIagentgovernance</span>
+      <span class="tag">#GovernedAutonomy</span>
+      <span class="tag">#AgenticAI</span>
+      <span class="tag">#AIsecurity</span>
+    </div>
+    <div class="share">
+      Share:
+      <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.clearglassinc.com/blog/ai-agent-governance-governed-autonomy.html" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://twitter.com/intent/tweet?text=The%20bottleneck%20to%20deploying%20AI%20agents%20isn%27t%20intelligence.%20It%27s%20accountability.&url=https://www.clearglassinc.com/blog/ai-agent-governance-governed-autonomy.html" target="_blank" rel="noopener">X</a>
+    </div>
+  </div>
+
+</article>
+</main>
+
+<footer class="footer">
+  <div class="footer-in">
+    <div class="footer-top">
+      <a href="../index.html" class="footer-brand">
+        <div class="footer-mark"><img src="../assets/images/clearglass-logo.png" alt="ClearGlass logo"></div>
+        <div><b>ClearGlassInc</b><span>See Through Everything</span></div>
+      </a>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h5>Insights</h5>
+          <a href="index.html">All articles</a>
+          <a href="clearglassinc-artemis-self-evolving-ai-intelligence-platform.html">Artemis Platform</a>
+          <a href="osint-workflow-that-survives-contact-with-reality.html">OSINT Tradecraft</a>
+          <a href="cybersecurity-architecture-for-agentic-software.html">Agentic Cyber Architecture</a>
+        </div>
+        <div class="footer-col">
+          <h5>Products</h5>
+          <a href="../ai-operator.html">AI Operator</a>
+          <a href="../guardian.html">Guardian</a>
+          <a href="../artemis-iv.html">Artemis IV Core</a>
+        </div>
+        <div class="footer-col">
+          <h5>Company</h5>
+          <a href="../index.html#vision">Vision</a>
+          <a href="../government.html">Government</a>
+          <a href="../index.html#contact">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> ClearGlass Inc. All rights reserved. Ontario, Canada</span>
+      <span>Clarity Is Power</span>
+    </div>
+    <div class="footer-tagline">"The truth is transparent. The truth is dangerous."</div>
+  </div>
+</footer>
+<div class="unclass-banner">UNCLASSIFIED / NON-CLASSIFIÉ — END OF DOCUMENT</div>
+
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+var pb=document.getElementById('progress');
+function upd(){var h=document.documentElement;var sc=h.scrollTop||document.body.scrollTop;var mx=h.scrollHeight-h.clientHeight;pb.style.width=(mx>0?(sc/mx*100):0)+'%';}
+addEventListener('scroll',upd,{passive:true});upd();
+</script>
+<script defer src="insights.js"></script>
+<script defer src="/logo-badge.js"></script>
+<script defer src="assistant/writing-help.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › <a href="index.html">ClearGlass Intelligence · Insights</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="autonomous-threat-modeling-2026.html"><span><b>Previous</b>Autonomous Threat Modeling in 2026</span></a>
+      <a href="index.html"><span><b>Topic hub</b>ClearGlass Intelligence</span></a>
+      <a href="clearglass-platform-audit-2026.html"><span><b>Next in journey</b>The ClearGlass Platform Audit</span></a>
+    </div>
+    <ul>
+      <li><a href="../percival-os.html"><b>PERCIVAL OS</b> — mission-ready governed command center</a></li>
+      <li><a href="../ai-operator.html"><b>AI Operator Workspace</b> — human-in-the-loop agent operations</a></li>
+      <li><a href="clearglass-platform-audit-2026.html"><b>The ClearGlass Platform Audit</b> — keep, simplify, gate, build — the platform upgrade doctrine</a></li>
+      <li><a href="ai-agents-insider-threat.html"><b>AI Agents Are the New Insider Threat</b> — why agent identity is a security boundary</a></li>
+      <li><a href="cybersecurity-architecture-for-agentic-software.html"><b>Security Architecture for Agentic Software</b> — designing defenses for autonomous systems</a></li>
+      <li><a href="zero-trust-is-outdated-adaptive-trust.html"><b>The Case for Adaptive Trust</b> — zero trust, revisited for agentic systems</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="../nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

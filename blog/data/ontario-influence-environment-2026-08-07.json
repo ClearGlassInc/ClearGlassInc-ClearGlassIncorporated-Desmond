@@ -1,0 +1,184 @@
+{
+  "schema": "clearglass-osint-evidence-ledger-v2",
+  "title": "Ontario Influence Environment — Evidence Ledger",
+  "asOf": "2026-08-07",
+  "jurisdiction": "Ontario, Canada",
+  "classification": "PUBLIC // OSINT",
+  "method": "Open-source verification with explicit separation of verified facts, reported claims, analytical inference, and collection targets.",
+  "confidenceModel": {
+    "description": "Deterministic editorial score. It is an audit aid, not a probability of truth.",
+    "formula": "authority + corroboration + directness + recency, normalized to 100",
+    "weights": {
+      "authority": 35,
+      "corroboration": 25,
+      "directness": 25,
+      "recency": 15
+    }
+  },
+  "records": [
+    {
+      "id": "ON-ADV-2024-25-TOTAL",
+      "status": "verified",
+      "domain": "government-advertising",
+      "claim": "Ontario government advertising spending totalled approximately CAD 111.9 million in fiscal 2024-25.",
+      "confidence": "high",
+      "confidenceScore": 87,
+      "source": "https://globalnews.ca/news/11757739/protect-ontario-commercial-campaign-cost/",
+      "sourceType": "media-reporting-on-auditor-general",
+      "authority": 4,
+      "corroborationCount": 1,
+      "directness": 4,
+      "recency": 5,
+      "notes": "Reported as the highest provincial government advertising total to that point."
+    },
+    {
+      "id": "ON-FIN-2025-26",
+      "status": "verified",
+      "domain": "government-advertising",
+      "claim": "Ontario Ministry of Finance advertising spending was approximately CAD 21.4 million in fiscal 2025-26, with about CAD 19.5 million reported as Protect Ontario-themed advertising.",
+      "confidence": "high",
+      "confidenceScore": 89,
+      "source": "https://www.thetrillium.ca/news/politics/finance-ministry-spent-214m-on-protect-ontario-and-affordability-focused-ads-in-2025-26-12478535",
+      "sourceType": "foi-derived-media-reporting",
+      "authority": 4,
+      "corroborationCount": 1,
+      "directness": 5,
+      "recency": 5
+    },
+    {
+      "id": "ON-ENERGY-2025-26",
+      "status": "verified",
+      "domain": "government-advertising",
+      "claim": "Ontario Ministry of Energy spent approximately CAD 9.93 million on advertising in fiscal 2025-26.",
+      "confidence": "high",
+      "confidenceScore": 89,
+      "source": "https://www.thetrillium.ca/news/politics/protect-ontario-ads-cost-one-ministry-nearly-10m-last-year-records-12432912",
+      "sourceType": "foi-derived-media-reporting",
+      "authority": 4,
+      "corroborationCount": 1,
+      "directness": 5,
+      "recency": 5
+    },
+    {
+      "id": "ON-PROTECT-ONTARIO-BRANDING",
+      "status": "verified",
+      "domain": "message-branding",
+      "claim": "The phrase Protect Ontario appears in both provincial government advertising and Ontario PC Party political branding.",
+      "confidence": "high",
+      "confidenceScore": 92,
+      "sources": [
+        "https://globalnews.ca/news/11757739/protect-ontario-commercial-campaign-cost/",
+        "https://ontariopc.ca/"
+      ],
+      "sourceType": "cross-source-observation",
+      "authority": 4,
+      "corroborationCount": 2,
+      "directness": 5,
+      "recency": 5,
+      "notes": "Brand overlap is observable; legality, intent, and electoral effect are separate questions requiring evidence."
+    },
+    {
+      "id": "CAN-FITAA-2026-08-04",
+      "status": "verified",
+      "domain": "foreign-influence-transparency",
+      "claim": "The federal Foreign Influence Transparency and Accountability Act regime came into force on August 4, 2026, subject to specified provisions.",
+      "confidence": "high",
+      "confidenceScore": 100,
+      "sources": [
+        "https://orders-in-council.canada.ca/attachment.php?attach=48780&lang=en",
+        "https://www.canada.ca/en/foreign-influence-commissioner/registration-compliance.html"
+      ],
+      "sourceType": "official-government",
+      "authority": 5,
+      "corroborationCount": 2,
+      "directness": 5,
+      "recency": 5
+    },
+    {
+      "id": "CAN-FITAA-REG-DEADLINES",
+      "status": "verified",
+      "domain": "foreign-influence-transparency",
+      "claim": "Federal guidance states that registrable arrangements generally must be registered within 14 days; qualifying arrangements existing before August 4, 2026 have until October 3, 2026.",
+      "confidence": "high",
+      "confidenceScore": 96,
+      "source": "https://www.canada.ca/en/foreign-influence-commissioner/registration-compliance.html",
+      "sourceType": "official-government",
+      "authority": 5,
+      "corroborationCount": 1,
+      "directness": 5,
+      "recency": 5
+    },
+    {
+      "id": "CAN-CSIS-FI-2025",
+      "status": "verified",
+      "domain": "foreign-interference",
+      "claim": "CSIS reported that the main perpetrators of foreign interference and espionage against Canada in 2025 included the People's Republic of China, India, Russia, Iran and Pakistan.",
+      "confidence": "high",
+      "confidenceScore": 96,
+      "source": "https://www.canada.ca/en/security-intelligence-service/corporate/publications/csis-public-report-2025/operations-and-analysis.html",
+      "sourceType": "official-intelligence-report",
+      "authority": 5,
+      "corroborationCount": 1,
+      "directness": 5,
+      "recency": 5
+    },
+    {
+      "id": "CAN-ELECTIONS-AI-DISINFO",
+      "status": "verified",
+      "domain": "information-integrity",
+      "claim": "Elections Canada documented apparent AI-generated videos containing inaccurate information about the federal electoral process after the 2025 general election.",
+      "confidence": "high",
+      "confidenceScore": 96,
+      "source": "https://www.elections.ca/content.aspx?dir=comp%2Ffeb0526&document=p5&lang=e&section=abo",
+      "sourceType": "official-election-administration",
+      "authority": 5,
+      "corroborationCount": 1,
+      "directness": 5,
+      "recency": 5
+    },
+    {
+      "id": "ON-CLOSED-EVENTS",
+      "status": "collection-target",
+      "domain": "media-access",
+      "claim": "Determine whether a recurring pattern of invitation-controlled government events materially limits independent media scrutiny.",
+      "confidence": "unassessed",
+      "confidenceScore": 0,
+      "requiredEvidence": [
+        "event invitation records",
+        "media attendance",
+        "livestream availability",
+        "question periods",
+        "official photo/video release timing"
+      ]
+    },
+    {
+      "id": "ON-BYELECTION-AD-PLACEMENT",
+      "status": "collection-target",
+      "domain": "election-integrity",
+      "claim": "Measure government advertising placement and targeting relative to active provincial by-election periods and ridings.",
+      "confidence": "unassessed",
+      "confidenceScore": 0,
+      "requiredEvidence": [
+        "media-buy records",
+        "ad-library captures",
+        "timestamped screenshots",
+        "riding geotargeting",
+        "Elections Ontario rulings or guidance"
+      ]
+    },
+    {
+      "id": "RCMP-ONTARIO-FI-CAPACITY",
+      "status": "collection-target",
+      "domain": "foreign-interference-enforcement",
+      "claim": "Establish whether Ontario-specific RCMP foreign-interference investigative capacity has expanded and by how much.",
+      "confidence": "unassessed",
+      "confidenceScore": 0,
+      "requiredEvidence": [
+        "RCMP announcement",
+        "budget document",
+        "committee testimony",
+        "attributable staffing data"
+      ]
+    }
+  ]
+}
