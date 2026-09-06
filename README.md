@@ -1,41 +1,77 @@
-# ClearGlass Guardian v5.0
+# ClearGlass SMB Cyber Trust Agent
 
-ClearGlass Guardian v5.0 is the governed Intelligence Command Interface for ClearGlass AgentOps. It is designed for enterprise-safe command execution, bounded autonomy, human approval gates, DLP controls, and structured auditability.
+A plain-language cyber resilience advisor for small and medium businesses. The
+agent works entirely from the **ClearGlass SMB Cyber Trust Kit** and never
+improvises controls, prices, or legal thresholds that aren't in the kit.
 
-## Package Contents
+## What's here
 
-- `system_prompt.md` — production system prompt for the Guardian v5 agent.
-- `developer_prompt.md` — developer/runtime behavior contract.
-- `tool_schema.json` — governed tool schema for deterministic orchestration.
+| File | Purpose |
+|---|---|
+| `agent.json` | Declarative agent config: role, capabilities, CTAs, guardrails, handoff. |
+| `system_prompt.md` | The agent's persona, tools, output shape, few-shot examples, guardrails. |
+| `tool_schema.json` | Tool contract — each tool maps 1:1 to a function in the engine. |
+| `README.md` | This file. |
 
-## Runtime Pattern
+## The four deliverables
 
-Guardian v5 should be deployed behind a governed orchestration layer. The recommended execution pattern is:
+1. **Simple policy templates** — eight fill-in-the-blank policies (acceptable
+   use, passwords/MFA, data protection, incident response, access control,
+   backup & recovery, vendor risk, devices/BYOD).
+2. **A risk heat-map** — a 5×5 likelihood × impact grid, banded Low → Critical,
+   with a starter register of the risks that actually hurt small businesses.
+3. **A "communication during incidents" script** — holding statements by phase
+   (detect → contain → eradicate → recover → post-incident) and audience
+   (staff, customers, affected individuals, regulator, partners, media).
+4. **A mini-guide** — *How to talk to non-technical people about cyber risk*:
+   principles, a jargon→plain glossary with analogies, and "what to say when…".
 
-1. Classify intent.
-2. Plan a bounded workflow.
-3. Evaluate policy.
-4. Execute only approved low-risk actions.
-5. Escalate high-risk or irreversible actions for approval.
-6. Verify completion with evidence.
-7. Write structured audit events.
+## Single source of truth
 
-## Default Controls
+The agent, the in-browser console (`/smb-cyber-trust-kit.html`), and the
+backend all read the **same** kit content produced by the deterministic engine:
 
-- Five-step bounded execution plan by default.
-- Human approval for irreversible or externally visible actions.
-- Deterministic tool usage before open-ended reasoning.
-- Audit-only mode for new integrations.
-- No raw secret logging.
-- DLP inspection on prompts, tool inputs, intermediate data, and outputs.
+```bash
+# Regenerate the kit (Markdown + JSON) and refresh the web data file
+python -m bots.smb_cyber_trust_kit_bot --org "Acme Dental"
 
-## Intended Integration Targets
+# Inspect the JSON payload the console/agent ingest
+python -m bots.smb_cyber_trust_kit_bot --json
 
-- Microsoft Agent Framework for orchestration, middleware, checkpointing, and human-in-the-loop controls.
-- Azure AI Foundry for approved model execution.
-- Copilot Studio for low-code enterprise user experience.
-- Microsoft Purview, Entra ID, and Power Platform DLP for governance.
+# Print the full Markdown kit to stdout
+python -m bots.smb_cyber_trust_kit_bot --print
+```
 
-## Status
+Outputs:
+- `operations/smb_cyber_trust_kit/smb-cyber-trust-kit.md` (+ timestamped archive)
+- `operations/smb_cyber_trust_kit/smb-cyber-trust-kit.json`
+- `assets/data/smb-cyber-trust-kit.json` (consumed by the web console)
 
-Initial production prompt package. Treat this as the source of truth for Guardian v5 behavior until runtime middleware and service code are added.
+## Tools
+
+| Tool | Engine function | Risk |
+|---|---|---|
+| `score_risk` | `score_risk` | low |
+| `build_heat_map` | `build_heat_map` | low |
+| `rank_risks` | `rank_risks` | low |
+| `render_policy` | `render_policy` | low |
+| `incident_script` | `incident_script` | medium |
+| `translate_jargon` | `JARGON_GLOSSARY` | low |
+| `build_kit` | `build_kit` | low |
+| `handoff_to_clearglass` | — | high |
+
+`incident_script` for the **regulator** / **media** audiences and any
+`handoff_to_clearglass` are gated: present them as drafts pending human approval.
+
+## Guardrails
+
+- Kit content only; no fabrication.
+- Practical guidance, **not legal advice** — PIPEDA / PHIPA breach decisions go
+  to a qualified advisor.
+- Ontario / Canadian context (PIPEDA, PHIPA, CASL).
+- Healthcare / government / finance → recommend professional review + offer a
+  clean handoff to the ClearGlass team.
+
+---
+
+*ClearGlass Inc. · Clarity Is Power · Burlington, Ontario*
