@@ -1,0 +1,50 @@
+{
+  "name": "ClearGlass Multi-Agent Workflow Prototype",
+  "version": "0.1.0",
+  "status": "deployed_prototype",
+  "acceptance": {
+    "workflow_file_exists": true,
+    "demo_run_exists": true,
+    "result_log_exists": true,
+    "reusable_tomorrow": true
+  },
+  "agents": [
+    {
+      "id": "intake",
+      "name": "Intake Agent",
+      "role": "Receives business task and extracts objective, constraints, inputs, outputs, owner, and deadline.",
+      "input": "raw_business_task",
+      "output": "intake_brief"
+    },
+    {
+      "id": "planner",
+      "name": "Planner Agent",
+      "role": "Breaks the intake brief into ordered execution steps with dependencies and acceptance criteria.",
+      "input": "intake_brief",
+      "output": "execution_plan"
+    },
+    {
+      "id": "executor",
+      "name": "Executor Agent",
+      "role": "Performs the planned work or drafts the required implementation artifact.",
+      "input": "execution_plan",
+      "output": "work_artifact"
+    },
+    {
+      "id": "auditor",
+      "name": "Auditor Agent",
+      "role": "Checks the artifact for errors, missing assumptions, security gaps, compliance risks, and operational drift.",
+      "input": "work_artifact",
+      "output": "audit_report"
+    },
+    {
+      "id": "logger",
+      "name": "Logger Agent",
+      "role": "Records execution result, decisions, success metric, blockers, and next action for reuse tomorrow.",
+      "input": "audit_report",
+      "output": "result_log"
+    }
+  ],
+  "run_order": ["intake", "planner", "executor", "auditor", "logger"],
+  "reusable_tomorrow_instruction": "Change raw_business_task and rerun the same five-stage sequence. Preserve result logs by date."
+}

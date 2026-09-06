@@ -1,0 +1,413 @@
+/* ═══════════════════════════════════════════════════════
+   CLEARGLASS WHITE GLASS — Universal Design Override
+   Link this LAST inside every page's <head>.
+   Converts any dark/neon theme to all-white frosted glass.
+═══════════════════════════════════════════════════════ */
+
+/* ── 1. DESIGN TOKENS ── */
+:root {
+  /* backgrounds */
+  --bg:#f7f8fa; --bg0:#f7f8fa; --bg-0:#f7f8fa; --bg-1:#f0f2f5;
+  --bg2:#eef0f4; --bg-2:#eef0f4; --bg3:#e8eaed; --bg-3:#e8eaed;
+  --bg4:#e0e3e8; --bg-4:#e0e3e8; --bg-soft:#f4f5f8;
+
+  /* surfaces */
+  --void:#f7f8fa; --abyss:#f7f8fa; --deep:#f0f2f5;
+  --white:#f7f8fa; --off:#f0f2f5; --pearl:#ffffff; --bone:#fafafa;
+  --card:#ffffff; --card2:#f7f8fa; --cards:rgba(255,255,255,.85);
+  --panel:#ffffff; --panel-2:#f7f8fa; --panel2:#f7f8fa;
+  --surface:#ffffff; --inset:#f0f2f5; --black:#f7f8fa;
+
+  /* glass */
+  --glass:rgba(255,255,255,.78); --glass-strong:rgba(255,255,255,.94);
+  --glass-2:rgba(255,255,255,.55); --glass-hi:rgba(0,0,0,.04);
+  --glass-border:rgba(0,0,0,.07); --glass-brd:rgba(0,0,0,.07);
+  --glass-brd-strong:rgba(0,0,0,.14);
+
+  /* text */
+  --text:#0c0e12; --text-2:#374151; --text-3:#6b7280; --text-4:#9ca3af;
+  --txt:#0c0e12; --txt-0:#0c0e12; --txt-1:#0c0e12;
+  --txt-2:#374151; --txt-3:#6b7280; --txt-dim:#6b7280; --txt-mute:#9ca3af;
+  --wt:#0c0e12; --wt2:#374151; --wt3:#6b7280; --wt4:#9ca3af;
+  --fg:#0c0e12;
+  --dim:#6b7280; --dim-2:#9ca3af; --dim2:#9ca3af; --dimmer:#9ca3af;
+  --muted:#6b7280; --muted2:#9ca3af; --soft:#9ca3af;
+
+  /* borders / lines */
+  --border:rgba(0,0,0,.07); --border-hi:rgba(0,0,0,.14);
+  --bdr:rgba(0,0,0,.08); --bdr2:rgba(0,0,0,.05); --bdr3:rgba(0,0,0,.04);
+  --line:rgba(0,0,0,.07); --line-2:rgba(0,0,0,.05);
+  --line-strong:rgba(0,0,0,.14); --line2:rgba(0,0,0,.07);
+  --edge:rgba(0,0,0,.08); --edge-2:rgba(0,0,0,.05); --edge-soft:rgba(0,0,0,.04);
+  --faint:rgba(0,0,0,.04); --ghost:rgba(0,0,0,.03);
+
+  /* dark structural surfaces */
+  --dark:#0c0e12; --dark-2:#1a1d25; --dark-3:#2a2d35;
+  --acc:#0c0e12; --acc2:#374151;
+  --ink:#0c0e12; --ink-2:#374151;
+  --navy:#0c0e12; --navy-2:#1a1d25; --navy-3:#2a2d35;
+  --ash:#6b7280; --ash-d:#4b5563; --neutral:#9ca3af;
+
+  /* neon → monochrome */
+  --prism-1:#0c0e12; --prism-2:#374151; --prism-3:#6b7280;
+  --prism-4:#374151; --prism-5:#9ca3af; --prism-6:#6b7280;
+  --crystal:linear-gradient(135deg,#e6e8ec 0%,#f4f5f7 40%,#fff 70%,#e8eaee 100%);
+  --crystal-soft:linear-gradient(135deg,#f0f2f5,#fff);
+  --cg-crystal:linear-gradient(135deg,#e6e8ec,#f4f5f7 40%,#fff 70%,#e8eaee);
+
+  /* blue/violet → mono */
+  --blue:#0c0e12; --blue-2:#374151;
+  --blue-light:rgba(12,14,18,.08); --blue-border:rgba(12,14,18,.1);
+  --violet:#374151; --purple:#374151;
+  --purple-light:rgba(55,65,81,.08); --purple-border:rgba(55,65,81,.1);
+  --indigo:#374151;
+  --cg-blue:#0c0e12; --cg-violet:#374151; --cg-prism-1:#0c0e12;
+
+  /* cyan/teal/mint → gray */
+  --cy:#6b7280; --cy2:#9ca3af; --cy3:#d1d5db;
+  --azure:#6b7280; --ice:#f0f2f5; --sky:#6b7280;
+  --teal:#6b7280; --mint:#9ca3af; --spring:#9ca3af;
+  --surf:rgba(0,0,0,.04); --surf2:rgba(0,0,0,.02);
+  --glow:rgba(0,0,0,.04); --glow-cyan:rgba(0,0,0,.04); --glow-soft:rgba(0,0,0,.02);
+
+  /* green → gray */
+  --green:#6b7280; --green-light:rgba(107,114,128,.08); --green-border:rgba(107,114,128,.1);
+  --gn:#6b7280; --gn2:#9ca3af; --gn3:#d1d5db;
+
+  /* gold/amber/yellow → gray */
+  --gold:#6b7280; --gold-2:#9ca3af; --gold-3:#d1d5db;
+  --gold-light:rgba(107,114,128,.08); --gold-border:rgba(107,114,128,.1);
+  --gold-grad:linear-gradient(135deg,#9ca3af,#6b7280);
+  --amber:#6b7280; --amber-2:#9ca3af; --amber-3:#d1d5db;
+  --amber-light:rgba(107,114,128,.08); --amber-border:rgba(107,114,128,.1);
+  --yw:#9ca3af; --yw2:#d1d5db;
+  --orange:#6b7280; --orange-2:#9ca3af;
+  --orange-light:rgba(107,114,128,.08); --orange-border:rgba(107,114,128,.1);
+
+  /* pink/red/crimson → gray */
+  --pink:#9ca3af; --magenta:#9ca3af;
+  --red:#374151; --red-2:#6b7280;
+  --red-light:rgba(55,65,81,.08); --red-border:rgba(55,65,81,.1);
+  --crimson:#374151; --crimson-2:#6b7280; --crimson-deep:#0c0e12;
+  --crimson-dim:rgba(55,65,81,.12); --crimson-glow:rgba(55,65,81,.06);
+  --crimson-line:rgba(55,65,81,.1); --crimson-soft:rgba(55,65,81,.06);
+
+  /* artemis terminal accent palette */
+  --am:#0c0e12; --am2:#374151; --am3:#6b7280; --am4:#9ca3af;
+  --al:#6b7280;
+  --bl:#374151; --bl2:#6b7280; --bl3:#9ca3af;
+  --or:#6b7280; --or2:#9ca3af;
+  --rd:#374151; --rd2:#6b7280;
+  --pu:#374151; --pu2:#6b7280;
+
+  /* government */
+  --gov-blue:#0c0e12; --gov-blue-2:#374151; --gov-light:rgba(12,14,18,.08);
+
+  /* legal */
+  --legal-grad:linear-gradient(135deg,#e6e8ec,#f4f5f7);
+  --legal-grad-soft:linear-gradient(135deg,rgba(230,232,236,.4),rgba(244,245,247,.4));
+
+  /* revenue / bank */
+  --revenue-1:#0c0e12; --revenue-2:#374151; --revenue-3:#6b7280;
+  --revenue-grad:linear-gradient(135deg,#e6e8ec,#0c0e12);
+  --bank-grad:linear-gradient(135deg,#e6e8ec,#0c0e12);
+  --bank-grad-soft:linear-gradient(135deg,rgba(230,232,236,.4),rgba(12,14,18,.08));
+
+  /* CG misc */
+  --aurora:rgba(12,14,18,.04); --command:rgba(12,14,18,.06);
+
+  /* semantic status — muted but functional */
+  --ok:#16a34a; --good:#16a34a; --sync:#16a34a;
+  --bad:#dc2626; --danger:#dc2626; --crit:#dc2626;
+  --warn:#d97706; --info:#6b7280; --idle:#9ca3af;
+  --flag:#6b7280; --toggle:rgba(0,0,0,.08);
+
+  /* shadows */
+  --sh:0 2px 12px rgba(0,0,0,.06);
+  --shadow:0 2px 12px rgba(0,0,0,.06);
+  --drop:0 4px 20px rgba(0,0,0,.08);
+  --lift:0 8px 32px rgba(0,0,0,.08);
+  --lift2:0 16px 48px rgba(0,0,0,.10);
+
+  /* layout */
+  --blur:24px; --gap:20px; --max:1180px;
+  --radius:16px; --radius-sm:8px;
+}
+
+/* ── 2. BODY / HTML ── */
+html { background:#f7f8fa !important; }
+body {
+  background:linear-gradient(180deg,#ffffff,#f4f5f8) !important;
+  color:#0c0e12 !important;
+}
+
+/* ── 3. DARK OVERLAYS & DECORATIVE FX ── */
+body::before, body::after { display:none !important; }
+.cursor-glow, .hero-prism, .manifesto-bg, .hero-scan, .hero-grid,
+[class*="scan-line"], [class*="scanline"],
+[class*="dot-grid"], [class*="noise-overlay"],
+[class*="vignette"], [class*="grid-bg"] { display:none !important; }
+
+.hero-line, .hero-lines .hero-line {
+  background:linear-gradient(90deg,transparent,rgba(0,0,0,.03),transparent) !important;
+}
+.hero-lines { opacity:.3 !important; }
+
+/* ── 4. NAVIGATION ── */
+nav, header.nav, .nav, .site-nav, #hdr, #nav, header {
+  background:rgba(255,255,255,.88) !important;
+  backdrop-filter:blur(24px) saturate(1.2) !important;
+  -webkit-backdrop-filter:blur(24px) saturate(1.2) !important;
+  border-color:rgba(0,0,0,.08) !important;
+  color:#0c0e12 !important;
+  box-shadow:0 1px 0 rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04) !important;
+}
+nav a, header.nav a, .nav a, .site-nav a, #hdr a,
+.nav-links a, .links a { color:#374151 !important; }
+nav a:hover, .nav a:hover, .site-nav a:hover,
+.nav-links a:hover, .links a:hover {
+  color:#0c0e12 !important; background:rgba(0,0,0,.04) !important;
+}
+nav a.active, nav a.is-active, .nav a.active, .site-nav a.active,
+.links a.active { color:#0c0e12 !important; font-weight:700 !important; }
+
+.nav-links, .links {
+  background:rgba(255,255,255,.5) !important;
+  border-color:rgba(0,0,0,.07) !important;
+}
+.nav-links a::after {
+  background:linear-gradient(90deg,rgba(12,14,18,.7),rgba(55,65,81,.5)) !important;
+}
+.nav-cta, a.nav-cta, .links .cta, .nav-links .cta {
+  background:#0c0e12 !important; color:#f7f8fa !important;
+}
+.nav-toggle { color:#0c0e12 !important; }
+.nav-toggle svg { stroke:#0c0e12 !important; }
+.mobile-menu { background:rgba(255,255,255,.95) !important; border-color:rgba(0,0,0,.08) !important; }
+.mobile-menu a { color:#0c0e12 !important; }
+.nav-mark, .nav-logo, .mark {
+  background:linear-gradient(145deg,#f0f2f5,#fff) !important;
+  border-color:rgba(0,0,0,.1) !important;
+  box-shadow:0 2px 10px rgba(0,0,0,.06) !important;
+}
+
+/* Terminal header elements */
+#hclock, #hdate, .hl-mark, .hl-sub { color:#374151 !important; }
+.hpill { background:rgba(0,0,0,.04) !important; border-color:rgba(0,0,0,.08) !important; color:#6b7280 !important; }
+.hdot, .hdot.g, .hdot.o, .hdot.r, .hdot.b {
+  background:#9ca3af !important; box-shadow:none !important; animation:none !important;
+}
+#darpa-banner, .darpa-banner { display:none !important; }
+
+/* ── 5. CARDS & PANELS ── */
+.card, .win, .window, .glass, .glass2, .glass-card,
+[class*="-card"], [class*="card-"],
+[class*="-panel"], [class*="panel-"],
+[class*="-tile"], [class*="tile-"] {
+  background:rgba(255,255,255,.88) !important;
+  border-color:rgba(0,0,0,.08) !important;
+  backdrop-filter:blur(12px) !important;
+  -webkit-backdrop-filter:blur(12px) !important;
+  box-shadow:0 2px 12px rgba(0,0,0,.06) !important;
+  color:#0c0e12 !important;
+}
+.card:hover, .win:hover, .glass-card:hover,
+[class*="-card"]:hover, [class*="card-"]:hover {
+  box-shadow:0 8px 32px rgba(0,0,0,.08) !important;
+  border-color:rgba(0,0,0,.12) !important;
+}
+
+/* Window bars */
+.wb, [class*="win-bar"] {
+  background:rgba(0,0,0,.03) !important;
+  border-color:rgba(0,0,0,.06) !important;
+}
+.wt, .wb * { color:#6b7280 !important; }
+
+/* ── 6. DARK SECTIONS ── */
+.sect-dark, .dark-section, .bg-dark,
+[class*="sect-dark"], [class*="dark-bg"] {
+  background:#f0f2f5 !important;
+  color:#0c0e12 !important;
+}
+.sect-dark *, [class*="sect-dark"] *, .dark-section * { color:#374151 !important; }
+.sh-dark h2 { color:#0c0e12 !important; }
+.sh-dark p { color:#6b7280 !important; }
+
+/* ── 7. HERO ── */
+.hero { background:transparent !important; }
+.hero-sub, .hero p { color:#6b7280 !important; }
+.hero-year { color:#9ca3af !important; }
+.hero-eyebrow { color:rgba(12,14,18,.4) !important; }
+.hero-eyebrow::before, .hero-eyebrow::after { background:rgba(12,14,18,.12) !important; }
+.hero-domain-line {
+  background:rgba(255,255,255,.72) !important;
+  border-color:rgba(0,0,0,.07) !important;
+  color:#374151 !important;
+}
+.hero-domain-line a { color:#0c0e12 !important; }
+.scroll-line { background:linear-gradient(180deg,#d1d5db,transparent) !important; }
+.hero-scroll span { color:rgba(12,14,18,.38) !important; }
+.hero-confirm {
+  background:rgba(255,255,255,.72) !important;
+  border-color:rgba(0,0,0,.1) !important;
+  color:#374151 !important;
+}
+
+/* Crystal / gradient text → monochrome */
+.crystal-text, .cx, [class*="crystal-text"],
+.hero h1 .cx, .hero h1 .crystal-text {
+  background:linear-gradient(135deg,#1a1d25,#374151) !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;
+}
+
+/* ── 8. BUTTONS ── */
+.btn-dark, .btn-primary, .cta-btn,
+[class*="btn-dark"], [class*="btn-primary"], [class*="btn-cta"] {
+  background:#0c0e12 !important;
+  color:#f7f8fa !important;
+  border-color:transparent !important;
+  box-shadow:0 2px 8px rgba(0,0,0,.12) !important;
+}
+.btn-dark:hover, .btn-primary:hover { background:#1a1d25 !important; }
+
+.btn-crystal, [class*="btn-crystal"] {
+  background:#0c0e12 !important;
+  color:#f7f8fa !important;
+  animation:none !important;
+  box-shadow:0 2px 8px rgba(0,0,0,.12) !important;
+}
+.btn-crystal:hover { background:#1a1d25 !important; }
+
+.btn-glass, [class*="btn-glass"] {
+  background:rgba(255,255,255,.7) !important;
+  color:#0c0e12 !important;
+  border-color:rgba(0,0,0,.1) !important;
+  backdrop-filter:blur(8px) !important;
+}
+.btn-glass:hover { background:rgba(255,255,255,.9) !important; }
+
+/* ── 9. TYPOGRAPHY ── */
+h1, h2, h3, h4, h5, h6 { color:#0c0e12 !important; }
+p { color:#374151 !important; }
+li { color:#374151 !important; }
+blockquote { color:#0c0e12 !important; }
+cite { color:#9ca3af !important; }
+.meta, .sh-tag, [class*="-era"], .pc-era,
+[class*="kicker"], [class*="eyebrow"] { color:#9ca3af !important; }
+.sh-tag::before, .sh-tag::after { background:#9ca3af !important; }
+.mission-label { color:#9ca3af !important; }
+.mission-text { color:#374151 !important; }
+.lead { color:rgba(12,14,18,.6) !important; }
+
+/* ── 10. LINKS ── */
+a { color:#0c0e12 !important; }
+a:hover { color:#374151 !important; }
+/* Preserve white text on filled buttons */
+.nav-cta, a.nav-cta, .links .cta, .btn-dark, .btn-crystal,
+[class*="btn-dark"], [class*="btn-primary"], [class*="btn-crystal"],
+.btn-dark:hover, .btn-crystal:hover { color:#f7f8fa !important; }
+
+/* ── 11. TECH / INTELLIGENCE CARDS ── */
+.tech-card { color:#0c0e12 !important; }
+.tech-card h3 { color:#0c0e12 !important; }
+.tech-card p { color:#374151 !important; }
+.tc-icon { background:rgba(0,0,0,.06) !important; }
+.tc-tags span {
+  background:rgba(0,0,0,.05) !important;
+  color:#6b7280 !important;
+  border-color:rgba(0,0,0,.08) !important;
+}
+
+/* ── 12. PRODUCT CARDS ── */
+.product-card.hero-product { background:rgba(255,255,255,.9) !important; }
+.pc-visual {
+  background:linear-gradient(145deg,#f0f2f5,#fff) !important;
+  border-color:rgba(0,0,0,.07) !important; color:#9ca3af !important;
+}
+.pc-dot { background:#d1d5db !important; }
+.pc-feat .ck { background:rgba(55,65,81,.08) !important; color:#374151 !important; }
+
+/* ── 13. VALUE / CONNECT / FOUNDER CARDS ── */
+.value-card { background:#f0f2f5 !important; }
+.value-card:hover { background:#fff !important; }
+.value-card::after { background:linear-gradient(90deg,#9ca3af,#d1d5db) !important; }
+.value-card .vc-num { color:#9ca3af !important; }
+.connect-card { background:#fff !important; }
+.founder-card {
+  background:linear-gradient(145deg,rgba(255,255,255,.92),rgba(243,245,248,.9)) !important;
+}
+.founder-role { color:#374151 !important; }
+.founder-copy p { color:#374151 !important; }
+
+/* ── 14. MANIFESTO / MISSION / TIMELINE ── */
+.manifesto { background:transparent !important; }
+.manifesto blockquote { color:#0c0e12 !important; }
+.mission-strip { border-color:rgba(0,0,0,.07) !important; }
+.tl-item { border-color:rgba(0,0,0,.07) !important; }
+.tl-year { color:#9ca3af !important; }
+
+/* ── 15. THREADS ── */
+.thread-card { background:#fff !important; border-color:rgba(0,0,0,.08) !important; }
+.tweet-index { color:#374151 !important; }
+
+/* ── 16. GUARDIAN SPECIFIC ── */
+.eyebrow { color:rgba(12,14,18,.42) !important; }
+.brand { color:#0c0e12 !important; }
+
+/* ── 17. TABLES ── */
+table { border-color:rgba(0,0,0,.08) !important; }
+thead tr, thead { background:rgba(0,0,0,.04) !important; }
+th { color:#0c0e12 !important; border-color:rgba(0,0,0,.08) !important; }
+td { color:#374151 !important; border-color:rgba(0,0,0,.06) !important; }
+tbody tr:nth-child(even) { background:rgba(0,0,0,.02) !important; }
+tbody tr:hover { background:rgba(0,0,0,.03) !important; }
+
+/* ── 18. CODE & MONO ── */
+code, pre, kbd, samp {
+  background:rgba(0,0,0,.05) !important;
+  color:#374151 !important;
+  border-color:rgba(0,0,0,.08) !important;
+}
+
+/* ── 19. FORMS ── */
+input, textarea, select {
+  background:#ffffff !important; color:#0c0e12 !important;
+  border-color:rgba(0,0,0,.15) !important;
+}
+input::placeholder, textarea::placeholder { color:#9ca3af !important; }
+input:focus, textarea:focus, select:focus {
+  border-color:#0c0e12 !important;
+  box-shadow:0 0 0 3px rgba(12,14,18,.06) !important;
+  outline:none !important;
+}
+
+/* ── 20. STATUS CHIPS / PILLS ── */
+.pill, .badge, .chip, .hpill,
+[class*="-pill"], [class*="pill-"],
+[class*="-badge"], [class*="badge-"],
+[class*="-chip"], [class*="chip-"] {
+  background:rgba(0,0,0,.05) !important;
+  color:#374151 !important;
+  border-color:rgba(0,0,0,.08) !important;
+}
+
+/* ── 21. FOOTER ── */
+footer, .footer, [class*="footer"] {
+  background:#f0f2f5 !important;
+  border-color:rgba(0,0,0,.07) !important;
+  color:#374151 !important;
+}
+footer *, .footer * { color:#374151 !important; }
+footer a, .footer a { color:#0c0e12 !important; }
+
+/* ── 22. SCROLLBAR ── */
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:#f0f2f5; }
+::-webkit-scrollbar-thumb { background:#d1d5db; border-radius:999px; }
+::-webkit-scrollbar-thumb:hover { background:#9ca3af; }
+
+/* ── 23. SELECTION ── */
+::selection { background:rgba(12,14,18,.12); color:#0c0e12; }

@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "platform": "ARTEMIS // FAWL",
+  "default_policy": "deny",
+  "sources": [
+    {
+      "id": "demo-revenue-pipeline",
+      "name": "Demonstration revenue pipeline",
+      "authorization": "public-demo",
+      "classification": "SIMULATED",
+      "freshness": "page-load",
+      "confidence": 0.74,
+      "connected": true,
+      "contains_personal_data": false,
+      "owner": "ClearGlass Inc.",
+      "warning": "Not booked revenue; values are demonstration projections."
+    }
+  ],
+  "execution_policy": {
+    "external_actions_enabled": false,
+    "human_approval_required": true,
+    "blocked_action_types": ["payment", "trade", "message-send", "deployment", "credential-access"]
+  }
+}

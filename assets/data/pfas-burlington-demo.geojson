@@ -1,0 +1,47 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "title": "PERCIVAL · PFAS — Burlington demo sites",
+    "note": "Illustrative ONLY. Coordinates point at municipal/utility/industrial CATEGORIES, not specific private properties. Values are sample placeholders for UI demonstration; real screenings require lab CSV via the PFAS ingester.",
+    "threshold_ngL": 30.0,
+    "threshold_source": "Health Canada interim drinking-water objective, sum of 25 PFAS"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {"type": "Point", "coordinates": [-79.7990, 43.3255]},
+      "properties": {
+        "site_id": "BURL-WTP-DEMO",
+        "label": "Municipal WTP (illustrative)",
+        "matrix": "drinking_water",
+        "sum_25_ngL": 14.2,
+        "risk": "LOW",
+        "demo": true
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {"type": "Point", "coordinates": [-79.7765, 43.3389]},
+      "properties": {
+        "site_id": "BURL-IND-DEMO",
+        "label": "Industrial site (illustrative)",
+        "matrix": "groundwater",
+        "sum_25_ngL": 22.5,
+        "risk": "ELEVATED",
+        "demo": true
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {"type": "Point", "coordinates": [-79.8230, 43.3132]},
+      "properties": {
+        "site_id": "BURL-LAND-DEMO",
+        "label": "Landfill leachate (illustrative)",
+        "matrix": "surface",
+        "sum_25_ngL": 41.8,
+        "risk": "EXCEEDANCE",
+        "demo": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,780 @@
+{
+  "name": "ClearGlass SMB Cyber Trust Kit",
+  "version": "1.0.0",
+  "org": "[Your Business Name]",
+  "generated_utc": "2026-06-20T09:36:14+00:00",
+  "risk_model": {
+    "likelihood_scale": {
+      "1": "Rare — would be surprising (once in many years)",
+      "2": "Unlikely — possible but not expected this year",
+      "3": "Possible — could reasonably happen this year",
+      "4": "Likely — expect it within the year",
+      "5": "Almost certain — happening now or imminent"
+    },
+    "impact_scale": {
+      "1": "Negligible — a nuisance, no real cost",
+      "2": "Minor — a few hours lost, small cost",
+      "3": "Moderate — a day or two down, noticeable cost",
+      "4": "Major — serious disruption, money + reputation",
+      "5": "Severe — business-threatening, legal/regulatory exposure"
+    },
+    "bands": [
+      {
+        "name": "Low",
+        "color": "#34d399",
+        "min_score": 1,
+        "max_score": 4,
+        "action": "Accept and monitor. Review at the normal cadence."
+      },
+      {
+        "name": "Moderate",
+        "color": "#fbbf24",
+        "min_score": 5,
+        "max_score": 9,
+        "action": "Plan a fix. Assign an owner and a target date this quarter."
+      },
+      {
+        "name": "High",
+        "color": "#fb7185",
+        "min_score": 10,
+        "max_score": 15,
+        "action": "Act soon. Put a control in place within 30 days."
+      },
+      {
+        "name": "Critical",
+        "color": "#ef4444",
+        "min_score": 16,
+        "max_score": 25,
+        "action": "Act now. Escalate to the owner today; treat as a priority."
+      }
+    ],
+    "register": [
+      {
+        "id": "R1",
+        "title": "Phishing / business email compromise",
+        "category": "People",
+        "likelihood": 4,
+        "impact": 4,
+        "note": "Most common entry point. Fake invoice or 'CEO' wire request."
+      },
+      {
+        "id": "R2",
+        "title": "Ransomware locks files / servers",
+        "category": "Systems",
+        "likelihood": 3,
+        "impact": 5,
+        "note": "Often arrives via phishing or an unpatched remote login."
+      },
+      {
+        "id": "R3",
+        "title": "Stolen or reused passwords",
+        "category": "Identity",
+        "likelihood": 4,
+        "impact": 4,
+        "note": "One leaked password unlocks email, banking, and cloud apps."
+      },
+      {
+        "id": "R4",
+        "title": "No multi-factor authentication (MFA)",
+        "category": "Identity",
+        "likelihood": 4,
+        "impact": 5,
+        "note": "Without MFA, a stolen password is a full account takeover."
+      },
+      {
+        "id": "R5",
+        "title": "Lost or stolen laptop / phone",
+        "category": "Devices",
+        "likelihood": 3,
+        "impact": 3,
+        "note": "Unencrypted device = the data on it is gone with the device."
+      },
+      {
+        "id": "R6",
+        "title": "No tested backups",
+        "category": "Recovery",
+        "likelihood": 3,
+        "impact": 5,
+        "note": "A backup you have never restored is a guess, not a safety net."
+      },
+      {
+        "id": "R7",
+        "title": "Unpatched software / overdue updates",
+        "category": "Systems",
+        "likelihood": 4,
+        "impact": 3,
+        "note": "Known holes get exploited within days of a patch release."
+      },
+      {
+        "id": "R8",
+        "title": "Ex-employee access not removed",
+        "category": "Identity",
+        "likelihood": 3,
+        "impact": 4,
+        "note": "Accounts that outlive the job are a quiet, standing risk."
+      },
+      {
+        "id": "R9",
+        "title": "Sensitive data emailed in the clear",
+        "category": "Data",
+        "likelihood": 3,
+        "impact": 3,
+        "note": "Client PII / health info sent unprotected can trigger reporting."
+      },
+      {
+        "id": "R10",
+        "title": "Vendor / supplier breach reaches you",
+        "category": "Third-party",
+        "likelihood": 2,
+        "impact": 4,
+        "note": "Their access and their breach become your incident."
+      },
+      {
+        "id": "R11",
+        "title": "Website / customer portal defaced or down",
+        "category": "Systems",
+        "likelihood": 2,
+        "impact": 3,
+        "note": "Reputation and revenue both take the hit when it is public."
+      },
+      {
+        "id": "R12",
+        "title": "Staff unsure who to call in an incident",
+        "category": "People",
+        "likelihood": 4,
+        "impact": 3,
+        "note": "Minutes lost in confusion are the most expensive minutes."
+      }
+    ],
+    "heat_map": [
+      {
+        "likelihood": 1,
+        "impact": 5,
+        "score": 5,
+        "band": "Moderate",
+        "color": "#fbbf24",
+        "risk_ids": []
+      },
+      {
+        "likelihood": 2,
+        "impact": 5,
+        "score": 10,
+        "band": "High",
+        "color": "#fb7185",
+        "risk_ids": []
+      },
+      {
+        "likelihood": 3,
+        "impact": 5,
+        "score": 15,
+        "band": "High",
+        "color": "#fb7185",
+        "risk_ids": [
+          "R2",
+          "R6"
+        ]
+      },
+      {
+        "likelihood": 4,
+        "impact": 5,
+        "score": 20,
+        "band": "Critical",
+        "color": "#ef4444",
+        "risk_ids": [
+          "R4"
+        ]
+      },
+      {
+        "likelihood": 5,
+        "impact": 5,
+        "score": 25,
+        "band": "Critical",
+        "color": "#ef4444",
+        "risk_ids": []
+      },
+      {
+        "likelihood": 1,
+        "impact": 4,
+        "score": 4,
+        "band": "Low",
+        "color": "#34d399",
+        "risk_ids": []
+      },
+      {
+        "likelihood": 2,
+        "impact": 4,
+        "score": 8,
+        "band": "Moderate",
+        "color": "#fbbf24",
+        "risk_ids": [
+          "R10"
+        ]
+      },
+      {
+        "likelihood": 3,
+        "impact": 4,
+        "score": 12,
+        "band": "High",
+        "color": "#fb7185",
+        "risk_ids": [
+          "R8"
+        ]
+      },
+      {
+        "likelihood": 4,
+        "impact": 4,
+        "score": 16,
+        "band": "Critical",
+        "color": "#ef4444",
+        "risk_ids": [
+          "R1",
+          "R3"
+        ]
+      },
+      {
+        "likelihood": 5,
+        "impact": 4,
+        "score": 20,
+        "band": "Critical",
+        "color": "#ef4444",
+        "risk_ids": []
+      },
+      {
+        "likelihood": 1,
+        "impact": 3,
+        "score": 3,
+        "band": "Low",
+        "color": "#34d399",
+        "risk_ids": []
+      },
+      {
+        "likelihood": 2,
+        "impact": 3,
+        "score": 6,
+        "band": "Moderate",
+        "color": "#fbbf24",
+        "risk_ids": [
+          "R11"
+        ]
+      },
+      {
+        "likelihood": 3,
+        "impact": 3,
+        "score": 9,
+        "band": "Moderate",
+        "color": "#fbbf24",
+        "risk_ids": [
+          "R5",
+          "R9"
+        ]
+      },
+      {
+        "likelihood": 4,
+        "impact": 3,
+        "score": 12,
+        "band": "High",
+        "color": "#fb7185",
+        "risk_ids": [
+          "R7",
+          "R12"
+        ]
+      },
+      {
+        "likelihood": 5,
+        "impact": 3,
+        "score": 15,
+        "band": "High",
+        "color": "#fb7185",
+        "risk_ids": []
+      },
+      {
+        "likelihood": 1,
+        "impact": 2,
+        "score": 2,
+        "band": "Low",
+        "color": "#34d399",
+        "risk_ids": []
+      },
+      {
+        "likelihood": 2,
+        "impact": 2,
+        "score": 4,
+        "band": "Low",
+        "color": "#34d399",
+        "risk_ids": []
+      },
+      {
+        "likelihood": 3,
+        "impact": 2,
+        "score": 6,
+        "band": "Moderate",
+        "color": "#fbbf24",
+        "risk_ids": []
+      },
+      {
+        "likelihood": 4,
+        "impact": 2,
+        "score": 8,
+        "band": "Moderate",
+        "color": "#fbbf24",
+        "risk_ids": []
+      },
+      {
+        "likelihood": 5,
+        "impact": 2,
+        "score": 10,
+        "band": "High",
+        "color": "#fb7185",
+        "risk_ids": []
+      },
+      {
+        "likelihood": 1,
+        "impact": 1,
+        "score": 1,
+        "band": "Low",
+        "color": "#34d399",
+        "risk_ids": []
+      },
+      {
+        "likelihood": 2,
+        "impact": 1,
+        "score": 2,
+        "band": "Low",
+        "color": "#34d399",
+        "risk_ids": []
+      },
+      {
+        "likelihood": 3,
+        "impact": 1,
+        "score": 3,
+        "band": "Low",
+        "color": "#34d399",
+        "risk_ids": []
+      },
+      {
+        "likelihood": 4,
+        "impact": 1,
+        "score": 4,
+        "band": "Low",
+        "color": "#34d399",
+        "risk_ids": []
+      },
+      {
+        "likelihood": 5,
+        "impact": 1,
+        "score": 5,
+        "band": "Moderate",
+        "color": "#fbbf24",
+        "risk_ids": []
+      }
+    ],
+    "ranked": [
+      {
+        "likelihood": 4,
+        "impact": 5,
+        "score": 20,
+        "band": "Critical",
+        "color": "#ef4444",
+        "action": "Act now. Escalate to the owner today; treat as a priority."
+      },
+      {
+        "likelihood": 4,
+        "impact": 4,
+        "score": 16,
+        "band": "Critical",
+        "color": "#ef4444",
+        "action": "Act now. Escalate to the owner today; treat as a priority."
+      },
+      {
+        "likelihood": 4,
+        "impact": 4,
+        "score": 16,
+        "band": "Critical",
+        "color": "#ef4444",
+        "action": "Act now. Escalate to the owner today; treat as a priority."
+      },
+      {
+        "likelihood": 3,
+        "impact": 5,
+        "score": 15,
+        "band": "High",
+        "color": "#fb7185",
+        "action": "Act soon. Put a control in place within 30 days."
+      },
+      {
+        "likelihood": 3,
+        "impact": 5,
+        "score": 15,
+        "band": "High",
+        "color": "#fb7185",
+        "action": "Act soon. Put a control in place within 30 days."
+      },
+      {
+        "likelihood": 4,
+        "impact": 3,
+        "score": 12,
+        "band": "High",
+        "color": "#fb7185",
+        "action": "Act soon. Put a control in place within 30 days."
+      },
+      {
+        "likelihood": 4,
+        "impact": 3,
+        "score": 12,
+        "band": "High",
+        "color": "#fb7185",
+        "action": "Act soon. Put a control in place within 30 days."
+      },
+      {
+        "likelihood": 3,
+        "impact": 4,
+        "score": 12,
+        "band": "High",
+        "color": "#fb7185",
+        "action": "Act soon. Put a control in place within 30 days."
+      },
+      {
+        "likelihood": 3,
+        "impact": 3,
+        "score": 9,
+        "band": "Moderate",
+        "color": "#fbbf24",
+        "action": "Plan a fix. Assign an owner and a target date this quarter."
+      },
+      {
+        "likelihood": 3,
+        "impact": 3,
+        "score": 9,
+        "band": "Moderate",
+        "color": "#fbbf24",
+        "action": "Plan a fix. Assign an owner and a target date this quarter."
+      },
+      {
+        "likelihood": 2,
+        "impact": 4,
+        "score": 8,
+        "band": "Moderate",
+        "color": "#fbbf24",
+        "action": "Plan a fix. Assign an owner and a target date this quarter."
+      },
+      {
+        "likelihood": 2,
+        "impact": 3,
+        "score": 6,
+        "band": "Moderate",
+        "color": "#fbbf24",
+        "action": "Plan a fix. Assign an owner and a target date this quarter."
+      }
+    ]
+  },
+  "policies": [
+    {
+      "id": "acceptable-use",
+      "title": "Acceptable Use Policy",
+      "purpose": "Set clear, fair rules for using company devices, accounts, and data.",
+      "scope": "Everyone who uses {org} systems: staff, contractors, and volunteers.",
+      "rules": [
+        "Use company accounts and devices for work purposes; keep reasonable personal use lawful and minimal.",
+        "Do not install unapproved software or plug in unknown USB drives.",
+        "Do not share your login with anyone, including co-workers.",
+        "Lock your screen when you step away.",
+        "Report anything that looks suspicious — no blame for a fast report."
+      ],
+      "owner_role": "Owner / Office Manager",
+      "review_cadence": "Annually, or after a major change"
+    },
+    {
+      "id": "passwords-mfa",
+      "title": "Password & Multi-Factor Authentication Policy",
+      "purpose": "Keep accounts hard to break into, even if a password leaks.",
+      "scope": "All {org} accounts: email, banking, cloud apps, and admin logins.",
+      "rules": [
+        "Use a unique passphrase of 12+ characters for every account.",
+        "Use the company password manager — never a sticky note or a shared spreadsheet.",
+        "Turn on multi-factor authentication (MFA) on every account that offers it, especially email and banking.",
+        "Never approve an MFA prompt you did not start.",
+        "Change a password immediately if you suspect it was exposed."
+      ],
+      "owner_role": "Owner / IT Lead",
+      "review_cadence": "Annually"
+    },
+    {
+      "id": "data-protection",
+      "title": "Data Protection & Privacy Policy",
+      "purpose": "Protect customer and staff information and meet privacy obligations.",
+      "scope": "All personal and sensitive data {org} collects, stores, or shares.",
+      "rules": [
+        "Collect only the information you actually need.",
+        "Store sensitive data in approved systems — not personal email or personal cloud drives.",
+        "Encrypt laptops, phones, and backups.",
+        "Share sensitive data only over approved, protected channels.",
+        "Delete data you no longer need on a defined schedule.",
+        "Know your obligations under PIPEDA (and PHIPA for health data)."
+      ],
+      "owner_role": "Owner / Privacy Lead",
+      "review_cadence": "Annually, or after a process change"
+    },
+    {
+      "id": "incident-response",
+      "title": "Incident Response Policy",
+      "purpose": "Make sure everyone knows what to do in the first hour of an incident.",
+      "scope": "Any suspected breach, ransomware, lost device, or account takeover.",
+      "rules": [
+        "If you suspect an incident, report it to {incident_contact} immediately — speed beats certainty.",
+        "Do not turn the device off or 'clean it up' — preserve evidence.",
+        "The incident lead decides on containment (disconnect, reset passwords, isolate).",
+        "Follow the Communication During Incidents script for who to tell and when.",
+        "Write down what happened and when — a simple timeline is enough.",
+        "Hold a short blameless review within a week to fix root causes."
+      ],
+      "owner_role": "Owner / Incident Lead",
+      "review_cadence": "Annually, plus after every incident"
+    },
+    {
+      "id": "access-control",
+      "title": "Access Control (Joiners, Movers, Leavers) Policy",
+      "purpose": "Give people the access they need — and remove it the day they leave.",
+      "scope": "All accounts and physical access across {org}.",
+      "rules": [
+        "Grant the least access needed to do the job.",
+        "Set up new-starter access from a checklist on day one.",
+        "Review access when someone changes role.",
+        "Remove all access the same day someone leaves — accounts, devices, building keys, and shared passwords.",
+        "Review who has admin rights every quarter."
+      ],
+      "owner_role": "Owner / Office Manager",
+      "review_cadence": "Quarterly access review"
+    },
+    {
+      "id": "backup-recovery",
+      "title": "Backup & Recovery Policy",
+      "purpose": "Be able to get back to work quickly after loss, theft, or ransomware.",
+      "scope": "All business-critical data, files, and systems.",
+      "rules": [
+        "Follow 3-2-1: three copies, on two types of media, one off-site.",
+        "Automate backups daily for anything you cannot afford to retype.",
+        "Keep at least one backup offline or otherwise out of reach of ransomware.",
+        "Test a real restore at least quarterly — an untested backup is a guess.",
+        "Know your target recovery time for the systems that matter most."
+      ],
+      "owner_role": "Owner / IT Lead",
+      "review_cadence": "Quarterly restore test"
+    },
+    {
+      "id": "vendor-risk",
+      "title": "Vendor & Third-Party Risk Policy",
+      "purpose": "Make sure the suppliers you trust do not become your weak point.",
+      "scope": "Any vendor with access to {org} data, systems, or accounts.",
+      "rules": [
+        "Keep a simple list of vendors and what each can access.",
+        "Ask new vendors how they protect your data before you sign.",
+        "Give vendors the least access they need, and remove it when the work ends.",
+        "Require vendors to tell you promptly if they have a breach.",
+        "Review the vendor list once a year."
+      ],
+      "owner_role": "Owner",
+      "review_cadence": "Annually"
+    },
+    {
+      "id": "device-byod",
+      "title": "Device & Bring-Your-Own-Device (BYOD) Policy",
+      "purpose": "Keep work data safe on the phones and laptops people actually use.",
+      "scope": "Company and personal devices used for {org} work.",
+      "rules": [
+        "Protect every device with a passcode or biometric lock.",
+        "Keep operating systems and apps updated.",
+        "Encrypt devices that hold work data.",
+        "Enable remote-wipe for lost or stolen devices.",
+        "Report a lost or stolen device immediately so access can be cut."
+      ],
+      "owner_role": "Owner / IT Lead",
+      "review_cadence": "Annually"
+    }
+  ],
+  "incident_comms": {
+    "phases": [
+      "detect",
+      "contain",
+      "eradicate",
+      "recover",
+      "post-incident"
+    ],
+    "principles": [
+      "Be first, be honest, be brief — silence reads as a cover-up.",
+      "Say what you know, what you don't yet know, and when you'll update next.",
+      "One approved spokesperson. Everyone else routes questions to them.",
+      "Never speculate on cause, numbers, or blame before the facts are in.",
+      "Write a timeline as you go — it protects you and speeds the review.",
+      "Tell people what to DO (the action) before why it happened."
+    ],
+    "scripts": [
+      {
+        "id": "staff-alert",
+        "audience": "Internal staff",
+        "phase": "contain",
+        "channel": "Internal chat / all-hands",
+        "when_to_use": "First message to the team once an incident is confirmed.",
+        "approver": "Incident Lead",
+        "template": "Team — we are responding to a security incident affecting {systems_affected}. Please {staff_action} now. Do not discuss this outside the company or post about it. Direct all questions to {incident_contact}. Next update by {next_update_time}."
+      },
+      {
+        "id": "staff-allclear",
+        "audience": "Internal staff",
+        "phase": "recover",
+        "channel": "Internal chat / all-hands",
+        "when_to_use": "When systems are restored and normal work resumes.",
+        "approver": "Incident Lead",
+        "template": "Update — the incident affecting {systems_affected} is resolved and systems are back to normal as of {resolved_time}. Thank you for your patience. If you notice anything unusual, tell {incident_contact}. A short review follows so we come out stronger."
+      },
+      {
+        "id": "customer-notice",
+        "audience": "Customers",
+        "phase": "contain",
+        "channel": "Email / status page",
+        "when_to_use": "Early, honest notice while you are still responding.",
+        "approver": "Owner",
+        "template": "We are writing to let you know we identified a security issue on {date} affecting {systems_affected}. We acted quickly to contain it and are investigating with care. {customer_impact_statement} We will share another update by {next_update_time}. Questions: {support_contact}."
+      },
+      {
+        "id": "customer-resolution",
+        "audience": "Customers",
+        "phase": "recover",
+        "channel": "Email / status page",
+        "when_to_use": "Closing the loop once service is restored.",
+        "approver": "Owner",
+        "template": "Update on the {date} security issue: it is now resolved. {what_we_did} {what_we_changed} We take the trust you place in us seriously and are sorry for any disruption. Questions: {support_contact}."
+      },
+      {
+        "id": "breach-affected",
+        "audience": "Affected individuals",
+        "phase": "post-incident",
+        "channel": "Email / letter",
+        "when_to_use": "If personal information was exposed (PIPEDA / PHIPA may require notice).",
+        "approver": "Owner + Privacy Lead (consider legal review)",
+        "template": "We are notifying you that a security incident on {date} may have exposed the following information about you: {data_categories}. Here is what happened, what we have done, and steps you can take: {protective_steps}. We have reported this as required. For help, contact {privacy_contact}."
+      },
+      {
+        "id": "regulator-notice",
+        "audience": "Privacy regulator",
+        "phase": "post-incident",
+        "channel": "Official form / letter",
+        "when_to_use": "Report to the Privacy Commissioner when a breach poses real risk of significant harm (PIPEDA) or per PHIPA for health information.",
+        "approver": "Owner + Privacy Lead (legal review recommended)",
+        "template": "Organization: {org}. Date of incident: {date}. Nature of breach: {breach_nature}. Personal information involved: {data_categories}. Estimated individuals affected: {affected_count}. Containment and remediation: {remediation}. Notification to individuals: {notice_status}. Contact: {privacy_contact}."
+      },
+      {
+        "id": "partner-notice",
+        "audience": "Partners & vendors",
+        "phase": "contain",
+        "channel": "Email / phone",
+        "when_to_use": "When a partner's data or shared systems may be involved.",
+        "approver": "Owner",
+        "template": "We are managing a security incident that may touch our shared {shared_resource}. As a precaution we have {precaution_taken}. Please watch for {what_to_watch_for} and let us know of anything unusual. Coordination contact: {incident_contact}."
+      },
+      {
+        "id": "media-holding",
+        "audience": "Media / public",
+        "phase": "contain",
+        "channel": "Spokesperson statement",
+        "when_to_use": "A short holding line if the incident becomes public. One spokesperson only.",
+        "approver": "Owner (single approved spokesperson)",
+        "template": "We are aware of a security incident and are responding with urgency. Protecting our customers' information is our priority. We have engaged the right expertise, are taking steps to contain it, and will share verified information as it becomes available."
+      }
+    ]
+  },
+  "plain_language_guide": {
+    "principles": [
+      "Lead with the business, not the technology: money, time, trust, reputation, and legal exposure.",
+      "Translate every risk into 'if this happens, then this is the cost.'",
+      "Use one analogy they already understand (a door, a key, insurance).",
+      "Give one clear recommendation, not five options.",
+      "Quantify with ranges, not false precision: 'a day or two offline.'",
+      "Replace fear with a next step — people act on direction, not dread.",
+      "Check for understanding: ask them to say it back in their own words."
+    ],
+    "glossary": [
+      {
+        "term": "Phishing",
+        "plain": "A fake email or text that tricks someone into clicking, paying, or giving up a password.",
+        "analogy": "A con artist in a delivery uniform talking their way through the door."
+      },
+      {
+        "term": "Ransomware",
+        "plain": "Malicious software that locks your files until you pay — and paying is no guarantee.",
+        "analogy": "A burglar who changes all your locks and sells you the new keys."
+      },
+      {
+        "term": "Multi-factor authentication (MFA)",
+        "plain": "A second check beyond your password, like a code on your phone.",
+        "analogy": "A deadbolt on top of the doorknob lock."
+      },
+      {
+        "term": "Patch / update",
+        "plain": "A fix the vendor releases to close a known security hole.",
+        "analogy": "Repairing a lock the manufacturer just warned everyone is pickable."
+      },
+      {
+        "term": "Encryption",
+        "plain": "Scrambling data so it's useless to anyone without the key.",
+        "analogy": "A document shredder that can be perfectly un-shredded only by you."
+      },
+      {
+        "term": "Firewall",
+        "plain": "A filter that decides what network traffic is allowed in or out.",
+        "analogy": "A bouncer checking everyone at the door against the guest list."
+      },
+      {
+        "term": "Backup",
+        "plain": "A spare copy of your data you can restore after loss or attack.",
+        "analogy": "A photocopy of every important document, kept in a different building."
+      },
+      {
+        "term": "Breach",
+        "plain": "An incident where data is accessed or taken by someone who shouldn't have it.",
+        "analogy": "Discovering the filing cabinet was opened and copied overnight."
+      },
+      {
+        "term": "Endpoint",
+        "plain": "Any device that connects to your systems — laptop, phone, tablet.",
+        "analogy": "Every door and window into the building."
+      },
+      {
+        "term": "Zero-day",
+        "plain": "A brand-new flaw that attackers know about before a fix exists.",
+        "analogy": "A lock flaw the locksmith hasn't learned about yet."
+      },
+      {
+        "term": "Social engineering",
+        "plain": "Manipulating a person, not a computer, to get access.",
+        "analogy": "Sweet-talking the receptionist instead of breaking the lock."
+      },
+      {
+        "term": "Attack surface",
+        "plain": "All the ways someone could possibly get in.",
+        "analogy": "The total number of doors, windows, and vents on the building."
+      }
+    ],
+    "scenarios": [
+      {
+        "situation": "Asking the owner to fund MFA",
+        "say_this": "For about the cost of a coffee per person each month, a stolen password stops being enough to drain the bank account.",
+        "not_this": "We need to deploy TOTP-based 2FA across the identity provider."
+      },
+      {
+        "situation": "Explaining why backups matter",
+        "say_this": "If ransomware hit tomorrow, tested backups are the difference between a bad day and a closed business.",
+        "not_this": "We have no immutable, air-gapped recovery tier."
+      },
+      {
+        "situation": "Justifying patching downtime",
+        "say_this": "A 20-minute update tonight closes a hole criminals are already using this week.",
+        "not_this": "There's an unpatched CVE with a public exploit in the wild."
+      },
+      {
+        "situation": "Reporting an incident to the board",
+        "say_this": "Here's what happened, what it cost us, what we've fixed, and the one thing we're changing so it can't repeat.",
+        "not_this": "We observed anomalous lateral movement and exfiltration indicators."
+      }
+    ]
+  }
+}

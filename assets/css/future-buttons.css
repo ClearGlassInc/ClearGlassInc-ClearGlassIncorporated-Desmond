@@ -1,0 +1,191 @@
+/* ClearGlass future-tech controls: an additive, progressively enhanced layer. */
+:root {
+  --glass-btn-bg: rgba(9, 20, 35, .76);
+  --glass-btn-bg-hover: rgba(14, 32, 51, .86);
+  --glass-btn-border: rgba(210, 246, 255, .3);
+  --glass-btn-highlight: rgba(255, 255, 255, .4);
+  --glass-btn-glow: rgba(64, 211, 255, .24);
+  --glass-btn-text: #f5fbff;
+  --glass-btn-blur: 16px;
+  --glass-btn-saturation: 1.28;
+  --glass-btn-radius: max(10px, .55em);
+  --glass-btn-duration: 260ms;
+  --glass-btn-ease: cubic-bezier(.2, .8, .2, 1);
+  --glass-btn-press-scale: .985;
+  --glass-btn-icon-shift: 3px;
+  --glass-btn-magnet-x: 0px;
+  --glass-btn-magnet-y: 0px;
+  --pointer-x: 50%;
+  --pointer-y: 50%;
+  --pointer-distance: 0;
+}
+
+.future-glass-control {
+  --future-edge-alpha: calc(.25 + (var(--pointer-distance) * .25));
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-color: var(--glass-button-border, var(--glass-btn-border));
+  border-radius: var(--glass-button-radius, var(--glass-btn-radius));
+  background-image:
+    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(219, 250, 255, calc(var(--pointer-distance) * .16)), transparent 46%),
+    linear-gradient(165deg, rgba(255, 255, 255, .13), transparent 38%, rgba(80, 204, 255, .07)),
+    var(--future-base-background-image, linear-gradient(transparent, transparent));
+  background-blend-mode: screen, normal;
+  -webkit-backdrop-filter: blur(var(--glass-button-blur, var(--glass-btn-blur))) saturate(var(--glass-btn-saturation)) brightness(1.04);
+  backdrop-filter: blur(var(--glass-button-blur, var(--glass-btn-blur))) saturate(var(--glass-btn-saturation)) brightness(1.04);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .24),
+    inset 0 -8px 18px -14px rgba(0, 0, 0, .82),
+    0 2px 4px -2px rgba(0, 0, 0, .52),
+    calc(var(--glass-btn-magnet-x) * -.5) calc(10px - (var(--glass-btn-magnet-y) * .5)) 26px -16px var(--glass-button-glow, var(--glass-btn-glow));
+  translate: var(--glass-btn-magnet-x) var(--glass-btn-magnet-y);
+  transition:
+    translate var(--glass-btn-duration) var(--glass-btn-ease),
+    scale 150ms var(--glass-btn-ease),
+    border-color var(--glass-btn-duration) ease,
+    box-shadow var(--glass-btn-duration) var(--glass-btn-ease),
+    filter var(--glass-btn-duration) ease,
+    background-color var(--glass-btn-duration) ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Pseudo layers are enabled only when discovery confirms they will not replace
+   a page-owned pseudo-element. Existing functional decoration always wins. */
+.future-glass-control.future-glass-layers::before,
+.future-glass-control.future-glass-layers::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.future-glass-control.future-glass-layers::before {
+  z-index: 0;
+  padding: 1px;
+  background: conic-gradient(from 210deg at var(--pointer-x) var(--pointer-y),
+    rgba(115, 224, 255, .1),
+    rgba(255, 255, 255, var(--future-edge-alpha)),
+    rgba(111, 161, 255, .28),
+    rgba(211, 135, 255, .12),
+    rgba(115, 224, 255, .1));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: .7;
+  transition: opacity var(--glass-btn-duration) ease;
+}
+
+.future-glass-control.future-glass-layers::after {
+  z-index: 0;
+  width: 44%;
+  left: -65%;
+  background: linear-gradient(108deg, transparent, rgba(255, 255, 255, .18), rgba(89, 220, 255, .08), transparent);
+  transform: skewX(-16deg);
+  opacity: 0;
+}
+
+.future-glass-control > * { position: relative; z-index: 1; }
+
+.future-glass-control:focus-visible {
+  outline: 3px solid #73e0ff;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgba(8, 26, 44, .88), 0 0 0 8px rgba(115, 224, 255, .54), 0 14px 34px -16px var(--glass-button-glow, var(--glass-btn-glow));
+}
+
+.future-glass-control:active:not(:disabled):not([aria-disabled="true"]),
+.future-glass-control.is-future-pressing {
+  translate: 0 1px;
+  scale: var(--glass-btn-press-scale);
+  filter: brightness(1.07);
+  box-shadow: inset 0 3px 9px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .36), 0 1px 3px rgba(0, 0, 0, .42);
+}
+
+.future-glass-control:disabled,
+.future-glass-control[aria-disabled="true"] {
+  --glass-btn-magnet-x: 0px;
+  --glass-btn-magnet-y: 0px;
+  cursor: not-allowed;
+  filter: grayscale(.35) saturate(.65);
+  opacity: .58;
+}
+
+.future-glass-control[aria-busy="true"] { cursor: progress; }
+.future-glass-control[aria-busy="true"]::after {
+  left: -50%;
+  width: 34%;
+  opacity: .5;
+  animation: future-glass-scan 1.25s linear infinite;
+}
+.future-glass-control[data-future-state="success"], .future-glass-control.is-success {
+  --glass-button-border: rgba(104, 255, 202, .72);
+  --glass-button-glow: rgba(65, 255, 184, .34);
+}
+.future-glass-control[data-future-state="error"], .future-glass-control.is-error {
+  --glass-button-border: rgba(255, 132, 149, .75);
+  --glass-button-glow: rgba(255, 76, 105, .28);
+  animation: future-glass-error 240ms var(--glass-btn-ease) 1;
+}
+
+.btn--primary-future, .future-glass-primary {
+  --glass-button-border: rgba(191, 245, 255, .55);
+  --glass-button-glow: rgba(49, 210, 255, .4);
+  letter-spacing: .018em;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .34), inset 0 -12px 24px -17px #001726, 0 4px 9px -5px rgba(0, 0, 0, .72), 0 18px 38px -22px var(--glass-button-glow);
+}
+.btn--glass-secondary { --glass-button-glow: rgba(80, 190, 230, .14); --glass-button-border: rgba(220, 247, 255, .22); }
+.btn--glass-ghost { --glass-button-glow: transparent; --glass-button-border: rgba(220, 247, 255, .12); }
+.btn--glass-danger, .future-glass-danger {
+  --glass-button-border: rgba(255, 133, 151, .58);
+  --glass-button-glow: rgba(255, 66, 98, .22);
+  background-color: rgba(31, 8, 17, .72);
+}
+
+.future-glass-control svg, .future-glass-control [class*="icon"], .future-glass-control [data-icon] {
+  transition: translate var(--glass-btn-duration) var(--glass-btn-ease), scale var(--glass-btn-duration) var(--glass-btn-ease), filter var(--glass-btn-duration) ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .future-glass-control.is-future-active { will-change: translate, scale; }
+  .future-glass-control:hover:not(:disabled):not([aria-disabled="true"]) {
+    translate: var(--glass-btn-magnet-x) calc(var(--glass-btn-magnet-y) - 1px);
+    border-color: rgba(184, 239, 255, .6);
+    filter: brightness(1.08) saturate(1.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .34), inset 0 -10px 20px -15px rgba(0, 0, 0, .72), 0 5px 11px -6px rgba(0, 0, 0, .62), calc(var(--glass-btn-magnet-x) * -.5) calc(18px - (var(--glass-btn-magnet-y) * .5)) 38px -19px var(--glass-button-glow, var(--glass-btn-glow));
+  }
+  .future-glass-control.future-glass-layers:hover::before { opacity: 1; }
+  .future-glass-control.future-glass-layers:hover::after { animation: future-glass-shimmer 720ms var(--glass-btn-ease) 1; }
+  .future-glass-control:hover svg, .future-glass-control:hover [data-icon="arrow"], .future-glass-control:hover [class*="arrow"] { translate: var(--glass-btn-icon-shift) 0; filter: drop-shadow(0 0 5px rgba(160, 235, 255, .5)); }
+  .future-glass-control:hover [data-icon="download"], .future-glass-control:hover [class*="download"] { translate: 0 2px; }
+  .future-glass-control:hover [data-icon="external"], .future-glass-control:hover [class*="external"] { translate: 2px -2px; }
+  .future-glass-control:hover [data-icon="search"], .future-glass-control:hover [class*="search"] { scale: 1.06; }
+}
+
+@media (pointer: coarse), (max-width: 720px) {
+  .future-glass-control { --glass-btn-blur: 11px; --glass-btn-magnet-x: 0px !important; --glass-btn-magnet-y: 0px !important; }
+  button.future-glass-control, [role="button"].future-glass-control, input.future-glass-control { min-width: 44px; min-height: 44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .future-glass-control {
+    --glass-btn-magnet-x: 0px !important;
+    --glass-btn-magnet-y: 0px !important;
+    translate: none !important;
+    scale: 1 !important;
+    transition-duration: .01ms !important;
+    animation: none !important;
+  }
+  .future-glass-control::before, .future-glass-control::after, .future-glass-control * { animation: none !important; transition-duration: .01ms !important; }
+}
+
+@media (forced-colors: active) {
+  .future-glass-control { color: ButtonText; background: ButtonFace; border: 1px solid ButtonText; box-shadow: none; forced-color-adjust: auto; }
+  .future-glass-control:focus-visible { outline: 3px solid Highlight; }
+  .future-glass-control::before, .future-glass-control::after { display: none; }
+}
+
+@keyframes future-glass-shimmer { 0% { left: -65%; opacity: 0; } 25% { opacity: .52; } 100% { left: 125%; opacity: 0; } }
+@keyframes future-glass-scan { from { left: -50%; } to { left: 120%; } }
+@keyframes future-glass-error { 35% { translate: -2px 0; } 70% { translate: 2px 0; } }

@@ -1,0 +1,92 @@
+{
+  "matter_id": "matter-demo-001",
+  "state": "review_required",
+  "recommended_next_step": "block_autonomous_action_and_prepare_counsel_packet",
+  "human_approval_required": true,
+  "summary": {
+    "entities": [
+      {
+        "name": "ClearGlassInc Artemis",
+        "role": "client",
+        "confidence": 0.97,
+        "source_ids": [
+          "doc-primary"
+        ]
+      },
+      {
+        "name": "Northstar Data Brokers Inc.",
+        "role": "counterparty",
+        "confidence": 0.97,
+        "source_ids": [
+          "doc-primary"
+        ]
+      }
+    ],
+    "obligations": [
+      {
+        "party": "ClearGlassInc Artemis",
+        "duty": "termination_notice",
+        "deadline": "no later than 30 days after notice",
+        "confidence": 0.94,
+        "source_ids": [
+          "doc-primary"
+        ]
+      },
+      {
+        "party": "Northstar Data Brokers Inc.",
+        "duty": "indemnification",
+        "deadline": null,
+        "confidence": 0.91,
+        "source_ids": [
+          "doc-primary"
+        ]
+      }
+    ],
+    "findings": [
+      {
+        "finding_id": "risk-1",
+        "severity": "high",
+        "issue": "Counterparty OSINT signal: litigation",
+        "rationale": "Vendor appears in recent privacy class-action docket.",
+        "confidence": 0.93,
+        "evidence": [
+          "osint-1"
+        ],
+        "approval_gate": "licensed_counsel_approval_required"
+      }
+    ]
+  },
+  "audit": [
+    {
+      "agent": "Document Processing Agent",
+      "action": "extract_entities_obligations",
+      "payload_hash": "d9ab06c54b63f7cdd78e1184544c05dfc77ed55afce4631208b884844eb594a6",
+      "recorded_at": "2026-07-14T11:50:37.919397+00:00"
+    },
+    {
+      "agent": "OSINT Enrichment Agent",
+      "action": "attach_public_records",
+      "payload_hash": "1294bc5f4c73f0bb06ff4d8258fdfe825bbe941fcea47a739b59cbc76ddbf279",
+      "recorded_at": "2026-07-14T11:50:37.919519+00:00"
+    },
+    {
+      "agent": "Risk Correlation Agent",
+      "action": "correlate_document_osint_risks",
+      "payload_hash": "971cd5f64a5c16f19ea2bcb9061dfcfbe3871b86b8b3404c519d97de90daaae1",
+      "recorded_at": "2026-07-14T11:50:37.919595+00:00"
+    },
+    {
+      "agent": "Counsel Review Gate Agent",
+      "action": "block_autonomous_action_and_prepare_counsel_packet",
+      "payload_hash": "21f1ef4e906f03cfbaeaef414ed32838ad0b8395a76093eec59a19db398f4319",
+      "recorded_at": "2026-07-14T11:50:37.919614+00:00"
+    }
+  ],
+  "quality": {
+    "error_rate": 0.0,
+    "accuracy": 1.0,
+    "actual_entities": 2,
+    "actual_obligations": 2,
+    "actual_findings": 1
+  }
+}
