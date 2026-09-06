@@ -1,0 +1,2 @@
+import Link from "next/link";
+export function Header(){return <><a className="skip" href="#main">Skip to content</a><div className="announcement">Launch offer: Start free for 14 days. No credit card required.</div><header><Link className="brand" href="/"><span>§</span><b>Procurement<br/>Legal Tech</b></Link><nav aria-label="Primary"><a href="/#how">How it works</a><a href="/#security">Security</a><Link href="/pricing">Pricing</Link><a className="primary" href="/#pricing">Start free</a></nav></header></>}

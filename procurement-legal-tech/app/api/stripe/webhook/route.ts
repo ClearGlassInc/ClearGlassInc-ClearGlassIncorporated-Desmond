@@ -1,0 +1,2 @@
+import {NextResponse} from "next/server";import {env} from "@/lib/env";
+export async function POST(request:Request){if(env.COMMERCE_APPROVED!=="true"||!env.STRIPE_WEBHOOK_SECRET)return NextResponse.json({error:"Webhook processing is disabled pending owner approval."},{status:503});const signature=request.headers.get("stripe-signature");if(!signature)return NextResponse.json({error:"Missing signature."},{status:400});return NextResponse.json({error:"Signature-verified persistence adapter is not configured."},{status:503});}
