@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+  <meta charset="UTF-8" />
+  <script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClearGlass Inc · Artemis Blue Team OSINT Command Center</title>
+  <meta name="description" content="Unclassified, public-source risk-intelligence and blue team dashboard prototype for enterprise cybersecurity, compliance, and defensive operations." />
+  <link rel="canonical" href="https://www.clearglassinc.com/artemis-blue-team.html" />
+  <style>
+    :root{
+      --bg:#070b12;--bg2:#0b111c;--panel:#111928;--panel2:#141f31;--line:#243247;--line2:#34465f;
+      --text:#eef4fb;--muted:#91a2b7;--dim:#607086;--info:#67c7d4;--high:#6a4ad6;--crit:#c85fc1;--ok:#69b88d;
+      --shadow:0 24px 80px rgba(0,0,0,.42);--mono:"IBM Plex Mono","JetBrains Mono",Consolas,monospace;--sans:Inter,"Helvetica Neue",system-ui,sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}html,body{min-height:100%}body{font-family:var(--sans);background:radial-gradient(circle at 20% -10%,rgba(103,199,212,.13),transparent 34%),radial-gradient(circle at 88% 0,rgba(200,95,193,.10),transparent 28%),linear-gradient(180deg,#060912,#0a101a 58%,#060912);color:var(--text);letter-spacing:.01em;overflow-x:hidden}
+    .shell{width:min(1760px,98vw);margin:14px auto;border:1px solid var(--line);border-radius:22px;overflow:hidden;background:rgba(9,14,23,.92);box-shadow:var(--shadow)}
+    .top{height:74px;display:grid;grid-template-columns:280px 1fr 290px;align-items:center;gap:14px;padding:0 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(17,25,40,.96),rgba(11,17,28,.92))}
+    .brand{display:flex;align-items:center;gap:12px}.mark{width:42px;height:42px;border-radius:12px;border:1px solid var(--line2);display:grid;place-items:center;background:linear-gradient(135deg,rgba(103,199,212,.18),rgba(106,74,214,.08));font-family:var(--mono);color:var(--info)}
+    .brand h1{font-size:14px;letter-spacing:.12em;text-transform:uppercase}.brand p{font:11px var(--mono);color:var(--muted);margin-top:3px}.omnibox{display:flex;align-items:center;gap:10px;background:#070d16;border:1px solid var(--line2);border-radius:15px;padding:10px 12px}.omnibox span{font:11px var(--mono);color:var(--info);white-space:nowrap}.omnibox input{width:100%;background:transparent;border:0;outline:0;color:var(--text);font:13px var(--mono)}.omnibox input::placeholder{color:#53647b}.status{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}.pill{border:1px solid var(--line2);background:rgba(255,255,255,.03);border-radius:999px;padding:5px 9px;font:10px var(--mono);color:var(--muted)}.pill.ok{color:var(--ok);border-color:rgba(105,184,141,.35)}.pill.audit{color:var(--info);border-color:rgba(103,199,212,.35)}
+    .layout{display:grid;grid-template-columns:236px 1fr 355px;min-height:calc(100vh - 102px)}
+    .nav{border-right:1px solid var(--line);background:rgba(11,17,28,.76);padding:14px}.nav button{width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding:10px 11px;border:1px solid transparent;border-radius:12px;background:transparent;color:var(--muted);font:11px var(--mono);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}.nav button:hover,.nav button.active{background:rgba(103,199,212,.08);border-color:rgba(103,199,212,.28);color:var(--text)}.nav b{font-weight:500;color:var(--dim)}
+    .sidecard{margin-top:14px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025);padding:12px}.sidecard h3{font:11px var(--mono);letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:10px}.actor{display:grid;grid-template-columns:1fr auto;gap:4px;padding:7px 0;border-bottom:1px dashed rgba(145,162,183,.16);font:11px var(--mono);color:var(--muted)}.actor:last-child{border-bottom:0}.actor strong{color:var(--text);font-weight:600}.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}.dot.ok{background:var(--ok)}.dot.info{background:var(--info)}.dot.high{background:var(--high)}.dot.crit{background:var(--crit)}
+    main{padding:16px 16px 20px;overflow:hidden}.brief{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:13px}.card{border:1px solid var(--line);border-radius:17px;background:linear-gradient(180deg,rgba(20,31,49,.86),rgba(13,20,32,.86));padding:13px;box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}.card h2,.panel h2{font:11px var(--mono);letter-spacing:.12em;color:var(--muted);text-transform:uppercase}.metric{font-size:28px;font-weight:750;margin:8px 0 2px}.sub{font-size:12px;color:var(--muted);line-height:1.55}.meta{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:10px;font:10px var(--mono);color:var(--dim)}.bar{height:5px;border-radius:999px;background:#1d2a3d;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--info),var(--ok));border-radius:999px}.impact{display:inline-flex;align-items:center;gap:6px;font:10px var(--mono);padding:3px 7px;border-radius:999px;border:1px solid var(--line2)}.impact.low{color:var(--ok)}.impact.medium{color:var(--info)}.impact.high{color:var(--high)}.impact.critical{color:var(--crit)}
+    .workspace{display:grid;grid-template-columns:1.1fr .9fr;gap:13px}.panel{border:1px solid var(--line);border-radius:18px;background:rgba(17,25,40,.72);padding:14px;min-height:210px}.panel-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.tools{display:flex;gap:7px;flex-wrap:wrap}.tool{border:1px solid var(--line2);background:rgba(255,255,255,.035);color:var(--muted);border-radius:10px;padding:6px 8px;font:10px var(--mono);cursor:pointer}.tool:hover{color:var(--text);border-color:var(--info)}
+    .map{position:relative;height:325px;border:1px solid var(--line);border-radius:15px;overflow:hidden;background:linear-gradient(160deg,#0a111d,#111b2b)}.map:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(103,199,212,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(103,199,212,.06) 1px,transparent 1px);background-size:36px 36px}.land{position:absolute;border:1px solid rgba(103,199,212,.19);background:rgba(103,199,212,.045);filter:blur(.1px)}.l1{left:8%;top:25%;width:24%;height:35%;border-radius:55% 42% 48% 35%}.l2{left:37%;top:18%;width:19%;height:47%;border-radius:42% 55% 35% 49%}.l3{right:13%;top:30%;width:22%;height:33%;border-radius:52% 43% 45% 55%}.node{position:absolute;width:13px;height:13px;border-radius:50%;border:2px solid rgba(255,255,255,.6);box-shadow:0 0 0 6px rgba(103,199,212,.08),0 0 28px rgba(103,199,212,.35);cursor:pointer}.node.high{background:var(--high);box-shadow:0 0 0 7px rgba(106,74,214,.12),0 0 30px rgba(106,74,214,.28)}.node.crit{background:var(--crit);box-shadow:0 0 0 8px rgba(200,95,193,.12),0 0 32px rgba(200,95,193,.36)}.maplabel{position:absolute;left:14px;bottom:13px;font:10px var(--mono);color:var(--muted);letter-spacing:.1em}
+    .feed{display:grid;gap:9px}.alert{border:1px solid var(--line);border-radius:14px;padding:11px;background:rgba(255,255,255,.025);cursor:pointer}.alert:hover{border-color:var(--line2);background:rgba(255,255,255,.04)}.alert-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:6px}.alert strong{font-size:13px}.alert p{font-size:12px;color:var(--muted);line-height:1.5}.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.tag{font:10px var(--mono);color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:3px 7px}
+    .bluegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:13px}.feature{border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025);padding:12px}.feature h3{font:12px var(--mono);color:var(--text);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}.feature ul{list-style:none;display:grid;gap:6px}.feature li{font-size:12px;color:var(--muted);line-height:1.45}.feature li:before{content:"▸";color:var(--info);margin-right:6px}.matrix{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin-top:9px}.cell{height:23px;border-radius:6px;border:1px solid var(--line);background:#172234}.cell.ok{background:rgba(105,184,141,.32);border-color:rgba(105,184,141,.45)}.cell.info{background:rgba(103,199,212,.26);border-color:rgba(103,199,212,.42)}.cell.high{background:rgba(106,74,214,.26);border-color:rgba(106,74,214,.45)}
+    aside{border-left:1px solid var(--line);background:rgba(9,14,23,.84);padding:14px;overflow:auto}.drawer{border:1px solid var(--line2);border-radius:18px;background:linear-gradient(180deg,rgba(20,31,49,.95),rgba(12,19,31,.96));box-shadow:var(--shadow);overflow:hidden}.drawer-head{padding:14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px}.drawer h2{font-size:15px}.drawer small{display:block;color:var(--muted);font:10px var(--mono);margin-top:4px}.severity{color:var(--crit);font:10px var(--mono);border:1px solid rgba(200,95,193,.45);border-radius:999px;padding:4px 7px;height:max-content}.drawer-body{padding:14px}.graph{height:180px;border:1px solid var(--line);border-radius:14px;position:relative;background:#0b111c;overflow:hidden}.graph:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 28% 42%,rgba(103,199,212,.18),transparent 7%),radial-gradient(circle at 61% 28%,rgba(106,74,214,.16),transparent 8%),radial-gradient(circle at 76% 66%,rgba(200,95,193,.20),transparent 8%),linear-gradient(32deg,transparent 46%,rgba(103,199,212,.14) 47%,transparent 49%),linear-gradient(148deg,transparent 52%,rgba(106,74,214,.13) 53%,transparent 55%)}.raw{margin-top:12px;border:1px solid var(--line);border-radius:13px;overflow:hidden}.raw div{display:grid;grid-template-columns:92px 1fr;padding:8px 9px;border-bottom:1px dashed rgba(145,162,183,.15);font:11px var(--mono)}.raw div:last-child{border-bottom:0}.raw b{color:var(--dim);font-weight:500}.raw span{color:var(--muted)}.audit-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.audit-actions button{border:1px solid var(--line2);border-radius:12px;background:rgba(103,199,212,.08);color:var(--text);padding:10px;font:11px var(--mono);cursor:pointer}.audit-actions button:hover{border-color:var(--info)}
+    .timeline{margin-top:13px;border:1px solid var(--line);border-radius:16px;background:rgba(17,25,40,.7);padding:12px}.timeline-top{display:flex;justify-content:space-between;font:11px var(--mono);color:var(--muted);margin-bottom:9px}.track{display:grid;grid-template-columns:repeat(30,1fr);gap:4px}.tick{height:26px;border-radius:6px;background:#172234;border:1px solid #233247}.tick:nth-child(4n){background:rgba(103,199,212,.18)}.tick:nth-child(7n){background:rgba(106,74,214,.22)}.tick:nth-child(13n){background:rgba(200,95,193,.25)}.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:9px;font:10px var(--mono);color:var(--dim)}
+    .terminal{margin-top:13px;border:1px solid var(--line);border-radius:16px;background:#070d16;padding:12px;font:12px var(--mono);color:var(--muted);min-height:74px}.terminal b{color:var(--info);font-weight:600}
+    @media(max-width:1240px){.layout{grid-template-columns:210px 1fr}.right{display:none}.brief{grid-template-columns:repeat(2,1fr)}.workspace{grid-template-columns:1fr}.bluegrid{grid-template-columns:repeat(2,1fr)}.top{grid-template-columns:1fr}.status{display:none}.top{height:auto;padding:14px}.omnibox{width:100%}}
+    @media(max-width:760px){.layout{grid-template-columns:1fr}.nav{border-right:0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.nav button{margin:0}.brief,.bluegrid{grid-template-columns:1fr}.top{border-radius:0}.shell{width:100%;margin:0;border-radius:0}.map{height:260px}}
+  </style>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.clearglassinc.com/artemis-blue-team.html">
+  <meta property="og:title" content="ClearGlass Inc · Artemis Blue Team OSINT Command Center">
+  <meta property="og:description" content="Unclassified, public-source risk-intelligence and blue team dashboard prototype for enterprise cybersecurity, compliance, and defensive operations.">
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="top">
+      <div class="brand"><div class="mark">CG</div><div><h1>Artemis Blue Team</h1><p>UNCLASSIFIED · PUBLIC-SOURCE DEFENSE</p></div></div>
+      <label class="omnibox"><span>QUERY</span><input id="omnibox" placeholder="actor:APT29 AND type:infrastructure AND confidence:&gt;80 | regex/domain | natural language" /></label>
+      <div class="status"><span class="pill ok">GDPR/CCPA ALIGNED</span><span class="pill audit">PUBLIC-SOURCE VERIFICATION</span><span class="pill">EXPORT READY</span></div>
+    </header>
+
+    <div class="layout">
+      <nav class="nav" id="nav">
+        <button class="active" data-view="executive">Executive Brief <b>01</b></button>
+        <button data-view="threat">Threat Intel <b>02</b></button>
+        <button data-view="exposure">Exposure <b>03</b></button>
+        <button data-view="brand">Brand Risk <b>04</b></button>
+        <button data-view="vendor">Vendor Risk <b>05</b></button>
+        <button data-view="breach">Breach Watch <b>06</b></button>
+        <button data-view="ioc">IOC Feed <b>07</b></button>
+        <button data-view="sanctions">Sanctions <b>08</b></button>
+        <button data-view="audit">Source Audit <b>09</b></button>
+        <button data-view="blue">Blue Team Core <b>10</b></button>
+        <div class="sidecard"><h3>Active Actors</h3><div class="actor"><strong>APT29</strong><span><i class="dot high"></i>Watch</span></div><div class="actor"><strong>FIN7</strong><span><i class="dot crit"></i>Active</span></div><div class="actor"><strong>Lazarus</strong><span><i class="dot info"></i>Monitor</span></div><div class="actor"><strong>TA505</strong><span><i class="dot ok"></i>Quiet</span></div></div>
+        <div class="sidecard"><h3>Live Feeds</h3><div class="actor"><strong>NVD</strong><span>online</span></div><div class="actor"><strong>Public DNS</strong><span>online</span></div><div class="actor"><strong>SEC Filings</strong><span>online</span></div><div class="actor"><strong>Clear Web News</strong><span>degraded</span></div></div>
+      </nav>
+
+      <main>
+        <section class="brief">
+          <article class="card"><h2>Macro Risk Score</h2><div class="metric">72/100</div><p class="sub">Elevated because infrastructure mentions, CVE pressure, and supplier concentration moved together.</p><div class="meta"><span>Source: OSINT Fusion</span><span>Fresh: 4m</span><span>Confidence: 91%</span><span class="impact high">High</span></div><div class="bar"><i style="width:91%"></i></div></article>
+          <article class="card"><h2>External Exposure</h2><div class="metric">19</div><p class="sub">Publicly observable assets requiring owner validation, TLS review, or inventory reconciliation.</p><div class="meta"><span>Source: Public DNS</span><span>Fresh: 12m</span><span>Confidence: 86%</span><span class="impact medium">Medium</span></div><div class="bar"><i style="width:86%"></i></div></article>
+          <article class="card"><h2>Identity Signals</h2><div class="metric">6</div><p class="sub">Credential exposure indicators mapped to defensive reset, MFA, and conditional access workflow.</p><div class="meta"><span>Source: Breach Watch</span><span>Fresh: 21m</span><span>Confidence: 88%</span><span class="impact critical">Critical</span></div><div class="bar"><i style="width:88%"></i></div></article>
+          <article class="card"><h2>Control Coverage</h2><div class="metric">83%</div><p class="sub">ATT&CK detection coverage across endpoint, identity, cloud, email, DNS, and network telemetry.</p><div class="meta"><span>Source: SIEM/EDR</span><span>Fresh: Live</span><span>Confidence: 94%</span><span class="impact low">Low</span></div><div class="bar"><i style="width:94%"></i></div></article>
+        </section>
+
+        <section class="workspace">
+          <div class="panel">
+            <div class="panel-head"><h2>Global Risk Map · Public-Source Geopolitical Context</h2><div class="tools"><button class="tool">Heat Nodes</button><button class="tool">Sanction Zones</button><button class="tool">Asset Overlay</button></div></div>
+            <div class="map" id="map"><div class="land l1"></div><div class="land l2"></div><div class="land l3"></div><button class="node high" style="left:33%;top:37%" title="Elevated vendor concentration"></button><button class="node crit" style="left:61%;top:28%" title="Critical exploit pressure"></button><button class="node" style="left:72%;top:55%" title="Informational public-source activity"></button><button class="node high" style="left:48%;top:62%" title="Policy and sanction watch"></button><div class="maplabel">LAWFUL PUBLIC-SOURCE AGGREGATION · NO PRIVATE COLLECTION · AUDITABLE PROVENANCE</div></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h2>Threat Intel Split View</h2><div class="tools"><button class="tool">MITRE</button><button class="tool">Campaigns</button><button class="tool">Export</button></div></div>
+            <div class="feed" id="feed">
+              <article class="alert" data-title="APT29 infrastructure overlap"><div class="alert-top"><strong>APT29 infrastructure overlap</strong><span class="impact high">High</span></div><p>Public DNS and certificate transparency signals overlap with known infrastructure naming patterns. Defensive validation recommended.</p><div class="tags"><span class="tag">Source: CT Logs</span><span class="tag">Fresh: 8m</span><span class="tag">93% Confidence</span></div></article>
+              <article class="alert" data-title="FIN7 phishing kit reuse"><div class="alert-top"><strong>FIN7 phishing kit reuse</strong><span class="impact critical">Critical</span></div><p>Clear-web reporting and OSINT enrichment suggest reuse of infrastructure tied to financial-sector targeting.</p><div class="tags"><span class="tag">Source: News + DNS</span><span class="tag">Fresh: 17m</span><span class="tag">89% Confidence</span></div></article>
+              <article class="alert" data-title="Supplier attack-surface drift"><div class="alert-top"><strong>Supplier attack-surface drift</strong><span class="impact medium">Medium</span></div><p>Third-party cloud endpoint changed posture outside approved baseline. Route to vendor-risk owner.</p><div class="tags"><span class="tag">Source: Public DNS</span><span class="tag">Fresh: 31m</span><span class="tag">82% Confidence</span></div></article>
+            </div>
+          </div>
+        </section>
+
+        <section class="bluegrid">
+          <article class="feature"><h3>Detection Engineering</h3><ul><li>Sigma, KQL, SPL, and YARA-L rule lifecycle.</li><li>Coverage mapped to ATT&CK tactics and control owners.</li><li>False-positive budget and rule confidence scoring.</li></ul></article>
+          <article class="feature"><h3>SOAR Readiness</h3><ul><li>Playbook status: isolate host, reset identity, block domain.</li><li>Human approval gate for high-impact actions.</li><li>Audit-ready action chain with rollback notes.</li></ul></article>
+          <article class="feature"><h3>Exposure-to-Control Graph</h3><ul><li>Asset → owner → vulnerability → detection → runbook path.</li><li>EPSS/CVSS prioritization with business criticality.</li><li>Control gaps surfaced before exploitation pressure rises.</li></ul></article>
+          <article class="feature"><h3>Deception Defense</h3><ul><li>Honeytoken and canary tripwire inventory.</li><li>Low-noise alerts routed to identity and cloud owners.</li><li>Legal and privacy banner for compliant deployment.</li></ul></article>
+          <article class="feature"><h3>Telemetry Health</h3><ul><li>EDR, DNS, email, identity, cloud, and firewall feed status.</li><li>Parser drift, ingestion delay, and schema-change detection.</li><li>Analyst trust score per source feed.</li></ul></article>
+          <article class="feature"><h3>ATT&CK Coverage Matrix</h3><p class="sub">Visual heatmap of detection coverage by tactic.</p><div class="matrix"> <i class="cell ok"></i><i class="cell ok"></i><i class="cell info"></i><i class="cell high"></i><i class="cell ok"></i><i class="cell"></i><i class="cell info"></i><i class="cell ok"></i><i class="cell high"></i><i class="cell ok"></i><i class="cell ok"></i><i class="cell info"></i><i class="cell"></i><i class="cell high"></i><i class="cell ok"></i><i class="cell info"></i></div></article>
+        </section>
+
+        <section class="timeline"><div class="timeline-top"><span>30-DAY CAMPAIGN TIMELINE</span><span id="timelineLabel">Day 22 · infrastructure pivot</span></div><div class="track" id="track"></div><div class="legend"><span><i class="dot info"></i>Informational</span><span><i class="dot high"></i>Elevated</span><span><i class="dot crit"></i>Critical</span><span><i class="dot ok"></i>Validated control</span></div></section>
+        <section class="terminal" id="terminal"><b>ARTEMIS&gt;</b> Ready. Try: <span>actor:APT29 AND control:dns AND confidence:&gt;80</span></section>
+      </main>
+
+      <aside class="right">
+        <section class="drawer">
+          <div class="drawer-head"><div><h2 id="drawerTitle">APT29 infrastructure overlap</h2><small>Drill-down modal · raw source data · audit export</small></div><span class="severity">HIGH IMPACT</span></div>
+          <div class="drawer-body">
+            <div class="graph" aria-label="Network graph placeholder"></div>
+            <div class="raw">
+              <div><b>Provenance</b><span>Public DNS, CT logs, NVD, clear-web reporting</span></div>
+              <div><b>Freshness</b><span>Updated 8 minutes ago · live signal monitor</span></div>
+              <div><b>Confidence</b><span>93% confidence · 4-source corroboration</span></div>
+              <div><b>Impact</b><span>High · possible infrastructure overlap, defensive validation required</span></div>
+              <div><b>Compliance</b><span>Unclassified public-source aggregation; no private collection</span></div>
+              <div><b>Action</b><span>Create detection task, confirm ownership, export evidence package</span></div>
+            </div>
+            <div class="audit-actions"><button id="exportBtn">Export for Audit</button><button id="caseBtn">Open Case</button></div>
+          </div>
+        </section>
+        <div class="sidecard"><h3>Source Audit Log</h3><div class="actor"><strong>14:22</strong><span>DNS verified</span></div><div class="actor"><strong>14:19</strong><span>CT log parsed</span></div><div class="actor"><strong>14:15</strong><span>NVD enriched</span></div><div class="actor"><strong>14:10</strong><span>Legal banner checked</span></div></div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const nav=[...document.querySelectorAll('#nav button[data-view]')];
+    const terminal=document.getElementById('terminal');
+    nav.forEach(btn=>btn.addEventListener('click',()=>{nav.forEach(b=>b.classList.remove('active'));btn.classList.add('active');terminal.innerHTML='<b>ARTEMIS&gt;</b> View switched to '+btn.textContent.trim()+'. Defensive, lawful public-source context only.';}));
+    document.querySelectorAll('.alert').forEach(a=>a.addEventListener('click',()=>{document.getElementById('drawerTitle').textContent=a.dataset.title;terminal.innerHTML='<b>ARTEMIS&gt;</b> Drill-down loaded: '+a.dataset.title+' · provenance and audit controls attached.';}));
+    document.getElementById('omnibox').addEventListener('keydown',e=>{if(e.key==='Enter'){terminal.innerHTML='<b>ARTEMIS QUERY&gt;</b> '+e.target.value.replace(/[<>]/g,'')+'<br><span>Parsed as defensive intelligence query. Boolean, regex, and natural-language modes accepted.</span>';}});
+    const track=document.getElementById('track');
+    for(let i=1;i<=30;i++){const d=document.createElement('button');d.className='tick';d.title='Day '+i;d.addEventListener('click',()=>{document.getElementById('timelineLabel').textContent='Day '+i+' · campaign signal review';});track.appendChild(d)}
+    document.getElementById('exportBtn').addEventListener('click',()=>{terminal.innerHTML='<b>EXPORT&gt;</b> Audit package staged: source provenance, timestamps, analyst notes, confidence model, and control mapping.'});
+    document.getElementById('caseBtn').addEventListener('click',()=>{terminal.innerHTML='<b>CASE&gt;</b> Defensive case opened with owner routing and SOAR approval gate.'});
+  </script>
+<script defer src="control-surface.js"></script>
+  <script defer src="ui.js"></script>
+  <script defer src="platform.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="cyber-defense-console.html">Cyber Defense &amp; Security Operations</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="guardian.html"><span><b>Previous</b>GUARDIAN</span></a>
+      <a href="cyber-defense-console.html"><span><b>Topic hub</b>Cyber Defense Console</span></a>
+      <a href="stegoforge.html"><span><b>Next in journey</b>STEGOFORGE</span></a>
+    </div>
+    <ul>
+      <li><a href="stegoforge.html"><b>STEGOFORGE</b> — steganography and covert-channel analysis terminal</a></li>
+      <li><a href="attack-prompt-core.html"><b>ATT&amp;CK Prompt Integrator</b> — MITRE ATT&amp;CK-aligned analysis prompts</a></li>
+      <li><a href="environmental-cyber-risk.html"><b>Environmental Cyber-Risk</b> — OT and environmental threat monitoring</a></li>
+      <li><a href="bluedesk-mobile.html"><b>BLUEDESK Mobile</b> — the CISO risk console on a phone-first canvas</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="offers/security-quick-audit.html">Start with the $249 Security Quick-Audit</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

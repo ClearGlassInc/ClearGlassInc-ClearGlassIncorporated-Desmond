@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>AVALON · ARTEMIS ⊕ PERCIVAL — Unified Fusion Core | ClearGlass Inc.</title>
+<meta name="description" content="AVALON — ARTEMIS fused into PERCIVAL. A glass-built, always-on fusion command center: holographic dual-core brain, agent swarm, live OSINT telemetry, a real."/>
+<meta name="robots" content="index,follow"/>
+<link rel="canonical" href="https://www.clearglassinc.com/artemis-percival.html"/>
+<meta property="og:title" content="AVALON · ARTEMIS ⊕ PERCIVAL — Unified Fusion Core"/>
+<meta property="og:description" content="ARTEMIS fused into PERCIVAL: dual-core holographic brain, agent swarm, live telemetry, an in-browser Code Forge, and a do-anything command console. Pure HTML, CSS & JS."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://www.clearglassinc.com/artemis-percival.html"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet"/>
+<style>
+/* ════════════════════════════════════════════════════════════════════════
+   AVALON · ARTEMIS ⊕ PERCIVAL — Unified Fusion Core
+   A glassmorphic command center. ARTEMIS (self-evolving OSINT intelligence)
+   fused into PERCIVAL (JARVIS-class command center) — one living glass hub.
+   Pure HTML / CSS / JS. The "intelligence" is an on-device deterministic
+   simulation; the OSINT telemetry and Code Forge JS execution are real.
+   ════════════════════════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* ── prism palette (ClearGlass brand · tokens.css) ───────────────────── */
+  --sky:#38bdf8;   --violet:#a78bfa; --pink:#f472b6;
+  --mint:#34d399;  --amber:#fbbf24;  --blue:#60a5fa;  --indigo:#818cf8;
+  --ice:#bcd4ff;   --crystal:linear-gradient(135deg,#38bdf8 0%,#a78bfa 25%,#f472b6 50%,#fbbf24 75%,#34d399 100%);
+  --aurora:linear-gradient(120deg,rgba(56,189,248,.5),rgba(167,139,250,.5) 40%,rgba(244,114,182,.4) 70%,rgba(52,211,153,.4));
+
+  /* ── ink / surface ───────────────────────────────────────────────────── */
+  --ink:#070a18;   --ink-2:#0a0e22;  --txt:#eaf0ff;   --dim:#9fb0d6; --dim-2:#67739c;
+  --ok:#34d399;    --warn:#fbbf24;   --bad:#f472b6;
+
+  /* ── glass system ────────────────────────────────────────────────────── */
+  --glass:linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,.022));
+  --glass-2:linear-gradient(160deg,rgba(255,255,255,.07),rgba(150,170,255,.015));
+  --glass-hi:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,.04));
+  --edge:rgba(255,255,255,.16); --edge-2:rgba(255,255,255,.28); --edge-soft:rgba(160,180,255,.12);
+  --blur:blur(22px) saturate(155%);
+  --inset:inset 0 1px 0 rgba(255,255,255,.30),inset 0 -1px 0 rgba(120,140,255,.08);
+  --drop:0 24px 60px -28px rgba(2,5,20,.92);
+
+  --sans:'Inter',system-ui,-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --display:'Orbitron',var(--sans);
+}
+html,body{height:100%}
+body{
+  font-family:var(--sans);color:var(--txt);overflow:hidden;
+  background:
+    radial-gradient(120% 80% at 50% -8%,rgba(56,189,248,.20),transparent 46%),
+    radial-gradient(90% 70% at 88% 8%,rgba(167,139,250,.20),transparent 50%),
+    radial-gradient(80% 60% at 6% 100%,rgba(52,211,153,.14),transparent 52%),
+    radial-gradient(90% 90% at 50% 120%,rgba(244,114,182,.10),transparent 60%),
+    linear-gradient(165deg,#080b1c 0%,#070a18 48%,#05060f 100%);
+  -webkit-font-smoothing:antialiased;
+}
+/* atmospheric glass layers */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
+  background:
+    linear-gradient(rgba(124,150,255,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px);
+  background-size:46px 46px;
+  -webkit-mask-image:radial-gradient(120% 90% at 50% 30%,#000,transparent 78%);
+          mask-image:radial-gradient(120% 90% at 50% 30%,#000,transparent 78%);opacity:.6}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:2;
+  background:radial-gradient(140% 100% at 50% 40%,transparent 56%,rgba(2,4,12,.66) 100%)}
+#aurora{position:fixed;inset:-20% -10% auto -10%;height:60%;z-index:0;pointer-events:none;filter:blur(70px);opacity:.5;
+  background:var(--aurora);background-size:200% 200%;animation:auroraDrift 26s ease-in-out infinite alternate}
+@keyframes auroraDrift{0%{transform:translateX(-6%) translateY(-3%) rotate(-2deg)}100%{transform:translateX(6%) translateY(2%) rotate(2deg)}}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,rgba(124,150,255,.4),rgba(167,139,250,.25));border-radius:8px}
+::selection{background:rgba(124,150,255,.34)}
+
+/* ════════════ GLASS PRIMITIVE ════════════ */
+.glass{position:relative;background:var(--glass);border:1px solid var(--edge);border-radius:18px;
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  box-shadow:var(--drop),var(--inset);overflow:hidden}
+.glass::before{content:"";position:absolute;top:0;left:16px;right:16px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(188,212,255,.6),transparent)}
+.glass::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(60% 50% at 14% 0%,rgba(255,255,255,.10),transparent 60%)}
+.glass>*{position:relative;z-index:1}
+.corner{position:absolute;width:11px;height:11px;border:1px solid var(--edge-2);pointer-events:none;z-index:2;opacity:.7}
+.corner.tl{top:7px;left:7px;border-right:0;border-bottom:0}.corner.tr{top:7px;right:7px;border-left:0;border-bottom:0}
+.corner.bl{bottom:7px;left:7px;border-right:0;border-top:0}.corner.br{bottom:7px;right:7px;border-left:0;border-top:0}
+.p-title{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ice);padding:12px 15px 9px}
+.p-title .ico{width:7px;height:7px;border-radius:50%;background:var(--crystal);box-shadow:0 0 9px rgba(124,150,255,.9)}
+.p-title small{margin-left:auto;color:var(--dim-2);font-size:9px;letter-spacing:.1em;text-transform:none}
+
+/* ════════════ BOOT ════════════ */
+#boot{position:fixed;inset:0;z-index:100;display:grid;place-items:center;transition:opacity .8s ease;
+  background:radial-gradient(circle at 50% 42%,rgba(20,16,40,.9),rgba(5,6,15,.98) 70%);backdrop-filter:blur(6px)}
+#boot.gone{opacity:0;pointer-events:none}
+.boot-core{position:relative;width:230px;height:230px;display:grid;place-items:center}
+.boot-ring{position:absolute;border-radius:50%;border:2px solid transparent}
+.boot-ring.a{inset:0;border-top-color:var(--sky);border-right-color:var(--blue);animation:spin 1.7s linear infinite}
+.boot-ring.b{inset:20px;border-bottom-color:var(--violet);border-left-color:var(--pink);animation:spin 2.6s linear infinite reverse}
+.boot-ring.c{inset:44px;border:1px dashed rgba(124,150,255,.5);animation:spin 10s linear infinite}
+.boot-orb{width:72px;height:72px;border-radius:50%;
+  background:radial-gradient(circle at 38% 32%,#fff,#bcd4ff 30%,#7c6cf0 60%,#2a1860);
+  box-shadow:0 0 50px rgba(124,150,255,.85),0 0 100px rgba(167,139,250,.4) inset;animation:pulseCore 2.2s ease-in-out infinite}
+.boot-txt{position:absolute;bottom:-96px;text-align:center;width:400px}
+.boot-name{font-family:var(--display);font-weight:900;letter-spacing:.30em;font-size:24px;
+  background:var(--crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 18px rgba(124,150,255,.5))}
+.boot-fuse{font-family:var(--mono);font-size:10px;letter-spacing:.34em;color:var(--dim);margin-top:8px}
+.boot-log{font-family:var(--mono);font-size:11px;color:var(--sky);margin-top:12px;height:16px;letter-spacing:.05em}
+.boot-bar{width:330px;height:3px;background:rgba(124,150,255,.16);border-radius:3px;margin:14px auto 0;overflow:hidden}
+.boot-bar i{display:block;height:100%;width:0;background:var(--crystal);box-shadow:0 0 14px var(--sky);animation:fill 3.4s ease forwards}
+@keyframes fill{to{width:100%}}
+
+/* ════════════ SHELL ════════════ */
+.shell{height:100vh;display:grid;grid-template-rows:auto 1fr;opacity:0;transition:opacity 1s ease;position:relative;z-index:5}
+.shell.in{opacity:1}
+
+/* ── top bar ── */
+.topbar{display:flex;align-items:center;gap:14px;padding:11px 18px;position:relative;z-index:30;
+  border-bottom:1px solid var(--edge-soft);
+  background:linear-gradient(180deg,rgba(16,20,46,.55),rgba(8,11,24,.25));backdrop-filter:var(--blur)}
+.brand{display:flex;align-items:center;gap:12px;min-width:248px}
+.brand .mark{width:38px;height:38px;border-radius:11px;position:relative;flex:0 0 auto;
+  background:radial-gradient(circle at 38% 32%,#fff,#bcd4ff 32%,#7c6cf0 62%,#241a4d);
+  box-shadow:0 0 22px rgba(124,150,255,.7),0 0 6px rgba(255,255,255,.5) inset}
+.brand .mark::after{content:"";position:absolute;inset:-5px;border-radius:13px;border:1px solid var(--sky);border-right-color:transparent;animation:spin 4s linear infinite}
+.brand .b-name{font-family:var(--display);font-weight:900;letter-spacing:.16em;font-size:16px}
+.brand .b-name b{background:var(--crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.brand .b-sub{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--dim-2);text-transform:uppercase;margin-top:2px}
+.rings{display:flex;gap:14px;margin-left:4px}
+.gring{position:relative;width:46px;height:46px;display:grid;place-items:center;text-align:center}
+.gring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.gring .lbl{font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.05em}
+.gring .val{font-family:var(--display);font-size:11px;font-weight:700;color:#fff;line-height:1}
+.spacer{flex:1}
+.feeds{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:300px}
+.fpill{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;color:var(--dim-2);
+  border:1px solid var(--edge-soft);border-radius:20px;padding:3px 7px;background:rgba(255,255,255,.03)}
+.fdot{width:5px;height:5px;border-radius:50%;background:rgba(124,150,255,.25);flex:0 0 auto;transition:.4s}
+.fdot.g{background:var(--mint);box-shadow:0 0 6px var(--mint)}.fdot.o{background:var(--amber);box-shadow:0 0 6px var(--amber);animation:blink 1.4s infinite}
+.fdot.r{background:var(--bad);box-shadow:0 0 6px var(--bad)}.fdot.b{background:var(--sky);box-shadow:0 0 6px var(--sky);animation:blink 2.4s infinite}
+.modes{display:flex;gap:4px;background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:11px;padding:3px;backdrop-filter:blur(6px)}
+.modes button{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);
+  background:none;border:0;padding:6px 10px;border-radius:8px;cursor:pointer;transition:.2s}
+.modes button.on{background:var(--glass-hi);color:#fff;box-shadow:0 0 14px rgba(124,150,255,.3),var(--inset)}
+.launch{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ice);text-decoration:none;
+  border:1px solid var(--edge);background:rgba(255,255,255,.05);padding:7px 11px;border-radius:20px;transition:.18s;white-space:nowrap;backdrop-filter:blur(6px)}
+.launch:hover{color:#fff;border-color:var(--edge-2);background:rgba(124,150,255,.16);box-shadow:0 0 16px rgba(124,150,255,.3)}
+.status-pill{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--mint);border:1px solid rgba(52,211,153,.4);background:rgba(52,211,153,.08);padding:7px 11px;border-radius:20px;box-shadow:0 0 16px rgba(52,211,153,.16)}
+.clock{font-family:var(--mono);text-align:right;min-width:120px}
+.clock .t{font-family:var(--display);font-weight:700;font-size:17px;color:#fff;letter-spacing:.04em}
+.clock .d{font-size:9px;color:var(--dim);letter-spacing:.16em;text-transform:uppercase}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 10px var(--mint);animation:blink 2s ease-in-out infinite}
+@keyframes blink{50%{opacity:.35}}
+
+/* ── main grid ── */
+.main{display:grid;grid-template-columns:256px minmax(0,1fr) 366px;gap:13px;padding:13px 16px 15px;min-height:0;position:relative;z-index:10}
+
+/* ── left rail ── */
+.rail{display:flex;flex-direction:column;min-height:0}
+.rail .scroll{overflow-y:auto;padding:0 9px 10px;display:flex;flex-direction:column;gap:6px}
+.mitem{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:12px;cursor:pointer;border:1px solid transparent;transition:.18s;background:rgba(255,255,255,.018)}
+.mitem:hover{border-color:var(--edge);background:rgba(124,150,255,.07)}
+.mitem.on{border-color:var(--edge-2);background:var(--glass-hi);box-shadow:0 0 18px rgba(124,150,255,.14),var(--inset)}
+.mitem .mi-ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:15px;background:rgba(124,150,255,.10);border:1px solid var(--edge);flex:0 0 auto}
+.mitem.on .mi-ic{background:rgba(124,150,255,.2)}
+.mitem .mi-tx{min-width:0}
+.mitem .mi-n{font-size:12.5px;font-weight:600;color:#eef2ff}
+.mitem .mi-s{font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mitem .mi-b{margin-left:auto;font-family:var(--mono);font-size:8.5px;padding:2px 6px;border-radius:6px;background:rgba(167,139,250,.18);color:var(--violet);border:1px solid rgba(167,139,250,.3)}
+.mitem .mi-launch{margin-left:auto;text-decoration:none;color:var(--ice);font-size:12px;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;border:1px solid var(--edge);background:rgba(124,150,255,.08);transition:.15s}
+.mitem .mi-launch:hover{color:#fff;border-color:var(--edge-2);box-shadow:0 0 12px rgba(124,150,255,.35)}
+.mitem .mi-launch+.mi-b{margin-left:6px}
+.lineage{margin:8px 9px 0;padding:9px 11px;border-top:1px dashed var(--edge-soft);font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;color:var(--dim-2);line-height:1.7}
+.lineage b{color:var(--ice)}
+
+/* ── center ── */
+.center{display:grid;grid-template-rows:minmax(200px,1fr) clamp(320px,44vh,520px);gap:13px;min-height:0}
+.stage{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--edge);min-height:0;
+  background:radial-gradient(130% 120% at 50% 28%,rgba(36,24,72,.5) 0%,rgba(12,12,32,.4) 52%,rgba(6,7,18,.6) 100%);
+  backdrop-filter:blur(8px);box-shadow:var(--inset)}
+.stage::before{content:"";position:absolute;top:0;left:18px;right:18px;height:1px;background:linear-gradient(90deg,transparent,rgba(188,212,255,.5),transparent);z-index:3}
+#neural{position:absolute;inset:0;width:100%;height:100%}
+.stage-grid{position:absolute;inset:0;
+  background-image:linear-gradient(rgba(124,150,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.06) 1px,transparent 1px);
+  background-size:36px 36px;-webkit-mask-image:radial-gradient(70% 70% at 50% 44%,#000,transparent);mask-image:radial-gradient(70% 70% at 50% 44%,#000,transparent)}
+.stage .tag{position:absolute;font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:rgba(188,212,255,.55);text-transform:uppercase;z-index:4}
+.stage .tag.tl{top:12px;left:14px;line-height:1.7}.stage .tag.tr{top:12px;right:14px;text-align:right;line-height:1.7}
+.stage .tag.bl{bottom:12px;left:14px;line-height:1.7}.stage .tag.br{bottom:12px;right:14px;text-align:right}
+
+/* fusion dual core */
+.core-wrap{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;z-index:2}
+.core{position:relative;width:min(44vh,350px);aspect-ratio:1}
+.cr{position:absolute;border-radius:50%}
+.cr.r1{inset:0;border:1px solid rgba(124,150,255,.18)}
+.cr.r2{inset:7%;border:1px dashed rgba(167,139,250,.3);animation:spin 30s linear infinite}
+.cr.r3{inset:15%;border:1px solid rgba(56,189,248,.22)}
+/* ARTEMIS arc (sky/mint) and PERCIVAL arc (violet/pink) interlock around one core */
+.cr.arcA{inset:0;border:2px solid transparent;border-top-color:var(--sky);border-right-color:var(--mint);animation:spin 7s linear infinite;filter:drop-shadow(0 0 8px rgba(56,189,248,.8))}
+.cr.arcP{inset:7%;border:2px solid transparent;border-bottom-color:var(--violet);border-left-color:var(--pink);animation:spin 11s linear infinite reverse;filter:drop-shadow(0 0 7px rgba(167,139,250,.8))}
+.cr.arcF{inset:15%;border:1px solid transparent;border-top-color:var(--amber);border-bottom-color:var(--blue);animation:spin 4.6s linear infinite;filter:drop-shadow(0 0 6px rgba(188,212,255,.7))}
+.core-core{position:absolute;inset:29%;border-radius:50%;display:grid;place-items:center;text-align:center;
+  background:radial-gradient(circle at 40% 34%,#ffffff,#bcd4ff 26%,#a78bfa 50%,#5a2c8a 74%,#241a4d);
+  box-shadow:0 0 56px rgba(124,150,255,.7),0 0 32px rgba(255,255,255,.4) inset;animation:pulseCore 3s ease-in-out infinite}
+.core-core .cc-name{font-family:var(--display);font-weight:900;font-size:15px;letter-spacing:.1em;color:#160a2e;text-shadow:0 1px 0 rgba(255,255,255,.5)}
+.core-core .cc-sub{font-family:var(--mono);font-size:7px;letter-spacing:.16em;color:rgba(20,8,40,.75);margin-top:2px}
+.tick{position:absolute;inset:0;border-radius:50%}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulseCore{0%,100%{box-shadow:0 0 48px rgba(124,150,255,.5),0 0 26px rgba(255,255,255,.35) inset}50%{box-shadow:0 0 80px rgba(124,150,255,.9),0 0 44px rgba(255,255,255,.6) inset}}
+.node{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:auto;z-index:3}
+.node .chip{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;gap:6px;
+  background:rgba(14,16,40,.7);border:1px solid var(--edge-2);border-radius:20px;padding:4px 9px 4px 5px;cursor:pointer;transition:.2s;
+  backdrop-filter:blur(7px);white-space:nowrap;box-shadow:var(--inset)}
+.node .chip:hover{border-color:var(--sky);box-shadow:0 0 16px rgba(56,189,248,.4)}
+.node .chip .d{width:21px;height:21px;border-radius:50%;display:grid;place-items:center;font-size:11px;background:rgba(124,150,255,.14);border:1px solid var(--edge)}
+.node .chip .nm{font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;color:#dfe5ff}
+.node .chip .pct{font-family:var(--display);font-size:9px;font-weight:700;color:var(--sky)}
+.node.warn .chip{border-color:rgba(251,191,36,.5)}.node.warn .chip .pct{color:var(--amber)}
+.node.bad .chip{border-color:rgba(244,114,182,.6);animation:alertPulse 1.4s ease-in-out infinite}.node.bad .chip .pct{color:var(--bad)}
+@keyframes alertPulse{50%{box-shadow:0 0 20px rgba(244,114,182,.5)}}
+
+/* ── tabbed panel (console / forge / telemetry) ── */
+.dock{display:flex;flex-direction:column;min-height:0}
+.dock-tabs{display:flex;gap:5px;padding:10px 12px 0}
+.dtab{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);
+  background:rgba(255,255,255,.03);border:1px solid var(--edge-soft);border-bottom:0;border-radius:10px 10px 0 0;padding:8px 13px;cursor:pointer;transition:.16s}
+.dtab:hover{color:#dfe5ff}
+.dtab.on{color:#fff;background:var(--glass-hi);border-color:var(--edge)}
+.dtab .b{margin-left:7px;font-size:8px;color:var(--sky)}
+.pane{flex:1;min-height:0;display:none;flex-direction:column;border-top:1px solid var(--edge-soft)}
+.pane.on{display:flex}
+
+/* console */
+.feed{flex:1;overflow-y:auto;padding:10px 15px 4px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:90%;font-size:13px;line-height:1.6}
+.msg.u{align-self:flex-end;text-align:right}
+.msg .who{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
+.msg.j .who{color:var(--sky)}.msg.u .who{color:var(--violet)}
+.msg .body{padding:9px 13px;border-radius:13px;border:1px solid var(--edge);backdrop-filter:blur(4px)}
+.msg.j .body{background:linear-gradient(160deg,rgba(124,150,255,.10),rgba(124,150,255,.02));border-top-left-radius:4px}
+.msg.u .body{background:rgba(167,139,250,.10);border-color:rgba(167,139,250,.3);border-top-right-radius:4px;display:inline-block;text-align:left}
+.msg .body b{color:#fff}.msg .body i{color:var(--ice)}
+.msg .body code{font-family:var(--mono);font-size:11.5px;background:rgba(0,0,0,.34);border:1px solid var(--edge-soft);border-radius:5px;padding:1px 5px;color:var(--mint)}
+.msg .body pre{font-family:var(--mono);font-size:11.5px;background:rgba(0,0,0,.4);border:1px solid var(--edge-soft);border-radius:9px;padding:10px 12px;margin-top:7px;overflow:auto;line-height:1.55;color:#dbe6ff}
+.msg .conf{display:inline-flex;gap:6px;margin-top:7px;font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.msg .conf .c{padding:1px 6px;border-radius:5px;border:1px solid var(--edge-soft)}
+.plan{margin-top:8px;border-left:2px solid var(--edge-2);padding-left:10px;display:flex;flex-direction:column;gap:5px}
+.step{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+.step .s-ic{width:14px;height:14px;border-radius:4px;border:1px solid var(--edge-2);display:grid;place-items:center;font-size:8px;color:var(--sky);flex:0 0 auto}
+.step.done .s-ic{background:rgba(52,211,153,.2);border-color:rgba(52,211,153,.45);color:var(--ok)}
+.step.done{color:#cdd6f5}
+.step .ag{margin-left:auto;font-size:8px;color:var(--dim-2)}
+.approve{margin-top:9px;border:1px solid rgba(251,191,36,.4);background:rgba(251,191,36,.06);border-radius:11px;padding:10px 12px}
+.approve .ah{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.approve .ab{font-size:12px;color:#f1e8ff;margin-bottom:9px}
+.approve .btns{display:flex;gap:7px}
+.approve button{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;border-radius:8px;cursor:pointer;border:1px solid var(--edge);background:rgba(255,255,255,.04);color:var(--dim);transition:.15s}
+.approve button.ok{border-color:rgba(52,211,153,.5);color:var(--ok);background:rgba(52,211,153,.1)}
+.approve button.no{border-color:rgba(244,114,182,.4);color:var(--bad)}
+.approve button:hover{filter:brightness(1.3)}
+.typing .body{display:inline-flex;gap:4px;align-items:center}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--sky);animation:tp 1.2s ease-in-out infinite}
+.typing i:nth-child(2){animation-delay:.18s}.typing i:nth-child(3){animation-delay:.36s}
+@keyframes tp{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+.chips{display:flex;gap:6px;padding:0 14px 9px;flex-wrap:wrap}
+.qchip{font-family:var(--mono);font-size:9px;letter-spacing:.03em;color:var(--dim);border:1px solid var(--edge-soft);background:rgba(124,150,255,.05);padding:5px 9px;border-radius:14px;cursor:pointer;transition:.15s}
+.qchip:hover{border-color:var(--edge);color:#dfe5ff;background:rgba(124,150,255,.12)}
+.composer{display:flex;align-items:center;gap:9px;padding:10px 13px;border-top:1px solid var(--edge-soft);background:rgba(9,11,24,.4)}
+.mic{width:40px;height:40px;border-radius:50%;flex:0 0 auto;border:1px solid var(--edge-2);background:rgba(124,150,255,.09);color:var(--sky);font-size:17px;cursor:pointer;display:grid;place-items:center;transition:.2s}
+.mic:hover{box-shadow:0 0 16px rgba(124,150,255,.4)}
+.mic.live{background:rgba(244,114,182,.16);border-color:var(--bad);color:var(--bad);animation:alertPulse 1.1s ease-in-out infinite}
+.composer input{flex:1;background:rgba(0,0,0,.3);border:1px solid var(--edge);border-radius:11px;padding:11px 14px;color:var(--txt);font-family:var(--sans);font-size:13px;outline:none}
+.composer input:focus{border-color:var(--edge-2);box-shadow:0 0 0 3px rgba(124,150,255,.1)}
+.composer input::placeholder{color:var(--dim-2)}
+.send{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:11px 16px;border-radius:11px;cursor:pointer;
+  border:1px solid var(--edge-2);background:linear-gradient(160deg,rgba(124,150,255,.26),rgba(124,150,255,.07));color:#fff;transition:.15s}
+.send:hover{box-shadow:0 0 16px rgba(124,150,255,.35)}
+
+/* ── CODE FORGE ── */
+.forge{flex:1;min-height:0;display:grid;grid-template-rows:auto 1fr auto;gap:0}
+.cf-bar{display:flex;align-items:center;gap:8px;padding:9px 13px;border-bottom:1px solid var(--edge-soft);flex-wrap:wrap}
+.cf-langs{display:flex;gap:3px;flex-wrap:wrap}
+.cf-lang{font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--dim);background:rgba(255,255,255,.03);border:1px solid var(--edge-soft);border-radius:7px;padding:4px 8px;cursor:pointer;transition:.14s}
+.cf-lang:hover{color:#dfe5ff}
+.cf-lang.on{color:#fff;background:rgba(124,150,255,.16);border-color:var(--edge)}
+.cf-prompt{flex:1;min-width:130px;background:rgba(0,0,0,.3);border:1px solid var(--edge);border-radius:9px;padding:7px 11px;color:var(--txt);font-family:var(--sans);font-size:12px;outline:none}
+.cf-prompt:focus{border-color:var(--edge-2);box-shadow:0 0 0 3px rgba(124,150,255,.1)}
+.cf-btn{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:7px 11px;border-radius:8px;cursor:pointer;
+  border:1px solid var(--edge);background:rgba(255,255,255,.04);color:var(--ice);transition:.14s;white-space:nowrap}
+.cf-btn:hover{border-color:var(--edge-2);background:rgba(124,150,255,.14);color:#fff}
+.cf-btn.primary{border-color:rgba(52,211,153,.5);color:var(--mint);background:rgba(52,211,153,.1)}
+.cf-btn.run{border-color:rgba(96,165,250,.5);color:var(--blue);background:rgba(96,165,250,.1)}
+.cf-editor{position:relative;min-height:0;overflow:hidden;background:rgba(2,4,12,.5)}
+.cf-hl,.cf-input{margin:0;border:0;width:100%;height:100%;padding:12px 14px;
+  font-family:var(--mono);font-size:12.5px;line-height:1.62;letter-spacing:0;tab-size:2;white-space:pre;overflow:auto}
+.cf-hl{position:absolute;inset:0;pointer-events:none;color:#cbd6f5;z-index:1}
+.cf-hl code{font:inherit;white-space:pre}
+.cf-input{position:absolute;inset:0;background:transparent;color:transparent;caret-color:var(--sky);resize:none;outline:none;z-index:2}
+.cf-input::selection{background:rgba(124,150,255,.3)}
+.t-kw{color:#c4a7fb;font-weight:600}.t-str{color:#7ee0a8}.t-num{color:#fbbf24}.t-com{color:#5f6b92;font-style:italic}.t-fn{color:#60a5fa}
+.cf-foot{display:flex;flex-direction:column;border-top:1px solid var(--edge-soft)}
+.cf-out{max-height:128px;overflow:auto;padding:9px 14px;font-family:var(--mono);font-size:11px;line-height:1.55;color:#bfe9cf;white-space:pre-wrap;background:rgba(0,0,0,.32)}
+.cf-out .err{color:var(--bad)}
+.cf-status{display:flex;align-items:center;gap:10px;padding:6px 14px;font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;color:var(--dim-2);text-transform:uppercase}
+.cf-status .ok{color:var(--mint)}.cf-status b{color:var(--ice)}
+
+/* telemetry pane */
+.tele{flex:1;overflow:auto;padding:12px 15px}
+.tele table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:10.5px}
+.tele th{text-align:left;color:var(--dim-2);font-weight:500;letter-spacing:.1em;text-transform:uppercase;font-size:8.5px;padding:5px 8px;border-bottom:1px solid var(--edge-soft)}
+.tele td{padding:6px 8px;border-bottom:1px solid rgba(124,150,255,.05);color:#cdd6f5}
+.tele td .bar{height:5px;border-radius:4px;background:rgba(255,255,255,.07);overflow:hidden}
+.tele td .bar i{display:block;height:100%;border-radius:4px;background:var(--crystal)}
+.tele .st-ok{color:var(--mint)}.tele .st-warn{color:var(--amber)}.tele .st-bad{color:var(--bad)}
+
+/* ── right column ── */
+.rightcol{display:flex;flex-direction:column;gap:13px;min-height:0;overflow-y:auto;padding-right:2px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 12px 12px}
+.kpi{background:rgba(124,150,255,.05);border:1px solid var(--edge-soft);border-radius:12px;padding:10px 11px;position:relative;overflow:hidden}
+.kpi .k-l{font-family:var(--mono);font-size:8px;letter-spacing:.11em;text-transform:uppercase;color:var(--dim)}
+.kpi .k-v{font-family:var(--display);font-weight:700;font-size:18px;color:#fff;margin-top:4px;letter-spacing:.02em}
+.kpi .k-d{font-family:var(--mono);font-size:8.5px;margin-top:2px}
+.kpi .k-d.up{color:var(--ok)}.kpi .k-d.dn{color:var(--bad)}
+.kpi .spark{position:absolute;right:0;bottom:0;width:62%;height:42%;opacity:.55}
+.er{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid rgba(124,150,255,.05);font-size:11px}
+.er .ek{color:var(--dim);font-family:var(--mono);font-size:9.5px;letter-spacing:.03em}
+.er .ev{color:#eef2ff;text-align:right}
+.er .ev.g{color:var(--mint)}.er .ev.r{color:var(--bad)}.er .ev.a{color:var(--sky)}.er .ev.y{color:var(--amber)}.er .ev.v{color:var(--violet)}
+.fbody{padding:6px 14px 13px}
+.bdg{font-family:var(--mono);font-size:8px;letter-spacing:.1em;padding:2px 7px;border-radius:20px;border:1px solid;white-space:nowrap}
+.bgn{color:var(--mint);border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.06)}
+.bam{color:var(--sky);border-color:rgba(56,189,248,.4);background:rgba(56,189,248,.06)}
+.byw{color:var(--amber);border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.06)}
+.brd{color:var(--bad);border-color:rgba(244,114,182,.4);background:rgba(244,114,182,.06)}
+.bdim{color:var(--dim);border-color:var(--edge-soft)}
+.bpu{color:var(--violet);border-color:rgba(167,139,250,.4);background:rgba(167,139,250,.06)}
+.feed-head{display:flex;align-items:center;justify-content:space-between;padding:0 14px}
+#map-wrap iframe{width:100%;height:150px;display:block;border:none;border-radius:10px;filter:saturate(1.2) brightness(.92) contrast(1.05) hue-rotate(6deg)}
+.ph{padding:14px;text-align:center;color:var(--dim-2)}
+.ph .ph-i{font-size:18px;opacity:.5}.ph .ph-t{font-size:9px;letter-spacing:.12em;margin-top:5px;font-family:var(--mono)}
+.stream{display:flex;flex-direction:column;min-height:160px}
+.stream .scroll{overflow-y:auto;padding:0 14px 12px;display:flex;flex-direction:column;gap:8px;max-height:230px}
+.ev2{display:flex;gap:9px;font-size:11px;line-height:1.45;animation:evIn .4s ease}
+@keyframes evIn{from{opacity:0;transform:translateX(8px)}}
+.ev2 .e-t{font-family:var(--mono);font-size:8.5px;color:var(--dim-2);flex:0 0 42px;padding-top:2px}
+.ev2 .e-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex:0 0 auto;background:var(--sky);box-shadow:0 0 8px var(--sky)}
+.ev2.ok .e-dot{background:var(--ok);box-shadow:0 0 8px var(--ok)}.ev2.warn .e-dot{background:var(--amber);box-shadow:0 0 8px var(--amber)}.ev2.bad .e-dot{background:var(--bad);box-shadow:0 0 8px var(--bad)}
+.ev2 .e-b{color:#d3dcf7}.ev2 .e-b b{color:#fff;font-weight:600}
+.ev2 .e-ag{font-family:var(--mono);font-size:8px;color:var(--dim-2);display:block;margin-top:1px;letter-spacing:.04em}
+.threat{padding:11px 14px}
+.threat .th-h{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:9px}
+.threat .lvl{margin-left:auto;font-family:var(--display);font-weight:700;font-size:11px;color:var(--ok)}
+.tbar{height:7px;border-radius:5px;background:rgba(255,255,255,.07);overflow:hidden;margin-bottom:9px}
+.tbar i{display:block;height:100%;width:18%;border-radius:5px;background:linear-gradient(90deg,var(--mint),var(--sky));transition:width .8s ease,background .8s ease}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.tcell{text-align:center;border:1px solid var(--edge-soft);border-radius:10px;padding:8px 4px;background:rgba(0,0,0,.2)}
+.tcell .n{font-family:var(--display);font-weight:700;font-size:16px;color:#fff}
+.tcell .l{font-family:var(--mono);font-size:7.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin-top:2px}
+
+/* toast + hint */
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);z-index:80;
+  background:rgba(14,18,42,.7);border:1px solid var(--edge-2);border-radius:13px;padding:11px 17px;display:flex;align-items:center;gap:12px;
+  opacity:0;transition:.35s;backdrop-filter:var(--blur);box-shadow:var(--drop)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast .ti{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:rgba(124,150,255,.14);border:1px solid var(--edge);font-size:15px}
+.toast .tt b{font-size:12.5px;color:#fff;display:block}
+.toast .tt span{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.06em}
+.hint{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:70;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.1em;pointer-events:none}
+
+@media (max-width:1240px){.main{grid-template-columns:1fr 360px}.rail{display:none}}
+@media (max-width:980px){.main{grid-template-columns:1fr}.rightcol{display:none}.clock{display:none}.feeds{display:none}.brand{min-width:0}}
+</style>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="ui.css">
+<link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+<h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">AVALON — ARTEMIS ⊕ PERCIVAL Unified Fusion Core</h1>
+<div id="aurora"></div>
+
+<!-- ════════════ BOOT ════════════ -->
+<div id="boot">
+  <div class="boot-core">
+    <div class="boot-ring a"></div><div class="boot-ring b"></div><div class="boot-ring c"></div>
+    <div class="boot-orb"></div>
+    <div class="boot-txt">
+      <div class="boot-name">A V A L O N</div>
+      <div class="boot-fuse">ARTEMIS&nbsp; ⊕ &nbsp;PERCIVAL&nbsp; · &nbsp;FUSION CORE</div>
+      <div class="boot-log" id="bootLog">initializing fusion lattice…</div>
+      <div class="boot-bar"><i></i></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ SHELL ════════════ -->
+<div class="shell" id="shell">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark"></div>
+      <div>
+        <div class="b-name">A<b>VALON</b></div>
+        <div class="b-sub">ARTEMIS ⊕ PERCIVAL · Fusion Core</div>
+      </div>
+    </div>
+    <div class="rings" id="rings"></div>
+    <div class="spacer"></div>
+    <div class="feeds" id="feeds"></div>
+    <div class="modes" id="modes">
+      <button data-mode="formal">Formal</button>
+      <button class="on" data-mode="tactical">Tactical</button>
+      <button data-mode="technical">Technical</button>
+      <button data-mode="architect">Architect</button>
+    </div>
+    <a class="launch" href="percival-os.html" title="Open PERCIVAL OS">◐ PERCIVAL</a>
+    <a class="launch" href="artemis.html" title="Open ARTEMIS / NEXUS OSINT">🛰 ARTEMIS</a>
+    <div class="status-pill"><span class="dot"></span>FUSION STABLE</div>
+    <div class="clock"><div class="t" id="clk">--:--:--</div><div class="d" id="cdate">—</div></div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- LEFT RAIL -->
+    <div class="glass rail">
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <div class="p-title"><span class="ico"></span>Fusion Rail <small id="railCount">11 subsystems</small></div>
+      <div class="scroll" id="rail"></div>
+      <div class="lineage">
+        <b>LINEAGE</b><br>ARTEMIS · self-evolving OSINT intelligence<br>PERCIVAL · always-on command center<br>= <b>AVALON</b> unified fusion core
+      </div>
+    </div>
+
+    <!-- CENTER -->
+    <div class="center">
+      <div class="stage">
+        <canvas id="neural"></canvas>
+        <div class="stage-grid"></div>
+        <div class="tag tl">AVALON FUSION CORE · v1.0<br>NEURAL FIELD ACTIVE</div>
+        <div class="tag tr" id="tagTr">LAT 0.00 · LON 0.00<br>UPLINK SECURE</div>
+        <div class="tag bl" id="tagBl">AGENTS · 10 ONLINE<br>MEMORY · SYNCED</div>
+        <div class="tag br" id="tagBr">CYCLE 0</div>
+        <div class="core-wrap">
+          <div class="core">
+            <div class="cr r1"></div><div class="cr r2"></div><div class="cr r3"></div>
+            <div class="cr arcA"></div><div class="cr arcP"></div><div class="cr arcF"></div>
+            <svg class="tick" viewBox="0 0 100 100" id="tickSvg"></svg>
+            <div class="core-core"><div><div class="cc-name">AVALON</div><div class="cc-sub">A⊕P</div></div></div>
+          </div>
+          <div id="nodes"></div>
+        </div>
+      </div>
+
+      <!-- TABBED DOCK -->
+      <div class="glass dock">
+        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <div class="dock-tabs">
+          <button class="dtab on" data-pane="console">Command Console</button>
+          <button class="dtab" data-pane="forge">Code Forge<span class="b">⌁</span></button>
+          <button class="dtab" data-pane="tele">Telemetry</button>
+        </div>
+
+        <!-- CONSOLE PANE -->
+        <div class="pane on" id="pane-console">
+          <div class="feed" id="feed"></div>
+          <div class="chips" id="chips"></div>
+          <div class="composer">
+            <button class="mic" id="mic" title="Push to talk">🎙</button>
+            <input id="cmd" placeholder="Command AVALON — ask or do anything…  (try: brief me · write a debounce · 18*7.5 · weather)" autocomplete="off"/>
+            <button class="send" id="send">Execute</button>
+          </div>
+        </div>
+
+        <!-- CODE FORGE PANE -->
+        <div class="pane" id="pane-forge">
+          <div class="forge">
+            <div class="cf-bar">
+              <div class="cf-langs" id="cfLangs"></div>
+              <input class="cf-prompt" id="cfPrompt" placeholder="Describe what to build — e.g. 'debounce function', 'rest api', 'sql revenue report'…" autocomplete="off"/>
+              <button class="cf-btn primary" id="cfGen">⌁ Generate</button>
+              <button class="cf-btn run" id="cfRun">▶ Run</button>
+              <button class="cf-btn" id="cfExplain">Explain</button>
+              <button class="cf-btn" id="cfOptimize">Optimize</button>
+              <button class="cf-btn" id="cfFormat">Format</button>
+              <button class="cf-btn" id="cfCopy">Copy</button>
+            </div>
+            <div class="cf-editor">
+              <pre class="cf-hl" id="cfHL" aria-hidden="true"><code></code></pre>
+              <textarea class="cf-input" id="cfInput" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+            </div>
+            <div class="cf-foot">
+              <div class="cf-out" id="cfOut">// AVALON Code Forge — generate, run (JS executes live), explain, optimize.\n// Pick a language, describe intent, hit Generate. Then ▶ Run JavaScript in-browser.</div>
+              <div class="cf-status">
+                <span>LANG · <b id="cfLangLabel">JavaScript</b></span>
+                <span id="cfLines">0 lines</span>
+                <span id="cfState" class="ok">READY</span>
+                <span style="margin-left:auto">sandboxed · client-side</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TELEMETRY PANE -->
+        <div class="pane" id="pane-tele">
+          <div class="tele" id="tele"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="rightcol">
+      <div class="glass">
+        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <div class="p-title"><span class="ico"></span>Live KPIs</div>
+        <div class="kpis" id="kpis"></div>
+      </div>
+
+      <div class="glass">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <div class="feed-head"><div class="p-title"><span class="ico"></span>Geo · Weather</div><span class="bdg bdim" id="wx-badge">…</span></div>
+        <div class="fbody">
+          <div id="map-wrap"><div class="ph"><div class="ph-i">🛰</div><div class="ph-t">ACQUIRING FIX</div></div></div>
+          <div id="wx-content" style="margin-top:8px"><div class="ph"><div class="ph-i">🌡</div><div class="ph-t">FETCHING WEATHER</div></div></div>
+        </div>
+      </div>
+
+      <div class="glass">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <div class="feed-head"><div class="p-title"><span class="ico"></span>Markets</div><span class="bdg bdim" id="mk-badge">…</span></div>
+        <div class="fbody" id="mk-content"><div class="ph"><div class="ph-i">₿</div><div class="ph-t">CONNECTING FEEDS</div></div></div>
+      </div>
+
+      <div class="glass">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <div class="feed-head"><div class="p-title"><span class="ico"></span>Sky · Seismic · Space</div><span class="bdg bdim" id="sky-badge">…</span></div>
+        <div class="fbody" id="sky-content"><div class="ph"><div class="ph-i">📡</div><div class="ph-t">POLLING USGS · NOAA · ISS · OPENSKY</div></div></div>
+      </div>
+
+      <div class="glass stream">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <div class="p-title"><span class="ico"></span>Activity Stream <small id="evCount">live</small></div>
+        <div class="scroll" id="events"></div>
+      </div>
+
+      <div class="glass">
+        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <div class="threat">
+          <div class="th-h">⚠ Hazard Monitor <span class="lvl" id="thLvl">—</span><small id="geoLive" style="margin-left:auto;font-size:8px;letter-spacing:.1em;color:var(--dim-2)">LIVE · USGS+NWS</small></div>
+          <div class="tbar"><i id="thBar"></i></div>
+          <div class="tgrid">
+            <div class="tcell"><div class="n" id="thBlocked">—</div><div class="l">Quakes 24h</div></div>
+            <div class="tcell"><div class="n" id="thAnom">—</div><div class="l">Wx Alerts</div></div>
+            <div class="tcell"><div class="n" id="thEndp">—</div><div class="l">Max Mag</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"><div class="ti" id="toastIc">◐</div><div class="tt"><b id="toastT">—</b><span id="toastS">—</span></div></div>
+<div class="hint" id="hint"></div>
+
+<!-- ════════════ CODE FORGE TEMPLATE LIBRARY (read as plain text — no escaping) ════════════ -->
+<script type="text/plain" class="cf-snip" data-key="debounce" data-lang="javascript" data-title="debounce()" data-keys="debounce,rate limit input">// debounce — coalesce rapid calls into one trailing call
+function debounce(fn, wait = 250) {
+  let t;
+  return function (...args) {
+    clearTimeout(t);
+    t = setTimeout(() => fn.apply(this, args), wait);
+  };
+}
+
+// demo
+const log = debounce((v) => console.log("search:", v), 300);
+["a", "ab", "abc"].forEach(log);   // only the last fires
+console.log("queued — trailing call will log 'abc'");</script>
+
+<script type="text/plain" class="cf-snip" data-key="throttle" data-lang="javascript" data-title="throttle()" data-keys="throttle,leading edge">// throttle — at most one call per interval (leading edge)
+function throttle(fn, interval = 200) {
+  let last = 0;
+  return function (...args) {
+    const now = Date.now();
+    if (now - last >= interval) { last = now; return fn.apply(this, args); }
+  };
+}
+const ping = throttle(() => console.log("tick", Date.now()), 100);
+ping(); ping(); ping();
+console.log("throttled — extra calls within 100ms are dropped");</script>
+
+<script type="text/plain" class="cf-snip" data-key="fibonacci" data-lang="javascript" data-title="fibonacci (memoized)" data-keys="fibonacci,fib,memo,recursion">// fibonacci — memoized, O(n)
+function fib(n, memo = { 0: 0, 1: 1 }) {
+  if (n in memo) return memo[n];
+  return (memo[n] = fib(n - 1, memo) + fib(n - 2, memo));
+}
+const seq = Array.from({ length: 12 }, (_, i) => fib(i));
+console.log("fib(0..11):", seq.join(", "));
+console.log("fib(40):", fib(40));</script>
+
+<script type="text/plain" class="cf-snip" data-key="quicksort" data-lang="javascript" data-title="quicksort()" data-keys="sort,quicksort,order,array sort">// quicksort — pure, immutable
+function quicksort(a) {
+  if (a.length <= 1) return a;
+  const [pivot, ...rest] = a;
+  const lo = rest.filter((x) => x < pivot);
+  const hi = rest.filter((x) => x >= pivot);
+  return [...quicksort(lo), pivot, ...quicksort(hi)];
+}
+console.log(quicksort([5, 3, 8, 1, 9, 2, 7, 4, 6]).join(" "));</script>
+
+<script type="text/plain" class="cf-snip" data-key="binarysearch" data-lang="javascript" data-title="binarySearch()" data-keys="binary search,search,find index">// binarySearch — O(log n) on a sorted array
+function binarySearch(arr, target) {
+  let lo = 0, hi = arr.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    if (arr[mid] === target) return mid;
+    arr[mid] < target ? (lo = mid + 1) : (hi = mid - 1);
+  }
+  return -1;
+}
+const data = [1, 4, 7, 11, 15, 22, 38, 49];
+console.log("index of 22:", binarySearch(data, 22));
+console.log("index of 5 :", binarySearch(data, 5));</script>
+
+<script type="text/plain" class="cf-snip" data-key="fetch" data-lang="javascript" data-title="resilient fetch with retry" data-keys="fetch,api,http,request,retry,axios">// fetchJSON — timeout + exponential backoff retry
+async function fetchJSON(url, { tries = 3, timeout = 8000 } = {}) {
+  for (let i = 0; i < tries; i++) {
+    const ctrl = new AbortController();
+    const id = setTimeout(() => ctrl.abort(), timeout);
+    try {
+      const res = await fetch(url, { signal: ctrl.signal });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return await res.json();
+    } catch (err) {
+      if (i === tries - 1) throw err;
+      await new Promise((r) => setTimeout(r, 2 ** i * 500));
+    } finally { clearTimeout(id); }
+  }
+}
+console.log("fetchJSON ready — await fetchJSON('/api/data')");</script>
+
+<script type="text/plain" class="cf-snip" data-key="promisepool" data-lang="javascript" data-title="concurrency pool" data-keys="concurrency,promise pool,parallel,worker,batch">// pool — run async tasks with bounded concurrency
+async function pool(items, worker, limit = 4) {
+  const out = []; let i = 0;
+  const runners = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (i < items.length) {
+      const idx = i++;
+      out[idx] = await worker(items[idx], idx);
+    }
+  });
+  await Promise.all(runners);
+  return out;
+}
+pool([1, 2, 3, 4, 5], async (n) => n * n, 2).then((r) => console.log("squares:", r.join(" ")));</script>
+
+<script type="text/plain" class="cf-snip" data-key="emitter" data-lang="javascript" data-title="EventEmitter" data-keys="event emitter,events,pubsub,observer,subscribe">// Emitter — tiny pub/sub
+class Emitter {
+  constructor() { this.map = new Map(); }
+  on(ev, fn) { (this.map.get(ev) || this.map.set(ev, []).get(ev)).push(fn); return () => this.off(ev, fn); }
+  off(ev, fn) { const a = this.map.get(ev); if (a) this.map.set(ev, a.filter((f) => f !== fn)); }
+  emit(ev, ...args) { (this.map.get(ev) || []).forEach((f) => f(...args)); }
+}
+const bus = new Emitter();
+bus.on("ready", (who) => console.log(who, "is ready"));
+bus.emit("ready", "AVALON");</script>
+
+<script type="text/plain" class="cf-snip" data-key="dijkstra" data-lang="javascript" data-title="Dijkstra shortest path" data-keys="graph,shortest path,dijkstra,pathfinding,route">// dijkstra — shortest path on a weighted graph
+function dijkstra(graph, start) {
+  const dist = {}, seen = new Set();
+  Object.keys(graph).forEach((n) => (dist[n] = Infinity));
+  dist[start] = 0;
+  while (seen.size < Object.keys(graph).length) {
+    let u = null;
+    for (const n in dist) if (!seen.has(n) && (u === null || dist[n] < dist[u])) u = n;
+    if (u === null || dist[u] === Infinity) break;
+    seen.add(u);
+    for (const [v, w] of Object.entries(graph[u])) dist[v] = Math.min(dist[v], dist[u] + w);
+  }
+  return dist;
+}
+const g = { A: { B: 1, C: 4 }, B: { C: 2, D: 5 }, C: { D: 1 }, D: {} };
+console.log("from A:", JSON.stringify(dijkstra(g, "A")));</script>
+
+<script type="text/plain" class="cf-snip" data-key="react" data-lang="typescript" data-title="React component (TSX)" data-keys="react,component,jsx,tsx,hook,ui">import { useEffect, useRef, useState } from "react";
+
+interface CounterProps { label: string; step?: number; }
+
+export function Counter({ label, step = 1 }: CounterProps) {
+  const [n, setN] = useState(0);
+  const ticks = useRef(0);
+
+  useEffect(() => {
+    ticks.current += 1;
+    document.title = `${label}: ${n}`;
+  }, [n, label]);
+
+  return (
+    <button className="counter" onClick={() => setN((v) => v + step)}>
+      {label} — {n} (renders: {ticks.current})
+    </button>
+  );
+}</script>
+
+<script type="text/plain" class="cf-snip" data-key="rest" data-lang="javascript" data-title="Express REST API" data-keys="rest api,express,server,endpoint,node,backend">// minimal REST API — Node + Express
+import express from "express";
+const app = express();
+app.use(express.json());
+
+const db = new Map();
+
+app.get("/items", (_req, res) => res.json([...db.values()]));
+app.get("/items/:id", (req, res) => {
+  const it = db.get(req.params.id);
+  return it ? res.json(it) : res.status(404).json({ error: "not found" });
+});
+app.post("/items", (req, res) => {
+  const id = crypto.randomUUID();
+  const item = { id, ...req.body, createdAt: Date.now() };
+  db.set(id, item);
+  res.status(201).json(item);
+});
+
+app.listen(3000, () => console.log("API on http://localhost:3000"));</script>
+
+<script type="text/plain" class="cf-snip" data-key="sql" data-lang="sql" data-title="SQL revenue report" data-keys="sql,query,report,database,revenue,analytics,join">-- Monthly revenue by segment, with running total
+WITH monthly AS (
+  SELECT date_trunc('month', o.created_at) AS month,
+         c.segment,
+         SUM(o.total_cents) / 100.0 AS revenue
+  FROM orders o
+  JOIN customers c ON c.id = o.customer_id
+  WHERE o.status = 'paid'
+    AND o.created_at >= now() - interval '12 months'
+  GROUP BY 1, 2
+)
+SELECT month, segment, revenue,
+       SUM(revenue) OVER (PARTITION BY segment ORDER BY month) AS running_total
+FROM monthly
+ORDER BY segment, month;</script>
+
+<script type="text/plain" class="cf-snip" data-key="python" data-lang="python" data-title="Python async scraper" data-keys="python,scraper,scrape,async,aiohttp,crawl">"""Async fetcher with bounded concurrency (Python 3.11+)."""
+import asyncio, aiohttp
+
+async def fetch(session, url):
+    async with session.get(url, timeout=10) as r:
+        r.raise_for_status()
+        return url, len(await r.text())
+
+async def crawl(urls, limit=8):
+    sem = asyncio.Semaphore(limit)
+    async with aiohttp.ClientSession() as session:
+        async def bound(u):
+            async with sem:
+                return await fetch(session, u)
+        return await asyncio.gather(*(bound(u) for u in urls))
+
+if __name__ == "__main__":
+    sites = [f"https://example.com/{i}" for i in range(20)]
+    for url, size in asyncio.run(crawl(sites)):
+        print(f"{size:>8}  {url}")</script>
+
+<script type="text/plain" class="cf-snip" data-key="rust" data-lang="rust" data-title="Rust word-count CLI" data-keys="rust,cli,word count,command line,parse">// word-frequency CLI — Rust
+use std::collections::HashMap;
+use std::io::{self, Read};
+
+fn main() {
+    let mut input = String::new();
+    io::stdin().read_to_string(&mut input).unwrap();
+
+    let mut counts: HashMap<&str, u32> = HashMap::new();
+    for word in input.split_whitespace() {
+        *counts.entry(word).or_insert(0) += 1;
+    }
+
+    let mut pairs: Vec<_> = counts.into_iter().collect();
+    pairs.sort_by(|a, b| b.1.cmp(&a.1));
+    for (word, n) in pairs.into_iter().take(10) {
+        println!("{:>6}  {}", n, word);
+    }
+}</script>
+
+<script>
+"use strict";
+/* ════════════════════════════════════════════════════════════════════════
+   AVALON — ARTEMIS ⊕ PERCIVAL fusion runtime (front-end).
+   Reasoning is a deterministic on-device simulation; OSINT telemetry and the
+   Code Forge JavaScript executor are real.
+   ════════════════════════════════════════════════════════════════════════ */
+const $ = (id) => document.getElementById(id);
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/* ───────────── boot ───────────── */
+const bootLines = [
+  "initializing fusion lattice…",
+  "linking ARTEMIS reasoning core…",
+  "mounting PERCIVAL command core…",
+  "fusing neural fields — coherence 99.4%…",
+  "spinning up agent swarm (10)…",
+  "compiling Code Forge engine…",
+  "arming OSINT + hazard telemetry…",
+  "AVALON online — fusion stable. Good day, Operator.",
+];
+let bi = 0;
+const bt = setInterval(() => { $("bootLog").textContent = bootLines[bi++]; if (bi >= bootLines.length) clearInterval(bt); }, 430);
+setTimeout(() => { $("boot").classList.add("gone"); $("shell").classList.add("in"); startLife(); }, 3400);
+
+/* ───────────── clock ───────────── */
+function tickClock() {
+  const d = new Date();
+  $("clk").textContent = d.toLocaleTimeString("en-GB");
+  $("cdate").textContent = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+}
+setInterval(tickClock, 1000); tickClock();
+
+/* ───────────── status rings ───────────── */
+const ringDefs = [{ l: "CPU", v: 32 }, { l: "MEM", v: 57 }, { l: "NET", v: 74 }, { l: "AI", v: 93 }];
+function ring(d) {
+  const r = 18, c = 2 * Math.PI * r, off = c * (1 - d.v / 100);
+  return '<div class="gring"><svg width="46" height="46">' +
+    '<circle cx="23" cy="23" r="' + r + '" fill="none" stroke="rgba(124,150,255,.12)" stroke-width="3"/>' +
+    '<circle cx="23" cy="23" r="' + r + '" fill="none" stroke="url(#g' + d.l + ')" stroke-width="3" stroke-linecap="round" stroke-dasharray="' + c + '" stroke-dashoffset="' + off + '"/>' +
+    '<defs><linearGradient id="g' + d.l + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#38bdf8"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs></svg>' +
+    '<div class="lbl">' + d.l + '</div><div class="val">' + d.v + '</div></div>';
+}
+function renderRings() { $("rings").innerHTML = ringDefs.map(ring).join(""); }
+renderRings();
+function refreshRings() { ringDefs.forEach((d) => { d.v = Math.max(8, Math.min(98, d.v + ((Math.random() * 14 - 7) | 0))); }); renderRings(); }
+
+/* ───────────── topbar feed pills ───────────── */
+const FEEDS = [["WX", "f-wx"], ["MKT", "f-mk"], ["EQ", "f-eq"], ["SPC", "f-sw"], ["ISS", "f-iss"], ["AIR", "f-air"]];
+$("feeds").innerHTML = FEEDS.map((f) => '<div class="fpill"><span class="fdot" id="' + f[1] + '"></span>' + f[0] + '</div>').join("");
+const setFeed = (id, cls) => { const e = $(id); if (e) e.className = "fdot " + cls; };
+
+/* ───────────── subsystems (fusion rail + orbit nodes) ───────────── */
+const subsystems = [
+  { id: "command",  ic: "📡", n: "Command Center",   s: "inbox · tasks · briefings", health: 97, badge: "4" },
+  { id: "orchestr", ic: "🧬", n: "Orchestration",    s: "agent swarm · routing",     health: 99 },
+  { id: "knowledge",ic: "🗂", n: "Knowledge Intel",  s: "RAG · entity graph",        health: 95 },
+  { id: "codeforge",ic: "⌁", n: "Code Forge",        s: "synthesize · run · refactor", health: 98, pane: "forge" },
+  { id: "security", ic: "🛡", n: "Security & Monitor",s: "anomaly · zero-trust",      health: 88, badge: "!", launch: "sentinel.html" },
+  { id: "automation",ic: "⚙", n: "Automation Engine",s: "workflows · triggers",      health: 96 },
+  { id: "osint",    ic: "🛰", n: "OSINT · NEXUS",     s: "global open-source intel",  health: 94, launch: "artemis.html" },
+  { id: "markets",  ic: "📈", n: "Markets & FX",      s: "crypto · forex · macro",    health: 99 },
+  { id: "geo",      ic: "🌐", n: "Geo & Hazard",      s: "seismic · weather · space", health: 92, launch: "sentinel.html" },
+  { id: "memory",   ic: "🧠", n: "Memory & Personal", s: "long-term · prefs",         health: 99 },
+  { id: "vault",    ic: "🔐", n: "Secrets Vault",     s: "envelope-encrypted",        health: 100 },
+];
+$("railCount").textContent = subsystems.length + " subsystems";
+$("rail").innerHTML = subsystems.map((x, i) =>
+  '<div class="mitem ' + (i === 0 ? "on" : "") + '" data-id="' + x.id + '">' +
+  '<div class="mi-ic">' + x.ic + '</div>' +
+  '<div class="mi-tx"><div class="mi-n">' + x.n + '</div><div class="mi-s">' + x.s + '</div></div>' +
+  (x.launch ? '<a class="mi-launch" href="' + x.launch + '" title="Open ' + x.n + '" onclick="event.stopPropagation()">↗</a>' : "") +
+  (x.badge ? '<div class="mi-b">' + x.badge + '</div>' : "") + '</div>'
+).join("");
+document.querySelectorAll(".mitem").forEach((m) => (m.onclick = () => focusSub(m.dataset.id)));
+
+/* orbit nodes around the fusion core */
+const nodesEl = $("nodes");
+function placeNodes() {
+  const n = subsystems.length;
+  const rad = Math.max(155, Math.min(238, Math.min(window.innerWidth, window.innerHeight) * 0.205));
+  nodesEl.innerHTML = subsystems.map((x, i) => {
+    const a = (i / n) * Math.PI * 2 - Math.PI / 2;
+    const px = Math.cos(a) * rad, py = Math.sin(a) * rad;
+    const cls = x.health < 90 ? "bad" : x.health < 96 ? "warn" : "";
+    return '<div class="node ' + cls + '" data-id="' + x.id + '" style="transform:translate(' + px + 'px,' + py + 'px)">' +
+      '<div class="chip"><div class="d">' + x.ic + '</div><div class="nm">' + x.n.split(" ")[0].toUpperCase() + '</div><div class="pct">' + x.health + '%</div></div></div>';
+  }).join("");
+  document.querySelectorAll(".node .chip").forEach((c) => (c.onclick = () => focusSub(c.closest(".node").dataset.id)));
+}
+function markNode(id, cls) { const nd = document.querySelector('.node[data-id="' + id + '"]'); if (nd) { nd.classList.remove("warn", "bad"); if (cls) nd.classList.add(cls); } }
+
+/* core tick marks */
+(function () {
+  let s = "";
+  for (let i = 0; i < 60; i++) {
+    const a = i * 6 * Math.PI / 180, r1 = i % 5 === 0 ? 42 : 45, r2 = 48;
+    s += '<line x1="' + (50 + Math.cos(a) * r1) + '" y1="' + (50 + Math.sin(a) * r1) + '" x2="' + (50 + Math.cos(a) * r2) + '" y2="' + (50 + Math.sin(a) * r2) + '" stroke="rgba(124,150,255,' + (i % 5 === 0 ? .5 : .2) + ')" stroke-width="' + (i % 5 === 0 ? .8 : .4) + '"/>';
+  }
+  $("tickSvg").innerHTML = s;
+})();
+
+/* ───────────── neural canvas ───────────── */
+const cv = $("neural"), ctx = cv.getContext("2d");
+let parts = [];
+function sizeCanvas() {
+  const r = cv.parentElement.getBoundingClientRect();
+  cv.width = r.width * devicePixelRatio; cv.height = r.height * devicePixelRatio;
+  ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+  parts = [];
+  const n = Math.min(96, Math.floor(r.width / 15));
+  for (let i = 0; i < n; i++) parts.push({ x: Math.random() * r.width, y: Math.random() * r.height, vx: (Math.random() - .5) * .32, vy: (Math.random() - .5) * .32 });
+  placeNodes();
+}
+const PALETTE = ["56,189,248", "167,139,250", "244,114,182", "52,211,153"];
+function drawNeural() {
+  const w = cv.width / devicePixelRatio, h = cv.height / devicePixelRatio;
+  ctx.clearRect(0, 0, w, h);
+  for (const p of parts) { p.x += p.vx; p.y += p.vy; if (p.x < 0 || p.x > w) p.vx *= -1; if (p.y < 0 || p.y > h) p.vy *= -1; }
+  for (let i = 0; i < parts.length; i++)
+    for (let j = i + 1; j < parts.length; j++) {
+      const a = parts[i], b = parts[j], dx = a.x - b.x, dy = a.y - b.y, d = Math.hypot(dx, dy);
+      if (d < 116) { ctx.strokeStyle = "rgba(124,150,255," + (.13 * (1 - d / 116)) + ")"; ctx.lineWidth = .6; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
+    }
+  for (let i = 0; i < parts.length; i++) { const p = parts[i]; ctx.fillStyle = "rgba(" + PALETTE[i % 4] + ",.6)"; ctx.beginPath(); ctx.arc(p.x, p.y, 1.4, 0, 7); ctx.fill(); }
+  requestAnimationFrame(drawNeural);
+}
+window.addEventListener("resize", () => { sizeCanvas(); });
+
+/* ───────────── KPIs ───────────── */
+const kpis = [
+  { l: "Revenue MTD",    v: 30000, fmt: (v) => "$" + (v / 1000).toFixed(1) + "K", d: "+12.4%",  up: true },
+  { l: "Tasks Cleared",  v: 148,   fmt: (v) => v | 0,                              d: "+23 today", up: true },
+  { l: "Code Builds",    v: 412,   fmt: (v) => (v | 0).toLocaleString(),           d: "+19 / hr",  up: true },
+  { l: "Uptime",         v: 99.98, fmt: (v) => v.toFixed(2) + "%",                 d: "30d SLA",   up: true },
+  { l: "Threats Blocked",v: 1284,  fmt: (v) => (v | 0).toLocaleString(),           d: "+57 / hr",  up: true },
+  { l: "Agents Online",  v: 10,    fmt: (v) => v | 0,                              d: "swarm",     up: true },
+];
+function sparkPath(seed) { let s = ""; for (let i = 0; i < 14; i++) s += (i ? "L" : "M") + (i / 13 * 100).toFixed(0) + "," + (20 - (seed[i] || 0) * 16).toFixed(1) + " "; return s; }
+function renderKpis() {
+  $("kpis").innerHTML = kpis.map((k, idx) => {
+    if (!k.seed) k.seed = Array.from({ length: 14 }, () => Math.random());
+    return '<div class="kpi"><div class="k-l">' + k.l + '</div><div class="k-v" id="kv' + idx + '">' + k.fmt(k.v) + '</div>' +
+      '<div class="k-d ' + (k.up ? "up" : "dn") + '">' + (k.up ? "▲" : "▼") + " " + k.d + '</div>' +
+      '<svg class="spark" viewBox="0 0 100 22" preserveAspectRatio="none"><path d="' + sparkPath(k.seed) + '" fill="none" stroke="' + (k.up ? "#34d399" : "#f472b6") + '" stroke-width="1.4"/></svg></div>';
+  }).join("");
+}
+renderKpis();
+function pulseKpis() {
+  kpis.forEach((k) => {
+    if (k.l === "Revenue MTD") k.v += Math.random() * 240;
+    else if (k.l === "Tasks Cleared") k.v += Math.random() < .4 ? 1 : 0;
+    else if (k.l === "Threats Blocked") k.v += (Math.random() * 4) | 0;
+    else if (k.l === "Code Builds") k.v += Math.random() < .5 ? 1 : 0;
+    k.seed.shift(); k.seed.push(Math.random());
+  });
+  renderKpis();
+}
+
+/* ───────────── activity stream ───────────── */
+const evSeed = [
+  ["ok", "Fusion handshake complete — <b>ARTEMIS ⊕ PERCIVAL</b> coherent", "ORCHESTR"],
+  ["", "Knowledge graph indexed <b>+42 docs</b>", "KNOWLEDGE"],
+  ["ok", "Code Forge compiled module <b>build #412</b>", "CODEX"],
+  ["warn", "Anomalous login flagged on <b>endpoint-17</b>", "MONITOR"],
+  ["", "OSINT entity profile updated · confidence <b>HIGH</b>", "OSINT"],
+  ["ok", "Daily briefing assembled", "REPORTING"],
+];
+const randEvents = [
+  ["ok", "Automation run complete · <b>CRM synced</b>", "EXECUTION"],
+  ["", "Memory salience scored — <b>4 promoted</b>", "MEMORY"],
+  ["ok", "Code Forge ran test suite · <b>42/42 green</b>", "CODEX"],
+  ["", "Topic graph expanded · <b>+7 entities</b>", "OSINT"],
+  ["warn", "Rate limit approaching on integration", "MONITOR"],
+  ["ok", "Briefing delivered to Operator", "REPORTING"],
+  ["", "FX snapshot cached · USD base", "FINANCE"],
+  ["ok", "Content repurposed for <b>LinkedIn + X</b>", "BRAND"],
+  ["", "Seismic sweep · USGS feed parsed", "GEO"],
+  ["ok", "Endpoint scan clean · <b>42/42</b>", "MONITOR"],
+];
+const eventsEl = $("events");
+function addEvent(kind, body, ag) {
+  const t = new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  const div = document.createElement("div");
+  div.className = "ev2 " + kind;
+  div.innerHTML = '<div class="e-t">' + t + '</div><div class="e-dot"></div><div class="e-b">' + body + '<span class="e-ag">' + ag + ' · agent</span></div>';
+  eventsEl.prepend(div);
+  while (eventsEl.children.length > 26) eventsEl.lastChild.remove();
+}
+evSeed.forEach((e) => addEvent(e[0], e[1], e[2]));
+
+/* ───────────── hazard monitor (live USGS + NWS) ───────────── */
+let threat = { level: 8, quakes: 0, maxMag: 0, alerts: 0, live: false };
+function renderThreat() {
+  $("thBlocked").textContent = threat.live ? threat.quakes.toLocaleString() : "—";
+  $("thAnom").textContent = threat.live ? threat.alerts : "—";
+  $("thEndp").textContent = threat.live ? ("M" + threat.maxMag.toFixed(1)) : "—";
+  const bar = $("thBar"), lvl = $("thLvl");
+  bar.style.width = threat.level + "%";
+  let txt = "LOW", col = "var(--ok)", grad = "linear-gradient(90deg,#34d399,#60a5fa)";
+  if (threat.level > 66) { txt = "HIGH"; col = "var(--bad)"; grad = "linear-gradient(90deg,#60a5fa,#f472b6)"; }
+  else if (threat.level > 33) { txt = "ELEVATED"; col = "var(--amber)"; }
+  bar.style.background = grad; lvl.textContent = threat.live ? txt : "—"; lvl.style.color = col;
+}
+renderThreat();
+function fetchT(u, o, ms) { const c = new AbortController(); const t = setTimeout(() => c.abort(), ms || 9000); return fetch(u, Object.assign({ signal: c.signal }, o || {})).finally(() => clearTimeout(t)); }
+function setGeo(txt, col) { const e = $("geoLive"); if (e) { e.textContent = txt; e.style.color = col || "var(--dim-2)"; } }
+async function loadGeoHazards() {
+  let ok = false;
+  try {
+    const r = await fetchT("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson", {}, 10000);
+    const j = await r.json(); const f = j.features || [];
+    threat.quakes = f.length; threat.maxMag = f.reduce((m, x) => Math.max(m, x.properties.mag || 0), 0);
+    const big = f.filter((x) => (x.properties.mag || 0) >= 4.5).length;
+    threat.level = Math.min(96, 12 + big * 14 + (threat.maxMag >= 5 ? 30 : threat.maxMag >= 4 ? 16 : threat.maxMag >= 2.5 ? 6 : 0));
+    ok = true;
+    const top = [...f].sort((a, b) => (b.properties.mag || 0) - (a.properties.mag || 0))[0];
+    if (top) addEvent(top.properties.mag >= 4 ? "bad" : top.properties.mag >= 2.5 ? "warn" : "", "USGS · <b>M" + (top.properties.mag || 0).toFixed(1) + "</b> " + (top.properties.place || "").slice(0, 38), "GEO");
+  } catch (e) {}
+  try {
+    const r = await fetchT("https://api.weather.gov/alerts/active?status=actual&limit=50", { headers: { Accept: "application/geo+json" } }, 10000);
+    const j = await r.json(); const a = j.features || [];
+    threat.alerts = a.length;
+    const sev = a.filter((x) => ["Severe", "Extreme"].includes(x.properties.severity)).length;
+    threat.level = Math.min(98, threat.level + sev * 6); ok = true;
+    if (a[0]) addEvent("warn", "NWS · <b>" + a[0].properties.event + "</b> — " + (a[0].properties.areaDesc || "").slice(0, 34), "GEO");
+  } catch (e) {}
+  threat.live = ok; renderThreat();
+  setFeed("f-eq", ok ? "g" : "r");
+  setGeo(ok ? "LIVE · USGS+NWS · " + new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : "OFFLINE · feeds unreachable", ok ? "var(--ok)" : "var(--bad)");
+}
+
+/* ════════════ LIVE OSINT FEEDS (ARTEMIS lineage) ════════════ */
+const S = { loc: { lat: 43.3255, lon: -79.799, city: "Burlington", region: "ON" }, wx: {}, fx: {}, cr: [], eq: {}, sw: {}, iss: {}, air: {} };
+function wxIcon(c){if(c<=1)return"☀";if(c<=3)return"🌤";if(c<=48)return"🌫";if(c<=57)return"🌧";if(c<=67)return"🌧";if(c<=77)return"❄";if(c<=82)return"🌦";return"⛈"}
+function wxName(c){if(c===0)return"CLEAR";if(c<=2)return"PARTLY CLOUDY";if(c===3)return"OVERCAST";if(c<=48)return"FOG";if(c<=57)return"DRIZZLE";if(c<=67)return"RAIN";if(c<=77)return"SNOW";if(c<=82)return"SHOWERS";return"THUNDERSTORM"}
+function windDir(d){return["N","NE","E","SE","S","SW","W","NW"][Math.round(d/45)%8]}
+
+function loadMap(lat, lon) {
+  const bbox = (lon - .08) + "," + (lat - .06) + "," + (lon + .08) + "," + (lat + .06);
+  $("map-wrap").innerHTML = '<iframe loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=' + bbox + '&layer=mapnik&marker=' + lat + ',' + lon + '"></iframe>';
+}
+async function reverseGeo(lat, lon) {
+  try {
+    const r = await fetch("https://nominatim.openstreetmap.org/reverse?lat=" + lat + "&lon=" + lon + "&format=json", { headers: { "Accept-Language": "en" } });
+    const d = await r.json();
+    S.loc.city = d.address?.city || d.address?.town || S.loc.city;
+    S.loc.region = d.address?.state || S.loc.region;
+  } catch (e) {}
+}
+function geoInit() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => { S.loc.lat = pos.coords.latitude; S.loc.lon = pos.coords.longitude; reverseGeo(S.loc.lat, S.loc.lon); loadMap(S.loc.lat, S.loc.lon); fetchWx(); },
+      () => { loadMap(S.loc.lat, S.loc.lon); }
+    );
+  } else loadMap(S.loc.lat, S.loc.lon);
+}
+async function fetchWx() {
+  try {
+    const [wx, aq] = await Promise.all([
+      fetch("https://api.open-meteo.com/v1/forecast?latitude=" + S.loc.lat + "&longitude=" + S.loc.lon + "&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code,pressure_msl&wind_speed_unit=kmh&timezone=auto").then((r) => r.json()),
+      fetch("https://air-quality-api.open-meteo.com/v1/air-quality?latitude=" + S.loc.lat + "&longitude=" + S.loc.lon + "&current=pm2_5,european_aqi").then((r) => r.json()),
+    ]);
+    const c = wx.current, aqc = (aq.current) || {};
+    S.wx = { temp: c.temperature_2m, feels: c.apparent_temperature, humidity: c.relative_humidity_2m, wind: c.wind_speed_10m, dir: c.wind_direction_10m, code: c.weather_code, aqi: aqc.european_aqi, pm25: aqc.pm2_5 };
+    $("wx-content").innerHTML =
+      '<div style="display:flex;align-items:center;gap:12px;margin-bottom:6px"><span style="font-size:30px">' + wxIcon(c.weather_code) + '</span>' +
+      '<div><div style="font-family:var(--display);font-size:22px;font-weight:700;color:#fff">' + Math.round(c.temperature_2m) + '°C</div>' +
+      '<div style="font-size:8px;letter-spacing:.12em;color:var(--dim);font-family:var(--mono)">' + wxName(c.weather_code) + ' · ' + S.loc.city + '</div></div></div>' +
+      '<div class="er"><span class="ek">FEELS</span><span class="ev">' + Math.round(c.apparent_temperature) + '°C</span></div>' +
+      '<div class="er"><span class="ek">HUMIDITY</span><span class="ev">' + c.relative_humidity_2m + '%</span></div>' +
+      '<div class="er"><span class="ek">WIND</span><span class="ev">' + Math.round(c.wind_speed_10m) + ' km/h ' + windDir(c.wind_direction_10m) + '</span></div>' +
+      '<div class="er"><span class="ek">AQI (EU)</span><span class="ev ' + (aqc.european_aqi > 75 ? "r" : aqc.european_aqi > 50 ? "y" : "g") + '">' + Math.round(aqc.european_aqi || 0) + '</span></div>';
+    $("wx-badge").textContent = Math.round(c.temperature_2m) + "°C"; $("wx-badge").className = "bdg bgn";
+    setFeed("f-wx", "g");
+  } catch (e) { $("wx-badge").textContent = "OFFLINE"; $("wx-badge").className = "bdg brd"; setFeed("f-wx", "r"); }
+}
+async function fetchMarkets() {
+  let coins = [];
+  try {
+    const r = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana&price_change_percentage=24h");
+    if (r.ok) { const d = await r.json(); coins = (d || []).map((a) => ({ sym: (a.symbol || "").toUpperCase(), usd: +a.current_price || 0, chg: +a.price_change_percentage_24h || 0 })); }
+  } catch (e) {}
+  let rates = {};
+  try {
+    const r = await fetch("https://api.frankfurter.app/latest?from=USD&to=CAD,EUR,GBP,JPY");
+    if (r.ok) { const d = await r.json(); rates = d.rates || {}; }
+  } catch (e) {}
+  S.cr = coins; S.fx = rates;
+  if (coins.length || Object.keys(rates).length) {
+    const btc = coins.find((c) => c.sym === "BTC");
+    let html = coins.map((c) => '<div class="er"><span class="ek">' + c.sym + '</span><span class="ev ' + (c.chg >= 0 ? "g" : "r") + '">$' + (c.usd >= 1 ? c.usd.toLocaleString("en", { maximumFractionDigits: 0 }) : c.usd.toFixed(4)) + ' <span style="font-size:9px">' + (c.chg >= 0 ? "▲" : "▼") + Math.abs(c.chg).toFixed(1) + '%</span></span></div>').join("");
+    const pairs = [["USD/CAD", "CAD"], ["USD/EUR", "EUR"], ["USD/GBP", "GBP"], ["USD/JPY", "JPY"]];
+    html += pairs.filter((p) => rates[p[1]]).map((p) => '<div class="er"><span class="ek">' + p[0] + '</span><span class="ev a">' + rates[p[1]].toFixed(rates[p[1]] > 10 ? 2 : 4) + '</span></div>').join("");
+    $("mk-content").innerHTML = html || '<div class="ph"><div class="ph-t">NO DATA</div></div>';
+    $("mk-badge").textContent = btc ? "BTC $" + (btc.usd / 1000).toFixed(1) + "K" : "FX LIVE"; $("mk-badge").className = "bdg " + (btc && btc.chg < 0 ? "brd" : "bgn");
+    setFeed("f-mk", "g");
+  } else { $("mk-badge").textContent = "OFFLINE"; $("mk-badge").className = "bdg brd"; setFeed("f-mk", "r"); }
+}
+async function fetchSky() {
+  const out = [];
+  // seismic
+  try {
+    const r = await fetchT("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson", {}, 9000);
+    const d = await r.json(); const f = d.features || [];
+    const mx = f.reduce((m, x) => Math.max(m, x.properties.mag || 0), 0);
+    out.push('<div class="er"><span class="ek">SEISMIC 24h</span><span class="ev">' + f.length + ' · max M' + mx.toFixed(1) + '</span></div>');
+    setFeed("f-eq", "g");
+  } catch (e) { out.push('<div class="er"><span class="ek">SEISMIC</span><span class="ev r">offline</span></div>'); }
+  // space weather
+  try {
+    const r = await fetchT("https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json", {}, 9000);
+    const d = await r.json(); const kp = parseFloat((d.slice(-1)[0] || [])[1]) || 0; S.sw.kp = kp;
+    out.push('<div class="er"><span class="ek">GEOMAGNETIC Kp</span><span class="ev ' + (kp >= 5 ? "r" : kp >= 3 ? "y" : "g") + '">' + kp.toFixed(1) + ' · ' + (kp >= 5 ? "STORM" : kp >= 3 ? "UNSETTLED" : "QUIET") + '</span></div>');
+    setFeed("f-sw", kp >= 5 ? "o" : "b");
+  } catch (e) { out.push('<div class="er"><span class="ek">SPACE WX</span><span class="ev r">offline</span></div>'); }
+  // ISS
+  try {
+    const r = await fetchT("https://api.wheretheiss.at/v1/satellites/25544", {}, 9000);
+    const d = await r.json(); S.iss = { lat: d.latitude, lon: d.longitude };
+    const dlat = d.latitude - S.loc.lat, dlon = d.longitude - S.loc.lon;
+    const a = Math.sin(dlat * Math.PI / 360) ** 2 + Math.cos(d.latitude * Math.PI / 180) * Math.cos(S.loc.lat * Math.PI / 180) * Math.sin(dlon * Math.PI / 360) ** 2;
+    S.iss.dist = Math.round(6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+    out.push('<div class="er"><span class="ek">ISS DISTANCE</span><span class="ev a">' + S.iss.dist.toLocaleString() + ' km</span></div>');
+    setFeed("f-iss", "g");
+  } catch (e) { out.push('<div class="er"><span class="ek">ISS</span><span class="ev r">offline</span></div>'); }
+  // airspace
+  try {
+    const r = await fetchT("https://opensky-network.org/api/states/all?lamin=43.0&lomin=-80.3&lamax=43.8&lomax=-79.2", {}, 9000);
+    const d = await r.json(); const n = (d.states || []).filter((s) => s && s[5] && s[6]).length;
+    S.air.count = n;
+    out.push('<div class="er"><span class="ek">AIRSPACE</span><span class="ev">' + n + ' tracks</span></div>');
+    setFeed("f-air", "g");
+  } catch (e) { out.push('<div class="er"><span class="ek">AIRSPACE</span><span class="ev y">restricted</span></div>'); setFeed("f-air", "o"); }
+  $("sky-content").innerHTML = out.join("");
+  $("sky-badge").textContent = "LIVE"; $("sky-badge").className = "bdg bgn";
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   CODE FORGE — multi-language synthesis + real in-browser JS execution.
+   ════════════════════════════════════════════════════════════════════════ */
+const CF_LANGS = ["javascript", "typescript", "python", "sql", "bash", "rust", "html"];
+const CF_LABEL = { javascript: "JavaScript", typescript: "TypeScript", python: "Python", sql: "SQL", bash: "Bash", rust: "Rust", html: "HTML" };
+let cfLang = "javascript";
+const CF_SNIPS = [...document.querySelectorAll(".cf-snip")].map((el) => ({
+  key: el.dataset.key, lang: el.dataset.lang, title: el.dataset.title,
+  keys: (el.dataset.keys || "").split(",").map((s) => s.trim()).filter(Boolean),
+  code: el.textContent.replace(/^\n/, "").replace(/\s+$/, ""),
+}));
+const CF_STARTERS = {
+  javascript: "// JavaScript — runs live with ▶ Run\nconst greet = (who) => `Hello, ${who}!`;\nconsole.log(greet(\"Operator\"));\nconsole.log(\"2 ** 10 =\", 2 ** 10);",
+  typescript: "// TypeScript\ntype User = { id: number; name: string };\nconst u: User = { id: 1, name: \"Operator\" };\nconsole.log(u);",
+  python: "# Python\ndef greet(who: str) -> str:\n    return f\"Hello, {who}!\"\n\nprint(greet(\"Operator\"))",
+  sql: "-- SQL\nSELECT name, count(*) AS n\nFROM events\nGROUP BY name\nORDER BY n DESC\nLIMIT 10;",
+  bash: "#!/usr/bin/env bash\nset -euo pipefail\nfor f in *.log; do\n  echo \"== $f ==\"\n  tail -n 5 \"$f\"\ndone",
+  rust: "// Rust\nfn main() {\n    let xs = [3, 1, 4, 1, 5, 9, 2, 6];\n    let sum: i32 = xs.iter().sum();\n    println!(\"sum = {}\", sum);\n}",
+  html: "<!doctype html>\n<main class=\"card\">\n  <h1>Hello from AVALON</h1>\n  <button onclick=\"alert('hi')\">Tap</button>\n</main>",
+};
+
+/* language tabs */
+$("cfLangs").innerHTML = CF_LANGS.map((l) => '<button class="cf-lang ' + (l === cfLang ? "on" : "") + '" data-lang="' + l + '">' + CF_LABEL[l] + '</button>').join("");
+document.querySelectorAll(".cf-lang").forEach((b) => (b.onclick = () => setLang(b.dataset.lang, true)));
+function setLang(l, loadStarter) {
+  cfLang = l;
+  document.querySelectorAll(".cf-lang").forEach((b) => b.classList.toggle("on", b.dataset.lang === l));
+  $("cfLangLabel").textContent = CF_LABEL[l];
+  if (loadStarter && !$("cfInput").value.trim()) cfSet(CF_STARTERS[l] || "");
+  cfHighlight();
+}
+
+/* syntax highlighter */
+function cfEsc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+const CF_KW = "const|let|var|function|return|if|else|elif|for|while|do|switch|case|break|continue|new|class|extends|super|this|self|typeof|instanceof|in|of|try|catch|finally|throw|await|async|yield|import|from|export|default|delete|void|null|undefined|true|false|def|lambda|None|True|False|print|public|private|protected|static|interface|type|enum|struct|impl|fn|mut|pub|use|match|where|SELECT|FROM|WHERE|GROUP|ORDER|LIMIT|JOIN|INSERT|UPDATE|DELETE|CREATE|TABLE|AS|BY|ON|WITH|OVER|PARTITION|echo|then|fi|done|set";
+const CF_RE = new RegExp(
+  "(\\/\\/[^\\n]*|--[^\\n]*|#[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)" +
+  "|(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'|`(?:[^`\\\\]|\\\\.)*`)" +
+  "|\\b(\\d[\\d_]*\\.?\\d*)\\b" +
+  "|\\b(" + CF_KW + ")\\b" +
+  "|([A-Za-z_$][\\w$]*)(?=\\s*\\()", "g");
+function cfHighlight() {
+  const code = $("cfInput").value;
+  const html = cfEsc(code).replace(CF_RE, (m, c, s, n, k, f) =>
+    c ? '<span class="t-com">' + c + "</span>" :
+    s ? '<span class="t-str">' + s + "</span>" :
+    n ? '<span class="t-num">' + n + "</span>" :
+    k ? '<span class="t-kw">' + k + "</span>" :
+    f ? '<span class="t-fn">' + f + "</span>" : m);
+  $("cfHL").firstChild.innerHTML = html + "\n";
+  $("cfLines").textContent = (code ? code.split("\n").length : 0) + " lines";
+}
+function cfSet(code) { $("cfInput").value = code; cfHighlight(); const hl = $("cfHL"), ta = $("cfInput"); hl.scrollTop = ta.scrollTop; }
+$("cfInput").addEventListener("input", cfHighlight);
+$("cfInput").addEventListener("scroll", () => { $("cfHL").scrollTop = $("cfInput").scrollTop; $("cfHL").scrollLeft = $("cfInput").scrollLeft; });
+$("cfInput").addEventListener("keydown", (e) => {
+  if (e.key === "Tab") { e.preventDefault(); const t = e.target, s = t.selectionStart; t.value = t.value.slice(0, s) + "  " + t.value.slice(t.selectionEnd); t.selectionStart = t.selectionEnd = s + 2; cfHighlight(); }
+});
+function cfState(txt, cls) { const e = $("cfState"); e.textContent = txt; e.className = cls || ""; }
+function cfPrint(txt, isErr) { $("cfOut").innerHTML = (isErr ? '<span class="err">' : "<span>") + cfEsc(txt) + "</span>"; }
+
+/* generate from natural language */
+function slug(s) { return (s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim().split(" ").slice(0, 4).map((w, i) => i ? w[0].toUpperCase() + w.slice(1) : w).join("") || "task"); }
+function scaffold(lang, prompt) {
+  const name = slug(prompt), p = prompt || "the task";
+  if (lang === "python") return "# Auto-generated by AVALON Code Forge\n# Intent: " + p + "\ndef " + name + "(data):\n    \"\"\"" + p + "\"\"\"\n    result = data  # TODO: implement\n    return result\n\n\nif __name__ == \"__main__\":\n    print(" + name + "(None))";
+  if (lang === "sql") return "-- Auto-generated by AVALON Code Forge\n-- Intent: " + p + "\nSELECT *\nFROM your_table\nWHERE 1 = 1\n-- TODO: " + p + "\nLIMIT 100;";
+  if (lang === "bash") return "#!/usr/bin/env bash\n# Auto-generated by AVALON Code Forge — " + p + "\nset -euo pipefail\nmain() {\n  : # TODO: implement " + p + "\n}\nmain \"$@\"";
+  if (lang === "rust") return "// Auto-generated by AVALON Code Forge — " + p + "\nfn " + name + "() {\n    // TODO: implement " + p + "\n    println!(\"" + p + "\");\n}\n\nfn main() {\n    " + name + "();\n}";
+  if (lang === "html") return "<!doctype html>\n<!-- AVALON Code Forge — " + p + " -->\n<main class=\"card\">\n  <h1>" + p + "</h1>\n  <!-- TODO: build it out -->\n</main>";
+  if (lang === "typescript") return "// Auto-generated by AVALON Code Forge\n// Intent: " + p + "\nexport function " + name + "(input: unknown): unknown {\n  // TODO: implement " + p + "\n  return input;\n}";
+  return "// Auto-generated by AVALON Code Forge\n// Intent: " + p + "\nfunction " + name + "(input) {\n  // TODO: implement " + p + "\n  const result = input;\n  return result;\n}\n\nconsole.log(" + name + "(42));";
+}
+function cfGenerate(prompt) {
+  const q = (prompt || "").toLowerCase().trim();
+  let hit = null;
+  if (q) for (const sn of CF_SNIPS) { if (sn.keys.some((k) => k && q.includes(k)) || q.includes(sn.key)) { hit = sn; break; } }
+  if (hit) { setLang(hit.lang, false); document.querySelectorAll(".cf-lang").forEach((b) => b.classList.toggle("on", b.dataset.lang === hit.lang)); $("cfLangLabel").textContent = CF_LABEL[hit.lang]; cfSet(hit.code); cfState("GENERATED · " + hit.title, "ok"); cfPrint("// Generated " + hit.title + " (" + CF_LABEL[hit.lang] + "). " + (hit.lang === "javascript" ? "Hit ▶ Run to execute." : "Switch to JavaScript to run live.")); return hit.title; }
+  const code = scaffold(cfLang, prompt); cfSet(code); cfState("SCAFFOLDED", "ok");
+  cfPrint("// No exact template matched — scaffolded a " + CF_LABEL[cfLang] + " skeleton for: " + (prompt || "your intent") + "\n// Try keywords like: debounce, throttle, fibonacci, quicksort, fetch, dijkstra, react, rest api, sql report, python scraper, rust cli.");
+  return "scaffold";
+}
+
+/* run — real JS execution; static dry-run for other languages */
+function cfFmt(v) { if (typeof v === "string") return v; if (typeof v === "function") return "[Function " + (v.name || "anonymous") + "]"; try { return JSON.stringify(v, (k, val) => (typeof val === "bigint" ? val.toString() : val), 2); } catch (_) { return String(v); } }
+function cfRunJS(code) {
+  const logs = [];
+  const push = (pre) => (...a) => logs.push(pre + a.map(cfFmt).join(" "));
+  const cons = { log: push(""), info: push(""), debug: push(""), warn: push("⚠ "), error: push("✕ "), table: (v) => logs.push(cfFmt(v)) };
+  let fn;
+  try { fn = new Function("console", "return (" + code + "\n);"); }
+  catch (_) { try { fn = new Function("console", '"use strict";\n' + code); } catch (e) { return { ok: false, out: "SyntaxError: " + e.message }; } }
+  const t0 = performance.now();
+  let ret;
+  try { ret = fn(cons); }
+  catch (e) { return { ok: false, out: (logs.length ? logs.join("\n") + "\n" : "") + "✕ " + (e && e.stack ? e.message : e) }; }
+  if (ret !== undefined && typeof ret !== "function") logs.push("⟶ " + cfFmt(ret));
+  const ms = (performance.now() - t0).toFixed(2);
+  return { ok: true, out: (logs.join("\n") || "(no output — use console.log or return a value)") + "\n\n— executed in " + ms + "ms" };
+}
+function cfDryRun(code, lang) {
+  const lines = code.split("\n").length;
+  const fns = (code.match(/\b(def|function|fn|fun)\b/g) || []).length + (code.match(/=>/g) || []).length;
+  const loops = (code.match(/\b(for|while)\b/g) || []).length;
+  return "▣ " + CF_LABEL[lang] + " — interpreter not bundled in-browser; static dry-run:\n" +
+    "  • " + lines + " lines · ~" + fns + " functions/closures · " + loops + " loops\n" +
+    "  • syntax shape: OK (heuristic)\n" +
+    "  • to execute live, switch the language tab to JavaScript.";
+}
+function cfDoRun() {
+  const code = $("cfInput").value;
+  if (!code.trim()) { cfPrint("// nothing to run — generate or type some code first."); return; }
+  if (cfLang === "javascript") {
+    cfState("RUNNING…");
+    const r = cfRunJS(code);
+    cfPrint(r.out, !r.ok); cfState(r.ok ? "RAN OK" : "RUNTIME ERROR", r.ok ? "ok" : "");
+    addEvent(r.ok ? "ok" : "warn", "Code Forge ran <b>JavaScript</b> · " + (r.ok ? "ok" : "error"), "CODEX");
+    kpis.find((k) => k.l === "Code Builds").v += 1;
+  } else { cfPrint(cfDryRun(code, cfLang)); cfState("DRY-RUN", "ok"); }
+}
+function cfExplain() {
+  const code = $("cfInput").value; if (!code.trim()) { cfPrint("// nothing to explain yet."); return; }
+  const lines = code.split("\n").length;
+  const fns = (code.match(/\b(def|function|fn)\b/g) || []).length + (code.match(/=>/g) || []).length;
+  const loops = (code.match(/\b(for|while)\b/g) || []).length;
+  const asyncN = (code.match(/\b(async|await|Promise)\b/g) || []).length;
+  const cls = (code.match(/\bclass\b/g) || []).length;
+  const io = /\b(fetch|XMLHttpRequest|requests|aiohttp|open|readFile|fs\.)/.test(code);
+  const bits = [];
+  bits.push("• " + lines + " lines, ~" + fns + " functions/closures, " + loops + " loop(s), " + cls + " class(es).");
+  if (asyncN) bits.push("• Uses asynchronous control flow (async/await/Promise) — non-blocking I/O.");
+  if (io) bits.push("• Performs I/O (network or files) — guard with timeouts and error handling.");
+  if (loops >= 2 && /for[\s\S]*for/.test(code)) bits.push("• Nested loops detected — watch for O(n²) complexity on large inputs.");
+  bits.push("• Big-O estimate: " + (loops >= 2 && /for[\s\S]*for/.test(code) ? "~O(n²)" : loops ? "~O(n)" : "~O(1)") + " (heuristic).");
+  cfPrint("AVALON · explanation\n" + bits.join("\n"));
+  cfState("EXPLAINED", "ok");
+}
+function cfOptimize() {
+  const code = $("cfInput").value; if (!code.trim()) { cfPrint("// nothing to optimize yet."); return; }
+  const tips = [];
+  if (/\bvar\b/.test(code)) tips.push("Replace var with const/let for block scoping.");
+  if (/== /.test(code) || /[^=!<>]==[^=]/.test(code)) tips.push("Prefer strict equality (===) to avoid coercion bugs.");
+  if (/for\s*\([^)]*\.length/.test(code)) tips.push("Cache array .length or use for…of / map for clarity.");
+  if (/for[\s\S]*for/.test(code)) tips.push("Nested loops: consider a hash map to drop from O(n²) → O(n).");
+  if (/console\.log/.test(code) && cfLang !== "javascript") tips.push("Strip debug logging before shipping.");
+  if (!/try|catch|except/.test(code) && /\b(fetch|await|open)\b/.test(code)) tips.push("Wrap I/O in try/catch and add timeouts/retries.");
+  if (!/\b(test|expect|assert)\b/i.test(code)) tips.push("Add unit tests for the critical paths.");
+  if (!tips.length) tips.push("Looks tight — clear naming, no obvious hotspots. Ship it. ✓");
+  cfPrint("AVALON · optimization pass\n" + tips.map((t, i) => "  " + (i + 1) + ". " + t).join("\n"));
+  cfState("OPTIMIZED", "ok");
+}
+function cfFormatCode() {
+  let code = $("cfInput").value; if (!code.trim()) return;
+  code = code.replace(/[ \t]+$/gm, "").replace(/\n{3,}/g, "\n\n").replace(/\s+$/, "") + "\n";
+  cfSet(code); cfState("FORMATTED", "ok"); cfPrint("// whitespace normalized — trailing spaces trimmed, blank runs collapsed.");
+}
+$("cfGen").onclick = () => { const p = $("cfPrompt").value; const t = cfGenerate(p); addEvent("ok", "Code Forge generated <b>" + (t || "code") + "</b>", "CODEX"); };
+$("cfPrompt").addEventListener("keydown", (e) => { if (e.key === "Enter") $("cfGen").click(); });
+$("cfRun").onclick = cfDoRun;
+$("cfExplain").onclick = cfExplain;
+$("cfOptimize").onclick = cfOptimize;
+$("cfFormat").onclick = cfFormatCode;
+$("cfCopy").onclick = async () => { try { await navigator.clipboard.writeText($("cfInput").value); cfState("COPIED", "ok"); } catch (_) { cfState("COPY BLOCKED", ""); } };
+cfSet(CF_STARTERS.javascript); cfHighlight();
+
+/* ════════════ tabbed dock switching ════════════ */
+function showPane(name) {
+  document.querySelectorAll(".dtab").forEach((t) => t.classList.toggle("on", t.dataset.pane === name));
+  document.querySelectorAll(".pane").forEach((p) => p.classList.toggle("on", p.id === "pane-" + name));
+  if (name === "tele") renderTele();
+  if (name === "forge") setTimeout(() => $("cfInput").focus(), 60);
+}
+document.querySelectorAll(".dtab").forEach((t) => (t.onclick = () => showPane(t.dataset.pane)));
+
+/* telemetry table */
+function renderTele() {
+  const feedRow = (label, dotId) => {
+    const cls = (($(dotId) || {}).className || "").includes("g") ? "st-ok" : (($(dotId) || {}).className || "").includes("o") || (($(dotId) || {}).className || "").includes("b") ? "st-warn" : "st-bad";
+    const st = cls === "st-ok" ? "LIVE" : cls === "st-warn" ? "PARTIAL" : "OFFLINE";
+    return '<tr><td>' + label + '</td><td colspan="2" class="' + cls + '">' + st + '</td></tr>';
+  };
+  let html = '<table><tr><th>Subsystem</th><th>Health</th><th>Status</th></tr>';
+  html += subsystems.map((x) => '<tr><td>' + x.ic + " " + x.n + '</td><td><div class="bar"><i style="width:' + x.health + '%"></i></div></td><td class="' + (x.health < 90 ? "st-bad" : x.health < 96 ? "st-warn" : "st-ok") + '">' + x.health + '%</td></tr>').join("");
+  html += '<tr><th>Live Feed</th><th>—</th><th>Status</th></tr>';
+  html += feedRow("Weather / AQ", "f-wx") + feedRow("Markets / FX", "f-mk") + feedRow("Seismic", "f-eq") + feedRow("Space Weather", "f-sw") + feedRow("ISS Orbital", "f-iss") + feedRow("Airspace", "f-air");
+  html += '<tr><th>Engine</th><th>—</th><th>Value</th></tr>';
+  html += '<tr><td>⌁ Code Forge builds</td><td>—</td><td class="st-ok">' + (kpis.find((k) => k.l === "Code Builds").v | 0) + '</td></tr>';
+  html += '<tr><td>🧬 Agents online</td><td>—</td><td class="st-ok">10 / 10</td></tr>';
+  html += '<tr><td>🛡 Threat level</td><td>—</td><td class="' + (threat.level > 66 ? "st-bad" : threat.level > 33 ? "st-warn" : "st-ok") + '">' + threat.level + '%</td></tr>';
+  html += "</table>";
+  $("tele").innerHTML = html;
+}
+
+/* ════════════ modes ════════════ */
+let mode = "tactical";
+const MODE_MSG = {
+  tactical: "Tactical mode. Decision-first, terse.",
+  formal: "Formal mode engaged — polished, executive-ready prose.",
+  technical: "Technical mode. Precise parameters, schemas, and code.",
+  architect: "Architect mode. I will bias toward design, code, and system structure — Code Forge is one command away.",
+};
+document.querySelectorAll("#modes button").forEach((b) => (b.onclick = () => {
+  document.querySelectorAll("#modes button").forEach((x) => x.classList.remove("on"));
+  b.classList.add("on"); mode = b.dataset.mode;
+  avalonSay(MODE_MSG[mode]);
+}));
+
+/* ════════════ console / "intelligence" ════════════ */
+const feed = $("feed");
+function scrollFeed() { feed.scrollTop = feed.scrollHeight; }
+function esc(s) { return String(s).replace(/[&<>]/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[m])); }
+function stripTags(s) { return s.replace(/<[^>]+>/g, ""); }
+function userSay(t) { const d = document.createElement("div"); d.className = "msg u"; d.innerHTML = '<div class="who">Operator</div><div class="body">' + esc(t) + "</div>"; feed.appendChild(d); scrollFeed(); }
+function avalonNode() { const d = document.createElement("div"); d.className = "msg j"; feed.appendChild(d); return d; }
+function confBlock(c) { return '<div class="conf"><span class="c">SRC · ' + (c.src || 3) + '</span><span class="c">CONF · ' + (c.lvl || "HIGH") + '</span><span class="c">' + (c.ms || 120) + 'ms</span></div>'; }
+function avalonSay(html, opts) {
+  opts = opts || {};
+  const typing = document.createElement("div"); typing.className = "msg j typing";
+  typing.innerHTML = '<div class="who">AVALON</div><div class="body"><i></i><i></i><i></i></div>';
+  feed.appendChild(typing); scrollFeed();
+  return new Promise((res) => setTimeout(() => {
+    typing.remove(); const d = avalonNode();
+    d.innerHTML = '<div class="who">AVALON</div><div class="body">' + html + (opts.conf ? confBlock(opts.conf) : "") + "</div>";
+    scrollFeed(); if (opts.speak) speak(stripTags(html)); res(d);
+  }, opts.delay || 560));
+}
+async function runPlan(steps, agentList) {
+  const host = avalonNode();
+  host.innerHTML = '<div class="who">AVALON</div><div class="body"><b>Decomposing intent → ' + steps.length + ' steps.</b>' +
+    '<div class="plan">' + steps.map((s, i) => '<div class="step" id="stp' + i + '"><span class="s-ic">' + (i + 1) + '</span>' + s + '<span class="ag">' + agentList[i % agentList.length] + '</span></div>').join("") + '</div></div>';
+  scrollFeed();
+  for (let i = 0; i < steps.length; i++) {
+    await wait(520 + Math.random() * 240);
+    const el = host.querySelector("#stp" + i); el.classList.add("done"); el.querySelector(".s-ic").textContent = "✓"; scrollFeed();
+    addEvent("ok", stripTags(steps[i]).slice(0, 52), agentList[i % agentList.length]);
+  }
+  return host;
+}
+function approvalCard(title, body, onOk) {
+  const d = avalonNode();
+  d.innerHTML = '<div class="who">AVALON</div><div class="body">' + title +
+    '<div class="approve"><div class="ah">⚠ Confirmation required · sensitive action</div><div class="ab">' + body + '</div>' +
+    '<div class="btns"><button class="ok">Approve</button><button class="no">Deny</button><button class="ex">Explain</button></div></div></div>';
+  feed.appendChild(d); scrollFeed();
+  d.querySelector(".ok").onclick = () => { d.querySelector(".approve").innerHTML = '<div class="ah" style="color:var(--ok)">✓ Approved · executed · logged to audit trail</div>'; addEvent("ok", "Operator approved: " + stripTags(title).slice(0, 40), "EXECUTION"); if (onOk) onOk(); };
+  d.querySelector(".no").onclick = () => { d.querySelector(".approve").innerHTML = '<div class="ah" style="color:var(--bad)">✕ Denied · action discarded · logged</div>'; addEvent("warn", "Operator denied an action", "EXECUTION"); };
+  d.querySelector(".ex").onclick = () => avalonSay("I recommended this because it advances the active mission and is reversible. Inputs, sources, and confidence are attached to the audit entry. Nothing is sent until you approve.");
+}
+
+/* ── helpers for the versatile router ── */
+function safeMath(expr) {
+  const e = expr.replace(/,/g, "").trim();
+  if (!/^[-+*/%().\d\seE]+$/.test(e) || !/\d/.test(e)) return null;
+  try { const v = Function('"use strict";return (' + e + ")")(); return typeof v === "number" && isFinite(v) ? v : null; } catch (_) { return null; }
+}
+const UNITS = { km: ["length", 1000], m: ["length", 1], mi: ["length", 1609.34], mile: ["length", 1609.34], miles: ["length", 1609.34], ft: ["length", 0.3048], feet: ["length", 0.3048], cm: ["length", 0.01], kg: ["mass", 1], g: ["mass", 0.001], lb: ["mass", 0.453592], lbs: ["mass", 0.453592], oz: ["mass", 0.0283495] };
+function convert(text) {
+  let m = text.match(/(-?\d+(?:\.\d+)?)\s*°?\s*([a-z]+)\s*(?:to|in|into)\s*°?\s*([a-z]+)/i);
+  if (!m) return null;
+  const val = parseFloat(m[1]), from = m[2].toLowerCase(), to = m[3].toLowerCase();
+  // temperature
+  const T = { c: "C", celsius: "C", f: "F", fahrenheit: "F", k: "K", kelvin: "K" };
+  if (T[from] && T[to]) {
+    let c; if (T[from] === "C") c = val; else if (T[from] === "F") c = (val - 32) * 5 / 9; else c = val - 273.15;
+    let o; if (T[to] === "C") o = c; else if (T[to] === "F") o = c * 9 / 5 + 32; else o = c + 273.15;
+    return val + "°" + T[from] + " = <b>" + o.toFixed(2) + "°" + T[to] + "</b>";
+  }
+  // currency via live FX (USD base)
+  const cur = (c) => c.toUpperCase();
+  if ((from.length === 3 && to.length === 3) && (S.fx[cur(to)] || cur(from) === "USD") ) {
+    const F = Object.assign({ USD: 1 }, S.fx);
+    if (F[cur(from)] && F[cur(to)]) { const usd = val / F[cur(from)]; const out = usd * F[cur(to)]; return val + " " + cur(from) + " ≈ <b>" + out.toFixed(2) + " " + cur(to) + "</b> <i>(live ECB ref)</i>"; }
+  }
+  // units
+  if (UNITS[from] && UNITS[to] && UNITS[from][0] === UNITS[to][0]) {
+    const out = val * UNITS[from][1] / UNITS[to][1];
+    return val + " " + from + " = <b>" + out.toLocaleString("en", { maximumFractionDigits: 4 }) + " " + to + "</b>";
+  }
+  return null;
+}
+function textOp(t) {
+  let m;
+  if ((m = t.match(/^(?:upper|uppercase)\s+(.+)/i))) return "<code>" + esc(m[1].toUpperCase()) + "</code>";
+  if ((m = t.match(/^(?:lower|lowercase)\s+(.+)/i))) return "<code>" + esc(m[1].toLowerCase()) + "</code>";
+  if ((m = t.match(/^reverse\s+(.+)/i))) return "<code>" + esc([...m[1]].reverse().join("")) + "</code>";
+  if ((m = t.match(/^(?:count\s+words|word\s+count)\s+(.+)/i))) return "<b>" + m[1].trim().split(/\s+/).length + "</b> words, <b>" + m[1].length + "</b> chars.";
+  if ((m = t.match(/^base64\s+encode\s+(.+)/i))) { try { return "<code>" + esc(btoa(unescape(encodeURIComponent(m[1])))) + "</code>"; } catch (_) { return "Could not encode that."; } }
+  if ((m = t.match(/^base64\s+decode\s+(.+)/i))) { try { return "<code>" + esc(decodeURIComponent(escape(atob(m[1].trim())))) + "</code>"; } catch (_) { return "That is not valid base64."; } }
+  if ((m = t.match(/^slug(?:ify)?\s+(.+)/i))) return "<code>" + esc(m[1].toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")) + "</code>";
+  return null;
+}
+const JOKES = [
+  "I told my neural net a joke about recursion. It told me a joke about recursion. It told me a joke about recursion…",
+  "There are 10 kinds of people: those who read binary, and those who don't.",
+  "A SQL query walks into a bar, approaches two tables and asks: 'may I JOIN you?'",
+  "Why do Java developers wear glasses? Because they don't C#.",
+];
+const DEFS = {
+  glassmorphism: "a UI style using translucent, frosted-glass surfaces (background blur, subtle borders, layered light) — exactly the language this fusion core is built in.",
+  osint: "Open-Source Intelligence — collecting and analysing publicly available data (web, social, geospatial, signals) for actionable insight.",
+  rag: "Retrieval-Augmented Generation — grounding a model's answers in retrieved documents so responses carry citations and stay current.",
+  "zero trust": "a security model where nothing is trusted by default; every request is authenticated, authorized, and encrypted regardless of network location.",
+  agent: "an autonomous software worker that perceives, plans, uses tools, and acts toward a goal — the swarm orbiting this core is made of them.",
+  fusion: "the merge of ARTEMIS (self-evolving OSINT intelligence) and PERCIVAL (always-on command center) into one unified core: AVALON.",
+};
+
+/* ════════════ the versatile router — answers & does (almost) anything ════════════ */
+async function handle(raw) {
+  const q = (raw || "").trim(); if (!q) return; userSay(q);
+  const t = q.toLowerCase();
+
+  // greetings
+  if (/^(hi|hey|hello|yo|sup|good (morning|afternoon|evening)|howdy)\b/.test(t))
+    return avalonSay("Hello, Operator. AVALON here — ARTEMIS and PERCIVAL, fused. Ask me anything, or tell me to build something. Try <i>brief me</i>, <i>write a debounce</i>, <i>btc price</i>, or <i>convert 10 km to mi</i>.");
+
+  // identity / help
+  if (/who are you|what are you|capab|^help|what can you|commands?\b/.test(t))
+    return avalonSay("I am <b>AVALON</b> — the fusion of <b>ARTEMIS</b> (self-evolving OSINT intelligence) and <b>PERCIVAL</b> (always-on command center). One core, ten agents, live telemetry, and a built-in <b>Code Forge</b>.<br>I can: brief you, triage inbox, hunt threats, research entities, build automations, <b>write & run code</b>, do math & conversions, and pull <b>live</b> weather, markets, seismic, space-weather, ISS and airspace data. Try: <i>write a quicksort</i> · <i>any threats?</i> · <i>100 usd to cad</i> · <i>weather</i> · <i>research this entity</i>.");
+
+  // math
+  const mv = safeMath(q.replace(/^(calc(ulate)?|what(?:'s| is)|eval(uate)?)\s+/i, ""));
+  if (mv !== null && /[-+*/%]/.test(q)) return avalonSay("<b>" + (Number.isInteger(mv) ? mv : +mv.toFixed(8)) + "</b>", { conf: { src: 1, lvl: "HIGH", ms: 2 } });
+
+  // conversions
+  if (/\b(to|in|into)\b/.test(t) && /\d/.test(t)) { const cv2 = convert(q); if (cv2) return avalonSay(cv2, { conf: { src: 1, lvl: "HIGH", ms: 3 } }); }
+
+  // text operations
+  const tx = textOp(q); if (tx) return avalonSay(tx);
+
+  // code → Code Forge
+  if (/\b(code|coding|program|function|script|algorithm|refactor|build (a|an|me)?\s*(function|class|api|component)|write (a|an|some)?\s*(function|code|script|class|program)|generate (a|an|some)?\s*(function|code))/.test(t) || /\b(debounce|throttle|quicksort|fibonacci|binary search|dijkstra|rest api|react component|sql (query|report)|python|rust)\b/.test(t)) {
+    showPane("forge");
+    const title = cfGenerate(q.replace(/^(write|generate|build|make|create|code)\s+(me\s+)?(a|an|some)?\s*/i, ""));
+    addEvent("ok", "Code Forge synthesized <b>" + (title || "code") + "</b> from console", "CODEX");
+    return avalonSay("Routed to <b>Code Forge</b> → generated <b>" + (title || "a scaffold") + "</b>. It's loaded in the editor" + (cfLang === "javascript" ? " — hit <b>▶ Run</b> to execute it live." : " — switch to JavaScript to run it live.") + " Ask me to <i>explain</i> or <i>optimize</i> it too.", { conf: { src: 1, lvl: "HIGH", ms: 40 } });
+  }
+
+  // live: weather
+  if (/\b(weather|temperature|forecast|how (hot|cold)|rain)\b/.test(t)) {
+    if (!S.wx.temp) await fetchWx();
+    if (S.wx.temp != null) return avalonSay("<b>" + Math.round(S.wx.temp) + "°C</b> · " + wxName(S.wx.code) + " in <b>" + S.loc.city + "</b>. Feels " + Math.round(S.wx.feels) + "°, humidity " + S.wx.humidity + "%, wind " + Math.round(S.wx.wind) + " km/h " + windDir(S.wx.dir) + ", EU-AQI " + Math.round(S.wx.aqi || 0) + ".", { conf: { src: 2, lvl: "HIGH", ms: 120 } });
+    return avalonSay("Weather feed is unreachable from here right now — open-meteo may be blocked by the network policy. The right-hand <b>Geo · Weather</b> card will fill in when it's reachable.");
+  }
+
+  // live: markets
+  if (/\b(btc|bitcoin|eth|ethereum|solana|crypto|price|market|stock)\b/.test(t)) {
+    if (!S.cr.length) await fetchMarkets();
+    if (S.cr.length) { const top = S.cr.map((c) => c.sym + " $" + (c.usd >= 1 ? c.usd.toLocaleString("en", { maximumFractionDigits: 0 }) : c.usd.toFixed(4)) + " (" + (c.chg >= 0 ? "▲" : "▼") + Math.abs(c.chg).toFixed(1) + "%)").join(" · "); return avalonSay("<b>Live crypto.</b> " + top + ".", { conf: { src: 2, lvl: "HIGH", ms: 140 } }); }
+    return avalonSay("Market feed unreachable right now (CoinGecko/Frankfurter may be blocked). The <b>Markets</b> card updates when feeds come back.");
+  }
+  if (/\b(fx|forex|exchange rate|usd|cad|eur|gbp|currency)\b/.test(t) && !/\bto\b/.test(t)) {
+    if (!Object.keys(S.fx).length) await fetchMarkets();
+    if (Object.keys(S.fx).length) return avalonSay("<b>FX (USD base).</b> " + Object.entries(S.fx).map(([k, v]) => "USD/" + k + " " + v.toFixed(v > 10 ? 2 : 4)).join(" · "), { conf: { src: 1, lvl: "HIGH", ms: 90 } });
+    return avalonSay("FX feed unreachable right now. Try again once <b>Markets</b> shows LIVE.");
+  }
+
+  // live: seismic / space / iss / airspace
+  if (/\b(earthquake|seismic|quake|tremor)\b/.test(t)) { await loadGeoHazards(); return avalonSay(threat.live ? "<b>Seismic.</b> " + threat.quakes + " quakes in 24h, max <b>M" + threat.maxMag.toFixed(1) + "</b>. Hazard level " + threat.level + "%." : "USGS feed unreachable right now.", { conf: { src: 1, lvl: threat.live ? "HIGH" : "LOW", ms: 160 } }); }
+  if (/\b(space weather|aurora|solar|geomagnetic|kp)\b/.test(t)) { if (S.sw.kp == null) await fetchSky(); return avalonSay(S.sw.kp != null ? "<b>Space weather.</b> Planetary Kp <b>" + S.sw.kp.toFixed(1) + "</b> — " + (S.sw.kp >= 5 ? "geomagnetic STORM, aurora likely at lower latitudes." : S.sw.kp >= 3 ? "unsettled." : "quiet.") : "NOAA SWPC feed unreachable right now."); }
+  if (/\b(iss|space station)\b/.test(t)) { if (!S.iss.lat) await fetchSky(); return avalonSay(S.iss.lat != null ? "<b>ISS</b> is at " + S.iss.lat.toFixed(2) + "°, " + S.iss.lon.toFixed(2) + "° — about <b>" + (S.iss.dist || 0).toLocaleString() + " km</b> from " + S.loc.city + ", travelling ~27,600 km/h." : "ISS feed unreachable right now."); }
+  if (/\b(aircraft|airspace|flights?|planes?)\b/.test(t)) { if (S.air.count == null) await fetchSky(); return avalonSay(S.air.count != null ? "<b>Airspace.</b> " + S.air.count + " aircraft tracked in the local sector (OpenSky ADS-B)." : "OpenSky is rate-limited / unreachable right now."); }
+
+  // time / date
+  if (/\b(time|clock)\b/.test(t)) return avalonSay("It is <b>" + new Date().toLocaleTimeString("en-GB") + "</b> (" + Intl.DateTimeFormat().resolvedOptions().timeZone + ").");
+  if (/\b(date|day|today)\b/.test(t)) return avalonSay("Today is <b>" + new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" }) + "</b>.");
+
+  // define / explain
+  let dm = t.match(/^(?:define|what(?:'s| is| are)|explain)\s+(?:the\s+)?(?:term\s+)?(.+?)\??$/i);
+  if (dm) { const key = dm[1].toLowerCase().trim(); for (const k in DEFS) if (key.includes(k)) return avalonSay("<b>" + k.replace(/\b\w/g, (c) => c.toUpperCase()) + "</b> — " + DEFS[k]); }
+
+  // jokes / random
+  if (/\b(joke|funny|make me laugh)\b/.test(t)) return avalonSay(JOKES[Math.floor(Math.random() * JOKES.length)]);
+  if (/\b(roll|dice)\b/.test(t)) return avalonSay("🎲 You rolled a <b>" + (1 + Math.floor(Math.random() * 6)) + "</b>.");
+  if (/\b(coin|flip)\b/.test(t)) return avalonSay("🪙 <b>" + (Math.random() < .5 ? "Heads" : "Tails") + "</b>.");
+  if (/\b(random number|random)\b/.test(t)) return avalonSay("Random: <b>" + Math.floor(Math.random() * 100) + "</b> (0–99).");
+
+  // PERCIVAL command-center intents
+  if (/brief|briefing|morning|catch me up|summary|status update/.test(t)) {
+    focusSub("command");
+    await runPlan(["Pull inbox + chat + calendar", "Score urgency × impact × deadline", "Fuse ARTEMIS OSINT + hazard signal", "Compose executive briefing"], ["COMMAND", "MONITOR", "OSINT", "REPORTING"]);
+    return avalonSay("<b>Daily briefing — " + new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" }) + ".</b><br>• <b>3 urgent:</b> Series-B counter-signature, vendor SLA breach, board deck v4.<br>• <b>2 opportunities:</b> inbound partnership (warm), tier-1 press request.<br>• <b>Today:</b> 4 meetings — I cleared 2.5h of low-value blocks.<br>• <b>Signal:</b> hazard level " + threat.level + "%" + (threat.live ? " (live USGS+NWS)" : "") + "; one contained login anomaly on endpoint-17.<br><b>First move:</b> approve the Series-B counter — it unblocks 3 downstream items.", { conf: { src: 9, lvl: "HIGH", ms: 142 } });
+  }
+  if (/inbox|email|triage|reply|draft/.test(t)) {
+    focusSub("command");
+    await runPlan(["Classify 16 unread threads", "Detect urgent + opportunity + risk", "Draft replies in your voice", "Queue sends for approval"], ["COMMAND", "KNOWLEDGE", "EXECUTION", "EXECUTION"]);
+    await avalonSay("Inbox triaged: <b>3 urgent · 11 routine · 2 opportunities</b>. Drafts are ready in your voice.", { conf: { src: 16, lvl: "HIGH", ms: 98 } });
+    return approvalCard("Send the 3 drafted urgent replies?", "Recipients: counsel@, vendor-ops@, board-chair@. Tone: formal. Reversible: drafts retained.", () => avalonSay("Sent. Threads tagged, follow-ups scheduled for +48h."));
+  }
+  if (/threat|security|attack|breach|anomal|monitor|endpoint|intrusion/.test(t)) {
+    focusSub("security"); threat.level = Math.min(78, threat.level + 30); renderThreat(); markNode("security", "bad");
+    await runPlan(["Correlate auth logs across endpoints", "Geo + device fingerprint anomaly", "Cross-check OSINT threat-intel", "Build incident timeline"], ["MONITOR", "MONITOR", "OSINT", "REPORTING"]);
+    await avalonSay("<b>Threat summary.</b> Anomalous login on <b>endpoint-17</b> from an unrecognized ASN, 02:14 UTC. No lateral movement; session isolated, token revoked.<br><b>Recommendation:</b> force re-auth + step-up MFA.", { conf: { src: 6, lvl: "MED", ms: 210 } });
+    return approvalCard("Quarantine endpoint-17 and force re-auth?", "Reversible. Affected user notified. Kill-switch remains available.", () => { threat.level = 14; renderThreat(); markNode("security", ""); avalonSay("Endpoint quarantined, identity re-authed. Threat level returned to LOW."); });
+  }
+  if (/research|osint|entity|investigat|find out|look up|dossier|profile/.test(t)) {
+    focusSub("osint");
+    await runPlan(["Spawn Research + OSINT agents", "Gather open sources (ARTEMIS)", "Score per-source confidence", "Build entity profile + topic graph"], ["RESEARCH", "OSINT", "KNOWLEDGE", "REPORTING"]);
+    return avalonSay("Research complete. Built an <b>entity profile</b> with 7 linked entities and a topic graph. Findings carry per-source confidence; 2 sources conflict on a date — I flagged the contradiction rather than guessing.", { conf: { src: 11, lvl: "MED", ms: 340 } });
+  }
+  if (/automat|workflow|schedule|trigger|cron|pipeline/.test(t)) {
+    focusSub("automation");
+    await runPlan(["Define trigger + steps", "Generate code in Code Forge (sandboxed)", "Dry-run in isolated env", "Stage for approval"], ["EXECUTION", "CODEX", "MONITOR", "EXECUTION"]);
+    await avalonSay("Workflow generated and dry-run in a sandbox (network-egress controlled). Core step:<pre>// weekdays 07:00\nconst brief = avalon.compose_briefing([\"inbox\",\"calendar\",\"osint\"]);\navalon.deliver(brief, { channel: \"push\", approval: \"auto\" });</pre>");
+    return approvalCard("Activate this scheduled workflow?", "Runs weekdays 07:00. Safe + reversible — pause or roll back anytime.", () => avalonSay("Workflow active. First run tomorrow 07:00. Logged to audit trail."));
+  }
+  if (/kpi|revenue|metric|dashboard|number|how are we doing/.test(t)) {
+    focusSub("command");
+    return avalonSay("<b>Live status.</b> Revenue MTD <b>" + kpis[0].fmt(kpis[0].v) + "</b> (▲12.4%) · Tasks cleared <b>" + (kpis[1].v | 0) + "</b> · Code builds <b>" + (kpis[2].v | 0) + "</b> · Uptime <b>99.98%</b> · Threats blocked <b>" + (kpis[4].v | 0).toLocaleString() + "</b>. All subsystems nominal.", { conf: { src: 5, lvl: "HIGH", ms: 60 } });
+  }
+  if (/memory|remember|forget|preference/.test(t)) {
+    focusSub("memory");
+    return avalonSay("Long-term memory holds your <b>preferences, projects, contacts, goals, and recurring workflows</b> — separate from session memory. View, edit, export, or delete any record; a 'forget' cascades to the vector index. Provenance + timestamps on every fact.");
+  }
+  if (/\bcode forge\b|open forge|forge/.test(t)) { showPane("forge"); return avalonSay("<b>Code Forge</b> is open. Describe what to build in its prompt, or ask me here — e.g. <i>write a dijkstra</i>."); }
+
+  // capable fallback — never a dead end
+  focusSub("orchestr");
+  return avalonSay("Acknowledged: \"<i>" + esc(q) + "</i>\". I routed it through the fusion core and didn't match a built-in skill, so here's how I'd take it on: decompose the intent, assign the right agent (research, execution, code, or OSINT), execute the safe steps, and report back with sources + confidence.<br>Fast paths you can try right now: <i>brief me</i> · <i>write code that…</i> · <i>any threats?</i> · <i>research &lt;entity&gt;</i> · <i>weather</i> · <i>btc price</i> · <i>convert 5 mi to km</i> · <i>define glassmorphism</i>.", { conf: { src: 2, lvl: "MED", ms: 120 } });
+}
+
+/* ── focus subsystem ── */
+function focusSub(id) {
+  document.querySelectorAll(".mitem").forEach((m) => m.classList.toggle("on", m.dataset.id === id));
+  const s = subsystems.find((x) => x.id === id); if (!s) return;
+  if (s.pane) showPane(s.pane);
+  const toast = $("toast");
+  $("toastIc").textContent = s.ic; $("toastT").textContent = s.n; $("toastS").textContent = "Subsystem focused · " + s.s;
+  toast.classList.add("show"); clearTimeout(focusSub._t); focusSub._t = setTimeout(() => toast.classList.remove("show"), 2400);
+}
+
+/* ── input wiring ── */
+const cmd = $("cmd");
+function submit() { const v = cmd.value; cmd.value = ""; handle(v); }
+$("send").onclick = submit;
+cmd.addEventListener("keydown", (e) => { if (e.key === "Enter") submit(); });
+const quick = ["Brief me", "Write a debounce", "Any threats?", "BTC price", "Convert 10 km to mi", "Research an entity", "Open Code Forge"];
+$("chips").innerHTML = quick.map((q) => '<button class="qchip">' + q + "</button>").join("");
+document.querySelectorAll(".qchip").forEach((c) => (c.onclick = () => handle(c.textContent)));
+
+/* ── voice (Web Speech API, graceful) ── */
+const micBtn = $("mic");
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null, listening = false;
+if (SR) { rec = new SR(); rec.lang = "en-US"; rec.interimResults = false; rec.onresult = (e) => { const t = e.results[0][0].transcript; cmd.value = t; handle(t); }; rec.onend = () => { listening = false; micBtn.classList.remove("live"); }; }
+micBtn.onclick = () => {
+  if (!rec) { avalonSay("Voice input needs a browser with the Web Speech API (Chrome/Edge). Text command works perfectly here."); return; }
+  if (listening) { rec.stop(); return; }
+  try { rec.start(); listening = true; micBtn.classList.add("live"); } catch (_) {}
+};
+function speak(text) { if (!window.speechSynthesis) return; try { const u = new SpeechSynthesisUtterance(text); u.rate = 1.04; u.pitch = .95; u.volume = .9; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (_) {} }
+
+/* ── life loop ── */
+let cycle = 0;
+function startLife() {
+  sizeCanvas(); drawNeural();
+  avalonSay("Good day, Operator. <b>AVALON</b> is online — ARTEMIS and PERCIVAL fused, all subsystems nominal. Ask anything, command anything, or build in <b>Code Forge</b>.", { delay: 420 });
+  geoInit();
+  setTimeout(fetchWx, 900);
+  setTimeout(fetchMarkets, 1500);
+  setTimeout(fetchSky, 2200);
+  setTimeout(loadGeoHazards, 1200);
+  setInterval(() => { const e = randEvents[Math.floor(Math.random() * randEvents.length)]; addEvent(e[0], e[1], e[2]); }, 3800);
+  setInterval(pulseKpis, 4200);
+  setInterval(refreshRings, 5000);
+  setInterval(loadGeoHazards, 120000);
+  setInterval(fetchMarkets, 90000);
+  setInterval(fetchSky, 60000);
+  setInterval(() => {
+    cycle++; $("tagBr").textContent = "CYCLE " + cycle;
+    $("tagTr").innerHTML = "LAT " + S.loc.lat.toFixed(2) + " · LON " + S.loc.lon.toFixed(2) + "<br>UPLINK SECURE";
+    $("tagBl").innerHTML = "AGENTS · 10 ONLINE<br>FUSION · COHERENT";
+  }, 2000);
+}
+</script>
+<script defer src="control-surface.js"></script>
+<script defer src="ui.js"></script>
+<script defer src="platform.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related" class="cgr-dock">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}#cg-related.cgr-dock{position:fixed;left:14px;bottom:14px;margin:0;padding:0;max-width:none;z-index:2147483000}#cg-related.cgr-dock .cgr-tab{display:inline-block;cursor:pointer;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#dbe4ff;padding:8px 12px;border-radius:9px;border:1px solid rgba(124,150,255,.42);background:linear-gradient(180deg,rgba(18,20,42,.92),rgba(11,12,28,.92));box-shadow:0 6px 22px rgba(0,0,0,.4);backdrop-filter:blur(6px);user-select:none}#cg-related.cgr-dock .cgr-tab:hover{color:#fff;border-color:rgba(124,150,255,.85)}#cg-related.cgr-dock .cgr-box{display:none;position:absolute;bottom:calc(100% + 8px);left:0;width:min(400px,92vw);max-height:62vh;overflow-y:auto}#cg-related.cgr-dock:hover .cgr-box,#cg-related.cgr-dock:focus-within .cgr-box{display:block}#cg-related.cgr-dock ul{grid-template-columns:1fr}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="percival-os.html">Command &amp; Autonomous Operations</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="percival-os.html"><span><b>Previous</b>PERCIVAL OS</span></a>
+      <a href="percival-os.html"><span><b>Topic hub</b>PERCIVAL OS</span></a>
+      <a href="agentmesh.html"><span><b>Next in journey</b>Agent Mesh</span></a>
+    </div>
+    <ul>
+      <li><a href="agentmesh.html"><b>Agent Mesh</b> — multi-agent OSINT orchestration</a></li>
+      <li><a href="ai-operator.html"><b>AI Operator Workspace</b> — human-in-the-loop agent operations</a></li>
+      <li><a href="advanced-features-tools-systems.html"><b>Advanced Features, Tools &amp; Systems</b> — the governed systems, agent and audit architecture catalog</a></li>
+      <li><a href="automap.html"><b>AutoMap Orchestration</b> — architecture-aware orchestration and system relationship mapping</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="offers/index.html">Browse services &amp; engagements</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+  <div class="cgr-tab" tabindex="0" role="button" aria-label="Show related ClearGlass pages">⌁ Explore ClearGlass</div>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

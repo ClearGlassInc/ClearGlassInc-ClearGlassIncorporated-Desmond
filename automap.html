@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#04060d">
+  <title>ClearGlass AutoMap · Agent Orchestration Architect</title>
+  <meta name="description" content="ClearGlass AutoMap converts workflow requirements into an auditable n8n, LangGraph, or hybrid agent-orchestration blueprint.">
+  <link rel="canonical" href="https://www.clearglassinc.com/automap.html">
+  <link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="msapplication-TileColor" content="#07111f">
+  <meta name="msapplication-TileImage" content="/icon-192.png">
+  <meta name="msapplication-config" content="/browserconfig.xml">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ClearGlass AutoMap · Agent Orchestration Architect">
+  <meta property="og:description" content="Map an automation requirement into a governed n8n, LangGraph, or hybrid architecture.">
+  <meta property="og:url" content="https://www.clearglassinc.com/automap.html">
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Urbanist:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "ClearGlass AutoMap",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Web",
+  "url": "https://www.clearglassinc.com/automap.html",
+  "description": "A browser-based decision system for mapping automation requirements to n8n, LangGraph, or hybrid orchestration architectures.",
+  "author": {
+    "@type": "Organization",
+    "name": "ClearGlass Inc.",
+    "url": "https://www.clearglassinc.com"
+  }
+}
+</script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --void: #04060d;
+      --void-2: #07101c;
+      --panel: rgba(12, 21, 37, .72);
+      --panel-strong: rgba(14, 25, 44, .92);
+      --line: rgba(115, 158, 220, .18);
+      --line-strong: rgba(115, 158, 220, .34);
+      --text: #edf4ff;
+      --muted: #a3b4cc;
+      --faint: #71829d;
+      --cyan: #55d8ff;
+      --mint: #39ffb6;
+      --violet: #9c87ff;
+      --amber: #ffbd59;
+      --danger: #ff6680;
+      --orange: #ff7a45;
+      --blue: #6f8dff;
+      --radius: 22px;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
+      --sans: "Urbanist", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(900px 600px at 12% -5%, rgba(85, 216, 255, .14), transparent 55%),
+        radial-gradient(780px 620px at 92% 10%, rgba(156, 135, 255, .14), transparent 58%),
+        linear-gradient(180deg, var(--void-2), var(--void) 68%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .42;
+      background:
+        linear-gradient(rgba(115, 158, 220, .055) 1px, transparent 1px) 0 0 / 44px 44px,
+        linear-gradient(90deg, rgba(115, 158, 220, .055) 1px, transparent 1px) 0 0 / 44px 44px;
+      mask-image: radial-gradient(circle at 50% 20%, black, transparent 82%);
+    }
+
+    a { color: inherit; }
+    button, textarea, input { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+
+    .skip-link {
+      position: fixed;
+      left: 16px;
+      top: -60px;
+      z-index: 100;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: var(--mint);
+      color: #04110d;
+      font-weight: 800;
+      transition: top .2s ease;
+    }
+    .skip-link:focus { top: 16px; }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      width: min(1480px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 64px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(5, 10, 19, .76);
+      backdrop-filter: blur(20px) saturate(1.2);
+      box-shadow: 0 18px 60px -34px #000;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      text-decoration: none;
+      font-weight: 800;
+      letter-spacing: -.02em;
+    }
+
+    .brand img {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+      border-radius: 10px;
+      border: 1px solid var(--line-strong);
+      background: rgba(255,255,255,.04);
+    }
+
+    .brand small {
+      display: block;
+      margin-top: 2px;
+      color: var(--faint);
+      font: 500 .65rem/1 var(--mono);
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    .top-actions { display: flex; align-items: center; gap: 9px; }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 11px;
+      border: 1px solid rgba(57, 255, 182, .22);
+      border-radius: 999px;
+      color: #bcffe7;
+      background: rgba(57, 255, 182, .06);
+      font: 500 .7rem var(--mono);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .status::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--mint);
+      box-shadow: 0 0 12px var(--mint);
+    }
+
+    .icon-link {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--muted);
+      background: rgba(255,255,255,.025);
+    }
+    .icon-link:hover, .icon-link:focus-visible { color: var(--text); border-color: var(--cyan); outline: none; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(340px, .92fr);
+      align-items: center;
+      gap: clamp(28px, 5vw, 74px);
+      padding: clamp(72px, 9vw, 128px) 8px 54px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--cyan);
+      font: 600 .72rem var(--mono);
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 34px; height: 1px; background: linear-gradient(90deg, transparent, var(--cyan)); }
+
+    h1 {
+      margin: 20px 0 18px;
+      max-width: 12ch;
+      font-size: clamp(3rem, 7vw, 6.4rem);
+      line-height: .93;
+      letter-spacing: -.055em;
+    }
+    h1 span {
+      background: linear-gradient(105deg, var(--mint), var(--cyan) 46%, var(--violet));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      max-width: 64ch;
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 1.6vw, 1.18rem);
+      line-height: 1.7;
+    }
+
+    .hero-badges { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 26px; }
+    .hero-badges span {
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255,255,255,.025);
+      font: 500 .7rem var(--mono);
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 390px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: linear-gradient(150deg, rgba(21, 36, 58, .78), rgba(7, 12, 23, .9));
+      overflow: hidden;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 50px 100px -58px #000;
+    }
+    .hero-visual::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 28% 28%, rgba(255,122,69,.18), transparent 24%),
+        radial-gradient(circle at 72% 32%, rgba(111,141,255,.18), transparent 28%);
+    }
+    .visual-title {
+      position: absolute;
+      inset: 20px 24px auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--faint);
+      font: 600 .68rem var(--mono);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .mini-flow { position: absolute; inset: 72px 18px 18px; width: calc(100% - 36px); height: calc(100% - 90px); }
+    .mini-flow text { font-family: var(--mono); font-size: 10px; fill: #c9d5e7; }
+    .mini-flow .line { fill: none; stroke-width: 1.4; stroke-linecap: round; stroke-dasharray: 4 6; animation: dash 9s linear infinite; }
+    .mini-flow .node { fill: rgba(8, 14, 25, .95); stroke-width: 1.3; }
+    @keyframes dash { to { stroke-dashoffset: -80; } }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(320px, .8fr) minmax(0, 1.2fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      backdrop-filter: blur(18px) saturate(1.18);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.045), 0 30px 80px -52px #000;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 20px 22px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+    .panel-head h2, .panel-head h3 { margin: 0; font-size: 1.08rem; letter-spacing: -.01em; }
+    .panel-head p { margin: 5px 0 0; color: var(--faint); font-size: .83rem; line-height: 1.45; }
+    .step {
+      flex: 0 0 auto;
+      padding: 4px 8px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      color: var(--cyan);
+      font: 600 .68rem var(--mono);
+    }
+
+    .control-body { padding: 20px 22px 24px; }
+    label[for="workflowInput"] { display: block; margin-bottom: 8px; color: var(--muted); font-size: .82rem; font-weight: 700; }
+    textarea {
+      width: 100%;
+      min-height: 116px;
+      resize: vertical;
+      padding: 13px 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      color: var(--text);
+      background: rgba(2, 7, 14, .72);
+      outline: none;
+      line-height: 1.5;
+    }
+    textarea:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(85,216,255,.08); }
+
+    .preset-row { display: flex; gap: 7px; flex-wrap: wrap; margin: 10px 0 20px; }
+    .preset {
+      padding: 7px 9px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      color: var(--muted);
+      background: rgba(255,255,255,.025);
+      cursor: pointer;
+      font: 500 .68rem var(--mono);
+    }
+    .preset:hover, .preset:focus-visible { color: var(--text); border-color: var(--violet); outline: none; }
+
+    .switches { display: grid; gap: 9px; }
+    .switch {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 13px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: rgba(255,255,255,.018);
+    }
+    .switch strong { display: block; font-size: .87rem; }
+    .switch small { display: block; margin-top: 3px; color: var(--faint); font-size: .72rem; line-height: 1.35; }
+    .switch input {
+      appearance: none;
+      width: 42px;
+      height: 24px;
+      border: 1px solid var(--line-strong);
+      border-radius: 99px;
+      background: #0a1422;
+      cursor: pointer;
+      position: relative;
+      transition: .2s ease;
+    }
+    .switch input::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--faint);
+      transition: .2s ease;
+    }
+    .switch input:checked { border-color: rgba(57,255,182,.54); background: rgba(57,255,182,.16); }
+    .switch input:checked::after { transform: translateX(18px); background: var(--mint); box-shadow: 0 0 12px rgba(57,255,182,.7); }
+    .switch input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+
+    .primary-btn, .secondary-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 44px;
+      padding: 11px 15px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .primary-btn {
+      width: 100%;
+      margin-top: 18px;
+      border: 0;
+      color: #04120f;
+      background: linear-gradient(100deg, var(--mint), #8fffd6);
+      box-shadow: 0 15px 36px -22px rgba(57,255,182,.9);
+    }
+    .secondary-btn {
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: rgba(255,255,255,.035);
+    }
+    .primary-btn:hover, .secondary-btn:hover { transform: translateY(-1px); }
+    .primary-btn:focus-visible, .secondary-btn:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+
+    .result-stack { display: grid; gap: 18px; }
+    .decision { padding: 22px; }
+    .decision-top { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: start; }
+    .decision-label { color: var(--faint); font: 600 .68rem var(--mono); letter-spacing: .16em; text-transform: uppercase; }
+    .decision h2 { margin: 8px 0 6px; font-size: clamp(1.7rem, 4vw, 2.9rem); letter-spacing: -.04em; }
+    .decision h2 span { color: var(--cyan); }
+    .decision-copy { max-width: 68ch; margin: 0; color: var(--muted); line-height: 1.6; }
+    .confidence {
+      display: grid;
+      place-items: center;
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: conic-gradient(var(--mint) calc(var(--confidence) * 1%), rgba(255,255,255,.06) 0);
+      position: relative;
+    }
+    .confidence::after { content: ""; position: absolute; inset: 7px; border-radius: 50%; background: #08111e; }
+    .confidence b { position: relative; z-index: 1; font: 600 1rem var(--mono); }
+    .confidence small { position: absolute; z-index: 1; margin-top: 28px; color: var(--faint); font: 500 .55rem var(--mono); text-transform: uppercase; }
+
+    .score-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+    .score-card { padding: 13px; border: 1px solid var(--line); border-radius: 13px; background: rgba(255,255,255,.02); }
+    .score-card header { display: flex; justify-content: space-between; gap: 10px; font-size: .8rem; font-weight: 800; }
+    .score-card header b { font-family: var(--mono); }
+    .score-track { height: 5px; margin-top: 10px; border-radius: 99px; background: rgba(255,255,255,.07); overflow: hidden; }
+    .score-track i { display: block; height: 100%; width: 0; border-radius: inherit; transition: width .45s ease; }
+    .score-n8n i { background: var(--orange); }
+    .score-lang i { background: var(--blue); }
+    .score-hybrid i { background: linear-gradient(90deg, var(--orange), var(--violet), var(--blue)); }
+
+    .map-panel { overflow: hidden; }
+    .map-toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
+    .architecture-map {
+      position: relative;
+      min-height: 480px;
+      padding: 16px;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(85,216,255,.065), transparent 42%),
+        linear-gradient(rgba(115,158,220,.045) 1px, transparent 1px) 0 0 / 28px 28px,
+        linear-gradient(90deg, rgba(115,158,220,.045) 1px, transparent 1px) 0 0 / 28px 28px,
+        rgba(3, 8, 16, .58);
+    }
+    #mapSvg { width: 100%; min-height: 448px; display: block; }
+    #mapSvg text { font-family: var(--mono); fill: #dbe8f8; font-size: 12px; }
+    #mapSvg .edge { fill: none; stroke: rgba(127, 165, 220, .62); stroke-width: 2; stroke-linecap: round; }
+    #mapSvg .edge.active { stroke: var(--mint); stroke-dasharray: 6 8; animation: dash 7s linear infinite; }
+    #mapSvg .edge.loop { stroke: var(--violet); stroke-dasharray: 4 7; }
+    #mapSvg .node-body { fill: #0a1524; stroke: rgba(127,165,220,.5); stroke-width: 1.5; }
+    #mapSvg .node-core { fill: rgba(85,216,255,.14); stroke: var(--cyan); }
+    #mapSvg .node-action { fill: rgba(255,122,69,.12); stroke: var(--orange); }
+    #mapSvg .node-state { fill: rgba(111,141,255,.13); stroke: var(--blue); }
+    #mapSvg .node-control { fill: rgba(156,135,255,.13); stroke: var(--violet); }
+    #mapSvg .node-output { fill: rgba(57,255,182,.12); stroke: var(--mint); }
+    #mapSvg .node-sub { fill: var(--faint); font-size: 9px; }
+
+    .blueprint { padding: 22px; }
+    .blueprint-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 11px; margin-top: 16px; }
+    .blueprint-item { padding: 14px; border: 1px solid var(--line); border-radius: 13px; background: rgba(255,255,255,.018); }
+    .blueprint-item small { display: block; color: var(--faint); font: 600 .63rem var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+    .blueprint-item strong { display: block; margin-top: 7px; font-size: .9rem; line-height: 1.45; }
+    .action-row { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 16px; }
+
+    .principles {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+    .principle { padding: 18px; }
+    .principle b { display: block; color: var(--cyan); font: 600 .72rem var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+    .principle h3 { margin: 9px 0 7px; font-size: 1rem; }
+    .principle p { margin: 0; color: var(--faint); font-size: .82rem; line-height: 1.55; }
+
+    footer { padding: 36px 8px 0; color: var(--faint); text-align: center; font: 500 .7rem var(--mono); }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 50;
+      transform: translateY(24px);
+      opacity: 0;
+      pointer-events: none;
+      padding: 11px 14px;
+      border: 1px solid rgba(57,255,182,.28);
+      border-radius: 12px;
+      background: rgba(5, 14, 18, .94);
+      color: #caffeb;
+      box-shadow: 0 18px 50px -25px #000;
+      transition: .25s ease;
+      font-size: .8rem;
+    }
+    .toast.show { transform: none; opacity: 1; }
+
+    @media (max-width: 1050px) {
+      .hero, .workspace { grid-template-columns: 1fr; }
+      .hero { padding-top: 64px; }
+      .hero-visual { min-height: 360px; }
+      .control-panel { position: static; }
+    }
+
+    @media (min-width: 1051px) {
+      .control-panel { position: sticky; top: 92px; }
+    }
+
+    @media (max-width: 680px) {
+      .shell { width: min(100% - 20px, 1480px); padding-top: 10px; }
+      .topbar { top: 8px; }
+      .status { display: none; }
+      .hero { padding: 56px 2px 38px; }
+      h1 { font-size: clamp(3rem, 18vw, 5rem); }
+      .panel-head, .control-body, .decision, .blueprint { padding-left: 16px; padding-right: 16px; }
+      .decision-top { grid-template-columns: 1fr; }
+      .confidence { width: 76px; height: 76px; }
+      .score-grid, .blueprint-grid, .principles { grid-template-columns: 1fr; }
+      .architecture-map { min-height: 400px; padding: 4px; overflow-x: auto; }
+      #mapSvg { min-width: 620px; min-height: 390px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+  <a class="skip-link" href="#mapper">Skip to AutoMap controls</a>
+  <div class="shell">
+    <nav class="topbar" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="ClearGlass Inc home">
+        <img src="/assets/images/clearglass-logo.png" alt="">
+        <span>ClearGlass AutoMap<small>Orchestration architect</small></span>
+      </a>
+      <div class="top-actions">
+        <span class="status">Decision engine online</span>
+        <a class="icon-link" href="/advanced-features-tools-systems.html" aria-label="Advanced systems">↗</a>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div>
+        <div class="eyebrow">ClearGlass Intelligence Layer</div>
+        <h1>Stop guessing. <span>Map the system.</span></h1>
+        <p>Describe the workflow, select the operational requirements, and AutoMap produces a defensible n8n, LangGraph, or hybrid architecture with scoring, topology, governance controls, and an exportable implementation blueprint.</p>
+        <div class="hero-badges" aria-label="Capabilities">
+          <span>Local analysis</span>
+          <span>No data transmission</span>
+          <span>Auditable scoring</span>
+          <span>Responsive SVG topology</span>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="visual-title"><span>Agent workflow comparison</span><span>n8n ↔ LangGraph</span></div>
+        <svg class="mini-flow" viewBox="0 0 620 310" role="img">
+          <path class="line" d="M148 38 L148 93 L88 150 L148 208 L148 272" stroke="#ff7a45"/>
+          <path class="line" d="M148 93 L212 150 L148 208" stroke="#ff7a45"/>
+          <path class="line" d="M460 40 C380 58 378 126 416 145 C448 160 498 150 512 114 C526 78 500 52 460 40 Z" stroke="#6f8dff"/>
+          <path class="line" d="M460 40 L416 145 L460 201 L414 260 M416 145 L512 114 L460 201 L518 260" stroke="#6f8dff"/>
+          <g><circle class="node" cx="148" cy="38" r="22" stroke="#ff7a45"/><text x="148" y="42" text-anchor="middle">INPUT</text></g>
+          <g><circle class="node" cx="148" cy="93" r="22" stroke="#ff7a45"/><text x="148" y="97" text-anchor="middle">AGENT</text></g>
+          <g><circle class="node" cx="88" cy="150" r="22" stroke="#ff7a45"/><text x="88" y="154" text-anchor="middle">TOOL</text></g>
+          <g><circle class="node" cx="212" cy="150" r="22" stroke="#ff7a45"/><text x="212" y="154" text-anchor="middle">DATA</text></g>
+          <g><circle class="node" cx="148" cy="208" r="22" stroke="#ff7a45"/><text x="148" y="212" text-anchor="middle">ROUTE</text></g>
+          <g><circle class="node" cx="148" cy="272" r="22" stroke="#39ffb6"/><text x="148" y="276" text-anchor="middle">DONE</text></g>
+          <g><circle class="node" cx="460" cy="40" r="22" stroke="#6f8dff"/><text x="460" y="44" text-anchor="middle">STATE</text></g>
+          <g><circle class="node" cx="416" cy="145" r="22" stroke="#6f8dff"/><text x="416" y="149" text-anchor="middle">A1</text></g>
+          <g><circle class="node" cx="512" cy="114" r="22" stroke="#6f8dff"/><text x="512" y="118" text-anchor="middle">A2</text></g>
+          <g><circle class="node" cx="460" cy="201" r="22" stroke="#9c87ff"/><text x="460" y="205" text-anchor="middle">GATE</text></g>
+          <g><circle class="node" cx="414" cy="260" r="22" stroke="#6f8dff"/><text x="414" y="264" text-anchor="middle">LOOP</text></g>
+          <g><circle class="node" cx="518" cy="260" r="22" stroke="#39ffb6"/><text x="518" y="264" text-anchor="middle">END</text></g>
+        </svg>
+      </div>
+    </header>
+
+    <main id="mapper" class="workspace">
+      <section class="panel control-panel" aria-labelledby="requirementsTitle">
+        <div class="panel-head">
+          <div><h2 id="requirementsTitle">Workflow requirements</h2><p>Auto-detect signals, then verify the operating constraints.</p></div>
+          <span class="step">01</span>
+        </div>
+        <div class="control-body">
+          <label for="workflowInput">Describe the automation or agent system</label>
+          <textarea id="workflowInput" placeholder="Example: Intake requests from HubSpot, use an agent to classify them, maintain case memory, branch for approvals, retry failed tools, and update Slack and the CRM."></textarea>
+          <div class="preset-row" aria-label="Example workflow presets">
+            <button class="preset" type="button" data-preset="crm">CRM intake</button>
+            <button class="preset" type="button" data-preset="research">Research agent</button>
+            <button class="preset" type="button" data-preset="support">Support triage</button>
+            <button class="preset" type="button" data-preset="governance">Governed hybrid</button>
+          </div>
+
+          <div class="switches">
+            <label class="switch"><span><strong>Connector-heavy workflow</strong><small>SaaS APIs, webhooks, schedules, forms, CRM, Slack.</small></span><input id="integrations" type="checkbox" checked></label>
+            <label class="switch"><span><strong>Fast low-code delivery</strong><small>Visual editing and rapid operational deployment matter.</small></span><input id="rapid" type="checkbox" checked></label>
+            <label class="switch"><span><strong>Persistent memory and state</strong><small>The system must retain context across steps or sessions.</small></span><input id="memory" type="checkbox"></label>
+            <label class="switch"><span><strong>Branching, retries, or loops</strong><small>Execution can revisit nodes, recover, or conditionally route.</small></span><input id="branching" type="checkbox"></label>
+            <label class="switch"><span><strong>Multiple specialized agents</strong><small>Planner, executor, reviewer, or domain agents collaborate.</small></span><input id="multiAgent" type="checkbox"></label>
+            <label class="switch"><span><strong>Human approval gates</strong><small>High-impact actions require explicit operator authorization.</small></span><input id="humanGate" type="checkbox" checked></label>
+            <label class="switch"><span><strong>Deep execution observability</strong><small>State transitions, traces, replay, and node-level auditability.</small></span><input id="observability" type="checkbox" checked></label>
+          </div>
+          <button id="analyzeBtn" class="primary-btn" type="button">Analyze and generate map →</button>
+        </div>
+      </section>
+
+      <div class="result-stack" aria-live="polite">
+        <section class="panel decision" aria-labelledby="decisionTitle">
+          <div class="decision-top">
+            <div>
+              <div class="decision-label">Recommended control plane</div>
+              <h2 id="decisionTitle">Use <span id="recommendationName">Hybrid</span></h2>
+              <p id="recommendationCopy" class="decision-copy">Use n8n at the integration boundary and LangGraph for stateful reasoning. This separates deterministic business automation from agent cognition while preserving one auditable operating model.</p>
+            </div>
+            <div id="confidenceRing" class="confidence" style="--confidence: 88" aria-label="Recommendation confidence 88 percent"><b id="confidenceValue">88%</b><small>confidence</small></div>
+          </div>
+          <div class="score-grid" aria-label="Architecture scores">
+            <div class="score-card score-n8n"><header><span>n8n</span><b id="n8nScore">72</b></header><div class="score-track"><i id="n8nBar" style="width:72%"></i></div></div>
+            <div class="score-card score-lang"><header><span>LangGraph</span><b id="langScore">76</b></header><div class="score-track"><i id="langBar" style="width:76%"></i></div></div>
+            <div class="score-card score-hybrid"><header><span>Hybrid</span><b id="hybridScore">88</b></header><div class="score-track"><i id="hybridBar" style="width:88%"></i></div></div>
+          </div>
+        </section>
+
+        <section class="panel map-panel" aria-labelledby="mapTitle">
+          <div class="panel-head">
+            <div><h3 id="mapTitle">Live orchestration topology</h3><p>The map rebuilds from the selected operating requirements.</p></div>
+            <div class="map-toolbar"><span class="step">02</span></div>
+          </div>
+          <div class="architecture-map">
+            <svg id="mapSvg" viewBox="0 0 820 448" role="img" aria-label="Generated workflow architecture map"></svg>
+          </div>
+        </section>
+
+        <section class="panel blueprint" aria-labelledby="blueprintTitle">
+          <div class="panel-head" style="padding:0 0 16px;border-bottom-color:var(--line)">
+            <div><h3 id="blueprintTitle">Implementation blueprint</h3><p>Minimum viable production architecture—not decorative complexity.</p></div>
+            <span class="step">03</span>
+          </div>
+          <div class="blueprint-grid">
+            <div class="blueprint-item"><small>Integration boundary</small><strong id="bpBoundary">n8n webhooks, schedules, SaaS connectors, and deterministic actions</strong></div>
+            <div class="blueprint-item"><small>Reasoning runtime</small><strong id="bpRuntime">LangGraph state machine with typed shared state and explicit transitions</strong></div>
+            <div class="blueprint-item"><small>Persistence</small><strong id="bpPersistence">PostgreSQL checkpoint store plus encrypted object evidence</strong></div>
+            <div class="blueprint-item"><small>Governance</small><strong id="bpGovernance">Approval gate, least-privilege tools, trace IDs, replay-safe writes</strong></div>
+            <div class="blueprint-item"><small>Failure policy</small><strong id="bpFailure">Bounded retries, dead-letter queue, idempotency keys, operator escalation</strong></div>
+            <div class="blueprint-item"><small>Deployment shape</small><strong id="bpDeploy">Containerized agent service behind authenticated n8n workflows</strong></div>
+          </div>
+          <div class="action-row">
+            <button id="copyBtn" class="secondary-btn" type="button">Copy blueprint JSON</button>
+            <button id="downloadBtn" class="secondary-btn" type="button">Download architecture</button>
+            <button id="resetBtn" class="secondary-btn" type="button">Reset</button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <section class="principles" aria-label="Architecture principles">
+      <article class="panel principle"><b>Boundary rule</b><h3>Automation is not cognition</h3><p>Keep deterministic triggers and business actions separate from stateful reasoning. The split reduces blast radius and makes failures diagnosable.</p></article>
+      <article class="panel principle"><b>Control rule</b><h3>Every tool call is governed</h3><p>Use narrow permissions, typed inputs, idempotency, policy checks, and human approval for irreversible or high-impact actions.</p></article>
+      <article class="panel principle"><b>Evidence rule</b><h3>Trace before scaling</h3><p>Persist state transitions, prompt and model provenance, tool results, decisions, latency, and operator overrides before increasing autonomy.</p></article>
+    </section>
+
+    <footer>ClearGlass Inc. · AutoMap decision support · Architecture recommendations require technical validation before production deployment.</footer>
+  </div>
+  <div id="toast" class="toast" role="status"></div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const ids = ["integrations", "rapid", "memory", "branching", "multiAgent", "humanGate", "observability"];
+      const controls = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
+      const input = document.getElementById("workflowInput");
+      const mapSvg = document.getElementById("mapSvg");
+      const toast = document.getElementById("toast");
+
+      const presets = {
+        crm: "Receive HubSpot and web form leads, classify each request with an AI model, enrich the record, request approval for high-value opportunities, then update CRM and Slack.",
+        research: "A research agent plans questions, searches multiple sources, stores memory, loops when evidence is weak, uses a reviewer agent, and produces a cited final brief.",
+        support: "Ingest support email and chat, classify urgency, retrieve customer context, route standard cases automatically, request human approval for refunds, and write back to the ticketing platform.",
+        governance: "Use webhooks and scheduled jobs to launch a multi-agent workflow with persistent state, policy checks, retries, human approval, full traceability, and controlled updates across external systems."
+      };
+
+      const keywordRules = {
+        integrations: ["webhook", "crm", "slack", "email", "form", "api", "schedule", "hubspot", "salesforce", "ticket", "shopify", "connector"],
+        rapid: ["rapid", "fast", "low-code", "no-code", "visual", "quickly", "prototype"],
+        memory: ["memory", "state", "context", "session", "checkpoint", "history", "retain"],
+        branching: ["branch", "retry", "loop", "conditional", "route", "recover", "revisit", "weak evidence"],
+        multiAgent: ["multi-agent", "multiple agents", "planner", "reviewer", "specialized agent", "agent team", "executor"],
+        humanGate: ["approval", "human", "authorize", "review before", "escalation", "operator", "refund"],
+        observability: ["trace", "audit", "observability", "replay", "provenance", "monitor", "evidence", "logs"]
+      };
+
+      const copies = {
+        n8n: "Use n8n as the primary orchestrator. The requirement profile is connector-heavy, mostly deterministic, and optimized for fast visual delivery without deep agent state.",
+        langgraph: "Use LangGraph as the primary runtime. The requirement profile depends on persistent state, conditional transitions, loops, retries, or collaboration among specialized agents.",
+        hybrid: "Use n8n at the integration boundary and LangGraph for stateful reasoning. This separates deterministic business automation from agent cognition while preserving one auditable operating model."
+      };
+
+      let currentBlueprint = {};
+      let toastTimer;
+
+      function getState() {
+        return Object.fromEntries(ids.map(id => [id, controls[id].checked]));
+      }
+
+      function detectFromText() {
+        const text = input.value.toLowerCase().trim();
+        if (!text) return;
+        for (const [key, words] of Object.entries(keywordRules)) {
+          if (words.some(word => text.includes(word))) controls[key].checked = true;
+        }
+      }
+
+      function calculate(state) {
+        let n8n = 18;
+        let langgraph = 18;
+        if (state.integrations) n8n += 27;
+        if (state.rapid) n8n += 24;
+        if (state.humanGate) n8n += 8;
+        if (state.observability) n8n += 7;
+        if (state.memory) langgraph += 25;
+        if (state.branching) langgraph += 23;
+        if (state.multiAgent) langgraph += 24;
+        if (state.observability) langgraph += 10;
+        if (state.humanGate) langgraph += 5;
+
+        n8n = Math.min(100, n8n);
+        langgraph = Math.min(100, langgraph);
+        const boundaryNeed = state.integrations || state.rapid;
+        const cognitionNeed = state.memory || state.branching || state.multiAgent;
+        let hybrid = Math.round((n8n + langgraph) / 2);
+        if (boundaryNeed && cognitionNeed) hybrid += 22;
+        if (state.humanGate && state.observability) hybrid += 5;
+        hybrid = Math.min(100, hybrid);
+
+        let type = "hybrid";
+        if (!cognitionNeed && n8n >= langgraph + 9) type = "n8n";
+        if (!boundaryNeed && langgraph >= n8n + 9) type = "langgraph";
+        const confidence = Math.max(type === "n8n" ? n8n : type === "langgraph" ? langgraph : hybrid, 54);
+        return { n8n, langgraph, hybrid, type, confidence };
+      }
+
+      function setScore(id, value) {
+        document.getElementById(id + "Score").textContent = value;
+        document.getElementById(id + "Bar").style.width = value + "%";
+      }
+
+      function renderDecision(result) {
+        const label = result.type === "n8n" ? "n8n" : result.type === "langgraph" ? "LangGraph" : "Hybrid";
+        document.getElementById("recommendationName").textContent = label;
+        document.getElementById("recommendationCopy").textContent = copies[result.type];
+        document.getElementById("confidenceValue").textContent = result.confidence + "%";
+        const ring = document.getElementById("confidenceRing");
+        ring.style.setProperty("--confidence", result.confidence);
+        ring.setAttribute("aria-label", "Recommendation confidence " + result.confidence + " percent");
+        setScore("n8n", result.n8n);
+        setScore("lang", result.langgraph);
+        setScore("hybrid", result.hybrid);
+      }
+
+      function node(x, y, title, subtitle, className = "node-core", width = 150) {
+        const h = 58;
+        return `<g transform="translate(${x - width / 2} ${y - h / 2})">
+          <rect class="node-body ${className}" width="${width}" height="${h}" rx="15"/>
+          <text x="${width / 2}" y="25" text-anchor="middle">${title}</text>
+          <text class="node-sub" x="${width / 2}" y="42" text-anchor="middle">${subtitle}</text>
+        </g>`;
+      }
+
+      function edge(x1, y1, x2, y2, extra = "active") {
+        const mid = (y1 + y2) / 2;
+        return `<path class="edge ${extra}" d="M${x1} ${y1} C${x1} ${mid}, ${x2} ${mid}, ${x2} ${y2}"/>`;
+      }
+
+      function renderMap(type, state) {
+        let svg = `<defs>
+          <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#39ffb6"/></marker>
+        </defs>`;
+
+        if (type === "n8n") {
+          svg += edge(410, 74, 410, 137) + edge(410, 195, 255, 258) + edge(410, 195, 565, 258) + edge(255, 316, 410, 379) + edge(565, 316, 410, 379);
+          svg += node(410, 45, "TRIGGER", state.integrations ? "Webhook / schedule / form" : "Manual / event", "node-action");
+          svg += node(410, 166, "AI ACTION", "Classify / extract / generate", "node-core");
+          svg += node(255, 287, "TOOL CALL", "External system action", "node-action");
+          svg += node(565, 287, state.humanGate ? "APPROVAL" : "DATA STEP", state.humanGate ? "Operator authorization" : "Transform / enrich", "node-control");
+          svg += node(410, 408, "RESPONSE", "Write back and notify", "node-output");
+        } else if (type === "langgraph") {
+          svg += edge(410, 74, 250, 150) + edge(410, 74, 570, 150) + edge(250, 208, 410, 268) + edge(570, 208, 410, 268) + edge(410, 326, 255, 391) + edge(410, 326, 565, 391);
+          svg += `<path class="edge loop" d="M250 150 C105 105, 100 345, 255 391"/>`;
+          svg += node(410, 45, "SHARED STATE", state.memory ? "Persistent checkpoint" : "Typed runtime state", "node-state");
+          svg += node(250, 179, state.multiAgent ? "PLANNER" : "AGENT", "Reason / select route", "node-state");
+          svg += node(570, 179, state.multiAgent ? "REVIEWER" : "TOOL NODE", state.multiAgent ? "Validate output" : "Execute capability", "node-state");
+          svg += node(410, 297, "CONDITIONAL GATE", state.branching ? "Retry / branch / continue" : "Continue / end", "node-control", 174);
+          svg += node(255, 420, state.branching ? "CONTINUE" : "PERSIST", "Return to graph", "node-state");
+          svg += node(565, 420, "END", "Final governed result", "node-output");
+        } else {
+          svg += edge(145, 104, 330, 104) + edge(405, 133, 405, 196) + edge(405, 254, 285, 319) + edge(405, 254, 525, 319) + edge(285, 377, 405, 420) + edge(525, 377, 405, 420) + edge(480, 104, 675, 104);
+          svg += `<path class="edge loop" d="M285 319 C170 268, 175 180, 330 225"/>`;
+          svg += node(145, 104, "n8n INGRESS", state.integrations ? "Connectors / events" : "Trigger boundary", "node-action", 160);
+          svg += node(405, 104, "POLICY HANDOFF", "Signed request + trace ID", "node-control", 170);
+          svg += node(675, 104, "n8n ACTIONS", "Deterministic writes", "node-action", 160);
+          svg += node(405, 225, "LANGGRAPH STATE", state.memory ? "Checkpointed context" : "Typed execution state", "node-state", 170);
+          svg += node(285, 348, state.multiAgent ? "AGENT MESH" : "REASONING NODE", state.branching ? "Plan / retry / branch" : "Reason / decide", "node-state", 170);
+          svg += node(525, 348, state.humanGate ? "HUMAN GATE" : "VALIDATION", state.humanGate ? "Approve high-impact action" : "Schema + policy check", "node-control", 170);
+          svg += node(405, 420, "AUDITED RESULT", state.observability ? "Trace + evidence + outcome" : "Result + status", "node-output", 180);
+        }
+        mapSvg.innerHTML = svg;
+      }
+
+      function buildBlueprint(type, state, result) {
+        const architecture = type === "n8n" ? "n8n" : type === "langgraph" ? "LangGraph" : "n8n + LangGraph";
+        const boundary = type === "langgraph" ? "Authenticated API or event gateway feeding the graph runtime" : "n8n webhooks, schedules, SaaS connectors, and deterministic actions";
+        const runtime = type === "n8n" ? "n8n workflow with bounded AI nodes and explicit error branches" : "LangGraph state machine with typed shared state and explicit transitions";
+        const persistence = state.memory ? "PostgreSQL checkpoint store plus encrypted object evidence" : "Stateless execution records with durable audit events";
+        const governance = `${state.humanGate ? "Approval gate, " : ""}least-privilege tools, schema validation${state.observability ? ", trace IDs, and replay-safe writes" : ""}`;
+        const failure = state.branching ? "Bounded retries, dead-letter queue, idempotency keys, and operator escalation" : "Explicit error route, idempotency keys, timeout policy, and operator escalation";
+        const deploy = type === "n8n" ? "Hardened n8n deployment with encrypted credentials and isolated workers" : type === "langgraph" ? "Containerized graph service behind an authenticated API and durable state store" : "Containerized agent service behind authenticated n8n workflows";
+
+        document.getElementById("bpBoundary").textContent = boundary;
+        document.getElementById("bpRuntime").textContent = runtime;
+        document.getElementById("bpPersistence").textContent = persistence;
+        document.getElementById("bpGovernance").textContent = governance;
+        document.getElementById("bpFailure").textContent = failure;
+        document.getElementById("bpDeploy").textContent = deploy;
+
+        currentBlueprint = {
+          product: "ClearGlass AutoMap",
+          generated_at: new Date().toISOString(),
+          workflow_description: input.value.trim(),
+          recommendation: architecture,
+          confidence: result.confidence,
+          scores: { n8n: result.n8n, langgraph: result.langgraph, hybrid: result.hybrid },
+          requirements: state,
+          architecture: { integration_boundary: boundary, reasoning_runtime: runtime, persistence, governance, failure_policy: failure, deployment_shape: deploy },
+          validation_notice: "Technical, security, privacy, and operational validation is required before production deployment."
+        };
+      }
+
+      function analyze({ detect = true, scroll = false } = {}) {
+        if (detect) detectFromText();
+        const state = getState();
+        const result = calculate(state);
+        renderDecision(result);
+        renderMap(result.type, state);
+        buildBlueprint(result.type, state, result);
+        if (scroll) document.getElementById("decisionTitle").scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
+      function showToast(message) {
+        clearTimeout(toastTimer);
+        toast.textContent = message;
+        toast.classList.add("show");
+        toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
+      }
+
+      document.querySelectorAll(".preset").forEach(button => {
+        button.addEventListener("click", () => {
+          input.value = presets[button.dataset.preset];
+          if (button.dataset.preset === "research") {
+            controls.integrations.checked = false; controls.rapid.checked = false;
+          }
+          if (button.dataset.preset === "governance") {
+            ids.forEach(id => controls[id].checked = true);
+          }
+          analyze();
+        });
+      });
+
+      document.getElementById("analyzeBtn").addEventListener("click", () => analyze({ detect: true, scroll: true }));
+      ids.forEach(id => controls[id].addEventListener("change", () => analyze({ detect: false })));
+
+      document.getElementById("copyBtn").addEventListener("click", async () => {
+        const text = JSON.stringify(currentBlueprint, null, 2);
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast("Blueprint copied to clipboard");
+        } catch {
+          const temp = document.createElement("textarea");
+          temp.value = text; document.body.appendChild(temp); temp.select(); document.execCommand("copy"); temp.remove();
+          showToast("Blueprint copied to clipboard");
+        }
+      });
+
+      document.getElementById("downloadBtn").addEventListener("click", () => {
+        const blob = new Blob([JSON.stringify(currentBlueprint, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = "clearglass-automap-architecture.json";
+        document.body.appendChild(anchor); anchor.click(); anchor.remove();
+        URL.revokeObjectURL(url);
+        showToast("Architecture JSON downloaded");
+      });
+
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        input.value = "";
+        Object.assign(controls.integrations, { checked: true });
+        Object.assign(controls.rapid, { checked: true });
+        Object.assign(controls.memory, { checked: false });
+        Object.assign(controls.branching, { checked: false });
+        Object.assign(controls.multiAgent, { checked: false });
+        Object.assign(controls.humanGate, { checked: true });
+        Object.assign(controls.observability, { checked: true });
+        analyze({ detect: false });
+        showToast("AutoMap reset");
+      });
+
+      analyze({ detect: false });
+    })();
+  </script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="percival-os.html">Command &amp; Autonomous Operations</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="advanced-features-tools-systems.html"><span><b>Previous</b>Advanced Features, Tools &amp; Systems</span></a>
+      <a href="percival-os.html"><span><b>Topic hub</b>PERCIVAL OS</span></a>
+      <a href="conduit.html"><span><b>Next in journey</b>CONDUIT</span></a>
+    </div>
+    <ul>
+      <li><a href="advanced-features-tools-systems.html"><b>Advanced Features, Tools &amp; Systems</b> — the governed systems, agent and audit architecture catalog</a></li>
+      <li><a href="conduit.html"><b>CONDUIT</b> — self-hosted open-source workflow automation</a></li>
+      <li><a href="agentmesh.html"><b>Agent Mesh</b> — multi-agent OSINT orchestration</a></li>
+      <li><a href="intelligence-command-surface.html"><b>Intelligence Command Surface</b> — one unified operational picture</a></li>
+      <li><a href="postloop.html"><b>PostLoop</b> — autonomous multi-account content engine</a></li>
+      <li><a href="command-console.html"><b>Command Console</b> — cyber intelligence operations hub</a></li>
+      <li><a href="control-surface.html"><b>Systems Control Surface v3.1</b> — the live command dashboard</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="offers/index.html">Browse services &amp; engagements</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script src="/assets/js/cg-design-system.js" defer></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+  <script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ClearGlassInc Artemis — Self-Evolving AI Intelligence Platform</title>
+  <meta name="description" content="A full-stack implementation blueprint for ClearGlassInc Artemis: a secure, coalition-aware, self-improving AI intelligence platform built on Palantir Gotham, Foundry, AIP, and Apollo." />
+  <link rel="canonical" href="https://www.clearglassinc.com/artemis-self-evolving-platform.html" />
+  <meta property="og:title" content="ClearGlassInc Artemis — Self-Evolving AI Intelligence Platform" />
+  <meta property="og:description" content="Production architecture, ontology, agent design, self-improvement loop, governance, code examples, and scenario walkthrough for ClearGlassInc Artemis." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://www.clearglassinc.com/artemis-self-evolving-platform.html" />
+  <meta name="theme-color" content="#07111f" />
+  <link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="msapplication-TileColor" content="#07111f">
+  <meta name="msapplication-TileImage" content="/icon-192.png">
+  <meta name="msapplication-config" content="/browserconfig.xml">
+  <style>
+    :root{color-scheme:dark;--bg:#07111f;--panel:rgba(12,25,45,.78);--line:rgba(91,217,255,.22);--text:#eef8ff;--muted:#a7c3d6;--cyan:#59d9ff;--green:#67ffb8;--violet:#b59cff;--amber:#ffd166;--danger:#ff7a90;--code:#04101d}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at 18% 12%,rgba(89,217,255,.22),transparent 34%),radial-gradient(circle at 82% 18%,rgba(181,156,255,.18),transparent 32%),linear-gradient(180deg,#07111f,#020711 62%,#07111f);color:var(--text);line-height:1.65}.shell{width:min(1180px,calc(100% - 32px));margin:auto}.hero{padding:72px 0 42px}.eyebrow{display:inline-flex;gap:10px;align-items:center;padding:8px 12px;border:1px solid var(--line);border-radius:999px;color:var(--green);background:rgba(103,255,184,.08);font:700 12px/1 ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase}h1{font-size:clamp(42px,7vw,84px);line-height:.94;margin:22px 0 18px;letter-spacing:-.06em}h1 span{color:var(--cyan)}.lead{font-size:clamp(18px,2.4vw,24px);max-width:930px;color:var(--muted)}.actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px}.btn{display:inline-flex;align-items:center;gap:10px;padding:13px 18px;border-radius:14px;border:1px solid var(--line);text-decoration:none;color:var(--text);background:rgba(255,255,255,.06);font-weight:800}.btn.primary{background:linear-gradient(135deg,var(--cyan),var(--green));color:#02101b;border:0}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;margin:28px 0}.card{grid-column:span 4;padding:22px;border:1px solid var(--line);border-radius:24px;background:var(--panel);box-shadow:0 24px 70px rgba(0,0,0,.28);backdrop-filter:blur(14px)}.card.wide{grid-column:span 6}.card.full{grid-column:1/-1}.k{color:var(--green);font:800 12px/1 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase}.card h2,.card h3{margin:.55rem 0 .45rem;line-height:1.1}.card p,.card li{color:var(--muted)}code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}pre{overflow:auto;background:var(--code);border:1px solid rgba(89,217,255,.18);border-radius:18px;padding:18px;color:#d8f7ff}.matrix{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.pill{border:1px solid rgba(103,255,184,.22);border-radius:16px;padding:14px;background:rgba(103,255,184,.06)}.pill strong{display:block;color:var(--green)}.footer{padding:38px 0 70px;color:var(--muted);border-top:1px solid var(--line);margin-top:32px}@media(max-width:860px){.card,.card.wide{grid-column:1/-1}.matrix{grid-template-columns:1fr}}
+  </style>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<link rel="stylesheet" href="adaptive-action-bar.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="eyebrow">ClearGlassInc Artemis · Palantir Gotham / Foundry / AIP / Apollo</div>
+      <h1>Self-evolving <span>AI intelligence</span> platform blueprint.</h1>
+      <p class="lead">A production-oriented, full-stack architecture for secure, coalition-aware, latency-sensitive intelligence operations that ingest live and historical data, reason over a governed ontology, learn from operator feedback, and propose safe self-upgrades under explicit human approval.</p>
+      <div class="actions adaptive-action-bar" data-adaptive-action-bar aria-label="Artemis platform actions">
+        <a class="btn primary" data-action-priority="primary" href="CLEARGLASSINC_ARTEMIS_SELF_EVOLVING_PLATFORM_BLUEPRINT.md">Open full technical blueprint →</a>
+        <a class="btn" data-action-priority="secondary" href="#architecture">Explore architecture</a>
+        <a class="btn" data-action-priority="secondary" href="#loop">Self-improvement loop</a>
+        <a class="btn" data-action-priority="overflow" href="tools/windows/ultimate-windows-gpu-advanced-graphics-optimization.ps1">Windows GPU Optimization Script</a>
+      </div>
+    </section>
+
+    <section class="grid" id="architecture">
+      <article class="card wide"><div class="k">System Architecture</div><h2>Mission-grade full stack</h2><p>Operator surfaces connect through a policy-aware API gateway into deterministic mission services, event streaming, AIP orchestration, Foundry/Gotham operational data, hybrid retrieval, observability, and Apollo runtime control.</p><pre>Frontend → API Gateway → Mission Services
+         → Kafka/Flink Events → AIP Agents
+         → Foundry Ontology + Gotham Graph
+         → Policy + Audit + Apollo Release Rings</pre></article>
+      <article class="card wide"><div class="k">Data and Ontology</div><h2>Objects drive both humans and agents</h2><p>The ontology models missions, actors, assets, observations, alerts, cases, actions, intel products, feedback, model routes, and improvement proposals with confidence, lineage, temporal state, and permissions.</p><pre>Mission ─ scopes ─ Case ─ contains ─ Alert
+Actor ─ linked_to ─ Asset ─ emits ─ Observation
+AgentRun ─ cites ─ Evidence ─ derives ─ IntelProduct</pre></article>
+      <article class="card"><div class="k">Gotham</div><h3>Operational intelligence</h3><p>Investigations, entity tracking, link analysis, case timelines, mission collaboration, and analyst workflows.</p></article>
+      <article class="card"><div class="k">Foundry</div><h3>Data operating system</h3><p>Ingestion, pipelines, data products, lineage, Ontology objects, object actions, and governed application logic.</p></article>
+      <article class="card"><div class="k">AIP</div><h3>AI execution layer</h3><p>Copilots, tool-using agents, evaluations, prompt governance, model routing, and workflow automation over approved data/actions.</p></article>
+      <article class="card"><div class="k">Apollo</div><h3>Runtime control</h3><p>Signed releases, progressive deployment, policy bundles, rollback, feature flags, and environment-specific controls.</p></article>
+      <article class="card"><div class="k">Policy</div><h3>Default deny</h3><p>Need-to-know, entity-level controls, coalition compartments, prompt/tool policy, and immutable authorization logs.</p></article>
+      <article class="card"><div class="k">Observability</div><h3>Audit everything</h3><p>Metrics, traces, model telemetry, eval scorecards, drift monitors, lineage, and operator trust signals.</p></article>
+    </section>
+
+    <section class="grid" id="loop">
+      <article class="card full"><div class="k">Self-Improvement Loop</div><h2>Gets better safely, never changes mission goals autonomously</h2><div class="matrix"><div class="pill"><strong>1 · Capture</strong>Corrections, query logs, alert outcomes, mission results, approvals, rejections.</div><div class="pill"><strong>2 · Evaluate</strong>Generate regression cases, precision/recall checks, latency budgets, policy tests.</div><div class="pill"><strong>3 · Propose</strong>Prompt diffs, workflow changes, routing updates, heuristic tuning with evidence.</div><div class="pill"><strong>4 · Approve + Deploy</strong>Human review, canary, Apollo rollout, rollback, immutable audit.</div></div><pre>if evals.pass_all() and human_approval.granted:
+    apollo.promote(candidate, ring="canary")
+else:
+    registry.pin(current_known_good)</pre></article>
+      <article class="card wide"><div class="k">Agentic AI Design</div><h2>Copilots and multi-agent workflows</h2><p>Analyst and commander copilots coordinate triage, enrichment, correlation, summarization, recommendation, product generation, case opening, and action-package drafting. Operationally significant actions require explicit human approval gates.</p></article>
+      <article class="card wide"><div class="k">Security and Governance</div><h2>Coalition-aware zero trust</h2><p>Row, column, entity, and action-level access control; compartmentalized retrieval; provenance-linked prompts; immutable logs; model governance; and policy-as-code enforced before every data read, tool call, and release.</p></article>
+      <article class="card full"><div class="k">Defensive Algorithm Prompt</div><h2>Calm, strict guardian behavior</h2><p>Artemis now includes a reusable defensive-algorithm operating prompt for AIP copilots, triage agents, policy agents, and CI/CD guardians. It prioritizes safety, containment, verification, least privilege, evidence preservation, reversible actions, and explicit human approval for identity, credential, production, or high-impact events.</p><pre>Low risk      → observe and log
+Medium risk   → warn, constrain, verify
+High risk     → isolate, halt, escalate
+Critical risk → contain, preserve evidence, notify operators</pre></article>
+      <article class="card full"><div class="k">Operator Utility</div><h2>Ultimate Windows GPU &amp; advanced graphics optimization</h2><p>A downloadable PowerShell utility has been added for elevated Windows workstations. It creates a desktop registry backup folder before applying Hardware-Accelerated GPU Scheduling, TDR delay, Ultimate Performance power-plan, SystemProfile, network-throttling, and MMCSS Games scheduling tweaks. Run only from an Administrator PowerShell session and restart after completion.</p><pre>Set-ExecutionPolicy -Scope Process Bypass
+.\tools\windows\ultimate-windows-gpu-advanced-graphics-optimization.ps1</pre></article>
+      <article class="card full"><div class="k">Safer Operator Utility</div><h2>Audit-first Windows GPU tuning</h2><p>A safer PowerShell alternative now keeps the original enthusiast script intact while adding explicit guardrails: registry exports, JSONL value snapshots, per-action logging, verified Ultimate Performance activation, optional HAGS enable/disable, opt-in TDR troubleshooting, opt-in SystemProfile/MMCSS experiments, WhatIf previews, and rollback from the generated backup folder.</p><pre>powershell -ExecutionPolicy Bypass -File .\tools\windows\safe-windows-gpu-tuning.ps1 -ApplyLowRisk
+powershell -ExecutionPolicy Bypass -File .\tools\windows\safe-windows-gpu-tuning.ps1 -ApplyLowRisk -IncludeTdrDelay -WhatIf</pre></article>
+      <article class="card full"><div class="k">Electrical Workflow Merge</div><h2>Safety-first field service, documentation, and earnings engine</h2><p>Artemis now models electrical inspections as permit-aware, evidence-backed work orders: immediate hazards are isolated first, qualified electricians perform de-energized LOTO work, circuits are traced and labelled, test evidence drives closeout, and verified findings become customer-ready estimates, maintenance plans, and recurring revenue workflows.</p><pre>Finding → severity classifier → controls + permit gate
+        → work order → test register → final report
+        → quote / maintenance plan / revenue metrics</pre></article>
+    </section>
+  </main>
+  <footer class="shell footer">ClearGlassInc Artemis blueprint landing page. The complete engineering design document is available in the linked Markdown specification.</footer>
+<script defer src="/logo-badge.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="artemis-os.html">Artemis Platform</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="artemis-ai-cyber-intelligence-platform.html"><span><b>Previous</b>AI Cyber Intelligence Platform</span></a>
+      <a href="artemis-os.html"><span><b>Topic hub</b>Artemis OS</span></a>
+      <a href="artemis-2040.html"><span><b>Next in journey</b>Artemis 2040</span></a>
+    </div>
+    <ul>
+      <li><a href="blog/clearglassinc-artemis-self-evolving-ai-intelligence-platform.html"><b>Self-Evolving AI Platforms</b> — how Artemis improves itself safely</a></li>
+      <li><a href="artemis-2040.html"><b>Artemis 2040</b> — long-horizon intelligence platform</a></li>
+      <li><a href="artemis-fawl/index.html"><b>ARTEMIS // FAWL</b> — the governed, self-healing Artemis command platform</a></li>
+      <li><a href="air-control.html"><b>ZEPHYR</b> — air systems control surface</a></li>
+      <li><a href="air-systems-control.html"><b>Air Systems Control</b> — the Artemis airspace control surface</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="pricing.html">See pricing &amp; plans</a> · <a href="store.html">Book a security engagement</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script src="/assets/js/cg-design-system.js" defer></script>
+<script src="adaptive-action-bar.js" defer></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

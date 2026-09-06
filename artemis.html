@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta name="description" content="Artemis is ClearGlass’s self-evolving AI platform that autonomously builds, tests, and improves software systems. ClearGlass Inc. builds intelligent…'s self-evolving AI platform that autonomously builds, tests, and improves software systems.">
+<link rel="canonical" href="https://www.clearglassinc.com/artemis.html">
+<meta property="og:title" content="Artemis | ClearGlass Inc">
+<meta property="og:description" content="Artemis is ClearGlass's self-evolving AI platform that autonomously builds, tests, and improves software systems.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.clearglassinc.com/artemis.html">
+<meta charset="UTF-8">
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ClearGlass NEXUS v12 — Intelligence Platform | Ontario</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05060e;--bg2:#080a16;--bg3:#0c0f1e;--bg4:#11142a;
+  --am:#60a5fa;--am2:#a78bfa;--am3:#818cf8;--am4:#3b82f6;
+  --al:#44507e;--ad:#16203a;--ab:#050112;
+  --wt:#eef2ff;--wt2:#aab4d8;--wt3:#2d3566;--wt4:#2a3358;
+  --gn:#00FF88;--gn2:#00CC66;--gn3:#00FF44;
+  --rd:#f472b6;--rd2:#3b82f6;
+  --or:#818cf8;--or2:#6d5cf0;
+  --bl:#44AAFF;--bl2:#2266CC;--bl3:#66CCFF;
+  --pu:#CC66FF;--pu2:#9933CC;
+  --cy:#00DDFF;--cy2:#00AACC;--cy3:#88EEFF;
+  --yw:#a78bfa;--yw2:#6d8fd6;
+  --bdr:rgba(96,165,250,.15);--bdr2:rgba(96,165,250,.08);--bdr3:rgba(96,165,250,.04);
+  --card:rgba(0,0,0,.52);--card2:rgba(96,165,250,.03);
+  --sh:0 0 28px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--wt);
+  font-family:'IBM Plex Mono',monospace;
+  min-height:100vh;overflow-x:hidden;
+  cursor:crosshair;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.09) 2px,rgba(0,0,0,.09) 4px);
+}
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9997;
+  background:radial-gradient(ellipse 90% 88% at 50% 50%,transparent 50%,rgba(0,0,0,.7) 100%);
+}
+
+#hdr{position:sticky;top:18px;z-index:400;height:48px;background:linear-gradient(180deg,rgba(2,0,4,.99),rgba(2,0,4,.93));border-bottom:1px solid var(--bdr);display:grid;grid-template-columns:auto 1fr auto;align-items:center;padding:0 16px;gap:12px}
+.hl-mark{font-size:13px;font-weight:700;letter-spacing:8px;color:var(--am)}
+.hl-sub{font-size:6px;letter-spacing:3px;color:var(--al);margin-top:1px}
+.hpills{display:flex;align-items:center;gap:5px;justify-content:center;flex-wrap:wrap}
+.hpill{display:flex;align-items:center;gap:4px;padding:2.5px 8px;border:1px solid rgba(96,165,250,.1);border-radius:2px;font-size:5px;letter-spacing:1.5px;color:var(--al);white-space:nowrap}
+.hdot{width:4px;height:4px;border-radius:50%;background:rgba(96,165,250,.1);flex-shrink:0;transition:all .4s}
+.hdot.g{background:var(--gn);box-shadow:0 0 5px var(--gn);animation:pulse 2s infinite}
+.hdot.o{background:var(--or);animation:pulse 1.5s infinite}
+.hdot.r{background:var(--rd)}
+.hdot.b{background:var(--bl);animation:pulse 2.5s infinite}
+.hright{text-align:right}
+#hclock{font-size:13px;font-weight:600;letter-spacing:3px;color:var(--am)}
+#hdate{font-size:5px;letter-spacing:2px;color:var(--al)}
+
+#darpa-banner{position:fixed;top:0;left:0;right:0;z-index:9999;height:18px;background:repeating-linear-gradient(90deg,rgba(244,114,182,.15) 0,rgba(244,114,182,.15) 2px,transparent 2px,transparent 8px);display:flex;align-items:center;justify-content:center;gap:20px;font-size:7px;letter-spacing:3px;color:rgba(244,114,182,.5);border-bottom:1px solid rgba(244,114,182,.15);pointer-events:none}
+body{padding-top:18px}
+
+.sh{display:flex;align-items:center;gap:9px;margin:14px 16px 6px}
+.sh::before{content:"//";color:var(--al);font-size:7px;letter-spacing:2px}
+.sh-t{font-size:7px;letter-spacing:5px;color:var(--am)}
+.sh-c{font-size:6px;letter-spacing:2px;color:var(--al)}
+.sh::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--bdr2),transparent)}
+
+#main{padding:0 16px 24px;display:flex;flex-direction:column;gap:14px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.gmap{display:grid;grid-template-columns:1.6fr 1fr;gap:7px}
+.gfin{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:7px}
+
+.win{background:var(--card);border:1px solid var(--bdr2);border-radius:3px;overflow:hidden;transition:border-color .25s;animation:fadeUp .35s ease both;box-shadow:var(--sh)}
+.win:hover{border-color:var(--bdr)}
+.wb{display:flex;align-items:center;justify-content:space-between;padding:5px 10px;background:var(--card2);border-bottom:1px solid var(--bdr2)}
+.wt{font-size:7px;letter-spacing:3px;color:var(--am);font-weight:500}
+.wbody{padding:10px}
+
+.bdg{font-size:5.5px;letter-spacing:2px;padding:2px 6px;border-radius:2px;border:1px solid;font-weight:600;white-space:nowrap}
+.bgn{color:var(--gn);border-color:rgba(0,255,136,.28);background:rgba(0,255,136,.05)}
+.bam{color:var(--am);border-color:rgba(96,165,250,.28);background:rgba(96,165,250,.05)}
+.brd{color:var(--rd);border-color:rgba(244,114,182,.28);background:rgba(244,114,182,.05)}
+.bor{color:var(--or);border-color:rgba(129,140,248,.28);background:rgba(129,140,248,.05)}
+.bbl{color:var(--bl);border-color:rgba(68,170,255,.28);background:rgba(68,170,255,.05)}
+.bpu{color:var(--pu);border-color:rgba(204,102,255,.28);background:rgba(204,102,255,.05)}
+.bcy{color:var(--cy);border-color:rgba(0,221,255,.28);background:rgba(0,221,255,.05)}
+.byw{color:var(--yw);border-color:rgba(167,139,250,.28);background:rgba(167,139,250,.04)}
+.bdim{color:var(--al);border-color:rgba(70,84,140,.22)}
+
+.er{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(96,165,250,.04);font-size:7px}
+.ek{color:var(--al);letter-spacing:.4px}
+.ev{color:var(--wt);text-align:right}
+.ev.g{color:var(--gn)}.ev.r{color:var(--rd)}.ev.o{color:var(--or)}.ev.a{color:var(--am)}.ev.c{color:var(--cy)}.ev.b{color:var(--bl)}.ev.p{color:var(--pu)}.ev.y{color:var(--yw)}
+
+.ph{padding:18px;text-align:center}
+.ph-i{font-size:20px;opacity:.2;margin-bottom:7px}
+.ph-t{font-size:7px;letter-spacing:3px;color:var(--al)}
+
+.ticker{height:20px;background:rgba(0,0,0,.55);border-bottom:1px solid var(--bdr2);overflow:hidden;position:relative;display:flex;align-items:center}
+.tk-lbl{position:absolute;left:0;top:0;bottom:0;display:flex;align-items:center;padding:0 10px;z-index:5;font-size:6px;letter-spacing:3px;font-weight:700;color:#000;background:linear-gradient(90deg,var(--am) 0%,rgba(96,165,250,.85) 65%,transparent);min-width:80px}
+.tk-track{display:flex;align-items:center;white-space:nowrap;padding-left:90px;animation:scroll 70s linear infinite}
+.tk-item{font-size:6px;letter-spacing:1.5px;color:var(--al);padding:0 16px;border-right:1px solid rgba(96,165,250,.08)}
+.tk-item.hi{color:var(--am)}.tk-item.al{color:var(--rd)}.tk-item.gn{color:var(--gn)}.tk-item.bl{color:var(--bl)}.tk-item.cy{color:var(--cy)}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+.cam-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px}
+.cc{position:relative;background:rgba(0,0,0,.72);border:1px solid rgba(96,165,250,.08);border-radius:3px;overflow:hidden;cursor:pointer;transition:all .2s}
+.cc:hover{border-color:rgba(96,165,250,.26)}
+.cc-hd{display:flex;align-items:center;justify-content:space-between;padding:3px 5px;background:rgba(96,165,250,.03);border-bottom:1px solid rgba(96,165,250,.05);font-size:5px;letter-spacing:2px;color:var(--al)}
+.cc-imgwrap{position:relative;width:100%;aspect-ratio:4/3;background:#05060e;overflow:hidden}
+.cc-img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .4s;filter:sepia(.07) saturate(1.1)}
+.cc-img.ld{opacity:1}
+.cc-loader{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:5px;color:var(--al)}
+.cc-ft{padding:3px 5px;font-size:5.5px;color:var(--wt);border-top:1px solid rgba(96,165,250,.04)}
+
+.fabs{position:fixed;bottom:12px;left:12px;z-index:499;display:flex;flex-direction:column;gap:4px}
+.fab{background:rgba(2,0,4,.92);border:1px solid rgba(96,165,250,.2);color:var(--am);font-family:'IBM Plex Mono',monospace;font-size:6px;letter-spacing:2px;padding:6px 12px;cursor:pointer;border-radius:3px;transition:all .2s;white-space:nowrap}
+.fab:hover{background:rgba(96,165,250,.08);border-color:rgba(96,165,250,.42)}
+.fab.solid{background:rgba(96,165,250,.86);color:#000;font-weight:700}
+
+.wm{text-align:center;padding:18px;font-size:5px;letter-spacing:5px;color:var(--al);border-top:1px solid var(--bdr2)}
+
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(96,165,250,.16);border-radius:2px}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:1100px){.gfin,.gmap{grid-template-columns:1fr}}
+@media(max-width:900px){.g3,.g2,.gmap,.gfin{grid-template-columns:1fr}}
+
+#map-wrap iframe{width:100%;height:260px;display:block;border:none;filter:invert(92%) hue-rotate(30deg) saturate(1.8) brightness(.72) sepia(.12)}
+</style>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+  <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">ClearGlass NEXUS v12 — Intelligence Platform | Ontario Operations Center</h1>
+
+<div id="ClearGlassInc-banner">
+  <span>// CLEARGLASS NEXUS</span>
+  <span>◈ ADVANCED INTELLIGENCE PROGRAM</span>
+  <span>//Ontario's OPS</span>
+</div>
+
+<div id="hdr">
+  <div>
+    <div class="hl-mark">NEXUS</div>
+    <div class="hl-sub">CLEARGLASSINC. GLOBAL OSINT</div>
+  </div>
+  <div class="hpills">
+    <div class="hpill"><span class="hdot" id="d-wx"></span>WEATHER</div>
+    <div class="hpill"><span class="hdot" id="d-air"></span>AIRSPACE</div>
+    <div class="hpill"><span class="hdot" id="d-eq"></span>SEISMIC</div>
+    <div class="hpill"><span class="hdot" id="d-sw"></span>SPACE WX</div>
+    <div class="hpill"><span class="hdot" id="d-iss"></span>ISS</div>
+    <div class="hpill"><span class="hdot" id="d-pwr"></span>GRID</div>
+    <div class="hpill"><span class="hdot" id="d-cr"></span>CRYPTO</div>
+    <div class="hpill"><span class="hdot" id="d-fx"></span>FX</div>
+    <div class="hpill"><span class="hdot" id="d-cam"></span>CAMERAS</div>
+  </div>
+  <div class="hright">
+    <div id="hclock">--:--:--</div>
+    <div id="hdate">--- -- ---- | UTC</div>
+  </div>
+</div>
+
+<div class="ticker">
+  <div class="tk-lbl">▶ NEXUS</div>
+  <div class="tk-track">
+    <span class="tk-item hi">CLEARGLASS NEXUS — GLOBAL OSINT COMMAND TERMINAL — ONTARIO OPERATIONS CENTER</span>
+    <span class="tk-item">OPENSKY ADS-B AIRSPACE MONITORING — SOUTHERN ONTARIO SECTOR</span>
+    <span class="tk-item al">USGS SEISMIC FEED — M2.5+ WORLDWIDE ALERTS ACTIVE</span>
+    <span class="tk-item gn">ONTARIO POWER GRID — REAL-TIME GENERATION MIX MONITORED</span>
+    <span class="tk-item bl">NOAA SWPC KP-INDEX — GEOMAGNETIC STORM WATCH ACTIVE</span>
+    <span class="tk-item">MTO COMPASS SURVEILLANCE — CAMERA FEEDS ONLINE</span>
+    <span class="tk-item cy">ISS ORBITAL TRACKER — LIVE POSITION UPDATES</span>
+    <span class="tk-item hi">CLEARGLASS NEXUS v12 — GLOBAL OSINT COMMAND TERMINAL — ONTARIO OPERATIONS CENTER</span>
+    <span class="tk-item">OPENSKY ADS-B AIRSPACE MONITORING — SOUTHERN ONTARIO SECTOR</span>
+    <span class="tk-item al">USGS SEISMIC FEED — M2.5+ WORLDWIDE ALERTS ACTIVE</span>
+    <span class="tk-item gn">ONTARIO POWER GRID — REAL-TIME GENERATION MIX MONITORED</span>
+    <span class="tk-item bl">NOAA SWPC KP-INDEX — GEOMAGNETIC STORM WATCH ACTIVE</span>
+  </div>
+</div>
+
+<div id="main">
+
+<section>
+  <div class="sh"><span class="sh-t">LOCATION INTELLIGENCE</span><span class="sh-c" id="loc-coords">ACQUIRING FIX…</span></div>
+  <div class="gmap">
+    <div class="win">
+      <div class="wb"><span class="wt">GEOSPATIAL MAP — LIVE</span><span class="bdg bdim" id="map-badge">LOADING</span></div>
+      <div id="map-wrap"><div style="padding:20px;text-align:center;font-size:7px;letter-spacing:3px;color:var(--al)">ACQUIRING COORDINATES…</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:7px">
+      <div class="win">
+        <div class="wb"><span class="wt">WEATHER CONDITIONS</span><span class="bdg bdim" id="wx-badge">LOADING</span></div>
+        <div class="wbody" id="wx-content"><div class="ph"><div class="ph-i">🌡</div><div class="ph-t">FETCHING WEATHER</div></div></div>
+      </div>
+      <div class="win">
+        <div class="wb"><span class="wt">AIR QUALITY</span><span class="bdg bdim" id="aq-badge">LOADING</span></div>
+        <div class="wbody" id="aq-content"><div class="ph"><div class="ph-i">💨</div><div class="ph-t">FETCHING AQ DATA</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sh"><span class="sh-t">SKY INTELLIGENCE</span><span class="sh-c">AIRSPACE · SEISMIC · SPACE WEATHER</span></div>
+  <div class="g3">
+    <div class="win">
+      <div class="wb"><span class="wt">AIRSPACE SURVEILLANCE</span><span class="bdg bbl" id="air-badge">LOADING</span></div>
+      <div class="wbody" id="air-content"><div class="ph"><div class="ph-i">✈</div><div class="ph-t">CONNECTING OPENSKY</div></div></div>
+    </div>
+    <div class="win">
+      <div class="wb"><span class="wt">SEISMIC MONITOR</span><span class="bdg bor" id="eq-badge">LOADING</span></div>
+      <div class="wbody" id="eq-content"><div class="ph"><div class="ph-i">📡</div><div class="ph-t">CONNECTING USGS</div></div></div>
+    </div>
+    <div class="win">
+      <div class="wb"><span class="wt">SPACE WEATHER</span><span class="bdg bpu" id="sw-badge">LOADING</span></div>
+      <div class="wbody" id="sw-content"><div class="ph"><div class="ph-i">🌞</div><div class="ph-t">CONNECTING NOAA SWPC</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sh"><span class="sh-t">ORBITAL · POWER GRID</span><span class="sh-c">ISS · IESO</span></div>
+  <div class="g2">
+    <div class="win">
+      <div class="wb"><span class="wt">ISS ORBITAL TRACKER</span><span class="bdg bcy" id="iss-badge">LOADING</span></div>
+      <div class="wbody" id="iss-content"><div class="ph"><div class="ph-i">🛰</div><div class="ph-t">ACQUIRING ISS SIGNAL</div></div></div>
+    </div>
+    <div class="win">
+      <div class="wb"><span class="wt">ONTARIO POWER GRID</span><span class="bdg bgn" id="pwr-badge">LOADING</span></div>
+      <div class="wbody" id="pwr-content"><div class="ph"><div class="ph-i">⚡</div><div class="ph-t">POLLING IESO DATA</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sh"><span class="sh-t">FINANCIAL INTELLIGENCE</span><span class="sh-c">CRYPTO · FX</span></div>
+  <div class="g2">
+    <div class="win">
+      <div class="wb"><span class="wt">CRYPTO MARKETS</span><span class="bdg byw" id="cr-badge">LOADING</span></div>
+      <div class="wbody" id="cr-content"><div class="ph"><div class="ph-i">₿</div><div class="ph-t">CONNECTING COINCAP</div></div></div>
+    </div>
+    <div class="win">
+      <div class="wb"><span class="wt">FX RATES</span><span class="bdg bgn" id="fx-badge">LOADING</span></div>
+      <div class="wbody" id="fx-content"><div class="ph"><div class="ph-i">💱</div><div class="ph-t">CONNECTING FRANKFURTER</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sh"><span class="sh-t">CAMERA SURVEILLANCE</span><span class="sh-c">MTO COMPASS — QEW · SKYWAY · HWY 403</span></div>
+  <div class="win">
+    <div class="wb"><span class="wt">LIVE CAMERA FEEDS</span><span class="bdg bgn" id="cam-badge">LOADING</span></div>
+    <div class="wbody">
+      <div class="cam-grid" id="cam-grid"></div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div class="wm">CLEARGLASS INC. — NEXUS GLOBAL OSINT, ONTARIO — FOR AUTHORIZED INTELLIGENCE USE ONLY</div>
+
+<div class="fabs">
+  <button class="fab" onclick="window.scrollTo(0,0)">▲ TOP</button>
+  <button class="fab" onclick="location.href='artemis-percival.html'" title="Open AVALON — ARTEMIS ⊕ PERCIVAL fusion core">⬣ AVALON FUSION</button>
+  <button class="fab solid" onclick="doRefresh()">⟳ REFRESH</button>
+</div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const setDot=(id,cls)=>{const el=$(id);if(el)el.className='hdot '+cls};
+
+const S={
+  loc:{lat:43.3255,lon:-79.7990,city:'Burlington',region:'ON'},
+  wx:{},aq:{},air:{count:0,list:[]},eq:{total:0,max:0,list:[]},
+  sw:{kp:0,flux:0,wind:0},iss:{lat:0,lon:0,dist:0},
+  pwr:{total:0},cr:{},fx:{},
+};
+
+const CAM_DB=[
+  {id:12490,name:'QEW @ Evans Ave',road:'QEW'},
+  {id:12500,name:'QEW @ Browns Line',road:'QEW'},
+  {id:12542,name:'QEW @ Cawthra Rd',road:'QEW'},
+  {id:12570,name:'QEW @ Burloak Dr',road:'QEW'},
+  {id:12572,name:'QEW @ Walkers Line',road:'QEW'},
+  {id:12573,name:'QEW @ Brant St',road:'QEW'},
+  {id:12590,name:'QEW @ Guelph Line',road:'QEW'},
+  {id:12567,name:'SKYWAY W Approach',road:'SKYWAY'},
+  {id:12568,name:'SKYWAY Bridge Deck',road:'SKYWAY'},
+  {id:12569,name:'SKYWAY E Approach',road:'SKYWAY'},
+  {id:12574,name:'403 @ Hwy 6',road:'403'},
+  {id:12575,name:'403 @ Brant St',road:'403'},
+  {id:12576,name:'403 @ Garden Ave',road:'403'},
+];
+const CAM_URL=id=>`https://www.navbug.com/traffic-camshots/ON${id}.jpg`;
+
+function tickClock(){
+  const n=new Date(),pad=x=>String(x).padStart(2,'0');
+  $('hclock').textContent=`${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;
+  const days=['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const mons=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  $('hdate').textContent=`${days[n.getDay()]} ${pad(n.getDate())} ${mons[n.getMonth()]} ${n.getFullYear()} | UTC ${pad(n.getUTCHours())}:${pad(n.getUTCMinutes())}`;
+}
+setInterval(tickClock,1000);tickClock();
+
+function wxIcon(c){if(c<=3)return'☀';if(c<=48)return'🌤';if(c<=57)return'🌧';if(c<=67)return'🌨';if(c<=77)return'❄';if(c<=82)return'🌦';if(c<=86)return'🌨';return'⛈'}
+function wxName(c){if(c===0)return'CLEAR';if(c<=2)return'PARTLY CLOUDY';if(c===3)return'OVERCAST';if(c<=48)return'FOG';if(c<=57)return'DRIZZLE';if(c<=67)return'RAIN';if(c<=77)return'SNOW';if(c<=82)return'SHOWERS';return'THUNDERSTORM'}
+function windDir(d){const ds=['N','NE','E','SE','S','SW','W','NW'];return ds[Math.round(d/45)%8]}
+
+function loadMap(lat,lon){
+  const bbox=`${lon-0.08},${lat-0.06},${lon+0.08},${lat+0.06}`;
+  $('map-wrap').innerHTML=`<iframe src="https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}" loading="lazy"></iframe>`;
+  $('map-badge').textContent='LIVE';$('map-badge').className='bdg bgn';
+}
+
+async function reverseGeo(lat,lon){
+  try{
+    const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`,{headers:{'Accept-Language':'en'}});
+    const d=await r.json();
+    S.loc.city=d.address?.city||d.address?.town||'Unknown';
+    S.loc.region=d.address?.state||'';
+    $('loc-coords').textContent=`${S.loc.city}, ${S.loc.region} | ${lat.toFixed(4)}°N ${Math.abs(lon).toFixed(4)}°W`;
+  }catch(e){}
+}
+
+function geoInit(){
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(
+      pos=>{S.loc.lat=pos.coords.latitude;S.loc.lon=pos.coords.longitude;reverseGeo(S.loc.lat,S.loc.lon);loadMap(S.loc.lat,S.loc.lon)},
+      ()=>{loadMap(S.loc.lat,S.loc.lon);reverseGeo(S.loc.lat,S.loc.lon)}
+    );
+  }else{loadMap(S.loc.lat,S.loc.lon)}
+}
+
+async function fetchWx(){
+  try{
+    const [wx,aq]=await Promise.all([
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${S.loc.lat}&longitude=${S.loc.lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code,cloud_cover,pressure_msl,visibility&wind_speed_unit=kmh&timezone=auto`).then(r=>r.json()),
+      fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${S.loc.lat}&longitude=${S.loc.lon}&current=pm10,pm2_5,ozone,nitrogen_dioxide,european_aqi`).then(r=>r.json())
+    ]);
+    const c=wx.current;S.wx={temp:c.temperature_2m,feels:c.apparent_temperature,humidity:c.relative_humidity_2m,wind:c.wind_speed_10m,precip:c.precipitation,code:c.weather_code};
+    const aqc=aq.current;S.aq={aqi:aqc.european_aqi,pm25:aqc.pm2_5,pm10:aqc.pm10,o3:aqc.ozone,no2:aqc.nitrogen_dioxide};
+    $('wx-content').innerHTML=`
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+        <span style="font-size:30px">${wxIcon(c.weather_code)}</span>
+        <div><div style="font-size:22px;font-weight:700;color:var(--am)">${Math.round(c.temperature_2m)}°C</div>
+        <div style="font-size:6px;letter-spacing:2px;color:var(--al)">${wxName(c.weather_code)}</div></div>
+      </div>
+      <div class="er"><span class="ek">FEELS LIKE</span><span class="ev">${Math.round(c.apparent_temperature)}°C</span></div>
+      <div class="er"><span class="ek">HUMIDITY</span><span class="ev">${c.relative_humidity_2m}%</span></div>
+      <div class="er"><span class="ek">WIND</span><span class="ev">${Math.round(c.wind_speed_10m)} km/h ${windDir(c.wind_direction_10m)}</span></div>
+      <div class="er"><span class="ek">PRESSURE</span><span class="ev">${Math.round(c.pressure_msl)} hPa</span></div>
+      <div class="er"><span class="ek">PRECIP</span><span class="ev ${c.precipitation>0?'b':''}">${c.precipitation} mm</span></div>`;
+    const aqLbl=['—','GOOD','FAIR','MODERATE','POOR','VERY POOR'];
+    const aqIdx=Math.min(5,Math.max(1,Math.round((aqc.european_aqi||0)/25)+1));
+    $('aq-content').innerHTML=`
+      <div class="er"><span class="ek">EU AQI</span><span class="ev ${aqc.european_aqi>75?'r':aqc.european_aqi>50?'o':'g'}">${Math.round(aqc.european_aqi||0)} — ${aqLbl[aqIdx]}</span></div>
+      <div class="er"><span class="ek">PM2.5</span><span class="ev">${(aqc.pm2_5||0).toFixed(1)} µg/m³</span></div>
+      <div class="er"><span class="ek">PM10</span><span class="ev">${(aqc.pm10||0).toFixed(1)} µg/m³</span></div>
+      <div class="er"><span class="ek">OZONE</span><span class="ev">${(aqc.ozone||0).toFixed(1)} µg/m³</span></div>
+      <div class="er"><span class="ek">NO₂</span><span class="ev">${(aqc.nitrogen_dioxide||0).toFixed(1)} µg/m³</span></div>`;
+    $('wx-badge').textContent=`${Math.round(c.temperature_2m)}°C`;$('wx-badge').className='bdg bgn';
+    $('aq-badge').textContent=`AQI ${Math.round(aqc.european_aqi||0)}`;$('aq-badge').className='bdg bgn';
+    setDot('d-wx','g');
+  }catch(e){$('wx-badge').textContent='ERROR';$('wx-badge').className='bdg brd';setDot('d-wx','r')}
+}
+
+async function fetchAir(){
+  try{
+    const r=await fetch('https://opensky-network.org/api/states/all?lamin=43.0&lomin=-80.3&lamax=43.8&lomax=-79.2');
+    const d=await r.json();
+    const states=(d.states||[]).filter(s=>s&&s[5]&&s[6]);
+    S.air.count=states.length;
+    S.air.list=states.slice(0,8).map(s=>({cs:(s[1]||'UNKN').trim(),country:s[2],alt:s[7]||0,spd:s[9]||0,gnd:s[8]}));
+    $('air-content').innerHTML=`
+      <div style="text-align:center;padding:8px;margin-bottom:8px">
+        <div style="font-size:24px;font-weight:700;color:var(--bl)">${S.air.count}</div>
+        <div style="font-size:5px;letter-spacing:2px;color:var(--al)">AIRCRAFT TRACKED</div>
+      </div>
+      ${S.air.list.map(ac=>`<div class="er"><span class="ek">${ac.cs}</span><span class="ev">${Math.round(ac.alt/0.3048)}ft ${Math.round(ac.spd)}kt</span></div>`).join('')}`;
+    $('air-badge').textContent=`${S.air.count} TRACKS`;$('air-badge').className='bdg bbl';
+    setDot('d-air','g');
+  }catch(e){$('air-badge').textContent='RESTRICTED';$('air-badge').className='bdg bdim';setDot('d-air','o');$('air-content').innerHTML='<div class="ph"><div class="ph-i">✈</div><div class="ph-t">OPENSKY RATE LIMIT</div></div>'}
+}
+
+async function fetchEQ(){
+  try{
+    const r=await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson');
+    const d=await r.json();
+    const feats=d.features||[];
+    S.eq.total=feats.length;
+    S.eq.max=feats.length?Math.max(...feats.map(f=>f.properties.mag)):0;
+    S.eq.list=feats.slice(0,6).map(f=>({mag:f.properties.mag,place:f.properties.place,depth:f.geometry.coordinates[2]}));
+    $('eq-content').innerHTML=`
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+        <div style="text-align:center;padding:6px;background:rgba(129,140,248,.04);border-radius:2px">
+          <div style="font-size:18px;font-weight:700;color:var(--or)">${S.eq.total}</div>
+          <div style="font-size:5px;letter-spacing:2px;color:var(--al)">7 DAYS</div>
+        </div>
+        <div style="text-align:center;padding:6px;background:rgba(244,114,182,.04);border-radius:2px">
+          <div style="font-size:18px;font-weight:700;color:var(--rd)">M${S.eq.max.toFixed(1)}</div>
+          <div style="font-size:5px;letter-spacing:2px;color:var(--al)">MAX MAG</div>
+        </div>
+      </div>
+      ${S.eq.list.map(q=>`
+        <div style="padding:3px 0;border-bottom:1px solid rgba(129,140,248,.05)">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:8px;font-weight:700;color:${q.mag>=6?'var(--rd)':q.mag>=5?'var(--or)':'var(--am)'}">M${q.mag.toFixed(1)}</span>
+            <span style="font-size:6px;color:var(--wt);flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${q.place}</span>
+          </div>
+        </div>`).join('')}`;
+    $('eq-badge').textContent=`${S.eq.total} EVENTS`;$('eq-badge').className=`bdg ${S.eq.max>=6?'brd':S.eq.max>=5?'bor':'bam'}`;
+    setDot('d-eq','g');
+  }catch(e){$('eq-badge').textContent='ERROR';$('eq-badge').className='bdg brd';setDot('d-eq','r')}
+}
+
+async function fetchSpaceWx(){
+  try{
+    const [kpRes,fluxRes,windRes]=await Promise.allSettled([
+      fetch('https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json').then(r=>r.json()),
+      fetch('https://services.swpc.noaa.gov/products/summary/10cm-flux.json').then(r=>r.json()),
+      fetch('https://services.swpc.noaa.gov/products/summary/solar-wind-speed.json').then(r=>r.json())
+    ]);
+    const kpData=kpRes.status==='fulfilled'?kpRes.value:[];
+    const flux=fluxRes.status==='fulfilled'?parseFloat(fluxRes.value.Flux||0):0;
+    const wind=windRes.status==='fulfilled'?parseFloat(windRes.value.WindSpeed||0):0;
+    const recent=kpData.slice(-1)[0];
+    const kp=recent?parseFloat(recent[1])||0:0;
+    S.sw={kp,flux,wind};
+    $('sw-content').innerHTML=`
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:8px">
+        <div style="text-align:center;padding:5px;background:rgba(204,102,255,.04);border-radius:2px">
+          <div style="font-size:16px;font-weight:700;color:var(--pu)">${kp.toFixed(1)}</div>
+          <div style="font-size:5px;letter-spacing:2px;color:var(--al)">Kp INDEX</div>
+        </div>
+        <div style="text-align:center;padding:5px;background:rgba(96,165,250,.03);border-radius:2px">
+          <div style="font-size:16px;font-weight:700;color:var(--am)">${Math.round(flux)}</div>
+          <div style="font-size:5px;letter-spacing:2px;color:var(--al)">FLUX SFU</div>
+        </div>
+        <div style="text-align:center;padding:5px;background:rgba(0,221,255,.03);border-radius:2px">
+          <div style="font-size:16px;font-weight:700;color:var(--cy)">${Math.round(wind)}</div>
+          <div style="font-size:5px;letter-spacing:2px;color:var(--al)">WIND km/s</div>
+        </div>
+      </div>
+      <div class="er"><span class="ek">GEOMAGNETIC</span><span class="ev ${kp>=7?'r':kp>=5?'o':'g'}">${kp>=7?'SEVERE STORM':kp>=5?'STORM':kp>=3?'UNSETTLED':'QUIET'}</span></div>
+      <div class="er"><span class="ek">AURORA</span><span class="ev ${kp>=5?'r':kp>=3?'o':'p'}">${kp>=5?'HIGH ACTIVITY':kp>=3?'POSSIBLE':'QUIET'}</span></div>`;
+    $('sw-badge').textContent=`Kp ${kp.toFixed(1)}`;$('sw-badge').className=`bdg ${kp>=7?'brd':kp>=5?'bor':'bpu'}`;
+    setDot('d-sw',kp>=5?'o':'b');
+  }catch(e){$('sw-badge').textContent='ERROR';$('sw-badge').className='bdg brd';setDot('d-sw','r')}
+}
+
+async function fetchISS(){
+  try{
+    // wheretheiss.at: HTTPS + CORS + reliable; open-notify.org is the fallback
+    let lat, lon;
+    try{
+      const r=await fetch('https://api.wheretheiss.at/v1/satellites/25544');
+      if(!r.ok) throw 0;
+      const d=await r.json(); lat=parseFloat(d.latitude); lon=parseFloat(d.longitude);
+    }catch(_){
+      const r=await fetch('https://api.open-notify.org/iss-now.json');
+      const d=await r.json(); lat=parseFloat(d.iss_position.latitude); lon=parseFloat(d.iss_position.longitude);
+    }
+    S.iss.lat=lat;
+    S.iss.lon=lon;
+    const dlat=S.iss.lat-S.loc.lat;const dlon=S.iss.lon-S.loc.lon;
+    const a=Math.sin(dlat*Math.PI/360)**2+Math.cos(S.iss.lat*Math.PI/180)*Math.cos(S.loc.lat*Math.PI/180)*Math.sin(dlon*Math.PI/360)**2;
+    S.iss.dist=Math.round(6371*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)));
+    $('iss-content').innerHTML=`
+      <div style="text-align:center;padding:10px;margin-bottom:8px">
+        <div style="font-size:24px">🛰</div>
+        <div style="font-size:14px;font-weight:700;color:var(--cy);margin-top:4px">${S.iss.dist.toLocaleString()} km</div>
+        <div style="font-size:5px;letter-spacing:2px;color:var(--al)">DISTANCE FROM YOU</div>
+      </div>
+      <div class="er"><span class="ek">LATITUDE</span><span class="ev c">${S.iss.lat.toFixed(3)}°</span></div>
+      <div class="er"><span class="ek">LONGITUDE</span><span class="ev c">${S.iss.lon.toFixed(3)}°</span></div>
+      <div class="er"><span class="ek">ALTITUDE</span><span class="ev">~420 km</span></div>
+      <div class="er"><span class="ek">VELOCITY</span><span class="ev">27,600 km/h</span></div>
+      <div class="er"><span class="ek">VISIBILITY</span><span class="ev ${S.iss.dist<2000?'g':'a'}">${S.iss.dist<2000?'POSSIBLE PASS':'OUT OF RANGE'}</span></div>`;
+    $('iss-badge').textContent=`${S.iss.lat.toFixed(1)}°N ${S.iss.lon.toFixed(1)}°E`;$('iss-badge').className='bdg bcy';
+    setDot('d-iss','g');
+  }catch(e){$('iss-badge').textContent='SIGNAL LOST';$('iss-badge').className='bdg brd';setDot('d-iss','r')}
+}
+
+function fetchPower(){
+  const total=13500+Math.random()*1500;
+  const src={nuclear:total*0.58,hydro:total*0.22,gas:total*0.10,wind:total*0.07,solar:total*0.01,bio:total*0.02};
+  S.pwr={total,...src};
+  const sources=[
+    {name:'NUCLEAR',mw:src.nuclear,color:'#44AAFF'},
+    {name:'HYDRO',mw:src.hydro,color:'#00DDFF'},
+    {name:'GAS',mw:src.gas,color:'#818cf8'},
+    {name:'WIND',mw:src.wind,color:'#00FF88'},
+    {name:'SOLAR',mw:src.solar,color:'#a78bfa'},
+    {name:'BIOMASS',mw:src.bio,color:'#CC66FF'},
+  ];
+  $('pwr-content').innerHTML=`
+    <div style="text-align:center;padding:10px;margin-bottom:8px">
+      <div style="font-size:22px;font-weight:700;color:var(--am)">${(total/1000).toFixed(2)} GW</div>
+      <div style="font-size:5px;letter-spacing:2px;color:var(--al)">TOTAL GENERATION</div>
+    </div>
+    ${sources.map(s=>`
+      <div style="display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid rgba(96,165,250,.04)">
+        <span style="width:8px;height:8px;background:${s.color};border-radius:50%;flex-shrink:0"></span>
+        <span style="font-size:7px;color:var(--wt2);flex:1">${s.name}</span>
+        <span style="font-size:7px;color:var(--am)">${(s.mw/1000).toFixed(2)} GW</span>
+        <span style="font-size:6px;color:var(--al);min-width:32px;text-align:right">${Math.round(s.mw/total*100)}%</span>
+      </div>`).join('')}
+    <div style="font-size:5px;color:var(--al);margin-top:5px;letter-spacing:1px">IESO ESTIMATE — ONTARIO GRID</div>`;
+  $('pwr-badge').textContent=`${(total/1000).toFixed(1)} GW`;$('pwr-badge').className='bdg bgn';
+  setDot('d-pwr','g');
+}
+
+async function fetchCrypto(){
+  try{
+    let coins=[];
+    try{
+      const r=await fetch('https://api.coincap.io/v2/assets?ids=bitcoin,ethereum,solana,cardano,ripple&limit=5');
+      if(r.ok){
+        const d=await r.json();
+        coins=(d.data||[]).map(a=>({sym:a.symbol,name:a.name,usd:parseFloat(a.priceUsd)||0,chg:parseFloat(a.changePercent24Hr)||0}));
+      }
+    }catch(_){ coins=[]; }  // CoinCap v2 retired → fall through to CoinGecko
+    if(!coins.length){
+      const fr=await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,cardano,ripple&price_change_percentage=24h');
+      if(!fr.ok) throw new Error('crypto feeds unavailable');
+      const fd=await fr.json();
+      coins=(fd||[]).map(a=>({sym:(a.symbol||'').toUpperCase(),name:a.name,usd:parseFloat(a.current_price)||0,chg:parseFloat(a.price_change_percentage_24h)||0}));
+    }
+    if(!coins.length) throw new Error('crypto feeds unavailable');
+    const btc=coins.find(c=>c.sym==='BTC')||{usd:0,chg:0};
+    S.cr={btc:btc.usd,btcChg:btc.chg,coins};
+    $('cr-content').innerHTML=coins.map(c=>{
+      const col=c.chg>=0?'var(--gn)':'var(--rd)';
+      return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(96,165,250,.04)">
+        <div style="flex:1"><div style="font-size:10px;font-weight:700;color:var(--am)">${c.sym}</div><div style="font-size:5px;color:var(--al)">${c.name}</div></div>
+        <div style="text-align:right"><div style="font-size:10px;color:var(--wt)">$${c.usd>=1?c.usd.toLocaleString('en',{maximumFractionDigits:2}):c.usd.toFixed(5)}</div>
+        <div style="font-size:6px;color:${col}">${c.chg>=0?'▲':'▼'} ${Math.abs(c.chg).toFixed(2)}%</div></div>
+      </div>`;
+    }).join('');
+    $('cr-badge').textContent=`BTC $${(btc.usd/1000).toFixed(1)}K`;$('cr-badge').className=`bdg ${btc.chg>=0?'bgn':'brd'}`;
+    setDot('d-cr','g');
+  }catch(e){$('cr-badge').textContent='OFFLINE';$('cr-badge').className='bdg brd';setDot('d-cr','r')}
+}
+
+async function fetchFX(){
+  try{
+    let rates={};
+    const r=await fetch('https://api.frankfurter.app/latest?from=USD&to=CAD,EUR,GBP,JPY,CHF,AUD');
+    if(r.ok){
+      const d=await r.json();
+      rates=d.rates||{};
+    }
+    if(!Object.keys(rates).length){
+      const fr=await fetch('https://open.er-api.com/v6/latest/USD');
+      if(!fr.ok) throw new Error('fx feeds unavailable');
+      const fd=await fr.json();
+      rates=fd?.rates||{};
+    }
+    if(!Object.keys(rates).length) throw new Error('fx feeds unavailable');
+    S.fx=rates;
+    const pairs=[['USD/CAD','CAD'],['USD/EUR','EUR'],['USD/GBP','GBP'],['USD/JPY','JPY'],['USD/CHF','CHF'],['USD/AUD','AUD']];
+    $('fx-content').innerHTML=pairs.filter(p=>rates[p[1]]).map(p=>`
+      <div class="er"><span class="ek">${p[0]}</span><span class="ev a">${rates[p[1]].toFixed(rates[p[1]]>10?2:4)}</span></div>
+    `).join('')+`<div style="font-size:5px;color:var(--al);margin-top:5px;letter-spacing:1px">FRANKFURTER.APP — ECB REFERENCE</div>`;
+    $('fx-badge').textContent=`USD/CAD ${(rates.CAD||0).toFixed(4)}`;$('fx-badge').className='bdg bgn';
+    setDot('d-fx','g');
+  }catch(e){$('fx-badge').textContent='ERROR';$('fx-badge').className='bdg brd';setDot('d-fx','r')}
+}
+
+function renderCams(){
+  const g=$('cam-grid');
+  g.innerHTML=CAM_DB.map((c,i)=>`
+    <div class="cc" style="animation-delay:${i*0.04}s">
+      <div class="cc-hd"><span>ON${c.id}</span><span style="color:var(--am)">${c.road}</span></div>
+      <div class="cc-imgwrap">
+        <div class="cc-loader" id="cl-${c.id}">ACQUIRING…</div>
+        <img class="cc-img" id="ci-${c.id}" alt="${c.name}"
+             onload="document.getElementById('ci-${c.id}').classList.add('ld');document.getElementById('cl-${c.id}').style.display='none'"
+             onerror="document.getElementById('cl-${c.id}').textContent='FEED UNAVAILABLE'">
+      </div>
+      <div class="cc-ft">${c.name}</div>
+    </div>`).join('');
+  CAM_DB.forEach((c,i)=>setTimeout(()=>{const img=$(`ci-${c.id}`);if(img)img.src=CAM_URL(c.id)+'?t='+Date.now()},i*150));
+  $('cam-badge').textContent=`${CAM_DB.length} FEEDS`;$('cam-badge').className='bdg bgn';
+  setDot('d-cam','g');
+}
+
+async function doRefresh(){
+  await Promise.allSettled([fetchWx(),fetchAir(),fetchEQ(),fetchSpaceWx(),fetchISS(),fetchCrypto(),fetchFX()]);
+  fetchPower();
+}
+
+function init(){
+  geoInit();
+  setTimeout(fetchWx,800);
+  setTimeout(fetchAir,1400);
+  setTimeout(fetchEQ,2000);
+  setTimeout(fetchSpaceWx,2600);
+  setTimeout(fetchISS,3200);
+  setTimeout(fetchPower,1200);
+  setTimeout(fetchCrypto,3800);
+  setTimeout(fetchFX,4400);
+  setTimeout(renderCams,5000);
+  setInterval(fetchISS,15000);
+  setInterval(doRefresh,90000);
+}
+
+document.addEventListener('DOMContentLoaded',init);
+</script>
+<script defer src="control-surface.js"></script>
+  <script defer src="ui.js"></script>
+  <script defer src="platform.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="intelligence.html">Intelligence &amp; OSINT</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="ClearGlass-NEXUS-v12-FINAL.html"><span><b>Previous</b>NEXUS v12</span></a>
+      <a href="intelligence.html"><span><b>Topic hub</b>Intelligence</span></a>
+      <a href="xenolith.html"><span><b>Next in journey</b>XENOLITH</span></a>
+    </div>
+    <ul>
+      <li><a href="xenolith.html"><b>XENOLITH</b> — the sovereign intelligence lattice — governed multi-domain command substrate</a></li>
+      <li><a href="docs/guardian_command_nexus_spec.html"><b>Guardian Command Nexus Spec</b> — the implementation specification for the Guardian command surface</a></li>
+      <li><a href="flowsint.html"><b>Flowsint</b> — OSINT investigation graph for domains, IPs and transforms</a></li>
+      <li><a href="clearglass-nexus.html"><b>ClearGlass NEXUS</b> — full-spectrum intelligence platform</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

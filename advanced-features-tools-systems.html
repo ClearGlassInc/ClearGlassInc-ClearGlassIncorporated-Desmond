@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#04060d">
+<meta name="msapplication-TileColor" content="#04060d">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>ClearGlass · Advanced Features, Tools &amp; Systems</title>
+<meta name="description" content="The ClearGlass advanced systems command surface — governed autonomous operators, the PERCIVAL agent stack, SENTINEL / AEGIS defenders, Agent Mesh, and the append-only audit architecture behind every platform."/>
+<link rel="canonical" href="https://www.clearglassinc.com/advanced-features-tools-systems.html"/>
+
+<!-- Open Graph -->
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="ClearGlass · Advanced Features, Tools &amp; Systems"/>
+<meta property="og:description" content="A command-surface catalog of ClearGlass's advanced systems: governed operators, the PERCIVAL agent stack, named defenders, Agent Mesh, and the audit architecture behind them."/>
+<meta property="og:url" content="https://www.clearglassinc.com/advanced-features-tools-systems.html"/>
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+
+<!-- Fonts (brand stack) -->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Urbanist:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+<!-- Design tokens → theme remap → Aurora Glass (nav + shared behaviours) -->
+<link rel="stylesheet" href="tokens.css"/>
+<link rel="stylesheet" href="futuristic-ui.css"/>
+<link rel="stylesheet" href="theme.css"/>
+<link rel="stylesheet" href="/assets/css/glass.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+<script defer src="/asset-protection.js"></script>
+
+<style>
+/* ══════════════════════════════════════════════════════════════════════════
+   ADVANCED FEATURES, TOOLS & SYSTEMS — page-owned dark command surface.
+   Everything is namespaced --afx-* / .afx-* and fully self-contained: this
+   page renders as one cohesive cinematic control room regardless of the shared
+   (light-leaning) global design system, which it deliberately overrides only
+   inside .ag-shell. No global files are touched.
+   ══════════════════════════════════════════════════════════════════════════ */
+:root{
+  --afx-void:#04060d; --afx-void-2:#070b16;
+  --afx-panel:rgba(13,20,36,.72); --afx-panel-2:rgba(19,28,48,.86); --afx-panel-3:rgba(24,34,58,.94);
+  --afx-edge:rgba(122,158,255,.14); --afx-edge-2:rgba(122,158,255,.28); --afx-edge-hair:rgba(122,158,255,.08);
+  --afx-text:#e9eefc; --afx-dim:#a4b4d6; --afx-faint:#6f7fa4;
+  --afx-term:#39ffb6; --afx-term-dim:#1f9d6d;
+  --afx-sky:#4cc4ff; --afx-violet:#a78bfa; --afx-pink:#f472b6; --afx-mint:#34d399; --afx-amber:#ffb743; --afx-red:#ff5d6c;
+  --afx-mono:var(--cg-mono,'IBM Plex Mono',ui-monospace,monospace);
+  --afx-sans:'Urbanist',system-ui,sans-serif;
+  --afx-serif:'Cormorant Garamond',Georgia,serif;
+  --afx-r:18px; --afx-r-lg:26px;
+  --afx-glow:0 0 34px -10px rgba(76,196,255,.5);
+}
+
+/* ── Fixed dark stage: guarantees the cohesive dark surface for this page ── */
+.afx-stage{position:fixed;inset:0;z-index:0;pointer-events:none;background:
+  radial-gradient(120% 90% at 50% -8%, rgba(76,196,255,.12), transparent 46%),
+  radial-gradient(90% 70% at 88% 8%, rgba(167,139,250,.12), transparent 50%),
+  radial-gradient(80% 60% at 6% 96%, rgba(57,255,182,.08), transparent 55%),
+  linear-gradient(180deg,var(--afx-void-2),var(--afx-void) 60%);}
+.afx-stage::before{content:"";position:absolute;inset:0;opacity:.5;background:
+  linear-gradient(var(--afx-edge-hair) 1px,transparent 1px) 0 0/44px 44px,
+  linear-gradient(90deg,var(--afx-edge-hair) 1px,transparent 1px) 0 0/44px 44px;
+  -webkit-mask-image:radial-gradient(120% 100% at 50% 0%,#000,transparent 78%);
+          mask-image:radial-gradient(120% 100% at 50% 0%,#000,transparent 78%);}
+.afx-stage::after{content:"";position:absolute;inset:0;
+  background:radial-gradient(130% 120% at 50% 40%,transparent 60%,rgba(0,0,0,.55));}
+
+/* keep the page content above the stage, and let the dark stage show through
+   (the global design system paints bare header/section elements white) */
+.ag-root{background:#04060d !important}
+.ag-shell{position:relative;z-index:1;background:transparent !important}
+.ag-shell .afx-section,
+.ag-shell header,
+.ag-shell .afx-hero{background:transparent !important;box-shadow:none}
+/* structural wrappers must never inherit the global white glass */
+.ag-shell .afx-card__head,.ag-shell .afx-card__code,.ag-shell .afx-shead,
+.ag-shell .afx-shead__top,.ag-shell .afx-cta,.ag-shell .afx-metrics,
+.ag-shell .afx-hero__grid,.ag-shell .afx-flow,.ag-shell .afx-branch,
+.ag-shell .afx-pipe,.ag-shell .afx-gov,.ag-shell .afx-schema,
+.ag-shell .afx-ladder,.ag-shell .afx-cards{background:transparent !important}
+
+/* ── Typography, scoped & overriding the global light theme ─────────────── */
+.ag-shell{font-family:var(--afx-sans);color:var(--afx-text)}
+.ag-shell ::selection{background:rgba(57,255,182,.28);color:#eafff6}
+.ag-shell h1,.ag-shell h2,.ag-shell h3,.ag-shell h4{font-family:var(--afx-sans);color:var(--afx-text) !important;letter-spacing:-.01em}
+.ag-shell p{color:var(--afx-dim) !important}
+.ag-shell a{color:inherit}
+
+.afx-wrap{width:min(1240px,92vw);margin-inline:auto}
+.afx-section{padding:clamp(64px,9vw,132px) 0;position:relative}
+
+/* section header: index number · mono eyebrow · display title */
+.afx-shead{display:flex;flex-direction:column;gap:14px;margin-bottom:clamp(34px,5vw,62px)}
+.afx-shead__top{display:flex;align-items:center;gap:16px}
+.afx-idx{font-family:var(--afx-mono);font-size:.78rem;color:var(--afx-term);
+  border:1px solid var(--afx-term-dim);border-radius:7px;padding:3px 9px;letter-spacing:.1em;
+  box-shadow:inset 0 0 14px -6px rgba(57,255,182,.5)}
+.afx-eyebrow{font-family:var(--afx-mono);font-size:.74rem;letter-spacing:.32em;text-transform:uppercase;color:var(--afx-faint)}
+.afx-title{font-size:clamp(1.9rem,3.4vw,3rem);line-height:1.06;font-weight:800;color:var(--afx-text);max-width:20ch}
+.afx-title .g{background:linear-gradient(100deg,var(--afx-sky),var(--afx-violet) 46%,var(--afx-pink));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.afx-title .t{color:var(--afx-term)}
+.afx-sub{color:var(--afx-dim) !important;max-width:60ch;font-size:1.06rem;line-height:1.65}
+
+/* HUD corner brackets for feature panels */
+.afx-hud{position:relative}
+.afx-hud::before,.afx-hud::after{content:"";position:absolute;width:16px;height:16px;pointer-events:none;opacity:.6}
+.afx-hud::before{top:10px;left:10px;border-top:1.5px solid var(--afx-term);border-left:1.5px solid var(--afx-term)}
+.afx-hud::after{bottom:10px;right:10px;border-bottom:1.5px solid var(--afx-term);border-right:1.5px solid var(--afx-term)}
+
+/* ── Glass panel base ──────────────────────────────────────────────────── */
+.afx-glass{background:var(--afx-panel);border:1px solid var(--afx-edge);border-radius:var(--afx-r-lg);
+  -webkit-backdrop-filter:blur(16px) saturate(1.25);backdrop-filter:blur(16px) saturate(1.25);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 30px 70px -40px rgba(0,0,0,.9)}
+
+/* ══ HERO ══════════════════════════════════════════════════════════════ */
+.afx-hero{padding-top:clamp(120px,15vw,190px)}
+.afx-hero__grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(26px,4vw,56px);align-items:center}
+.afx-badge{display:inline-flex;align-items:center;gap:9px;font-family:var(--afx-mono);font-size:.74rem;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--afx-dim);
+  border:1px solid var(--afx-edge-2);border-radius:999px;padding:7px 15px;background:rgba(10,16,30,.6)}
+.afx-badge b{width:7px;height:7px;border-radius:50%;background:var(--afx-term);box-shadow:0 0 10px var(--afx-term);animation:afxPulse 2.4s ease-in-out infinite}
+.afx-hero h1{font-size:clamp(2.7rem,6.4vw,5.1rem);line-height:1.01;font-weight:800;letter-spacing:-.025em;margin:22px 0 0}
+.afx-hero h1 .g{background:linear-gradient(100deg,var(--afx-sky),var(--afx-violet) 45%,var(--afx-pink));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.afx-hero .afx-sub{margin-top:22px;font-size:1.16rem}
+.afx-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px}
+.afx-btn{display:inline-flex;align-items:center;gap:9px;font-family:var(--afx-sans);font-weight:700;font-size:.98rem;
+  padding:13px 24px;border-radius:14px;cursor:pointer;text-decoration:none;transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s,border-color .25s}
+.afx-btn--primary{color:#04121a;background:linear-gradient(100deg,var(--afx-term),#7ef7c9);box-shadow:0 0 30px -8px rgba(57,255,182,.6)}
+.afx-btn--primary:hover{transform:translateY(-2px);box-shadow:0 0 44px -6px rgba(57,255,182,.75)}
+.afx-btn--ghost{color:var(--afx-text);background:rgba(16,24,44,.7);border:1px solid var(--afx-edge-2)}
+.afx-btn--ghost:hover{transform:translateY(-2px);border-color:var(--afx-term);box-shadow:var(--afx-glow)}
+.afx-btn:focus-visible{outline:2px solid var(--afx-term);outline-offset:3px}
+
+.afx-metrics{display:flex;gap:26px;flex-wrap:wrap;margin-top:40px}
+.afx-metric{display:flex;flex-direction:column;gap:2px}
+.afx-metric b{font-family:var(--afx-mono);font-size:1.5rem;font-weight:600;
+  background:linear-gradient(100deg,var(--afx-sky),var(--afx-violet));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.afx-metric span{font-family:var(--afx-mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--afx-faint)}
+
+/* ── Live console terminal (image 1) ───────────────────────────────────── */
+.afx-term{font-family:var(--afx-mono);position:relative;overflow:hidden;padding:0;
+  border:1px solid rgba(57,255,182,.3);border-radius:var(--afx-r-lg);
+  background:linear-gradient(180deg,rgba(4,12,10,.95),rgba(3,8,7,.98));
+  box-shadow:inset 0 0 70px -26px rgba(57,255,182,.4),0 40px 90px -46px rgba(0,0,0,.95),var(--afx-glow)}
+.afx-term::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(57,255,182,.05) 0 1px,transparent 1px 3px);mix-blend-mode:screen;opacity:.55}
+.afx-term__bar{display:flex;align-items:center;gap:8px;padding:13px 16px;border-bottom:1px solid rgba(57,255,182,.16);
+  font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--afx-term-dim)}
+.afx-dot{width:10px;height:10px;border-radius:50%}
+.afx-dot--r{background:var(--afx-red);box-shadow:0 0 8px var(--afx-red)}
+.afx-dot--y{background:var(--afx-amber);box-shadow:0 0 8px var(--afx-amber)}
+.afx-dot--g{background:var(--afx-term);box-shadow:0 0 8px var(--afx-term)}
+.afx-term__title{margin-left:auto;display:flex;align-items:center;gap:12px}
+.afx-eq{display:inline-flex;align-items:flex-end;gap:2px;height:14px}
+.afx-eq i{width:3px;height:5px;background:var(--afx-term);border-radius:1px;animation:afxEq 1.1s ease-in-out infinite}
+.afx-eq i:nth-child(2){animation-delay:.15s}.afx-eq i:nth-child(3){animation-delay:.3s}
+.afx-eq i:nth-child(4){animation-delay:.45s}.afx-eq i:nth-child(5){animation-delay:.6s}
+.afx-term__body{padding:18px 20px 20px;color:var(--afx-term);font-size:.92rem;line-height:2}
+.afx-l{display:block;white-space:pre-wrap;opacity:0}
+.afx-l.on{opacity:1}
+.afx-l .k{color:var(--afx-term-dim)}.afx-l .v{color:var(--afx-term)}
+.afx-l .w{color:var(--afx-amber)}.afx-l .b{color:var(--afx-red);font-weight:600}
+.afx-caret{display:inline-block;width:9px;height:1.05em;vertical-align:-2px;background:var(--afx-term);
+  box-shadow:0 0 10px var(--afx-term);animation:afxBlink 1.05s steps(1) infinite}
+.afx-arrays{display:flex;flex-wrap:wrap;gap:9px;padding:0 20px 20px}
+.afx-arr{display:inline-flex;font-family:var(--afx-mono);font-size:.8rem;border:1px solid rgba(57,255,182,.32);border-radius:6px;overflow:hidden}
+.afx-arr b{background:rgba(57,255,182,.16);color:var(--afx-term);padding:5px 9px;font-weight:600;letter-spacing:.06em}
+.afx-arr span{padding:5px 11px;color:var(--afx-term);letter-spacing:.14em}
+
+/* ══ SYSTEMS CARDS ═════════════════════════════════════════════════════ */
+.afx-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.afx-card{position:relative;padding:26px 24px 24px;border-radius:var(--afx-r);overflow:hidden;
+  background:var(--afx-panel-2) !important;border:1px solid var(--afx-edge);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 24px 54px -36px rgba(0,0,0,.9);
+  transition:transform .3s cubic-bezier(.2,.7,.2,1),border-color .3s,box-shadow .3s}
+.afx-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--ac,var(--afx-term));opacity:.85}
+.afx-card::after{content:"";position:absolute;inset:0;opacity:0;transition:opacity .3s;pointer-events:none;
+  background:radial-gradient(120% 80% at 50% -10%,rgba(76,196,255,.14),transparent 60%)}
+.afx-card:hover{transform:translateY(-6px);border-color:var(--afx-edge-2);box-shadow:0 34px 70px -34px rgba(0,0,0,.95),var(--afx-glow)}
+.afx-card:hover::after{opacity:1}
+.afx-card__head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.afx-ico{width:44px;height:44px;display:grid;place-items:center;border-radius:12px;font-size:1.3rem;
+  color:var(--ac,var(--afx-term));border:1px solid var(--afx-edge-2);background:rgba(10,16,30,.7)}
+.afx-tag{font-family:var(--afx-mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:4px 10px;border-radius:999px;border:1px solid currentColor;color:var(--ac,var(--afx-term))}
+.afx-card__code{font-family:var(--afx-mono);font-size:.68rem;letter-spacing:.1em;color:var(--afx-faint);text-transform:uppercase}
+.afx-card h3{font-size:1.24rem;font-weight:700;margin:5px 0 10px;color:var(--afx-text) !important}
+.afx-card p{font-size:.94rem;line-height:1.55;color:var(--afx-dim) !important}
+.afx-card ul{list-style:none;margin:15px 0 0;padding:14px 0 0;border-top:1px solid var(--afx-edge-hair);display:grid;gap:8px}
+.afx-card li{position:relative;padding-left:20px;font-size:.9rem;color:var(--afx-dim) !important;line-height:1.45}
+.afx-card li::before{content:"▸";position:absolute;left:0;color:var(--ac,var(--afx-term))}
+.afx-card code{font-family:var(--afx-mono);font-size:.85em;color:var(--afx-sky) !important;background:rgba(76,196,255,.1);padding:1px 5px;border-radius:4px}
+
+/* ══ ARCHITECTURE — data model + governed pipeline ═════════════════════ */
+.afx-board{padding:clamp(20px,3vw,36px)}
+.afx-schema{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:15px}
+.afx-entity{font-family:var(--afx-mono);border-radius:12px;overflow:hidden;
+  border:1px solid var(--afx-edge-2);background:rgba(10,16,30,.8);transition:transform .25s,box-shadow .25s}
+.afx-entity:hover{transform:translateY(-4px);box-shadow:0 20px 40px -26px rgba(0,0,0,.9)}
+.afx-entity__h{padding:9px 13px;font-weight:600;font-size:.82rem;letter-spacing:.04em;color:#04121a}
+.afx-entity--u .afx-entity__h{background:var(--afx-sky)}
+.afx-entity--o .afx-entity__h{background:var(--afx-mint)}
+.afx-entity--p .afx-entity__h{background:var(--afx-mint)}
+.afx-entity--y .afx-entity__h{background:var(--afx-amber)}
+.afx-entity--v .afx-entity__h{background:var(--afx-violet)}
+.afx-entity--r .afx-entity__h{background:var(--afx-red);color:#fff}
+.afx-entity__b{padding:11px 13px;display:grid;gap:6px}
+.afx-entity__b span{font-size:.75rem;color:var(--afx-dim);display:flex;gap:9px}
+.afx-entity__b i{color:var(--afx-faint);font-style:normal;min-width:22px}
+.afx-entity__b .pk{color:var(--afx-amber)}
+
+.afx-pipe{margin-top:30px;padding-top:26px;border-top:1px solid var(--afx-edge-hair)}
+.afx-pipe__lab{font-family:var(--afx-mono);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--afx-faint);margin-bottom:16px}
+.afx-flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px}
+.afx-node{display:flex;flex-direction:column;justify-content:center;gap:3px;font-family:var(--afx-mono);
+  padding:11px 15px;border-radius:12px;border:1px solid var(--afx-edge-2);background:rgba(12,18,34,.75);min-width:118px}
+.afx-node small{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--afx-faint)}
+.afx-node b{font-size:.9rem;color:var(--afx-text);font-weight:600}
+.afx-node--gate{border-color:var(--afx-term);background:linear-gradient(180deg,rgba(57,255,182,.14),rgba(12,18,34,.8));
+  box-shadow:inset 0 0 30px -12px rgba(57,255,182,.6);animation:afxGate 3s ease-in-out infinite}
+.afx-node--gate b{color:var(--afx-term)}
+.afx-arrow{align-self:center;color:var(--afx-faint);font-family:var(--afx-mono)}
+.afx-branch{display:flex;flex-direction:column;gap:8px}
+.afx-pill{font-family:var(--afx-mono);font-size:.78rem;padding:7px 13px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.afx-pill--low{color:var(--afx-term)}.afx-pill--med{color:var(--afx-amber)}.afx-pill--high{color:var(--afx-red)}
+.afx-ledger{display:flex;align-items:center;gap:8px;font-family:var(--afx-mono);font-size:.82rem;color:var(--afx-text);
+  padding:11px 16px;border-radius:12px;border:1px dashed var(--afx-edge-2);background:rgba(12,18,34,.6)}
+
+/* ══ GOVERNANCE LADDER ═════════════════════════════════════════════════ */
+.afx-gov{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,54px);align-items:center}
+.afx-ladder{display:grid;gap:12px}
+.afx-rung{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;padding:16px 18px;
+  border-radius:14px;border:1px solid var(--afx-edge);background:var(--afx-panel);transition:transform .25s,border-color .25s}
+.afx-rung:hover{transform:translateX(4px)}
+.afx-rung b{font-family:var(--afx-mono);font-weight:600;font-size:.98rem;min-width:66px}
+.afx-rung p{margin:0;color:var(--afx-dim) !important;font-size:.92rem}
+.afx-rung p strong{color:var(--afx-text) !important;font-weight:700}
+.afx-route{font-family:var(--afx-mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:6px 13px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.afx-rung--low b,.afx-rung--low .afx-route{color:var(--afx-term)} .afx-rung--low{border-left:3px solid var(--afx-term)}
+.afx-rung--med b,.afx-rung--med .afx-route{color:var(--afx-amber)} .afx-rung--med{border-left:3px solid var(--afx-amber)}
+.afx-rung--high b,.afx-rung--high .afx-route{color:var(--afx-red)} .afx-rung--high{border-left:3px solid var(--afx-red)}
+.afx-quote{font-family:var(--afx-serif);font-size:clamp(1.5rem,2.6vw,2.15rem);line-height:1.3;color:var(--afx-text);font-weight:500}
+.afx-quote em{font-style:italic;color:var(--afx-term)}
+.afx-rules{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:10px}
+.afx-rules li{position:relative;padding-left:26px;color:var(--afx-dim) !important;font-size:.96rem;line-height:1.5}
+.afx-rules li::before{content:"✕";position:absolute;left:0;top:1px;color:var(--afx-red);font-family:var(--afx-mono);font-size:.85rem}
+
+/* ══ TOOLS REGISTRY ════════════════════════════════════════════════════ */
+.afx-reg-wrap{padding:clamp(10px,2vw,22px) clamp(14px,2.5vw,26px)}
+.afx-reg{width:100%;border-collapse:collapse;font-size:.92rem}
+.afx-reg th,.afx-reg td{text-align:left;padding:14px 14px;border-bottom:1px solid var(--afx-edge-hair)}
+.afx-reg th{font-family:var(--afx-mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:#8b9bc6 !important}
+.afx-reg td{color:var(--afx-dim) !important}
+.afx-reg tr:last-child td{border-bottom:0}
+.afx-reg td:first-child{font-family:var(--afx-mono);color:var(--afx-term);white-space:nowrap}
+.afx-reg tbody tr{transition:background .2s}
+.afx-reg tbody tr:hover td{background:rgba(57,255,182,.04)}
+.afx-st{display:inline-flex;align-items:center;gap:7px;font-family:var(--afx-mono);font-size:.74rem;letter-spacing:.04em}
+.afx-st b{width:7px;height:7px;border-radius:50%}
+.afx-st--live{color:var(--afx-term)} .afx-st--live b{background:var(--afx-term);box-shadow:0 0 7px var(--afx-term)}
+.afx-st--gate{color:var(--afx-amber)} .afx-st--gate b{background:var(--afx-amber);box-shadow:0 0 7px var(--afx-amber)}
+
+/* ══ FINALE ════════════════════════════════════════════════════════════ */
+.afx-finale{text-align:center;padding:clamp(40px,6vw,80px) clamp(20px,4vw,64px);border-radius:var(--afx-r-lg)}
+.afx-finale h2{font-size:clamp(2rem,4.6vw,3.6rem);font-weight:800;letter-spacing:-.02em;margin-bottom:18px}
+.afx-finale h2 .g{background:linear-gradient(100deg,var(--afx-sky),var(--afx-violet) 50%,var(--afx-pink));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.afx-footer{padding:44px 0 60px;text-align:center;font-family:var(--afx-mono);font-size:.8rem;color:var(--afx-faint);letter-spacing:.04em}
+
+/* ── Reveal (JS-driven, with hard failsafe) ────────────────────────────── */
+.afx-rise{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+.afx-rise.in{opacity:1;transform:none}
+[data-stag]>*{opacity:0;transform:translateY(22px);transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
+[data-stag].in>*{opacity:1;transform:none}
+[data-stag].in>*:nth-child(2){transition-delay:.07s}
+[data-stag].in>*:nth-child(3){transition-delay:.14s}
+[data-stag].in>*:nth-child(4){transition-delay:.21s}
+[data-stag].in>*:nth-child(5){transition-delay:.28s}
+[data-stag].in>*:nth-child(6){transition-delay:.35s}
+
+/* ── Motion ────────────────────────────────────────────────────────────── */
+@keyframes afxBlink{50%{opacity:0}}
+@keyframes afxPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.55}}
+@keyframes afxEq{0%,100%{height:4px}50%{height:14px}}
+@keyframes afxGate{0%,100%{box-shadow:inset 0 0 30px -12px rgba(57,255,182,.5)}50%{box-shadow:inset 0 0 34px -8px rgba(57,255,182,.85)}}
+
+@media (max-width:960px){
+  .afx-hero__grid,.afx-gov{grid-template-columns:1fr}
+  .afx-cards{grid-template-columns:1fr 1fr}
+}
+@media (max-width:620px){
+  .afx-cards{grid-template-columns:1fr}
+  .afx-rung{grid-template-columns:auto 1fr;gap:10px}
+  .afx-rung .afx-route{grid-column:1/-1;justify-self:start}
+  .afx-reg-wrap{overflow-x:auto}.afx-reg{min-width:560px}
+}
+@media (prefers-reduced-motion:reduce){
+  .afx-rise,[data-stag]>*{opacity:1 !important;transform:none !important;transition:none !important}
+  .afx-l{opacity:1 !important}
+  .afx-badge b,.afx-eq i,.afx-node--gate,.afx-caret{animation:none !important}
+}
+</style>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+
+<body class="ag-root">
+  <div class="afx-stage" aria-hidden="true"></div>
+
+  <!-- ══ SHARED FLOATING GLASS NAV ══ -->
+  <nav class="ag-nav" id="agNav" aria-label="Primary">
+    <a class="ag-nav__brand" href="index.html">
+      <span class="ag-nav__mark" aria-hidden="true">◈</span><span>ClearGlass</span>
+    </a>
+    <div class="ag-nav__links" id="agLinks">
+      <span class="ag-nav__glide" id="agGlide" aria-hidden="true"></span>
+      <a class="ag-nav__link" href="#console">Console</a>
+      <a class="ag-nav__link" href="#systems">Systems</a>
+      <a class="ag-nav__link" href="#architecture">Architecture</a>
+      <a class="ag-nav__link" href="#governance">Governance</a>
+      <a class="ag-nav__link" href="#tools">Tools</a>
+      <a class="ag-btn ag-btn--ghost ag-btn--luminous cg-magnetic" href="#launch" style="padding:9px 18px;font-size:.9rem">Enter</a>
+    </div>
+    <button class="ag-nav__toggle" id="agToggle" aria-label="Open menu" aria-expanded="false" aria-controls="agLinks">☰</button>
+  </nav>
+
+  <main class="ag-shell">
+
+    <!-- ══ HERO + LIVE CONSOLE ══ -->
+    <header class="afx-section afx-hero afx-wrap" id="console">
+      <div class="afx-hero__grid">
+        <div class="afx-rise">
+          <span class="afx-badge"><b></b>Systems catalog · live index</span>
+          <h1>Advanced features,<br>tools &amp; <span class="g">systems</span>.</h1>
+          <p class="afx-sub">One command surface for everything ClearGlass runs autonomously — governed
+            operators, named defenders, the PERCIVAL agent stack, and the append-only audit spine
+            underneath them. Read-only by default, human-approved by design.</p>
+          <div class="afx-cta">
+            <a class="afx-btn afx-btn--primary cg-magnetic" href="#systems">Browse the systems</a>
+            <a class="afx-btn afx-btn--ghost cg-magnetic" href="#architecture">See the architecture</a>
+          </div>
+          <div class="afx-metrics">
+            <div class="afx-metric"><b>7</b><span>Governed system blueprints</span></div>
+            <div class="afx-metric"><b>0–100</b><span>Risk score / action</span></div>
+            <div class="afx-metric"><b>100%</b><span>Material changes logged</span></div>
+          </div>
+        </div>
+
+        <div class="afx-term afx-hud afx-rise" data-tilt role="img"
+             aria-label="Simulated ClearGlass control-plane console: a governance self-check passing, live money paths approval-gated, and three risk/audit/state hex arrays.">
+          <div class="afx-term__bar">
+            <span class="afx-dot afx-dot--r"></span><span class="afx-dot afx-dot--y"></span><span class="afx-dot afx-dot--g"></span>
+            <span class="afx-term__title">
+              <span class="afx-eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+              control-plane · daily_loop
+            </span>
+          </div>
+          <div class="afx-term__body" id="afxTerm">
+            <span class="afx-l"><span class="k">›</span> clearglass control-plane <span class="k">::</span> <span class="v">boot</span></span>
+            <span class="afx-l"><span class="k">›</span> governance ............ <span class="v">self-check PASS</span></span>
+            <span class="afx-l"><span class="k">›</span> ledger ............... <span class="v">append-only · verified</span></span>
+            <span class="afx-l"><span class="k">›</span> operators ............ <span class="v">6 online</span> <span class="k">/</span> queue <span class="w">2 pending</span></span>
+            <span class="afx-l"><span class="k">›</span> risk_router .......... <span class="v">scoring 0–100</span></span>
+            <span class="afx-l"><span class="k">›</span> live_money_paths ..... <span class="b">APPROVAL-GATED</span></span>
+            <span class="afx-l"><span class="k">›</span> mock_mode ............ <span class="v">true</span> <span class="k">(no key)</span></span>
+            <span class="afx-l"><span class="k">›</span> report ............... <span class="v">executive · ok</span> <span class="afx-caret" aria-hidden="true"></span></span>
+          </div>
+          <div class="afx-arrays" aria-hidden="true">
+            <span class="afx-arr"><b>A_RISK</b><span>2EC96/1BAF</span></span>
+            <span class="afx-arr"><b>B_AUDIT</b><span>ADE2B/EA0C</span></span>
+            <span class="afx-arr"><b>C_STATE</b><span>D75235F/7B</span></span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ══ SYSTEMS ══ -->
+    <section class="afx-section afx-wrap" id="systems">
+      <div class="afx-shead afx-rise">
+        <div class="afx-shead__top"><span class="afx-idx">01</span><span class="afx-eyebrow">The catalog</span></div>
+        <h2 class="afx-title">Systems that run themselves — <span class="t">safely</span></h2>
+        <p class="afx-sub">Each is an independent subtree with its own CI gate. All of them fail closed, and all of them log.</p>
+      </div>
+
+      <div class="afx-cards" data-stag>
+        <article class="afx-card" data-tilt style="--ac:var(--afx-red)">
+          <div class="afx-card__head"><span class="afx-ico">◈</span><span class="afx-tag">Governed</span></div>
+          <div class="afx-card__code">clearglass-commerce/</div>
+          <h3>Autonomous Commerce Operator</h3>
+          <p>A governed commerce engine — FastAPI control plane + Next.js storefront/admin. Pricing, payments, refunds and fulfillment stay blocked until a human approves.</p>
+          <ul><li>Risk-scored action router (0–100)</li><li>Approvals queue for money-moving paths</li><li>Safe <code>mock mode</code> with no live key</li></ul>
+        </article>
+
+        <article class="afx-card" data-tilt style="--ac:var(--afx-violet)">
+          <div class="afx-card__head"><span class="afx-ico">⟠</span><span class="afx-tag">Autonomous</span></div>
+          <div class="afx-card__code">sentinel/ · PERCIVAL</div>
+          <h3>PERCIVAL Agent Stack</h3>
+          <p>The keyless governor / identity / capability / mission-memory core — stdlib-only, fail-closed Python agents that reason under strict capability scoping.</p>
+          <ul><li>Governor + identity + capability layers</li><li>Mission-memory continuity</li><li>No external keys, deterministic</li></ul>
+        </article>
+
+        <article class="afx-card" data-tilt style="--ac:var(--afx-sky)">
+          <div class="afx-card__head"><span class="afx-ico">❖</span><span class="afx-tag">Defender</span></div>
+          <div class="afx-card__code">sentinel/ · SENTINEL · AEGIS</div>
+          <h3>SENTINEL &amp; AEGIS Defenders</h3>
+          <p>Named-agent defenders in the keyless sentinel index — continuous posture checks that surface risk without ever taking a destructive action on their own.</p>
+          <ul><li>Continuous posture &amp; health signals</li><li>Read-first, escalate-second</li><li>Feeds the defender handoff reports</li></ul>
+        </article>
+
+        <article class="afx-card" data-tilt style="--ac:var(--afx-mint)">
+          <div class="afx-card__head"><span class="afx-ico">◇</span><span class="afx-tag">Mesh</span></div>
+          <div class="afx-card__code">sentinel/ · Agent Mesh</div>
+          <h3>Agent Mesh</h3>
+          <p>The coordination fabric that lets named agents pass missions, share memory, and hand off work while every step stays inside the same governance envelope.</p>
+          <ul><li>Mission routing between agents</li><li>Shared, auditable context</li><li>Target-state v9 architecture docs</li></ul>
+        </article>
+
+        <article class="afx-card" data-tilt style="--ac:var(--afx-amber)">
+          <div class="afx-card__head"><span class="afx-ico">◐</span><span class="afx-tag">Queue</span></div>
+          <div class="afx-card__code">control-plane/app/audit.py</div>
+          <h3>Audit Ledger &amp; Approvals</h3>
+          <p>An append-only <code>events</code> ledger records every material change with its risk score; the <code>approvals</code> table is the only door high-risk actions can pass through.</p>
+          <ul><li>Immutable event trail</li><li>Per-event risk annotation</li><li>Human-in-the-loop gating</li></ul>
+        </article>
+
+        <article class="afx-card" data-tilt style="--ac:var(--afx-term)">
+          <div class="afx-card__head"><span class="afx-ico">✧</span><span class="afx-tag">Scheduled</span></div>
+          <div class="afx-card__code">bots/ · .github/workflows/</div>
+          <h3>Scheduled Bot Loops</h3>
+          <p>Standalone automation bots (like the store smoke bot) run on scheduled workflows — daily governance self-checks and executive reports that keep the CI gates green.</p>
+          <ul><li>Storefront smoke + health checks</li><li>Daily governance self-check</li><li>Generated executive report</li></ul>
+        </article>
+
+        <article class="afx-card" data-tilt style="--ac:var(--afx-sky)">
+          <div class="afx-card__head"><span class="afx-ico">◎</span><span class="afx-tag">Target state</span></div>
+          <div class="afx-card__code">Gotham · Foundry · AIP · Apollo</div>
+          <h3>Artemis Intelligence Platform</h3>
+          <p>A Python-first, full-stack reference architecture for live data fusion, ontology-grounded agents, operator feedback, evaluated self-improvement, and controlled deployment.</p>
+          <ul><li>Coalition-aware ontology and policy plane</li><li>Human-approved prompt and workflow upgrades</li><li>Versioned canary rollout and safe rollback</li></ul>
+          <p><a href="blog/clearglassinc-artemis-palantir-self-evolving-ai-intelligence-platform.html">Read the production blueprint →</a></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ══ ARCHITECTURE ══ -->
+    <section class="afx-section afx-wrap" id="architecture">
+      <div class="afx-shead afx-rise">
+        <div class="afx-shead__top"><span class="afx-idx">02</span><span class="afx-eyebrow">Architecture</span></div>
+        <h2 class="afx-title">The <span class="g">governed</span> data model</h2>
+        <p class="afx-sub">A small, typed schema — but the load-bearing edge isn't a foreign key. It's the one that routes every proposed action through governance before it can ever touch money.</p>
+      </div>
+
+      <div class="afx-glass afx-board afx-hud afx-rise" data-tilt>
+        <div class="afx-schema">
+          <div class="afx-entity afx-entity--u"><div class="afx-entity__h">Users</div><div class="afx-entity__b"><span class="pk"><i>PK</i>user_id</span><span><i></i>email</span><span><i></i>role</span><span><i></i>created_at</span></div></div>
+          <div class="afx-entity afx-entity--o"><div class="afx-entity__h">Orders</div><div class="afx-entity__b"><span class="pk"><i>PK</i>order_id</span><span><i>FK</i>user_id</span><span><i></i>status</span><span><i></i>total</span></div></div>
+          <div class="afx-entity afx-entity--p"><div class="afx-entity__h">Products</div><div class="afx-entity__b"><span class="pk"><i>PK</i>product_id</span><span><i></i>name</span><span><i></i>price</span><span><i></i>stock_level</span></div></div>
+          <div class="afx-entity afx-entity--y"><div class="afx-entity__h">Payments</div><div class="afx-entity__b"><span class="pk"><i>PK</i>payment_id</span><span><i>FK</i>order_id</span><span><i></i>amount</span><span><i></i>method</span></div></div>
+          <div class="afx-entity afx-entity--v"><div class="afx-entity__h">Approvals</div><div class="afx-entity__b"><span class="pk"><i>PK</i>approval_id</span><span><i>FK</i>event_id</span><span><i></i>state</span><span><i></i>approver</span></div></div>
+          <div class="afx-entity afx-entity--r"><div class="afx-entity__h">Events (ledger)</div><div class="afx-entity__b"><span class="pk"><i>PK</i>event_id</span><span><i></i>action</span><span><i></i>risk_score</span><span><i></i>ts</span></div></div>
+        </div>
+
+        <div class="afx-pipe">
+          <div class="afx-pipe__lab">Every material action travels this path</div>
+          <div class="afx-flow">
+            <div class="afx-node"><small>step 01</small><b>observe</b></div>
+            <span class="afx-arrow">→</span>
+            <div class="afx-node"><small>step 02</small><b>draft</b></div>
+            <span class="afx-arrow">→</span>
+            <div class="afx-node afx-node--gate"><small>governance</small><b>score 0–100</b></div>
+            <span class="afx-arrow">→</span>
+            <div class="afx-branch">
+              <span class="afx-pill afx-pill--low">low · auto-execute</span>
+              <span class="afx-pill afx-pill--med">medium · queue</span>
+              <span class="afx-pill afx-pill--high">high / critical · approval</span>
+            </div>
+            <span class="afx-arrow">→</span>
+            <div class="afx-ledger">▤ audit ledger</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ GOVERNANCE ══ -->
+    <section class="afx-section afx-wrap" id="governance">
+      <div class="afx-shead afx-rise">
+        <div class="afx-shead__top"><span class="afx-idx">03</span><span class="afx-eyebrow">The safety model</span></div>
+        <h2 class="afx-title">Every action earns its <span class="t">route</span></h2>
+      </div>
+
+      <div class="afx-gov">
+        <div class="afx-ladder afx-rise" data-stag>
+          <div class="afx-rung afx-rung--low"><b>0–30</b><p><strong>Low.</strong> Generate copy, read metrics, reconcile.</p><span class="afx-route">auto + log</span></div>
+          <div class="afx-rung afx-rung--med"><b>31–70</b><p><strong>Medium.</strong> Content publish, non-price catalog edits.</p><span class="afx-route">queue approval</span></div>
+          <div class="afx-rung afx-rung--high"><b>71–100</b><p><strong>High / critical.</strong> Pricing, payments, refunds, fulfillment, reorders, mass outbound.</p><span class="afx-route">blocked · approve</span></div>
+        </div>
+
+        <div class="afx-rise">
+          <p class="afx-quote">No high or critical action executes until an <em>approvals</em> row reaches <em>approved</em>. The self-check fails, by design, if that door is ever left open.</p>
+          <ul class="afx-rules">
+            <li>Never fabricate inventory, reviews, sales, or urgency</li>
+            <li>Never move live pricing, tax, payment, refund or fulfillment without approval</li>
+            <li>Log every material action to the append-only ledger</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ TOOLS ══ -->
+    <section class="afx-section afx-wrap" id="tools">
+      <div class="afx-shead afx-rise">
+        <div class="afx-shead__top"><span class="afx-idx">04</span><span class="afx-eyebrow">Tools</span></div>
+        <h2 class="afx-title">The operator toolchain</h2>
+      </div>
+
+      <div class="afx-glass afx-reg-wrap afx-rise">
+        <table class="afx-reg">
+          <thead><tr><th>Tool</th><th>Surface</th><th>What it does</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>daily_loop</td><td>control-plane</td><td>Governance self-check + executive report (stdlib only)</td><td><span class="afx-st afx-st--live"><b></b>live</span></td></tr>
+            <tr><td>governance</td><td>control-plane</td><td>Scores every action 0–100 and routes it by risk tier</td><td><span class="afx-st afx-st--live"><b></b>live</span></td></tr>
+            <tr><td>audit</td><td>control-plane</td><td>Writes every material change to the append-only ledger</td><td><span class="afx-st afx-st--live"><b></b>live</span></td></tr>
+            <tr><td>payments</td><td>control-plane</td><td>Governed money movement — mock mode until a key is present</td><td><span class="afx-st afx-st--gate"><b></b>gated</span></td></tr>
+            <tr><td>store_smoke_bot</td><td>bots/</td><td>Storefront smoke test run on scheduled workflows</td><td><span class="afx-st afx-st--live"><b></b>live</span></td></tr>
+            <tr><td>PERCIVAL</td><td>sentinel/</td><td>Keyless governor/identity/capability/mission-memory stack</td><td><span class="afx-st afx-st--live"><b></b>live</span></td></tr>
+            <tr><td>Agent Mesh</td><td>sentinel/</td><td>Mission routing &amp; shared memory between named agents</td><td><span class="afx-st afx-st--gate"><b></b>target-state</span></td></tr>
+            <tr><td>Artemis Intelligence Platform</td><td>architecture blueprint</td><td>Governed Palantir reference stack with ontology, agents, evals, approvals, and rollback</td><td><span class="afx-st afx-st--gate"><b></b>target-state</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══ FINALE ══ -->
+    <section class="afx-section afx-wrap" id="launch">
+      <div class="afx-glass afx-finale afx-hud afx-rise">
+        <span class="afx-eyebrow">Explore</span>
+        <h2 style="margin-top:14px">Governed autonomy, <span class="g">on the record</span>.</h2>
+        <p class="afx-sub" style="margin:0 auto 30px">Advanced doesn't mean unchecked. Every ClearGlass system reads first, drafts second, asks a human before it moves anything that matters — and logs all of it.</p>
+        <div class="afx-cta" style="justify-content:center">
+          <a class="afx-btn afx-btn--primary cg-magnetic" href="index.html">Back to ClearGlass</a>
+          <a class="afx-btn afx-btn--ghost cg-magnetic" href="ai-operator.html">See the AI Operator</a>
+        </div>
+      </div>
+      <div class="afx-footer">ClearGlass Inc. · Advanced features, tools &amp; systems · read-only by default, human-approved by design.</div>
+    </section>
+  </main>
+
+  <!-- ══ INTERACTION LAYER — progressive enhancement, reduced-motion aware ══ -->
+  <script>
+  (function(){
+    "use strict";
+    var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var fine   = matchMedia("(pointer: fine)").matches;
+
+    /* nav: scroll compression + mobile toggle + glide */
+    var nav=document.getElementById("agNav");
+    addEventListener("scroll",function(){nav.classList.toggle("is-scrolled",scrollY>24);},{passive:true});
+    var toggle=document.getElementById("agToggle"), links=document.getElementById("agLinks");
+    toggle.addEventListener("click",function(){var o=links.classList.toggle("is-open");
+      toggle.setAttribute("aria-expanded",String(o));toggle.setAttribute("aria-label",o?"Close menu":"Open menu");});
+    links.addEventListener("click",function(e){if(e.target.closest("a")){links.classList.remove("is-open");toggle.setAttribute("aria-expanded","false");}});
+    var glide=document.getElementById("agGlide");
+    if(glide&&fine){links.querySelectorAll(".ag-nav__link").forEach(function(el){el.addEventListener("mouseenter",function(){
+      var pr=links.getBoundingClientRect(),r=el.getBoundingClientRect();glide.style.opacity="1";
+      glide.style.left=(r.left-pr.left)+"px";glide.style.top=(r.top-pr.top)+"px";glide.style.width=r.width+"px";glide.style.height=r.height+"px";});});
+      links.addEventListener("mouseleave",function(){glide.style.opacity="0";});}
+
+    /* smooth anchor scrolling */
+    document.querySelectorAll('a[href^="#"]').forEach(function(a){a.addEventListener("click",function(e){
+      var t=document.querySelector(a.getAttribute("href"));if(t){e.preventDefault();t.scrollIntoView({behavior:reduce?"auto":"smooth"});}});});
+
+    /* reveal on scroll — with initial sweep, no-IO fallback, and a hard failsafe */
+    var rises=document.querySelectorAll(".afx-rise,[data-stag]");
+    var show=function(el){el.classList.add("in");};
+    if(!("IntersectionObserver" in window)){rises.forEach(show);}
+    else{
+      var io=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){show(e.target);io.unobserve(e.target);}});},
+        {threshold:0,rootMargin:"0px 0px -6% 0px"});
+      rises.forEach(function(el){io.observe(el);});
+      var sweep=function(){rises.forEach(function(el){if(el.classList.contains("in"))return;
+        var r=el.getBoundingClientRect();if(r.top<innerHeight&&r.bottom>0){show(el);io.unobserve(el);}});};
+      sweep();addEventListener("scroll",sweep,{passive:true});
+      addEventListener("load",function(){setTimeout(function(){rises.forEach(show);},2400);});
+    }
+
+    /* console: sequential line reveal (typing feel), reduced-motion shows all */
+    var term=document.getElementById("afxTerm");
+    if(term){
+      var lines=term.querySelectorAll(".afx-l");
+      if(reduce){lines.forEach(function(l){l.classList.add("on");});}
+      else{
+        var start=function(){lines.forEach(function(l,i){setTimeout(function(){l.classList.add("on");},280+i*260);});};
+        if("IntersectionObserver" in window){
+          var t=new IntersectionObserver(function(en){if(en[0].isIntersecting){start();t.disconnect();}},{threshold:.4});
+          t.observe(term);
+        } else start();
+        /* failsafe */
+        addEventListener("load",function(){setTimeout(function(){lines.forEach(function(l){l.classList.add("on");});},3000);});
+      }
+    }
+
+    if(reduce) return;
+
+    /* pointer polish: tilt + magnetic (fine pointers only) */
+    if(fine){
+      document.querySelectorAll("[data-tilt]").forEach(function(el){
+        el.addEventListener("pointermove",function(e){var r=el.getBoundingClientRect();
+          var px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;
+          el.style.transform="perspective(1000px) rotateX("+((py-.5)*-3.5)+"deg) rotateY("+((px-.5)*4.5)+"deg)";});
+        el.addEventListener("pointerleave",function(){el.style.transform="";});
+      });
+      document.querySelectorAll(".cg-magnetic").forEach(function(el){
+        el.addEventListener("pointermove",function(e){var r=el.getBoundingClientRect();
+          el.style.transform="translate("+((e.clientX-r.left-r.width/2)*.16)+"px,"+((e.clientY-r.top-r.height/2)*.28)+"px)";});
+        el.addEventListener("pointerleave",function(){el.style.transform="";});
+      });
+    }
+  })();
+  </script>
+
+  <!-- shared platform layer: PWA, instant-nav, view transitions, FX -->
+  <script defer src="platform.js"></script>
+  <script defer src="ui.js"></script>
+  <script defer src="logo-badge.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="percival-os.html">Command &amp; Autonomous Operations</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="ai-operator.html"><span><b>Previous</b>AI Operator Workspace</span></a>
+      <a href="percival-os.html"><span><b>Topic hub</b>PERCIVAL OS</span></a>
+      <a href="automap.html"><span><b>Next in journey</b>AutoMap Orchestration</span></a>
+    </div>
+    <ul>
+      <li><a href="automap.html"><b>AutoMap Orchestration</b> — architecture-aware orchestration and system relationship mapping</a></li>
+      <li><a href="percival-os.html"><b>PERCIVAL OS</b> — mission-ready governed command center</a></li>
+      <li><a href="agentmesh.html"><b>Agent Mesh</b> — multi-agent OSINT orchestration</a></li>
+      <li><a href="blog/autonomous-threat-modeling-2026.html"><b>Autonomous Threat Modeling in 2026</b> — continuous architecture-grounded security for agentic and cyber-physical systems</a></li>
+      <li><a href="conduit.html"><b>CONDUIT</b> — self-hosted open-source workflow automation</a></li>
+      <li><a href="postloop.html"><b>PostLoop</b> — autonomous multi-account content engine</a></li>
+      <li><a href="command-console.html"><b>Command Console</b> — cyber intelligence operations hub</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="offers/index.html">Browse services &amp; engagements</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

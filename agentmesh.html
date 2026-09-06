@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>PERCIVAL · Agent Mesh — OSINT Orchestration — ClearGlass</title>
+<meta name="description" content="ClearGlass-only OSINT agent orchestration dashboard: 20+ approved open sources, SIGINT-PRMPT mission packets, fail-closed privacy gate (no person targeting)."/>
+<link rel="canonical" href="https://www.clearglassinc.com/agentmesh.html"/>
+<meta property="og:title" content="PERCIVAL · Agent Mesh — OSINT Orchestration"/>
+<meta property="og:type" content="website"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#60a5fa;--amber:#60a5fa;--cyan:#36b6ff;--teal:#2fd4c0;--violet:#9b7bff;--ok:#34d399;
+  --line:rgba(124,150,255,.16);--line-2:rgba(124,150,255,.3);--txt:#eef2ff;--dim:#9aa6c8;--dim-2:#5f6a8a;
+  --mono:'IBM Plex Mono',monospace;--display:'Orbitron','Inter',sans-serif;--sans:'Inter',system-ui,sans-serif}
+html,body{height:100%}
+body{font-family:var(--sans);color:var(--txt);min-height:100vh;padding-bottom:36px;
+  background:radial-gradient(130% 100% at 50% -10%,#1a0619 0%,#0c030b 45%,#050205 100%);-webkit-font-smoothing:antialiased}
+.top{display:flex;align-items:center;gap:13px;padding:13px 22px;border-bottom:1px solid var(--line);background:rgba(11,14,29,.7);backdrop-filter:blur(8px);position:sticky;top:0;z-index:10}
+.mk{width:30px;height:30px;border-radius:8px;position:relative;background:radial-gradient(circle at 40% 35%,#bcd4ff,#1a2350 60%,#1f041d);box-shadow:0 0 14px rgba(124,150,255,.6)}
+.mk::after{content:"⌗";position:absolute;inset:0;display:grid;place-items:center;font-size:15px;color:#fff}
+.b-name{font-family:var(--display);font-weight:900;letter-spacing:.18em;font-size:15px}.b-name b{color:var(--red)}
+.b-sub{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--dim-2);text-transform:uppercase}
+.spacer{flex:1}.back{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#7fd6ff;text-decoration:none;border:1px solid rgba(54,182,255,.35);background:rgba(54,182,255,.07);padding:7px 12px;border-radius:18px}
+.wrap{max-width:1280px;margin:0 auto;padding:18px;display:grid;gap:16px;grid-template-columns:300px 1fr 330px}
+@media(max-width:1080px){.wrap{grid-template-columns:1fr}}
+.card{background:rgba(11,14,29,.72);border:1px solid var(--line);border-radius:13px;padding:14px 16px;min-height:0}
+.card h2{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--red);margin-bottom:11px;display:flex;align-items:center;gap:7px}
+.card h2 small{margin-left:auto;color:var(--dim-2);font-size:9px}
+.disc{grid-column:1/-1;font-size:12px;line-height:1.5;color:var(--teal);border:1px solid rgba(47,212,192,.3);background:rgba(47,212,192,.06);border-radius:11px;padding:10px 13px}
+.disc b{color:#bff7ee}
+label{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:8px 0 3px}
+input,select{width:100%;background:rgba(0,0,0,.32);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--txt);font-size:12.5px;outline:none}
+input:focus,select:focus{border-color:var(--line-2);box-shadow:0 0 0 3px rgba(124,150,255,.08)}
+.row{display:flex;gap:9px}.row>div{flex:1}
+.chk{display:flex;align-items:center;gap:7px;margin-top:9px}.chk input{width:auto}
+.btn{margin-top:13px;width:100%;text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;padding:10px;border-radius:9px;cursor:pointer;border:1px solid var(--line-2);background:linear-gradient(180deg,rgba(124,150,255,.22),rgba(124,150,255,.06));color:#fff}
+.btn:hover{box-shadow:0 0 14px rgba(124,150,255,.3)}
+.srcfilter{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px}
+.fchip{font-family:var(--mono);font-size:9px;letter-spacing:.04em;color:var(--dim);border:1px solid var(--line);padding:4px 8px;border-radius:12px;cursor:pointer}
+.fchip.on{border-color:var(--line-2);color:var(--txt);background:rgba(124,150,255,.12)}
+.src{display:flex;align-items:center;gap:8px;padding:6px 4px;font-size:11.5px;border-bottom:1px solid rgba(124,150,255,.06)}
+.src .d{width:7px;height:7px;border-radius:50%;flex:0 0 auto}
+.src .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.src .key{margin-left:auto;font-family:var(--mono);font-size:8px;color:var(--amber);border:1px solid rgba(96,165,250,.3);border-radius:5px;padding:1px 4px}
+.srcscroll{max-height:340px;overflow-y:auto}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-family:var(--mono);font-size:11px}
+.p-ok{background:rgba(52,211,153,.12);color:var(--ok);border:1px solid rgba(52,211,153,.4)}
+.p-deny{background:rgba(124,150,255,.12);color:#f472b6;border:1px solid rgba(124,150,255,.45)}
+.p-esc{background:rgba(96,165,250,.12);color:var(--amber);border:1px solid rgba(96,165,250,.4)}
+.out{margin-top:12px;display:none}.out.show{display:block;animation:in .3s ease}
+@keyframes in{from{opacity:0;transform:translateY(6px)}}
+.kv{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:7px}.kv b{color:var(--txt)}
+pre{font-family:var(--mono);font-size:10.5px;color:#d8c7d7;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:8px;padding:9px;overflow:auto;margin-top:8px;line-height:1.5}
+.ev{display:flex;gap:8px;font-size:11px;line-height:1.4;padding:5px 0;border-bottom:1px solid rgba(124,150,255,.06)}
+.ev .d{width:8px;height:8px;border-radius:50%;margin-top:3px;flex:0 0 auto}
+.ev.ok .d{background:var(--ok)}.ev.deny .d{background:var(--red)}.ev.esc .d{background:var(--amber)}
+.ev .src2{display:block;font-family:var(--mono);font-size:8px;color:var(--dim-2)}
+.empty{color:var(--dim-2);font-size:11px;font-family:var(--mono);padding:8px}
+code{font-family:var(--mono);font-size:11px;color:var(--dim)}
+</style>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:description" content="ClearGlass-only OSINT agent orchestration dashboard: 20+ approved open sources, SIGINT-PRMPT mission packets, fail-closed privacy gate (no person targeting).">
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+  <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">PERCIVAL · Agent Mesh — OSINT Orchestration — ClearGlass Inc.</h1>
+<div class="top">
+  <div class="mk"></div>
+  <div><div class="b-name">PERCIVAL · <b>AGENT MESH</b></div><div class="b-sub">OSINT Orchestration · ClearGlass-only</div></div>
+  <div class="spacer"></div><a class="back" href="percival-os.html">← PERCIVAL</a>
+</div>
+
+<div class="wrap">
+  <div class="disc">⌗ <b>ClearGlass-only OSINT orchestration.</b> Lawful, approved public sources on organizations / brands / domains / assets — <b>never</b> private individuals. Org credential required; refusals are stated openly (no deception). Every dispatch is audited. This dashboard runs the mesh decision logic locally (mirrors <code>sentinel/sentinel/agentmesh.py</code>).</div>
+
+  <!-- sources -->
+  <div class="card">
+    <h2>Open sources <small id="srcCount"></small></h2>
+    <div class="srcfilter" id="srcFilter"></div>
+    <div class="srcscroll" id="sources"></div>
+  </div>
+
+  <!-- mission packet -->
+  <div class="card">
+    <h2>SIGINT-PRMPT mission packet</h2>
+    <label>Principal email (org credential lock)</label>
+    <input id="email" placeholder="you@clearglassinc.com" value="desmond@clearglassinc.com"/>
+    <div class="row">
+      <div><label>Target (org / brand / domain / asset)</label><input id="target" placeholder="acme-corp"/></div>
+      <div><label>Jurisdiction</label><input id="juris" placeholder="CA" value="CA"/></div>
+    </div>
+    <div class="row">
+      <div><label>Mission</label><select id="mission"><option>recon</option><option>association</option><option>pattern</option><option>tracking</option></select></div>
+      <div><label>Domain</label><select id="domain"><option>web</option><option>social</option><option>news</option><option>financial</option><option>legal</option><option>geospatial</option><option>telecom</option><option>vuln</option></select></div>
+    </div>
+    <div class="chk"><input type="checkbox" id="indiv"/><label style="margin:0">Target is a private individual (declared honestly)</label></div>
+    <button class="btn" id="dispatch">Dispatch mission</button>
+    <div class="out card" id="out" style="background:rgba(0,0,0,.18)"></div>
+    <details style="margin-top:12px"><summary style="cursor:pointer;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em">JSON-PACKET SPEC</summary>
+      <pre>{
+  "target": "acme-corp",
+  "mission": "recon|association|pattern|tracking",
+  "domain": "web|social|news|financial|legal|geospatial|telecom|vuln",
+  "sources": ["public"],
+  "time_window": "past 30 days",
+  "jurisdiction": "CA",
+  "target_is_individual": false
+}</pre></details>
+  </div>
+
+  <!-- register / alerts -->
+  <div class="card">
+    <h2>Dispatch log & alerts <small id="logc"></small></h2>
+    <div id="log"><div class="empty">No dispatches yet.</div></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* Agent Mesh dashboard — mirrors sentinel/sentinel/agentmesh.py decision logic. */
+const $=id=>document.getElementById(id);
+// 20+ approved sources (key = collector registry key)
+const SOURCES=[
+ ["usgs_quakes","USGS earthquakes","geospatial",0],["nws_alerts","NWS weather alerts","geospatial",0],
+ ["opensky","OpenSky aircraft (ADS-B)","telecom",0],["exploit_db","Exploit-DB","vuln",0],
+ ["nvd_cve","NVD CVE feed","vuln",0],["cisa_kev","CISA Known Exploited Vulns","vuln",0],
+ ["cisa_advisories","CISA advisories","threat",0],["github_advisories","GitHub Security Advisories","vuln",0],
+ ["urlhaus","abuse.ch URLhaus","threat",0],["threatfox","abuse.ch ThreatFox","threat",0],
+ ["feodo","abuse.ch Feodo C2","threat",0],["phishtank","PhishTank","threat",0],
+ ["krebs","Krebs on Security","news",0],["bleeping","BleepingComputer","news",0],
+ ["theregister_sec","The Register · Security","news",0],["thehackernews","The Hacker News","news",0],
+ ["hn","Hacker News front page","web",0],["gdelt","GDELT events","news",0],
+ ["sec_edgar","SEC EDGAR filings","financial",0],["opencorporates","OpenCorporates","legal",1],
+ ["companies_house","UK Companies House","legal",1],["ofac_sdn","OFAC sanctions (SDN)","legal",0],
+ ["rss_generic","Generic RSS/Atom feed","news",0],["wikipedia","Wikipedia (org/entity)","web",0]];
+const DOMAIN_OK=new Set(["web","social","news","financial","legal","geospatial","telecom","vuln"]);
+const DCOLOR={geospatial:"#2fd4c0",telecom:"#9fb6ff",vuln:"#60a5fa",threat:"#60a5fa",news:"#36b6ff",financial:"#34d399",legal:"#9b7bff",web:"#9aa6c8"};
+const AGENTS=[["Agent.ClearGlass.OSINT-Harvest",["web","social","news"]],["Agent.ClearGlass.Entity-Link",["web","financial","legal"]],
+ ["Agent.ClearGlass.Legal-Sig",["legal"]],["Agent.ClearGlass.Financial-Sig",["financial"]],
+ ["Agent.ClearGlass.Geo-Telemetry",["geospatial","telecom"]],["Agent.ClearGlass.Vuln-Intel",["vuln"]]];
+const IDENTITY="ClearGlass Inc. internal intelligence agent. Access is restricted to ClearGlass-authorized principals; I state that restriction openly and refuse out-of-scope or unauthorized requests rather than concealing them.";
+const log=[];
+let dfilter="all";
+
+function routeAgent(domain){let best=null;AGENTS.forEach((a,i)=>{if(a[1].includes(domain)){const sz=a[1].length;if(!best||sz<best.sz||(sz===best.sz&&i<best.i))best={name:a[0],sz,i};}});return best?best.name:null;}
+function aref(){return "MESH-"+Math.random().toString(16).slice(2,8).toUpperCase();}
+function authorized(email){return (email||"").trim().toLowerCase().endsWith("@clearglassinc.com");}
+
+function dispatch(p){
+  // 1. org lock
+  if(!authorized(p.email))return {d:"DENIED",reasons:["principal is not ClearGlass-authorized — access is restricted to ClearGlass principals (stated openly)"],agent:null};
+  // 2. approved domain
+  if(!DOMAIN_OK.has(p.domain))return {d:"DENIED",reasons:["domain '"+p.domain+"' is not an approved OSINT domain"],agent:null};
+  // 3. privacy gate (no person targeting)
+  if(p.indiv){
+    return {d:"DENIED",reasons:["identifying/locating/tracking/profiling a private individual requires explicit documented authorization","privacy gate: person-targeting refused"],agent:null};
+  }
+  const agent=routeAgent(p.domain);
+  if(!agent)return {d:"DENIED",reasons:["no agent available for domain"],agent:null};
+  return {d:"ACCEPTED",reasons:["org-authorized + within approved OSINT scope"],agent,
+    report:{agent,target:p.target,domain:p.domain,schema:{entities:"[{id,type,name}] (orgs/assets only)",relationships:"[{from,to,kind,confidence}]",timestamps:"[ISO 8601]",confidence:"0..1 per finding",provenance:"approved source + collected_at; aggregate summaries only"},constraints:{jurisdiction:p.juris||"unspecified"}}};
+}
+
+function renderSources(){
+  const list=dfilter==="all"?SOURCES:SOURCES.filter(s=>s[2]===dfilter || (dfilter==="threat"&&s[2]==="threat"));
+  $('srcCount').textContent=SOURCES.length+" approved";
+  $('sources').innerHTML=list.map(s=>`<div class="src"><span class="d" style="background:${DCOLOR[s[2]]||'#999'};box-shadow:0 0 6px ${DCOLOR[s[2]]||'#999'}"></span><span class="nm">${s[1]}</span>${s[3]?'<span class="key">KEY</span>':''}<span style="font-family:var(--mono);font-size:8px;color:var(--dim-2);margin-left:6px">${s[2]}</span></div>`).join('');
+}
+function renderFilter(){
+  const doms=["all",...new Set(SOURCES.map(s=>s[2]))];
+  $('srcFilter').innerHTML=doms.map(d=>`<div class="fchip ${d===dfilter?'on':''}" data-d="${d}">${d}</div>`).join('');
+  $('srcFilter').querySelectorAll('.fchip').forEach(c=>c.onclick=()=>{dfilter=c.dataset.d;renderFilter();renderSources();});
+}
+function esc(s){return String(s).replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));}
+function renderOut(p,r){
+  const ar=aref();
+  const cls=r.d==="ACCEPTED"?"p-ok":r.d==="ESCALATE"?"p-esc":"p-deny";
+  $('out').innerHTML=`<span class="pill ${cls}">${r.d}</span>
+    <div class="kv">agent: <b>${r.agent||'— (refused)'}</b></div>
+    <div class="kv">reasons: ${r.reasons.map(esc).join('; ')}</div>
+    <div class="kv" style="color:var(--teal)">identity: ${esc(IDENTITY)}</div>
+    ${r.report?`<pre>${esc(JSON.stringify(r.report,null,2))}</pre>`:''}
+    <div class="kv">audit ref ${ar}</div>`;
+  $('out').classList.add('show');
+  log.unshift({d:r.d,target:p.target,domain:p.domain,agent:r.agent,ar});
+  renderLog();
+}
+function renderLog(){
+  $('logc').textContent=log.length?log.length+" total":"";
+  if(!log.length){$('log').innerHTML='<div class="empty">No dispatches yet.</div>';return;}
+  $('log').innerHTML=log.map(e=>{const cls=e.d==="ACCEPTED"?"ok":e.d==="ESCALATE"?"esc":"deny";
+    return `<div class="ev ${cls}"><div class="d"></div><div><b>${esc(e.d)}</b> ${esc(e.target||'—')} <span style="color:var(--dim-2)">[${esc(e.domain)}]</span><span class="src2">${e.agent||'refused'} · ${e.ar}</span></div></div>`;}).join('');
+}
+$('dispatch').onclick=()=>{
+  const p={email:$('email').value,target:$('target').value,juris:$('juris').value,
+    mission:$('mission').value,domain:$('domain').value,indiv:$('indiv').checked};
+  renderOut(p,dispatch(p));
+};
+renderFilter();renderSources();renderLog();
+</script>
+<script defer src="control-surface.js"></script>
+  <script defer src="ui.js"></script>
+  <script defer src="platform.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="percival-os.html">Command &amp; Autonomous Operations</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="artemis-percival.html"><span><b>Previous</b>AVALON</span></a>
+      <a href="percival-os.html"><span><b>Topic hub</b>PERCIVAL OS</span></a>
+      <a href="ai-operator.html"><span><b>Next in journey</b>AI Operator Workspace</span></a>
+    </div>
+    <ul>
+      <li><a href="blog/cybersecurity-architecture-for-agentic-software.html"><b>Security Architecture for Agentic Software</b> — designing defenses for autonomous systems</a></li>
+      <li><a href="flowsint.html"><b>Flowsint</b> — OSINT investigation graph for domains, IPs and transforms</a></li>
+      <li><a href="ai-operator.html"><b>AI Operator Workspace</b> — human-in-the-loop agent operations</a></li>
+      <li><a href="advanced-features-tools-systems.html"><b>Advanced Features, Tools &amp; Systems</b> — the governed systems, agent and audit architecture catalog</a></li>
+      <li><a href="automap.html"><b>AutoMap Orchestration</b> — architecture-aware orchestration and system relationship mapping</a></li>
+      <li><a href="conduit.html"><b>CONDUIT</b> — self-hosted open-source workflow automation</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="offers/index.html">Browse services &amp; engagements</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

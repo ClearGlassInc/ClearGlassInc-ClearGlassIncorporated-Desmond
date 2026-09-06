@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+  <meta charset="UTF-8" />
+  <script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClearGlassInc Artemis — ATT&CK Prompt Integrator</title>
+  <meta name="description" content="ATT&CK-driven prompt core and full-stack implementation blueprint for ClearGlassInc Artemis. ClearGlass Inc. builds intelligent automation, AI operations." />
+  <link rel="canonical" href="https://www.clearglassinc.com/attack-prompt-core.html" />
+  <style>
+    :root {
+      --bg: #070b14;
+      --panel: #101a2b;
+      --panel-2: #15233a;
+      --text: #e8f0ff;
+      --muted: #9bb2d1;
+      --line: #294063;
+      --accent: #4da3ff;
+      --accent-2: #53e3c2;
+      --warn: #8f71f9;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top, #102040 0%, var(--bg) 50%);
+      color: var(--text);
+      font-family: Inter, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 18px 42px;
+    }
+    .hero {
+      background: linear-gradient(145deg, rgba(77,163,255,0.15), rgba(83,227,194,0.08));
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+    h1, h2, h3 { margin-top: 0; }
+    h1 { font-size: 1.6rem; }
+    h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #cfe3ff;
+    }
+    .muted { color: var(--muted); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .card ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+    code, pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 0.9rem;
+    }
+    pre {
+      margin: 10px 0 0;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: 1px solid var(--line);
+      background: #173459;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 8px 10px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover { border-color: var(--accent); }
+    .tag {
+      display: inline-block;
+      font-size: 0.78rem;
+      background: #1c3252;
+      border: 1px solid var(--line);
+      color: #beddff;
+      padding: 2px 7px;
+      border-radius: 999px;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+    .footer-note {
+      margin-top: 16px;
+      color: var(--warn);
+      font-size: 0.92rem;
+    }
+  </style>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.clearglassinc.com/attack-prompt-core.html">
+  <meta property="og:title" content="ClearGlassInc Artemis — ATT&amp;CK Prompt Integrator">
+  <meta property="og:description" content="ATT&CK-driven prompt core and full-stack implementation blueprint for ClearGlassInc Artemis. ClearGlass Inc. builds intelligent automation, AI operations.">
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <h1>ClearGlassInc Artemis — ATT&amp;CK Prompt Integrator</h1>
+      <p class="muted">
+        Production-ready HTML module to integrate your ATT&amp;CK-driven prompt core with a full-stack,
+        self-improving architecture directive for mission-critical intelligence operations.
+      </p>
+      <span class="tag">MITRE ATT&amp;CK</span>
+      <span class="tag">Gotham</span>
+      <span class="tag">Foundry</span>
+      <span class="tag">AIP</span>
+      <span class="tag">Apollo</span>
+      <span class="tag">Python-first</span>
+    </section>
+
+    <section class="card">
+      <div class="toolbar">
+        <h2>1) Core Prompt Template (Copy/Paste)</h2>
+        <button data-copy-target="prompt-core">Copy Prompt</button>
+      </div>
+      <pre id="prompt-core">Act as a senior cybersecurity threat intelligence and detection engineering expert. Using the MITRE ATT&amp;CK framework (latest version), analyze the following scenario:
+
+Context/Input:
+- Organization: ClearGlassInc Artemis
+- Target environment: [enterprise cloud + on-prem hybrid]
+- Industry: [finance | gov | SaaS | defense]
+- Known IOCs: [IPs, domains, hashes, URLs]
+- Threat actor: [APT group or unknown]
+- Objective: [detect | simulate | hunt | defend]
+
+1) Tactics (TA0043...TA0040)
+- Map likely adversary progression across all tactics.
+- For each tactic: explain intent + likely enterprise attack paths.
+
+2) Techniques &amp; Sub-techniques
+- Provide Technique ID + Name + sub-techniques.
+- Include real-world APT examples where possible.
+- Add detection logic (Sigma/KQL/SPL/behavioral), mitigations, and data sources.
+
+3) IOC → TTP Enrichment
+- Correlate IOC with ATT&amp;CK techniques, patterns, and actor overlaps.
+- Output IOC → Technique mapping + confidence + notes.
+
+4) Detection Engineering
+- Define high-signal analytics, SIEM/SOAR correlation, tuning, and coverage gaps.
+
+5) Red Team Simulation Paths
+- Step-by-step adversary chains: entry → escalation → lateral → exfiltration.
+
+6) Blue Team Response Playbooks
+- For each phase: trigger, immediate action, containment, forensics artifacts.
+
+7) ATT&amp;CK Navigator Layer
+- JSON-compatible techniques, 0–5 coverage scoring, and prioritized gaps.
+
+8) Strategic Gap Analysis
+- Weakest controls, missing telemetry, and actionable recommendations.
+
+Output Format Requirements:
+- Structured, tactical, and actionable.
+- Use real ATT&amp;CK IDs.
+- Prioritize enterprise realism over theory.
+- Optimize for SOC, Threat Intel, and Red Team execution.</pre>
+    </section>
+
+    <div class="grid" style="margin-top: 14px;">
+      <section class="card">
+        <div class="toolbar">
+          <h2>2) Full-Stack Directive Add-on</h2>
+          <button data-copy-target="directive">Copy Directive</button>
+        </div>
+        <pre id="directive">You are a senior full-stack Palantir AI architect building an extreme, next-generation intelligence system for ClearGlassInc Artemis.
+
+Design a self-improving, agentic, real-time platform on Gotham, Foundry, AIP, Apollo.
+Use Python for precision in orchestration, evals, policy checks, and adaptive optimization pipelines.
+
+Deliverables:
+- System Architecture
+- Data and Ontology
+- AI and Agent Design
+- Self-Improvement Loop
+- Full-Stack Implementation
+- Security and Governance
+- Code Examples
+- Scenario Walkthrough
+
+Constraints:
+- Human-approved guardrails for all self-upgrades
+- Explicit approval gates for operational actions
+- Full auditability, rollback, and model/prompt governance</pre>
+      </section>
+
+      <section class="card">
+        <h2>3) Required Output Blocks</h2>
+        <ul>
+          <li>Frontend, API Gateway, backend services, event bus, lakehouse, retrieval, model routing.</li>
+          <li>Ontology: entities, relationships, lineage, confidence, temporal states, mission context.</li>
+          <li>Agentic workflows: triage, enrichment, correlation, recommendation, case actions.</li>
+          <li>Self-improvement loop: evals, A/B prompt tests, drift detection, approvals, rollback.</li>
+          <li>Policy-as-code: need-to-know access, coalition boundaries, immutable provenance.</li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top: 14px;">
+      <div class="toolbar">
+        <h2>4) Python Precision Scaffold (for prompt/eval automation)</h2>
+        <button data-copy-target="python-scaffold">Copy Python</button>
+      </div>
+      <pre id="python-scaffold">from dataclasses import dataclass
+from typing import Literal, Dict, Any, List
+from datetime import datetime
+
+Confidence = Literal["low", "med", "high"]
+
+@dataclass
+class EvalSignal:
+    mission_id: str
+    prompt_version: str
+    workflow_version: str
+    precision: float
+    recall: float
+    latency_ms: int
+    operator_trust: float
+    outcome: Literal["success", "partial", "failure"]
+    ts: datetime
+
+
+def propose_upgrade(signals: List[EvalSignal], guardrails: Dict[str, Any]) -> Dict[str, Any]:
+    """Create a safe, reviewable upgrade proposal (no auto-deploy)."""
+    if not signals:
+        return {"status": "no-data", "proposal": None}
+
+    avg_precision = sum(s.precision for s in signals) / len(signals)
+    avg_recall = sum(s.recall for s in signals) / len(signals)
+    avg_latency = sum(s.latency_ms for s in signals) / len(signals)
+
+    if avg_precision &lt; guardrails["min_precision"] or avg_recall &lt; guardrails["min_recall"]:
+        return {
+            "status": "blocked",
+            "reason": "quality-gate-failed",
+            "metrics": {"precision": avg_precision, "recall": avg_recall, "latency_ms": avg_latency},
+        }
+
+    proposal = {
+        "status": "needs-human-approval",
+        "changes": [
+            {"type": "prompt", "action": "tighten_ioc_to_ttp_mapping"},
+            {"type": "routing", "action": "prefer_low_latency_model_for_triage"},
+            {"type": "workflow", "action": "insert_second_pass_entity_resolution"},
+        ],
+        "metrics": {"precision": avg_precision, "recall": avg_recall, "latency_ms": avg_latency},
+        "rollback_plan": "revert to previous signed config bundle",
+        "audit_tag": f"upgrade-{datetime.utcnow().isoformat()}Z",
+    }
+    return proposal</pre>
+    </section>
+
+    <p class="footer-note">
+      Integration tip: embed this HTML inside your internal ClearGlassInc Artemis operations portal and route generated artifacts
+      to Foundry datasets + AIP evaluation pipelines.
+    </p>
+  </div>
+
+  <script>
+    document.querySelectorAll('button[data-copy-target]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const id = btn.getAttribute('data-copy-target');
+        const text = document.getElementById(id)?.innerText || '';
+        try {
+          await navigator.clipboard.writeText(text);
+          const original = btn.textContent;
+          btn.textContent = 'Copied';
+          setTimeout(() => (btn.textContent = original), 1200);
+        } catch {
+          alert('Copy failed. Select and copy manually.');
+        }
+      });
+    });
+  </script>
+<script defer src="control-surface.js"></script>
+  <script defer src="ui.js"></script>
+  <script defer src="platform.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="cyber-defense-console.html">Cyber Defense &amp; Security Operations</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="stegoforge.html"><span><b>Previous</b>STEGOFORGE</span></a>
+      <a href="cyber-defense-console.html"><span><b>Topic hub</b>Cyber Defense Console</span></a>
+      <a href="environmental-cyber-risk.html"><span><b>Next in journey</b>Environmental Cyber-Risk</span></a>
+    </div>
+    <ul>
+      <li><a href="environmental-cyber-risk.html"><b>Environmental Cyber-Risk</b> — OT and environmental threat monitoring</a></li>
+      <li><a href="bluedesk-mobile.html"><b>BLUEDESK Mobile</b> — the CISO risk console on a phone-first canvas</a></li>
+      <li><a href="sentinel.html"><b>SENTINEL</b> — live geospatial security command center</a></li>
+      <li><a href="bluedesk.html"><b>BLUEDESK</b> — CISO risk and blue-team console</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="offers/security-quick-audit.html">Start with the $249 Security Quick-Audit</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>
