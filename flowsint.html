@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>Flowsint · OSINT Investigation Graph — Domains, IPs & Transforms | ClearGlass Inc.</title>
+<meta name="description" content="Flowsint — an OSINT investigation surface that maps domains, IPs and infrastructure as a live entity graph. Run transforms, resolve neighbors, and pivot across 900+ nodes in one sketch."/>
+<link rel="canonical" href="https://www.clearglassinc.com/flowsint.html"/>
+<meta property="og:title" content="Flowsint · OSINT Investigation Graph"/>
+<meta property="og:description" content="Map domains, IPs and infrastructure as a live entity graph. Run transforms, resolve neighbors, pivot across 900+ nodes. Built by ClearGlass Inc."/>
+<meta property="og:type" content="website"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--cyan:#36b6ff;--teal:#2fd4c0;--violet:#9b7bff;--ok:#34d399;--warn:#fbbf24;--pink:#f472b6;--blue:#60a5fa;
+  --line:rgba(124,150,255,.16);--line-2:rgba(124,150,255,.3);--txt:#eef2ff;--dim:#9aa6c8;--dim-2:#5f6a8a;
+  --node-d:#36b6ff;--node-i:#34d399;
+  --mono:'IBM Plex Mono',monospace;--display:'Orbitron','Inter',sans-serif;--sans:'Inter',system-ui,sans-serif}
+html,body{height:100%}
+body{font-family:var(--sans);color:var(--txt);min-height:100vh;
+  background:radial-gradient(130% 100% at 50% -10%,#0c1330 0%,#070a1c 48%,#04050d 100%);-webkit-font-smoothing:antialiased}
+
+.top{display:flex;align-items:center;gap:13px;padding:13px 22px;border-bottom:1px solid var(--line);background:rgba(7,10,28,.72);backdrop-filter:blur(8px);position:sticky;top:0;z-index:40}
+.mk{width:30px;height:30px;border-radius:8px;position:relative;background:radial-gradient(circle at 40% 35%,#bcd4ff,#1a2350 60%,#10183f);box-shadow:0 0 14px rgba(124,150,255,.6)}
+.mk::after{content:"🕸";position:absolute;inset:0;display:grid;place-items:center;font-size:15px}
+.b-name{font-family:var(--display);font-weight:900;letter-spacing:.18em;font-size:15px}.b-name b{background:linear-gradient(90deg,#36b6ff,#34d399);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.b-sub{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--dim-2);text-transform:uppercase}
+.spacer{flex:1}
+.live-pill{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#bdf7da;border:1px solid rgba(52,211,153,.4);background:rgba(52,211,153,.08);padding:6px 12px;border-radius:999px}
+.live-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 9px var(--ok);animation:pulse 1.3s infinite}
+.back{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#9fc4ff;text-decoration:none;border:1px solid rgba(96,165,250,.35);background:rgba(96,165,250,.07);padding:7px 12px;border-radius:18px}
+.back:hover{border-color:var(--line-2);box-shadow:0 0 14px rgba(124,150,255,.25)}
+
+.hero{max-width:1180px;margin:0 auto;padding:54px 22px 26px;text-align:center}
+.tagchip{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#bcd4ff;border:1px solid var(--line-2);background:rgba(124,150,255,.07);padding:6px 14px;border-radius:999px;margin-bottom:22px}
+.tagchip .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok)}
+h1{font-family:var(--display);font-weight:900;font-size:clamp(34px,6vw,62px);line-height:1.02;letter-spacing:-.01em}
+h1 .grad{background:linear-gradient(135deg,#36b6ff,#34d399 55%,#a78bfa);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.lede{max-width:700px;margin:18px auto 0;font-size:clamp(15px,2vw,18px);line-height:1.6;color:var(--dim)}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.btn{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:13px 22px;border-radius:11px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:9px;transition:.16s;border:1px solid var(--line-2)}
+.btn-primary{background:linear-gradient(180deg,rgba(54,182,255,.28),rgba(52,211,153,.1));color:#fff}
+.btn-primary:hover{box-shadow:0 0 22px rgba(54,182,255,.4);transform:translateY(-1px)}
+.btn-ghost{background:rgba(255,255,255,.02);color:#cdd6f5}
+.btn-ghost:hover{border-color:var(--line-2);color:#fff}
+
+.stats{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;max-width:1000px;margin:40px auto 0;padding:0 22px}
+.stat{flex:1 1 170px;background:rgba(12,16,38,.6);border:1px solid var(--line);border-radius:14px;padding:18px 16px;text-align:center}
+.stat .n{font-family:var(--display);font-weight:900;font-size:30px;background:linear-gradient(90deg,#36b6ff,#34d399);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat .l{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-top:6px}
+
+section{max-width:1280px;margin:0 auto;padding:46px 22px}
+.sec-head{text-align:center;margin-bottom:26px}
+.sec-kicker{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--teal)}
+.sec-title{font-family:var(--display);font-weight:800;font-size:clamp(22px,3.4vw,34px);margin-top:8px}
+.sec-sub{color:var(--dim);max-width:640px;margin:12px auto 0;font-size:15px;line-height:1.6}
+
+/* ── INVESTIGATION SURFACE ───────────────────────────── */
+.invest{background:rgba(8,11,28,.72);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.iv-bar{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line);background:rgba(11,14,34,.6);flex-wrap:wrap}
+.iv-bar .title{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#cdd6f5}
+.iv-bar .crumb{font-family:var(--mono);font-size:10.5px;color:var(--dim-2)}
+.iv-bar .crumb b{color:#9fc4ff}
+.bb-spacer{flex:1}
+.iv-tools{display:flex;gap:6px}
+.tool{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;border:1px solid var(--line);background:rgba(124,150,255,.05);color:#cdd6f5;font-size:13px;cursor:pointer;transition:.13s}
+.tool:hover{border-color:var(--line-2);color:#fff}
+.tool.on{background:rgba(54,182,255,.18);border-color:rgba(54,182,255,.5);color:#fff}
+
+.iv-grid{display:grid;grid-template-columns:220px 1fr 250px;min-height:520px}
+@media(max-width:1040px){.iv-grid{grid-template-columns:1fr}}
+
+/* entity list */
+.ents{border-right:1px solid var(--line);padding:10px;overflow-y:auto;max-height:600px}
+.ents .eh{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim-2);padding:6px;display:flex;align-items:center;gap:6px}
+.ents .eh .sel{margin-left:auto;color:var(--blue);background:rgba(96,165,250,.12);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.esearch{width:100%;font-family:var(--mono);font-size:11px;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:9px;padding:8px 10px;color:var(--txt);outline:none;margin:4px 0 8px}
+.esearch:focus{border-color:var(--line-2)}
+.ent{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;border:1px solid transparent;cursor:pointer;font-family:var(--mono);font-size:11px;transition:.1s}
+.ent:hover{background:rgba(124,150,255,.07)}
+.ent.active{border-color:rgba(54,182,255,.45);background:rgba(54,182,255,.1)}
+.ent .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#dfe7ff}
+.ent .badge{margin-left:auto;font-size:8px;letter-spacing:.06em;text-transform:uppercase;padding:1px 6px;border-radius:5px;flex:0 0 auto}
+.ent .badge.domain{color:#cdebff;background:rgba(54,182,255,.16);border:1px solid rgba(54,182,255,.35)}
+.ent .badge.ip{color:#bff0d8;background:rgba(52,211,153,.16);border:1px solid rgba(52,211,153,.35)}
+
+/* graph canvas */
+.gwrap{position:relative;overflow:hidden;background:
+  radial-gradient(circle at 1px 1px,rgba(124,150,255,.1) 1px,transparent 0) 0 0/30px 30px,
+  linear-gradient(180deg,rgba(8,11,26,.4),rgba(6,8,20,.4))}
+#graph{display:block;width:100%;height:520px}
+.glabel{position:absolute;font-family:var(--mono);font-size:9.5px;color:#dfe7ff;background:rgba(8,11,28,.82);border:1px solid var(--line);border-radius:6px;padding:2px 7px;pointer-events:none;white-space:nowrap;transform:translate(-50%,-130%)}
+.glabel.ip{border-color:rgba(52,211,153,.4)}
+.glabel.domain{border-color:rgba(54,182,255,.4)}
+.gconsole{position:absolute;left:0;right:0;bottom:0;border-top:1px solid var(--line);background:rgba(7,10,24,.9);font-family:var(--mono);font-size:10px;padding:8px 12px;display:flex;flex-direction:column;gap:3px;max-height:64px;overflow:hidden}
+.gconsole .gl{display:flex;gap:8px}
+.gconsole .gl .tag{flex:0 0 auto;border-radius:4px;padding:0 5px;font-size:8.5px;letter-spacing:.06em}
+.gconsole .gl .tag.ok{color:#bdf7da;background:rgba(52,211,153,.14)}
+.gconsole .gl .tag.info{color:#9fc4ff;background:rgba(96,165,250,.14)}
+.gconsole .gl .m{color:var(--dim)}
+.gconsole .gl .t{color:var(--dim-2);flex:0 0 auto}
+
+/* detail panel */
+.detail{border-left:1px solid var(--line);padding:14px;overflow-y:auto;max-height:600px}
+.detail .dn{font-family:var(--mono);font-size:15px;font-weight:700;color:#bff0d8;display:flex;align-items:center;gap:8px}
+.detail .dn .pin{width:9px;height:9px;border-radius:50%;background:var(--node-i);box-shadow:0 0 8px var(--node-i)}
+.detail .kv{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid rgba(124,150,255,.08);font-family:var(--mono);font-size:11px}
+.detail .kv .k{color:var(--dim-2);text-transform:uppercase;letter-spacing:.08em;font-size:9px;align-self:center}
+.detail .kv .v{color:#dfe7ff;text-align:right}
+.detail .kv .v.na{color:var(--dim-2)}
+.detail .neigh{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim-2);margin:16px 0 8px}
+.detail .neigh b{color:#bff0d8}
+.resolve{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;padding:6px 0;color:var(--dim)}
+.resolve .r1{color:#cdebff;min-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.resolve .arr{color:var(--teal)}
+.resolve .r2{color:#bff0d8;margin-left:auto}
+
+/* feature cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.fcard{background:rgba(12,16,38,.6);border:1px solid var(--line);border-radius:15px;padding:20px;transition:.16s}
+.fcard:hover{border-color:var(--line-2);transform:translateY(-3px);box-shadow:0 18px 40px -22px rgba(54,182,255,.4)}
+.fcard .fi{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:20px;background:rgba(54,182,255,.1);border:1px solid var(--line);margin-bottom:13px}
+.fcard h4{font-size:16px;margin-bottom:7px}
+.fcard p{color:var(--dim);font-size:13.5px;line-height:1.55}
+
+.close{text-align:center;max-width:760px;margin:0 auto}
+footer{text-align:center;padding:40px 22px 70px;color:var(--dim-2);font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;border-top:1px solid var(--line);margin-top:30px}
+footer a{color:#9fc4ff;text-decoration:none}
+@keyframes pulse{50%{opacity:.4}}
+.signal-network{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(9,13,34,.82),rgba(4,9,22,.72));border:1px solid rgba(54,182,255,.24);border-radius:22px;padding:24px;box-shadow:0 0 0 1px rgba(52,211,153,.08),0 22px 70px -42px rgba(54,182,255,.9)}
+.signal-network::before{content:"";position:absolute;inset:-1px;background:linear-gradient(90deg,transparent,rgba(54,182,255,.28),transparent),radial-gradient(circle at 18% 0,rgba(52,211,153,.18),transparent 36%),radial-gradient(circle at 88% 18%,rgba(155,123,255,.18),transparent 34%);pointer-events:none}
+.signal-network>*{position:relative}.signal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-top:20px}.signal-card{border:1px solid rgba(124,150,255,.18);background:rgba(5,9,25,.72);border-radius:16px;padding:17px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.025)}
+.signal-card h3{font-family:var(--display);font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#dbeafe;margin-bottom:9px}.signal-card p,.signal-card li{color:var(--dim);font-size:13px;line-height:1.55}.signal-card ul{list-style:none;display:grid;gap:7px}.signal-card a{color:#a7f3d0;text-decoration:none;border-bottom:1px solid rgba(52,211,153,.24)}.signal-card a:hover{color:#fff;border-bottom-color:#36b6ff;text-shadow:0 0 12px rgba(54,182,255,.7)}.matrix{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:16px}.matrix a{display:block;padding:10px 12px;border-radius:12px;border:1px solid rgba(54,182,255,.2);background:rgba(54,182,255,.055);font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#c7f9ff;text-decoration:none}.matrix a:hover{background:rgba(54,182,255,.12);box-shadow:0 0 18px rgba(54,182,255,.24)}
+
+</style>
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/glass.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+
+<div class="top">
+  <div class="mk"></div>
+  <div>
+    <div class="b-name"><b>FLOWSINT</b></div>
+    <div class="b-sub">OSINT Investigation Graph</div>
+  </div>
+  <div class="spacer"></div>
+  <span class="live-pill"><span class="dot"></span>Transform OK · 924 nodes</span>
+  <a class="back" href="index.html">← ClearGlass</a>
+</div>
+
+<div class="hero">
+  <span class="tagchip"><span class="dot"></span>Investigation · Sketch #13434 · 924 nodes</span>
+  <h1>Map the<br><span class="grad">infrastructure.</span></h1>
+  <p class="lede">Flowsint turns a single domain or IP into a living entity graph. Run transforms to resolve neighbors, pivot across hundreds of nodes, and watch infrastructure relationships surface in real time — domains, IPs, subdomains and the links between them.</p>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="store.html">🕸 Open an investigation</a>
+    <a class="btn btn-ghost" href="#surface">See the surface ▸</a>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="n" data-count="924">0</div><div class="l">Nodes in sketch</div></div>
+  <div class="stat"><div class="n" data-count="169">0</div><div class="l">Neighbors resolved</div></div>
+  <div class="stat"><div class="n">5</div><div class="l">Entities selected</div></div>
+  <div class="stat"><div class="n">∞</div><div class="l">Transforms / pivot</div></div>
+</div>
+
+<!-- ── SURFACE ─────────────────────────────────────────── -->
+<section id="surface">
+  <div class="sec-head">
+    <div class="sec-kicker">The surface</div>
+    <div class="sec-title">Every entity, every edge, one canvas.</div>
+    <p class="sec-sub">Pick an entity on the left, watch it light up in the graph, read its full resolution on the right. Transforms run in the console below.</p>
+  </div>
+
+  <div class="invest">
+    <div class="iv-bar">
+      <span class="title">Flowsint</span>
+      <span class="crumb">Investigation / <b>Sketch #13434</b></span>
+      <span class="bb-spacer"></span>
+      <div class="iv-tools">
+        <span class="tool on" title="Layout">⠿</span>
+        <span class="tool" title="Transform">⚡</span>
+        <span class="tool" title="List">☰</span>
+        <span class="tool" title="Pivot">⇄</span>
+        <span class="tool" title="Geo">◎</span>
+      </div>
+    </div>
+    <div class="iv-grid">
+
+      <!-- entities -->
+      <div class="ents">
+        <div class="eh">Entities · 924 nodes <span class="sel">5 sel</span></div>
+        <input class="esearch" id="esearch" placeholder="Search Flowsint  ⌘J"/>
+        <div id="entList"></div>
+      </div>
+
+      <!-- graph -->
+      <div class="gwrap">
+        <canvas id="graph"></canvas>
+        <div id="labels"></div>
+        <div class="gconsole" id="gconsole">
+          <div class="gl"><span class="t">11:36:48</span><span class="tag ok">COMPLETED</span><span class="m">Transform completed successfully.</span></div>
+          <div class="gl"><span class="t">11:36:48</span><span class="tag info">INFO</span><span class="m">Transform execution log finalized · 169 neighbors.</span></div>
+        </div>
+      </div>
+
+      <!-- detail -->
+      <div class="detail" id="detail">
+        <div class="dn"><span class="pin"></span><span id="dTitle">12.34.56.78</span></div>
+        <div id="dBody">
+          <div class="kv"><span class="k">Type</span><span class="v">IP address</span></div>
+          <div class="kv"><span class="k">Country</span><span class="v na">N/A</span></div>
+          <div class="kv"><span class="k">Address</span><span class="v">12.34.56.78</span></div>
+          <div class="kv"><span class="k">City</span><span class="v na">N/A</span></div>
+          <div class="kv"><span class="k">ISP</span><span class="v na">N/A</span></div>
+          <div class="kv"><span class="k">Latitude</span><span class="v na">N/A</span></div>
+          <div class="neigh"><b>169</b> neighbor(s)</div>
+          <div class="resolve"><span class="r1">akamai</span><span class="arr">→ resolves</span><span class="r2">12.34.5…</span></div>
+          <div class="resolve"><span class="r1">gridlog</span><span class="arr">→ resolves</span><span class="r2">12.34.5…</span></div>
+          <div class="resolve"><span class="r1">github</span><span class="arr">→ resolves</span><span class="r2">12.34.5…</span></div>
+          <div class="resolve"><span class="r1">inference</span><span class="arr">→ resolves</span><span class="r2">12.34.5…</span></div>
+          <div class="resolve"><span class="r1">incontrol</span><span class="arr">→ resolves</span><span class="r2">12.34.5…</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ────────────────────────────────────────── -->
+<section>
+  <div class="sec-head">
+    <div class="sec-kicker">What it does</div>
+    <div class="sec-title">From one seed to the whole footprint.</div>
+  </div>
+  <div class="cards">
+    <div class="fcard"><div class="fi">🌐</div><h4>Domain → IP resolution</h4><p>Drop a domain and Flowsint resolves it, maps its subdomains, and pulls every IP it touches into the graph.</p></div>
+    <div class="fcard"><div class="fi">⚡</div><h4>Transforms on demand</h4><p>Run a transform on any node to expand its neighbors. Each run is logged to the console with a finalized execution record.</p></div>
+    <div class="fcard"><div class="fi">🔗</div><h4>Neighbor resolution</h4><p>A single IP surfaced 169 neighbors — every domain resolving to it, ranked and pivot-ready in the detail panel.</p></div>
+    <div class="fcard"><div class="fi">⇄</div><h4>Pivot across entities</h4><p>Select up to many entities at once and pivot — Flowsint redraws the graph around the shared infrastructure between them.</p></div>
+    <div class="fcard"><div class="fi">📍</div><h4>Geo + ISP enrichment</h4><p>Country, city, ISP and coordinates fill in as enrichment transforms complete — N/A today, mapped tomorrow.</p></div>
+    <div class="fcard"><div class="fi">🗂</div><h4>Sketches that persist</h4><p>Every investigation is a saved sketch — 924 nodes in #13434 — so you can return, re-run, and keep building the case.</p></div>
+  </div>
+</section>
+
+
+<section id="authority-network">
+  <div class="signal-network">
+    <div class="sec-head">
+      <div class="sec-kicker">Authority lattice</div>
+      <div class="sec-title">Flowsint is the OSINT node in the ClearGlass command grid.</div>
+      <p class="sec-sub">This page now acts as an investigation cluster waypoint: it routes discovery traffic into the intelligence pillar, laterally into cyber defense and agent orchestration, and forward into a governed engagement path without adding noisy or random links.</p>
+    </div>
+    <div class="signal-grid">
+      <article class="signal-card"><h3>1 · Site linking strategy</h3><p>Home remains the authority hub; pillar pages hold category intent; cluster pages prove depth; blog posts expand topical relevance; service pages convert qualified demand. Each link is a controlled signal path from discovery to trust to conversion.</p></article>
+      <article class="signal-card"><h3>2 · Page hierarchy map</h3><ul><li><a href="index.html">Home authority hub</a></li><li><a href="intelligence.html">Intelligence &amp; OSINT pillar</a></li><li><a href="cyber-defense-console.html">Cyber defense pillar</a></li><li><a href="percival-os.html">Command and agent operations pillar</a></li><li><a href="offers/index.html">Services and engagement pillar</a></li></ul></article>
+      <article class="signal-card"><h3>3 · Pillar-to-cluster matrix</h3><p>Flowsint supports the Intelligence pillar, bridges to the Cyber Defense Console for defensive validation, and connects to Agent Mesh for governed OSINT orchestration.</p><div class="matrix"><a href="intelligence-command-surface.html">Unified intelligence picture</a><a href="agentmesh.html">Multi-agent OSINT orchestration</a><a href="blog/osint-workflow-that-survives-contact-with-reality.html">Operational OSINT workflow</a></div></article>
+      <article class="signal-card"><h3>4 · Recommended anchors</h3><ul><li><a href="intelligence.html">ClearGlass intelligence practice</a></li><li><a href="clearglass-nexus.html">full-spectrum intelligence platform</a></li><li><a href="Ontario-osint.html">regional OSINT control deck</a></li><li><a href="store.html">book an authorized investigation</a></li></ul></article>
+      <article class="signal-card"><h3>5 · Service-page links</h3><p>Service pages should point back to proof and process: Security Quick-Audit to cyber defense, hardening to SMB trust, PHIPA to ClearPulse, procurement work to government readiness, and all high-intent routes to pricing or booking.</p></article>
+      <article class="signal-card"><h3>6 · Blog pillar links</h3><p>Blog posts should reinforce a pillar, one sibling cluster, and one conversion next step. OSINT posts route to Flowsint and Intelligence; agent-governance posts route to PERCIVAL and AI Operator; security posts route to Cyber Defense Console.</p></article>
+      <article class="signal-card"><h3>7 · Footer and CTA structure</h3><p>The footer stays minimal: ClearGlass hub, intelligence pillar, service booking, pricing, privacy, and terms. CTAs stay specific: open an investigation, request a security briefing, see pricing, or browse engagements.</p></article>
+      <article class="signal-card"><h3>8 · Implementation order</h3><p>Maintain the graph in <code>tools/internal_links.py</code>, regenerate generated blocks, add contextual links only where they improve intent, validate with the bot, then review changed pages for visual and crawl integrity.</p></article>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="close">
+    <div class="sec-kicker">Defensive OSINT, by ClearGlass Inc</div>
+    <h1 style="font-size:clamp(26px,4.5vw,44px);margin-top:10px">See the graph<br><span class="grad">before they do.</span></h1>
+    <p class="lede">Flowsint is built for authorized investigations, attack-surface mapping, and infrastructure intelligence. Part of the ClearGlass intelligence stack alongside Sentinel and the Ontario OSINT deck.</p>
+    <div class="cta-row" style="justify-content:center">
+      <a class="btn btn-primary" href="store.html">🕸 Open an investigation</a>
+      <a class="btn btn-ghost" href="intelligence.html">Intelligence stack</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Flowsint · a ClearGlass Inc intelligence tool · for authorized investigations only · <a href="index.html">www.clearglassinc.com</a>
+</footer>
+
+<script>
+const $=s=>document.querySelector(s);
+
+/* count-up */
+function countUp(el){
+  const target=+el.dataset.count, dur=1100, t0=performance.now();
+  function step(t){const p=Math.min(1,(t-t0)/dur),v=Math.floor((1-Math.pow(1-p,3))*target);
+    el.textContent=v.toLocaleString();if(p<1)requestAnimationFrame(step);}
+  requestAnimationFrame(step);
+}
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){countUp(e.target);io.unobserve(e.target);}}),{threshold:.5});
+document.querySelectorAll(".stat .n[data-count]").forEach(el=>io.observe(el));
+
+/* entity data (from the sketch) */
+const ENTS=[
+  {n:"mydummydomain.com",t:"domain",sel:false,seed:true},
+  {n:"20.mydummydomain.com",t:"domain",sel:true},
+  {n:"3.mydummydomain.com",t:"domain",sel:true},
+  {n:"47.mydummydomain.com",t:"domain",sel:true},
+  {n:"2.18.48.207",t:"ip"},
+  {n:"academiawashington…",t:"domain"},
+  {n:"acme-sentry-4.eng…",t:"domain"},
+  {n:"acs2-poc.voice.myd…",t:"domain"},
+  {n:"ai-api-stg.mydumm…",t:"domain"},
+  {n:"ai-api-uat.mydumm…",t:"domain"},
+  {n:"ai-api.mydummydo…",t:"domain"},
+  {n:"inside-stg.mydummydomain.com",t:"domain"},
+  {n:"gf.mydummydomain.com",t:"domain"},
+  {n:"12.34.56.78",t:"ip"},
+  {n:"54.218.161.170",t:"ip"},
+  {n:"3.20.194.73",t:"ip"},
+  {n:"2.18.206.211",t:"ip"},
+  {n:"206.234.27.221",t:"ip"},
+];
+const list=$("#entList");
+function renderList(q){
+  q=(q||"").toLowerCase();
+  list.innerHTML=ENTS.filter(e=>!q||e.n.toLowerCase().includes(q)).map((e,i)=>
+    `<div class="ent${e.sel?' active':''}" data-i="${ENTS.indexOf(e)}"><span class="nm">${e.n}</span><span class="badge ${e.t}">${e.t}</span></div>`
+  ).join("")||`<div style="color:var(--dim-2);font-family:var(--mono);font-size:11px;padding:8px">no match</div>`;
+}
+renderList("");
+$("#esearch").addEventListener("input",e=>renderList(e.target.value));
+
+/* detail panel swap on click */
+const detail=$("#dBody"), dTitle=$("#dTitle");
+list.addEventListener("click",ev=>{
+  const row=ev.target.closest(".ent"); if(!row) return;
+  list.querySelectorAll(".ent").forEach(r=>r.classList.remove("active"));
+  row.classList.add("active");
+  const e=ENTS[+row.dataset.i];
+  dTitle.textContent=e.n;
+  if(e.t==="ip"){
+    detail.innerHTML=`
+      <div class="kv"><span class="k">Type</span><span class="v">IP address</span></div>
+      <div class="kv"><span class="k">Country</span><span class="v na">N/A</span></div>
+      <div class="kv"><span class="k">Address</span><span class="v">${e.n}</span></div>
+      <div class="kv"><span class="k">City</span><span class="v na">N/A</span></div>
+      <div class="kv"><span class="k">ISP</span><span class="v na">N/A</span></div>
+      <div class="kv"><span class="k">Latitude</span><span class="v na">N/A</span></div>
+      <div class="neigh"><b>${1+Math.floor(Math.random()*200)}</b> neighbor(s)</div>
+      <div class="resolve"><span class="r1">resolves</span><span class="arr">→</span><span class="r2">${e.n}</span></div>`;
+  } else {
+    detail.innerHTML=`
+      <div class="kv"><span class="k">Type</span><span class="v">Domain</span></div>
+      <div class="kv"><span class="k">Apex</span><span class="v">mydummydomain.com</span></div>
+      <div class="kv"><span class="k">Record</span><span class="v">A · CNAME</span></div>
+      <div class="kv"><span class="k">Status</span><span class="v">resolving</span></div>
+      <div class="neigh"><b>${1+Math.floor(Math.random()*40)}</b> edge(s) · run a transform to expand</div>
+      <div class="resolve"><span class="r1">${e.n.split('.')[0]}</span><span class="arr">→ resolves</span><span class="r2">2.18.48…</span></div>`;
+  }
+});
+
+/* graph: force-ish constellation of nodes */
+const cv=$("#graph"), ctx=cv.getContext("2d"), labels=$("#labels");
+let W,H,DPR=Math.min(2,window.devicePixelRatio||1);
+function size(){W=cv.clientWidth;H=cv.clientHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
+const NODES=[],EDGES=[];
+function build(){
+  NODES.length=0;EDGES.length=0;
+  const cx=W*0.42,cy=H*0.46;
+  // central hub (seed domain)
+  NODES.push({x:cx,y:cy,r:6,c:'#36b6ff',hub:true,label:'mydummydomain.com',type:'domain',show:true});
+  // labelled key nodes from the sketch
+  const keys=[
+    ['199.120.51.239','ip',-0.18,-0.34],['66.17.20.3','ip',0.12,-0.36],['209.133.79.61','ip',-0.34,-0.22],
+    ['52.220.175.77','ip',-0.38,-0.10],['54.75.101.220','ip',0.30,-0.18],['206.234.27.221','ip',0.30,-0.05],
+    ['inside-stg.mydummydomain.com','domain',0.20,0.02],['54.218.161.170','ip',0.30,0.14],
+    ['2.22.4.63','ip',-0.30,0.16],['gf.mydummydomain.com','domain',0.02,0.26],
+    ['3.20.194.73','ip',0.18,0.28],['2.18.206.211','ip',0.06,0.34]
+  ];
+  keys.forEach(k=>{
+    NODES.push({x:cx+k[2]*W,y:cy+k[3]*H,r:5,c:k[1]==='ip'?'#9fc4ff':'#36b6ff',label:k[0],type:k[1],show:true});
+  });
+  // dense halo of unlabeled nodes
+  for(let i=0;i<240;i++){
+    const a=Math.random()*Math.PI*2, rad=(28+Math.random()*Math.min(W,H)*0.42);
+    NODES.push({x:cx+Math.cos(a)*rad,y:cy+Math.sin(a)*rad,r:1.6+Math.random()*1.6,c:'#7fd8b8',type:'ip'});
+  }
+  // a second cluster
+  const c2x=W*0.20,c2y=H*0.62;
+  for(let i=0;i<60;i++){
+    const a=Math.random()*Math.PI*2, rad=10+Math.random()*70;
+    NODES.push({x:c2x+Math.cos(a)*rad,y:c2y+Math.sin(a)*rad,r:1.4+Math.random()*1.4,c:'#7fd8b8'});
+  }
+  // edges: hub to everything-ish
+  for(let i=1;i<NODES.length;i++){
+    if(Math.random()<0.55) EDGES.push([0,i]);
+    else EDGES.push([1+Math.floor(Math.random()*12),i]);
+  }
+}
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  ctx.lineWidth=0.6;
+  EDGES.forEach(([a,b])=>{
+    const n1=NODES[a],n2=NODES[b]; if(!n1||!n2)return;
+    ctx.strokeStyle='rgba(124,150,255,0.07)';
+    ctx.beginPath();ctx.moveTo(n1.x,n1.y);ctx.lineTo(n2.x,n2.y);ctx.stroke();
+  });
+  NODES.forEach(n=>{
+    ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+    ctx.fillStyle=n.c;ctx.fill();
+    if(n.hub){ctx.beginPath();ctx.arc(n.x,n.y,n.r+4,0,Math.PI*2);ctx.strokeStyle='rgba(54,182,255,0.5)';ctx.lineWidth=1.2;ctx.stroke();}
+  });
+}
+function placeLabels(){
+  labels.innerHTML="";
+  NODES.filter(n=>n.show&&n.label).forEach(n=>{
+    const d=document.createElement("div");
+    d.className="glabel "+(n.type||"");
+    d.textContent=n.label;
+    d.style.left=n.x+"px";d.style.top=n.y+"px";
+    labels.appendChild(d);
+  });
+}
+let t=0;
+function tick(){
+  t+=0.004;
+  NODES.forEach((n,i)=>{ if(i>13){ n.x+=Math.sin(t+i)*0.06; n.y+=Math.cos(t*0.8+i)*0.06; } });
+  draw();
+  requestAnimationFrame(tick);
+}
+function boot(){ size(); build(); placeLabels(); tick(); }
+window.addEventListener("resize",()=>{size();build();placeLabels();});
+window.addEventListener("load",boot);
+
+/* console: stream transform lines */
+const con=$("#gconsole");
+const CLINES=[
+  ["ok","COMPLETED","Transform completed successfully."],
+  ["info","INFO","Resolving neighbors for 12.34.56.78 …"],
+  ["ok","COMPLETED","169 neighbor(s) added to sketch."],
+  ["info","INFO","Pivot · 5 selected entities → shared infra."],
+  ["ok","COMPLETED","924 nodes · sketch #13434 saved."],
+  ["info","INFO","Transform execution log finalized."],
+];
+let ci=2;
+setInterval(()=>{
+  const [cls,tag,msg]=CLINES[ci%CLINES.length]; ci++;
+  const ts=`11:36:${String(48+(ci%12)).padStart(2,'0')}`;
+  const row=document.createElement("div");
+  row.className="gl";
+  row.innerHTML=`<span class="t">${ts}</span><span class="tag ${cls}">${tag}</span><span class="m">${msg}</span>`;
+  con.prepend(row);
+  while(con.children.length>2) con.removeChild(con.lastChild);
+},2800);
+</script>
+
+<script defer src="nav.js"></script>
+<script defer src="ui.js"></script>
+<script defer src="platform.js"></script>
+<script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="intelligence.html">Intelligence &amp; OSINT</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="intelligence.html"><span><b>Previous</b>Intelligence</span></a>
+      <a href="intelligence.html"><span><b>Topic hub</b>Intelligence</span></a>
+      <a href="clearglass-nexus.html"><span><b>Next in journey</b>ClearGlass NEXUS</span></a>
+    </div>
+    <ul>
+      <li><a href="blog/osint-workflow-that-survives-contact-with-reality.html"><b>The OSINT Workflow That Survives Contact With Reality</b> — field-tested investigation practice</a></li>
+      <li><a href="agentmesh.html"><b>Agent Mesh</b> — multi-agent OSINT orchestration</a></li>
+      <li><a href="cyber-defense-console.html"><b>Cyber Defense Console</b> — the ClearGlass command center for defensive operations</a></li>
+      <li><a href="clearglass-nexus.html"><b>ClearGlass NEXUS</b> — full-spectrum intelligence platform</a></li>
+      <li><a href="Ontario-osint.html"><b>Ontario OSINT Deck</b> — regional open-source intelligence control deck</a></li>
+      <li><a href="clearglass.html"><b>Network Flow Intelligence</b> — see network traffic as living structure</a></li>
+      <li><a href="intelligence-command-surface.html"><b>Intelligence Command Surface</b> — one unified operational picture</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

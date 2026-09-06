@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="ClearGlass Inc. browser tab stamp mark">
+  <metadata>© 2026 ClearGlass Inc. Browser-tab-only neon stamp mark. This asset is separate from the ClearGlass company logo and does not modify the company logo files.</metadata>
+  <defs>
+    <radialGradient id="field" cx="50%" cy="42%" r="72%">
+      <stop offset="0" stop-color="#173058"/>
+      <stop offset="0.46" stop-color="#07182b"/>
+      <stop offset="1" stop-color="#020713"/>
+    </radialGradient>
+    <linearGradient id="neon" x1="88" y1="78" x2="428" y2="436" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60f7ff"/>
+      <stop offset="0.5" stop-color="#b892ff"/>
+      <stop offset="1" stop-color="#5fffc9"/>
+    </linearGradient>
+    <filter id="glow" x="-35%" y="-35%" width="170%" height="170%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 .32 0 0 0 0 .88 0 0 0 0 1 0 0 0 .8 0" result="aura"/>
+      <feMerge><feMergeNode in="aura"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <path id="star" d="M0-14 3.4-4.6 13.3-4.3 5.5 1.8 8.2 11.3 0 5.8-8.2 11.3-5.5 1.8-13.3-4.3-3.4-4.6Z"/>
+  </defs>
+  <rect x="28" y="28" width="456" height="456" rx="112" fill="url(#field)"/>
+  <g fill="none" stroke="url(#neon)" filter="url(#glow)">
+    <circle cx="256" cy="256" r="198" stroke-width="11" opacity=".95"/>
+    <circle cx="256" cy="256" r="166" stroke-width="5" opacity=".55" stroke-dasharray="3 14"/>
+    <rect x="112" y="112" width="288" height="288" rx="26" stroke-width="5" opacity=".36" transform="rotate(45 256 256)"/>
+  </g>
+  <g fill="url(#neon)" filter="url(#glow)" opacity=".95">
+    <use href="#star" transform="translate(256 75) scale(.86)"/>
+    <use href="#star" transform="translate(256 437) scale(.86)"/>
+    <use href="#star" transform="translate(75 256) scale(.86)"/>
+    <use href="#star" transform="translate(437 256) scale(.86)"/>
+    <use href="#star" transform="translate(128 128) scale(.62)"/>
+    <use href="#star" transform="translate(384 128) scale(.62)"/>
+    <use href="#star" transform="translate(128 384) scale(.62)"/>
+    <use href="#star" transform="translate(384 384) scale(.62)"/>
+  </g>
+  <path d="M256 123 302 214 402 229 329 300 347 400 256 352 165 400 183 300 110 229 210 214Z" fill="none" stroke="url(#neon)" stroke-width="18" stroke-linejoin="round" filter="url(#glow)" opacity=".92"/>
+  <path d="M176 277h160M176 242h160M176 312h160" stroke="#f8fbff" stroke-width="19" stroke-linecap="round" opacity=".92" filter="url(#glow)"/>
+  <path d="M126 112h260" stroke="#f8fbff" stroke-width="14" stroke-linecap="round" opacity=".9" filter="url(#glow)"/>
+</svg>

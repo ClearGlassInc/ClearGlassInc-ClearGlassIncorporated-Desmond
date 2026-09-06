@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<link rel="sitemap" type="application/xml" href="/sitemap.xml">
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>ClearGlass Inc. — Federal & Government Solutions | FedRAMP</title>
+<meta name="description" content="ClearGlass Inc. delivers DARPA-grade intelligence platforms, zero-trust cybersecurity, and AI-driven command surfaces for Canadian and US federal agencies."/>
+<link rel="canonical" href="https://www.clearglassinc.com/government.html"/>
+<meta property="og:title" content="ClearGlass Inc. — Federal & Government Solutions"/>
+<meta property="og:description" content="DARPA-grade intelligence platforms and zero-trust cybersecurity for Canadian and US federal agencies."/>
+<meta property="og:url" content="https://www.clearglassinc.com/government.html"/>
+<meta property="og:site_name" content="ClearGlass Inc."/>
+<meta property="og:type" content="website"/>
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --white:#fafbfc;--off:#f3f5f8;
+  --glass:rgba(255,255,255,0.55);--glass-border:rgba(0,0,0,0.06);
+  --dark:#0a0c10;--dark-2:#1a1d25;--dark-3:#0d1020;
+  --text:#0a0c10;--text-2:#3a3f4a;--text-3:#6b7280;--text-4:#9ca3af;
+  --navy:#0a1628;--navy-2:#0f1f3d;--navy-3:#1a2d4a;
+  --gold:#5b4bc8;--gold-2:#887ae8;--gold-3:#2f1e8a;
+  --gov-blue:#1a3a6b;--gov-blue-2:#2a5298;--gov-light:#4a7fd4;
+  --prism-1:#38bdf8;--prism-2:#a78bfa;--prism-4:#34d399;--prism-5:#4929f6;
+  --crystal:linear-gradient(135deg,#38bdf8 0%,#a78bfa 25%,#f472b6 50%,#4929f6 75%,#34d399 100%);
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Urbanist',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',monospace
+}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ── CLASSIFICATION BANNER ── */
+.class-banner{
+  background:#af1cb7;color:#fff;text-align:center;
+  font-family:var(--mono);font-size:11px;letter-spacing:.18em;font-weight:700;
+  padding:6px 16px;position:relative;z-index:200;
+  border-bottom:2px solid #74057a;
+}
+.class-banner span{opacity:.8;font-weight:400;margin:0 8px}
+
+/* ── NAV ── */
+.nav{
+  position:sticky;top:0;z-index:100;height:68px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(1rem,3vw,2rem);
+  background:rgba(10,22,40,.97);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  backdrop-filter:blur(20px);
+}
+.nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.nav-mark{width:38px;height:38px;border-radius:9px;overflow:hidden;background:#fff;display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.nav-mark img{width:100%;height:100%;object-fit:cover}
+.nav-name{font-family:var(--serif);font-size:19px;font-weight:600;color:#fff;letter-spacing:-.01em}
+.nav-name em{font-style:italic;font-weight:300;color:rgba(255,255,255,.45)}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{color:rgba(255,255,255,.55);text-decoration:none;font-size:13px;font-weight:600;padding:8px 14px;border-radius:8px;transition:all .18s}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.nav-links a.active{color:#fff}
+.nav-cta{color:#fff!important;background:var(--gov-blue-2)!important;border:1px solid rgba(74,127,212,.4)!important}
+.nav-cta:hover{background:#3464b8!important}
+@media(max-width:860px){.nav-links{display:none}}
+
+/* ── HERO ── */
+.hero{
+  background:var(--navy);
+  padding:clamp(80px,10vw,130px) 0 clamp(60px,8vw,100px);
+  position:relative;overflow:hidden;
+}
+.hero-grid-lines{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(74,127,212,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(74,127,212,.05) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.hero-glow{
+  position:absolute;top:-200px;left:50%;transform:translateX(-50%);
+  width:800px;height:600px;
+  background:radial-gradient(ellipse,rgba(42,82,152,.3) 0%,transparent 70%);
+  pointer-events:none;
+}
+.container{width:min(1180px,92vw);margin:0 auto;padding:0 clamp(1rem,3vw,2rem)}
+.hero-inner{position:relative;z-index:1}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.2em;
+  color:var(--gold);margin-bottom:24px;
+}
+.hero-eyebrow::before{content:'';width:18px;height:1px;background:var(--gold)}
+.hero h1{
+  font-family:var(--serif);
+  font-size:clamp(3rem,7vw,6.5rem);
+  font-weight:300;line-height:1.02;letter-spacing:-.025em;
+  color:#fff;max-width:860px;
+}
+.hero h1 strong{font-weight:600}
+.hero h1 .gold-text{
+  background:linear-gradient(135deg,var(--gold) 0%,var(--gold-2) 50%,var(--gold) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{
+  font-size:clamp(1rem,1.6vw,1.18rem);color:rgba(255,255,255,.55);
+  line-height:1.78;max-width:620px;margin-top:24px;
+}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:36px}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 28px;border-radius:8px;
+  font-family:var(--sans);font-size:14px;font-weight:700;
+  text-decoration:none;cursor:pointer;border:none;transition:all .25s;
+  letter-spacing:.01em;
+}
+.btn-gold{
+  color:var(--navy);background:linear-gradient(135deg,var(--gold),var(--gold-2));
+  box-shadow:0 4px 20px rgba(91,75,200,.25);
+}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(91,75,200,.35)}
+.btn-outline{
+  color:rgba(255,255,255,.85);
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.18);
+}
+.btn-outline:hover{background:rgba(255,255,255,.12);color:#fff}
+.btn-dark{color:#fff;background:var(--dark);box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.btn-dark:hover{background:var(--dark-2);transform:translateY(-1px)}
+.hero-badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:32px}
+.hero-badge{
+  padding:6px 14px;border-radius:6px;
+  font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;
+  border:1px solid;
+}
+.hb-green{color:#4ade80;border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.07)}
+.hb-blue{color:#60a5fa;border-color:rgba(96,165,250,.3);background:rgba(96,165,250,.06)}
+.hb-gold{color:var(--gold-2);border-color:rgba(91,75,200,.3);background:rgba(91,75,200,.06)}
+.hb-purple{color:#c084fc;border-color:rgba(192,132,252,.28);background:rgba(192,132,252,.05)}
+
+/* ── STAT STRIP ── */
+.stat-strip{
+  background:rgba(255,255,255,.04);
+  border-top:1px solid rgba(255,255,255,.07);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  padding:20px 0;
+}
+.stat-inner{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:rgba(255,255,255,.06);
+}
+.stat-cell{
+  padding:20px 24px;background:var(--navy);text-align:center;
+}
+.stat-val{
+  font-family:var(--serif);font-size:clamp(2rem,3.5vw,3rem);
+  font-weight:300;color:#fff;letter-spacing:-.02em;line-height:1;
+}
+.stat-val strong{font-weight:600;color:var(--gold-2)}
+.stat-label{
+  font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+  color:rgba(255,255,255,.35);margin-top:6px;
+}
+@media(max-width:680px){.stat-inner{grid-template-columns:repeat(2,1fr)}}
+
+/* ── SECTIONS ── */
+.sect{padding:clamp(72px,10vw,120px) 0}
+.sect-dark{background:var(--navy);color:#fff}
+.sect-navy{background:var(--navy-2);color:#fff}
+.sect-off{background:var(--off)}
+
+.sh{margin-bottom:clamp(44px,6vw,68px)}
+.sh-tag{
+  font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.18em;
+  color:var(--text-4);margin-bottom:14px;display:flex;align-items:center;gap:10px;
+}
+.sh-tag::before{content:'';width:20px;height:1px;background:currentColor}
+.sh-tag.light{color:rgba(255,255,255,.35)}
+.sh-tag.light::before{background:rgba(255,255,255,.35)}
+.sh-tag.gold{color:var(--gold);opacity:.85}
+.sh-tag.gold::before{background:var(--gold)}
+.sh h2{
+  font-family:var(--serif);font-size:clamp(2.2rem,5vw,3.8rem);
+  font-weight:300;line-height:1.1;letter-spacing:-.02em;
+}
+.sh h2 strong{font-weight:600}
+.sh p{color:var(--text-3);font-size:clamp(1rem,1.4vw,1.08rem);line-height:1.78;max-width:620px;margin-top:16px}
+.sh-light h2{color:#fff}
+.sh-light p{color:rgba(255,255,255,.5)}
+.sh-center{text-align:center}
+.sh-center p{margin-left:auto;margin-right:auto}
+
+/* ── COMPLIANCE GRID ── */
+.compliance-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:16px;
+}
+.comp-card{
+  padding:24px 26px;border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03);
+  transition:all .3s;position:relative;overflow:hidden;
+}
+.comp-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--bar-color,rgba(255,255,255,.15));
+  opacity:.8;
+}
+.comp-card:hover{border-color:rgba(255,255,255,.16);transform:translateY(-3px)}
+.comp-badge{
+  display:inline-block;padding:4px 10px;border-radius:4px;
+  font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.12em;
+  margin-bottom:16px;
+}
+.comp-card h3{font-size:15px;font-weight:700;color:#fff;margin-bottom:8px}
+.comp-card p{font-size:13px;color:rgba(255,255,255,.45);line-height:1.7}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25)}
+.badge-blue{background:rgba(96,165,250,.1);color:#60a5fa;border:1px solid rgba(96,165,250,.22)}
+.badge-gold{background:rgba(91,75,200,.12);color:var(--gold-2);border:1px solid rgba(91,75,200,.25)}
+.badge-purple{background:rgba(192,132,252,.1);color:#c084fc;border:1px solid rgba(192,132,252,.22)}
+.badge-red{background:rgba(241,113,248,.08);color:#f171f8;border:1px solid rgba(241,113,248,.22)}
+.badge-cyan{background:rgba(34,211,238,.08);color:#22d3ee;border:1px solid rgba(34,211,238,.2)}
+
+/* ── USE CASE CARDS ── */
+.usecase-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.uc-card{
+  padding:clamp(24px,3vw,36px);border-radius:16px;
+  border:1px solid var(--glass-border);background:#fff;
+  box-shadow:0 8px 32px rgba(0,0,0,.04);
+  transition:all .3s;
+}
+.uc-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.08)}
+.uc-flag{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;
+  color:var(--gov-blue-2);margin-bottom:18px;
+}
+.uc-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:20px;flex-shrink:0}
+.uc-card h3{font-family:var(--serif);font-size:1.5rem;font-weight:500;margin-bottom:10px;letter-spacing:-.01em}
+.uc-card p{font-size:13.5px;color:var(--text-3);line-height:1.75}
+.uc-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:16px}
+.uc-tag{
+  padding:4px 10px;border-radius:4px;font-size:10px;font-weight:600;
+  letter-spacing:.06em;background:var(--off);
+  color:var(--text-3);border:1px solid rgba(0,0,0,.06);
+}
+
+/* ── CAPABILITY CARDS ── */
+.cap-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:720px){.cap-grid{grid-template-columns:1fr}}
+.cap-card{
+  padding:clamp(28px,3.5vw,44px);border-radius:16px;
+  border:1px solid rgba(255,255,255,.07);
+  background:rgba(255,255,255,.03);
+  transition:all .3s;
+}
+.cap-card:hover{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.05)}
+.cap-card.hero-cap{
+  grid-column:1/-1;
+  background:linear-gradient(140deg,rgba(42,82,152,.2),rgba(26,58,107,.15));
+  border-color:rgba(74,127,212,.22);
+}
+.cap-badge{
+  font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;
+  margin-bottom:14px;display:block;
+}
+.cap-card h3{font-family:var(--serif);font-size:clamp(1.4rem,2.5vw,2rem);font-weight:400;color:#fff;margin-bottom:12px}
+.cap-card p{font-size:14px;color:rgba(255,255,255,.5);line-height:1.75}
+.cap-feats{display:grid;gap:8px;margin-top:18px}
+.cap-feat{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.55)}
+.cap-feat .ck{
+  width:18px;height:18px;border-radius:5px;flex-shrink:0;
+  display:grid;place-items:center;font-size:9px;font-weight:700;
+}
+.cap-card .btn{margin-top:22px}
+
+/* ── PROCUREMENT TABLE ── */
+.proc-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:740px){.proc-grid{grid-template-columns:1fr}}
+.proc-card{
+  padding:clamp(24px,3vw,36px);border-radius:16px;
+  border:1px solid var(--glass-border);background:#fff;
+  box-shadow:0 6px 28px rgba(0,0,0,.04);
+}
+.proc-flag{
+  font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.15em;
+  margin-bottom:18px;display:flex;align-items:center;gap:8px;
+}
+.proc-card h3{font-family:var(--serif);font-size:1.6rem;font-weight:500;margin-bottom:14px}
+.proc-list{display:grid;gap:10px}
+.proc-item{padding:12px 14px;border-radius:10px;background:var(--off);border:1px solid rgba(0,0,0,.05)}
+.proc-item-head{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.proc-item p{font-size:12.5px;color:var(--text-3);line-height:1.65}
+.proc-item code{font-family:var(--mono);font-size:11.5px;background:rgba(0,0,0,.05);padding:2px 6px;border-radius:4px;color:var(--gov-blue)}
+
+/* ── CONTACT SECTION ── */
+.contact-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:start}
+@media(max-width:740px){.contact-grid{grid-template-columns:1fr}}
+.contact-card{
+  padding:clamp(32px,4vw,48px);border-radius:20px;
+  background:linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.1);
+}
+.contact-card h3{font-family:var(--serif);font-size:clamp(1.6rem,3vw,2.4rem);color:#fff;font-weight:400;margin-bottom:8px}
+.contact-card p{font-size:14px;color:rgba(255,255,255,.5);line-height:1.75;margin-bottom:22px}
+.contact-items{display:grid;gap:12px}
+.contact-item{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+.ci-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.ci-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-bottom:3px}
+.ci-val{font-size:14px;color:#fff;font-weight:500}
+.ci-val a{color:var(--gold-2);text-decoration:none}
+.ci-val a:hover{text-decoration:underline}
+.info-card{
+  padding:clamp(28px,3.5vw,40px);border-radius:20px;
+  background:#fff;border:1px solid var(--glass-border);
+  box-shadow:0 12px 40px rgba(0,0,0,.05);
+}
+.info-card h3{font-family:var(--serif);font-size:1.5rem;font-weight:500;margin-bottom:18px}
+.info-list{display:grid;gap:14px}
+.info-item{padding:14px 0;border-top:1px solid rgba(0,0,0,.06)}
+.info-item:first-child{border-top:none;padding-top:0}
+.il-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--text-4);margin-bottom:5px}
+.il-val{font-size:14px;color:var(--text-2);line-height:1.65}
+
+/* ── FOOTER ── */
+.gov-footer{background:var(--navy);border-top:1px solid rgba(255,255,255,.07);padding:40px 0}
+.gf-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
+.gf-brand{font-family:var(--serif);font-size:18px;color:rgba(255,255,255,.7);font-weight:500}
+.gf-brand em{font-style:italic;font-weight:300;color:rgba(255,255,255,.35)}
+.gf-links{display:flex;gap:20px;flex-wrap:wrap}
+.gf-links a{color:rgba(255,255,255,.4);font-size:12.5px;text-decoration:none;transition:color .2s}
+.gf-links a:hover{color:#fff}
+.gf-copy{font-family:var(--mono);font-size:10.5px;color:rgba(255,255,255,.25);width:100%;margin-top:8px;letter-spacing:.05em}
+
+/* ── UNCLASS BANNER AT BOTTOM ── */
+.unclass-banner{
+  background:#1a4731;color:#4ade80;text-align:center;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;font-weight:700;
+  padding:5px 16px;border-top:1px solid rgba(74,222,128,.2);
+}
+
+/* ── SCROLL REVEAL ── */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.rv.vis{opacity:1;transform:translateY(0)}
+</style>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="/assets/css/glass.css">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Service","@id":"https://www.clearglassinc.com/government.html#service","name":"Federal & Government Solutions","serviceType":"Government intelligence platforms, zero-trust cybersecurity and AI command surfaces","description":"ClearGlass Inc. delivers intelligence platforms, zero-trust cybersecurity architecture, and AI-driven command surfaces for Canadian and US federal, provincial and municipal agencies.","url":"https://www.clearglassinc.com/government.html","provider":{"@id":"https://www.clearglassinc.com/#org"},"audience":{"@type":"Audience","audienceType":"Federal, provincial and municipal government agencies"},"areaServed":[{"@type":"Country","name":"Canada"},{"@type":"Country","name":"United States"}],"hasOfferCatalog":{"@type":"OfferCatalog","name":"Government capability areas","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"Zero-trust security architecture","description":"Identity-first, least-privilege architecture design and implementation for government environments."}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Intelligence & command surfaces","description":"Operational dashboards and decision surfaces with auditable, human-in-the-loop governance."}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"OSINT and investigative automation","description":"Open-source intelligence tooling and investigative workflow automation with source grading."}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Procurement readiness","description":"Federal and Ontario procurement documentation, security posture evidence and supplier onboarding."}}]}},{"@type":"BreadcrumbList","@id":"https://www.clearglassinc.com/government.html#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.clearglassinc.com/"},{"@type":"ListItem","position":2,"name":"Federal & Government Solutions","item":"https://www.clearglassinc.com/government.html"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+
+<!-- Classification banner — UNCLASSIFIED demo instance -->
+<div class="class-banner" role="banner" aria-label="Document classification">
+  UNCLASSIFIED / NON-CLASSIFIÉ
+  <span>·</span>
+  CLEARGLASS INC. — GOVERNMENT & FEDERAL SOLUTIONS BRIEF
+  <span>·</span>
+  FOR OFFICIAL USE — AUTHORIZED DISTRIBUTION
+</div>
+
+<!-- NAV -->
+<nav class="nav" aria-label="Primary navigation">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-mark"><img src="assets/images/clearglass-logo.png" alt="ClearGlass Inc."/></div>
+    <div class="nav-name">ClearGlass <em>Inc.</em></div>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="clearglass-nexus.html">NEXUS v12</a>
+    <a href="artemis-iv.html">Artemis IV</a>
+    <a href="guardian.html">Guardian</a>
+    <a href="bluedesk.html" style="background:linear-gradient(90deg,#f43f5e,#a855f7 60%,#7e22ce);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:700">BLUEDESK</a>
+    <a href="operations/procurement-readiness.html">Procurement</a>
+    <a href="mailto:desmondotieno@icloud.com" class="nav-cta">Secure Contact →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid-lines"></div>
+  <div class="hero-glow"></div>
+  <div class="container hero-inner">
+    <div class="hero-eyebrow">FEDERAL &amp; GOVERNMENT SOLUTIONS · CLEARGLASSINC INC. · BURLINGTON, ONTARIO</div>
+    <h1><strong>Intelligence</strong> platforms<br>built for the <span class="gold-text">nation's trust.</span></h1>
+    <p class="hero-sub">ClearGlass delivers DARPA-grade command intelligence, zero-trust cybersecurity, and AI-driven decision surfaces to Canadian and US federal agencies — built to the highest security and compliance standards.</p>
+    <div class="hero-actions">
+      <a href="#capabilities" class="btn btn-gold">View Platform Capabilities →</a>
+      <a href="#contact" class="btn btn-outline">Request Government Briefing</a>
+    </div>
+    <div class="hero-badges">
+      <span class="hero-badge hb-green">FedRAMP READY</span>
+      <span class="hero-badge hb-blue">CMMC LEVEL 2</span>
+      <span class="hero-badge hb-gold">CCCS ALIGNED</span>
+      <span class="hero-badge hb-purple">SOC 2 TYPE II</span>
+      <span class="hero-badge hb-blue">ITAR COMPLIANT</span>
+      <span class="hero-badge hb-green">ZERO TRUST</span>
+      <span class="hero-badge hb-gold">PIPEDA</span>
+    </div>
+  </div>
+</section>
+
+<!-- STAT STRIP -->
+<div class="stat-strip" style="background:var(--navy)">
+  <div class="container">
+    <div class="stat-inner">
+      <div class="stat-cell">
+        <div class="stat-val"><strong>45+</strong></div>
+        <div class="stat-label">LIVE SURVEILLANCE FEEDS</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val"><strong>7</strong></div>
+        <div class="stat-label">FEDERAL COMPLIANCE FRAMEWORKS</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val"><strong>v12</strong></div>
+        <div class="stat-label">NEXUS PLATFORM VERSION</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val"><strong>24/7</strong></div>
+        <div class="stat-label">REAL-TIME INTELLIGENCE UPTIME</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPLIANCE & CERTIFICATIONS -->
+<section class="sect sect-dark" id="compliance">
+  <div class="container">
+    <div class="sh sh-light sh-center rv">
+      <div class="sh-tag light" style="justify-content:center">SECURITY POSTURE</div>
+      <h2>Built to <strong>government-grade</strong> compliance</h2>
+      <p>Every ClearGlass platform is engineered to satisfy the most rigorous federal security frameworks in North America. Compliance is not an afterthought — it is the architecture.</p>
+    </div>
+    <div class="compliance-grid">
+      <div class="comp-card rv" style="--bar-color:rgba(74,222,128,.5)">
+        <span class="comp-badge badge-green">FedRAMP READY</span>
+        <h3>FedRAMP Authorization</h3>
+        <p>Cloud infrastructure aligned to FedRAMP Moderate baselines. NIST SP 800-53 Rev 5 controls implemented across all compute and storage layers.</p>
+      </div>
+      <div class="comp-card rv" style="--bar-color:rgba(96,165,250,.5)">
+        <span class="comp-badge badge-blue">CMMC LEVEL 2</span>
+        <h3>CMMC 2.0 Level 2</h3>
+        <p>Cybersecurity Maturity Model Certification Level 2 practices implemented — safeguarding Controlled Unclassified Information (CUI) for DoD supply chain eligibility.</p>
+      </div>
+      <div class="comp-card rv" style="--bar-color:rgba(91,75,200,.5)">
+        <span class="comp-badge badge-gold">CCCS ALIGNED</span>
+        <h3>Canadian Centre for Cyber Security</h3>
+        <p>Platforms aligned to CCCS Security Controls Catalogue (ITSG-33) and the Government of Canada Cloud Security Risk Management Framework.</p>
+      </div>
+      <div class="comp-card rv" style="--bar-color:rgba(192,132,252,.5)">
+        <span class="comp-badge badge-purple">SOC 2 TYPE II</span>
+        <h3>SOC 2 Type II Readiness</h3>
+        <p>Trust Service Criteria (Security, Availability, Confidentiality, Processing Integrity, Privacy) built into operational controls and audit logging.</p>
+      </div>
+      <div class="comp-card rv" style="--bar-color:rgba(241,113,248,.5)">
+        <span class="comp-badge badge-red">ITAR ALIGNED</span>
+        <h3>ITAR / EAR Compliance</h3>
+        <p>Technology transfer controls aligned to US ITAR and EAR requirements. Dual-use technology classification reviewed and documented for defense export purposes.</p>
+      </div>
+      <div class="comp-card rv" style="--bar-color:rgba(34,211,238,.5)">
+        <span class="comp-badge badge-cyan">PIPEDA</span>
+        <h3>PIPEDA / Privacy Act</h3>
+        <p>Full alignment to Canada's Personal Information Protection and Electronic Documents Act. Data residency controls keep Canadian citizen data within Canadian jurisdiction.</p>
+      </div>
+      <div class="comp-card rv" style="--bar-color:rgba(74,222,128,.5)">
+        <span class="comp-badge badge-green">ZERO TRUST</span>
+        <h3>Zero-Trust Architecture</h3>
+        <p>NIST SP 800-207 Zero Trust Architecture implemented. mTLS everywhere, microsegmentation, least-privilege identity, and continuous session verification.</p>
+      </div>
+      <div class="comp-card rv" style="--bar-color:rgba(96,165,250,.4)">
+        <span class="comp-badge badge-blue">PBMM READY</span>
+        <h3>Protected B / Medium / Medium</h3>
+        <p>Platform architecture supports Protected B data classification under the Government of Canada's cloud security profile — validated for sensitive federal workloads.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORM CAPABILITIES -->
+<section class="sect" id="capabilities">
+  <div class="container">
+    <div class="sh rv">
+      <div class="sh-tag">PLATFORM CAPABILITIES</div>
+      <h2>Command-grade platforms for <strong>decisive advantage</strong></h2>
+      <p>Four integrated intelligence and security platforms — purpose-built for the operational tempo of federal agencies, defense commands, and national security institutions.</p>
+    </div>
+    <div class="cap-grid">
+      <div class="cap-card hero-cap rv">
+        <span class="cap-badge" style="color:var(--gold-2)">FLAGSHIP · CLEARGLASS NEXUS v12 · DARPA INTELLIGENCE PLATFORM</span>
+        <h3>NEXUS v12 — Global Intelligence Command Surface</h3>
+        <p style="color:rgba(255,255,255,.55)">DARPA-grade full-spectrum intelligence platform operated from the Burlington Operations Center. Real-time multi-domain awareness across 45+ live feeds, AI-driven threat analysis, geospatial mapping, SIGINT-class signal intelligence, and a neuromorphic SyNAPSE threat engine. The most advanced open-source intelligence command surface available to government operators.</p>
+        <div class="cap-feats">
+          <div class="cap-feat"><span class="ck" style="background:rgba(91,75,200,.12);color:var(--gold-2)">✓</span> SyNAPSE neuromorphic threat scoring engine</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(91,75,200,.12);color:var(--gold-2)">✓</span> 45-camera MTO COMPASS surveillance integration</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(91,75,200,.12);color:var(--gold-2)">✓</span> HELIX geospatial threat heatmap (ARGUS overlay)</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(91,75,200,.12);color:var(--gold-2)">✓</span> DARPA SIGMA anomaly detection (2.5σ threshold)</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(91,75,200,.12);color:var(--gold-2)">✓</span> CASCADE infrastructure dependency failure prediction</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(91,75,200,.12);color:var(--gold-2)">✓</span> MEMEX cross-domain intelligence correlation engine</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(91,75,200,.12);color:var(--gold-2)">✓</span> ISS orbital tracking + space weather monitoring (NOAA SWPC)</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(91,75,200,.12);color:var(--gold-2)">✓</span> Real-time AIS maritime + OpenSky airspace surveillance</div>
+        </div>
+        <a href="clearglass-nexus.html" class="btn btn-gold">Launch NEXUS v12 →</a>
+      </div>
+
+      <div class="cap-card rv" style="border-color:rgba(56,189,248,.18);background:rgba(56,189,248,.04)">
+        <span class="cap-badge" style="color:#38bdf8">ARTEMIS IV CORE · TACTICAL INTELLIGENCE</span>
+        <h3>Artemis IV Core</h3>
+        <p style="color:rgba(255,255,255,.5)">High-intensity command shell for tactical intelligence workflows, mission logging, and threat matrix navigation. Designed for operational tempo in field and command center environments.</p>
+        <div class="cap-feats">
+          <div class="cap-feat"><span class="ck" style="background:rgba(56,189,248,.12);color:#38bdf8">✓</span> Threat matrix with APT actor tracking</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(56,189,248,.12);color:#38bdf8">✓</span> Mission logging and console quick commands</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(56,189,248,.12);color:#38bdf8">✓</span> CAM/sensor data integration</div>
+        </div>
+        <a href="artemis-iv.html" class="btn btn-outline">Open Artemis IV →</a>
+      </div>
+
+      <div class="cap-card rv" style="border-color:rgba(52,211,153,.18);background:rgba(52,211,153,.03)">
+        <span class="cap-badge" style="color:#34d399">GUARDIAN · CYBER DEFENSE PLATFORM</span>
+        <h3>Guardian — Zero-Trust Cyber Defense</h3>
+        <p style="color:rgba(255,255,255,.5)">Enterprise cybersecurity platform with six integrated defense modules: ClearDash, ClearCast, ClearScore, ClearInsights, ClearAlert, and ClearLink. Purpose-built for agency and SMB security operations.</p>
+        <div class="cap-feats">
+          <div class="cap-feat"><span class="ck" style="background:rgba(52,211,153,.12);color:#34d399">✓</span> Financial + operational health monitoring</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(52,211,153,.12);color:#34d399">✓</span> AI anomaly detection and alerting</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(52,211,153,.12);color:#34d399">✓</span> Secure bank and system integrations</div>
+        </div>
+        <a href="guardian.html" class="btn btn-outline">Open Guardian →</a>
+      </div>
+
+      <div class="cap-card rv" style="border-color:rgba(167,139,250,.18);background:rgba(167,139,250,.04)">
+        <span class="cap-badge" style="color:#a78bfa">ARTEMIS BLUE TEAM · DEFENSIVE OPERATIONS</span>
+        <h3>Artemis Blue Team</h3>
+        <p style="color:rgba(255,255,255,.5)">Blue team defensive operations platform for continuous network monitoring, incident triage, and adversarial simulation — aligned to MITRE ATT&CK defensive playbooks.</p>
+        <div class="cap-feats">
+          <div class="cap-feat"><span class="ck" style="background:rgba(167,139,250,.12);color:#a78bfa">✓</span> MITRE ATT&CK defensive coverage mapping</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(167,139,250,.12);color:#a78bfa">✓</span> Continuous threat hunting + IOC feeds</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(167,139,250,.12);color:#a78bfa">✓</span> Incident triage and response playbooks</div>
+        </div>
+        <a href="artemis-blue-team.html" class="btn btn-outline">Open Blue Team →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GOVERNMENT USE CASES -->
+<section class="sect sect-off" id="usecases">
+  <div class="container">
+    <div class="sh sh-center rv">
+      <div class="sh-tag" style="justify-content:center">AGENCY USE CASES</div>
+      <h2>Trusted by the institutions that <strong>protect the nation</strong></h2>
+      <p>ClearGlass platforms are designed for the operational realities of national defense, border security, law enforcement, signals intelligence, and critical infrastructure protection.</p>
+    </div>
+    <div class="usecase-grid">
+      <div class="uc-card rv">
+        <div class="uc-flag">
+          <span>🍁</span> CANADIAN DEFENCE — DND / CAF
+        </div>
+        <div class="uc-icon" style="background:rgba(211,38,220,.08)">🛡️</div>
+        <h3>National Defence & Armed Forces</h3>
+        <p>NEXUS v12 provides the Canadian Armed Forces and DND with full-spectrum OSINT awareness, threat scoring, and geospatial intelligence — aligned to CF operational security doctrine.</p>
+        <div class="uc-tags">
+          <span class="uc-tag">SIGINT</span>
+          <span class="uc-tag">GEOINT</span>
+          <span class="uc-tag">C2 INTEGRATION</span>
+          <span class="uc-tag">PROTECTED B</span>
+        </div>
+      </div>
+      <div class="uc-card rv">
+        <div class="uc-flag">
+          <span>🍁</span> INTELLIGENCE — CSIS / CSE
+        </div>
+        <div class="uc-icon" style="background:rgba(30,64,175,.08)">🔭</div>
+        <h3>Intelligence Agencies</h3>
+        <p>ARIA intelligence mining and MEMEX correlation engines provide CSIS and CSE-grade analysts with structured OSINT, dark-web pulse monitoring, and cross-domain threat correlation at machine speed.</p>
+        <div class="uc-tags">
+          <span class="uc-tag">OSINT</span>
+          <span class="uc-tag">DARK WEB PULSE</span>
+          <span class="uc-tag">CORRELATION ENGINE</span>
+          <span class="uc-tag">FIVE EYES READY</span>
+        </div>
+      </div>
+      <div class="uc-card rv">
+        <div class="uc-flag">
+          <span>🍁</span> LAW ENFORCEMENT — RCMP
+        </div>
+        <div class="uc-icon" style="background:rgba(16,185,129,.08)">👮</div>
+        <h3>Federal Law Enforcement</h3>
+        <p>Guardian and NEXUS surveillance modules support RCMP operational intelligence: 45+ live highway cameras, maritime vessel tracking, aircraft surveillance, and cascade infrastructure failure prediction.</p>
+        <div class="uc-tags">
+          <span class="uc-tag">SURVEILLANCE</span>
+          <span class="uc-tag">AIS MARITIME</span>
+          <span class="uc-tag">AIRSPACE</span>
+          <span class="uc-tag">CRITICAL INFRA</span>
+        </div>
+      </div>
+      <div class="uc-card rv">
+        <div class="uc-flag">
+          <span>🍁</span> BORDER SERVICES — CBSA / PUBLIC SAFETY
+        </div>
+        <div class="uc-icon" style="background:rgba(72,11,245,.08)">🛂</div>
+        <h3>Border & Public Safety</h3>
+        <p>Real-time maritime AIS tracking, airspace surveillance, geomagnetic storm alerts, and infrastructure health monitoring support CBSA and Public Safety Canada operational mandates.</p>
+        <div class="uc-tags">
+          <span class="uc-tag">MARITIME</span>
+          <span class="uc-tag">AIRSPACE</span>
+          <span class="uc-tag">SEISMIC</span>
+          <span class="uc-tag">INFRA HEALTH</span>
+        </div>
+      </div>
+      <div class="uc-card rv">
+        <div class="uc-flag">
+          <span>🇺🇸</span> US FEDERAL — DHS / CISA
+        </div>
+        <div class="uc-icon" style="background:rgba(99,102,241,.08)">🏛️</div>
+        <h3>Homeland Security & CISA</h3>
+        <p>Critical infrastructure protection, cyber threat intelligence (dark web pulse, IOC feeds), and anomaly detection aligned to CISA's Cross-Sector Cybersecurity Performance Goals (CPGs).</p>
+        <div class="uc-tags">
+          <span class="uc-tag">CRITICAL INFRA</span>
+          <span class="uc-tag">IOC FEEDS</span>
+          <span class="uc-tag">CISA CPG</span>
+          <span class="uc-tag">FEDRAMP</span>
+        </div>
+      </div>
+      <div class="uc-card rv">
+        <div class="uc-flag">
+          <span>🇺🇸</span> DEFENSE — DoD / DARPA PROGRAMS
+        </div>
+        <div class="uc-icon" style="background:rgba(230,68,239,.08)">⚔️</div>
+        <h3>Department of Defense</h3>
+        <p>NEXUS v12 neuromorphic SyNAPSE engine, XAI explainable AI threat factors, and DARPA CASCADE failure prediction are directly aligned to DoD AI/ML modernization and DARPA program objectives.</p>
+        <div class="uc-tags">
+          <span class="uc-tag">DARPA SYNAPSE</span>
+          <span class="uc-tag">XAI</span>
+          <span class="uc-tag">CMMC L2</span>
+          <span class="uc-tag">ITAR</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCUREMENT PATHWAYS -->
+<section class="sect" id="procurement">
+  <div class="container">
+    <div class="sh rv">
+      <div class="sh-tag">PROCUREMENT PATHWAYS</div>
+      <h2>Fast-track acquisition <strong>routes to market</strong></h2>
+      <p>ClearGlass is procurement-ready for Canadian and US federal acquisition vehicles. Our documentation, compliance artifacts, and supplier registrations are structured for rapid award.</p>
+    </div>
+    <div class="proc-grid">
+      <!-- Canada -->
+      <div class="proc-card rv">
+        <div class="proc-flag" style="color:#a92bc0">🍁 CANADA — GOVERNMENT OF CANADA</div>
+        <h3>Canadian Federal Procurement</h3>
+        <div class="proc-list">
+          <div class="proc-item">
+            <div class="proc-item-head">ProServices — SIN 3.3 (Cybersecurity)</div>
+            <p>Listed under PSPC ProServices Supply Arrangement — <code>SIN 3.3 IT Security</code>. Qualified for task-based cybersecurity and intelligence platform engagements across federal departments.</p>
+          </div>
+          <div class="proc-item">
+            <div class="proc-item-head">CanadaBuys / MERX</div>
+            <p>Active on CanadaBuys.canada.ca Supplier Registry (SRI). Business Number registered with CRA. Integrity Declaration filed with PSPC. <code>PBN: Available on request</code></p>
+          </div>
+          <div class="proc-item">
+            <div class="proc-item-head">National Security Exception (NSE)</div>
+            <p>Intelligence and SIGINT platforms may qualify for sole-source procurement under Government Contracts Regulations Section 6(d) — National Security Exception.</p>
+          </div>
+          <div class="proc-item">
+            <div class="proc-item-head">SAP Ariba Procurement</div>
+            <p>Onboarded to SAP Ariba Network for streamlined purchase order and invoice processing across federal departments using centralized procurement.</p>
+          </div>
+        </div>
+        <div style="margin-top:22px">
+          <a href="operations/federal-supplier-handoff.html" class="btn btn-dark">View Federal Supplier Docs →</a>
+        </div>
+      </div>
+      <!-- USA -->
+      <div class="proc-card rv">
+        <div class="proc-flag" style="color:#1a3a6b">🇺🇸 UNITED STATES — FEDERAL ACQUISITION</div>
+        <h3>US Federal Procurement</h3>
+        <div class="proc-list">
+          <div class="proc-item">
+            <div class="proc-item-head">GSA Schedule 70 / IT Category</div>
+            <p>Positioned for GSA Multiple Award Schedule (MAS) IT Category. NAICS codes: <code>541519</code> (Other Computer Related Services), <code>541512</code> (Computer Systems Design), <code>541690</code> (Other Scientific/Tech Consulting).</p>
+          </div>
+          <div class="proc-item">
+            <div class="proc-item-head">SBIR / STTR Phase I & II</div>
+            <p>NEXUS and Artemis neuromorphic AI capabilities are aligned to DARPA SBIR topics — particularly DARPA SyNAPSE, XAI, and CASCADE program areas. Phase I proposal-ready.</p>
+          </div>
+          <div class="proc-item">
+            <div class="proc-item-head">Sole Source / 8(a) Equivalent</div>
+            <p>Proprietary intelligence platform capabilities (SyNAPSE engine, HELIX geospatial, MEMEX correlation) may justify Other Transaction Authority (OTA) or sole-source awards under FAR 6.302-1.</p>
+          </div>
+          <div class="proc-item">
+            <div class="proc-item-head">SAM.gov Registration</div>
+            <p>Registration pathway initiated. CAGE code application in process. DUNS/UEI documentation available upon qualified agency request. <code>NAICS Primary: 541519</code></p>
+          </div>
+        </div>
+        <div style="margin-top:22px">
+          <a href="operations/procurement-readiness.html" class="btn btn-dark">View Procurement Readiness →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FIVE EYES & ALLIANCE READINESS -->
+<section class="sect sect-navy" id="alliance">
+  <div class="container">
+    <div class="sh sh-light rv">
+      <div class="sh-tag light">ALLIANCE READINESS</div>
+      <h2>Five Eyes <strong>compatible intelligence</strong></h2>
+      <p style="color:rgba(255,255,255,.5)">ClearGlass NEXUS is architected for intelligence sharing standards across Five Eyes alliance members. Our OSINT data structures, classification handling, and API schemas are designed for interoperability with UKUSA agreement frameworks.</p>
+    </div>
+    <div class="compliance-grid">
+      <div class="comp-card rv" style="--bar-color:rgba(96,165,250,.5)">
+        <span class="comp-badge badge-blue">CANADA</span>
+        <h3>CSE / CCCS</h3>
+        <p>ITSG-33 security controls, CCCS cloud security profile, Protected B data handling, and Government of Canada IT Security Policy alignment.</p>
+      </div>
+      <div class="comp-card rv" style="--bar-color:rgba(96,165,250,.5)">
+        <span class="comp-badge badge-blue">UNITED STATES</span>
+        <h3>NSA / CISA / DARPA</h3>
+        <p>NIST SP 800-53, CMMC 2.0 Level 2, ITAR/EAR, FedRAMP Moderate baseline. NSA-aligned cryptographic standards (CNSA Suite).</p>
+      </div>
+      <div class="comp-card rv" style="--bar-color:rgba(91,75,200,.5)">
+        <span class="comp-badge badge-gold">UNITED KINGDOM</span>
+        <h3>GCHQ / NCSC</h3>
+        <p>Cyber Essentials Plus alignment. NCSC Cloud Security Principles (14 controls). UK Government Security Classifications (OFFICIAL / SECRET) architecture support.</p>
+      </div>
+      <div class="comp-card rv" style="--bar-color:rgba(74,222,128,.5)">
+        <span class="comp-badge badge-green">AUSTRALIA / NZ</span>
+        <h3>ASD / NZSIS</h3>
+        <p>Australian ISM Essential Eight mitigation strategies implemented. ACSC Cloud Security Guidance alignment. New Zealand GCSB cybersecurity framework compatibility.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT / BRIEFING REQUEST -->
+<section class="sect sect-dark" id="contact">
+  <div class="container">
+    <div class="sh sh-light rv">
+      <div class="sh-tag light">SECURE CONTACT</div>
+      <h2>Request a <strong>classified briefing</strong></h2>
+      <p style="color:rgba(255,255,255,.5)">Connect directly with Desmond Otieno Odhiambo, Founder & Chairman, for government sales discussions, procurement documentation, security demonstrations, and strategic partnership conversations.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-card rv">
+        <h3>Government Liaison Contact</h3>
+        <p>All government inquiries are routed directly to the founder. Secure communications available. NDA execution available prior to detailed platform briefings.</p>
+        <div class="contact-items">
+          <div class="contact-item">
+            <span class="ci-icon">📧</span>
+            <div>
+              <div class="ci-label">PRIMARY EMAIL</div>
+              <div class="ci-val"><a href="mailto:desmondotieno@icloud.com">desmondotieno@icloud.com</a></div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="ci-icon">📞</span>
+            <div>
+              <div class="ci-label">DIRECT LINE</div>
+              <div class="ci-val"><a href="tel:+12897070269">+1 (289) 707-0269</a></div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="ci-icon">📍</span>
+            <div>
+              <div class="ci-label">OPERATIONS CENTER</div>
+              <div class="ci-val">Burlington, Ontario, Canada</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="ci-icon">🔒</span>
+            <div>
+              <div class="ci-label">SECURE CHANNEL</div>
+              <div class="ci-val">NDA execution available · Signal available on request</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap">
+          <a href="mailto:desmondotieno@icloud.com?subject=Government%20Briefing%20Request%20-%20ClearGlass%20NEXUS%20v12" class="btn btn-gold">Request Briefing →</a>
+          <a href="legal/nda.html" class="btn btn-outline">Review NDA Template</a>
+        </div>
+      </div>
+      <div class="info-card rv">
+        <h3>Procurement Reference Information</h3>
+        <div class="info-list">
+          <div class="info-item">
+            <div class="il-label">COMPANY NAME</div>
+            <div class="il-val">ClearGlass Inc.</div>
+          </div>
+          <div class="info-item">
+            <div class="il-label">INCORPORATION</div>
+            <div class="il-val">Ontario, Canada — Business Corporations Act</div>
+          </div>
+          <div class="info-item">
+            <div class="il-label">LEGAL STRUCTURE</div>
+            <div class="il-val">Canadian-controlled private corporation</div>
+          </div>
+          <div class="info-item">
+            <div class="il-label">PRIMARY NAICS (CA)</div>
+            <div class="il-val">541510 — Computer Systems Design &amp; Related Services</div>
+          </div>
+          <div class="info-item">
+            <div class="il-label">PRIMARY NAICS (US)</div>
+            <div class="il-val">541519 — Other Computer Related Services</div>
+          </div>
+          <div class="info-item">
+            <div class="il-label">SECURITY CLEARANCE</div>
+            <div class="il-val">Personnel Security Clearance (PSC) — application ready upon contract award</div>
+          </div>
+          <div class="info-item">
+            <div class="il-label">DATA RESIDENCY</div>
+            <div class="il-val">Canadian-hosted deployment available. US GovCloud deployment roadmap active.</div>
+          </div>
+          <div class="info-item">
+            <div class="il-label">DOCUMENTATION</div>
+            <div class="il-val">
+              <a href="operations/procurement-readiness.html" style="color:var(--gov-blue-2)">Procurement Readiness Pack →</a><br>
+              <a href="operations/federal-supplier-handoff.html" style="color:var(--gov-blue-2)">Federal Supplier Registration →</a><br>
+              <a href="legal/nda.html" style="color:var(--gov-blue-2)">NDA Template →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="gov-footer">
+  <div class="container">
+    <div class="gf-inner">
+      <div>
+        <div class="gf-brand">ClearGlass <em>Inc.</em> — Federal Solutions</div>
+      </div>
+      <nav class="gf-links" aria-label="Footer navigation">
+        <a href="index.html">Home</a>
+        <a href="clearglass-nexus.html">NEXUS v12</a>
+        <a href="artemis-iv.html">Artemis IV</a>
+        <a href="guardian.html">Guardian</a>
+        <a href="operations/procurement-readiness.html">Procurement</a>
+        <a href="legal/">Legal</a>
+        <a href="mailto:desmondotieno@icloud.com">Contact</a>
+      </nav>
+      <div class="gf-copy">
+        © <span id="govYear"></span> ClearGlass Inc. All rights reserved. Burlington, Ontario, Canada ·
+        All platform capabilities shown are for authorized demonstration purposes.
+        Classification markings are for structural reference only — no classified information is contained herein.
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="unclass-banner">UNCLASSIFIED / NON-CLASSIFIÉ — END OF DOCUMENT</div>
+
+<script>
+document.getElementById('govYear').textContent = new Date().getFullYear();
+var rvEls = document.querySelectorAll('.rv');
+var rvObs = new IntersectionObserver(function(entries){
+  entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('vis'); });
+},{threshold:.1,rootMargin:'0px 0px -20px 0px'});
+rvEls.forEach(function(el){ rvObs.observe(el); });
+</script>
+<script defer src="control-surface.js"></script>
+  <script defer src="ui.js"></script>
+  <script defer src="platform.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › Government &amp; Procurement</p>
+    <h2>Inside Government &amp; Procurement</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="sats-digital-twin.html"><span><b>Previous</b>SATS Digital Twin</span></a>
+      <a href="government.html"><span><b>Topic hub</b>Government Solutions</span></a>
+      <a href="operations/procurement-readiness.html"><span><b>Next in journey</b>Procurement Readiness</span></a>
+    </div>
+    <ul>
+      <li><a href="procurement-legal-tech.html"><b>Procurement &amp; Legal-Tech Surface</b> — public-sector procurement intelligence</a></li>
+      <li><a href="operations/procurement-readiness.html"><b>Procurement Readiness</b> — verified supplier-registration status</a></li>
+      <li><a href="operations/federal-supplier-handoff.html"><b>Federal Supplier Handoff</b> — supplier registration runbook</a></li>
+      <li><a href="counter-uas-commercialization-os.html"><b>Counter-UAS OS</b> — counter-drone commercialization platform</a></li>
+      <li><a href="traffic-enforcement.html"><b>Speed Vision AI</b> — AI traffic-enforcement platform</a></li>
+      <li><a href="sats-digital-twin.html"><b>SATS Digital Twin</b> — storm-adaptive transit simulation with governed operations</a></li>
+      <li><a href="offers/index.html"><b>Services &amp; Engagements</b> — every ClearGlass offer in one place</a></li>
+      <li><a href="web-design.html"><b>Web Design &amp; Development</b> — growth infrastructure built by ClearGlass</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="operations/procurement-readiness.html">Check our procurement readiness</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

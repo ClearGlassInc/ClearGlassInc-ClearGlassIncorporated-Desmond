@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ClearGlass Intelligence Platform — Brand & Platform Architecture | ClearGlass Inc.</title>
+<meta name="description" content="The ClearGlass Intelligence Platform: executive layer, 85-codename autonomous agent framework, enterprise multi-agent hierarchy under ClearGlass Nexus, premium product family, and the naming standard that binds them.">
+<link rel="canonical" href="https://www.clearglassinc.com/intelligence-platform.html">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script defer src="/logo-badge.js"></script>
+<style>
+:root{
+  --bg:#020004;--bg2:#04010e;
+  --am:#370af5;--am2:#8066f9;--am3:#4f0af5;
+  --wt:#e4e1fe;--wt2:#7970cd;--wt3:#42307a;
+  --gn:#00FF88;--cy:#00DDFF;
+  --bdr:rgba(55,10,245,.15);--bdr2:rgba(55,10,245,.08);
+  --card:rgba(0,0,0,.52);--card2:rgba(55,10,245,.04);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--wt);font-family:'IBM Plex Mono',monospace;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.09) 2px,rgba(0,0,0,.09) 4px)}
+a{color:var(--am2);text-decoration:none}
+a:hover{color:var(--cy)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px 80px}
+
+header{position:sticky;top:0;z-index:400;background:linear-gradient(180deg,rgba(2,0,4,.99),rgba(2,0,4,.93));
+  border-bottom:1px solid var(--bdr);padding:12px 20px;display:flex;align-items:center;gap:14px}
+.mark{font-size:14px;font-weight:700;letter-spacing:6px;color:var(--am2)}
+.mark-sub{font-size:8px;letter-spacing:3px;color:var(--wt3)}
+header nav{margin-left:auto;display:flex;gap:16px;font-size:10px;letter-spacing:2px}
+
+.hero{padding:72px 0 40px;text-align:center}
+.hero h1{font-size:clamp(22px,4vw,40px);font-weight:700;letter-spacing:4px;
+  color:var(--wt);text-shadow:0 0 40px rgba(55,10,245,.5)}
+.hero .tag{margin-top:14px;font-size:11px;letter-spacing:3px;color:var(--wt2)}
+.badge{display:inline-block;margin-top:18px;padding:4px 14px;border:1px solid var(--bdr);
+  border-radius:2px;font-size:9px;letter-spacing:2px;color:var(--gn)}
+
+section{margin-top:56px}
+h2{font-size:13px;letter-spacing:5px;color:var(--am2);border-bottom:1px solid var(--bdr2);
+  padding-bottom:8px;margin-bottom:20px}
+h2 .n{color:var(--wt3);margin-right:10px}
+p.lead{font-size:11px;line-height:1.8;color:var(--wt2);max-width:70ch}
+
+.grid{display:grid;gap:12px}
+.grid.c5{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.grid.c3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.card{background:var(--card);border:1px solid var(--bdr2);border-radius:3px;padding:16px}
+.card:hover{border-color:var(--bdr)}
+.card h3{font-size:12px;letter-spacing:2px;color:var(--wt)}
+.card .role{margin-top:8px;font-size:9px;letter-spacing:1px;line-height:1.6;color:var(--wt2)}
+.card .dom{margin-top:6px;font-size:8px;letter-spacing:2px;color:var(--cy)}
+
+.names{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:8.5px;letter-spacing:1px;padding:3px 8px;border:1px solid var(--bdr2);
+  border-radius:2px;color:var(--wt2);background:var(--card2)}
+
+pre.tree{margin-top:8px;background:var(--card);border:1px solid var(--bdr2);border-radius:3px;
+  padding:20px;font-size:10.5px;line-height:1.7;color:var(--wt2);overflow-x:auto}
+pre.tree .rt{color:var(--am2);font-weight:700}
+pre.tree .id{color:var(--wt3)}
+pre.tree .nm{color:var(--wt)}
+
+.tbl{width:100%;border-collapse:collapse;font-size:10px;letter-spacing:1px}
+.tbl th{color:var(--am2);text-align:left;padding:8px 12px;border-bottom:1px solid var(--bdr);font-weight:600;letter-spacing:2px}
+.tbl td{padding:8px 12px;border-bottom:1px solid var(--bdr2);color:var(--wt2)}
+.tbl td:first-child{color:var(--wt)}
+.tbl code{color:var(--gn);font-size:9.5px}
+.tblwrap{overflow-x:auto;background:var(--card);border:1px solid var(--bdr2);border-radius:3px}
+
+footer{margin-top:72px;border-top:1px solid var(--bdr2);padding-top:20px;
+  font-size:8.5px;letter-spacing:2px;color:var(--wt3);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+</style>
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/glass.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="mark">CLEARGLASS</div>
+    <div class="mark-sub">INTELLIGENCE PLATFORM</div>
+  </div>
+  <nav>
+    <a href="index.html">HOME</a>
+    <a href="#agents">AGENTS</a>
+    <a href="#hierarchy">HIERARCHY</a>
+    <a href="#products">PRODUCTS</a>
+    <a href="#naming">NAMING</a>
+  </nav>
+</header>
+
+<div class="wrap">
+
+<div class="hero">
+  <h1>CLEARGLASS INTELLIGENCE PLATFORM</h1>
+  <div class="tag">ONE TAXONOMY · FIVE PLATFORMS · NINE DOMAINS · EIGHTY-FIVE CODENAMES</div>
+  <div class="badge" id="reg-badge">REGISTRY v1.0.0 · BRAND ARCHITECTURE</div>
+</div>
+
+<section id="executive">
+  <h2><span class="n">01</span>EXECUTIVE LAYER</h2>
+  <div class="grid c5">
+    <div class="card"><h3>ClearGlass Nexus</h3><div class="role">Central intelligence and orchestration platform</div></div>
+    <div class="card"><h3>ClearGlass Command</h3><div class="role">Executive operations center</div></div>
+    <div class="card"><h3>ClearGlass Cortex</h3><div class="role">AI reasoning engine</div></div>
+    <div class="card"><h3>ClearGlass Core</h3><div class="role">Platform runtime</div></div>
+    <div class="card"><h3>ClearGlass Fabric</h3><div class="role">Distributed services layer</div></div>
+  </div>
+</section>
+
+<section id="agents">
+  <h2><span class="n">02</span>AUTONOMOUS AGENT FRAMEWORK</h2>
+  <p class="lead">Nine domains, eighty-five reserved agent codenames. A codename is a slot in the namespace — assigned to an implemented agent, a product line, or held in reserve. The registry keeps every slot unique within its domain.</p>
+  <div class="grid c3" style="margin-top:18px">
+    <div class="card"><h3>EXECUTIVE AI</h3><div class="names"><span class="chip">Executive</span><span class="chip">Director</span><span class="chip">Governor</span><span class="chip">Steward</span><span class="chip">Prime</span></div></div>
+    <div class="card"><h3>INTELLIGENCE</h3><div class="names"><span class="chip">Oracle</span><span class="chip">Spectra</span><span class="chip">Prism</span><span class="chip">Vector</span><span class="chip">Meridian</span><span class="chip">Horizon</span><span class="chip">Atlas</span><span class="chip">Helix</span><span class="chip">Pulse</span><span class="chip">Axiom</span></div></div>
+    <div class="card"><h3>CYBERSECURITY</h3><div class="names"><span class="chip">Bastion</span><span class="chip">Citadel</span><span class="chip">Fortress</span><span class="chip">Rampart</span><span class="chip">ShieldCore</span><span class="chip">LockPoint</span><span class="chip">GuardianX</span><span class="chip">IronGate</span><span class="chip">SentinelOne</span><span class="chip">BlackMirror</span></div></div>
+    <div class="card"><h3>THREAT INTELLIGENCE</h3><div class="names"><span class="chip">Recon</span><span class="chip">Hunter</span><span class="chip">Watchtower</span><span class="chip">DeepTrace</span><span class="chip">Signal</span><span class="chip">Echo</span><span class="chip">ShadowNet</span><span class="chip">RedScope</span><span class="chip">BlueWatch</span><span class="chip">ThreatGrid</span></div></div>
+    <div class="card"><h3>OSINT</h3><div class="names"><span class="chip">Pathfinder</span><span class="chip">Observer</span><span class="chip">Discovery</span><span class="chip">Cartographer</span><span class="chip">Surveyor</span><span class="chip">Scout</span><span class="chip">AtlasOS</span><span class="chip">IntelMap</span><span class="chip">OpenIntel</span><span class="chip">TraceNet</span></div></div>
+    <div class="card"><h3>DIGITAL FORENSICS</h3><div class="names"><span class="chip">Evidence</span><span class="chip">Ledger</span><span class="chip">Chronicle</span><span class="chip">Timeline</span><span class="chip">Recover</span><span class="chip">Integrity</span><span class="chip">Veritas</span><span class="chip">Provenance</span><span class="chip">Archive</span><span class="chip">Chain</span></div></div>
+    <div class="card"><h3>AI AUTOMATION</h3><div class="names"><span class="chip">Catalyst</span><span class="chip">Forge</span><span class="chip">Reactor</span><span class="chip">VectorFlow</span><span class="chip">Assembly</span><span class="chip">Pipeline</span><span class="chip">Conductor</span><span class="chip">Maestro</span><span class="chip">Architect</span><span class="chip">Builder</span></div></div>
+    <div class="card"><h3>BUSINESS INTELLIGENCE</h3><div class="names"><span class="chip">Polaris</span><span class="chip">Compass</span><span class="chip">Lighthouse</span><span class="chip">Navigator</span><span class="chip">Beacon</span><span class="chip">MarketPulse</span><span class="chip">RevenueIQ</span><span class="chip">GrowthCore</span><span class="chip">Opportunity</span><span class="chip">Forecast</span></div></div>
+    <div class="card"><h3>DEVELOPMENT</h3><div class="names"><span class="chip">Foundry</span><span class="chip">Workshop</span><span class="chip">ForgeWorks</span><span class="chip">DevCore</span><span class="chip">CodePilot</span><span class="chip">StackEngine</span><span class="chip">Compiler</span><span class="chip">Runtime</span><span class="chip">BuilderAI</span><span class="chip">LaunchPad</span></div></div>
+  </div>
+</section>
+
+<section id="hierarchy">
+  <h2><span class="n">03</span>ENTERPRISE MULTI-AGENT HIERARCHY</h2>
+  <p class="lead">Fifteen first-class agents report to ClearGlass Nexus. Each carries a canonical agent ID — the prime instance is <code style="color:var(--gn)">-01</code>.</p>
+  <pre class="tree"><span class="rt">ClearGlass Nexus</span>
+│
+├── <span class="nm">Cortex</span>      (Reasoning)        <span class="id">CGA-Cortex-01</span>
+├── <span class="nm">Sentinel</span>    (Cyber Defense)    <span class="id">CGA-Sentinel-01</span>
+├── <span class="nm">Recon</span>       (OSINT)            <span class="id">CGA-Recon-01</span>
+├── <span class="nm">Forge</span>       (Automation)       <span class="id">CGA-Forge-01</span>
+├── <span class="nm">Oracle</span>      (Strategic AI)     <span class="id">CGA-Oracle-01</span>
+├── <span class="nm">Ledger</span>      (Compliance)       <span class="id">CGA-Ledger-01</span>
+├── <span class="nm">Beacon</span>      (Monitoring)       <span class="id">CGA-Beacon-01</span>
+├── <span class="nm">Navigator</span>   (Business)         <span class="id">CGA-Navigator-01</span>
+├── <span class="nm">Foundry</span>     (Development)      <span class="id">CGA-Foundry-01</span>
+├── <span class="nm">Pulse</span>       (Telemetry)        <span class="id">CGA-Pulse-01</span>
+├── <span class="nm">Chronicle</span>   (Knowledge)        <span class="id">CGA-Chronicle-01</span>
+├── <span class="nm">Catalyst</span>    (Workflow)         <span class="id">CGA-Catalyst-01</span>
+├── <span class="nm">Vector</span>      (Analytics)        <span class="id">CGA-Vector-01</span>
+├── <span class="nm">Bastion</span>     (Infrastructure)   <span class="id">CGA-Bastion-01</span>
+└── <span class="nm">Horizon</span>     (Forecasting)      <span class="id">CGA-Horizon-01</span></pre>
+</section>
+
+<section id="products">
+  <h2><span class="n">04</span>PREMIUM PRODUCT FAMILY</h2>
+  <p class="lead">Recognizable product lines instead of standalone names. Every product anchor has a hierarchy node under Nexus — enforced by the registry validator.</p>
+  <div class="grid c3" style="margin-top:18px">
+    <div class="card"><h3>ClearGlass Sentinel</h3><div class="dom">CYBERSECURITY</div></div>
+    <div class="card"><h3>ClearGlass Oracle</h3><div class="dom">AI DECISION INTELLIGENCE</div></div>
+    <div class="card"><h3>ClearGlass Forge</h3><div class="dom">AUTOMATION PLATFORM</div></div>
+    <div class="card"><h3>ClearGlass Vector</h3><div class="dom">DATA ANALYTICS</div></div>
+    <div class="card"><h3>ClearGlass Chronicle</h3><div class="dom">KNOWLEDGE MANAGEMENT</div></div>
+    <div class="card"><h3>ClearGlass Recon</h3><div class="dom">OSINT SUITE</div></div>
+    <div class="card"><h3>ClearGlass Ledger</h3><div class="dom">COMPLIANCE &amp; AUDIT</div></div>
+    <div class="card"><h3>ClearGlass Beacon</h3><div class="dom">MONITORING &amp; ALERTING</div></div>
+    <div class="card"><h3>ClearGlass Pulse</h3><div class="dom">INFRASTRUCTURE OBSERVABILITY</div></div>
+    <div class="card"><h3>ClearGlass Navigator</h3><div class="dom">EXECUTIVE DASHBOARD</div></div>
+    <div class="card"><h3>ClearGlass Foundry</h3><div class="dom">DEVELOPER PLATFORM</div></div>
+    <div class="card"><h3>ClearGlass Horizon</h3><div class="dom">PREDICTIVE INTELLIGENCE</div></div>
+  </div>
+</section>
+
+<section id="naming">
+  <h2><span class="n">05</span>WORLD-CLASS NAMING STANDARD</h2>
+  <p class="lead">Every named thing resolves to exactly one tier. Prefixes are reserved and unique; instance identifiers must match the tier pattern. New names enter <a href="data/platform/registry.json">the registry</a> first — CI fails if the standard breaks.</p>
+  <div class="tblwrap" style="margin-top:18px">
+    <table class="tbl">
+      <thead><tr><th>TIER</th><th>PREFIX</th><th>EXAMPLE</th></tr></thead>
+      <tbody>
+        <tr><td>Platform</td><td>ClearGlass</td><td><code>ClearGlass Nexus</code></td></tr>
+        <tr><td>AI Engine</td><td>Cortex</td><td><code>Cortex-1</code></td></tr>
+        <tr><td>Agent</td><td>CGA</td><td><code>CGA-Sentinel-01</code></td></tr>
+        <tr><td>Workflow</td><td>Flow</td><td><code>Flow-Incident-001</code></td></tr>
+        <tr><td>Knowledge</td><td>Chronicle</td><td><code>Chronicle-Alpha</code></td></tr>
+        <tr><td>Security</td><td>Sentinel</td><td><code>Sentinel-Edge</code></td></tr>
+        <tr><td>Analytics</td><td>Vector</td><td><code>Vector-X</code></td></tr>
+        <tr><td>Automation</td><td>Forge</td><td><code>Forge-Auto</code></td></tr>
+        <tr><td>Infrastructure</td><td>Bastion</td><td><code>Bastion-Cloud</code></td></tr>
+        <tr><td>Executive</td><td>Oracle</td><td><code>Oracle-Prime</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 CLEARGLASS INC. · BRAND ARCHITECTURE — REGISTRY ENTRIES ARE NAMES, NOT PROVISIONED SYSTEMS</span>
+  <span><a href="docs/CLEARGLASS_INTELLIGENCE_PLATFORM.md">ARCHITECTURE DOC</a> · <a href="data/platform/registry.json">REGISTRY</a></span>
+</footer>
+
+</div>
+
+<script>
+fetch('data/platform/registry.json')
+  .then(function(r){ return r.json(); })
+  .then(function(reg){
+    var badge = document.getElementById('reg-badge');
+    if (badge && reg.version) {
+      badge.textContent = 'REGISTRY v' + reg.version + ' · ' + String(reg.status || '').toUpperCase().replace('-', ' ');
+    }
+  })
+  .catch(function(){ /* static fallback text already present */ });
+</script>
+<script defer src="/logo-badge.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="intelligence.html">Intelligence &amp; OSINT</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="intelligence-interface.html"><span><b>Previous</b>Intelligence Interface 2027</span></a>
+      <a href="intelligence.html"><span><b>Topic hub</b>Intelligence</span></a>
+      <a href="ClearGlass-NEXUS-v12-FINAL.html"><span><b>Next in journey</b>NEXUS v12</span></a>
+    </div>
+    <ul>
+      <li><a href="ClearGlass-NEXUS-v12-FINAL.html"><b>NEXUS v12</b> — the flagship intelligence platform build</a></li>
+      <li><a href="artemis.html"><b>NEXUS v12 · Ontario</b> — intelligence platform deployment profile</a></li>
+      <li><a href="xenolith.html"><b>XENOLITH</b> — the sovereign intelligence lattice — governed multi-domain command substrate</a></li>
+      <li><a href="docs/guardian_command_nexus_spec.html"><b>Guardian Command Nexus Spec</b> — the implementation specification for the Guardian command surface</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

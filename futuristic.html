@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>ClearGlass · Aurora Glass — Futuristic Control Surface</title>
+<meta name="description" content="Aurora Glass: ClearGlass's futuristic 2050-tech interface system — layered refractive glass, holographic borders, and cinematic ambient motion, built for production on the web."/>
+<link rel="canonical" href="https://www.clearglassinc.com/futuristic.html"/>
+
+<!-- Open Graph -->
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="ClearGlass · Aurora Glass — Futuristic Control Surface"/>
+<meta property="og:description" content="A living-future control surface: layered glass, holographic edges, cinematic motion — production-ready on the web."/>
+<meta property="og:url" content="https://www.clearglassinc.com/futuristic.html"/>
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+
+<!-- Fonts (brand stack) -->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Urbanist:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet"/>
+
+<!-- Design tokens → theme remap → Aurora Glass system -->
+<link rel="stylesheet" href="tokens.css"/>
+<link rel="stylesheet" href="futuristic-ui.css"/>
+<link rel="stylesheet" href="theme.css"/>
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/glass.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+
+<body class="ag-root">
+
+  <!-- ══ AMBIENT BACKDROP (fixed, single paint, pointer-events:none) ══ -->
+  <div class="ag-backdrop" aria-hidden="true"></div>
+  <div class="ag-aurora ag-aurora--a" aria-hidden="true"></div>
+  <div class="ag-aurora ag-aurora--b" aria-hidden="true"></div>
+  <div class="ag-cursor-field" id="agCursor" aria-hidden="true"></div>
+
+  <!-- ══ FLOATING GLASS NAV ══ -->
+  <nav class="ag-nav" id="agNav" aria-label="Primary">
+    <a class="ag-nav__brand" href="index.html">
+      <span class="ag-nav__mark" aria-hidden="true">◈</span>
+      <span>ClearGlass</span>
+    </a>
+    <div class="ag-nav__links" id="agLinks">
+      <span class="ag-nav__glide" id="agGlide" aria-hidden="true"></span>
+      <a class="ag-nav__link" href="#system">System</a>
+      <a class="ag-nav__link" href="#features">Capabilities</a>
+      <a class="ag-nav__link" href="#signals">Signals</a>
+      <a class="ag-nav__link" href="#modules">Modules</a>
+      <a class="ag-btn ag-btn--ghost ag-btn--luminous cg-magnetic" href="#launch" style="padding:9px 18px;font-size:.9rem">Enter</a>
+    </div>
+    <button class="ag-nav__toggle" id="agToggle" aria-label="Open menu" aria-expanded="false" aria-controls="agLinks">☰</button>
+  </nav>
+
+  <main class="ag-shell">
+
+    <!-- ══ HERO ══ -->
+    <header class="ag-hero ag-wrap" id="top">
+      <div class="ag-hero__aura" aria-hidden="true"></div>
+      <div class="ag-hero__panel" data-ag-reveal>
+        <span class="ag-chip" style="margin-bottom:20px"><span class="ag-chip__dot"></span>Aurora Glass · v1.0 · live</span>
+        <h1 class="ag-display">A living-future <span class="ag-prism-text">control surface</span>.</h1>
+        <p class="ag-lede" style="margin-top:20px;max-width:640px;margin-inline:auto">
+          Layered refractive glass, holographic edges, and calm ambient motion — a 2050-tech
+          interface language engineered to stay fast, readable, and production-ready.
+        </p>
+        <div class="ag-hero__cta">
+          <a class="ag-btn ag-btn--primary cg-magnetic" href="#features">Explore the system</a>
+          <a class="ag-btn ag-btn--ghost ag-btn--luminous cg-magnetic" href="#launch">Launch console</a>
+        </div>
+        <div class="ag-hero__stats" data-ag-stagger>
+          <div class="ag-stat"><span class="ag-stat__num">60fps</span><span class="ag-stat__label">Compositor-only motion</span></div>
+          <div class="ag-stat"><span class="ag-stat__num">AA+</span><span class="ag-stat__label">Contrast verified</span></div>
+          <div class="ag-stat"><span class="ag-stat__num">0ms</span><span class="ag-stat__label">Blocking scripts</span></div>
+        </div>
+      </div>
+      <div class="ag-scroll-cue" aria-hidden="true">scroll ↓</div>
+    </header>
+
+    <!-- ══ SYSTEM OVERVIEW (asymmetric split) ══ -->
+    <section class="ag-section ag-wrap" id="system">
+      <div class="ag-grid ag-grid--2" style="align-items:center;gap:var(--ag-sp-5)" data-ag-reveal>
+        <div>
+          <span class="ag-eyebrow">The concept</span>
+          <h2 class="ag-h2" style="margin-top:12px">Depth you can feel, clarity you can trust.</h2>
+          <p style="color:var(--ag-on-dim)">
+            Every surface is a pane of intelligent glass — refracting the light behind it,
+            catching a specular streak as your cursor moves, and settling with physical inertia.
+            The system reads like a premium instrument: cinematic, calm, never cluttered.
+          </p>
+          <p style="color:var(--ag-on-dim)">
+            Five elevation levels, three blur tiers, and a single prism palette keep the whole
+            world coherent. Motion is ambient by default and tactile on demand.
+          </p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:20px">
+            <span class="ag-chip">Layered glass</span>
+            <span class="ag-chip">Holographic edges</span>
+            <span class="ag-chip">Prism light</span>
+            <span class="ag-chip">Reduced-motion aware</span>
+          </div>
+        </div>
+        <div class="ag-glass ag-glass--holo ag-glass--reflective ag-e2" data-tilt style="padding:var(--ag-sp-4);min-height:280px">
+          <div class="ag-signal" style="margin-bottom:18px" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <div style="font-family:var(--cg-mono);color:var(--ag-on-dim);font-size:.9rem;line-height:2">
+            <div>› surface.elevation ......... <span class="ag-prism-text">5 tiers</span></div>
+            <div>› blur.tiers ............... <span class="ag-prism-text">sm / md / lg</span></div>
+            <div>› motion.budget ............ <span class="ag-prism-text">transform · opacity</span></div>
+            <div>› palette.channels ......... <span class="ag-prism-text">prism ×5</span></div>
+            <div>› a11y.contrast ............ <span class="ag-prism-text">WCAG AA+</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ FEATURE CARDS ══ -->
+    <section class="ag-section ag-wrap" id="features">
+      <div style="text-align:center;margin-bottom:var(--ag-sp-5)" data-ag-reveal>
+        <span class="ag-eyebrow">Capabilities</span>
+        <h2 class="ag-h2" style="margin-top:12px">Interface primitives that feel alive</h2>
+      </div>
+      <div class="ag-grid ag-grid--3" data-ag-stagger>
+        <article class="ag-glass ag-card" data-tilt>
+          <div class="ag-card__icon">❖</div>
+          <h3 class="ag-card__title">Refractive panels</h3>
+          <p class="ag-card__body">Frosted layers with a top-left light source, inner sheen, and a cursor-linked specular streak.</p>
+        </article>
+        <article class="ag-glass ag-card ag-glass--holo" data-tilt>
+          <div class="ag-card__icon">◇</div>
+          <h3 class="ag-card__title">Holographic borders</h3>
+          <p class="ag-card__body">Animated prism edges rendered with mask compositing — no extra DOM, no repaint storms.</p>
+        </article>
+        <article class="ag-glass ag-card" data-tilt>
+          <div class="ag-card__icon">✧</div>
+          <h3 class="ag-card__title">Ambient aura</h3>
+          <p class="ag-card__body">Slow-drifting aurora orbs breathe behind the content, giving depth without distraction.</p>
+        </article>
+        <article class="ag-glass ag-card" data-tilt>
+          <div class="ag-card__icon">⟠</div>
+          <h3 class="ag-card__title">Magnetic controls</h3>
+          <p class="ag-card__body">Buttons lean toward the pointer and settle with spring inertia; press gives a crisp scale-down.</p>
+        </article>
+        <article class="ag-glass ag-card" data-tilt>
+          <div class="ag-card__icon">◐</div>
+          <h3 class="ag-card__title">Staggered reveals</h3>
+          <p class="ag-card__body">Sections resolve into view with elegant, ordered timing driven by IntersectionObserver.</p>
+        </article>
+        <article class="ag-glass ag-card ag-glass--holo" data-tilt>
+          <div class="ag-card__icon">◈</div>
+          <h3 class="ag-card__title">Signal indicators</h3>
+          <p class="ag-card__body">Live equalizer bars and pulsing status dots communicate system state at a glance.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ══ SIGNAL / STATS STRIP ══ -->
+    <section class="ag-section--tight ag-wrap" id="signals">
+      <div class="ag-glass ag-glass--reflective ag-e2" data-tilt style="padding:var(--ag-sp-5)">
+        <div class="ag-grid ag-grid--4" data-ag-stagger>
+          <div class="ag-stat" style="background:transparent;border:0">
+            <span class="ag-stat__num">99.98%</span><span class="ag-stat__label">Uptime signal</span></div>
+          <div class="ag-stat" style="background:transparent;border:0">
+            <span class="ag-stat__num">1.2M</span><span class="ag-stat__label">Events / day</span></div>
+          <div class="ag-stat" style="background:transparent;border:0">
+            <span class="ag-stat__num">&lt;40ms</span><span class="ag-stat__label">Interaction latency</span></div>
+          <div class="ag-stat" style="background:transparent;border:0">
+            <span class="ag-stat__num">A11Y</span><span class="ag-stat__label">Motion-safe</span></div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ag-divider ag-wrap"/>
+
+    <!-- ══ TRANSLUCENT CONTENT MODULES ══ -->
+    <section class="ag-section ag-wrap" id="modules">
+      <div style="text-align:center;margin-bottom:var(--ag-sp-5)" data-ag-reveal>
+        <span class="ag-eyebrow">Modules</span>
+        <h2 class="ag-h2" style="margin-top:12px">Composable, translucent, coherent</h2>
+      </div>
+      <div class="ag-grid ag-grid--2" data-ag-stagger>
+        <div class="ag-glass ag-card" data-tilt style="padding:var(--ag-sp-4)">
+          <span class="ag-chip"><span class="ag-chip__dot"></span>Nominal</span>
+          <h3 class="ag-card__title" style="margin-top:16px">Intelligence panel</h3>
+          <p class="ag-card__body">Hologram-style data module for metrics, telemetry, and AI output — mono type on glass, prism-clipped highlights.</p>
+        </div>
+        <div class="ag-glass ag-card ag-glass--holo" data-tilt style="padding:var(--ag-sp-4)">
+          <span class="ag-chip" style="color:var(--ag-hi-amber)">
+            <span class="ag-chip__dot" style="background:var(--ag-hi-amber);box-shadow:0 0 10px var(--ag-hi-amber)"></span>Approval</span>
+          <h3 class="ag-card__title" style="margin-top:16px">Governed action queue</h3>
+          <p class="ag-card__body">High-risk actions surface here for human approval — the interface makes the safety model visible, not hidden.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ FINALE / LAUNCH SCREEN ══ -->
+    <section class="ag-section ag-wrap" id="launch">
+      <div class="ag-finale" data-ag-reveal>
+        <span class="ag-eyebrow">Launch-ready</span>
+        <h2 class="ag-display" style="font-size:clamp(2.2rem,5vw,4rem);margin:16px 0">
+          Build the <span class="ag-prism-text">future interface</span>.
+        </h2>
+        <p class="ag-lede" style="max-width:600px;margin:0 auto var(--ag-sp-4)">
+          Aurora Glass ships as portable CSS tokens and a documented component map — drop it into
+          static pages today, or lift it into React / Next.js with GSAP tomorrow.
+        </p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <a class="ag-btn ag-btn--primary cg-magnetic" href="index.html">Back to ClearGlass</a>
+          <a class="ag-btn ag-btn--ghost ag-btn--luminous cg-magnetic" href="FUTURISTIC_UI_SYSTEM.md">Read the system spec</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="ag-footer">
+      <p>ClearGlass Inc. · Aurora Glass design system · built for production on the web.</p>
+    </footer>
+  </main>
+
+  <!-- ══ INTERACTION LAYER — progressive enhancement, reduced-motion aware ══ -->
+  <script>
+  (function () {
+    "use strict";
+    var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var fine   = matchMedia("(pointer: fine)").matches;
+
+    /* ── nav: scroll compression ─────────────────────────────────────────── */
+    var nav = document.getElementById("agNav");
+    addEventListener("scroll", function () {
+      nav.classList.toggle("is-scrolled", scrollY > 24);
+    }, { passive: true });
+
+    /* ── nav: mobile toggle ──────────────────────────────────────────────── */
+    var toggle = document.getElementById("agToggle");
+    var links  = document.getElementById("agLinks");
+    toggle.addEventListener("click", function () {
+      var open = links.classList.toggle("is-open");
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    });
+    links.addEventListener("click", function (e) {
+      if (e.target.closest("a")) {
+        links.classList.remove("is-open");
+        toggle.setAttribute("aria-expanded", "false");
+      }
+    });
+
+    /* ── nav: glide pill tracks the hovered link (desktop) ───────────────── */
+    var glide = document.getElementById("agGlide");
+    if (glide && fine) {
+      links.querySelectorAll(".ag-nav__link").forEach(function (el) {
+        el.addEventListener("mouseenter", function () {
+          var pr = links.getBoundingClientRect(), r = el.getBoundingClientRect();
+          glide.style.opacity = "1";
+          glide.style.left = (r.left - pr.left) + "px";
+          glide.style.top = (r.top - pr.top) + "px";
+          glide.style.width = r.width + "px";
+          glide.style.height = r.height + "px";
+        });
+      });
+      links.addEventListener("mouseleave", function () { glide.style.opacity = "0"; });
+    }
+
+    /* ── smooth anchor scrolling ─────────────────────────────────────────── */
+    document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+      a.addEventListener("click", function (e) {
+        var t = document.querySelector(a.getAttribute("href"));
+        if (t) { e.preventDefault(); t.scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); }
+      });
+    });
+
+    if (reduce) return;  /* everything below is pure motion polish */
+
+    /* ── cursor-reactive specular field + panel tilt/reflection ──────────── */
+    if (fine) {
+      var cx = -200, cy = -200, tx = -200, ty = -200, raf;
+      addEventListener("pointermove", function (e) { tx = e.clientX; ty = e.clientY; });
+      (function loop() {
+        cx += (tx - cx) * 0.14; cy += (ty - cy) * 0.14;
+        document.documentElement.style.setProperty("--ag-mx", cx + "px");
+        document.documentElement.style.setProperty("--ag-my", cy + "px");
+        raf = requestAnimationFrame(loop);
+      })();
+
+      /* subtle 3D tilt for [data-tilt] surfaces */
+      document.querySelectorAll("[data-tilt]").forEach(function (el) {
+        el.addEventListener("pointermove", function (e) {
+          var r = el.getBoundingClientRect();
+          var px = (e.clientX - r.left) / r.width;
+          var py = (e.clientY - r.top) / r.height;
+          el.style.setProperty("--ag-tilt-x", px);
+          el.style.transform = "perspective(900px) rotateX(" + ((py - .5) * -4) +
+            "deg) rotateY(" + ((px - .5) * 5) + "deg)";
+        });
+        el.addEventListener("pointerleave", function () {
+          el.style.transform = ""; el.style.setProperty("--ag-tilt-x", .5);
+        });
+      });
+
+      /* magnetic buttons */
+      document.querySelectorAll(".cg-magnetic").forEach(function (el) {
+        el.addEventListener("pointermove", function (e) {
+          var r = el.getBoundingClientRect();
+          el.style.transform = "translate(" + ((e.clientX - r.left - r.width / 2) * .18) +
+            "px," + ((e.clientY - r.top - r.height / 2) * .3) + "px)";
+        });
+        el.addEventListener("pointerleave", function () { el.style.transform = ""; });
+      });
+    }
+
+    /* ── scroll reveal / stagger (IntersectionObserver) ──────────────────── */
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add("is-in"); io.unobserve(en.target); }
+      });
+    }, { threshold: .12, rootMargin: "0px 0px -8% 0px" });
+    document.querySelectorAll("[data-ag-reveal],[data-ag-stagger]").forEach(function (el) { io.observe(el); });
+  })();
+  </script>
+
+  <!-- shared platform layer: PWA, instant-nav, view transitions, FX -->
+  <script defer src="platform.js"></script>
+  <script defer src="ui.js"></script>
+  <script defer src="logo-badge.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="web-design.html">Web Design &amp; UI Engineering</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="clearglass-ultra.html"><span><b>Previous</b>ClearGlass Ultra</span></a>
+      <a href="web-design.html"><span><b>Topic hub</b>Web Design &amp; Development</span></a>
+      <a href="button-lab.html"><span><b>Next in journey</b>Button Lab</span></a>
+    </div>
+    <ul>
+      <li><a href="button-lab.html"><b>Button Lab</b> — machined-glass control components</a></li>
+      <li><a href="button-system.html"><b>Button System</b> — the ClearGlass glass-UI component set</a></li>
+      <li><a href="hover-menu.html"><b>Hover Menu</b> — elegant navigation component study</a></li>
+      <li><a href="ultra-glass.html"><b>Ultra Glass</b> — governed intelligence, rendered visible</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>
