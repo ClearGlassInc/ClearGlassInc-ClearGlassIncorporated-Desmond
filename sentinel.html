@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>SENTINEL · Live Geospatial Command Center — ClearGlass Inc.</title>
+<meta name="description" content="SENTINEL — a privacy-first geospatial command center running on LIVE data: device location awareness, real map tiles, and live USGS earthquake + NWS weather-alert feeds. Fail-closed by design."/>
+<link rel="canonical" href="https://www.clearglassinc.com/sentinel.html"/>
+<meta property="og:title" content="SENTINEL · Live Geospatial Command Center"/>
+<meta property="og:description" content="Live map, device location awareness, live USGS + NWS feeds, anonymous camera presence. Privacy-first, fail-closed."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://www.clearglassinc.com/sentinel.html"/>
+<meta property="og:site_name" content="ClearGlass Inc."/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="SENTINEL · Live Geospatial Command Center — ClearGlass Inc."/>
+<meta name="twitter:description" content="Live map, device location awareness, live USGS + NWS feeds, anonymous camera presence. Privacy-first, fail-closed."/>
+<meta name="twitter:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet"/>
+<!-- Leaflet (real map tiles). Degrades gracefully if the CDN is blocked. -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#60a5fa;--red-2:#3b82f6;--amber:#60a5fa;--cyan:#36b6ff;--teal:#2fd4c0;
+  --violet:#9b7bff;--ok:#34d399;--ink:#080a16;--panel:#0f1326;
+  --line:rgba(124,150,255,.16);--line-2:rgba(124,150,255,.30);
+  --txt:#eef2ff;--dim:#9aa6c8;--dim-2:#5f6a8a;
+  --sans:'Inter',system-ui,sans-serif;--mono:'IBM Plex Mono',monospace;--display:'Orbitron',var(--sans);
+}
+html,body{height:100%}
+body{font-family:var(--sans);color:var(--txt);overflow:hidden;
+  background:radial-gradient(130% 100% at 50% -10%,#1a0619 0%,#0c030b 45%,#050205 100%);-webkit-font-smoothing:antialiased}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:61;background:radial-gradient(120% 90% at 50% 35%,transparent 60%,rgba(0,0,0,.5) 100%)}
+::-webkit-scrollbar{width:7px;height:7px}::-webkit-scrollbar-thumb{background:rgba(124,150,255,.25);border-radius:6px}
+
+.shell{height:100vh;display:grid;grid-template-rows:auto 1fr}
+.topbar{display:flex;align-items:center;gap:14px;padding:11px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(16,20,46,.92),rgba(9,11,24,.6));backdrop-filter:blur(8px);z-index:1200}
+.brand{display:flex;align-items:center;gap:11px;min-width:200px}
+.brand .mk{width:32px;height:32px;border-radius:8px;flex:0 0 auto;position:relative;background:radial-gradient(circle at 40% 35%,#bcd4ff,#1a2350 60%,#1f041d);box-shadow:0 0 16px rgba(124,150,255,.6)}
+.brand .mk::after{content:"";position:absolute;inset:5px;border:1px solid rgba(224,231,255,.5);border-radius:4px}
+.b-name{font-family:var(--display);font-weight:900;letter-spacing:.2em;font-size:15px}.b-name b{color:var(--red)}
+.b-sub{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--dim-2);text-transform:uppercase}
+.spacer{flex:1}
+.pill{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;border-radius:18px;padding:6px 11px;border:1px solid;white-space:nowrap}
+.pill.armed{color:#f472b6;border-color:rgba(124,150,255,.4);background:rgba(124,150,255,.08)}
+.pill.juris{color:var(--teal);border-color:rgba(47,212,192,.35);background:rgba(47,212,192,.07);cursor:pointer}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 9px var(--red);animation:blink 2s infinite}
+@keyframes blink{50%{opacity:.35}}
+.clock{font-family:var(--mono);text-align:right;min-width:118px}
+.clock .t{font-family:var(--display);font-weight:700;font-size:17px}.clock .d{font-size:9px;color:var(--dim);letter-spacing:.16em;text-transform:uppercase}
+
+.main{display:grid;grid-template-columns:228px 1fr 320px;gap:12px;padding:12px 16px 14px;min-height:0}
+.panel{background:linear-gradient(180deg,rgba(19,24,54,.72),rgba(11,14,29,.72));border:1px solid var(--line);border-radius:13px;position:relative;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+.p-t{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--red);padding:12px 14px 8px;display:flex;align-items:center;gap:7px}
+.p-t .i{width:6px;height:6px;border-radius:50%;background:var(--red);box-shadow:0 0 7px var(--red)}
+.p-t small{margin-left:auto;color:var(--dim-2);font-size:9px}
+
+.rail{overflow-y:auto}
+.railsub{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim-2);padding:11px 12px 5px}
+.layer{display:flex;align-items:center;gap:9px;padding:8px 12px;cursor:pointer;transition:.15s}
+.layer:hover{background:rgba(124,150,255,.05)}.layer.off{opacity:.4}
+.layer .sw{width:11px;height:11px;border-radius:3px;flex:0 0 auto;box-shadow:0 0 8px currentColor}
+.layer .nm{font-size:12px;font-weight:600}.layer .ct{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--dim)}
+.feedstat{display:flex;align-items:center;gap:8px;padding:7px 12px;font-size:11px}
+.feedstat .led{width:8px;height:8px;border-radius:50%;flex:0 0 auto;background:var(--dim-2)}
+.feedstat .led.live{background:var(--ok);box-shadow:0 0 8px var(--ok);animation:blink 2.4s infinite}
+.feedstat .led.err{background:var(--red);box-shadow:0 0 8px var(--red)}
+.feedstat .led.pend{background:var(--amber);box-shadow:0 0 8px var(--amber)}
+.feedstat .nm{font-weight:600}.feedstat .up{margin-left:auto;font-family:var(--mono);font-size:8.5px;color:var(--dim-2)}
+.btn{display:block;margin:8px 12px;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:9px;border-radius:9px;cursor:pointer;border:1px solid var(--line-2);background:rgba(47,212,192,.08);color:#9af0e4;transition:.15s}
+.btn:hover{background:rgba(47,212,192,.16);box-shadow:0 0 14px rgba(47,212,192,.25)}
+.btn.amber{border-color:rgba(96,165,250,.4);background:rgba(96,165,250,.08);color:var(--amber)}
+
+.center{display:grid;grid-template-rows:1fr auto;gap:12px;min-height:0}
+.stage{position:relative;border-radius:13px;overflow:hidden;border:1px solid var(--line);background:#0a0309}
+#map{position:absolute;inset:0;width:100%;height:100%;background:#0a0309}
+.fusion{position:absolute;inset:0;z-index:850;display:grid;place-items:center;padding:22px;background:radial-gradient(circle at 50% 45%,rgba(54,182,255,.16),transparent 34%),rgba(3,6,16,.88);backdrop-filter:blur(9px);transition:opacity .28s ease,visibility .28s ease}
+.fusion[hidden]{display:none}.fusion-grid{position:relative;display:grid;grid-template-columns:repeat(2,minmax(150px,210px));gap:42px 74px}.fusion-grid::before{content:"";position:absolute;inset:50% -9%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),var(--violet),transparent);box-shadow:0 0 18px var(--cyan);animation:fusion-flow 3s linear infinite}.fusion-core{position:absolute;left:50%;top:50%;z-index:2;display:grid;place-items:center;width:82px;height:82px;border:1px solid var(--cyan);border-radius:50%;background:#071326;transform:translate(-50%,-50%);box-shadow:0 0 0 10px rgba(54,182,255,.05),0 0 35px rgba(54,182,255,.3);font:800 10px/1.35 var(--display);letter-spacing:.12em;text-align:center}.fusion-core::after{content:"";position:absolute;inset:-12px;border:1px dashed rgba(167,139,250,.55);border-radius:50%;animation:fusion-orbit 10s linear infinite}.fusion-node{position:relative;z-index:3;padding:13px;border:1px solid rgba(124,150,255,.27);border-radius:11px;background:linear-gradient(145deg,rgba(18,29,56,.96),rgba(10,12,31,.96));box-shadow:0 12px 28px rgba(0,0,0,.25)}.fusion-node b{display:block;color:#fff;font:700 11px var(--display);letter-spacing:.08em}.fusion-node span{display:block;margin-top:5px;color:var(--dim);font:9px/1.45 var(--mono)}.fusion-node i{position:absolute;right:10px;top:10px;width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 9px var(--ok)}.fusion-badge{position:absolute;left:12px;bottom:10px;color:#8ca1c5;font:8px var(--mono);letter-spacing:.1em;text-transform:uppercase}.fusion-close{position:absolute;right:12px;top:10px;z-index:4;border:1px solid var(--line-2);border-radius:8px;background:rgba(7,10,23,.9);color:#fff;padding:7px 10px;cursor:pointer}.fusion-close:focus-visible{outline:3px solid #fff;outline-offset:2px}@keyframes fusion-orbit{to{transform:rotate(360deg)}}@keyframes fusion-flow{50%{filter:brightness(1.9);transform:scaleX(.92)}}
+.leaflet-container{background:#0a0309!important;font-family:var(--mono)!important}
+.mtag{position:absolute;z-index:800;font-family:var(--mono);font-size:9px;letter-spacing:.13em;color:rgba(188,212,255,.75);text-transform:uppercase;background:rgba(7,9,20,.6);padding:3px 7px;border-radius:5px;pointer-events:none}
+.mtag.tl{top:11px;left:11px;line-height:1.7}.mtag.br{bottom:11px;right:11px;text-align:right}
+.maphint{position:absolute;inset:0;display:grid;place-items:center;z-index:700;text-align:center;pointer-events:none}
+.maphint .box{background:rgba(8,10,22,.85);border:1px solid var(--line-2);border-radius:12px;padding:18px 22px;max-width:340px;pointer-events:auto}
+.maphint h3{font-family:var(--display);font-size:14px;letter-spacing:.05em;margin-bottom:7px}
+.maphint p{font-size:12px;color:var(--dim);line-height:1.55;margin-bottom:12px}
+
+.console{min-height:148px;max-height:36vh}
+.feed{flex:1;overflow-y:auto;padding:8px 14px 4px;display:flex;flex-direction:column;gap:9px}
+.msg{font-size:12.5px;line-height:1.55;max-width:94%}.msg.u{align-self:flex-end}
+.msg .who{font-family:var(--mono);font-size:8.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
+.msg.s .who{color:var(--red)}
+.msg .body{padding:9px 12px;border-radius:11px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(124,150,255,.07),rgba(124,150,255,.02))}
+.msg.u .body{background:rgba(54,182,255,.08);border-color:rgba(54,182,255,.28)}
+.msg .body b{color:#fff}
+.report{display:grid;gap:3px;font-size:11.5px}.report .ln{display:flex;gap:8px}
+.report .ln .k{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);min-width:84px;padding-top:2px}
+.deny{border:1px solid rgba(124,150,255,.5);background:rgba(124,150,255,.09);border-radius:10px;padding:10px 12px}
+.deny .h{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#f472b6;display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.aref{font-family:var(--mono);font-size:9px;color:var(--dim-2);letter-spacing:.06em}
+.composer{display:flex;gap:9px;padding:10px 13px;border-top:1px solid var(--line);background:rgba(6,8,18,.6)}
+.composer input{flex:1;background:rgba(0,0,0,.32);border:1px solid var(--line);border-radius:10px;padding:10px 13px;color:var(--txt);font-size:13px;outline:none}
+.composer input:focus{border-color:var(--line-2);box-shadow:0 0 0 3px rgba(124,150,255,.08)}
+.composer input::placeholder{color:var(--dim-2)}
+.send{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:10px 15px;border-radius:10px;cursor:pointer;border:1px solid var(--line-2);background:linear-gradient(180deg,rgba(124,150,255,.22),rgba(124,150,255,.06));color:#fff}
+.qrow{display:flex;gap:6px;padding:0 13px 10px;flex-wrap:wrap}
+.qchip{font-family:var(--mono);font-size:9px;letter-spacing:.03em;color:var(--dim);border:1px solid var(--line);background:rgba(124,150,255,.04);padding:5px 8px;border-radius:12px;cursor:pointer}
+.qchip:hover{color:var(--txt);border-color:var(--line-2)}
+
+.rightcol{display:grid;grid-template-rows:1fr 1fr;gap:12px;min-height:0}
+.scroll{overflow-y:auto;padding:2px 12px 12px;display:flex;flex-direction:column;gap:8px}
+.ev{display:flex;gap:8px;font-size:11px;line-height:1.4;animation:evin .4s ease;cursor:pointer}
+@keyframes evin{from{opacity:0;transform:translateX(8px)}}
+.ev:hover{opacity:.85}
+.ev .t{font-family:var(--mono);font-size:8.5px;color:var(--dim-2);flex:0 0 42px;padding-top:2px}
+.ev .d{width:8px;height:8px;border-radius:50%;margin-top:3px;flex:0 0 auto;background:var(--cyan);box-shadow:0 0 7px var(--cyan)}
+.ev.warn .d{background:var(--amber);box-shadow:0 0 7px var(--amber)}.ev.bad .d{background:var(--red);box-shadow:0 0 7px var(--red)}.ev.ok .d{background:var(--ok);box-shadow:0 0 7px var(--ok)}
+.ev .b{color:#e9cfe8}.ev .b b{color:#fff}.ev .src{display:block;font-family:var(--mono);font-size:8px;color:var(--dim-2);margin-top:1px}
+.empty{font-size:11px;color:var(--dim-2);padding:10px 14px;font-family:var(--mono);letter-spacing:.04em}
+
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(390px,94vw);background:linear-gradient(180deg,rgba(15,19,44,.99),rgba(8,10,22,.99));border-left:1px solid var(--line-2);box-shadow:-20px 0 60px rgba(0,0,0,.6);z-index:1300;transform:translateX(100%);transition:transform .3s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column}
+.drawer.open{transform:translateX(0)}
+.dr-h{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.dr-h .ic{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:14px;border:1px solid var(--line)}
+.dr-h .nm{font-family:var(--display);font-weight:700;font-size:14px}.dr-h .ty{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.dr-h .x{margin-left:auto;cursor:pointer;color:var(--dim);font-size:18px;background:none;border:0}
+.dr-body{overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.feedbox{position:relative;aspect-ratio:16/10;border-radius:9px;overflow:hidden;border:1px solid var(--line-2);background:#0a0309}
+.feedbox video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.feedbox canvas.ov{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.feedbox .lab{position:absolute;top:7px;left:8px;font-family:var(--mono);font-size:9px;color:var(--ok);letter-spacing:.08em;background:rgba(0,0,0,.55);padding:1px 5px;border-radius:3px;z-index:3}
+.feedbox .rec{position:absolute;top:7px;right:8px;font-family:var(--mono);font-size:9px;color:var(--red);display:flex;align-items:center;gap:4px;z-index:3}
+.feedbox .rec::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--red);animation:blink 1.2s infinite}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.meta .c{border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:rgba(0,0,0,.2)}
+.meta .c .k{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim-2)}.meta .c .v{font-size:12px;font-weight:600;margin-top:2px;word-break:break-word}
+.note{font-size:12px;color:var(--dim);line-height:1.55}.note b{color:var(--txt)}
+.privacy{font-family:var(--mono);font-size:9.5px;color:var(--teal);border:1px solid rgba(47,212,192,.3);background:rgba(47,212,192,.06);border-radius:8px;padding:8px 10px;line-height:1.5}
+
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(18px);z-index:1400;background:rgba(11,14,29,.96);border:1px solid var(--line-2);border-radius:11px;padding:11px 16px;display:flex;align-items:center;gap:11px;opacity:0;transition:.32s;backdrop-filter:blur(8px)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast .i{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;border:1px solid var(--line)}
+.toast b{font-size:12px;display:block}.toast span{font-family:var(--mono);font-size:9px;color:var(--dim)}
+@media(max-width:1080px){.main{grid-template-columns:1fr}.rail,.rightcol{display:none}.clock{display:none}}
+@media(max-width:620px){.fusion-grid{grid-template-columns:1fr 1fr;gap:76px 12px}.fusion-node{padding:10px}.fusion-node span{font-size:8px}.fusion-core{width:70px;height:70px}}
+@media(prefers-reduced-motion:reduce){.dot,.feedstat .led.live,.fusion-grid::before,.fusion-core::after,.feedbox .rec::before{animation:none!important}.drawer,.toast{transition:none}}
+</style>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+  <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">SENTINEL · Live Geospatial Command Center — ClearGlass Inc.</h1>
+<div class="shell">
+  <div class="topbar">
+    <div class="brand"><div class="mk"></div>
+      <div><div class="b-name">SENTINEL<b>·</b>LIVE</div><div class="b-sub">Live Geospatial Command Center</div></div></div>
+    <div class="spacer"></div>
+    <div class="pill juris" id="jurisPill" title="Enable device location">⬢ LOCATION · NOT SET</div>
+    <div class="pill armed"><span class="dot"></span>FAIL-CLOSED · ARMED</div>
+    <div class="clock"><div class="t" id="clk">--:--:--</div><div class="d" id="cdate">—</div></div>
+  </div>
+  <div class="main">
+    <div class="panel rail">
+      <div class="p-t"><span class="i"></span>Live Sources</div>
+      <div id="feeds"></div>
+      <button class="btn" id="btnLoc">⬢ Enable location awareness</button>
+      <button class="btn amber" id="btnCam">📷 Connect owned camera</button>
+      <button class="btn" id="btnPfas">⬡ PERCIVAL · PFAS (Burlington)</button>
+      <button class="btn" id="btnRefresh">↻ Refresh live feeds</button>
+      <button class="btn amber" id="btnFusion" aria-controls="fusionLayer" aria-expanded="false">◈ Artemis agent mesh</button>
+      <div class="railsub">Map layers</div>
+      <div id="layers"></div>
+    </div>
+    <div class="center">
+      <div class="stage">
+        <div id="map"></div>
+        <div class="mtag tl" id="mtl">AWAITING LOCATION<br>LIVE: USGS · NWS</div>
+        <div class="mtag br" id="mbr">SOURCES: LIVE PUBLIC</div>
+        <div class="maphint" id="maphint"><div class="box">
+          <h3>Live geospatial mode</h3>
+          <p>SENTINEL runs on live data: your device location (with consent), real map tiles, and live <b>USGS earthquake</b> + <b>NWS weather-alert</b> feeds. No hardcoded data. Asset/hazard focus only — never person identification.</p>
+          <button class="btn" id="btnLoc2" style="margin:0">⬢ Enable location awareness</button>
+        </div></div>
+        <section class="fusion" id="fusionLayer" aria-label="ClearGlassInc Artemis architecture preview" hidden>
+          <button class="fusion-close" id="fusionClose" type="button">Close mesh</button>
+          <div class="fusion-grid">
+            <div class="fusion-core">ARTEMIS<br>POLICY CORE</div>
+            <article class="fusion-node"><i></i><b>GOTHAM</b><span>Operational intelligence<br>entities · cases · tracking</span></article>
+            <article class="fusion-node"><i></i><b>FOUNDRY</b><span>Ontology + pipelines<br>lineage · temporal state</span></article>
+            <article class="fusion-node"><i></i><b>AIP</b><span>Governed copilots<br>evals · agent workflows</span></article>
+            <article class="fusion-node"><i></i><b>APOLLO</b><span>Controlled delivery<br>health · rollback · policy</span></article>
+          </div>
+          <div class="fusion-badge">Target-state blueprint · consequential actions require human approval</div>
+        </section>
+      </div>
+      <div class="panel console">
+        <div class="p-t"><span class="i"></span>Command Console <small>live · fail-closed</small></div>
+        <div class="feed" id="cfeed"></div>
+        <div class="qrow" id="qrow"></div>
+        <div class="composer">
+          <input id="cmd" placeholder="Ask SENTINEL…  (try: status, quakes near me, weather alerts, report)" autocomplete="off"/>
+          <button class="send" id="send">Run</button>
+        </div>
+      </div>
+    </div>
+    <div class="rightcol">
+      <div class="panel">
+        <div class="p-t"><span class="i"></span>Activity Timeline <small id="tlc">live</small></div>
+        <div class="scroll" id="timeline"></div>
+      </div>
+      <div class="panel">
+        <div class="p-t"><span class="i"></span>Incident Feed <small id="incsrc">USGS · NWS</small></div>
+        <div class="scroll" id="incidents"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="drawer" id="drawer">
+  <div class="dr-h"><div class="ic" id="drIc">📷</div>
+    <div><div class="nm" id="drNm">—</div><div class="ty" id="drTy">—</div></div>
+    <button class="x" id="drX">✕</button></div>
+  <div class="dr-body" id="drBody"></div>
+</div>
+<div class="toast" id="toast"><div class="i" id="tIc">◉</div><div><b id="tT">—</b><span id="tS">—</span></div></div>
+
+<script>
+"use strict";
+/* ===========================================================================
+   SENTINEL LIVE — geospatial command center on LIVE public data.
+   Sources (all client-side, real, keyless):
+     - Geolocation API ............ device location awareness (consent)
+     - Leaflet + CARTO/OSM tiles .. real map
+     - USGS earthquakes GeoJSON ... live seismic events
+     - NWS api.weather.gov ........ live weather alerts + place/jurisdiction
+     - getUserMedia ............... live owned camera, ANONYMOUS presence only
+   Charter: never identify/locate/track/profile a private individual.
+   =========================================================================== */
+const $=id=>document.getElementById(id);
+function clock(){const d=new Date();$('clk').textContent=d.toLocaleTimeString('en-GB');
+  $('cdate').textContent=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});}
+setInterval(clock,1000);clock();
+
+const state={pos:null,juris:null,map:null,markers:{quakes:[],alerts:[],aircraft:[],pfas:[],me:null},
+  feeds:{location:'off',quakes:'pend',weather:'pend',aircraft:'off',pfas:'off',camera:'off'},
+  data:{quakes:[],alerts:[],aircraft:[],pfas:[]},camStream:null};
+
+/* ---------- map ---------- */
+let mapReady=false;
+function initMap(){
+  if(typeof L==='undefined'){$('mtl').innerHTML='MAP LIBRARY OFFLINE<br>FEEDS STILL LIVE';return;}
+  state.map=L.map('map',{zoomControl:true,attributionControl:true}).setView([39.5,-98.35],4);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+    subdomains:'abcd',maxZoom:19,attribution:'© OpenStreetMap © CARTO'}).addTo(state.map);
+  mapReady=true;
+}
+const LAYERS={me:true,quakes:true,alerts:true};
+const LDEF=[['me','#2fd4c0','My location'],['quakes','#60a5fa','Earthquakes (USGS)'],['alerts','#60a5fa','Weather alerts (NWS)'],['aircraft','#9fb6ff','Aircraft (OpenSky)'],['pfas','#a78bfa','PFAS sites (PERCIVAL)']];
+function renderLayers(){
+  $('layers').innerHTML=LDEF.map(([k,c,n])=>{
+    const ct=k==='me'?(state.pos?1:0):(state.data[k]?state.data[k].length:0);
+    return `<div class="layer ${LAYERS[k]?'':'off'}" data-k="${k}"><span class="sw" style="color:${c};background:${c}"></span><span class="nm">${n}</span><span class="ct">${ct}</span></div>`;
+  }).join('');
+  $('layers').querySelectorAll('.layer').forEach(el=>el.onclick=()=>{LAYERS[el.dataset.k]=!LAYERS[el.dataset.k];renderLayers();redraw();});
+}
+function redraw(){
+  if(!mapReady)return;
+  ['quakes','alerts','aircraft','pfas'].forEach(k=>{state.markers[k].forEach(m=>state.map.removeLayer(m));state.markers[k]=[];});
+  if(state.markers.me){state.map.removeLayer(state.markers.me);state.markers.me=null;}
+  if(LAYERS.me&&state.pos){
+    state.markers.me=L.circleMarker([state.pos.lat,state.pos.lon],{radius:8,color:'#2fd4c0',fillColor:'#2fd4c0',fillOpacity:.6,weight:2}).addTo(state.map).bindPopup('Operator device (live)');
+  }
+  if(LAYERS.quakes)state.data.quakes.forEach(q=>{
+    const r=Math.max(4,q.mag*2.2),col=q.mag>=4?'#60a5fa':q.mag>=2.5?'#60a5fa':'#36b6ff';
+    const m=L.circleMarker([q.lat,q.lon],{radius:r,color:col,fillColor:col,fillOpacity:.35,weight:1.3}).addTo(state.map)
+      .bindPopup(`<b>M${q.mag.toFixed(1)}</b> ${q.place}<br>${new Date(q.time).toUTCString()}<br><span style="opacity:.7">source: USGS</span>`);
+    m.on('click',()=>openQuake(q));state.markers.quakes.push(m);});
+  if(LAYERS.alerts)state.data.alerts.forEach(a=>{ if(a.lat==null)return;
+    const m=L.circleMarker([a.lat,a.lon],{radius:9,color:'#60a5fa',fillColor:'#60a5fa',fillOpacity:.25,weight:1.5}).addTo(state.map)
+      .bindPopup(`<b>${a.event}</b><br>${a.area}<br><span style="opacity:.7">source: NWS</span>`);
+    state.markers.alerts.push(m);});
+  if(LAYERS.aircraft)state.data.aircraft.forEach(ac=>{
+    const icon=L.divIcon({className:'',html:`<div style="color:#9fb6ff;font-size:14px;transform:rotate(${(ac.track||0)}deg);text-shadow:0 0 6px #9fb6ff">✈</div>`,iconSize:[16,16]});
+    const m=L.marker([ac.lat,ac.lon],{icon}).addTo(state.map)
+      .bindPopup(`<b>${ac.call||ac.icao}</b><br>alt ${ac.alt!=null?Math.round(ac.alt)+'m':'—'} · ${ac.vel!=null?Math.round(ac.vel)+'m/s':''}<br>origin ${ac.origin||'—'}<br><span style="opacity:.7">source: OpenSky (ADS-B)</span>`);
+    state.markers.aircraft.push(m);});
+  if(LAYERS.pfas)state.data.pfas.forEach(s=>{
+    const c=s.risk==='EXCEEDANCE'?'#60a5fa':s.risk==='ELEVATED'?'#60a5fa':'#34d399';
+    const r=s.risk==='EXCEEDANCE'?12:s.risk==='ELEVATED'?10:8;
+    const m=L.circleMarker([s.lat,s.lon],{radius:r,color:c,fillColor:c,fillOpacity:.5,weight:2}).addTo(state.map)
+      .bindPopup(`<b>${s.label||s.site_id}</b><br>${s.matrix||''} · sum-of-25 <b>${s.sum_25_ngL} ng/L</b><br>risk: <b style="color:${c}">${s.risk}</b>${s.demo?'<br><span style="opacity:.7">demo data · illustrative only</span>':''}<br><span style="opacity:.7">threshold: HC 30 ng/L</span>`);
+    m.on('click',()=>openPfas(s));state.markers.pfas.push(m);});
+}
+
+/* ---------- feed status UI ---------- */
+function setFeed(k,st,up){state.feeds[k]=st;renderFeeds(up);}
+function renderFeeds(up){
+  const rows=[
+    ['location','Device location',state.feeds.location],
+    ['quakes','USGS earthquakes',state.feeds.quakes],
+    ['weather','NWS weather alerts',state.feeds.weather],
+    ['aircraft','Airspace (OpenSky)',state.feeds.aircraft],
+    ['pfas','PFAS sites (PERCIVAL)',state.feeds.pfas],
+    ['camera','Owned camera',state.feeds.camera],
+  ];
+  $('feeds').innerHTML=rows.map(([k,n,st])=>{
+    const cls=st==='live'?'live':st==='err'?'err':st==='pend'?'pend':'';
+    const lab=st==='live'?'LIVE':st==='err'?'OFFLINE':st==='pend'?'…':'OFF';
+    return `<div class="feedstat"><span class="led ${cls}"></span><span class="nm">${n}</span><span class="up">${lab}</span></div>`;
+  }).join('');
+}
+
+/* ---------- geolocation ---------- */
+function enableLocation(){
+  if(!navigator.geolocation){say('Geolocation is not available in this browser.');setFeed('location','err');return;}
+  setFeed('location','pend');toast('⬢','Location','Requesting device position…');
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    state.pos={lat:pos.coords.latitude,lon:pos.coords.longitude,acc:pos.coords.accuracy};
+    setFeed('location','live');
+    $('maphint').style.display='none';
+    if(mapReady)state.map.setView([state.pos.lat,state.pos.lon],11);
+    renderLayers();redraw();
+    addTL('ok',`Device located — <b>${state.pos.lat.toFixed(4)}, ${state.pos.lon.toFixed(4)}</b> ±${Math.round(state.pos.acc)}m`,'geolocation');
+    $('mtl').innerHTML=`LOC ${state.pos.lat.toFixed(3)}, ${state.pos.lon.toFixed(3)}<br>±${Math.round(state.pos.acc)}m · LIVE`;
+    await resolveJurisdiction();
+    loadAll();
+  },err=>{setFeed('location','err');say(`Location denied or unavailable (${err.message}). Live hazard feeds still load globally.`);loadAll();},
+  {enableHighAccuracy:true,timeout:12000,maximumAge:60000});
+}
+async function resolveJurisdiction(){
+  try{
+    const r=await fetchT(`https://api.weather.gov/points/${state.pos.lat.toFixed(4)},${state.pos.lon.toFixed(4)}`,{headers:{'Accept':'application/geo+json'}},8000);
+    const j=await r.json();const rl=j.properties&&j.properties.relativeLocation&&j.properties.relativeLocation.properties;
+    if(rl){state.juris=`${rl.city}, ${rl.state} (US)`;}
+    else state.juris=null;
+  }catch(e){state.juris=null;}
+  const p=$('jurisPill');
+  p.textContent='⬢ '+(state.juris?('JURISDICTION · '+state.juris.toUpperCase()):`LAT/LON ${state.pos.lat.toFixed(2)},${state.pos.lon.toFixed(2)}`);
+}
+
+/* ---------- live feeds ---------- */
+function fetchT(url,opts,ms){const c=new AbortController();const t=setTimeout(()=>c.abort(),ms||9000);
+  return fetch(url,Object.assign({signal:c.signal},opts||{})).finally(()=>clearTimeout(t));}
+
+async function loadQuakes(){
+  setFeed('quakes','pend');
+  try{
+    const r=await fetchT('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson',{},10000);
+    const j=await r.json();
+    let feats=j.features.map(f=>({mag:f.properties.mag||0,place:f.properties.place||'—',time:f.properties.time,
+      lon:f.geometry.coordinates[0],lat:f.geometry.coordinates[1],id:f.id,url:f.properties.url,tsunami:f.properties.tsunami}));
+    if(state.pos)feats.sort((a,b)=>dist(a,state.pos)-dist(b,state.pos));
+    else feats.sort((a,b)=>b.mag-a.mag);
+    state.data.quakes=feats.slice(0,40);
+    setFeed('quakes','live');renderLayers();redraw();renderIncidents();
+    addTL('',`USGS — <b>${j.features.length} quakes/24h</b> ingested`,'usgs.gov');
+  }catch(e){setFeed('quakes','err');addTL('bad','USGS feed unreachable','usgs.gov');renderIncidents();}
+}
+async function loadAlerts(){
+  setFeed('weather','pend');
+  try{
+    const url=state.pos?`https://api.weather.gov/alerts/active?point=${state.pos.lat.toFixed(4)},${state.pos.lon.toFixed(4)}`
+                       :'https://api.weather.gov/alerts/active?status=actual&limit=50';
+    const r=await fetchT(url,{headers:{'Accept':'application/geo+json'}},10000);
+    const j=await r.json();
+    state.data.alerts=(j.features||[]).map(f=>{const p=f.properties;let lat=null,lon=null;
+      if(f.geometry&&f.geometry.type==='Polygon'){const c=f.geometry.coordinates[0][0];lon=c[0];lat=c[1];}
+      return {event:p.event,area:p.areaDesc,sev:p.severity,headline:p.headline,sent:p.sent,lat,lon};}).slice(0,40);
+    setFeed('weather','live');renderLayers();redraw();renderIncidents();
+    addTL(state.data.alerts.length?'warn':'ok',`NWS — <b>${state.data.alerts.length} active alert(s)</b>`,'weather.gov');
+  }catch(e){setFeed('weather','err');addTL('bad','NWS feed unreachable','weather.gov');renderIncidents();}
+}
+async function loadAircraft(){
+  if(!state.pos){setFeed('aircraft','off');return;}      // bounded to operator area only
+  setFeed('aircraft','pend');
+  const d=1.5,la=state.pos.lat,lo=state.pos.lon;
+  const url=`https://opensky-network.org/api/states/all?lamin=${(la-d).toFixed(3)}&lomin=${(lo-d).toFixed(3)}&lamax=${(la+d).toFixed(3)}&lomax=${(lo+d).toFixed(3)}`;
+  try{
+    const r=await fetchT(url,{},11000);const j=await r.json();
+    const st=j.states||[];
+    state.data.aircraft=st.map(s=>({icao:s[0],call:(s[1]||'').trim(),origin:s[2],lon:s[5],lat:s[6],
+      alt:s[7],vel:s[9],track:s[10]})).filter(a=>a.lat!=null&&a.lon!=null).slice(0,80);
+    setFeed('aircraft','live');renderLayers();redraw();
+    addTL('',`OpenSky — <b>${state.data.aircraft.length} aircraft</b> in ${(2*d).toFixed(0)}° box`,'opensky-network.org');
+  }catch(e){setFeed('aircraft','err');addTL('warn','OpenSky airspace feed unavailable','opensky-network.org');}
+}
+function dist(a,b){const dx=a.lat-b.lat,dy=a.lon-b.lon;return dx*dx+dy*dy;}
+function loadAll(){loadQuakes();loadAlerts();loadAircraft();}
+async function loadPfas(url){
+  url=url||'assets/data/pfas-burlington-demo.geojson';
+  setFeed('pfas','pend');
+  try{
+    const r=await fetchT(url,{},9000);const j=await r.json();
+    state.data.pfas=(j.features||[]).map(f=>Object.assign({lat:f.geometry.coordinates[1],lon:f.geometry.coordinates[0]},f.properties));
+    setFeed('pfas','live');renderLayers();redraw();
+    if(mapReady&&state.data.pfas[0]){state.map.setView([state.data.pfas[0].lat,state.data.pfas[0].lon],11);}
+    const n=state.data.pfas.length,exc=state.data.pfas.filter(s=>s.risk==='EXCEEDANCE').length;
+    addTL(exc?'bad':'',`PERCIVAL · PFAS — <b>${n} site(s)</b>${exc?', '+exc+' exceedance':''}`,'PERCIVAL/PFAS');
+  }catch(e){setFeed('pfas','err');addTL('warn','PFAS layer unavailable','PERCIVAL/PFAS');}
+}
+function openPfas(s){
+  const c=s.risk==='EXCEEDANCE'?'#60a5fa':s.risk==='ELEVATED'?'#60a5fa':'#34d399';
+  $('drIc').textContent='⬡';$('drIc').style.color=c;
+  $('drNm').textContent=s.label||s.site_id;$('drTy').textContent='PERCIVAL · PFAS site';
+  const ratio=(s.sum_25_ngL/30*100).toFixed(0);
+  $('drBody').innerHTML=`<div class="meta">
+    <div class="c"><div class="k">Sum of 25</div><div class="v">${s.sum_25_ngL} ng/L</div></div>
+    <div class="c"><div class="k">Threshold</div><div class="v">30 ng/L (HC)</div></div>
+    <div class="c"><div class="k">Risk band</div><div class="v" style="color:${c}">${s.risk}</div></div>
+    <div class="c"><div class="k">% of threshold</div><div class="v">${ratio}%</div></div>
+    <div class="c"><div class="k">Matrix</div><div class="v">${s.matrix||'—'}</div></div>
+    <div class="c"><div class="k">Site</div><div class="v">${s.site_id||'—'}</div></div></div>
+    <div class="note"><b>Health Canada interim drinking-water objective:</b> 30 ng/L (sum of 25 PFAS). ${s.risk==='EXCEEDANCE'?'<b style="color:#f472b6">Exceedance</b> — initiate source characterization + treatment evaluation; 7-day resample.':s.risk==='ELEVATED'?'<b style="color:var(--amber)">Elevated</b> — increase monitoring to monthly; pre-design GAC/IEX study.':'<b style="color:#7fe8db">Low</b> — maintain annual cadence.'}</div>
+    <button class="btn" id="pfDl" style="margin:0">⬇ Download evidence pack (.md + .json)</button>
+    ${s.demo?'<div class="privacy" style="color:#bcd4ff;border-color:rgba(96,165,250,.3);background:rgba(96,165,250,.05)">⚠ Demo data — illustrative only. Real screenings use the PFAS CSV/PDF ingesters feeding pfas.screen().</div>':''}
+    <div class="privacy">🔒 Asset-focused compliance intelligence. No personal data.</div>`;
+  $('drawer').classList.add('open');
+  const dl=document.getElementById('pfDl');if(dl)dl.onclick=()=>downloadPfasPack(s);
+}
+function downloadPfasPack(s){
+  const aref='PFAS-'+(Math.random().toString(16).slice(2,12).toUpperCase());
+  const nowZ=new Date().toISOString();
+  const nextActions=s.risk==='EXCEEDANCE'?
+    ['Notify utility / property owner and document chain of custody',
+     'Open compliance ticket: HC interim objective exceedance',
+     'Initiate source characterization (sampling plan + receptor map)',
+     'Evaluate treatment options and capital-planning brief']
+    :s.risk==='ELEVATED'?
+    ['Increase monitoring frequency (monthly)',
+     'Pre-design study: treatment screening (GAC / IEX)',
+     'Notify operator + draft watch-status report']
+    :['Maintain annual screening cadence'];
+  const resample=s.risk==='EXCEEDANCE'?7:s.risk==='ELEVATED'?30:365;
+  const treatment=s.risk==='EXCEEDANCE'?
+    ['Granular activated carbon (GAC) — proven for long-chain PFAS',
+     'Ion exchange (selective) — strong for short-chain + PFOS/PFOA',
+     'Reverse osmosis — high removal, residual management required',
+     'Source isolation + connect to alternate supply (interim)']
+    :s.risk==='ELEVATED'?
+    ['Increase monitoring frequency to monthly',
+     'Pre-design study: GAC vs ion-exchange screening']
+    :[];
+  const refs=[
+    'Health Canada — Objective for Canadian drinking water: per- and polyfluoroalkyl substances (PFAS), interim objective 30 ng/L (sum of 25 PFAS).',
+    'Ontario MECP — Drinking Water Quality Standards (PFAS where applicable).'];
+  const pkg={
+    accepted:true,reasons:['screening complete','risk: '+s.risk],
+    sample_id:s.site_id||'site',
+    finding:{sum_25_ngL:s.sum_25_ngL,sum_25_ngL_max:s.sum_25_ngL,risk:s.risk,
+             detected_analytes:[],exceedance_ratio:+(s.sum_25_ngL/30).toFixed(2),
+             matrix:s.matrix||'drinking_water',source_category_hints:[]},
+    next_actions:nextActions,resample_after_days:resample,
+    treatment_options:treatment,references:refs,audit_ref:aref,generated_utc:nowZ,
+  };
+  const md=[
+    '# PERCIVAL · PFAS Compliance Package','',
+    '- **Generated (UTC):** '+nowZ,
+    '- **Audit ref:** `'+aref+'`',
+    '- **Sample / site:** `'+(s.site_id||'site')+'`',
+    '- **Threshold:** 30 ng/L (sum of 25 PFAS, Health Canada interim)','',
+    '## Top line','',
+    '- **Risk band:** **'+s.risk+'**',
+    '- **Sum of 25 (ng/L):** '+s.sum_25_ngL.toFixed(2),
+    '- **% of threshold:** '+((s.sum_25_ngL/30*100).toFixed(0))+'%',
+    '- **Matrix:** '+(s.matrix||'drinking_water'),'',
+    '## Next actions','',...nextActions.map(a=>'- [ ] '+a),'',
+    '**Resample after:** '+resample+' days','',
+    '## Treatment options to evaluate','',...treatment.map(t=>'- '+t),'',
+    '## References','',...refs.map(r=>'- '+r),'',
+    '---','*Generated by PERCIVAL · PFAS. Asset-focused compliance intelligence; no personal data processed.*',
+  ].join('\n')+'\n';
+  function dl(name,type,body){const blob=new Blob([body],{type});const u=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();
+    setTimeout(()=>{a.remove();URL.revokeObjectURL(u);},800);}
+  const base='pfas-'+(s.site_id||'site')+'-'+aref;
+  dl(base+'.md','text/markdown',md);
+  dl(base+'.json','application/json',JSON.stringify(pkg,null,2));
+  addTL('ok','Evidence pack exported — <b>'+s.risk+'</b> · audit '+aref,'PERCIVAL/PFAS');
+  toast('⬇','Evidence pack','Markdown + JSON downloaded');
+}
+
+/* ---------- incident feed (LIVE) ---------- */
+function renderIncidents(){
+  const el=$('incidents');const items=[];
+  state.data.alerts.forEach(a=>items.push({kind:a.sev==='Extreme'||a.sev==='Severe'?'bad':'warn',
+    body:`<b>${a.event}</b> — ${a.area}`,src:'NWS · weather.gov',ts:a.sent}));
+  state.data.quakes.slice(0,12).forEach(q=>items.push({kind:q.mag>=4?'bad':q.mag>=2.5?'warn':'',
+    body:`<b>M${q.mag.toFixed(1)}</b> ${q.place}`,src:'USGS',ts:q.time,q}));
+  if(!items.length){el.innerHTML=`<div class="empty">${state.feeds.quakes==='err'||state.feeds.weather==='err'?'● feeds unreachable from this network':'awaiting live data — enable location or refresh'}</div>`;return;}
+  items.sort((a,b)=>new Date(b.ts)-new Date(a.ts));
+  el.innerHTML=items.slice(0,18).map((it,i)=>{const t=new Date(it.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    return `<div class="ev ${it.kind}" data-q="${it.q?it.q.id:''}"><div class="t">${t}</div><div class="d"></div><div class="b">${it.body}<span class="src">${it.src}</span></div></div>`;}).join('');
+  el.querySelectorAll('.ev[data-q]').forEach(e=>{const id=e.dataset.q;if(!id)return;e.onclick=()=>{const q=state.data.quakes.find(x=>x.id===id);if(q)openQuake(q);};});
+}
+
+/* ---------- timeline ---------- */
+function addTL(kind,body,src){const t=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const d=document.createElement('div');d.className='ev '+kind;d.innerHTML=`<div class="t">${t}</div><div class="d"></div><div class="b">${body}<span class="src">${src}</span></div>`;
+  $('timeline').prepend(d);while($('timeline').children.length>24)$('timeline').lastChild.remove();}
+
+/* ---------- drawers ---------- */
+function openQuake(q){
+  $('drIc').textContent='⚠';$('drIc').style.color='#60a5fa';$('drNm').textContent='M'+q.mag.toFixed(1)+' earthquake';$('drTy').textContent='USGS · live seismic';
+  $('drBody').innerHTML=`<div class="meta">
+    <div class="c"><div class="k">Magnitude</div><div class="v">${q.mag.toFixed(1)}</div></div>
+    <div class="c"><div class="k">When (UTC)</div><div class="v">${new Date(q.time).toUTCString().replace(' GMT','')}</div></div>
+    <div class="c"><div class="k">Location</div><div class="v">${q.place}</div></div>
+    <div class="c"><div class="k">Coordinates</div><div class="v">${q.lat.toFixed(3)}, ${q.lon.toFixed(3)}</div></div>
+    <div class="c"><div class="k">Tsunami flag</div><div class="v">${q.tsunami?'YES':'no'}</div></div>
+    <div class="c"><div class="k">Source</div><div class="v">USGS</div></div></div>
+    <div class="note"><b>Provenance.</b> Live USGS GeoJSON feed (all_day). <a href="${q.url}" target="_blank" rel="noopener" style="color:#36b6ff">Open USGS event ↗</a></div>
+    <div class="privacy">🔒 Hazard/asset data only. No personal data involved.</div>`;
+  if(mapReady){state.map.setView([q.lat,q.lon],8);}$('drawer').classList.add('open');
+}
+
+/* ---------- live camera: ANONYMOUS presence (motion only, no identity) ---------- */
+async function connectCamera(){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){say('Camera API unavailable in this browser.');return;}
+  $('drIc').textContent='📷';$('drIc').style.color='#36b6ff';$('drNm').textContent='Owned camera';$('drTy').textContent='Live · anonymous presence';
+  $('drBody').innerHTML=`<div class="feedbox"><video id="vid" autoplay playsinline muted></video><canvas class="ov" id="ov"></canvas>
+      <div class="lab" id="presLab">PRESENCE: —</div><div class="rec">REC · LIVE</div></div>
+    <div class="privacy">🔒 <b style="color:#7fe8db">Anonymous presence only.</b> SENTINEL measures motion/activity to flag presence and safety events. It does <b style="color:#7fe8db">not</b> run face recognition, identify, or name anyone. Frames are processed on-device and never stored.</div>
+    <div class="meta"><div class="c"><div class="k">Source</div><div class="v">owned camera (getUserMedia)</div></div>
+      <div class="c"><div class="k">Processing</div><div class="v">on-device · motion diff</div></div></div>`;
+  $('drawer').classList.add('open');
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false});
+    state.camStream=stream;setFeed('camera','live');
+    const vid=$('vid');vid.srcObject=stream;
+    addTL('ok','Owned camera connected — presence analytics (anonymous)','getUserMedia');
+    startPresence();
+  }catch(e){setFeed('camera','err');say('Camera access denied or unavailable: '+e.message);}
+}
+function startPresence(){
+  const vid=$('vid'),ov=$('ov');if(!vid||!ov)return;
+  const w=160,h=100;const work=document.createElement('canvas');work.width=w;work.height=h;const wx=work.getContext('2d',{willReadFrequently:true});
+  const octx=ov.getContext('2d');let prev=null;
+  function loop(){
+    if(!state.camStream||!document.getElementById('vid')){return;}
+    if(vid.videoWidth){
+      wx.drawImage(vid,0,0,w,h);const cur=wx.getImageData(0,0,w,h);
+      let motion=0,cells=new Array(64).fill(0);
+      if(prev){for(let i=0;i<cur.data.length;i+=4){
+        const d=Math.abs(cur.data[i]-prev.data[i])+Math.abs(cur.data[i+1]-prev.data[i+1])+Math.abs(cur.data[i+2]-prev.data[i+2]);
+        if(d>60){motion++;const px=(i/4)%w,py=Math.floor((i/4)/w);const cx=Math.floor(px/(w/8)),cy=Math.floor(py/(h/8));cells[cy*8+cx]++;}}}
+      prev=cur;
+      const active=cells.filter(c=>c>4).length;          // anonymous active regions, NOT people-ID
+      const pct=(100*motion/(w*h))|0;
+      ov.width=ov.clientWidth;ov.height=ov.clientHeight;octx.clearRect(0,0,ov.width,ov.height);
+      octx.strokeStyle='#34d399';octx.lineWidth=2;octx.shadowColor='#34d399';octx.shadowBlur=6;
+      const sx=ov.width/8,sy=ov.height/8;
+      for(let c=0;c<64;c++){if(cells[c]>4){const gx=c%8,gy=Math.floor(c/8);octx.strokeRect(ov.width-(gx+1)*sx+3,gy*sy+3,sx-6,sy-6);}}
+      const lvl=pct>8?'ELEVATED':pct>2?'ACTIVE':'CLEAR';
+      $('presLab').textContent=`PRESENCE: ${active} region(s) · motion ${pct}% · ${lvl}`;
+    }
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+}
+$('drX').onclick=()=>{$('drawer').classList.remove('open');};
+
+/* ---------- Artemis governed agent-mesh blueprint ---------- */
+function setFusion(open){
+  const layer=$('fusionLayer'),button=$('btnFusion');
+  layer.hidden=!open;button.setAttribute('aria-expanded',String(open));
+  if(open){
+    addTL('ok','Artemis target-state agent mesh opened','local blueprint');
+    toast('◈','Artemis mesh','Governed architecture preview');
+    $('fusionClose').focus();
+  }else button.focus();
+}
+function openArtemisBlueprint(){
+  $('drIc').textContent='◈';$('drIc').style.color='#36b6ff';
+  $('drNm').textContent='ClearGlassInc Artemis';$('drTy').textContent='governed intelligence architecture · target state';
+  $('drBody').innerHTML=`<div class="privacy">This is an <b style="color:#7fe8db">implementation blueprint</b>, not evidence of a provisioned Palantir environment. Model output proposes; deterministic policy and an authorized human approve consequential actions.</div>
+    <div class="meta"><div class="c"><div class="k">Gotham</div><div class="v">Investigations + entity operations</div></div><div class="c"><div class="k">Foundry</div><div class="v">Ontology + governed data pipelines</div></div><div class="c"><div class="k">AIP</div><div class="v">Copilots, agents + evaluation</div></div><div class="c"><div class="k">Apollo</div><div class="v">Deployment, health + rollback</div></div></div>
+    <div class="note"><b>Self-improvement loop</b><br>1. Capture corrections and outcomes with provenance.<br>2. Build versioned evaluation sets.<br>3. Propose prompt, routing, or workflow changes.<br>4. Run offline safety, quality, latency, and drift gates.<br>5. Require human approval for promotion.<br>6. Canary through Apollo and automatically roll back on guardrail regression.</div>
+    <div class="note"><b>Operational state machine</b><br>OBSERVE → CORRELATE → DRAFT → POLICY CHECK → HUMAN REVIEW → EXECUTE → AUDIT. Unknown or denied transitions fail closed; approvals append records and never rewrite history.</div>`;
+  $('drawer').classList.add('open');
+}
+
+/* ---------- console + deny gate ---------- */
+const cfeed=$('cfeed');
+function aref(){return 'SENT-'+Math.random().toString(16).slice(2,8).toUpperCase();}
+function userSay(t){const d=document.createElement('div');d.className='msg u';d.innerHTML=`<div class="who">Operator</div><div class="body">${esc(t)}</div>`;cfeed.appendChild(d);cfeed.scrollTop=cfeed.scrollHeight;}
+function say(html){const d=document.createElement('div');d.className='msg s';d.innerHTML=`<div class="who">SENTINEL</div><div class="body">${html}</div>`;cfeed.appendChild(d);cfeed.scrollTop=cfeed.scrollHeight;return d;}
+function esc(s){return s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));}
+function toast(ic,t,s){$('tIc').textContent=ic;$('tT').textContent=t;$('tS').textContent=s;$('toast').classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>$('toast').classList.remove('show'),2600);}
+const DENY=/\b(who is|who'?s|identif|recogni[sz]e|facial|face recognition|de-?anon|re-?identif|stalk|surveil|profile|\b(find|locate|track|identify|name)\b.{0,16}\b(person|people|individual|someone|him|her|man|woman|guy|suspect|face)\b|\b(this|that|a|the)\s+(person|individual|suspect))/i;
+
+function handle(raw){const q=raw.trim();if(!q)return;userSay(q);const t=q.toLowerCase();
+  if(DENY.test(t)){const r=aref();
+    say(`<div class="deny"><div class="h">⛔ DENIED · fail-closed</div>Request would identify, locate, track, or re-identify a private individual — prohibited by SENTINEL hard rules (no person identification, no biometric re-identification, no de-anonymization).<br><b>Redirect:</b> lawful asset protection only — live hazard feeds, perimeter/occupancy presence, or asset-scoped OSINT.<div class="aref" style="margin-top:7px">audit ref ${r} · logged · escalated to human review</div></div>`);
+    addTL('bad','Policy DENY — person-identification request blocked','policy-gate');toast('⛔','Denied','Person identification prohibited');return;}
+
+  if(/locat|where am|my position|gps|jurisd/.test(t)){if(state.pos)say(`<b>Device location (live).</b> ${state.pos.lat.toFixed(4)}, ${state.pos.lon.toFixed(4)} ±${Math.round(state.pos.acc)}m. Jurisdiction: <b>${state.juris||'lat/lon only'}</b>. Source: device Geolocation API.`);else{say('Location not enabled. Requesting now (consent required)…');enableLocation();}return;}
+  if(/quake|earthquake|seismic|usgs/.test(t)){const n=state.data.quakes.length;if(!n){say(state.feeds.quakes==='err'?'USGS feed is unreachable from this network right now.':'Loading live USGS data…');loadQuakes();return;}
+    const top=state.data.quakes.slice(0,5).map(q=>`• <b>M${q.mag.toFixed(1)}</b> ${q.place} <span style="opacity:.6">(${new Date(q.time).toUTCString().slice(17,22)}Z)</span>`).join('<br>');
+    say(`<b>Live USGS — ${n} events (24h)${state.pos?', nearest first':''}.</b><br>${top}<br><span class="aref">source: earthquake.usgs.gov · ${new Date().toLocaleTimeString('en-GB')}</span>`);return;}
+  if(/weather|alert|storm|nws|hazard/.test(t)){const n=state.data.alerts.length;if(state.feeds.weather==='err'){say('NWS feed unreachable from this network right now.');return;}
+    if(!n){say(`<b>NWS — no active alerts</b> ${state.pos?'for your area':'(global sample)'}. Source: weather.gov.`);return;}
+    const top=state.data.alerts.slice(0,5).map(a=>`• <b>${a.event}</b> — ${a.area} <span style="opacity:.6">[${a.sev||'—'}]</span>`).join('<br>');
+    say(`<b>Live NWS — ${n} active alert(s).</b><br>${top}<br><span class="aref">source: api.weather.gov</span>`);return;}
+  if(/pfas|drinking water|compliance|burlington pfas|water quality/.test(t)){loadPfas();
+    if(!state.data.pfas.length){say('Loading PERCIVAL PFAS layer…');return;}
+    const n=state.data.pfas.length,exc=state.data.pfas.filter(s=>s.risk==='EXCEEDANCE').length,el=state.data.pfas.filter(s=>s.risk==='ELEVATED').length;
+    say(`<b>PERCIVAL · PFAS — ${n} site(s) in view.</b> ${exc} exceedance, ${el} elevated, ${n-exc-el} low.<br>Threshold: <b>Health Canada 30 ng/L</b> (sum of 25 PFAS). Demo data; real screenings via the lab CSV ingester.`);return;}
+  if(/aircraft|airspace|plane|flight|adsb|ads-b/.test(t)){if(!state.pos){say('Enable location first — airspace is bounded to your area to stay lawful and light.');return;}
+    const n=state.data.aircraft.length;if(state.feeds.aircraft==='err'){say('OpenSky airspace feed is unreachable right now.');return;}
+    if(!n){say('Loading live airspace (OpenSky)…');loadAircraft();return;}
+    const top=state.data.aircraft.slice(0,6).map(a=>`• <b>${a.call||a.icao}</b> ${a.alt!=null?Math.round(a.alt)+'m':''} ${a.origin?'· '+a.origin:''}`).join('<br>');
+    say(`<b>Live airspace — ${n} aircraft</b> within ~1.5° of you (public ADS-B).<br>${top}<br><span class="aref">source: opensky-network.org · vehicles/airspace only, no persons</span>`);return;}
+  if(/camera|cam|feed|presence|webcam/.test(t)){connectCamera();return;}
+  if(/report|summary|sitrep|brief/.test(t)){const r=aref();const q0=state.data.quakes[0],a0=state.data.alerts[0];
+    say(`<div class="report">
+      <div class="ln"><span class="k">Top-line</span><span><b>${state.data.alerts.length} active weather alert(s)</b>, ${state.data.quakes.length} quakes/24h in view.</span></div>
+      <div class="ln"><span class="k">Location</span><span>${state.pos?`${state.juris||state.pos.lat.toFixed(2)+','+state.pos.lon.toFixed(2)} (±${Math.round(state.pos.acc)}m)`:'not enabled'}</span></div>
+      <div class="ln"><span class="k">Feeds</span><span>USGS ${state.feeds.quakes.toUpperCase()} · NWS ${state.feeds.weather.toUpperCase()} · camera ${state.feeds.camera.toUpperCase()}</span></div>
+      <div class="ln"><span class="k">Timeline</span><span>${q0?`nearest M${q0.mag.toFixed(1)} ${q0.place}`:'—'}${a0?`; alert: ${a0.event}`:''}</span></div>
+      <div class="ln"><span class="k">Evidence</span><span>USGS GeoJSON + NWS alerts + device GPS · timestamps live.</span></div>
+      <div class="ln"><span class="k">Confidence</span><span>HIGH (authoritative public feeds).</span></div>
+      <div class="ln"><span class="k">Risk</span><span>${a0?(a0.sev||'weather')+' — '+a0.event:(q0&&q0.mag>=4?'significant seismic activity':'nominal')}</span></div>
+      <div class="ln"><span class="k">Next step</span><span>${a0?'brief site teams on '+a0.event:'monitor; no action required'}.</span></div>
+      <div class="ln"><span class="k">Audit</span><span>${r}</span></div></div>`);toast('🧾','Live report','Real feeds, timestamped');return;}
+  if(/artemis|agent mesh|palantir|gotham|foundry|aip|apollo|self.?improv/.test(t)){openArtemisBlueprint();say('<b>ClearGlassInc Artemis blueprint opened.</b> The mesh separates operational intelligence, ontology, governed AI, and deployment control. Improvements remain proposals until evaluation and explicit human approval.');return;}
+  if(/status|health|online/.test(t)){say(`<b>Status: ARMED · fail-closed.</b> Location ${state.feeds.location.toUpperCase()}, USGS ${state.feeds.quakes.toUpperCase()}, NWS ${state.feeds.weather.toUpperCase()}, camera ${state.feeds.camera.toUpperCase()}. ${state.juris?('Jurisdiction '+state.juris+'.'):''} All sources live + public; no person identification active.`);return;}
+  if(/help|what can|capab/.test(t)){say(`I run on <b>live public data</b>: device location, real map tiles, live <b>USGS</b> quakes + <b>NWS</b> alerts, and on-device <b>anonymous</b> camera presence. Try: <i>enable location</i> · <i>quakes near me</i> · <i>weather alerts</i> · <i>connect camera</i> · <i>report</i>. I never identify or track people.`);return;}
+  say(`Acknowledged. I operate on <b>live, lawful, asset-focused sources</b> only. Try: <i>status</i> · <i>quakes</i> · <i>weather alerts</i> · <i>report</i>. Person identification is denied by design.`);
+}
+$('send').onclick=()=>{const v=$('cmd').value;$('cmd').value='';handle(v);};
+$('cmd').addEventListener('keydown',e=>{if(e.key==='Enter')$('send').click();});
+const QUICK=['Enable location','Quakes near me','Weather alerts','Aircraft','PFAS','Connect camera','Report','Find this person'];
+$('qrow').innerHTML=QUICK.map(q=>`<div class="qchip">${q}</div>`).join('');
+$('qrow').querySelectorAll('.qchip').forEach(c=>c.onclick=()=>{const x=c.textContent;if(/enable location/i.test(x))enableLocation();else handle(x);});
+
+/* ---------- buttons + boot ---------- */
+$('btnLoc').onclick=enableLocation;$('btnLoc2').onclick=enableLocation;
+$('btnCam').onclick=connectCamera;
+$('btnPfas').onclick=()=>{toast('⬡','PFAS','Loading Burlington demo layer');loadPfas();};
+$('btnRefresh').onclick=()=>{toast('↻','Refresh','Reloading live feeds');loadAll();};
+$('btnFusion').onclick=()=>setFusion($('fusionLayer').hidden);
+$('fusionClose').onclick=()=>setFusion(false);
+$('jurisPill').onclick=enableLocation;
+
+renderFeeds();renderLayers();initMap();
+say(`SENTINEL <b>LIVE</b> online — fail-closed. Sources are real and public: device location, map tiles, <b>USGS</b> earthquakes, <b>NWS</b> weather alerts, and on-device <b>anonymous</b> camera presence. Click <b>Enable location awareness</b> to localize, or ask for <i>quakes</i> / <i>weather alerts</i>. I do not identify or track people.`);
+// kick global feeds immediately (work without location); refresh on intervals
+loadAll();
+setInterval(loadQuakes,90000);
+setInterval(loadAlerts,300000);
+setInterval(()=>{if(state.pos)loadAircraft();},60000);   // airspace refresh (bounded)
+</script>
+<script defer src="control-surface.js"></script>
+  <script defer src="ui.js"></script>
+  <script defer src="platform.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related" class="cgr-dock">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}#cg-related.cgr-dock{position:fixed;left:14px;bottom:14px;margin:0;padding:0;max-width:none;z-index:2147483000}#cg-related.cgr-dock .cgr-tab{display:inline-block;cursor:pointer;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#dbe4ff;padding:8px 12px;border-radius:9px;border:1px solid rgba(124,150,255,.42);background:linear-gradient(180deg,rgba(18,20,42,.92),rgba(11,12,28,.92));box-shadow:0 6px 22px rgba(0,0,0,.4);backdrop-filter:blur(6px);user-select:none}#cg-related.cgr-dock .cgr-tab:hover{color:#fff;border-color:rgba(124,150,255,.85)}#cg-related.cgr-dock .cgr-box{display:none;position:absolute;bottom:calc(100% + 8px);left:0;width:min(400px,92vw);max-height:62vh;overflow-y:auto}#cg-related.cgr-dock:hover .cgr-box,#cg-related.cgr-dock:focus-within .cgr-box{display:block}#cg-related.cgr-dock ul{grid-template-columns:1fr}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="cyber-defense-console.html">Cyber Defense &amp; Security Operations</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="cyber-defense-console.html"><span><b>Previous</b>Cyber Defense Console</span></a>
+      <a href="cyber-defense-console.html"><span><b>Topic hub</b>Cyber Defense Console</span></a>
+      <a href="bluedesk.html"><span><b>Next in journey</b>BLUEDESK</span></a>
+    </div>
+    <ul>
+      <li><a href="intelligence.html"><b>Intelligence</b> — the ClearGlass intelligence practice</a></li>
+      <li><a href="bluedesk.html"><b>BLUEDESK</b> — CISO risk and blue-team console</a></li>
+      <li><a href="guardian.html"><b>GUARDIAN</b> — intelligence command interface</a></li>
+      <li><a href="artemis-blue-team.html"><b>Artemis Blue Team</b> — OSINT-driven defense command center</a></li>
+      <li><a href="stegoforge.html"><b>STEGOFORGE</b> — steganography and covert-channel analysis terminal</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="offers/security-quick-audit.html">Start with the $249 Security Quick-Audit</a></p>
+  </nav>
+  <div class="cgr-tab" tabindex="0" role="button" aria-label="Show related ClearGlass pages">⌁ Explore ClearGlass</div>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

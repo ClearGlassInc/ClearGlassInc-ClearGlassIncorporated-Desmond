@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>SATS Digital Twin — Storm-Adaptive Transit Simulation | ClearGlass Inc.</title>
+<meta name="description" content="The ClearGlass SATS digital twin: physics-aware storm simulation over subways, tunnels, streets and drainage, with governed AI operations. Run a live 100-year storm scenario in your browser."/>
+<link rel="canonical" href="https://www.clearglassinc.com/sats-digital-twin.html"/>
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1"/>
+<meta name="keywords" content="digital twin transit simulation, storm adaptive transit system, SATS digital twin, urban flood simulation, transit resilience, physics-aware digital twin"/>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="SATS Digital Twin — Storm-Adaptive Transit Simulation"/>
+<meta property="og:description" content="Physics-aware storm simulation over transit networks with governed AI operations. Run a live storm scenario in your browser."/>
+<meta property="og:url" content="https://www.clearglassinc.com/sats-digital-twin.html"/>
+<meta property="og:site_name" content="ClearGlass Inc."/>
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="manifest" href="/site.webmanifest"/>
+<meta name="theme-color" content="#05070d"/>
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=IBM+Plex+Mono:wght@400;600;700&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "ClearGlass SATS Digital Twin",
+  "applicationCategory": "Simulation",
+  "operatingSystem": "Web",
+  "description": "Physics-aware storm simulation over transit networks — subways, tunnels, streets, drainage — with governed AI operations and multi-stakeholder access.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "ClearGlass Inc.",
+    "url": "https://www.clearglassinc.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.clearglassinc.com/assets/images/clearglass-logo.png"
+    }
+  },
+  "url": "https://www.clearglassinc.com/sats-digital-twin.html"
+}
+</script>
+<style>
+:root{--bg:#05070d;--line:rgba(180,214,255,.18);--text:#f8fbff;--muted:#a8b4c7;--soft:#dbe7ff;--cyan:#39d8ff;--green:#55f2a6;--amber:#ffc857;--red:#ff5d7a;--violet:#9d7bff;--mono:'IBM Plex Mono',monospace;--sans:'Inter',system-ui,sans-serif;--serif:'Cormorant Garamond',Georgia,serif;--max:1120px}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--sans);color:var(--text);background:radial-gradient(circle at 18% 0,rgba(57,216,255,.20),transparent 34%),radial-gradient(circle at 85% 8%,rgba(157,123,255,.16),transparent 30%),linear-gradient(180deg,#05070d,#08111d 48%,#05070d)}
+a{color:var(--cyan)}
+.wrap{width:min(var(--max),calc(100% - 40px));margin:auto}
+.nav{position:sticky;top:0;z-index:10;background:rgba(5,7,13,.86);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.nav-inner{height:70px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:var(--serif);font-size:25px;font-weight:700;text-decoration:none;color:#fff}
+.nav a{margin-left:16px;text-decoration:none;font-weight:800;color:#dbe7ff}
+.hero{padding:76px 0 40px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);font-weight:800}
+.hero h1{font-family:var(--serif);font-size:clamp(42px,6.5vw,80px);line-height:.94;letter-spacing:-.04em;margin:16px 0}
+.hero p{font-size:clamp(17px,2vw,21px);line-height:1.65;color:var(--soft);max-width:78ch}
+.panel{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border-radius:26px;padding:clamp(20px,3vw,34px);margin:26px 0}
+h2{font-family:var(--serif);font-size:clamp(30px,4vw,46px);line-height:1.02;margin:0 0 14px}
+p,li{color:var(--soft);line-height:1.72;font-size:16.5px}
+.simgrid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:22px;align-items:start}
+@media(max-width:920px){.simgrid{grid-template-columns:1fr}}
+#twin{width:100%;height:460px;display:block;border-radius:18px;border:1px solid var(--line);background:#03050b}
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 0}
+.controls button{font-family:var(--mono);font-size:12px;letter-spacing:.06em;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:rgba(57,216,255,.08);color:#dbe7ff;cursor:pointer}
+.controls button:hover{border-color:var(--cyan);color:#fff}
+.controls button.active{background:rgba(85,242,166,.16);border-color:var(--green);color:#fff}
+.readout{font-family:var(--mono);font-size:12.5px;color:var(--muted);line-height:1.9}
+.readout b{color:#fff;font-size:20px}
+.risk-bar{height:10px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden;margin:6px 0 14px}
+.risk-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--amber),var(--red));transition:width .4s}
+#proposals{margin:0;padding:0;list-style:none}
+#proposals li{font-family:var(--mono);font-size:11.5px;line-height:1.55;border-left:3px solid var(--line);padding:6px 10px;margin:8px 0;border-radius:6px;background:rgba(255,255,255,.04)}
+#proposals li.t-closure{border-color:var(--red)}
+#proposals li.t-adjust{border-color:var(--amber)}
+#proposals li.t-advisory{border-color:var(--green)}
+#proposals .tier{text-transform:uppercase;letter-spacing:.1em;font-weight:700}
+table{width:100%;border-collapse:collapse;margin:20px 0;color:var(--soft);font-size:14px}
+th,td{border:1px solid var(--line);padding:11px;text-align:left;vertical-align:top}
+th{color:#fff;background:rgba(57,216,255,.08)}
+.tablewrap{overflow-x:auto}
+.stack{display:grid;gap:10px;counter-reset:layer}
+.stack div{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:rgba(255,255,255,.04)}
+.stack b{color:#fff}
+.callout{border-left:3px solid var(--green);background:rgba(85,242,166,.07);padding:15px 18px;border-radius:14px;margin:20px 0}
+.cta{display:inline-block;margin:8px 12px 0 0;padding:13px 22px;border-radius:12px;font-weight:800;text-decoration:none;border:1px solid var(--line);color:#fff;background:linear-gradient(120deg,rgba(57,216,255,.22),rgba(157,123,255,.22))}
+.footer{padding:44px 0;color:var(--muted)}
+</style>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+<nav class="nav"><div class="wrap nav-inner"><a class="brand" href="index.html">ClearGlass <em>Inc.</em></a><div class="links"><a href="blog/digital-twin-simulation-tools-storm-adaptive-transit-2026.html">Tool Guide</a><a href="environmental-cyber-risk.html">Environmental Risk</a><a href="store.html">Engage</a></div></div></nav>
+
+<header class="hero wrap">
+  <div class="kicker">SATS · Storm-Adaptive Transit Systems</div>
+  <h1>A digital twin that rehearses the storm before the storm arrives.</h1>
+  <p>The ClearGlass SATS digital twin runs continuous, physics-aware storm simulations over subways, tunnels, streets and drainage — then routes every predicted intervention through governed approval. Below is the live simulation core: the same deterministic model that ships in <code>tools/sats_risk_engine.py</code>, running in your browser.</p>
+</header>
+
+<main class="wrap">
+
+<section class="panel">
+  <h2>Live twin: run a storm over the demonstration network</h2>
+  <div class="simgrid">
+    <div>
+      <canvas id="twin" aria-label="SATS transit network storm simulation"></canvas>
+      <div class="controls" id="scenarioBtns" role="group" aria-label="Storm scenarios"></div>
+    </div>
+    <aside>
+      <div class="readout">
+        HOUR <b id="hourOut">—</b> · RAIN <b id="rainOut">0</b> <span>mm/hr</span><br/>
+        NETWORK RISK <b id="riskOut">0</b>/100
+        <div class="risk-bar"><i id="riskBar"></i></div>
+      </div>
+      <div class="readout" style="margin-bottom:6px">GOVERNED PROPOSALS</div>
+      <ul id="proposals"><li class="t-advisory"><span class="tier">standby</span> — run a scenario to generate proposals</li></ul>
+    </aside>
+  </div>
+  <p class="callout" style="margin-bottom:0"><strong>Governance is the product.</strong> The twin never acts on its own. Advisories auto-publish; service adjustments and protective closures are drafted, risk-scored, and blocked until a human operator approves — the same read-only analysis → draft → approval → execution invariant that governs every ClearGlass autonomous system.</p>
+</section>
+
+<section class="panel">
+  <h2>What the SATS twin is made of</h2>
+  <p>No single vendor covers engineering-grade assets, physics simulation, IoT ingestion and agentic operations at once. SATS composes best-of-breed layers behind one governed control plane:</p>
+  <div class="stack">
+    <div><b>1 · Data &amp; shared model</b> — Azure Digital Twins / AWS IoT TwinMaker: secure ingestion from weather APIs, USGS gauges, GTFS-RT and trackside sensors into a DTDL-modeled shared state.</div>
+    <div><b>2 · Asset core</b> — Bentley iTwin: engineering-accurate models of stations, tunnels and drainage networks, federated from BIM and survey data.</div>
+    <div><b>3 · Simulation &amp; prediction</b> — the ClearGlass SATS risk engine (deterministic, stdlib Python) extended with MATSim agent-based mobility and physics-informed models; scales into NVIDIA Omniverse for full physics AI.</div>
+    <div><b>4 · Visualization</b> — CesiumJS for web-native 3D geospatial views with live flood-risk overlays; Omniverse for immersive operations centers.</div>
+    <div><b>5 · Agent orchestration</b> — LangGraph/Temporal agents read twin state (<code>build_twin_state()</code> JSON) and draft operations and passenger guidance.</div>
+    <div><b>6 · Security layer (the ClearGlass differentiator)</b> — zero-trust, role-scoped shared views and append-only audit trails so transit agencies, utilities and emergency services can work from one twin without over-sharing.</div>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Platform fit at a glance</h2>
+  <p>Full analysis, scoring rationale and deployment guidance live in the companion guide: <a href="blog/digital-twin-simulation-tools-storm-adaptive-transit-2026.html">Best Digital Twin Simulation Tools for Storm-Adaptive Transit Systems in 2026</a>.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Platform</th><th>Best SATS role</th><th>Fit</th></tr></thead>
+    <tbody>
+      <tr><td>NVIDIA Omniverse</td><td>Physics-AI simulation + immersive visualization</td><td>9.5/10</td></tr>
+      <tr><td>Bentley iTwin</td><td>Engineering-grade asset core (tunnels, drainage)</td><td>9.0/10</td></tr>
+      <tr><td>Azure Digital Twins / AWS IoT TwinMaker</td><td>IoT data fabric &amp; shared model</td><td>8.0/10</td></tr>
+      <tr><td>MATSim + CesiumJS</td><td>Agile agent-based mobility sim + web 3D</td><td>8.0/10</td></tr>
+      <tr><td>Autodesk Tandem</td><td>Station-level operational twins</td><td>7.5/10</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="panel">
+  <h2>Pilot a storm-adaptive twin</h2>
+  <p>The MVP path is deliberately lightweight: the Python risk engine plus Cesium visualization and a cloud data fabric — live hazard ingestion and 1–3&nbsp;hour storm simulations in weeks, not quarters, scaling to Omniverse-class physics when the mission demands it.</p>
+  <a class="cta" href="store.html">Book a security engagement</a>
+  <a class="cta" href="pricing.html">See pricing &amp; plans</a>
+</section>
+
+</main>
+
+<footer class="footer wrap">© 2026 ClearGlass Inc. · Clarity Is Power · <a href="index.html">Home</a></footer>
+
+<script>
+(function(){
+"use strict";
+/* Browser port of tools/sats_risk_engine.py — same constants, same math. */
+var DEGRADED=50, CRITICAL=200, DRAINDOWN=25, LOW_ELEV=5, SURGE_MM=60, CASCADE=0.35;
+var NETWORK=[
+ {id:"drn-canal",name:"Canal Trunk Drain",kind:"drainage",elev:1,cap:55,crit:.85,dep:[],x:.30,y:.78},
+ {id:"drn-hillside",name:"Hillside Interceptor",kind:"drainage",elev:14,cap:75,crit:.60,dep:[],x:.72,y:.30},
+ {id:"stn-harborfront",name:"Harborfront Stn",kind:"station",elev:2,cap:35,crit:.95,dep:["drn-canal"],x:.16,y:.66},
+ {id:"stn-civic",name:"Civic Center Stn",kind:"station",elev:6,cap:45,crit:.90,dep:["drn-canal"],x:.44,y:.58},
+ {id:"stn-uptown",name:"Uptown Stn",kind:"station",elev:21,cap:50,crit:.70,dep:["drn-hillside"],x:.82,y:.18},
+ {id:"tun-river",name:"River Tunnel",kind:"tunnel",elev:-8,cap:40,crit:1,dep:["drn-canal"],x:.30,y:.86},
+ {id:"tun-midtown",name:"Midtown Tunnel",kind:"tunnel",elev:-4,cap:48,crit:.90,dep:["drn-hillside"],x:.60,y:.44},
+ {id:"rte-shoreline",name:"Shoreline Busway",kind:"surface_route",elev:3,cap:30,crit:.55,dep:[],x:.10,y:.88},
+ {id:"rte-ridge",name:"Ridge Corridor",kind:"surface_route",elev:26,cap:40,crit:.45,dep:[],x:.92,y:.08}
+];
+var LINKS=[["rte-shoreline","stn-harborfront"],["stn-harborfront","tun-river"],["tun-river","drn-canal"],["stn-harborfront","stn-civic"],["stn-civic","tun-midtown"],["tun-midtown","drn-hillside"],["drn-hillside","stn-uptown"],["stn-uptown","rte-ridge"]];
+var SCENARIOS=[
+ {id:"nuisance-rain",label:"Nuisance rain",peak:8,hours:6,surge:0,wind:0},
+ {id:"cloudburst-2h",label:"2h cloudburst",peak:120,hours:2,surge:0,wind:0},
+ {id:"hurricane-remnant-12h",label:"Hurricane remnant",peak:45,hours:12,surge:1.2,wind:95},
+ {id:"design-storm-100yr",label:"100-yr design storm",peak:90,hours:8,surge:1.8,wind:110}
+];
+function rainAt(s,h){if(h<0||h>=s.hours)return 0;var half=s.hours/2,d=Math.abs(h+0.5-half)/half;return s.peak*Math.max(0,1-d);}
+function simulate(s){
+ var depth={},frames=[],peak={},above={};
+ NETWORK.forEach(function(a){depth[a.id]=0;peak[a.id]=0;above[a.id]=0;});
+ for(var h=0;h<s.hours+4;h++){
+  var rain=rainAt(s,h),overflow={};
+  NETWORK.forEach(function(a){
+   var ex=rain-a.cap;
+   if(ex>0){depth[a.id]+=ex;if(a.kind==="drainage")overflow[a.id]=ex*CASCADE;}
+   else depth[a.id]=Math.max(0,depth[a.id]-DRAINDOWN);
+  });
+  NETWORK.forEach(function(a){a.dep.forEach(function(d){if(overflow[d])depth[a.id]+=overflow[d];});});
+  if(rain>0&&s.surge>0)NETWORK.forEach(function(a){
+   if(a.elev<=LOW_ELEV){var reach=Math.max(0,LOW_ELEV-a.elev)/LOW_ELEV;depth[a.id]+=s.surge*SURGE_MM*reach/s.hours;}
+  });
+  var snap={rain:rain,depth:{}};
+  NETWORK.forEach(function(a){snap.depth[a.id]=depth[a.id];peak[a.id]=Math.max(peak[a.id],depth[a.id]);if(depth[a.id]>=DEGRADED)above[a.id]++;});
+  frames.push(snap);
+ }
+ var results={};
+ NETWORK.forEach(function(a){
+  var dt=Math.min(1,peak[a.id]/CRITICAL),du=Math.min(1,above[a.id]/Math.max(s.hours,1));
+  var wt=a.kind==="surface_route"?Math.min(1,s.wind/150):0;
+  var score=Math.round(100*(0.6*dt+0.25*du+0.15*wt)*(0.5+0.5*a.crit));
+  score=Math.max(0,Math.min(100,score));
+  results[a.id]={score:score,peak:peak[a.id],status:score>=70?"critical":score>=35?"degraded":"nominal"};
+ });
+ return {frames:frames,results:results};
+}
+function proposals(results){
+ var out=[];
+ NETWORK.slice().sort(function(a,b){return results[b.id].score-results[a.id].score;}).forEach(function(a){
+  var r=results[a.id];
+  if(r.status==="critical")out.push({cls:"t-closure",tier:"closure · approval required",text:a.name+" — "+({station:"close & reroute",tunnel:"suspend service",drainage:"dispatch pump crew",surface_route:"close route"})[a.kind]+" (risk "+r.score+")"});
+  else if(r.status==="degraded")out.push({cls:"t-adjust",tier:"adjust · approval required",text:a.name+" — reduce frequency, stage crews (risk "+r.score+")"});
+  else if(r.score>=15)out.push({cls:"t-advisory",tier:"advisory · auto",text:a.name+" — passenger weather advisory (risk "+r.score+")"});
+ });
+ return out;
+}
+/* ---- rendering ---- */
+var cv=document.getElementById("twin"),ctx=cv.getContext("2d");
+var hourOut=document.getElementById("hourOut"),rainOut=document.getElementById("rainOut"),
+    riskOut=document.getElementById("riskOut"),riskBar=document.getElementById("riskBar"),
+    propList=document.getElementById("proposals"),btnBox=document.getElementById("scenarioBtns");
+function size(){var r=cv.getBoundingClientRect();cv.width=r.width*devicePixelRatio;cv.height=r.height*devicePixelRatio;ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);}
+window.addEventListener("resize",function(){size();draw(lastFrame,lastResults,lastT);});
+function colorFor(d){if(d>=CRITICAL)return"#ff5d7a";if(d>=DEGRADED)return"#ffc857";return"#55f2a6";}
+var lastFrame=null,lastResults=null,lastT=0,timer=null;
+function draw(frame,results,t){
+ var w=cv.getBoundingClientRect().width,h=cv.getBoundingClientRect().height;
+ ctx.clearRect(0,0,w,h);
+ ctx.strokeStyle="rgba(180,214,255,.10)";
+ for(var gx=0;gx<w;gx+=40){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,h);ctx.stroke();}
+ for(var gy=0;gy<h;gy+=40){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(w,gy);ctx.stroke();}
+ var pos={};NETWORK.forEach(function(a){pos[a.id]=[a.x*w,a.y*h];});
+ ctx.lineWidth=2;
+ LINKS.forEach(function(l){var A=pos[l[0]],B=pos[l[1]];ctx.strokeStyle="rgba(57,216,255,.35)";ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();});
+ if(frame&&frame.rain>0){ /* storm cell sweeping west→east */
+  var cx=w*(0.15+0.7*t),cy=h*0.25,rad=60+frame.rain*1.4;
+  var g=ctx.createRadialGradient(cx,cy,10,cx,cy,rad);
+  g.addColorStop(0,"rgba(57,216,255,.30)");g.addColorStop(1,"rgba(57,216,255,0)");
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,rad,0,7);ctx.fill();
+ }
+ NETWORK.forEach(function(a){
+  var p=pos[a.id],d=frame?frame.depth[a.id]:0,r=7+a.crit*6;
+  ctx.fillStyle=colorFor(d);
+  ctx.beginPath();ctx.arc(p[0],p[1],r,0,7);ctx.fill();
+  if(d>=DEGRADED){ctx.strokeStyle=colorFor(d);ctx.lineWidth=2;ctx.beginPath();ctx.arc(p[0],p[1],r+5,0,7);ctx.stroke();}
+  ctx.fillStyle="rgba(219,231,255,.85)";ctx.font="10px 'IBM Plex Mono',monospace";
+  ctx.fillText(a.name,p[0]+r+5,p[1]+3);
+  if(d>1){ctx.fillStyle="#9ad8ff";ctx.fillText(Math.round(d)+"mm",p[0]+r+5,p[1]+15);}
+ });
+ lastFrame=frame;lastResults=results;lastT=t;
+}
+function netRisk(results){
+ var tw=0,sum=0;NETWORK.forEach(function(a){tw+=a.crit;sum+=results[a.id].score*a.crit;});
+ return Math.round(sum/tw);
+}
+function run(s,btn){
+ if(timer)clearInterval(timer);
+ Array.prototype.forEach.call(btnBox.children,function(b){b.classList.remove("active");});
+ btn.classList.add("active");
+ var sim=simulate(s),i=0,total=sim.frames.length;
+ propList.innerHTML='<li class="t-advisory"><span class="tier">simulating</span> — '+s.label+'…</li>';
+ timer=setInterval(function(){
+  if(i>=total){
+   clearInterval(timer);timer=null;
+   var nr=netRisk(sim.results);
+   riskOut.textContent=nr;riskBar.style.width=nr+"%";hourOut.textContent="END";
+   propList.innerHTML="";
+   var ps=proposals(sim.results);
+   if(!ps.length)propList.innerHTML='<li class="t-advisory"><span class="tier">nominal</span> — no action required</li>';
+   ps.forEach(function(p){var li=document.createElement("li");li.className=p.cls;li.innerHTML='<span class="tier">'+p.tier+"</span><br/>"+p.text;propList.appendChild(li);});
+   return;
+  }
+  var f=sim.frames[i];
+  hourOut.textContent="T+"+i;rainOut.textContent=Math.round(f.rain);
+  /* live network risk approximation from current depths */
+  var tw=0,sum=0;NETWORK.forEach(function(a){var d=f.depth[a.id];tw+=a.crit;sum+=Math.min(100,Math.round(100*0.6*Math.min(1,d/CRITICAL)*(0.5+0.5*a.crit)))*a.crit;});
+  var live=Math.round(sum/tw);riskOut.textContent=live;riskBar.style.width=live+"%";
+  draw(f,sim.results,i/Math.max(1,total-1));
+  i++;
+ },650);
+}
+SCENARIOS.forEach(function(s,i){
+ var b=document.createElement("button");b.type="button";b.textContent=s.label;
+ b.addEventListener("click",function(){run(s,b);});
+ btnBox.appendChild(b);
+ if(i===3)setTimeout(function(){size();run(s,b);},300);
+});
+size();draw(null,null,0);
+})();
+</script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="government.html">Government &amp; Procurement</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="traffic-enforcement.html"><span><b>Previous</b>Speed Vision AI</span></a>
+      <a href="government.html"><span><b>Topic hub</b>Government Solutions</span></a>
+      <a href="government.html"><span><b>Next in journey</b>Government Solutions</span></a>
+    </div>
+    <ul>
+      <li><a href="blog/digital-twin-simulation-tools-storm-adaptive-transit-2026.html"><b>Digital Twin Tools for Storm-Adaptive Transit</b> — the 2026 platform comparison and hybrid architecture</a></li>
+      <li><a href="environmental-cyber-risk.html"><b>Environmental Cyber-Risk</b> — OT and environmental threat monitoring</a></li>
+      <li><a href="operations/procurement-readiness.html"><b>Procurement Readiness</b> — verified supplier-registration status</a></li>
+      <li><a href="operations/federal-supplier-handoff.html"><b>Federal Supplier Handoff</b> — supplier registration runbook</a></li>
+      <li><a href="counter-uas-commercialization-os.html"><b>Counter-UAS OS</b> — counter-drone commercialization platform</a></li>
+      <li><a href="traffic-enforcement.html"><b>Speed Vision AI</b> — AI traffic-enforcement platform</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="operations/procurement-readiness.html">Check our procurement readiness</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script src="/assets/js/cg-design-system.js" defer></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

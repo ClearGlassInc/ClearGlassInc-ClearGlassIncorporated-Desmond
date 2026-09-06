@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: clearglass-agent-service
+    runtime: docker
+    plan: starter
+    region: oregon
+    dockerfilePath: ./services/clearglass_agent_service/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: CLEARGLASS_AGENT_VERSION
+        value: "0.1.0"
+      - key: CLEARGLASS_ALLOWED_ORGS
+        value: "ClearGlassInc"
+      - key: CLEARGLASS_ALLOWED_ORIGINS
+        value: "https://www.clearglassinc.com"
+      - key: CLEARGLASS_AGENT_API_KEYS
+        sync: false

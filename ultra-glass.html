@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>ClearGlass — Ultra Glass. Governed Intelligence, Rendered Visible.</title>
+<meta name="description" content="The ClearGlass Ultra Glass experience — ARTEMIS IV, WRAITH-OMEN, and AEGIS presented as one governed intelligence surface. See the visibility-to-control gap, then close it."/>
+<link rel="canonical" href="https://www.clearglassinc.com/ultra-glass.html"/>
+<meta name="robots" content="index,follow"/>
+<meta name="author" content="ClearGlass Inc."/>
+<meta name="keywords" content="ClearGlass, governed AI, Artemis IV, AEGIS, autonomous agents, cyber defense, glassmorphism, premium security platform"/>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="ClearGlass — Ultra Glass"/>
+<meta property="og:description" content="Governed intelligence, rendered visible. ARTEMIS IV, WRAITH-OMEN, and AEGIS on one obsidian surface."/>
+<meta property="og:url" content="https://www.clearglassinc.com/ultra-glass.html"/>
+<meta property="og:site_name" content="ClearGlass Inc."/>
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="ClearGlass — Ultra Glass"/>
+<meta name="twitter:description" content="Governed intelligence, rendered visible. See the visibility-to-control gap, then close it."/>
+<meta name="twitter:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+<style>
+/* ============================================================
+   CLEARGLASS ULTRA GLASS — cold obsidian · glacial cyan · prism violet
+   All motion is transform/opacity only. rAF-throttled pointer work.
+   prefers-reduced-motion collapses every animation to a static state.
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --obsidian:#05070d;--obsidian-2:#080b14;--pane:rgba(255,255,255,.045);--pane-2:rgba(255,255,255,.07);
+  --line:rgba(148,187,233,.14);--line-hot:rgba(94,234,255,.45);
+  --ink:#eaf2ff;--soft:#b7c4de;--muted:#7787a3;
+  --cyan:#5eeaff;--violet:#a78bfa;--ice:#c9f3ff;--ember:#f472b6;
+  --beam:linear-gradient(105deg,transparent 20%,rgba(94,234,255,.85) 46%,rgba(167,139,250,.9) 54%,transparent 80%);
+  --prism:linear-gradient(120deg,#5eeaff,#a78bfa 55%,#f472b6);
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'Urbanist',system-ui,sans-serif;--mono:'IBM Plex Mono',monospace;
+  --ease:cubic-bezier(.22,.8,.24,1)
+}
+html{scroll-behavior:smooth}
+body{background:var(--obsidian);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+::selection{background:rgba(94,234,255,.25)}
+a{color:inherit}
+
+/* keyboard focus rings — visible, on-brand */
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:6px}
+
+/* ---------- ambient depth field (pure CSS, GPU-cheap) ---------- */
+.depth{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(1100px 700px at 82% -10%,rgba(167,139,250,.14),transparent 60%),
+    radial-gradient(900px 600px at 8% 20%,rgba(94,234,255,.10),transparent 55%),
+    radial-gradient(1200px 900px at 50% 120%,rgba(56,89,148,.14),transparent 60%),
+    var(--obsidian)}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
+
+/* ---------- top banner + nav ---------- */
+.class-banner{position:relative;z-index:5;background:#04060b;color:#9fdcff;text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--line)}
+.nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px clamp(16px,5vw,44px);background:rgba(5,7,13,.62);backdrop-filter:blur(22px) saturate(1.3);-webkit-backdrop-filter:blur(22px) saturate(1.3);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.brand-mark{width:40px;height:40px;border-radius:11px;overflow:hidden;background:#fff;box-shadow:0 0 26px rgba(94,234,255,.25);flex-shrink:0}
+.brand-mark img{width:100%;height:100%;object-fit:cover;display:block}
+.brand-name{font-family:var(--serif);font-size:21px;font-weight:600}
+.brand-name em{font-style:italic;font-weight:400;background:var(--prism);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{color:var(--soft);text-decoration:none;font-size:13.5px;font-weight:600;padding:9px 14px;border-radius:10px;transition:color .2s,background .2s}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav-cta{border:1px solid var(--line-hot);color:var(--ice) !important;box-shadow:inset 0 0 18px rgba(94,234,255,.08)}
+.nav-cta:hover{box-shadow:inset 0 0 26px rgba(94,234,255,.16),0 0 30px rgba(94,234,255,.15)}
+@media(max-width:840px){.nav-links a:not(.nav-cta){display:none}}
+
+/* ---------- hero: layered glass panes + refraction beam ---------- */
+.hero{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:clamp(64px,10vw,130px) clamp(18px,5vw,40px) clamp(48px,7vw,90px)}
+.panes{position:absolute;inset:0;pointer-events:none;z-index:-1}
+.pane{position:absolute;border-radius:30px;border:1px solid var(--line);background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.015));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 40px 90px -50px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.09);will-change:transform;transition:transform .12s linear}
+.pane-a{width:min(46vw,520px);height:300px;right:-4%;top:6%;transform:rotate(8deg)}
+.pane-b{width:min(34vw,380px);height:230px;right:16%;top:38%;transform:rotate(-6deg);border-color:rgba(167,139,250,.22)}
+.pane-c{width:min(26vw,300px);height:180px;left:-6%;top:52%;transform:rotate(4deg);border-color:rgba(94,234,255,.18)}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:26px}
+.eyebrow::before{content:"";width:26px;height:1.5px;background:var(--prism)}
+.h1{font-family:var(--serif);font-weight:600;font-size:clamp(44px,8vw,96px);line-height:.98;letter-spacing:-.025em;max-width:13ch}
+.h1 .refract{position:relative;display:inline-block;background:var(--prism);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;overflow:hidden}
+.h1 .refract::after{content:"";position:absolute;inset:-8% -30%;background:var(--beam);transform:translateX(-120%) skewX(-14deg);animation:beam 5.2s var(--ease) infinite;mix-blend-mode:screen;pointer-events:none}
+@keyframes beam{0%,55%{transform:translateX(-120%) skewX(-14deg)}80%,100%{transform:translateX(120%) skewX(-14deg)}}
+.dek{margin-top:26px;max-width:52ch;color:var(--soft);font-size:clamp(16px,1.9vw,19.5px);line-height:1.7}
+.dek b{color:var(--ice);font-weight:700}
+.hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:36px}
+.btn{display:inline-flex;align-items:center;gap:9px;min-height:52px;padding:0 26px;border-radius:14px;font-weight:700;font-size:15px;text-decoration:none;transition:transform .18s var(--ease),box-shadow .25s;will-change:transform}
+.btn-solid{background:linear-gradient(120deg,#0e2233,#101a33);border:1px solid var(--line-hot);color:var(--ice);box-shadow:0 0 34px rgba(94,234,255,.14),inset 0 0 22px rgba(94,234,255,.07)}
+.btn-solid:hover{transform:translateY(-2px);box-shadow:0 0 52px rgba(94,234,255,.28),inset 0 0 26px rgba(94,234,255,.1)}
+.btn-ghost{border:1px solid var(--line);color:var(--soft)}
+.btn-ghost:hover{transform:translateY(-2px);border-color:rgba(167,139,250,.5);color:#fff}
+
+/* ---------- live signal ticker ---------- */
+.ticker{position:relative;z-index:2;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(255,255,255,.02);overflow:hidden}
+.ticker-track{display:flex;gap:0;width:max-content;animation:tick 46s linear infinite;will-change:transform}
+.ticker:hover .ticker-track{animation-play-state:paused}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tick-item{display:inline-flex;align-items:center;gap:10px;padding:12px 30px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--soft);white-space:nowrap;border-right:1px solid var(--line)}
+.tick-item b{color:var(--cyan);font-weight:600}
+.tick-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* ---------- sections ---------- */
+.section{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:clamp(56px,8vw,110px) clamp(18px,5vw,40px)}
+.section-head{max-width:760px;margin-bottom:clamp(30px,5vw,54px)}
+.kicker{font-family:var(--mono);font-size:11.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:16px;display:inline-flex;align-items:center;gap:10px}
+.kicker::before{content:"";width:24px;height:1.5px;background:var(--prism)}
+.h2{font-family:var(--serif);font-weight:600;font-size:clamp(32px,5vw,58px);line-height:1.04;letter-spacing:-.02em}
+.h2 em{font-style:italic;background:var(--prism);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sub{margin-top:16px;color:var(--soft);line-height:1.7;font-size:16.5px;max-width:58ch}
+
+/* ---------- system cards: magnetic hover + progressive disclosure ---------- */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media(max-width:920px){.cards{grid-template-columns:1fr}}
+.card{position:relative;border-radius:26px;border:1px solid var(--line);background:linear-gradient(165deg,var(--pane-2),var(--pane));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:28px 26px 24px;overflow:hidden;transition:border-color .3s,box-shadow .35s;will-change:transform;transform:translate3d(0,0,0)}
+.card::before{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(320px 240px at var(--mx,50%) var(--my,0%),rgba(94,234,255,.12),transparent 65%);opacity:0;transition:opacity .35s;pointer-events:none}
+.card:hover{border-color:var(--line-hot);box-shadow:0 30px 80px -40px rgba(0,0,0,.9),0 0 44px -8px rgba(94,234,255,.18)}
+.card:hover::before{opacity:1}
+.card:focus-within{border-color:var(--line-hot)}
+.card-code{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;color:var(--muted);font-weight:600}
+.card-name{font-family:var(--serif);font-size:clamp(28px,3vw,36px);font-weight:600;margin:10px 0 4px;letter-spacing:-.01em}
+.card-role{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;color:var(--cyan);margin-bottom:14px}
+.card--violet .card-role{color:var(--violet)}
+.card--ember .card-role{color:var(--ember)}
+.card p{color:var(--soft);font-size:14.5px;line-height:1.65}
+.card-more{max-height:0;opacity:0;overflow:hidden;transition:max-height .5s var(--ease),opacity .4s .05s}
+.card.open .card-more{max-height:340px;opacity:1}
+.card-more ul{list-style:none;margin-top:14px;border-top:1px solid var(--line);padding-top:14px}
+.card-more li{display:flex;gap:10px;align-items:baseline;color:var(--soft);font-size:13.5px;line-height:1.55;margin-bottom:9px}
+.card-more li::before{content:"◆";font-size:8px;color:var(--cyan);flex-shrink:0}
+.card--violet .card-more li::before{color:var(--violet)}
+.card--ember .card-more li::before{color:var(--ember)}
+.disclose{margin-top:16px;display:inline-flex;align-items:center;gap:8px;background:none;border:1px solid var(--line);color:var(--soft);font:600 12.5px var(--sans);letter-spacing:.04em;padding:10px 16px;border-radius:11px;cursor:pointer;transition:color .2s,border-color .2s}
+.disclose:hover{color:#fff;border-color:var(--line-hot)}
+.disclose .chev{display:inline-block;transition:transform .35s var(--ease)}
+.card.open .disclose .chev{transform:rotate(180deg)}
+.card-cta{margin-top:14px;display:inline-block;font-size:13px;font-weight:700;color:var(--ice);text-decoration:none;border-bottom:1px solid rgba(94,234,255,.4);padding-bottom:2px}
+.card-cta:hover{border-bottom-color:var(--cyan)}
+
+/* ---------- visibility-to-control gap meters ---------- */
+.gap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media(max-width:920px){.gap-grid{grid-template-columns:1fr}}
+.meter-card{border-radius:22px;border:1px solid var(--line);background:linear-gradient(165deg,var(--pane-2),var(--pane));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:24px}
+.meter-title{font-weight:800;font-size:15.5px;margin-bottom:4px}
+.meter-sub{color:var(--muted);font-size:12.5px;font-family:var(--mono);letter-spacing:.06em;margin-bottom:18px}
+.meter-row{margin-bottom:14px}
+.meter-label{display:flex;justify-content:space-between;font-size:12px;color:var(--soft);margin-bottom:7px}
+.meter-label b{font-family:var(--mono);color:var(--ice);font-weight:600}
+.meter{height:8px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden;border:1px solid rgba(255,255,255,.05)}
+.meter i{display:block;height:100%;border-radius:inherit;transform:scaleX(0);transform-origin:left;transition:transform 1.3s var(--ease);will-change:transform}
+.m-vis i{background:linear-gradient(90deg,#5eeaff,#8ff5ff)}
+.m-ctl i{background:linear-gradient(90deg,#a78bfa,#f472b6)}
+.in-view .meter i{transform:scaleX(var(--v,0))}
+.gap-note{margin-top:10px;padding-top:12px;border-top:1px dashed var(--line);font-size:12.5px;color:var(--muted);line-height:1.55}
+.gap-note b{color:var(--ember);font-family:var(--mono);font-weight:600}
+
+/* ---------- scroll reveal (opacity/transform only) ---------- */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.reveal.in-view{opacity:1;transform:translateY(0)}
+
+/* ---------- finale CTA: luminous border ---------- */
+.finale{position:relative;z-index:2;max-width:1020px;margin:0 auto clamp(70px,9vw,120px);padding:0 clamp(18px,5vw,40px)}
+.finale-frame{position:relative;border-radius:34px;padding:2px;overflow:hidden;isolation:isolate}
+.finale-frame::before{content:"";position:absolute;inset:-60%;background:conic-gradient(from 0deg,transparent 0deg,rgba(94,234,255,.8) 40deg,transparent 110deg,rgba(167,139,250,.8) 220deg,transparent 300deg);animation:orbit 9s linear infinite;z-index:-1}
+@keyframes orbit{to{transform:rotate(1turn)}}
+.finale-core{border-radius:32px;background:linear-gradient(170deg,#0a0f1c,#05070d 70%);padding:clamp(40px,7vw,76px) clamp(24px,6vw,64px);text-align:center}
+.finale h2{font-family:var(--serif);font-weight:600;font-size:clamp(34px,6vw,68px);line-height:1;letter-spacing:-.025em;margin:14px 0 16px}
+.finale h2 em{font-style:italic;background:var(--prism);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.finale p{color:var(--soft);max-width:52ch;margin:0 auto 30px;line-height:1.7;font-size:16.5px}
+.finale .hero-actions{justify-content:center}
+
+/* ---------- footer ---------- */
+.footer{position:relative;z-index:2;border-top:1px solid var(--line);color:var(--muted);padding:38px clamp(18px,5vw,40px);display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;font-size:13px}
+.footer a{color:var(--soft);text-decoration:none;margin-right:18px}
+.footer a:hover{color:#fff}
+.footer .sig{font-family:var(--serif);font-style:italic;color:var(--soft)}
+
+/* ---------- reduced motion: collapse ALL animation ---------- */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  .h1 .refract::after{display:none}
+  .ticker-track{animation:none;transform:none}
+  .pane{transition:none}
+  .reveal{opacity:1;transform:none}
+  .in-view .meter i{transform:scaleX(var(--v,0))}
+  html{scroll-behavior:auto}
+}
+/* touch devices: no parallax/magnetic transforms to fight the scroll */
+@media (hover: none){
+  .pane{transition:none}
+  .card:hover{box-shadow:none}
+}
+</style>
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/glass.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+<div class="depth" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="class-banner">UNCLASSIFIED / NON-CLASSIFIÉ · CLEARGLASS ULTRA GLASS SURFACE · OPEN PUBLICATION</div>
+
+<nav class="nav" aria-label="Primary">
+  <a class="brand" href="index.html">
+    <span class="brand-mark"><img src="assets/images/clearglass-logo.png" alt="ClearGlass logo"/></span>
+    <span class="brand-name">ClearGlassInc. <em>Ultra</em></span>
+  </a>
+  <div class="nav-links">
+    <a href="#systems">Systems</a>
+    <a href="#gap">The Gap</a>
+    <a href="blog/index.html">Insights</a>
+    <a href="index.html#contact" class="nav-cta">Book a briefing →</a>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="top">
+  <div class="panes" aria-hidden="true">
+    <div class="pane pane-a" data-depth="14"></div>
+    <div class="pane pane-b" data-depth="26"></div>
+    <div class="pane pane-c" data-depth="20"></div>
+  </div>
+  <div class="eyebrow">Governed intelligence · rendered visible</div>
+  <h1 class="h1">Most platforms show you dashboards.<br/><span class="refract">We show you through.</span></h1>
+  <p class="dek">ClearGlass builds <b>governed autonomous systems</b> for operators who need to see everything — and control what matters. Cold clarity, engineered: every agent identified, every action scored, every decision on the record.</p>
+  <div class="hero-actions">
+    <a class="btn btn-solid" href="#systems">Enter the glass →</a>
+    <a class="btn btn-ghost" href="index.html#contact">Request a private briefing</a>
+  </div>
+</header>
+
+<!-- ================= LIVE SIGNAL TICKER ================= -->
+<div class="ticker" role="marquee" aria-label="Live platform signals">
+  <div class="ticker-track" id="tickerTrack">
+    <!-- sequence duplicated once in JS for a seamless loop -->
+    <span class="tick-item"><span class="tick-dot"></span>GOVERNOR <b>ACTIVE</b></span>
+    <span class="tick-item">RISK ROUTER <b>0–100 SCORING LIVE</b></span>
+    <span class="tick-item">AUDIT LEDGER <b>APPEND-ONLY</b></span>
+    <span class="tick-item">AGENT IDENTITIES <b>SCOPED · SPONSORED</b></span>
+    <span class="tick-item">HIGH-RISK ACTIONS <b>HUMAN-SANCTIONED</b></span>
+    <span class="tick-item">ARTEMIS IV <b>SENSE → DRAFT → SANCTION → ACT</b></span>
+    <span class="tick-item">AEGIS <b>FAIL-CLOSED</b></span>
+    <span class="tick-item">MISSION MEMORY <b>PERSISTENT</b></span>
+  </div>
+</div>
+
+<!-- ================= SYSTEM CARDS ================= -->
+<section class="section" id="systems">
+  <div class="section-head reveal">
+    <div class="kicker">The instruments</div>
+    <h2 class="h2">Three systems. One <em>governed</em> surface.</h2>
+    <p class="sub">Each instrument does one job with surgical scope — and none of them acts outside its mission, its risk band, or its ledger. Hover to focus. Expand to see what's under the glass.</p>
+  </div>
+
+  <div class="cards">
+    <article class="card" tabindex="-1">
+      <div class="card-code">CG//CORE-04</div>
+      <h3 class="card-name">ARTEMIS IV</h3>
+      <div class="card-role">AUTONOMOUS INTELLIGENCE CORE</div>
+      <p>The reasoning engine. Senses continuously, drafts precisely, and executes only what the governor sanctions — mission-speed intelligence with provenance on every claim.</p>
+      <div class="card-more">
+        <ul>
+          <li>Four-gate action path: Sense → Draft → Sanction → Act</li>
+          <li>Risk-routed autonomy — low-band verbs run free, high-band verbs wait for a human</li>
+          <li>Persistent mission memory; no fabricated recall</li>
+          <li>Every material action written to the append-only ledger</li>
+        </ul>
+      </div>
+      <button class="disclose" type="button" aria-expanded="false">Under the glass <span class="chev">▾</span></button><br/>
+      <a class="card-cta" href="artemis-iv.html">Open ARTEMIS IV →</a>
+    </article>
+
+    <article class="card card--violet" tabindex="-1">
+      <div class="card-code">CG//SHADOW-01</div>
+      <h3 class="card-name">WRAITH-OMEN</h3>
+      <div class="card-role">SIGNALS &amp; EARLY-WARNING LAYER</div>
+      <p>The quiet one. Watches the horizon for the signal that precedes the incident — drift, anomaly, out-of-mission intent — and hands the picture to a human before it becomes a headline.</p>
+      <div class="card-more">
+        <ul>
+          <li>Defensive-only charter — detection and warning, never offense</li>
+          <li>Out-of-mission action attempts surfaced as first-class alerts</li>
+          <li>Evidence chains attached to every signal it raises</li>
+          <li>Disclosed by briefing only</li>
+        </ul>
+      </div>
+      <button class="disclose" type="button" aria-expanded="false">Under the glass <span class="chev">▾</span></button><br/>
+      <a class="card-cta" href="index.html#contact">Request the briefing →</a>
+    </article>
+
+    <article class="card card--ember" tabindex="-1">
+      <div class="card-code">CG//SHIELD-02</div>
+      <h3 class="card-name">AEGIS</h3>
+      <div class="card-role">FAIL-CLOSED DEFENSE GOVERNOR</div>
+      <p>The hand on the switch. Scores every proposed action for blast radius and holds the irreversible ones until a named human signs. When approval state is unknown, the answer is no.</p>
+      <div class="card-more">
+        <ul>
+          <li>0–100 risk scoring on reversibility × reach × exposure</li>
+          <li>High/critical actions hard-blocked without an approval record</li>
+          <li>No override path in code — by design, by test, by CI gate</li>
+          <li>Keyless, stdlib-only core; runs anywhere the mission does</li>
+        </ul>
+      </div>
+      <button class="disclose" type="button" aria-expanded="false">Under the glass <span class="chev">▾</span></button><br/>
+      <a class="card-cta" href="aegis.html">Open AEGIS →</a>
+    </article>
+  </div>
+</section>
+
+<!-- ================= VISIBILITY-TO-CONTROL GAP ================= -->
+<section class="section" id="gap">
+  <div class="section-head reveal">
+    <div class="kicker">Why this exists</div>
+    <h2 class="h2">The visibility-to-control <em>gap</em>.</h2>
+    <p class="sub">Modern stacks can see almost everything and control almost nothing about what their autonomous systems do next. That spread — visibility without a matching hand on the switch — is where incidents live. ClearGlass closes it.</p>
+  </div>
+
+  <div class="gap-grid">
+    <div class="meter-card reveal">
+      <div class="meter-title">Typical enterprise stack</div>
+      <div class="meter-sub">DASHBOARDS EVERYWHERE · GOVERNORS NOWHERE</div>
+      <div class="meter-row">
+        <div class="meter-label"><span>Visibility</span><b>88%</b></div>
+        <div class="meter m-vis"><i style="--v:.88"></i></div>
+      </div>
+      <div class="meter-row">
+        <div class="meter-label"><span>Control</span><b>31%</b></div>
+        <div class="meter m-ctl"><i style="--v:.31"></i></div>
+      </div>
+      <div class="gap-note">Gap: <b>57 pts</b> — the system watches the incident happen in high definition.</div>
+    </div>
+
+    <div class="meter-card reveal">
+      <div class="meter-title">Stack + ungoverned AI agents</div>
+      <div class="meter-sub">AUTONOMY ADDED · ACCOUNTABILITY NOT</div>
+      <div class="meter-row">
+        <div class="meter-label"><span>Visibility</span><b>72%</b></div>
+        <div class="meter m-vis"><i style="--v:.72"></i></div>
+      </div>
+      <div class="meter-row">
+        <div class="meter-label"><span>Control</span><b>18%</b></div>
+        <div class="meter m-ctl"><i style="--v:.18"></i></div>
+      </div>
+      <div class="gap-note">Gap: <b>54 pts</b> — and now the actor moves at machine speed on shared credentials.</div>
+    </div>
+
+    <div class="meter-card reveal">
+      <div class="meter-title">ClearGlass governed surface</div>
+      <div class="meter-sub">EVERY ACTION SCORED · EVERY LEDGER ROW WRITTEN</div>
+      <div class="meter-row">
+        <div class="meter-label"><span>Visibility</span><b>96%</b></div>
+        <div class="meter m-vis"><i style="--v:.96"></i></div>
+      </div>
+      <div class="meter-row">
+        <div class="meter-label"><span>Control</span><b>93%</b></div>
+        <div class="meter m-ctl"><i style="--v:.93"></i></div>
+      </div>
+      <div class="gap-note">Gap: <b>3 pts</b> — see everything, govern everything, prove both. <em>Illustrative model, not a benchmark.</em></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FINALE CTA ================= -->
+<section class="finale reveal" id="contact">
+  <div class="finale-frame">
+    <div class="finale-core">
+      <div class="kicker" style="justify-content:center">ClearGlass Inc. · Burlington, Ontario</div>
+      <h2>Clarity is not a dashboard.<br/>It's a <em>decision you can defend.</em></h2>
+      <p>Bring us the system you're afraid to let run on its own. We'll show you the governed version — identified, scored, sanctioned, and written to a ledger you can hand to an auditor.</p>
+      <div class="hero-actions">
+        <a class="btn btn-solid" href="index.html#contact">Book a 20-minute briefing →</a>
+        <a class="btn btn-ghost" href="blog/index.html">Read the field notes</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div>
+    <a href="index.html">Home</a>
+    <a href="artemis-iv.html">Artemis IV</a>
+    <a href="aegis.html">AEGIS</a>
+    <a href="guardian.html">Guardian</a>
+    <a href="bluedesk.html" style="background:linear-gradient(90deg,#f43f5e,#a855f7 60%,#7e22ce);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:700">BLUEDESK</a>
+    <a href="blog/index.html">Insights</a>
+  </div>
+  <div class="sig">"The truth is transparent. The truth is dangerous." — © <span id="year"></span> ClearGlass Inc.</div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var touch   = matchMedia('(hover: none)').matches;
+  var cleanups = [];
+
+  /* seamless ticker: duplicate the sequence once */
+  var track = document.getElementById('tickerTrack');
+  track.innerHTML += track.innerHTML;
+
+  /* ---- rAF-throttled pointer engine (shared by parallax + magnetic cards) ---- */
+  var px = 0, py = 0, raf = 0;
+  var panes = Array.prototype.slice.call(document.querySelectorAll('.pane'));
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.card'));
+  var hovered = null, hx = 0, hy = 0;
+
+  function frame(){
+    raf = 0;
+    /* hero pane parallax — transform only */
+    for (var i = 0; i < panes.length; i++){
+      var d = +panes[i].getAttribute('data-depth') || 12;
+      panes[i].style.transform = 'translate3d(' + (px * d) + 'px,' + (py * d) + 'px,0) rotate(' +
+        (i === 0 ? 8 : i === 1 ? -6 : 4) + 'deg)';
+    }
+    /* magnetic card: subtle pull toward cursor + glow origin */
+    if (hovered){
+      var r = hovered.getBoundingClientRect();
+      var dx = (hx - r.left - r.width / 2) / r.width;
+      var dy = (hy - r.top - r.height / 2) / r.height;
+      hovered.style.transform = 'translate3d(' + (dx * 10) + 'px,' + (dy * 8) + 'px,0)';
+      hovered.style.setProperty('--mx', ((hx - r.left) / r.width * 100) + '%');
+      hovered.style.setProperty('--my', ((hy - r.top) / r.height * 100) + '%');
+    }
+  }
+  function queue(){ if (!raf) raf = requestAnimationFrame(frame); }
+
+  function onMove(e){
+    px = (e.clientX / innerWidth  - .5);
+    py = (e.clientY / innerHeight - .5);
+    hx = e.clientX; hy = e.clientY;
+    queue();
+  }
+
+  if (!reduced && !touch){
+    addEventListener('pointermove', onMove, {passive:true});
+    cleanups.push(function(){ removeEventListener('pointermove', onMove); });
+
+    cards.forEach(function(c){
+      var enter = function(){ hovered = c; };
+      var leave = function(){
+        if (hovered === c) hovered = null;
+        c.style.transform = 'translate3d(0,0,0)';
+      };
+      c.addEventListener('pointerenter', enter);
+      c.addEventListener('pointerleave', leave);
+      cleanups.push(function(){
+        c.removeEventListener('pointerenter', enter);
+        c.removeEventListener('pointerleave', leave);
+      });
+    });
+  }
+
+  /* ---- progressive disclosure ---- */
+  document.querySelectorAll('.disclose').forEach(function(btn){
+    var onClick = function(){
+      var card = btn.closest('.card');
+      var open = card.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+    btn.addEventListener('click', onClick);
+    cleanups.push(function(){ btn.removeEventListener('click', onClick); });
+  });
+
+  /* ---- scroll reveal + meter animation (IntersectionObserver) ---- */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (en.isIntersecting){ en.target.classList.add('in-view'); io.unobserve(en.target); }
+    });
+  }, {threshold: .18});
+  document.querySelectorAll('.reveal, .meter-card').forEach(function(el){ io.observe(el); });
+  cleanups.push(function(){ io.disconnect(); });
+
+  /* ---- cleanup on unload ---- */
+  addEventListener('pagehide', function(){
+    if (raf) cancelAnimationFrame(raf);
+    cleanups.forEach(function(fn){ fn(); });
+  }, {once:true});
+})();
+</script>
+<script defer src="/logo-badge.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="web-design.html">Web Design &amp; UI Engineering</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="web-design.html"><span><b>Previous</b>Web Design &amp; Development</span></a>
+      <a href="web-design.html"><span><b>Topic hub</b>Web Design &amp; Development</span></a>
+      <a href="clearglass-ultra.html"><span><b>Next in journey</b>ClearGlass Ultra</span></a>
+    </div>
+    <ul>
+      <li><a href="clearglass-ultra.html"><b>ClearGlass Ultra</b> — see through everything</a></li>
+      <li><a href="futuristic.html"><b>Aurora Glass</b> — futuristic control-surface design study</a></li>
+      <li><a href="button-lab.html"><b>Button Lab</b> — machined-glass control components</a></li>
+      <li><a href="button-system.html"><b>Button System</b> — the ClearGlass glass-UI component set</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

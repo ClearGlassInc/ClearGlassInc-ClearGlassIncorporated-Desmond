@@ -1,0 +1,22 @@
+{
+  "name": "clearglassinc-site-tooling",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Node tooling for the ClearGlass Inc. GitHub Pages site. Currently: the Stripe product-catalog sync.",
+  "license": "SEE LICENSE IN LICENSE",
+  "type": "module",
+  "engines": {
+    "node": ">=20.11.0"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "tsc -p tsconfig.json",
+    "test": "node scripts/stripe-sync/run-tests.mjs",
+    "sync:stripe": "tsc -p tsconfig.json && node dist/scripts/sync-stripe-products.js"
+  },
+  "dependencies": {
+    "@types/node": "22.10.2",
+    "stripe": "18.5.0",
+    "typescript": "5.7.2"
+  }
+}

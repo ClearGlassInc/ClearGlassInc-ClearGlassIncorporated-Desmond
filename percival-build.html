@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>PERCIVAL BUILD · Spatial Workspace — ClearGlass Inc.</title>
+<meta name="description" content="PERCIVAL BUILD — an orbital spatial workspace. A live space scene with floating, draggable widgets: digital clock, audio spectrum visualizer, system monitor."/>
+<link rel="canonical" href="https://www.clearglassinc.com/percival-build.html"/>
+<meta property="og:title" content="PERCIVAL BUILD · Spatial Workspace — ClearGlass Inc."/>
+<meta property="og:description" content="An orbital spatial desktop: floating widgets over Earth and the Moon — clock, audio visualizer, system monitor, app dock and a command bar."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://www.clearglassinc.com/percival-build.html"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cyan:#60a5fa;--cyan-2:#3b82f6;--violet:#a78bfa;--indigo:#818cf8;
+  --ink:#04060f;--panel:rgba(13,17,34,.72);--panel-2:rgba(9,12,26,.78);
+  --line:rgba(124,150,255,.18);--line-2:rgba(124,150,255,.34);
+  --txt:#e8eef7;--dim:#8aa0bd;--dim-2:#5b6678;
+  --ok:#34d399;--warn:#60a5fa;--bad:#f472b6;
+  --sans:'Inter',system-ui,-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--display:'Orbitron',var(--sans);
+}
+html,body{height:100%}
+body{
+  font-family:var(--sans);color:var(--txt);overflow:hidden;background:#02030a;
+  -webkit-font-smoothing:antialiased;touch-action:none;
+}
+/* faint scanlines + vignette to match PERCIVAL OS */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:90;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0 1px,transparent 1px 3px);mix-blend-mode:overlay;opacity:.5}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:91;
+  background:radial-gradient(125% 100% at 50% 38%,transparent 56%,rgba(0,0,0,.6) 100%)}
+::selection{background:rgba(124,150,255,.3)}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:rgba(124,150,255,.25);border-radius:6px}
+
+/* ============ SPACE SCENE ============ */
+#stars{position:fixed;inset:0;z-index:0}
+.scene{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+/* Earth, partially out of frame top-left like the reference */
+.earth{position:absolute;border-radius:50%;width:min(78vw,900px);aspect-ratio:1;left:-26%;top:-44%;
+  background:
+    radial-gradient(40% 38% at 32% 30%,rgba(120,180,255,.55),transparent 60%),
+    radial-gradient(circle at 60% 64%,#2b6b59 0%,#1c5b8f 30%,#123a6b 55%,#0a1f44 78%,#050f29 100%);
+  box-shadow:inset -40px -30px 120px rgba(0,0,0,.75),inset 30px 20px 80px rgba(140,190,255,.25),0 0 120px rgba(43,108,255,.25);
+  filter:saturate(1.05)}
+.earth::after{content:"";position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(60% 55% at 30% 28%,rgba(255,255,255,.18),transparent 55%);mix-blend-mode:screen;opacity:.7}
+/* Moon — the central body the workspace orbits */
+.moon{position:absolute;border-radius:50%;width:min(52vmin,520px);aspect-ratio:1;left:50%;top:54%;transform:translate(-50%,-50%);
+  background:
+    radial-gradient(28% 26% at 38% 34%,#cfd4dd,transparent 55%),
+    radial-gradient(circle at 52% 50%,#9aa0ac 0%,#777d8a 42%,#525763 70%,#34373f 100%);
+  box-shadow:inset -34px -26px 90px rgba(0,0,0,.7),inset 22px 16px 60px rgba(255,255,255,.12),0 0 90px rgba(120,140,190,.18);
+  animation:moonDrift 26s ease-in-out infinite}
+/* a few craters */
+.moon::before,.moon::after{content:"";position:absolute;border-radius:50%;background:rgba(0,0,0,.16);box-shadow:inset 3px 3px 8px rgba(0,0,0,.4),inset -2px -2px 6px rgba(255,255,255,.08)}
+.moon::before{width:18%;aspect-ratio:1;left:30%;top:24%}
+.moon::after{width:11%;aspect-ratio:1;left:60%;top:58%}
+@keyframes moonDrift{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-50%,-53%)}}
+.nebula{position:absolute;right:-6%;top:34%;width:46vw;height:46vw;border-radius:50%;
+  background:radial-gradient(circle,rgba(59,130,246,.20),rgba(129,140,248,.10) 42%,transparent 68%);filter:blur(8px)}
+
+/* ============ TOP BAR ============ */
+.topbar{position:fixed;inset:0 0 auto 0;z-index:40;display:flex;align-items:center;gap:14px;
+  padding:12px 18px;background:linear-gradient(180deg,rgba(6,8,18,.78),rgba(6,8,18,0));backdrop-filter:blur(3px)}
+.brand{display:flex;align-items:center;gap:11px}
+.brand .mark{width:30px;height:30px;border-radius:50%;position:relative;flex:0 0 auto;
+  background:radial-gradient(circle at 40% 35%,#bcd4ff,#1a2350 60%,#1f041d);box-shadow:0 0 16px rgba(124,150,255,.7),0 0 6px rgba(124,150,255,.6) inset}
+.brand .mark::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1px solid var(--cyan);border-right-color:transparent;animation:spin 4s linear infinite}
+.brand .b-name{font-family:var(--display);font-weight:900;letter-spacing:.2em;font-size:14px}
+.brand .b-name b{color:var(--cyan)}
+.brand .b-sub{font-family:var(--mono);font-size:8.5px;letter-spacing:.2em;color:var(--dim-2);text-transform:uppercase;margin-top:1px}
+.spacer{flex:1}
+.tbtn{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#cdd9ff;
+  text-decoration:none;border:1px solid var(--line-2);background:rgba(124,150,255,.08);padding:7px 12px;border-radius:18px;cursor:pointer;transition:.16s;white-space:nowrap}
+.tbtn:hover{color:#fff;border-color:rgba(124,150,255,.7);background:rgba(124,150,255,.18);box-shadow:0 0 16px rgba(124,150,255,.28)}
+.tbtn.back{color:#7fe8db;border-color:rgba(47,212,192,.4);background:rgba(47,212,192,.08)}
+.tbtn.back:hover{color:#bff7ee;border-color:rgba(47,212,192,.7);box-shadow:0 0 16px rgba(47,212,192,.3)}
+.statpill{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#bcd4ff;
+  border:1px solid var(--line-2);background:rgba(124,150,255,.08);padding:7px 12px;border-radius:18px}
+.statpill .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);animation:blink 2s ease-in-out infinite}
+@keyframes blink{50%{opacity:.35}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ============ WIDGETS (floating, draggable) ============ */
+.surface{position:fixed;inset:0;z-index:20}
+.widget{position:absolute;background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  backdrop-filter:blur(10px) saturate(1.1);box-shadow:0 18px 50px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.02) inset;
+  -webkit-user-select:none;user-select:none;transition:box-shadow .2s,border-color .2s;will-change:transform}
+.widget:hover{border-color:var(--line-2)}
+.widget.drag{box-shadow:0 26px 70px rgba(0,0,0,.7),0 0 28px rgba(124,150,255,.25);border-color:var(--cyan);z-index:60}
+.w-head{display:flex;align-items:center;gap:8px;padding:9px 12px;cursor:grab;border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan)}
+.w-head:active{cursor:grabbing}
+.w-head .gd{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.w-head .x{margin-left:auto;color:var(--dim-2);font-size:11px;cursor:pointer;width:18px;height:18px;display:grid;place-items:center;border-radius:5px}
+.w-head .x:hover{color:var(--bad);background:rgba(244,114,182,.1)}
+.w-body{padding:12px}
+
+/* clock widget */
+.clk-time{font-family:var(--display);font-weight:700;font-size:46px;letter-spacing:.04em;color:#eef2ff;line-height:1;text-shadow:0 0 24px rgba(124,150,255,.45)}
+.clk-time .sec{font-size:24px;color:var(--cyan);vertical-align:super}
+.clk-date{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--dim);margin-top:8px}
+.clk-meta{display:flex;gap:14px;margin-top:12px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--dim-2);text-transform:uppercase}
+.clk-meta b{color:var(--cyan);font-weight:600}
+
+/* spectrum visualizer */
+.spectrum{display:flex;align-items:flex-end;gap:3px;height:78px;width:300px}
+.spectrum i{flex:1;border-radius:3px 3px 1px 1px;background:linear-gradient(180deg,var(--cyan),var(--indigo) 60%,rgba(167,139,250,.25));
+  box-shadow:0 0 8px rgba(124,150,255,.4);transition:height .08s linear}
+.spec-meta{display:flex;justify-content:space-between;margin-top:9px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--dim-2);text-transform:uppercase}
+.spec-meta b{color:var(--cyan)}
+
+/* system monitor */
+.mon-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;width:248px}
+.mon{background:rgba(124,150,255,.05);border:1px solid var(--line);border-radius:10px;padding:9px 10px}
+.mon .ml{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.mon .mv{font-family:var(--display);font-weight:700;font-size:18px;color:#eef2ff;margin-top:3px}
+.mon .mbar{height:5px;border-radius:4px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:7px}
+.mon .mbar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--cyan),var(--indigo));transition:width .5s ease}
+.mon.warn .mbar i{background:linear-gradient(90deg,var(--cyan),var(--bad))}
+
+/* mixer tray */
+.mix{display:flex;gap:16px;height:120px;align-items:flex-end;padding:4px 4px 0}
+.fader{display:flex;flex-direction:column;align-items:center;gap:8px;height:100%}
+.fader .track{position:relative;flex:1;width:6px;border-radius:6px;background:rgba(255,255,255,.08);cursor:pointer}
+.fader .fill{position:absolute;left:0;right:0;bottom:0;border-radius:6px;background:linear-gradient(180deg,var(--cyan),var(--indigo))}
+.fader .knob{position:absolute;left:50%;width:16px;height:16px;border-radius:50%;transform:translate(-50%,50%);
+  background:radial-gradient(circle at 38% 32%,#eef2ff,#9fb4ff 60%,#3b53a8);box-shadow:0 0 12px rgba(124,150,255,.6)}
+.fader .fl{font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;color:var(--dim);text-transform:uppercase}
+
+/* app dock */
+.dock{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:50;display:flex;align-items:flex-end;gap:10px;
+  padding:10px 14px;border-radius:20px;background:rgba(9,12,26,.7);border:1px solid var(--line-2);backdrop-filter:blur(12px);
+  box-shadow:0 18px 50px rgba(0,0,0,.6)}
+.app{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:22px;cursor:pointer;position:relative;
+  background:rgba(124,150,255,.08);border:1px solid var(--line);transition:transform .14s ease,box-shadow .14s ease,background .14s}
+.app:hover{transform:translateY(-10px) scale(1.08);box-shadow:0 12px 26px rgba(0,0,0,.5),0 0 18px rgba(124,150,255,.35);background:rgba(124,150,255,.16)}
+.app .tip{position:absolute;bottom:118%;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--mono);font-size:9px;letter-spacing:.1em;
+  text-transform:uppercase;color:#dfe5ff;background:rgba(9,12,26,.95);border:1px solid var(--line-2);padding:4px 8px;border-radius:7px;opacity:0;pointer-events:none;transition:.14s}
+.app:hover .tip{opacity:1;bottom:128%}
+.app.run::after{content:"";position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+
+/* command bar */
+.cmdbar{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);z-index:50;width:min(560px,86vw);
+  display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:16px;
+  background:rgba(9,12,26,.78);border:1px solid var(--line-2);backdrop-filter:blur(12px);box-shadow:0 16px 44px rgba(0,0,0,.55)}
+.cmdbar .pr{font-family:var(--mono);color:var(--cyan);font-size:13px}
+.cmdbar input{flex:1;background:none;border:0;outline:none;color:var(--txt);font-family:var(--mono);font-size:13px;letter-spacing:.02em}
+.cmdbar input::placeholder{color:var(--dim-2)}
+.cmdbar .run{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#eef2ff;cursor:pointer;
+  border:1px solid var(--line-2);background:rgba(124,150,255,.14);padding:7px 11px;border-radius:10px;transition:.15s}
+.cmdbar .run:hover{box-shadow:0 0 16px rgba(124,150,255,.3)}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:160px;transform:translateX(-50%) translateY(14px);z-index:70;opacity:0;transition:.3s;
+  background:rgba(14,18,42,.95);border:1px solid var(--line-2);border-radius:12px;padding:11px 16px;display:flex;align-items:center;gap:11px;
+  backdrop-filter:blur(8px);box-shadow:0 12px 40px rgba(0,0,0,.6);pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast .ti{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:rgba(124,150,255,.12);border:1px solid var(--line);font-size:15px}
+.toast .tt b{font-size:12.5px;color:#eef2ff;display:block}
+.toast .tt span{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.06em}
+
+.hint{position:fixed;left:50%;bottom:160px;transform:translateX(-50%);z-index:30;font-family:var(--mono);font-size:10px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--dim-2);pointer-events:none;opacity:.85;transition:opacity .6s ease}
+
+@media (max-width:760px){
+  .widget{display:none}
+  .widget.keep{display:block;position:fixed!important;left:50%!important;top:88px!important;transform:translateX(-50%)!important}
+  .cmdbar{bottom:96px}
+  .topbar{gap:8px;padding:10px 12px}.statpill{display:none}
+}
+@media (prefers-reduced-motion: reduce){.moon{animation:none}.brand .mark::after{animation:none}}
+</style>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+  <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">PERCIVAL BUILD · Spatial Workspace — ClearGlass Inc.</h1>
+
+<canvas id="stars"></canvas>
+<div class="scene">
+  <div class="earth"></div>
+  <div class="nebula"></div>
+  <div class="moon"></div>
+</div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="brand">
+    <div class="mark"></div>
+    <div>
+      <div class="b-name">PERCIVAL<b>·</b>BUILD</div>
+      <div class="b-sub">Spatial Workspace</div>
+    </div>
+  </div>
+  <div class="spacer"></div>
+  <div class="statpill"><span class="dot"></span><span id="orbit">ORBIT · SYNCED</span></div>
+  <button class="tbtn" id="fsBtn">⤢ Full screen</button>
+  <button class="tbtn" id="resetBtn">↺ Reset layout</button>
+  <a class="tbtn back" href="percival-os.html">← PERCIVAL OS</a>
+</div>
+
+<!-- FLOATING WIDGETS -->
+<div class="surface" id="surface">
+
+  <!-- Clock -->
+  <div class="widget keep" id="w-clock" style="left:64px;top:120px;width:300px">
+    <div class="w-head"><span class="gd"></span>Chrono <span class="x" data-close>✕</span></div>
+    <div class="w-body">
+      <div class="clk-time"><span id="clkHM">00:00</span><span class="sec" id="clkS">00</span></div>
+      <div class="clk-date" id="clkDate">—</div>
+      <div class="clk-meta"><span>UTC <b id="clkUtc">—</b></span><span>UPTIME <b id="clkUp">0s</b></span><span>TZ <b id="clkTz">—</b></span></div>
+    </div>
+  </div>
+
+  <!-- Spectrum visualizer -->
+  <div class="widget" id="w-spec" style="left:64px;top:340px">
+    <div class="w-head"><span class="gd"></span>Spectrum <span class="x" data-close>✕</span></div>
+    <div class="w-body">
+      <div class="spectrum" id="spectrum"></div>
+      <div class="spec-meta"><span><b id="specCells">46</b> × 17 cells</span><span>GAIN <b id="specGain">0.0</b> dB</span></div>
+    </div>
+  </div>
+
+  <!-- System monitor -->
+  <div class="widget" id="w-mon" style="right:64px;top:120px">
+    <div class="w-head"><span class="gd"></span>Telemetry <span class="x" data-close>✕</span></div>
+    <div class="w-body">
+      <div class="mon-grid" id="monGrid"></div>
+    </div>
+  </div>
+
+  <!-- Mixer tray -->
+  <div class="widget" id="w-mix" style="right:64px;top:360px">
+    <div class="w-head"><span class="gd"></span>Tray · Mixer <span class="x" data-close>✕</span></div>
+    <div class="w-body">
+      <div class="mix" id="mix"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- COMMAND BAR -->
+<div class="cmdbar">
+  <span class="pr">⟩</span>
+  <input id="cmd" placeholder="type a command…  (try: launch obs · spawn clock · reset)" autocomplete="off" spellcheck="false"/>
+  <button class="run" id="cmdRun">Run</button>
+</div>
+
+<!-- APP DOCK -->
+<div class="dock" id="dock"></div>
+
+<div class="toast" id="toast"><div class="ti" id="toastIc">◐</div><div class="tt"><b id="toastT">—</b><span id="toastS">—</span></div></div>
+<div class="hint" id="hint">Drag any panel · click a dock app · type a command</div>
+
+<script>
+"use strict";
+/* ============================================================
+   PERCIVAL BUILD — spatial workspace (front-end only).
+   A live orbital desktop: floating draggable widgets over a
+   space scene. Mirrors the reference: clock, spectrum,
+   telemetry, mixer tray, app dock and a command bar.
+   ============================================================ */
+
+/* ---------- starfield ---------- */
+const sky=document.getElementById('stars'),sctx=sky.getContext('2d');
+let starList=[];
+function sizeStars(){sky.width=innerWidth*devicePixelRatio;sky.height=innerHeight*devicePixelRatio;
+  sctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  const n=Math.min(220,Math.floor(innerWidth*innerHeight/7000));starList=[];
+  for(let i=0;i<n;i++)starList.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,
+    r:Math.random()*1.3+.2,a:Math.random()*.6+.2,tw:Math.random()*.02+.004,p:Math.random()*Math.PI*2});}
+function drawStars(){sctx.clearRect(0,0,innerWidth,innerHeight);
+  for(const s of starList){s.p+=s.tw;const a=Math.max(.05,s.a+Math.sin(s.p)*.25);
+    sctx.fillStyle=`rgba(214,226,255,${a})`;
+    sctx.beginPath();sctx.arc(s.x,s.y,s.r,0,7);sctx.fill();}
+  requestAnimationFrame(drawStars);}
+addEventListener('resize',sizeStars);sizeStars();drawStars();
+
+/* ---------- toast ---------- */
+let toastT;
+function toast(ic,title,sub){const t=document.getElementById('toast');
+  document.getElementById('toastIc').textContent=ic;
+  document.getElementById('toastT').textContent=title;
+  document.getElementById('toastS').textContent=sub||'';
+  t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2400);}
+
+/* ---------- live clock ---------- */
+const boot=Date.now();
+function fmtUp(s){if(s<60)return s+'s';if(s<3600)return (s/60|0)+'m';return (s/3600).toFixed(1)+'h';}
+function tickClock(){const d=new Date();
+  const hm=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  const ss=d.getSeconds().toString().padStart(2,'0');
+  document.getElementById('clkHM').textContent=hm;
+  document.getElementById('clkS').textContent=ss;
+  document.getElementById('clkDate').textContent=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  document.getElementById('clkUtc').textContent=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'UTC'});
+  document.getElementById('clkUp').textContent=fmtUp(Math.floor((Date.now()-boot)/1000));
+  document.getElementById('clkTz').textContent=(Intl.DateTimeFormat().resolvedOptions().timeZone||'LOCAL').split('/').pop();}
+setInterval(tickClock,1000);tickClock();
+
+/* ---------- spectrum visualizer ---------- */
+const BARS=46;const spec=document.getElementById('spectrum');
+const bars=Array.from({length:BARS},()=>{const i=document.createElement('i');i.style.height='10%';spec.appendChild(i);return i;});
+let phase=0;
+function animSpec(){phase+=0.08;
+  for(let i=0;i<BARS;i++){
+    const base=Math.sin(phase+i*0.45)*.5+.5;
+    const mid=Math.sin(phase*1.7+i*0.18)*.5+.5;
+    const env=Math.exp(-Math.pow((i-BARS/2)/(BARS/2),2)*1.4); // center-weighted
+    const h=8+(base*0.55+mid*0.45)*env*92+Math.random()*6;
+    bars[i].style.height=Math.min(100,h)+'%';
+  }
+  requestAnimationFrame(animSpec);}
+animSpec();
+setInterval(()=>{document.getElementById('specGain').textContent=((Math.random()*6-3)).toFixed(1);},900);
+
+/* ---------- system monitor ---------- */
+const mons=[
+  {l:'CPU',v:32,u:'%'},{l:'GPU',v:48,u:'%'},
+  {l:'RAM',v:61,u:'%'},{l:'NET',v:18,u:'Mb'},
+  {l:'TEMP',v:54,u:'°C'},{l:'FPS',v:120,u:''},
+];
+const monGrid=document.getElementById('monGrid');
+function renderMon(){monGrid.innerHTML=mons.map(m=>{
+  const pct=m.u==='FPS'||m.l==='FPS'?Math.min(100,m.v/144*100):(m.l==='NET'?Math.min(100,m.v):m.v);
+  const warn=(m.l==='CPU'||m.l==='GPU'||m.l==='TEMP')&&m.v>78;
+  return `<div class="mon ${warn?'warn':''}"><div class="ml">${m.l}</div>
+    <div class="mv">${m.v|0}${m.u&&m.u.length<3?'<span style="font-size:11px;color:var(--dim)">'+m.u+'</span>':''}</div>
+    <div class="mbar"><i style="width:${pct}%"></i></div></div>`;}).join('');}
+renderMon();
+function pulseMon(){mons.forEach(m=>{
+  let lo=10,hi=92;if(m.l==='TEMP'){lo=42;hi=86;}if(m.l==='FPS'){lo=90;hi=144;}if(m.l==='NET'){lo=2;hi=95;}
+  m.v=Math.max(lo,Math.min(hi,m.v+(Math.random()*16-8)));});renderMon();}
+setInterval(pulseMon,1500);
+
+/* ---------- mixer tray ---------- */
+const channels=[['MASTER',74],['MUSIC',58],['VOICE',81],['ALERT',40],['FX',66]];
+const mix=document.getElementById('mix');
+mix.innerHTML=channels.map((c,i)=>`<div class="fader" data-i="${i}">
+  <div class="track"><div class="fill" style="height:${c[1]}%"></div><div class="knob" style="bottom:${c[1]}%"></div></div>
+  <div class="fl">${c[0]}</div></div>`).join('');
+mix.querySelectorAll('.track').forEach(tr=>{
+  function set(e){const r=tr.getBoundingClientRect();const y=(e.touches?e.touches[0].clientY:e.clientY);
+    let p=Math.max(0,Math.min(100,(1-(y-r.top)/r.height)*100));
+    tr.querySelector('.fill').style.height=p+'%';tr.querySelector('.knob').style.bottom=p+'%';}
+  let down=false;
+  tr.addEventListener('pointerdown',e=>{down=true;set(e);tr.setPointerCapture(e.pointerId);e.stopPropagation();});
+  tr.addEventListener('pointermove',e=>{if(down)set(e);});
+  tr.addEventListener('pointerup',()=>down=false);
+});
+
+/* ---------- draggable widgets ---------- */
+function makeDraggable(w){
+  const head=w.querySelector('.w-head');let sx,sy,ox,oy,dragging=false;
+  function rect(){const r=w.getBoundingClientRect();return r;}
+  head.addEventListener('pointerdown',e=>{
+    if(e.target.hasAttribute('data-close'))return;
+    dragging=true;w.classList.add('drag');
+    const r=rect();ox=r.left;oy=r.top;sx=e.clientX;sy=e.clientY;
+    w.style.left=ox+'px';w.style.top=oy+'px';w.style.right='auto';w.style.bottom='auto';
+    w.style.transform='none';head.setPointerCapture(e.pointerId);e.preventDefault();
+  });
+  head.addEventListener('pointermove',e=>{if(!dragging)return;
+    let nx=ox+(e.clientX-sx),ny=oy+(e.clientY-sy);
+    nx=Math.max(4,Math.min(innerWidth-60,nx));ny=Math.max(60,Math.min(innerHeight-50,ny));
+    w.style.left=nx+'px';w.style.top=ny+'px';});
+  head.addEventListener('pointerup',()=>{dragging=false;w.classList.remove('drag');});
+  // close
+  const x=w.querySelector('[data-close]');if(x)x.onclick=()=>{w.style.display='none';
+    const app=document.querySelector(`.app[data-spawn="${w.id}"]`);if(app)app.classList.remove('run');
+    toast('✕','Panel closed',w.querySelector('.w-head').textContent.replace('✕','').trim());};
+  // raise z on tap
+  w.addEventListener('pointerdown',()=>{document.querySelectorAll('.widget').forEach(o=>o.style.zIndex=20);w.style.zIndex=58;});
+}
+document.querySelectorAll('.widget').forEach(makeDraggable);
+
+/* ---------- app dock ---------- */
+const apps=[
+  {ic:'🎬',n:'OBS Studio',k:'obs'},
+  {ic:'💬',n:'Discord',k:'discord'},
+  {ic:'🕑',n:'Clocks',k:'clock',spawn:'w-clock'},
+  {ic:'🎚',n:'Spectrum',k:'spectrum',spawn:'w-spec'},
+  {ic:'📈',n:'Telemetry',k:'telemetry',spawn:'w-mon'},
+  {ic:'🎛',n:'Mixer',k:'mixer',spawn:'w-mix'},
+  {ic:'🟪',n:'Obsidian',k:'obsidian'},
+  {ic:'🎮',n:'Steam',k:'steam'},
+  {ic:'⌨',n:'Terminal',k:'terminal'},
+];
+const dock=document.getElementById('dock');
+dock.innerHTML=apps.map(a=>`<div class="app${a.spawn?' run':''}" data-k="${a.k}"${a.spawn?` data-spawn="${a.spawn}"`:''}>
+  <span>${a.ic}</span><span class="tip">${a.n}</span></div>`).join('');
+dock.querySelectorAll('.app').forEach(el=>{
+  el.onclick=()=>{
+    const a=apps.find(x=>x.k===el.dataset.k);
+    if(a.spawn){const w=document.getElementById(a.spawn);
+      const show=w.style.display==='none';
+      w.style.display=show?'block':'none';el.classList.toggle('run',show);
+      toast(a.ic,a.n,show?'Panel spawned':'Panel hidden');
+    }else{
+      el.classList.add('run');
+      toast(a.ic,'Launching '+a.n+'…','session attached · orbit synced');
+    }
+  };
+});
+
+/* ---------- command bar ---------- */
+const cmd=document.getElementById('cmd');
+function runCmd(){
+  const raw=cmd.value.trim();cmd.value='';if(!raw)return;
+  const t=raw.toLowerCase();
+  if(/^reset/.test(t)){resetLayout();return toast('↺','Layout reset','panels returned to launch positions');}
+  if(/^(help|\?)/.test(t))return toast('ℹ','Commands','launch <app> · spawn <panel> · close <panel> · reset');
+  // launch / open
+  let m=t.match(/(?:launch|open|run)\s+(.+)/);
+  if(m){const a=apps.find(x=>x.k===m[1].trim()||x.n.toLowerCase().includes(m[1].trim()));
+    if(a){const el=document.querySelector(`.app[data-k="${a.k}"]`);el&&el.click();return;}
+    return toast('?','Unknown app',m[1]);}
+  // spawn / close panel
+  m=t.match(/(spawn|show|close|hide)\s+(.+)/);
+  if(m){const target=m[2].trim();
+    const a=apps.find(x=>x.spawn&&(x.k===target||x.n.toLowerCase().includes(target)));
+    if(a){const w=document.getElementById(a.spawn);const want=/spawn|show/.test(m[1]);
+      w.style.display=want?'block':'none';
+      const el=document.querySelector(`.app[data-spawn="${a.spawn}"]`);el&&el.classList.toggle('run',want);
+      return toast(a.ic,a.n,want?'spawned':'hidden');}
+    return toast('?','Unknown panel',target);}
+  toast('⟩',raw,'routed to spatial shell');
+}
+document.getElementById('cmdRun').onclick=runCmd;
+cmd.addEventListener('keydown',e=>{if(e.key==='Enter')runCmd();});
+
+/* ---------- layout reset ---------- */
+const launch={};
+document.querySelectorAll('.widget').forEach(w=>{launch[w.id]={cssText:w.style.cssText};});
+function resetLayout(){
+  for(const id in launch){const w=document.getElementById(id);w.style.cssText=launch[id].cssText;w.style.display='block';}
+  document.querySelectorAll('.app[data-spawn]').forEach(a=>a.classList.add('run'));
+}
+document.getElementById('resetBtn').onclick=()=>{resetLayout();toast('↺','Layout reset','panels returned to launch positions');};
+
+/* ---------- fullscreen ---------- */
+document.getElementById('fsBtn').onclick=()=>{
+  try{
+    if(!document.fullscreenElement){
+      const el=document.documentElement;
+      if(el.requestFullscreen){const p=el.requestFullscreen();if(p&&p.catch)p.catch(()=>{});}
+    }else if(document.exitFullscreen){document.exitFullscreen();}
+  }catch(_){}
+};
+
+/* ---------- subtle parallax on the scene ---------- */
+const scene=document.querySelector('.scene');
+addEventListener('pointermove',e=>{
+  const dx=(e.clientX/innerWidth-.5),dy=(e.clientY/innerHeight-.5);
+  scene.style.transform=`translate(${dx*-14}px,${dy*-10}px)`;
+},{passive:true});
+
+/* ---------- orbit cycle label ---------- */
+let cyc=0;setInterval(()=>{cyc++;document.getElementById('orbit').textContent='ORBIT · CYCLE '+cyc;},4000);
+
+/* welcome */
+setTimeout(()=>toast('◐','PERCIVAL BUILD online','spatial workspace · drag, dock, command'),600);
+/* fade the hint so it never collides with toasts */
+setTimeout(()=>{const h=document.getElementById('hint');if(h)h.style.opacity='0';},6000);
+</script>
+<script defer src="platform.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related" class="cgr-dock">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}#cg-related.cgr-dock{position:fixed;left:14px;bottom:14px;margin:0;padding:0;max-width:none;z-index:2147483000}#cg-related.cgr-dock .cgr-tab{display:inline-block;cursor:pointer;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#dbe4ff;padding:8px 12px;border-radius:9px;border:1px solid rgba(124,150,255,.42);background:linear-gradient(180deg,rgba(18,20,42,.92),rgba(11,12,28,.92));box-shadow:0 6px 22px rgba(0,0,0,.4);backdrop-filter:blur(6px);user-select:none}#cg-related.cgr-dock .cgr-tab:hover{color:#fff;border-color:rgba(124,150,255,.85)}#cg-related.cgr-dock .cgr-box{display:none;position:absolute;bottom:calc(100% + 8px);left:0;width:min(400px,92vw);max-height:62vh;overflow-y:auto}#cg-related.cgr-dock:hover .cgr-box,#cg-related.cgr-dock:focus-within .cgr-box{display:block}#cg-related.cgr-dock ul{grid-template-columns:1fr}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="percival-os.html">Command &amp; Autonomous Operations</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="CG-os.html"><span><b>Previous</b>CG OS</span></a>
+      <a href="percival-os.html"><span><b>Topic hub</b>PERCIVAL OS</span></a>
+      <a href="clearsight.html"><span><b>Next in journey</b>CLEARSIGHT</span></a>
+    </div>
+    <ul>
+      <li><a href="clearsight.html"><b>CLEARSIGHT</b> — edge-AI camera vision &amp; object detection</a></li>
+      <li><a href="command-center.html"><b>Command Center</b> — executive security operations deck</a></li>
+      <li><a href="artemis-percival.html"><b>AVALON</b> — the ARTEMIS ⊕ PERCIVAL unified fusion core</a></li>
+      <li><a href="agentmesh.html"><b>Agent Mesh</b> — multi-agent OSINT orchestration</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="offers/index.html">Browse services &amp; engagements</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+  <div class="cgr-tab" tabindex="0" role="button" aria-label="Show related ClearGlass pages">⌁ Explore ClearGlass</div>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

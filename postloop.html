@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>PostLoop · Autonomous Content Engine — Multi-Account Publishing on Autopilot | ClearGlass Inc.</title>
+<meta name="description" content="PostLoop — an always-on content engine that drives, captions, scores, and publishes short-form video across Instagram, TikTok & YouTube. Multi-workspace, multi-account, creator-trend wall, and ad-boost in one live cockpit."/>
+<link rel="canonical" href="https://www.clearglassinc.com/postloop.html"/>
+<meta property="og:title" content="PostLoop · Autonomous Content Engine"/>
+<meta property="og:description" content="Drive → Caption → Music → Upload → Publish, on a loop. Multi-account short-form publishing with a live trend wall and one-tap ad boost. 298 posts shipped, 171k views, $793 in tracked revenue."/>
+<meta property="og:type" content="website"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#60a5fa;--amber:#fbbf24;--cyan:#36b6ff;--teal:#2fd4c0;--violet:#9b7bff;--ok:#34d399;--warn:#fbbf24;--pink:#f472b6;
+  --line:rgba(124,150,255,.16);--line-2:rgba(124,150,255,.3);--txt:#eef2ff;--dim:#9aa6c8;--dim-2:#5f6a8a;
+  --mono:'IBM Plex Mono',monospace;--display:'Orbitron','Inter',sans-serif;--sans:'Inter',system-ui,sans-serif}
+html,body{height:100%}
+body{font-family:var(--sans);color:var(--txt);min-height:100vh;
+  background:radial-gradient(130% 100% at 50% -10%,#0c1330 0%,#070a1c 48%,#04050d 100%);-webkit-font-smoothing:antialiased}
+
+/* top bar */
+.top{display:flex;align-items:center;gap:13px;padding:13px 22px;border-bottom:1px solid var(--line);background:rgba(7,10,28,.72);backdrop-filter:blur(8px);position:sticky;top:0;z-index:40}
+.mk{width:30px;height:30px;border-radius:8px;position:relative;background:radial-gradient(circle at 40% 35%,#bcd4ff,#1a2350 60%,#10183f);box-shadow:0 0 14px rgba(124,150,255,.6)}
+.mk::after{content:"⟲";position:absolute;inset:0;display:grid;place-items:center;font-size:17px;color:#fff}
+.b-name{font-family:var(--display);font-weight:900;letter-spacing:.18em;font-size:15px}.b-name b{background:linear-gradient(90deg,#60a5fa,#a78bfa);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.b-sub{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--dim-2);text-transform:uppercase}
+.spacer{flex:1}
+.live-pill{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#bdf7da;border:1px solid rgba(52,211,153,.4);background:rgba(52,211,153,.08);padding:6px 12px;border-radius:999px}
+.live-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 9px var(--ok);animation:pulse 1.3s infinite}
+.back{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#9fc4ff;text-decoration:none;border:1px solid rgba(96,165,250,.35);background:rgba(96,165,250,.07);padding:7px 12px;border-radius:18px}
+.back:hover{border-color:var(--line-2);box-shadow:0 0 14px rgba(124,150,255,.25)}
+
+/* hero */
+.hero{max-width:1180px;margin:0 auto;padding:54px 22px 26px;text-align:center}
+.tagchip{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#bcd4ff;border:1px solid var(--line-2);background:rgba(124,150,255,.07);padding:6px 14px;border-radius:999px;margin-bottom:22px}
+.tagchip .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok)}
+h1{font-family:var(--display);font-weight:900;font-size:clamp(34px,6vw,62px);line-height:1.02;letter-spacing:-.01em}
+h1 .grad{background:linear-gradient(135deg,#38bdf8,#a78bfa 45%,#f472b6 75%,#34d399);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.lede{max-width:700px;margin:18px auto 0;font-size:clamp(15px,2vw,18px);line-height:1.6;color:var(--dim)}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.btn{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:13px 22px;border-radius:11px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:9px;transition:.16s;border:1px solid var(--line-2)}
+.btn-primary{background:linear-gradient(180deg,rgba(124,150,255,.3),rgba(124,150,255,.08));color:#fff}
+.btn-primary:hover{box-shadow:0 0 22px rgba(124,150,255,.4);transform:translateY(-1px)}
+.btn-ghost{background:rgba(255,255,255,.02);color:#cdd6f5}
+.btn-ghost:hover{border-color:var(--line-2);color:#fff}
+
+/* stat strip */
+.stats{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;max-width:1100px;margin:40px auto 0;padding:0 22px}
+.stat{flex:1 1 150px;background:rgba(12,16,38,.6);border:1px solid var(--line);border-radius:14px;padding:18px 16px;text-align:center}
+.stat .n{font-family:var(--display);font-weight:900;font-size:28px;background:linear-gradient(90deg,#60a5fa,#a78bfa);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat .l{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-top:6px}
+
+/* section */
+section{max-width:1280px;margin:0 auto;padding:46px 22px}
+.sec-head{text-align:center;margin-bottom:26px}
+.sec-kicker{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--violet)}
+.sec-title{font-family:var(--display);font-weight:800;font-size:clamp(22px,3.4vw,34px);margin-top:8px}
+.sec-sub{color:var(--dim);max-width:640px;margin:12px auto 0;font-size:15px;line-height:1.6}
+
+/* ── COCKPIT ───────────────────────────────────────── */
+.cockpit{background:rgba(8,11,28,.72);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.ck-bar{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line);background:rgba(11,14,34,.6);flex-wrap:wrap}
+.ck-bar .title{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#cdd6f5}
+.ck-bar .next{font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:.04em}
+.ck-bar .next b{color:#9fc4ff}
+.ck-bar .next .tm{color:#fff;background:rgba(96,165,250,.14);border:1px solid var(--line);padding:1px 7px;border-radius:6px}
+.bb-spacer{flex:1}
+.rev{font-family:var(--mono);font-size:12px;font-weight:700;color:#bdf7da;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.4);padding:7px 12px;border-radius:9px}
+
+.ck-grid{display:grid;grid-template-columns:230px 1fr 280px;min-height:480px}
+@media(max-width:980px){.ck-grid{grid-template-columns:1fr}}
+
+/* accounts rail */
+.rail{border-right:1px solid var(--line);padding:12px;overflow-y:auto;max-height:560px}
+.rail-grp{font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim-2);padding:12px 6px 6px}
+.rail-grp:first-child{padding-top:2px}
+.acct{display:block;padding:10px;border-radius:11px;border:1px solid var(--line);background:rgba(124,150,255,.04);margin-bottom:8px;transition:.13s}
+.acct:hover{border-color:var(--line-2);background:rgba(124,150,255,.09)}
+.acct .ah{display:flex;align-items:center;gap:8px}
+.acct .ic{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:13px;flex:0 0 auto;background:rgba(124,150,255,.1)}
+.acct .nm{font-size:12.5px;font-weight:600}
+.acct .nm small{display:block;font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--dim-2);text-transform:uppercase;font-weight:400}
+.acct .row{display:flex;gap:10px;margin-top:8px;font-family:var(--mono);font-size:9px;color:var(--dim);flex-wrap:wrap}
+.acct .row .up{color:var(--ok)}.acct .row .dn{color:var(--pink)}
+.ws-tag{display:inline-block;font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#bcd4ff;border:1px solid var(--line);border-radius:5px;padding:1px 6px;margin-left:auto}
+
+/* pipeline canvas */
+.flow{position:relative;overflow:hidden;background:
+  radial-gradient(circle at 1px 1px,rgba(124,150,255,.13) 1px,transparent 0) 0 0/26px 26px,
+  linear-gradient(180deg,rgba(8,11,26,.4),rgba(6,8,20,.4));padding:18px}
+.flow-hint{font-family:var(--mono);font-size:9px;color:var(--dim-2);letter-spacing:.04em;margin-bottom:14px}
+.branch{margin-bottom:18px}
+.branch-h{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#bcd4ff;margin-bottom:9px;display:flex;align-items:center;gap:8px}
+.branch-h .pin{width:7px;height:7px;border-radius:2px;background:var(--violet);box-shadow:0 0 8px var(--violet)}
+.chain{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding-bottom:6px}
+.pnode{flex:0 0 auto;min-width:104px;background:linear-gradient(180deg,rgba(18,22,46,.97),rgba(12,15,34,.97));border:1px solid var(--line-2);border-radius:11px;padding:9px 10px;position:relative;transition:.2s}
+.pnode + .pnode{margin-left:26px}
+.pnode + .pnode::before{content:"";position:absolute;left:-27px;top:50%;width:27px;height:2px;background:linear-gradient(90deg,rgba(124,150,255,.15),rgba(52,211,153,.55));transform:translateY(-50%)}
+.pnode .pt{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim-2);display:flex;align-items:center;gap:5px}
+.pnode .pt .s{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 6px var(--ok)}
+.pnode .pv{font-size:12px;font-weight:600;margin-top:5px;color:#eef2ff;line-height:1.2}
+.pnode .pm{font-family:var(--mono);font-size:8.5px;color:var(--dim);margin-top:3px}
+.pnode.active{border-color:var(--warn);box-shadow:0 0 0 1px var(--warn),0 0 20px rgba(251,191,36,.35)}
+.pnode.active .pt .s{background:var(--warn);box-shadow:0 0 7px var(--warn);animation:pulse .7s infinite}
+
+/* log panel */
+.logpane{border-left:1px solid var(--line);display:flex;flex-direction:column;max-height:560px}
+.logpane h3{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#cdd6f5;padding:12px 14px 10px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+.logpane h3 .lc{margin-left:auto;color:var(--dim-2);font-size:9px}
+.log{flex:1;overflow-y:auto;padding:10px 12px;font-family:var(--mono);font-size:10.5px;line-height:1.55}
+.log .le{display:flex;gap:8px;padding:4px 0;border-bottom:1px solid rgba(124,150,255,.06);animation:slidein .25s ease}
+@keyframes slidein{from{opacity:0;transform:translateX(6px)}}
+@keyframes pulse{50%{opacity:.4}}
+.log .le .t{color:var(--dim-2);flex:0 0 auto}
+.log .le.ok .m{color:#bdf7da}.log .le.run .m{color:#ffe7a8}.log .le.info .m{color:var(--dim)}.log .le.rev .m{color:#9fc4ff}
+
+/* creator wall */
+.wall{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.creator{background:rgba(12,16,38,.6);border:1px solid var(--line);border-radius:15px;padding:16px;transition:.16s}
+.creator:hover{border-color:var(--line-2);transform:translateY(-3px);box-shadow:0 18px 40px -22px rgba(124,150,255,.5)}
+.creator .ch{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.creator .av{width:38px;height:38px;border-radius:50%;flex:0 0 auto;background:linear-gradient(135deg,#38bdf8,#a78bfa,#f472b6);display:grid;place-items:center;font-weight:800;font-size:15px;color:#06080f}
+.creator .hn{font-size:14px;font-weight:700}
+.creator .hn small{display:block;font-family:var(--mono);font-size:9px;color:var(--dim-2);letter-spacing:.04em}
+.creator .cstats{display:flex;gap:14px;margin-bottom:12px}
+.creator .cstats div{font-family:var(--mono)}
+.creator .cstats .cn{font-size:15px;font-weight:700;color:#eef2ff}
+.creator .cstats .cl{font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim-2);margin-top:2px}
+.clips{display:flex;gap:7px}
+.clip{flex:1;aspect-ratio:9/14;border-radius:9px;border:1px solid var(--line);background:linear-gradient(160deg,rgba(124,150,255,.14),rgba(8,11,26,.6));position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:6px}
+.clip::before{content:"▶";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13px;color:rgba(255,255,255,.55)}
+.clip .vw{font-family:var(--mono);font-size:8px;color:#dfe7ff;background:rgba(0,0,0,.45);padding:1px 5px;border-radius:5px;position:relative;z-index:1}
+
+/* feature cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.fcard{background:rgba(12,16,38,.6);border:1px solid var(--line);border-radius:15px;padding:20px;transition:.16s}
+.fcard:hover{border-color:var(--line-2);transform:translateY(-3px);box-shadow:0 18px 40px -22px rgba(124,150,255,.5)}
+.fcard .fi{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:20px;background:rgba(124,150,255,.1);border:1px solid var(--line);margin-bottom:13px}
+.fcard h4{font-size:16px;margin-bottom:7px}
+.fcard p{color:var(--dim);font-size:13.5px;line-height:1.55}
+
+/* boost */
+.boost{display:grid;grid-template-columns:1.1fr 1fr;gap:18px;align-items:center}
+@media(max-width:860px){.boost{grid-template-columns:1fr}}
+.boost-card{background:rgba(8,11,28,.72);border:1px solid var(--line);border-radius:16px;padding:20px}
+.boost-card h4{font-size:17px;margin-bottom:6px}
+.boost-card .metric{display:flex;gap:16px;margin:16px 0;flex-wrap:wrap}
+.boost-card .metric div .bn{font-family:var(--display);font-weight:900;font-size:24px;color:#bdf7da}
+.boost-card .metric div .bl{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim-2);margin-top:3px}
+.boost-card p{color:var(--dim);font-size:13.5px;line-height:1.55}
+.boost ul{list-style:none;display:grid;gap:11px}
+.boost li{display:flex;gap:11px;align-items:flex-start;font-size:14px;color:var(--dim);line-height:1.5}
+.boost li b{color:#eef2ff;font-weight:600}
+.boost li .bk{color:var(--ok);flex:0 0 auto}
+
+/* closing */
+.close{text-align:center;max-width:760px;margin:0 auto}
+.close .btn{margin-top:24px}
+footer{text-align:center;padding:40px 22px 70px;color:var(--dim-2);font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;border-top:1px solid var(--line);margin-top:30px}
+footer a{color:#9fc4ff;text-decoration:none}
+</style>
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/glass.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+
+<div class="top">
+  <div class="mk"></div>
+  <div>
+    <div class="b-name"><b>POSTLOOP</b></div>
+    <div class="b-sub">Autonomous Content Engine</div>
+  </div>
+  <div class="spacer"></div>
+  <span class="live-pill"><span class="dot"></span>Live · 298 posts</span>
+  <a class="back" href="index.html">← ClearGlass</a>
+</div>
+
+<div class="hero">
+  <span class="tagchip"><span class="dot"></span>Drive → Caption → Music → Upload → Publish · on a loop</span>
+  <h1>Your content,<br><span class="grad">running itself.</span></h1>
+  <p class="lede">PostLoop is an always-on engine that pulls clips from your Drive, writes the caption, scores the music, schedules per platform, and publishes across every account — Turkish and English, Instagram, TikTok and YouTube — while a live trend wall feeds it what's working today.</p>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="store.html">⟲ Start a loop</a>
+    <a class="btn btn-ghost" href="#cockpit">Watch the cockpit ▸</a>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="n" data-count="298" data-suffix="">0</div><div class="l">Posts shipped</div></div>
+  <div class="stat"><div class="n" data-count="5300" data-suffix="" data-fmt="k">0</div><div class="l">Followers</div></div>
+  <div class="stat"><div class="n" data-count="171000" data-suffix="" data-fmt="k">0</div><div class="l">Views</div></div>
+  <div class="stat"><div class="n" data-count="1500" data-suffix="" data-fmt="k">0</div><div class="l">Likes</div></div>
+  <div class="stat"><div class="n" data-count="2100" data-suffix="" data-fmt="k">0</div><div class="l">Saves</div></div>
+  <div class="stat"><div class="n">1.77%</div><div class="l">Engagement</div></div>
+  <div class="stat"><div class="n">$793</div><div class="l">Tracked revenue</div></div>
+</div>
+
+<!-- ── COCKPIT ─────────────────────────────────────────── -->
+<section id="cockpit">
+  <div class="sec-head">
+    <div class="sec-kicker">The cockpit</div>
+    <div class="sec-title">One screen. Every account. Always shipping.</div>
+    <p class="sec-sub">A single live workspace orchestrates each account through the same five-stage pipeline. Watch the next post move stage-to-stage in real time.</p>
+  </div>
+
+  <div class="cockpit">
+    <div class="ck-bar">
+      <span class="title">PostLoop · Live</span>
+      <span class="next">Next up <b>Instagram 1</b> <span class="tm" id="cd">01:48</span></span>
+      <span class="bb-spacer"></span>
+      <span class="rev" id="revBox">↑ $793 · 273 reach</span>
+    </div>
+    <div class="ck-grid">
+
+      <!-- accounts rail -->
+      <div class="rail">
+        <div class="rail-grp">Workspace · Turkish</div>
+        <div class="acct">
+          <div class="ah"><span class="ic">📸</span><div class="nm">Instagram 1<small>instagram · faceyoga</small></div><span class="ws-tag">TR</span></div>
+          <div class="row"><span>👥 5.3k</span><span class="up">↑ +19</span><span>👁 12k</span><span class="up">⚡ 0.98%</span></div>
+        </div>
+        <div class="acct">
+          <div class="ah"><span class="ic">📸</span><div class="nm">Instagram 2<small>instagram · faceyoga</small></div><span class="ws-tag">TR</span></div>
+          <div class="row"><span>👥 4.9k</span><span class="dn">↓ -14</span><span>👁 94k</span><span class="up">⚡ 2.49%</span></div>
+        </div>
+        <div class="rail-grp">Workspace · English</div>
+        <div class="acct">
+          <div class="ah"><span class="ic">🎵</span><div class="nm">TikTok 1<small>tiktok · faceyoga</small></div><span class="ws-tag">EN</span></div>
+          <div class="row"><span>👥 51k</span><span class="up">⚡ 2.6%</span><span>👁 188k</span></div>
+        </div>
+        <div class="acct">
+          <div class="ah"><span class="ic">▶️</span><div class="nm">YouTube 1<small>youtube · shorts</small></div><span class="ws-tag">EN</span></div>
+          <div class="row"><span>👥 13k</span><span class="up">⚡ 0.86%</span><span>👁 14k</span></div>
+        </div>
+      </div>
+
+      <!-- pipeline -->
+      <div class="flow">
+        <div class="flow-hint">drag a node · shift+drag = move branch · drag background to pan · wheel to zoom · ⟲ reset</div>
+
+        <div class="branch">
+          <div class="branch-h"><span class="pin"></span>Turkish · Instagram 1 · cyc 3</div>
+          <div class="chain" data-chain="b1">
+            <div class="pnode" data-stage="0"><div class="pt"><span class="s"></span>Drive</div><div class="pv">REEL_69</div><div class="pm">15Stack · 21</div></div>
+            <div class="pnode" data-stage="1"><div class="pt"><span class="s"></span>Caption</div><div class="pv">Auto · TR</div><div class="pm">hook + CTA</div></div>
+            <div class="pnode" data-stage="2"><div class="pt"><span class="s"></span>Music</div><div class="pv">fitness-music-03</div><div class="pm">scored ⚡</div></div>
+            <div class="pnode" data-stage="3"><div class="pt"><span class="s"></span>Upload</div><div class="pv">queued</div><div class="pm">14:58 slot</div></div>
+            <div class="pnode" data-stage="4"><div class="pt"><span class="s"></span>Publish</div><div class="pv">→ live</div><div class="pm">cyc 3</div></div>
+          </div>
+        </div>
+
+        <div class="branch">
+          <div class="branch-h"><span class="pin"></span>Turkish · Instagram 2 · cyc 1</div>
+          <div class="chain" data-chain="b2">
+            <div class="pnode" data-stage="0"><div class="pt"><span class="s"></span>Drive</div><div class="pv">REEL_21</div><div class="pm">Lipoden · 4.9k</div></div>
+            <div class="pnode" data-stage="1"><div class="pt"><span class="s"></span>Caption</div><div class="pv">Auto · TR</div><div class="pm">hydrants</div></div>
+            <div class="pnode" data-stage="2"><div class="pt"><span class="s"></span>Music</div><div class="pv">fitness-music-03</div><div class="pm">scored ⚡</div></div>
+            <div class="pnode" data-stage="3"><div class="pt"><span class="s"></span>Upload</div><div class="pv">06:01 slot</div><div class="pm">cyc 1</div></div>
+            <div class="pnode" data-stage="4"><div class="pt"><span class="s"></span>Publish</div><div class="pv">→ live</div><div class="pm">2.49% ⚡</div></div>
+          </div>
+        </div>
+
+        <div class="branch">
+          <div class="branch-h"><span class="pin"></span>English · YouTube 1</div>
+          <div class="chain" data-chain="b3">
+            <div class="pnode" data-stage="0"><div class="pt"><span class="s"></span>Drive</div><div class="pv">REEL_22</div><div class="pm">AlinGoz_TR</div></div>
+            <div class="pnode" data-stage="1"><div class="pt"><span class="s"></span>Caption</div><div class="pv">Auto · EN</div><div class="pm">localized</div></div>
+            <div class="pnode" data-stage="2"><div class="pt"><span class="s"></span>Music</div><div class="pv">faceyoga-music-02</div><div class="pm">scored ⚡</div></div>
+            <div class="pnode" data-stage="3"><div class="pt"><span class="s"></span>Upload</div><div class="pv">posted ✓</div><div class="pm">14 saves</div></div>
+            <div class="pnode" data-stage="4"><div class="pt"><span class="s"></span>Publish</div><div class="pv">→ live</div><div class="pm">0.86% ⚡</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- live log -->
+      <div class="logpane">
+        <h3>Activity <span class="lc" id="lc">live</span></h3>
+        <div class="log" id="log"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── CREATOR WALL ────────────────────────────────────── -->
+<section>
+  <div class="sec-head">
+    <div class="sec-kicker">Creators · TikTok wall</div>
+    <div class="sec-title">Top 3 clips per creator, refreshed daily.</div>
+    <p class="sec-sub">PostLoop watches the accounts that win in your niche, ranks their best performing clips every morning, and feeds the patterns straight into your caption and music scoring.</p>
+  </div>
+  <div class="wall">
+    <div class="creator">
+      <div class="ch"><div class="av">E</div><div class="hn">elizabethgracefit<small>@elizabethgracefit</small></div></div>
+      <div class="cstats"><div><div class="cn">222k</div><div class="cl">Followers</div></div><div><div class="cn">4.45%</div><div class="cl">Engagement</div></div><div><div class="cn">796k</div><div class="cl">Last views</div></div></div>
+      <div class="clips"><div class="clip"><span class="vw">1.1M</span></div><div class="clip"><span class="vw">612k</span></div><div class="clip"><span class="vw">240k</span></div></div>
+    </div>
+    <div class="creator">
+      <div class="ch"><div class="av">M</div><div class="hn">Miranda Locher<small>@miranda_locher</small></div></div>
+      <div class="cstats"><div><div class="cn">41k</div><div class="cl">Followers</div></div><div><div class="cn">0.42%</div><div class="cl">Engagement</div></div><div><div class="cn">32k</div><div class="cl">Last views</div></div></div>
+      <div class="clips"><div class="clip"><span class="vw">88k</span></div><div class="clip"><span class="vw">31k</span></div><div class="clip"><span class="vw">19k</span></div></div>
+    </div>
+    <div class="creator">
+      <div class="ch"><div class="av">N</div><div class="hn">Natural Face Bible<small>@naturalfacebible</small></div></div>
+      <div class="cstats"><div><div class="cn">300k</div><div class="cl">Followers</div></div><div><div class="cn">0.27%</div><div class="cl">Engagement</div></div><div><div class="cn">302k</div><div class="cl">Last views</div></div></div>
+      <div class="clips"><div class="clip"><span class="vw">420k</span></div><div class="clip"><span class="vw">210k</span></div><div class="clip"><span class="vw">96k</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ────────────────────────────────────────── -->
+<section>
+  <div class="sec-head">
+    <div class="sec-kicker">Under the hood</div>
+    <div class="sec-title">A pipeline, not a scheduler.</div>
+    <p class="sec-sub">Other tools queue a post. PostLoop produces it — every stage automated, every account on its own cadence.</p>
+  </div>
+  <div class="cards">
+    <div class="fcard"><div class="fi">🗂</div><h4>Drive-native sourcing</h4><p>Point it at a Google Drive folder. PostLoop pulls the next clip in the stack, tracks what's been used, and never repeats a reel across an account.</p></div>
+    <div class="fcard"><div class="fi">✍️</div><h4>Auto captions, per language</h4><p>Hook + body + CTA written for each platform and localized per workspace — Turkish and English branches from the same source clip.</p></div>
+    <div class="fcard"><div class="fi">🎵</div><h4>Music scoring</h4><p>Trending audio matched and scored against the clip, so every upload rides a sound that's already moving — fitness-music, faceyoga-music, rotated.</p></div>
+    <div class="fcard"><div class="fi">⏱</div><h4>Per-account cadence</h4><p>Each account runs its own cycle and slot. Countdown to next post, posts-per-cycle, and recovery if a slot is missed — all handled.</p></div>
+    <div class="fcard"><div class="fi">📈</div><h4>Live follower delta</h4><p>Per-account follower swing, views, likes, saves and engagement update on every cycle so you see what each branch is actually doing.</p></div>
+    <div class="fcard"><div class="fi">🧭</div><h4>Trend wall feedback</h4><p>The creator wall ranks the best clips in your niche daily and feeds the winning patterns back into caption and music selection.</p></div>
+  </div>
+</section>
+
+<!-- ── BOOST ───────────────────────────────────────────── -->
+<section>
+  <div class="sec-head">
+    <div class="sec-kicker">Boost · Ads</div>
+    <div class="sec-title">When a post pops, promote it without leaving the loop.</div>
+  </div>
+  <div class="boost">
+    <div class="boost-card">
+      <h4>Instagram 1 · high shares</h4>
+      <p>Engagement spiked 5.52% on the last reel. PostLoop surfaces the winner and lets you push it into Ads Manager in one tap.</p>
+      <div class="metric">
+        <div><div class="bn">$632</div><div class="bl">Revenue · 30d</div></div>
+        <div><div class="bn">273</div><div class="bl">New reach</div></div>
+        <div><div class="bn">107</div><div class="bl">New subs</div></div>
+      </div>
+      <a class="btn btn-primary" href="store.html">Promote in Ads Manager →</a>
+    </div>
+    <ul>
+      <li><span class="bk">✓</span><div><b>One-tap boost.</b> Promote the exact reel that's already winning — no re-upload, no exports.</div></li>
+      <li><span class="bk">✓</span><div><b>Revenue attribution.</b> $793 tracked back to the posts that drove it, per account and per cycle.</div></li>
+      <li><span class="bk">✓</span><div><b>Reach + subs in view.</b> 273 new reach and 107 new subscribers logged against the boosted clip.</div></li>
+      <li><span class="bk">✓</span><div><b>Spend stays controlled.</b> Boost only the top-share posts the engine flags, not the whole feed.</div></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ── CLOSE ───────────────────────────────────────────── -->
+<section>
+  <div class="close">
+    <div class="sec-kicker">Stop posting. Start looping.</div>
+    <h1 style="font-size:clamp(26px,4.5vw,44px);margin-top:10px">Set it once.<br><span class="grad">It runs every day.</span></h1>
+    <p class="lede">298 posts, 171k views and $793 in tracked revenue — produced and published without a human touching the upload button. PostLoop is built and operated by ClearGlass Inc.</p>
+    <div class="cta-row" style="justify-content:center">
+      <a class="btn btn-primary" href="store.html">⟲ Start a loop</a>
+      <a class="btn btn-ghost" href="pricing.html">See pricing</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  PostLoop · a ClearGlass Inc content engine · <a href="index.html">www.clearglassinc.com</a>
+</footer>
+
+<script>
+const $=s=>document.querySelector(s);
+
+/* ── count-up stats (with k formatting) ──────────────── */
+function fmt(v,style){
+  if(style==="k"){ return v>=1000? (v/1000).toFixed(v>=10000?0:1).replace(/\.0$/,"")+"k" : ""+v; }
+  return v.toLocaleString();
+}
+function countUp(el){
+  const target=+el.dataset.count, style=el.dataset.fmt, suf=el.dataset.suffix||"", dur=1100, t0=performance.now();
+  function step(t){
+    const p=Math.min(1,(t-t0)/dur), v=Math.floor((1-Math.pow(1-p,3))*target);
+    el.textContent=fmt(v,style)+(p>=1?suf:""); if(p<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){countUp(e.target);io.unobserve(e.target);}}),{threshold:.5});
+document.querySelectorAll(".stat .n[data-count]").forEach(el=>io.observe(el));
+
+/* ── countdown to next post ──────────────────────────── */
+let secs=108; // 01:48
+const cd=$("#cd");
+setInterval(()=>{
+  secs--; if(secs<0) secs=108;
+  const m=String(Math.floor(secs/60)).padStart(2,"0"), s=String(secs%60).padStart(2,"0");
+  cd.textContent=`${m}:${s}`;
+},1000);
+
+/* ── pipeline pulse: one stage active at a time per branch ── */
+const branches=[...document.querySelectorAll(".chain")];
+let step=0;
+function pulse(){
+  branches.forEach((ch,bi)=>{
+    const nodes=[...ch.querySelectorAll(".pnode")];
+    nodes.forEach(n=>n.classList.remove("active"));
+    const idx=(step+bi)%nodes.length;
+    nodes[idx].classList.add("active");
+  });
+  step++;
+}
+pulse(); setInterval(pulse,1400);
+
+/* ── live activity log ───────────────────────────────── */
+const LOG=[
+  ["ok","youtube 1 REEL_22_AlinGoz_TR.mp4 posted ✓"],
+  ["info","caption written · EN · hook+CTA"],
+  ["run","music scored · faceyoga-music-02.mp3"],
+  ["ok","Instagram 2 published · cyc 1 · 4.9k reach"],
+  ["rev","+$18 attributed · Instagram 1 boost"],
+  ["info","drive pulled REEL_69_15Stack · TR"],
+  ["run","TikTok 1 upload queued · 14:58 slot"],
+  ["ok","Instagram 1 engagement 5.52% · high shares"],
+  ["rev","273 new reach · 107 new subs"],
+  ["info","creator wall refreshed · top 3 / creator"],
+  ["ok","298 posts shipped this cycle"],
+];
+const log=$("#log"); let li=0;
+function pushLog(){
+  const [cls,msg]=LOG[li%LOG.length]; li++;
+  const ts=String(14).padStart(2,"0")+":"+String(58-(li%59)).padStart(2,"0");
+  const row=document.createElement("div");
+  row.className="le "+cls;
+  row.innerHTML=`<span class="t">${ts}</span><span class="m">${msg}</span>`;
+  log.prepend(row);
+  while(log.children.length>9) log.removeChild(log.lastChild);
+}
+for(let i=0;i<6;i++) pushLog();
+setInterval(pushLog,2600);
+</script>
+
+<script defer src="nav.js"></script>
+<script defer src="ui.js"></script>
+<script defer src="platform.js"></script>
+<script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="percival-os.html">Command &amp; Autonomous Operations</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="conduit.html"><span><b>Previous</b>CONDUIT</span></a>
+      <a href="percival-os.html"><span><b>Topic hub</b>PERCIVAL OS</span></a>
+      <a href="command-console.html"><span><b>Next in journey</b>Command Console</span></a>
+    </div>
+    <ul>
+      <li><a href="command-console.html"><b>Command Console</b> — cyber intelligence operations hub</a></li>
+      <li><a href="control-surface.html"><b>Systems Control Surface v3.1</b> — the live command dashboard</a></li>
+      <li><a href="systems.html"><b>Systems Console</b> — PERCIVAL operations console</a></li>
+      <li><a href="saas-platform.html"><b>Event Control Surface</b> — event-driven platform operations</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="offers/index.html">Browse services &amp; engagements</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

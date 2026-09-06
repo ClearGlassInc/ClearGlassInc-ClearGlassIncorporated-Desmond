@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<link rel="sitemap" type="application/xml" href="/sitemap.xml">
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>Procurement & Legal-Tech Command Surface | ClearGlass Inc.</title>
+<meta name="description" content="ClearGlass Inc. — autonomous procurement and legal-tech infrastructure for government, legal, and regulated enterprise. Identity verification, evidence-chain integrity, secure orchestration, and compliance automation with human oversight."/>
+<meta name="author" content="Desmond Otieno — Founder & Systems Architect, ClearGlass Inc."/>
+<link rel="canonical" href="https://clearglassinc.github.io/procurement-legal-tech.html"/>
+<meta property="og:title" content="Procurement & Legal-Tech Command Surface — ClearGlass Inc."/>
+<meta property="og:description" content="A governed automation surface for procurement and legal operations — verified identity, evidence provenance, and compliance automation with human oversight."/>
+<meta property="og:url" content="https://clearglassinc.github.io/procurement-legal-tech.html"/>
+<meta property="og:site_name" content="ClearGlass Inc."/>
+<meta property="og:type" content="website"/>
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --white:#fafbfc;--off:#f3f5f8;
+  --glass:rgba(255,255,255,0.55);--glass-border:rgba(0,0,0,0.06);
+  --dark:#0a0c10;--dark-2:#1a1d25;--dark-3:#0d1020;
+  --text:#0a0c10;--text-2:#3a3f4a;--text-3:#6b7280;--text-4:#9ca3af;
+  --navy:#0a1628;--navy-2:#0f1f3d;--navy-3:#1a2d4a;
+  --gold:#5b4bc8;--gold-2:#887ae8;--gold-3:#2f1e8a;
+  --gov-blue:#1a3a6b;--gov-blue-2:#2a5298;--gov-light:#4a7fd4;
+  --prism-1:#38bdf8;--prism-2:#a78bfa;--prism-4:#34d399;--prism-5:#4929f6;
+  --crystal:linear-gradient(135deg,#38bdf8 0%,#a78bfa 25%,#f472b6 50%,#4929f6 75%,#34d399 100%);
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Urbanist',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',monospace
+}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ── CLASSIFICATION BANNER ── */
+.class-banner{
+  background:#af1cb7;color:#fff;text-align:center;
+  font-family:var(--mono);font-size:11px;letter-spacing:.18em;font-weight:700;
+  padding:6px 16px;position:relative;z-index:200;
+  border-bottom:2px solid #74057a;
+}
+.class-banner span{opacity:.8;font-weight:400;margin:0 8px}
+
+/* ── NAV ── */
+.nav{
+  position:sticky;top:0;z-index:100;height:68px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(1rem,3vw,2rem);
+  background:rgba(10,22,40,.97);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  backdrop-filter:blur(20px);
+}
+.nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.nav-mark{width:38px;height:38px;border-radius:9px;overflow:hidden;background:#fff;display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.nav-mark img{width:100%;height:100%;object-fit:cover}
+.nav-name{font-family:var(--serif);font-size:19px;font-weight:600;color:#fff;letter-spacing:-.01em}
+.nav-name em{font-style:italic;font-weight:300;color:rgba(255,255,255,.45)}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{color:rgba(255,255,255,.55);text-decoration:none;font-size:13px;font-weight:600;padding:8px 14px;border-radius:8px;transition:all .18s}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.nav-links a.active{color:#fff}
+.nav-cta{color:#fff!important;background:var(--gov-blue-2)!important;border:1px solid rgba(74,127,212,.4)!important}
+.nav-cta:hover{background:#3464b8!important}
+@media(max-width:960px){.nav-links a:not(.nav-cta){display:none}}
+
+/* ── HERO ── */
+.hero{
+  background:var(--navy);
+  padding:clamp(80px,10vw,130px) 0 clamp(60px,8vw,100px);
+  position:relative;overflow:hidden;
+}
+.hero-grid-lines{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(74,127,212,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(74,127,212,.05) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.hero-glow{
+  position:absolute;top:-200px;left:50%;transform:translateX(-50%);
+  width:800px;height:600px;
+  background:radial-gradient(ellipse,rgba(42,82,152,.3) 0%,transparent 70%);
+  pointer-events:none;
+}
+.container{width:min(1180px,92vw);margin:0 auto;padding:0 clamp(1rem,3vw,2rem)}
+.hero-inner{position:relative;z-index:1}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.2em;
+  color:var(--gold);margin-bottom:24px;
+}
+.hero-eyebrow::before{content:'';width:18px;height:1px;background:var(--gold)}
+.hero h1{
+  font-family:var(--serif);
+  font-size:clamp(2.7rem,6.4vw,6rem);
+  font-weight:300;line-height:1.03;letter-spacing:-.025em;
+  color:#fff;max-width:940px;
+}
+.hero h1 strong{font-weight:600}
+.hero h1 .gold-text{
+  background:linear-gradient(135deg,var(--gold) 0%,var(--gold-2) 50%,var(--gold) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{
+  font-size:clamp(1rem,1.6vw,1.18rem);color:rgba(255,255,255,.58);
+  line-height:1.78;max-width:660px;margin-top:26px;
+}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:38px}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 28px;border-radius:8px;
+  font-family:var(--sans);font-size:14px;font-weight:700;
+  text-decoration:none;cursor:pointer;border:none;transition:all .25s;
+  letter-spacing:.01em;
+}
+.btn-gold{
+  color:var(--navy);background:linear-gradient(135deg,var(--gold),var(--gold-2));
+  box-shadow:0 4px 20px rgba(91,75,200,.25);
+}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(91,75,200,.35)}
+.btn-outline{
+  color:rgba(255,255,255,.85);
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.18);
+}
+.btn-outline:hover{background:rgba(255,255,255,.12);color:#fff}
+.hero-badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:34px}
+.hero-badge{
+  padding:6px 14px;border-radius:6px;
+  font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;
+  border:1px solid;
+}
+.hb-green{color:#4ade80;border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.07)}
+.hb-blue{color:#60a5fa;border-color:rgba(96,165,250,.3);background:rgba(96,165,250,.06)}
+.hb-gold{color:var(--gold-2);border-color:rgba(91,75,200,.3);background:rgba(91,75,200,.06)}
+.hb-purple{color:#c084fc;border-color:rgba(192,132,252,.28);background:rgba(192,132,252,.05)}
+
+/* ── STAT STRIP ── */
+.stat-strip{
+  background:var(--navy);
+  border-top:1px solid rgba(255,255,255,.07);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  padding:20px 0;
+}
+.stat-inner{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:rgba(255,255,255,.06);
+}
+.stat-cell{padding:20px 24px;background:var(--navy);text-align:center}
+.stat-val{
+  font-family:var(--serif);font-size:clamp(2rem,3.5vw,3rem);
+  font-weight:300;color:#fff;letter-spacing:-.02em;line-height:1;
+}
+.stat-val strong{font-weight:600;color:var(--gold-2)}
+.stat-label{
+  font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+  color:rgba(255,255,255,.35);margin-top:6px;
+}
+@media(max-width:680px){.stat-inner{grid-template-columns:repeat(2,1fr)}}
+
+/* ── SECTIONS ── */
+.sect{padding:clamp(72px,10vw,120px) 0}
+.sect-dark{background:var(--navy);color:#fff}
+.sect-navy{background:var(--navy-2);color:#fff}
+.sect-off{background:var(--off)}
+
+.sh{margin-bottom:clamp(44px,6vw,68px)}
+.sh-tag{
+  font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.18em;
+  color:var(--text-4);margin-bottom:14px;display:flex;align-items:center;gap:10px;
+}
+.sh-tag::before{content:'';width:20px;height:1px;background:currentColor}
+.sh-tag.light{color:rgba(255,255,255,.35)}
+.sh-tag.light::before{background:rgba(255,255,255,.35)}
+.sh-tag.gold{color:var(--gold);opacity:.85}
+.sh-tag.gold::before{background:var(--gold)}
+.sh h2{
+  font-family:var(--serif);font-size:clamp(2.2rem,5vw,3.8rem);
+  font-weight:300;line-height:1.1;letter-spacing:-.02em;
+}
+.sh h2 strong{font-weight:600}
+.sh p{color:var(--text-3);font-size:clamp(1rem,1.4vw,1.08rem);line-height:1.78;max-width:660px;margin-top:16px}
+.sh-light h2{color:#fff}
+.sh-light p{color:rgba(255,255,255,.5)}
+.sh-center{text-align:center}
+.sh-center p{margin-left:auto;margin-right:auto}
+
+/* ── LEAD / MANDATE ── */
+.lead{
+  font-family:var(--serif);font-weight:300;
+  font-size:clamp(1.5rem,3vw,2.3rem);line-height:1.4;letter-spacing:-.01em;
+  color:var(--text);max-width:900px;
+}
+.lead strong{font-weight:600}
+.lead-sub{margin-top:26px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+@media(max-width:760px){.lead-sub{grid-template-columns:1fr}}
+.lead-col h4{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--gold);margin-bottom:10px}
+.lead-col p{font-size:14px;color:var(--text-3);line-height:1.75;max-width:none}
+
+/* ── COMPLIANCE / CARD GRID ── */
+.compliance-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;
+}
+.comp-card{
+  padding:24px 26px;border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03);
+  transition:all .3s;position:relative;overflow:hidden;
+}
+.comp-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--bar-color,rgba(255,255,255,.15));opacity:.8;
+}
+.comp-card:hover{border-color:rgba(255,255,255,.16);transform:translateY(-3px)}
+.comp-badge{
+  display:inline-block;padding:4px 10px;border-radius:4px;
+  font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.12em;margin-bottom:16px;
+}
+.comp-card h3{font-size:15px;font-weight:700;color:#fff;margin-bottom:8px}
+.comp-card p{font-size:13px;color:rgba(255,255,255,.45);line-height:1.7}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25)}
+.badge-blue{background:rgba(96,165,250,.1);color:#60a5fa;border:1px solid rgba(96,165,250,.22)}
+.badge-gold{background:rgba(91,75,200,.12);color:var(--gold-2);border:1px solid rgba(91,75,200,.25)}
+.badge-purple{background:rgba(192,132,252,.1);color:#c084fc;border:1px solid rgba(192,132,252,.22)}
+.badge-cyan{background:rgba(34,211,238,.08);color:#22d3ee;border:1px solid rgba(34,211,238,.2)}
+
+/* ── FEATURE LINES ── */
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.07);border-radius:16px;overflow:hidden}
+@media(max-width:760px){.feat-grid{grid-template-columns:1fr}}
+.feat-row{background:var(--navy-2);padding:26px 28px;display:flex;gap:16px;transition:background .25s}
+.feat-row:hover{background:var(--navy-3)}
+.feat-num{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--gold-2);flex-shrink:0;padding-top:3px;width:34px}
+.feat-body h3{font-size:15px;font-weight:700;color:#fff;margin-bottom:6px;letter-spacing:-.005em}
+.feat-body p{font-size:13px;color:rgba(255,255,255,.5);line-height:1.7}
+
+/* ── CONTROL RULES ── */
+.rules-grid{display:grid;gap:12px}
+.rule{
+  display:flex;gap:18px;align-items:flex-start;
+  padding:22px 24px;border-radius:12px;
+  background:#fff;border:1px solid var(--glass-border);
+  box-shadow:0 4px 20px rgba(0,0,0,.03);
+}
+.rule-tier{
+  font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.1em;
+  padding:5px 9px;border-radius:5px;flex-shrink:0;white-space:nowrap;margin-top:2px;
+}
+.tier-auto{background:rgba(74,222,128,.12);color:#16a34a;border:1px solid rgba(74,222,128,.3)}
+.tier-review{background:rgba(96,165,250,.12);color:#2563eb;border:1px solid rgba(96,165,250,.3)}
+.tier-block{background:rgba(241,113,248,.1);color:#c026d3;border:1px solid rgba(241,113,248,.3)}
+.rule-body h3{font-size:14.5px;font-weight:700;color:var(--text);margin-bottom:5px}
+.rule-body p{font-size:13px;color:var(--text-3);line-height:1.7}
+.rule-body code{font-family:var(--mono);font-size:11.5px;background:rgba(0,0,0,.05);padding:2px 6px;border-radius:4px;color:var(--gov-blue)}
+
+/* ── STACK LAYERS ── */
+.stack{display:grid;gap:14px}
+.layer{
+  border:1px solid rgba(255,255,255,.08);border-radius:14px;
+  background:rgba(255,255,255,.03);padding:26px 28px;
+  display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:start;transition:all .3s;
+}
+.layer:hover{border-color:rgba(255,255,255,.16);background:rgba(255,255,255,.05)}
+@media(max-width:720px){.layer{grid-template-columns:1fr;gap:12px}}
+.layer-name{font-family:var(--serif);font-size:1.35rem;font-weight:400;color:#fff}
+.layer-tag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--gold-2);margin-top:6px}
+.layer-desc p{font-size:13.5px;color:rgba(255,255,255,.5);line-height:1.72}
+.layer-chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
+.chip{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.05em;padding:5px 11px;border-radius:5px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.08)}
+
+/* ── TRUST COLUMNS ── */
+.trust-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.trust-card{
+  padding:clamp(26px,3vw,38px);border-radius:16px;background:#fff;
+  border:1px solid var(--glass-border);box-shadow:0 8px 32px rgba(0,0,0,.04);transition:all .3s;
+}
+.trust-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.08)}
+.trust-ico{font-size:22px;margin-bottom:16px}
+.trust-card h3{font-family:var(--serif);font-size:1.45rem;font-weight:500;margin-bottom:10px;letter-spacing:-.01em}
+.trust-card p{font-size:13.5px;color:var(--text-3);line-height:1.75}
+.trust-list{display:grid;gap:8px;margin-top:16px}
+.trust-li{display:flex;gap:9px;font-size:13px;color:var(--text-2);line-height:1.55}
+.trust-li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:7px}
+
+/* ── READINESS ── */
+.ready-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.ready-card{padding:26px 28px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03)}
+.ready-status{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;margin-bottom:14px}
+.dot{width:8px;height:8px;border-radius:50%}
+.dot-live{background:#4ade80;box-shadow:0 0 10px rgba(74,222,128,.6)}
+.dot-ready{background:#60a5fa}
+.dot-award{background:var(--gold-2)}
+.ready-card h3{font-size:15px;font-weight:700;color:#fff;margin-bottom:8px}
+.ready-card p{font-size:13px;color:rgba(255,255,255,.48);line-height:1.7}
+
+/* ── CONTACT ── */
+.contact-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:start}
+@media(max-width:740px){.contact-grid{grid-template-columns:1fr}}
+.contact-card{
+  padding:clamp(32px,4vw,48px);border-radius:20px;
+  background:linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.1);
+}
+.contact-card h3{font-family:var(--serif);font-size:clamp(1.6rem,3vw,2.4rem);color:#fff;font-weight:400;margin-bottom:8px}
+.contact-card p{font-size:14px;color:rgba(255,255,255,.5);line-height:1.75;margin-bottom:22px}
+.contact-items{display:grid;gap:12px}
+.contact-item{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+.ci-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.ci-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-bottom:3px}
+.ci-val{font-size:14px;color:#fff;font-weight:500}
+.ci-val a{color:var(--gold-2);text-decoration:none}
+.ci-val a:hover{text-decoration:underline}
+.info-card{
+  padding:clamp(28px,3.5vw,40px);border-radius:20px;
+  background:#fff;border:1px solid var(--glass-border);box-shadow:0 12px 40px rgba(0,0,0,.05);
+}
+.info-card h3{font-family:var(--serif);font-size:1.5rem;font-weight:500;margin-bottom:18px}
+.info-list{display:grid;gap:14px}
+.info-item{padding:14px 0;border-top:1px solid rgba(0,0,0,.06)}
+.info-item:first-child{border-top:none;padding-top:0}
+.il-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--text-4);margin-bottom:5px}
+.il-val{font-size:14px;color:var(--text-2);line-height:1.65}
+
+/* ── FOOTER ── */
+.gov-footer{background:var(--navy);border-top:1px solid rgba(255,255,255,.07);padding:40px 0}
+.gf-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
+.gf-brand{font-family:var(--serif);font-size:18px;color:rgba(255,255,255,.7);font-weight:500}
+.gf-brand em{font-style:italic;font-weight:300;color:rgba(255,255,255,.35)}
+.gf-links{display:flex;gap:20px;flex-wrap:wrap}
+.gf-links a{color:rgba(255,255,255,.4);font-size:12.5px;text-decoration:none;transition:color .2s}
+.gf-links a:hover{color:#fff}
+.gf-copy{font-family:var(--mono);font-size:10.5px;color:rgba(255,255,255,.25);width:100%;margin-top:8px;letter-spacing:.05em;line-height:1.7}
+.gf-sig{color:rgba(255,255,255,.4)}
+
+.unclass-banner{
+  background:#1a4731;color:#4ade80;text-align:center;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;font-weight:700;
+  padding:5px 16px;border-top:1px solid rgba(74,222,128,.2);
+}
+
+/* ── SCROLL REVEAL ── */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.rv.vis{opacity:1;transform:translateY(0)}
+</style>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="/assets/css/glass.css">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+
+<!-- Classification banner — UNCLASSIFIED demo instance -->
+<div class="class-banner" role="banner" aria-label="Document classification">
+  UNCLASSIFIED / NON-CLASSIFIÉ
+  <span>·</span>
+  CLEARGLASS INC. — PROCUREMENT &amp; LEGAL-TECH COMMAND SURFACE
+  <span>·</span>
+  FOR OFFICIAL USE — AUTHORIZED DISTRIBUTION
+</div>
+
+<!-- NAV -->
+<nav class="nav" aria-label="Primary navigation">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-mark"><img src="assets/images/clearglass-logo.png" alt="ClearGlass Inc."/></div>
+    <div class="nav-name">ClearGlass <em>Inc.</em></div>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="government.html">Government</a>
+    <a href="procurement-legal-tech.html" class="active">Procurement &amp; Legal-Tech</a>
+    <a href="operations/procurement-readiness.html">Readiness</a>
+    <a href="legal/">Legal</a>
+    <a href="mailto:desmondotieno@icloud.com" class="nav-cta">Secure Contact →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid-lines"></div>
+  <div class="hero-glow"></div>
+  <div class="container hero-inner">
+    <div class="hero-eyebrow">PROCUREMENT &amp; LEGAL-TECH · GOVERNED AUTOMATION · BURLINGTON, ONTARIO</div>
+    <h1 class="rv">The command surface for <strong>procurement</strong><br>and <span class="gold-text">legal operations at scale.</span></h1>
+    <p class="hero-sub rv">ClearGlass builds governed automation for the work that cannot afford to be wrong — sourcing, contracting, disclosure, and compliance. Autonomous agents draft, verify, and reconcile against source-of-truth data; nothing that moves money, alters a legal position, or leaves the building executes without a recorded human approval.</p>
+    <div class="hero-actions rv">
+      <a href="#capability" class="btn btn-gold">Review Capabilities →</a>
+      <a href="#contact" class="btn btn-outline">Request an Operator Briefing</a>
+    </div>
+    <div class="hero-badges rv">
+      <span class="hero-badge hb-green">HUMAN-IN-THE-LOOP</span>
+      <span class="hero-badge hb-blue">EVIDENCE-CHAIN INTEGRITY</span>
+      <span class="hero-badge hb-gold">APPEND-ONLY AUDIT</span>
+      <span class="hero-badge hb-purple">IDENTITY-VERIFIED</span>
+      <span class="hero-badge hb-blue">PIPEDA · ITSG-33 ALIGNED</span>
+      <span class="hero-badge hb-green">FAIL-CLOSED</span>
+    </div>
+  </div>
+</section>
+
+<!-- STAT STRIP -->
+<div class="stat-strip">
+  <div class="container">
+    <div class="stat-inner">
+      <div class="stat-cell rv">
+        <div class="stat-val"><strong>0</strong></div>
+        <div class="stat-label">UNAPPROVED HIGH-RISK ACTIONS</div>
+      </div>
+      <div class="stat-cell rv">
+        <div class="stat-val"><strong>100%</strong></div>
+        <div class="stat-label">MATERIAL ACTIONS LOGGED</div>
+      </div>
+      <div class="stat-cell rv">
+        <div class="stat-val"><strong>3</strong></div>
+        <div class="stat-label">GOVERNANCE RISK TIERS</div>
+      </div>
+      <div class="stat-cell rv">
+        <div class="stat-val"><strong>24/7</strong></div>
+        <div class="stat-label">CONTINUOUS RECONCILIATION</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MANDATE -->
+<section class="sect sect-off" id="mandate">
+  <div class="container">
+    <div class="sh rv">
+      <div class="sh-tag gold">THE MANDATE</div>
+    </div>
+    <p class="lead rv">Procurement and legal work run on <strong>evidence, authority, and time</strong> — three things most organizations manage manually and lose to friction. ClearGlass installs a governed automation layer between your people and your systems of record, so routine work executes at machine speed while every consequential decision stays in human hands, on the record, and defensible after the fact.</p>
+    <div class="lead-sub rv">
+      <div class="lead-col">
+        <h4>WHO WE BUILD FOR</h4>
+        <p>Government buyers, in-house legal and legal-ops teams, public-sector procurement offices, and regulated enterprise operators who are accountable for what their systems do — and must prove it.</p>
+      </div>
+      <div class="lead-col">
+        <h4>WHAT WE REPLACE</h4>
+        <p>Manual intake, copy-paste contracting, spreadsheet vendor tracking, and disconnected approval chains — with a single orchestrated surface that keeps its own audit trail.</p>
+      </div>
+      <div class="lead-col">
+        <h4>WHAT WE REFUSE TO DO</h4>
+        <p>Fabricate a fact, move money without authorization, alter a legal position on its own, or take an irreversible action outside a recorded, human-approved control path.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CAPABILITY / 12 FEATURE LINES -->
+<section class="sect sect-dark" id="capability">
+  <div class="container">
+    <div class="sh sh-light rv">
+      <div class="sh-tag light">CAPABILITY SURFACE · 12 CORE FUNCTIONS</div>
+      <h2>Autonomous workflows, <strong>bounded by design</strong></h2>
+      <p>Each function runs as a supervised agent against your source-of-truth data. Agents read broadly and act narrowly — they draft, verify, and reconcile; they escalate anything material to a named human. Below is the production capability set.</p>
+    </div>
+    <div class="feat-grid rv">
+      <div class="feat-row"><div class="feat-num">01</div><div class="feat-body"><h3>Autonomous intake &amp; triage</h3><p>Inbound RFPs, tenders, contracts, and requests are parsed, classified, and routed by obligation type, deadline, and risk exposure — with a structured summary and a proposed next action for the responsible owner.</p></div></div>
+      <div class="feat-row"><div class="feat-num">02</div><div class="feat-body"><h3>Solicitation &amp; requirement extraction</h3><p>Mandatory criteria, evaluation weightings, submission format, and compliance clauses are extracted verbatim from tender documents and mapped to a response matrix, so nothing scored is missed.</p></div></div>
+      <div class="feat-row"><div class="feat-num">03</div><div class="feat-body"><h3>Supplier identity &amp; eligibility verification</h3><p>Counterparties are checked against registry, sanctions, debarment, and beneficial-ownership sources before engagement. Unverifiable identities are held, not passed through.</p></div></div>
+      <div class="feat-row"><div class="feat-num">04</div><div class="feat-body"><h3>Contract drafting &amp; clause assembly</h3><p>Agreements are assembled from an approved clause library with jurisdiction-aware fallbacks. Every clause carries its provenance; no bespoke legal term is introduced without a lawyer's sign-off.</p></div></div>
+      <div class="feat-row"><div class="feat-num">05</div><div class="feat-body"><h3>Obligation &amp; renewal tracking</h3><p>Deliverables, milestones, indemnities, auto-renewals, and notice windows are extracted into a live obligation register that raises the responsible owner ahead of every deadline.</p></div></div>
+      <div class="feat-row"><div class="feat-num">06</div><div class="feat-body"><h3>Evidence capture &amp; provenance</h3><p>Every document, decision, and data point that enters a workflow is hashed, timestamped, and bound to its origin — producing a tamper-evident chain that stands up under audit and disclosure.</p></div></div>
+      <div class="feat-row"><div class="feat-num">07</div><div class="feat-body"><h3>Compliance mapping &amp; control checks</h3><p>Workflows are continuously tested against applicable frameworks — PIPEDA, trade-agreement procurement rules, records-retention schedules — and flagged the moment an action would fall outside them.</p></div></div>
+      <div class="feat-row"><div class="feat-num">08</div><div class="feat-body"><h3>Approval orchestration</h3><p>Consequential actions are routed to the correct authority with full context, held in a pending state, and released only on a recorded approval. Delegations and thresholds are enforced in code.</p></div></div>
+      <div class="feat-row"><div class="feat-num">09</div><div class="feat-body"><h3>Reconciliation &amp; discrepancy detection</h3><p>Invoices, purchase orders, receipts, and contract terms are matched three-way; variances outside tolerance are surfaced with the underlying evidence rather than silently accepted.</p></div></div>
+      <div class="feat-row"><div class="feat-num">10</div><div class="feat-body"><h3>Disclosure &amp; records assembly</h3><p>On request — access, audit, litigation hold, or FOI — the relevant record set is assembled with its provenance intact and its redactions logged, turning weeks of manual retrieval into a reviewable package.</p></div></div>
+      <div class="feat-row"><div class="feat-num">11</div><div class="feat-body"><h3>Decision support &amp; scoring</h3><p>Bids and proposals are scored against the published evaluation matrix with the reasoning shown line by line. The system recommends; the evaluator decides and signs.</p></div></div>
+      <div class="feat-row"><div class="feat-num">12</div><div class="feat-body"><h3>Executive reporting &amp; ledger export</h3><p>A standing report reconstructs what was decided, by whom, on what evidence, and under which control — exportable to your GRC, records, and finance systems without rekeying.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTROL RULES -->
+<section class="sect sect-off" id="control">
+  <div class="container">
+    <div class="sh rv">
+      <div class="sh-tag gold">CONTROL MODEL · 8 OPERATING RULES</div>
+      <h2>Read-only analysis. Draft. <strong>Human approval. Execute.</strong></h2>
+      <p>Every proposed action is scored and routed through one of three tiers. These eight rules are enforced in code and in the agent contract — not written on a policy page and hoped for.</p>
+    </div>
+    <div class="rules-grid rv">
+      <div class="rule"><span class="rule-tier tier-auto">TIER · LOW</span><div class="rule-body"><h3>Low-risk work auto-executes and is logged</h3><p>Generating drafts, reading metrics, extracting requirements, and reconciling records run automatically and land in the audit ledger. Speed where nothing is at stake.</p></div></div>
+      <div class="rule"><span class="rule-tier tier-review">TIER · MEDIUM</span><div class="rule-body"><h3>Content and non-price changes queue for review</h3><p>Publishing a response, updating a supplier record, or altering a non-financial term is drafted in full and held for a named reviewer before it takes effect.</p></div></div>
+      <div class="rule"><span class="rule-tier tier-block">TIER · HIGH</span><div class="rule-body"><h3>Money, price, and legal position are blocked until approved</h3><p>Awards, payments, pricing, refunds, contract execution, and mass outbound communication are <code>blocked</code> until an approval record reaches <code>approved</code>. No exceptions in code.</p></div></div>
+      <div class="rule"><span class="rule-tier tier-block">RULE · 04</span><div class="rule-body"><h3>No fabrication of fact</h3><p>The system never invents a supplier, a certification, a price, a review, or a sense of urgency. If a fact cannot be sourced, it is reported as unknown — not filled in.</p></div></div>
+      <div class="rule"><span class="rule-tier tier-block">RULE · 05</span><div class="rule-body"><h3>Every material change is written to an append-only ledger</h3><p>Each consequential action is recorded with actor, timestamp, evidence reference, and risk score in an audit trail that can be added to but never quietly edited.</p></div></div>
+      <div class="rule"><span class="rule-tier tier-block">RULE · 06</span><div class="rule-body"><h3>Fail closed, not open</h3><p>On missing authority, an unverifiable identity, a broken evidence chain, or an unreachable control, the workflow halts and escalates. Ambiguity resolves toward stop.</p></div></div>
+      <div class="rule"><span class="rule-tier tier-review">RULE · 07</span><div class="rule-body"><h3>Least privilege, scoped access</h3><p>Agents hold only the credentials a task requires, for only as long as it runs. Read access is broad; write access is narrow, named, and revocable.</p></div></div>
+      <div class="rule"><span class="rule-tier tier-auto">RULE · 08</span><div class="rule-body"><h3>Human authority is always reversible-forward</h3><p>An operator can override, pause, or roll back any agent decision at any point — and the override is itself logged. The human is the final control, by construction.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TECHNOLOGY STACK -->
+<section class="sect sect-dark" id="stack">
+  <div class="container">
+    <div class="sh sh-light rv">
+      <div class="sh-tag light">TECHNOLOGY STACK</div>
+      <h2>A <strong>secure-by-design</strong> orchestration architecture</h2>
+      <p>Five layers, each independently auditable. The design goal is resilience under partial failure: any one layer can degrade without a consequential action slipping through unapproved or unlogged.</p>
+    </div>
+    <div class="stack rv">
+      <div class="layer">
+        <div><div class="layer-name">Governance Core</div><div class="layer-tag">RISK SCORING · APPROVAL ROUTING</div></div>
+        <div class="layer-desc"><p>Scores every proposed action and routes it to auto-execute, queue, or block. Runs on a minimal, dependency-light footprint so it stays verifiable and can execute in constrained or offline environments. This layer is the arbiter — no action reaches an external system without passing through it.</p><div class="layer-chips"><span class="chip">policy-as-code</span><span class="chip">deterministic</span><span class="chip">self-check on boot</span></div></div>
+      </div>
+      <div class="layer">
+        <div><div class="layer-name">Evidence Ledger</div><div class="layer-tag">APPEND-ONLY · TAMPER-EVIDENT</div></div>
+        <div class="layer-desc"><p>An append-only event store that records every material change with its actor, inputs, hash-linked evidence, and risk score. Records chain to their predecessors, so any later alteration is detectable. This is the substrate for audit, disclosure, and after-action review.</p><div class="layer-chips"><span class="chip">hash-linked events</span><span class="chip">immutable history</span><span class="chip">export to GRC</span></div></div>
+      </div>
+      <div class="layer">
+        <div><div class="layer-name">Agent Mesh</div><div class="layer-tag">ADAPTIVE · SUPERVISED</div></div>
+        <div class="layer-desc"><p>Task-specialized agents — intake, extraction, drafting, verification, reconciliation — coordinated under a supervisor that enforces scope and hands off between steps. Agents adapt to document and case variety; they do not adapt their own authority. Capability is granted, never assumed.</p><div class="layer-chips"><span class="chip">role-scoped</span><span class="chip">tool-gated</span><span class="chip">human handoff</span></div></div>
+      </div>
+      <div class="layer">
+        <div><div class="layer-name">Verification Fabric</div><div class="layer-tag">IDENTITY · PROVENANCE</div></div>
+        <div class="layer-desc"><p>Establishes who a counterparty is and where a document came from before either is trusted. Identity checks run against registry and sanctions sources; provenance binds every artifact to its origin and custody path. Unverified inputs are quarantined, not consumed.</p><div class="layer-chips"><span class="chip">registry checks</span><span class="chip">chain-of-custody</span><span class="chip">quarantine-on-doubt</span></div></div>
+      </div>
+      <div class="layer">
+        <div><div class="layer-name">Secure Control Plane</div><div class="layer-tag">ZERO-TRUST · LEAST-PRIVILEGE</div></div>
+        <div class="layer-desc"><p>The API and access boundary. Every call is authenticated, scoped, and rate-bounded; secrets live in the runtime, never in the repository; deployments run in a safe mock mode until live credentials are explicitly provisioned. Canadian-hosted deployment is available.</p><div class="layer-chips"><span class="chip">authn per call</span><span class="chip">secrets at runtime</span><span class="chip">mock-mode default</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST & VERIFICATION -->
+<section class="sect sect-off" id="trust">
+  <div class="container">
+    <div class="sh rv">
+      <div class="sh-tag gold">TRUST &amp; VERIFICATION</div>
+      <h2>Proof is the <strong>product</strong></h2>
+      <p>In regulated work, the output is only as valuable as your ability to defend it. ClearGlass is built so that every consequential result arrives with the evidence, identity, and authority that justify it — already assembled.</p>
+    </div>
+    <div class="trust-grid">
+      <div class="trust-card rv">
+        <div class="trust-ico">🔐</div>
+        <h3>Identity verification</h3>
+        <p>No counterparty is trusted on assertion alone. Suppliers and signatories are verified against authoritative sources before they enter a workflow.</p>
+        <div class="trust-list">
+          <div class="trust-li">Registry, sanctions, and debarment screening</div>
+          <div class="trust-li">Beneficial-ownership and authority-to-sign checks</div>
+          <div class="trust-li">Unverifiable identities held for human review</div>
+        </div>
+      </div>
+      <div class="trust-card rv">
+        <div class="trust-ico">⛓️</div>
+        <h3>Evidence-chain integrity</h3>
+        <p>Every artifact is hashed, timestamped, and linked to its origin and custody path, producing a record that reveals tampering rather than hiding it.</p>
+        <div class="trust-list">
+          <div class="trust-li">Hash-linked, append-only event history</div>
+          <div class="trust-li">Provenance bound to every document and decision</div>
+          <div class="trust-li">Redactions logged, never silently applied</div>
+        </div>
+      </div>
+      <div class="trust-card rv">
+        <div class="trust-ico">📑</div>
+        <h3>Auditability &amp; disclosure</h3>
+        <p>The full decision record — what happened, by whom, on what evidence, under which control — can be reconstructed and exported on demand.</p>
+        <div class="trust-list">
+          <div class="trust-li">Actor, timestamp, and risk score on every action</div>
+          <div class="trust-li">Litigation-hold and FOI record assembly</div>
+          <div class="trust-li">Export to GRC, records, and finance systems</div>
+        </div>
+      </div>
+      <div class="trust-card rv">
+        <div class="trust-ico">🛡️</div>
+        <h3>Human oversight</h3>
+        <p>Automation accelerates the work; it never removes the accountable person. Consequential decisions are made by a named human, on the record.</p>
+        <div class="trust-list">
+          <div class="trust-li">Named approver on every high-risk action</div>
+          <div class="trust-li">Override, pause, and rollback at any point</div>
+          <div class="trust-li">Delegations and thresholds enforced in code</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OPERATIONAL READINESS -->
+<section class="sect sect-dark" id="readiness">
+  <div class="container">
+    <div class="sh sh-light rv">
+      <div class="sh-tag light">OPERATIONAL READINESS</div>
+      <h2>What is <strong>live</strong>, what is <strong>ready</strong>, what awaits <strong>award</strong></h2>
+      <p>We do not overstate posture. Below is an honest reading of what ships today, what is provisioned and awaiting your credentials, and what activates on contract. Some steps require a human — by law and by design.</p>
+    </div>
+    <div class="ready-grid rv">
+      <div class="ready-card">
+        <div class="ready-status" style="color:#4ade80"><span class="dot dot-live"></span>LIVE TODAY</div>
+        <h3>Governed automation engine</h3>
+        <p>Risk scoring, three-tier routing, append-only audit ledger, and the daily governance self-check run now. High-risk paths are blocked pending approval out of the box.</p>
+      </div>
+      <div class="ready-card">
+        <div class="ready-status" style="color:#4ade80"><span class="dot dot-live"></span>LIVE TODAY</div>
+        <h3>Drafting, extraction &amp; reconciliation</h3>
+        <p>Intake, requirement extraction, clause assembly, and three-way reconciliation are operational against connected data, with provenance captured on every artifact.</p>
+      </div>
+      <div class="ready-card">
+        <div class="ready-status" style="color:#60a5fa"><span class="dot dot-ready"></span>READY · AWAITING CONNECTION</div>
+        <h3>Systems-of-record integration</h3>
+        <p>Connectors for finance, GRC, and records systems are built and run in safe mock mode until you provision live credentials and scopes. Canadian data residency available.</p>
+      </div>
+      <div class="ready-card">
+        <div class="ready-status" style="color:#60a5fa"><span class="dot dot-ready"></span>READY · AWAITING CONNECTION</div>
+        <h3>Identity &amp; sanctions screening</h3>
+        <p>Verification fabric is in place; live registry and sanctions feeds activate on your API entitlements. Until then, screening runs against provided reference data.</p>
+      </div>
+      <div class="ready-card">
+        <div class="ready-status" style="color:var(--gold-2)"><span class="dot dot-award"></span>ON AWARD</div>
+        <h3>Personnel security clearance</h3>
+        <p>Clearance application is prepared and submitted upon contract award, per Canadian procurement practice. Cleared-environment deployment follows the sponsoring authority's process.</p>
+      </div>
+      <div class="ready-card">
+        <div class="ready-status" style="color:var(--gold-2)"><span class="dot dot-award"></span>ON AWARD</div>
+        <h3>Formal accreditation &amp; ATO</h3>
+        <p>Control documentation is maintained against ITSG-33 / NIST SP 800-53 baselines and packaged for the authorizing body's assessment. Accreditation is granted by the authority, not asserted by us.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="sect sect-dark" id="contact">
+  <div class="container">
+    <div class="sh sh-light rv">
+      <div class="sh-tag light">SECURE CONTACT</div>
+      <h2>Request an <strong>operator briefing</strong></h2>
+      <p style="color:rgba(255,255,255,.5)">Speak directly with Desmond Otieno, Founder &amp; Systems Architect, for procurement documentation, a governed demonstration against representative data, and partnership discussions. NDA execution available before any detailed briefing.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-card rv">
+        <h3>Procurement &amp; Legal-Ops Liaison</h3>
+        <p>All inquiries route directly to the founder. Secure communications available. We can execute a mutual NDA prior to a working demonstration of the governed control path.</p>
+        <div class="contact-items">
+          <div class="contact-item">
+            <span class="ci-icon">📧</span>
+            <div><div class="ci-label">PRIMARY EMAIL</div><div class="ci-val"><a href="mailto:desmondotieno@icloud.com">desmondotieno@icloud.com</a></div></div>
+          </div>
+          <div class="contact-item">
+            <span class="ci-icon">📞</span>
+            <div><div class="ci-label">DIRECT LINE</div><div class="ci-val"><a href="tel:+12897070269">+1 (289) 707-0269</a></div></div>
+          </div>
+          <div class="contact-item">
+            <span class="ci-icon">📍</span>
+            <div><div class="ci-label">OPERATIONS CENTER</div><div class="ci-val">Burlington, Ontario, Canada</div></div>
+          </div>
+          <div class="contact-item">
+            <span class="ci-icon">🔒</span>
+            <div><div class="ci-label">SECURE CHANNEL</div><div class="ci-val">NDA execution available · Signal on request</div></div>
+          </div>
+        </div>
+        <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap">
+          <a href="mailto:desmondotieno@icloud.com?subject=Operator%20Briefing%20Request%20-%20Procurement%20%26%20Legal-Tech" class="btn btn-gold">Request Briefing →</a>
+          <a href="legal/nda.html" class="btn btn-outline">Review NDA Template</a>
+        </div>
+      </div>
+      <div class="info-card rv">
+        <h3>Procurement Reference Information</h3>
+        <div class="info-list">
+          <div class="info-item"><div class="il-label">COMPANY NAME</div><div class="il-val">ClearGlass Inc.</div></div>
+          <div class="info-item"><div class="il-label">INCORPORATION</div><div class="il-val">Ontario, Canada — Business Corporations Act</div></div>
+          <div class="info-item"><div class="il-label">LEGAL STRUCTURE</div><div class="il-val">Canadian-controlled private corporation</div></div>
+          <div class="info-item"><div class="il-label">PRIMARY NAICS (CA)</div><div class="il-val">541510 — Computer Systems Design &amp; Related Services</div></div>
+          <div class="info-item"><div class="il-label">PRIMARY NAICS (US)</div><div class="il-val">541519 — Other Computer Related Services</div></div>
+          <div class="info-item"><div class="il-label">DATA RESIDENCY</div><div class="il-val">Canadian-hosted deployment available · US GovCloud roadmap active</div></div>
+          <div class="info-item"><div class="il-label">SYSTEMS ARCHITECT</div><div class="il-val">Desmond Otieno — Founder &amp; Systems Architect</div></div>
+          <div class="info-item"><div class="il-label">DOCUMENTATION</div><div class="il-val">
+            <a href="operations/procurement-readiness.html" style="color:var(--gold-2)">Procurement Readiness Pack →</a><br>
+            <a href="operations/federal-supplier-handoff.html" style="color:var(--gold-2)">Federal Supplier Registration →</a><br>
+            <a href="legal/nda.html" style="color:var(--gold-2)">NDA Template →</a>
+          </div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="gov-footer">
+  <div class="container">
+    <div class="gf-inner">
+      <div><div class="gf-brand">ClearGlass <em>Inc.</em> — Procurement &amp; Legal-Tech</div></div>
+      <nav class="gf-links" aria-label="Footer navigation">
+        <a href="index.html">Home</a>
+        <a href="government.html">Government</a>
+        <a href="operations/procurement-readiness.html">Readiness</a>
+        <a href="legal/">Legal</a>
+        <a href="mailto:desmondotieno@icloud.com">Contact</a>
+      </nav>
+      <div class="gf-copy">
+        © <span id="pltYear"></span> ClearGlass Inc. All rights reserved. Burlington, Ontario, Canada ·
+        Architected by <span class="gf-sig">Desmond Otieno — Founder &amp; Systems Architect</span>.<br>
+        Capabilities shown are for authorized evaluation. Classification markings are structural references only — no classified information is contained herein.
+        Readiness states reflect an honest posture: items marked “on award” require a sponsoring authority and human credentials.
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="unclass-banner">UNCLASSIFIED / NON-CLASSIFIÉ — END OF DOCUMENT · IMPRINT: DESMOND OTIENO</div>
+
+<script>
+document.getElementById('pltYear').textContent = new Date().getFullYear();
+var rvEls = document.querySelectorAll('.rv');
+var rvObs = new IntersectionObserver(function(entries){
+  entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('vis'); });
+},{threshold:.1,rootMargin:'0px 0px -20px 0px'});
+rvEls.forEach(function(el){ rvObs.observe(el); });
+</script>
+<script defer src="control-surface.js"></script>
+  <script defer src="ui.js"></script>
+  <script defer src="platform.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="legal/index.html">Legal, Tax &amp; Compliance</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="tax.html"><span><b>Previous</b>ClearTax AI</span></a>
+      <a href="legal/index.html"><span><b>Topic hub</b>Legal Infrastructure</span></a>
+      <a href="legal/ai-liability.html"><span><b>Next in journey</b>AI Liability Framework</span></a>
+    </div>
+    <ul>
+      <li><a href="government.html"><b>Government Solutions</b> — federal and public-sector systems</a></li>
+      <li><a href="blog/master-investigator-legal-tech-osint-government-accountability.html"><b>Master Investigator</b> — legal-tech OSINT for government accountability</a></li>
+      <li><a href="legal/ai-liability.html"><b>AI Liability Framework</b> — how ClearGlass governs AI risk</a></li>
+      <li><a href="legal/legal-council.html"><b>AI Legal Council Framework</b> — structured multi-advisor legal review</a></li>
+      <li><a href="legal/privacy.html"><b>Privacy Policy</b> — how ClearGlass handles data</a></li>
+      <li><a href="legal/terms.html"><b>Terms of Service</b> — the terms governing ClearGlass services</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="offers/index.html">Browse services &amp; engagements</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

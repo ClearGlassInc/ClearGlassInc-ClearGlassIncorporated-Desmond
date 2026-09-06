@@ -1,0 +1,552 @@
+/* ClearGlass · advanced interaction layer — gives every button and link a
+   modern, tactile, accessible feel. Collision-free by design: it only sets
+   properties pages rarely define (transform/filter/box-shadow on hover,
+   :focus-visible rings, animated underlines on unclassed links) and never
+   touches ::before/::after on buttons (some pages already use those), so it
+   layers on top of bespoke styles without breaking them.
+
+   Palette ties to the homepage: blue #60a5fa → violet #a78bfa, indigo glow. */
+
+/* ── smooth, hardware-friendly transitions on all controls ───────────────── */
+:where(a, button, [role="button"], .btn, .cta, .button,
+       input[type="submit"], input[type="button"], input[type="reset"], summary) {
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .18s cubic-bezier(.16,1,.3,1),
+              box-shadow .25s ease, filter .25s ease,
+              background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+
+/* ── universal accessible focus ring (keyboard) ──────────────────────────── */
+:where(a, button, [role="button"], .btn, .cta, .button,
+       input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--accent, #60a5fa) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(124,150,255,.28) !important;
+  border-radius: inherit;
+}
+
+/* ── buttons: lift + aurora glow on hover, crisp press on active ─────────── */
+@media (hover: hover) {
+  button:hover, [role="button"]:hover, .btn:hover, .cta:hover, .button:hover,
+  input[type="submit"]:hover, input[type="button"]:hover,
+  a.btn:hover, a.cta:hover, a.button:hover {
+    transform: translateY(-2px);
+    filter: saturate(1.12) brightness(1.06);
+    box-shadow: 0 8px 24px -8px rgba(96,165,250,.55),
+                0 2px 8px -2px rgba(167,139,250,.45),
+                0 0 0 1px rgba(124,150,255,.28),
+                inset 0 1px 0 rgba(255,255,255,.10);
+    will-change: transform;
+  }
+}
+button:active, [role="button"]:active, .btn:active, .cta:active, .button:active,
+input[type="submit"]:active, a.btn:active, a.cta:active, a.button:active {
+  transform: translateY(0) scale(.972);
+  filter: brightness(.97);
+}
+button:disabled, [role="button"][aria-disabled="true"], .btn:disabled,
+.btn[disabled], input:disabled {
+  transform: none !important; filter: none !important;
+  box-shadow: none !important; cursor: not-allowed; opacity: .55;
+}
+
+/* ── plain content links: animated blue→violet underline that grows ──────── */
+a:not([class]):not([href^="#cg"]) {
+  text-decoration: none;
+  background-image: linear-gradient(90deg, var(--accent, #60a5fa), var(--accent-2, #a78bfa));
+  background-size: 0% 2px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  padding-bottom: 1px;
+  transition: background-size .3s cubic-bezier(.16,1,.3,1), color .2s ease, text-shadow .2s ease;
+}
+@media (hover: hover) {
+  a:not([class]):not([href^="#cg"]):hover {
+    background-size: 100% 2px;
+    color: var(--accent, #60a5fa);
+    text-shadow: 0 0 14px rgba(96,165,250,.45);
+  }
+}
+a:not([class]):focus-visible { background-size: 100% 2px; }
+
+/* ── our own nav menu manages its own effects; keep this layer off it ────── */
+#cg-nav a, #cg-nav button { box-shadow: none; }
+#cg-nav a:hover, #cg-nav button:hover { transform: none; filter: none; box-shadow: none; }
+
+/* ── click ripple (driven by ui.js) ──────────────────────────────────────── */
+.cg-ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(167,139,250,.45), rgba(96,165,250,.18) 60%, transparent 70%);
+  animation: cg-ripple .62s cubic-bezier(.22,.61,.36,1) forwards;
+  z-index: 0;
+  mix-blend-mode: screen;
+}
+@keyframes cg-ripple {
+  to { transform: scale(2.4); opacity: 0; }
+}
+
+/* ── pointer spotlight (driven by ui.js) — subtle ambient blue-violet glow ── */
+#cg-spotlight {
+  position: fixed; inset: 0; z-index: 2147483000;
+  pointer-events: none; opacity: 0;
+  transition: opacity .45s ease;
+  background: radial-gradient(280px circle at var(--cg-x, -100px) var(--cg-y, -100px),
+              rgba(124,150,255,.08), rgba(167,139,250,.04) 40%, transparent 62%);
+}
+
+/* ── Neon pulse system ─────────────────────────────────────────────────
+   Reusable, composited lighting primitives. Add .cg-neon-surface to a panel,
+   .cg-neon-action to a focal control, or .cg-neon-divider to a separator.
+   The homepage selectors below integrate the same treatment without changing
+   its content, structure, or interaction model. */
+:root {
+  --cg-neon-cyan: 34, 211, 238;
+  --cg-neon-blue: 96, 165, 250;
+  --cg-neon-violet: 167, 139, 250;
+  --cg-neon-magenta: 244, 114, 182;
+  --cg-neon-speed: 6.8s;
+}
+
+.cg-neon-surface,
+.cg-neon-action,
+.cg-neon-divider {
+  position: relative;
+  isolation: isolate;
+}
+
+.cg-neon-surface::before,
+.cg-neon-action::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -2px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(115deg,
+    rgba(var(--cg-neon-cyan), .7),
+    rgba(255, 255, 255, .32) 27%,
+    rgba(var(--cg-neon-violet), .7) 56%,
+    rgba(var(--cg-neon-magenta), .5));
+  filter: blur(11px);
+  opacity: .3;
+  transform: scale(.99);
+  animation: cg-neon-breathe var(--cg-neon-speed) ease-in-out infinite;
+}
+
+.cg-neon-surface {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.22),
+              0 0 0 1px rgba(var(--cg-neon-cyan),.16),
+              0 14px 42px -24px rgba(var(--cg-neon-violet),.55);
+}
+
+.cg-neon-action {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.24),
+              0 0 0 1px rgba(var(--cg-neon-cyan),.28),
+              0 0 22px rgba(var(--cg-neon-blue),.22),
+              0 12px 34px -18px rgba(var(--cg-neon-magenta),.65);
+}
+
+.cg-neon-divider::after {
+  content: "";
+  position: absolute;
+  left: 8%; right: 8%; bottom: -1px;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent,
+    rgba(var(--cg-neon-cyan),.75), rgba(255,255,255,.72),
+    rgba(var(--cg-neon-violet),.7), transparent);
+  box-shadow: 0 0 10px rgba(var(--cg-neon-cyan),.4),
+              0 0 22px rgba(var(--cg-neon-violet),.24);
+  animation: cg-neon-shimmer 8s ease-in-out infinite;
+}
+
+/* Homepage integration: focal surfaces only, keeping the light canvas and
+   typography crisp while concentrating bloom around interactive landmarks. */
+body:has(.hero-prism) .nav::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -2px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(105deg,
+    rgba(var(--cg-neon-cyan),.72), transparent 28%,
+    rgba(var(--cg-neon-violet),.58) 68%, rgba(var(--cg-neon-magenta),.5));
+  filter: blur(12px);
+  opacity: .2;
+  animation: cg-neon-breathe 7.5s ease-in-out infinite;
+}
+
+body:has(.hero-prism) .nav { isolation: isolate; }
+
+body:has(.hero-prism) .hero-profile {
+  box-shadow: 0 18px 44px rgba(0,0,0,.18),
+              0 0 0 1px rgba(255,255,255,.78),
+              0 0 24px rgba(var(--cg-neon-cyan),.2),
+              0 0 54px rgba(var(--cg-neon-violet),.14);
+}
+
+body:has(.hero-prism) :is(.btn-crystal, .nav-cta, .primary-btn) {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.24),
+              0 0 0 1px rgba(var(--cg-neon-cyan),.24),
+              0 0 20px rgba(var(--cg-neon-blue),.28),
+              0 10px 34px -12px rgba(var(--cg-neon-violet),.62);
+  animation: cg-neon-action-pulse 5.6s ease-in-out infinite;
+}
+
+body:has(.hero-prism) :is(.tech-card, .product-card, .connect-card,
+  .founder-card, .credentials-card, .signup-card, .catalog-card) {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12),
+              0 0 0 1px rgba(var(--cg-neon-cyan),.08),
+              0 16px 46px -32px rgba(var(--cg-neon-violet),.55);
+}
+
+@media (hover: hover) {
+  body:has(.hero-prism) :is(.tech-card, .product-card, .connect-card,
+    .founder-card, .credentials-card, .signup-card, .catalog-card):hover {
+    border-color: rgba(var(--cg-neon-cyan),.3);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.2),
+                0 0 0 1px rgba(var(--cg-neon-cyan),.18),
+                0 0 26px rgba(var(--cg-neon-cyan),.12),
+                0 18px 52px -28px rgba(var(--cg-neon-violet),.58);
+  }
+}
+
+body:has(.hero-prism) :is(.mission-strip, .tl-item, .cta-sect) {
+  border-image: linear-gradient(90deg, transparent,
+    rgba(var(--cg-neon-cyan),.42), rgba(var(--cg-neon-violet),.38), transparent) 1;
+}
+
+@keyframes cg-neon-breathe {
+  0%, 100% { opacity: .18; transform: scale(.99); }
+  50% { opacity: .48; transform: scale(1.012); }
+}
+
+@keyframes cg-neon-action-pulse {
+  0%, 100% { filter: saturate(1); }
+  50% { filter: saturate(1.12) brightness(1.04); }
+}
+
+@keyframes cg-neon-shimmer {
+  0%, 100% { opacity: .45; transform: scaleX(.88); }
+  50% { opacity: .92; transform: scaleX(1); }
+}
+
+
+
+/* ── Artemis command-interface atmosphere ──────────────────────────────────
+   Additive cyberpunk layer: neon edge lighting, glass refraction, scan lines,
+   orbital bloom, and precision microinteractions without removing content. */
+.cg-command-atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: .78;
+  mix-blend-mode: screen;
+}
+.cg-command-atmosphere::before,
+.cg-command-atmosphere::after {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  background:
+    radial-gradient(circle at var(--cg-orbit-x, 18%) var(--cg-orbit-y, 24%), rgba(var(--cg-cyber-cyan, 34,211,238), .18), transparent 24%),
+    radial-gradient(circle at 78% 18%, rgba(var(--cg-cyber-magenta, 244,114,182), .14), transparent 26%),
+    radial-gradient(circle at 50% 88%, rgba(var(--cg-cyber-violet, 167,139,250), .16), transparent 32%);
+  filter: blur(10px);
+  animation: cg-orbital-drift 18s ease-in-out infinite alternate;
+}
+.cg-command-atmosphere::after {
+  inset: 0;
+  background: var(--cg-cyber-grid), var(--cg-cyber-scanline);
+  background-size: 44px 44px, 44px 44px, auto;
+  opacity: .22;
+  filter: none;
+  animation: cg-scan-drift 10s linear infinite;
+}
+
+.cg-holo-shimmer,
+.cg-neon-card,
+.cg-signal-active {
+  position: relative;
+  isolation: isolate;
+}
+
+.cg-holo-shimmer::after,
+.cg-neon-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  padding: 1px;
+  background: var(--cg-cyber-edge);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: .42;
+  transition: opacity .28s var(--cg-cyber-ease), filter .28s var(--cg-cyber-ease);
+}
+
+.cg-holo-shimmer::before,
+.cg-neon-card::before {
+  content: "";
+  position: absolute;
+  inset: -35%;
+  z-index: -1;
+  pointer-events: none;
+  background: conic-gradient(from 140deg, transparent, rgba(var(--cg-cyber-cyan, 34,211,238), .18), transparent 28%, rgba(var(--cg-cyber-magenta, 244,114,182), .14), transparent 58%, rgba(var(--cg-cyber-violet, 167,139,250), .16), transparent);
+  filter: blur(24px);
+  opacity: .2;
+  animation: cg-halo-rotate 16s linear infinite;
+}
+
+.cg-signal-active::before {
+  content: "";
+  display: inline-block;
+  width: .58em;
+  height: .58em;
+  margin-right: .55em;
+  border-radius: 999px;
+  background: rgb(var(--cg-cyber-mint, 52,211,153));
+  box-shadow: 0 0 10px rgba(var(--cg-cyber-mint, 52,211,153), .8), 0 0 24px rgba(var(--cg-cyber-cyan, 34,211,238), .42);
+  animation: cg-signal-pulse 1.8s ease-in-out infinite;
+}
+
+:is(.nav, .navbar, header nav, #cg-nav, .mobile-menu) {
+  --cg-nav-bloom: 0 0 0 1px rgba(var(--cg-cyber-cyan, 34,211,238), .16), 0 0 30px rgba(var(--cg-cyber-cyan, 34,211,238), .11), 0 0 60px rgba(var(--cg-cyber-violet, 167,139,250), .10);
+}
+:is(.nav, .navbar, header nav, #cg-nav) {
+  box-shadow: var(--cg-nav-bloom), 0 18px 52px rgba(3, 7, 18, .12);
+}
+
+:is(.hero, .hero-section, .masthead, main > section:first-of-type) {
+  position: relative;
+  isolation: isolate;
+}
+:is(.hero, .hero-section, .masthead, main > section:first-of-type)::after {
+  content: "";
+  position: absolute;
+  inset: 4% 3%;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: clamp(28px, 6vw, 84px);
+  background:
+    radial-gradient(circle at 20% 20%, rgba(var(--cg-cyber-cyan, 34,211,238), .16), transparent 28%),
+    radial-gradient(circle at 82% 16%, rgba(var(--cg-cyber-magenta, 244,114,182), .12), transparent 30%),
+    radial-gradient(circle at 54% 76%, rgba(var(--cg-cyber-violet, 167,139,250), .14), transparent 34%);
+  filter: blur(24px);
+  opacity: .72;
+  animation: cg-neon-breathe var(--cg-cyber-pulse, 7.2s) ease-in-out infinite;
+}
+
+:is(.card, .panel, .tile, .tech-card, .product-card, .connect-card, .value-card,
+  .founder-card, .credentials-card, .signup-card, .catalog-card, .dcard, .console,
+  .stat, .stat-card, .metric, .kpi, .feature-card, .data-panel) {
+  position: relative;
+  isolation: isolate;
+  transition: transform .28s var(--cg-cyber-ease), border-color .28s var(--cg-cyber-ease), box-shadow .28s var(--cg-cyber-ease), filter .28s var(--cg-cyber-ease);
+}
+:is(.card, .panel, .tile, .tech-card, .product-card, .connect-card, .value-card,
+  .founder-card, .credentials-card, .signup-card, .catalog-card, .dcard, .console,
+  .stat, .stat-card, .metric, .kpi, .feature-card, .data-panel)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(255,255,255,.16), transparent 34%, rgba(var(--cg-cyber-cyan, 34,211,238), .08) 52%, transparent 72%, rgba(var(--cg-cyber-magenta, 244,114,182), .08));
+  opacity: 0;
+  transition: opacity .28s var(--cg-cyber-ease);
+}
+@media (hover: hover) {
+  :is(.card, .panel, .tile, .tech-card, .product-card, .connect-card, .value-card,
+    .founder-card, .credentials-card, .signup-card, .catalog-card, .dcard, .console,
+    .stat, .stat-card, .metric, .kpi, .feature-card, .data-panel):hover {
+    transform: translateY(-4px);
+    border-color: rgba(var(--cg-cyber-cyan, 34,211,238), .34) !important;
+    box-shadow: var(--cg-cyber-halo), 0 20px 58px rgba(2, 6, 23, .14);
+  }
+  :is(.card, .panel, .tile, .tech-card, .product-card, .connect-card, .value-card,
+    .founder-card, .credentials-card, .signup-card, .catalog-card, .dcard, .console,
+    .stat, .stat-card, .metric, .kpi, .feature-card, .data-panel):hover::after { opacity: .82; }
+  :is(a, button, [role="button"], .btn, .cta, .button):hover {
+    text-shadow: 0 0 16px rgba(var(--cg-cyber-cyan, 34,211,238), .26);
+  }
+}
+
+:is(.btn, .cta, .button, button, [role="button"], input[type="submit"], .nav-cta):focus-visible {
+  box-shadow: 0 0 0 3px rgba(255,255,255,.86), 0 0 0 6px rgba(var(--cg-cyber-cyan, 34,211,238), .46), var(--cg-cyber-halo) !important;
+}
+
+:is(.sh-tag, .eyebrow, .badge, .pill, .tag, .chip, .tc-tags span, .pc-era, .hero-year) {
+  text-shadow: 0 0 14px rgba(var(--cg-cyber-cyan, 34,211,238), .22);
+}
+
+@keyframes cg-orbital-drift {
+  0% { transform: translate3d(-1.5%, -1%, 0) rotate(0deg) scale(1); opacity: .58; }
+  100% { transform: translate3d(1.5%, 1%, 0) rotate(2deg) scale(1.05); opacity: .9; }
+}
+@keyframes cg-scan-drift {
+  from { transform: translateY(0); }
+  to { transform: translateY(44px); }
+}
+@keyframes cg-halo-rotate {
+  to { transform: rotate(360deg); }
+}
+@keyframes cg-signal-pulse {
+  0%, 100% { transform: scale(1); opacity: .78; }
+  50% { transform: scale(1.22); opacity: 1; }
+}
+
+/* ── magnetic-capable controls get a snappier transform curve ─────────────── */
+.cg-magnetic { transition: transform .22s cubic-bezier(.16,1,.3,1), box-shadow .25s ease, filter .25s ease !important; }
+
+/* ── SMB Cyber Trust Kit: surgical enhancement layer ───────────────────────
+   Page-scoped with :has(#kit-fallback), so no other ClearGlass page changes.
+   The legacy local .bar is hidden because the global ClearGlass navigation
+   already provides the site header. Nothing is deleted from the document. */
+body:has(#kit-fallback) > header.bar {
+  display: none !important;
+}
+
+body:has(#kit-fallback) {
+  --smb-neon-cyan: rgba(56, 189, 248, .78);
+  --smb-neon-violet: rgba(167, 139, 250, .72);
+  --smb-neon-pink: rgba(244, 114, 182, .52);
+}
+
+body:has(#kit-fallback) .hero {
+  position: relative;
+  isolation: isolate;
+}
+
+body:has(#kit-fallback) .hero::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 2% 8% 8%;
+  pointer-events: none;
+  border-radius: 48px;
+  background:
+    radial-gradient(circle at 24% 22%, rgba(56,189,248,.22), transparent 34%),
+    radial-gradient(circle at 76% 28%, rgba(167,139,250,.22), transparent 36%),
+    radial-gradient(circle at 50% 78%, rgba(244,114,182,.12), transparent 42%);
+  filter: blur(28px);
+  animation: smb-neon-breathe 7s ease-in-out infinite alternate;
+}
+
+body:has(#kit-fallback) .hero .eyebrow {
+  box-shadow:
+    0 0 0 1px rgba(56,189,248,.12),
+    0 0 20px rgba(56,189,248,.28),
+    0 0 42px rgba(167,139,250,.16),
+    inset 0 0 18px rgba(255,255,255,.16);
+}
+
+body:has(#kit-fallback) .hero h1 .g {
+  filter: drop-shadow(0 0 10px rgba(56,189,248,.32))
+          drop-shadow(0 0 22px rgba(167,139,250,.22));
+}
+
+body:has(#kit-fallback) :is(.card, .dcard, .console, .closer) {
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 16px 46px rgba(15,23,42,.10),
+    0 0 0 1px rgba(255,255,255,.48),
+    0 0 28px rgba(56,189,248,.10),
+    0 0 48px rgba(167,139,250,.07);
+}
+
+body:has(#kit-fallback) :is(.card, .dcard, .console, .closer)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(125deg,
+    rgba(56,189,248,.72),
+    rgba(255,255,255,.20) 24%,
+    rgba(167,139,250,.70) 52%,
+    rgba(244,114,182,.42) 74%,
+    rgba(52,211,153,.50));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: .5;
+}
+
+@media (hover: hover) {
+  body:has(#kit-fallback) :is(.card, .dcard, .console, .closer):hover {
+    box-shadow:
+      0 20px 58px rgba(15,23,42,.14),
+      0 0 0 1px rgba(255,255,255,.62),
+      0 0 34px rgba(56,189,248,.22),
+      0 0 64px rgba(167,139,250,.16);
+  }
+}
+
+body:has(#kit-fallback) .btn.primary,
+body:has(#kit-fallback) .cinput button,
+body:has(#kit-fallback) .console .av {
+  box-shadow:
+    0 0 18px rgba(56,189,248,.38),
+    0 0 34px rgba(167,139,250,.26),
+    0 12px 32px -12px rgba(96,165,250,.68);
+}
+
+body:has(#kit-fallback) .cell.sel {
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,.92),
+    0 0 18px currentColor,
+    0 0 34px rgba(167,139,250,.30);
+}
+
+body:has(#kit-fallback) .clive i,
+body:has(#kit-fallback) .eyebrow .dot {
+  animation: smb-status-pulse 2.1s ease-in-out infinite;
+}
+
+@keyframes smb-neon-breathe {
+  from { opacity: .72; transform: scale(.985); }
+  to   { opacity: 1; transform: scale(1.025); }
+}
+
+@keyframes smb-status-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 8px currentColor; }
+  50% { transform: scale(1.18); box-shadow: 0 0 18px currentColor, 0 0 30px rgba(56,189,248,.35); }
+}
+
+/* ── respect reduced-motion preferences ──────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  :where(a, button, [role="button"], .btn, .cta, .button, input, summary) {
+    transition: none !important;
+  }
+  button:hover, [role="button"]:hover, .btn:hover, .cta:hover, .button:hover,
+  a.btn:hover, a.cta:hover, a.button:hover { transform: none !important; }
+  .cg-ripple { display: none !important; }
+  #cg-spotlight { display: none !important; }
+  body:has(#kit-fallback) .hero::before,
+  .cg-command-atmosphere::before,
+  .cg-command-atmosphere::after,
+  .cg-holo-shimmer::before,
+  .cg-neon-card::before,
+  .cg-signal-active::before,
+  :is(.hero, .hero-section, .masthead, main > section:first-of-type)::after,
+  body:has(#kit-fallback) .clive i,
+  body:has(#kit-fallback) .eyebrow .dot,
+  .cg-neon-surface::before,
+  .cg-neon-action::before,
+  .cg-neon-divider::after,
+  body:has(.hero-prism) .nav::before,
+  body:has(.hero-prism) :is(.btn-crystal, .nav-cta, .primary-btn) {
+    animation: none !important;
+  }
+}

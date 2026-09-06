@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" data-mission-theme="glass">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#090712">
+  <title>Mission Control | ClearGlass Inc.</title>
+  <meta name="description" content="ClearGlass Inc. Mission Control — operational portfolio for AI automation, cyber defense, deployments, engineering systems and autonomous workflows.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Urbanist:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/mission-control.css">
+</head>
+<body>
+  <a class="skip-link" href="#mission-gallery">Skip to missions</a>
+
+  <header class="mc-hero" id="command-deck">
+    <div class="mc-hero__grid" aria-hidden="true"></div>
+    <div class="mc-hero__noise" aria-hidden="true"></div>
+    <div class="mc-hero__scan" aria-hidden="true"></div>
+    <div class="mc-shell mc-hero__content">
+      <div class="mc-topline">
+        <a class="mc-brand" href="./" aria-label="Return to ClearGlass Inc. homepage">CLEARGLASS INC. // MISSION CONTROL</a>
+        <button class="mc-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to light technical theme">
+          <span aria-hidden="true">◐</span><span class="mc-theme-toggle__label">LIGHT TECHNICAL</span>
+        </button>
+      </div>
+      <div class="mc-status"><span class="mc-status__dot" aria-hidden="true"></span> ACTIVE OPERATIONS</div>
+      <p class="mc-kicker">OPERATIONAL PORTFOLIO // AI • CYBER • AUTOMATION • DEPLOYMENT</p>
+      <h1>Engineering missions.<br><span>Measured outcomes.</span></h1>
+      <p class="mc-hero__lede">A cinematic operating record of ClearGlass systems, deployments, cyber-defense work and autonomous engineering workflows.</p>
+      <div class="mc-hero__actions">
+        <a class="mc-button mc-button--primary" href="#mission-gallery">Open Mission Grid</a>
+        <a class="mc-button" href="#mission-timeline">View Timeline</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="mc-analytics" aria-label="Mission analytics">
+      <div class="mc-shell mc-analytics__grid" id="mission-metrics"></div>
+    </section>
+
+    <section class="mc-section" id="mission-gallery">
+      <div class="mc-shell">
+        <div class="mc-section__head mc-reveal">
+          <div><p class="mc-kicker">MISSION ARCHIVE</p><h2>Operational Gallery</h2></div>
+          <p>Filter the archive by classification, operational state, year, mission title or technology.</p>
+        </div>
+
+        <form class="mc-filters mc-reveal" id="mission-filters" role="search">
+          <label>Search<input id="mission-search" type="search" placeholder="Mission or technology" autocomplete="off"></label>
+          <label>Classification<select id="classification-filter"><option value="all">All classifications</option></select></label>
+          <label>Status<select id="status-filter"><option value="all">All statuses</option></select></label>
+          <label>Year<select id="year-filter"><option value="all">All years</option></select></label>
+          <button class="mc-button mc-button--compact" type="reset">Reset</button>
+        </form>
+
+        <p class="mc-results-count" id="mission-results-count" aria-live="polite"></p>
+        <div class="mc-gallery" id="mission-grid"></div>
+        <div class="mc-empty" id="mission-empty" hidden>No missions match the current filters.</div>
+      </div>
+    </section>
+
+    <section class="mc-section mc-section--timeline" id="mission-timeline">
+      <div class="mc-shell">
+        <div class="mc-section__head mc-reveal"><div><p class="mc-kicker">MISSION TIMELINE</p><h2>Operational Milestones</h2></div><p>Selected build, deployment and hardening phases represented as an engineering progression.</p></div>
+        <div class="mc-timeline" id="mission-timeline-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <a class="mc-return" href="#command-deck" aria-label="Return to Command Deck">↑ <span>Return to Command Deck</span></a>
+
+  <dialog class="mc-modal" id="mission-modal" aria-labelledby="mission-modal-title">
+    <div class="mc-modal__panel">
+      <button class="mc-modal__close" type="button" aria-label="Close mission briefing">×</button>
+      <div id="mission-modal-content"></div>
+      <div class="mc-modal__nav">
+        <button class="mc-button" id="mission-prev" type="button">← Previous</button>
+        <button class="mc-button" id="mission-next" type="button">Next →</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="assets/js/missions.js"></script>
+  <script src="assets/js/mission-control.js"></script>
+</body>
+</html>

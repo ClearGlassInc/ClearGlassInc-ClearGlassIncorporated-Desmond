@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8">
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SMB Cyber Trust Kit — Plain-Language Cyber Resilience | ClearGlass Inc</title>
+<meta name="description" content="The ClearGlass SMB Cyber Trust Kit: a plain-language cyber resilience starter pack for small and medium businesses — simple policy templates, an interactive risk heat-map, an incident communication script, and a guide to talking about cyber risk without jargon. Powered by an on-page Trust Advisor agent.">
+<link rel="canonical" href="https://www.clearglassinc.com/smb-cyber-trust-kit.html">
+<meta property="og:title" content="SMB Cyber Trust Kit | ClearGlass Inc">
+<meta property="og:description" content="Plain-language policies, an interactive risk heat-map, an incident communication script, and a jargon-free guide — with an on-page Cyber Trust Advisor agent. Built for small and medium businesses.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.clearglassinc.com/smb-cyber-trust-kit.html">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="ui.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "ClearGlass SMB Cyber Trust Kit",
+  "description": "A plain-language cyber resilience starter pack for small and medium businesses: simple policy templates, a risk heat-map, an incident communication script, and a guide to talking about cyber risk to non-technical people.",
+  "brand": {"@type": "Brand", "name": "ClearGlass Inc."},
+  "category": "Cybersecurity",
+  "audience": {"@type": "BusinessAudience", "name": "Small and medium businesses"},
+  "url": "https://www.clearglassinc.com/smb-cyber-trust-kit.html"
+}
+</script>
+<style>
+  :root{
+    --bg:#070a14; --surf:rgba(17,22,40,.62); --surf2:rgba(12,16,32,.80); --surf3:rgba(9,12,26,.7);
+    --line:rgba(124,150,255,.15); --line2:rgba(124,150,255,.32);
+    --txt:#e7ecff; --dim:#94a0c0; --dim2:#67718f;
+    --sky:#38bdf8; --violet:#a78bfa; --pink:#f472b6; --mint:#34d399; --amber:#fbbf24;
+    --low:#34d399; --mod:#fbbf24; --high:#fb7185; --crit:#ef4444;
+    --mono:'JetBrains Mono',ui-monospace,monospace; --sans:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;color:var(--txt);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1100px 720px at 86% -10%,rgba(167,139,250,.12),transparent 55%),
+      radial-gradient(940px 680px at -8% 8%,rgba(56,189,248,.12),transparent 52%),
+      radial-gradient(800px 600px at 50% 120%,rgba(52,211,153,.08),transparent 60%),
+      var(--bg);}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  a{color:inherit}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+
+  /* top bar */
+  header.bar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:14px;
+    padding:12px 22px;border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,rgba(8,11,22,.92),rgba(8,11,22,.66));backdrop-filter:blur(16px)}
+  .bar .brand{display:flex;align-items:center;gap:11px;text-decoration:none}
+  .bar .mk{width:30px;height:30px;border-radius:8px;flex:0 0 auto;
+    background:radial-gradient(circle at 38% 32%,#bcd4ff,#6d5cf0 60%,#161038);box-shadow:0 0 16px rgba(124,150,255,.5)}
+  .bar .bt{font-weight:800;letter-spacing:.02em;font-size:15px}
+  .bar .bt b{background:var(--cg-crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .bar .bs{font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim2)}
+  .bar nav{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+  .bar nav a{font-size:12px;color:var(--dim);text-decoration:none;padding:7px 11px;border-radius:9px;
+    border:1px solid transparent;transition:.15s}
+  .bar nav a:hover{color:#fff;background:rgba(124,150,255,.1);border-color:var(--line)}
+  @media(max-width:760px){.bar nav{display:none}}
+
+  /* hero */
+  .hero{position:relative;overflow:hidden;padding:78px 0 34px;text-align:center}
+  .hero>*{position:relative;z-index:2}
+
+  /* premium cyber hero visual — deep midnight command-center backdrop */
+  .hero-fx{position:absolute;inset:-2px;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(680px 420px at 78% 20%,rgba(56,189,248,.16),transparent 62%),
+      radial-gradient(560px 420px at 20% 78%,rgba(255,45,85,.13),transparent 60%),
+      radial-gradient(900px 520px at 50% 38%,rgba(9,13,28,.0),rgba(4,6,14,.72) 78%),
+      linear-gradient(180deg,#05070f 0%,#070b1a 55%,#05070f 100%);
+    opacity:.96}
+  .hero-fx svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+  /* central legibility scrim so the headline always reads clean */
+  .hero-scrim{position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(560px 360px at 50% 46%,rgba(5,7,15,.78),rgba(5,7,15,.30) 60%,transparent 80%)}
+  .hf-grid line{stroke:rgba(124,150,255,.10);stroke-width:1}
+  .hf-mesh line{stroke:rgba(56,189,248,.28)}
+  .hf-node{fill:#7fd6ff}
+  .hf-node.r{fill:#ff6b83}
+  .hf-node-glow{fill:rgba(56,189,248,.9);filter:url(#hfGlow)}
+  .hf-node-glow.r{fill:rgba(255,80,110,.9)}
+  .hf-pulse{transform-box:fill-box;transform-origin:center;animation:hfPulse 3.2s ease-in-out infinite}
+  .hf-pulse.d1{animation-delay:.4s}.hf-pulse.d2{animation-delay:.9s}
+  .hf-pulse.d3{animation-delay:1.5s}.hf-pulse.d4{animation-delay:2.1s}.hf-pulse.d5{animation-delay:2.7s}
+  @keyframes hfPulse{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.25)}}
+  .hf-stream{fill:none;stroke-linecap:round;stroke-dasharray:6 260;
+    animation:hfStream 4.6s linear infinite}
+  .hf-stream.c{stroke:rgba(120,220,255,.85);filter:url(#hfSoft)}
+  .hf-stream.r{stroke:rgba(255,90,120,.8);filter:url(#hfSoft)}
+  .hf-stream.s1{animation-delay:0s}.hf-stream.s2{animation-delay:-1.4s}
+  .hf-stream.s3{animation-delay:-2.6s}.hf-stream.s4{animation-delay:-3.5s}
+  @keyframes hfStream{to{stroke-dashoffset:-266}}
+  .hf-shield{opacity:.9}
+  .hf-shield-plate{fill:rgba(10,16,34,.42);stroke:rgba(56,189,248,.5);stroke-width:2.2;filter:url(#hfSoft)}
+  .hf-shield-edge{fill:none;stroke:rgba(120,220,255,.9);stroke-width:1.4}
+  .hf-shield-crim{fill:none;stroke:rgba(255,70,100,.85);stroke-width:2;filter:url(#hfGlow)}
+  .hf-shield-check{fill:none;stroke:#eaf6ff;stroke-width:5.5;stroke-linecap:round;stroke-linejoin:round;
+    stroke-dasharray:70;stroke-dashoffset:70;animation:hfDraw 2.4s ease-out .3s forwards}
+  @keyframes hfDraw{to{stroke-dashoffset:0}}
+  .hf-ring{fill:none;stroke:rgba(56,189,248,.35);transform-box:fill-box;transform-origin:center;
+    animation:hfSpin 26s linear infinite}
+  .hf-ring.r2{stroke:rgba(255,70,100,.28);animation-duration:34s;animation-direction:reverse}
+  @keyframes hfSpin{to{transform:rotate(360deg)}}
+  @media(max-width:760px){.hf-shield{opacity:.55}.hero-fx{opacity:.85}}
+  @media(prefers-reduced-motion:reduce){
+    .hf-pulse,.hf-stream,.hf-ring,.hf-shield-check{animation:none}
+    .hf-shield-check{stroke-dashoffset:0}}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:10.5px;
+    letter-spacing:.2em;text-transform:uppercase;color:var(--sky);
+    border:1px solid var(--line2);border-radius:999px;padding:7px 15px;background:rgba(56,189,248,.07)}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 9px var(--mint);animation:pl 1.7s infinite}
+  @keyframes pl{50%{opacity:.4}}
+  h1{font-size:clamp(34px,6vw,60px);line-height:1.02;letter-spacing:-.02em;margin:22px 0 0;font-weight:800}
+  h1 .g{background:var(--cg-crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .lede{max-width:660px;margin:18px auto 0;color:var(--dim);font-size:clamp(15px,2.2vw,18px)}
+  .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+  .btn{display:inline-flex;align-items:center;gap:9px;font-family:var(--sans);font-weight:600;font-size:14px;
+    padding:12px 20px;border-radius:999px;text-decoration:none;cursor:pointer;border:1px solid transparent;transition:.18s}
+  .btn.primary{background:linear-gradient(100deg,var(--sky),var(--violet));color:#0a0c12;box-shadow:0 12px 34px -12px rgba(96,165,250,.7)}
+  .btn.primary:hover{transform:translateY(-2px);box-shadow:0 18px 40px -12px rgba(96,165,250,.85)}
+  .btn.ghost{background:rgba(124,150,255,.07);border-color:var(--line2);color:#dbe4ff}
+  .btn.ghost:hover{background:rgba(124,150,255,.15);color:#fff}
+
+  .deliverables{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:38px}
+  @media(max-width:820px){.deliverables{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:460px){.deliverables{grid-template-columns:1fr}}
+  .dcard{text-align:left;background:var(--surf);border:1px solid var(--line);border-radius:15px;padding:16px;
+    backdrop-filter:blur(12px);text-decoration:none;display:block;transition:.18s}
+  .dcard:hover{border-color:var(--line2);transform:translateY(-3px);background:var(--surf2)}
+  .dcard .n{font-family:var(--mono);font-size:10px;color:var(--dim2);letter-spacing:.1em}
+  .dcard .ic{font-size:21px;margin:6px 0 9px}
+  .dcard h3{margin:0 0 5px;font-size:14.5px;font-weight:700}
+  .dcard p{margin:0;font-size:12px;color:var(--dim);line-height:1.45}
+
+  /* sections */
+  section.blk{padding:42px 0;border-top:1px solid var(--line)}
+  .sec-head{display:flex;align-items:flex-end;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+  .sec-head .num{font-family:var(--mono);font-size:11px;color:var(--sky);border:1px solid var(--line2);
+    border-radius:8px;padding:4px 9px;letter-spacing:.1em}
+  .sec-head h2{margin:0;font-size:clamp(22px,3.4vw,30px);font-weight:800;letter-spacing:-.01em}
+  .sec-head p{margin:4px 0 0;color:var(--dim);font-size:13.5px;flex-basis:100%}
+
+  .card{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:20px;backdrop-filter:blur(12px)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:820px){.grid2{grid-template-columns:1fr}}
+
+  /* agent console */
+  .console{display:grid;grid-template-rows:auto 1fr auto;height:498px;
+    background:linear-gradient(180deg,var(--surf2),var(--surf3));border:1px solid var(--line2);border-radius:18px;overflow:hidden}
+  .console .chead{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line);
+    background:rgba(10,13,26,.6)}
+  .console .av{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:15px;
+    background:linear-gradient(135deg,var(--sky),var(--violet));color:#0a0c12;flex:0 0 auto}
+  .console .ct{font-weight:700;font-size:13.5px}
+  .console .cs{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim2)}
+  .console .clive{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:10.5px;color:var(--mint);font-family:var(--mono)}
+  .console .clive i{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 8px var(--mint)}
+  .log{overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:13px}
+  .msg{max-width:86%;font-size:13px;line-height:1.5;padding:11px 14px;border-radius:13px;white-space:pre-wrap;word-wrap:break-word}
+  .msg.bot{align-self:flex-start;background:rgba(124,150,255,.09);border:1px solid var(--line);border-bottom-left-radius:4px}
+  .msg.me{align-self:flex-end;background:linear-gradient(100deg,rgba(56,189,248,.20),rgba(167,139,250,.14));
+    border:1px solid var(--line2);border-bottom-right-radius:4px}
+  .msg b{color:#fff} .msg .pill{font-family:var(--mono);font-size:11px;padding:1px 7px;border-radius:6px;border:1px solid currentColor}
+  .msg code{font-family:var(--mono);font-size:12px;background:rgba(8,12,26,.6);padding:1px 5px;border-radius:5px;color:#bcd0ff}
+  .chips{display:flex;gap:7px;flex-wrap:wrap;padding:10px 14px 0}
+  .chip{font-size:11.5px;font-family:var(--mono);color:#cdd6f5;background:rgba(124,150,255,.08);
+    border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer;transition:.14s;white-space:nowrap}
+  .chip:hover{background:rgba(124,150,255,.18);color:#fff;border-color:var(--line2)}
+  .cinput{display:flex;gap:9px;padding:12px 14px;border-top:1px solid var(--line);background:rgba(10,13,26,.5)}
+  .cinput input{flex:1;background:rgba(8,12,26,.7);border:1px solid var(--line);border-radius:11px;
+    padding:11px 14px;color:#fff;font-family:var(--sans);font-size:13px;outline:0}
+  .cinput input:focus{border-color:var(--line2)}
+  .cinput button{background:linear-gradient(100deg,var(--sky),var(--violet));border:0;border-radius:11px;
+    padding:0 16px;color:#0a0c12;font-weight:700;cursor:pointer;font-size:13px}
+  .aside-note{font-size:11.5px;color:var(--dim2);margin-top:10px;line-height:1.5}
+
+  /* heat-map */
+  .hm-wrap{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center}
+  .yaxis{writing-mode:vertical-rl;transform:rotate(180deg);text-align:center;font-size:10px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--dim2);font-family:var(--mono)}
+  .grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  .cell{aspect-ratio:1.35;border-radius:10px;border:1px solid rgba(255,255,255,.10);cursor:pointer;position:relative;
+    display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:600;color:#0a0c12;
+    font-size:13px;transition:.14s;overflow:hidden}
+  .cell:hover{transform:scale(1.06);z-index:2;box-shadow:0 8px 22px rgba(0,0,0,.4)}
+  .cell.sel{outline:2px solid #fff;outline-offset:1px;z-index:3}
+  .cell .cnt{position:absolute;top:4px;right:5px;font-size:9px;background:rgba(8,12,26,.55);color:#fff;
+    border-radius:6px;padding:0 4px;line-height:1.4}
+  .xaxis{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:4px}
+  .xaxis span{text-align:center;font-size:9.5px;color:var(--dim2);font-family:var(--mono)}
+  .axis-label{text-align:center;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim2);
+    font-family:var(--mono);margin-top:7px}
+  .legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .lg{display:inline-flex;align-items:center;gap:7px;font-size:11px;color:var(--dim);font-family:var(--mono)}
+  .lg i{width:12px;height:12px;border-radius:4px}
+  .detail{min-height:120px}
+  .detail .score-big{font-size:40px;font-weight:800;line-height:1;font-family:var(--mono)}
+  .badge{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:3px 9px;
+    border-radius:999px;border:1px solid;font-weight:600}
+  .risk-li{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line)}
+  .risk-li .rid{font-family:var(--mono);font-size:10px;color:#0a0c12;border-radius:6px;padding:2px 6px;font-weight:700;flex:0 0 auto}
+  .risk-li .rt{font-size:12.5px;font-weight:600}
+  .risk-li .rn{font-size:11.5px;color:var(--dim);margin-top:1px}
+  .scorer{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:8px}
+  .scorer label{font-size:11px;color:var(--dim2);font-family:var(--mono);display:block;margin-bottom:5px;letter-spacing:.1em;text-transform:uppercase}
+  .scorer input[type=range]{width:150px;accent-color:var(--sky)}
+
+  /* policy + incident + glossary controls */
+  .selrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .seg{font-size:12px;font-family:var(--mono);color:#cdd6f5;background:rgba(124,150,255,.07);
+    border:1px solid var(--line);border-radius:9px;padding:7px 12px;cursor:pointer;transition:.14s}
+  .seg:hover{background:rgba(124,150,255,.14);color:#fff}
+  .seg.on{background:linear-gradient(100deg,rgba(56,189,248,.22),rgba(167,139,250,.12));border-color:var(--line2);color:#fff}
+  .field{display:flex;gap:9px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+  .field label{font-size:11px;color:var(--dim2);font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase}
+  .field input,.field select{background:rgba(8,12,26,.7);border:1px solid var(--line);border-radius:9px;
+    padding:9px 12px;color:#fff;font-family:var(--sans);font-size:13px;outline:0}
+  .field input:focus,.field select:focus{border-color:var(--line2)}
+  .doc{background:rgba(8,12,26,.6);border:1px solid var(--line);border-radius:13px;padding:18px;font-size:13px;line-height:1.6}
+  .doc h4{margin:0 0 8px;font-size:16px}
+  .doc .meta-line{font-family:var(--mono);font-size:11px;color:var(--dim2);margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+  .doc ol,.doc ul{margin:8px 0 0;padding-left:20px} .doc li{margin:4px 0}
+  .quote{font-family:var(--mono);font-size:12.5px;line-height:1.65;color:#dbe4ff;background:rgba(8,12,26,.7);
+    border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:13px 15px;white-space:pre-wrap}
+  .ph{color:var(--amber)}
+  .approve-flag{display:flex;gap:9px;align-items:flex-start;margin-top:12px;padding:11px 13px;border-radius:10px;
+    background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);font-size:12px;color:#ffe6ab}
+  .copybar{display:flex;gap:9px;margin-top:13px;flex-wrap:wrap}
+  .copybar button{font-size:12px;font-family:var(--mono);background:rgba(124,150,255,.08);border:1px solid var(--line);
+    border-radius:9px;padding:8px 13px;color:#cdd6f5;cursor:pointer;transition:.14s}
+  .copybar button:hover{background:rgba(124,150,255,.18);color:#fff}
+
+  .glossary{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
+  @media(max-width:680px){.glossary{grid-template-columns:1fr}}
+  .term{background:rgba(8,12,26,.55);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .term h4{margin:0 0 6px;font-size:13.5px;color:#fff}
+  .term .pl{font-size:12.5px;color:var(--dim);margin:0 0 8px}
+  .term .an{font-size:12px;color:#bcd0ff;font-style:italic;border-top:1px dashed var(--line);padding-top:8px}
+  .term .an::before{content:"🔑 ";font-style:normal}
+  .principles{list-style:none;padding:0;margin:0;counter-reset:p}
+  .principles li{counter-increment:p;position:relative;padding:9px 0 9px 38px;border-top:1px solid var(--line);font-size:13px}
+  .principles li::before{content:counter(p);position:absolute;left:0;top:8px;width:24px;height:24px;border-radius:7px;
+    display:grid;place-items:center;font-family:var(--mono);font-size:11px;color:#0a0c12;font-weight:700;
+    background:linear-gradient(135deg,var(--sky),var(--violet))}
+  .scenario{padding:13px 0;border-top:1px solid var(--line)}
+  .scenario .st{font-size:13px;font-weight:700;margin-bottom:7px}
+  .say{font-size:12.5px;padding:8px 12px;border-radius:9px;margin:5px 0}
+  .say.do{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.28)}
+  .say.dont{background:rgba(244,114,182,.07);border:1px solid rgba(244,114,182,.26);color:#f6c8df}
+
+  /* close / handoff */
+  .closer{text-align:center;background:linear-gradient(160deg,rgba(56,189,248,.10),rgba(167,139,250,.07));
+    border:1px solid var(--line2);border-radius:20px;padding:40px 24px;margin:42px 0}
+  .closer h2{font-size:clamp(22px,3.4vw,30px);margin:0 0 10px}
+  .closer p{color:var(--dim);max-width:540px;margin:0 auto 22px;font-size:14px}
+  .disclaimer{font-size:11.5px;color:var(--dim2);text-align:center;max-width:680px;margin:18px auto 0;line-height:1.6}
+  footer.foot{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:var(--dim2);font-size:11.5px;font-family:var(--mono);letter-spacing:.06em}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;
+    background:rgba(20,24,44,.97);border:1px solid var(--line2);border-radius:11px;padding:11px 18px;font-size:12.5px;
+    color:#fff;pointer-events:none;transition:.25s;z-index:90;font-family:var(--mono)}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* ── premium product framing (v2) ──────────────────────────────────── */
+  .summary-band{max-width:770px;margin:24px auto 0;text-align:center;color:var(--dim);font-size:14.5px;line-height:1.75}
+  .summary-band b{color:#e7ecff;font-weight:600}
+  .trust-strip{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:24px}
+  .trust-strip .ti{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--dim);
+    font-family:var(--mono);background:rgba(124,150,255,.06);border:1px solid var(--line);border-radius:999px;padding:8px 14px}
+  .trust-strip .ti b{color:#fff;font-weight:600}
+  .arch{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:820px){.arch{grid-template-columns:1fr}}
+  .arch-card{position:relative;background:var(--surf);border:1px solid var(--line);border-radius:16px;
+    padding:22px 20px;backdrop-filter:blur(12px);overflow:hidden;transition:.16s}
+  .arch-card:hover{border-color:var(--line2);transform:translateY(-2px)}
+  .arch-card::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:var(--cg-crystal);opacity:.85}
+  .arch-card .tag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--sky)}
+  .arch-card h3{margin:9px 0 6px;font-size:19px;font-weight:800}
+  .arch-card .sub{margin:0 0 13px;color:var(--dim);font-size:13.5px;line-height:1.6}
+  .arch-card ul{margin:0;padding-left:18px;color:var(--dim);font-size:13px;line-height:1.8}
+  .arch-card ul b{color:#fff;font-weight:600}
+  .arch-flow{display:flex;flex-wrap:wrap;gap:9px;align-items:center;justify-content:center;margin-top:20px;
+    font-family:var(--mono);font-size:12px;color:var(--dim)}
+  .arch-flow .step{background:rgba(124,150,255,.07);border:1px solid var(--line);border-radius:999px;padding:8px 15px;color:#dbe4ff}
+  .arch-flow .arrow{color:var(--violet);font-weight:700}
+  .maturity{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:820px){.maturity{grid-template-columns:1fr}}
+  .mat-panel{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:20px;backdrop-filter:blur(12px)}
+  .mat-lbl{font-size:11px;color:var(--dim2);font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;margin:0 0 9px}
+  .mat-opts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .mat-opt{font-size:12.5px;font-family:var(--sans);color:#cdd6f5;background:rgba(124,150,255,.07);
+    border:1px solid var(--line);border-radius:10px;padding:9px 13px;cursor:pointer;transition:.14s;text-align:left}
+  .mat-opt:hover{background:rgba(124,150,255,.15);color:#fff}
+  .mat-opt.on{background:linear-gradient(100deg,rgba(56,189,248,.22),rgba(167,139,250,.12));border-color:var(--line2);color:#fff}
+  .mat-rec{min-height:170px;display:flex;flex-direction:column;justify-content:center}
+  .mat-rec .pre{font-size:11px;color:var(--dim2);font-family:var(--mono);letter-spacing:.09em;text-transform:uppercase}
+  .mat-rec h4{margin:9px 0 7px;font-size:20px;font-weight:800;background:var(--cg-crystal);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .mat-rec p{margin:0 0 15px;color:var(--dim);font-size:13.5px;line-height:1.65}
+</style>
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/glass.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+
+<header class="bar">
+  <a class="brand" href="index.html">
+    <span class="mk"></span>
+    <span><span class="bt">ClearGlass<b>·</b>Trust</span><br><span class="bs">SMB Cyber Trust Kit</span></span>
+  </a>
+  <nav>
+    <a href="#advisor">Advisor</a>
+    <a href="#heatmap">Heat-map</a>
+    <a href="#policies">Policies</a>
+    <a href="#incident">Incident comms</a>
+    <a href="#guide">Plain-language</a>
+    <a href="offers/">Offers</a>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <!-- premium cyber command-center hero visual (decorative) -->
+    <div class="hero-fx" aria-hidden="true">
+      <svg viewBox="0 0 1600 620" preserveAspectRatio="xMidYMid slice" role="presentation" focusable="false">
+        <defs>
+          <filter id="hfGlow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="hfSoft" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="1.4"/>
+          </filter>
+          <linearGradient id="hfPlate" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="rgba(56,189,248,.16)"/><stop offset="1" stop-color="rgba(255,45,85,.08)"/>
+          </linearGradient>
+          <pattern id="hfGridP" width="52" height="52" patternUnits="userSpaceOnUse">
+            <path d="M52 0H0V52" fill="none" stroke="rgba(124,150,255,.07)" stroke-width="1"/>
+          </pattern>
+        </defs>
+
+        <!-- base mesh grid -->
+        <rect width="1600" height="620" fill="url(#hfGridP)"/>
+
+        <!-- network-node constellation (kept to the edges — clean negative space at centre) -->
+        <g class="hf-mesh" stroke-width="1">
+          <line x1="120" y1="120" x2="300" y2="210"/><line x1="300" y1="210" x2="200" y2="380"/>
+          <line x1="200" y1="380" x2="360" y2="470"/><line x1="300" y1="210" x2="470" y2="150"/>
+          <line x1="1480" y1="130" x2="1300" y2="220"/><line x1="1300" y1="220" x2="1420" y2="380"/>
+          <line x1="1420" y1="380" x2="1250" y2="470"/><line x1="1300" y1="220" x2="1140" y2="160"/>
+        </g>
+        <g>
+          <g class="hf-pulse d1"><circle class="hf-node-glow" cx="120" cy="120" r="7"/><circle class="hf-node" cx="120" cy="120" r="3.4"/></g>
+          <g class="hf-pulse d3"><circle class="hf-node-glow" cx="300" cy="210" r="6"/><circle class="hf-node" cx="300" cy="210" r="3"/></g>
+          <g class="hf-pulse d2"><circle class="hf-node-glow r" cx="200" cy="380" r="7"/><circle class="hf-node r" cx="200" cy="380" r="3.4"/></g>
+          <g class="hf-pulse d5"><circle class="hf-node-glow" cx="360" cy="470" r="6"/><circle class="hf-node" cx="360" cy="470" r="3"/></g>
+          <g class="hf-pulse d4"><circle class="hf-node-glow" cx="470" cy="150" r="6"/><circle class="hf-node" cx="470" cy="150" r="3"/></g>
+          <g class="hf-pulse d2"><circle class="hf-node-glow" cx="1480" cy="130" r="7"/><circle class="hf-node" cx="1480" cy="130" r="3.4"/></g>
+          <g class="hf-pulse d4"><circle class="hf-node-glow r" cx="1300" cy="220" r="6"/><circle class="hf-node r" cx="1300" cy="220" r="3"/></g>
+          <g class="hf-pulse d1"><circle class="hf-node-glow" cx="1420" cy="380" r="7"/><circle class="hf-node" cx="1420" cy="380" r="3.4"/></g>
+          <g class="hf-pulse d3"><circle class="hf-node-glow" cx="1250" cy="470" r="6"/><circle class="hf-node" cx="1250" cy="470" r="3"/></g>
+          <g class="hf-pulse d5"><circle class="hf-node-glow" cx="1140" cy="160" r="6"/><circle class="hf-node" cx="1140" cy="160" r="3"/></g>
+        </g>
+
+        <!-- encrypted data streams -->
+        <path class="hf-stream c s1" stroke-width="2.4" d="M-40 96 H360 l60 60 H620"/>
+        <path class="hf-stream r s2" stroke-width="2.2" d="M-40 300 H240 l70 70 H520"/>
+        <path class="hf-stream c s3" stroke-width="2.2" d="M1640 150 H1300 l-60 60 H1020"/>
+        <path class="hf-stream r s4" stroke-width="2.4" d="M1640 340 H1360 l-70 70 H1060"/>
+
+        <!-- digital shield emblem (centre-anchored, sits behind headline scrim) -->
+        <g class="hf-shield" transform="translate(800 246) scale(.82)">
+          <circle class="hf-ring" r="150" stroke-width="1.2"/>
+          <circle class="hf-ring r2" r="176" stroke-width="1" stroke-dasharray="4 12"/>
+          <path class="hf-shield-plate" d="M0 -132 L104 -96 V16 C104 92 56 140 0 168 C-56 140 -104 92 -104 16 V-96 Z" fill="url(#hfPlate)"/>
+          <path class="hf-shield-edge" d="M0 -132 L104 -96 V16 C104 92 56 140 0 168 C-56 140 -104 92 -104 16 V-96 Z"/>
+          <path class="hf-shield-crim" d="M0 -110 L86 -80 V14 C86 78 46 118 0 142 C-46 118 -86 78 -86 14 V-80 Z"/>
+          <path class="hf-shield-check" d="M-42 6 L-10 42 L52 -34"/>
+        </g>
+      </svg>
+      <div class="hero-scrim"></div>
+    </div>
+
+    <span class="eyebrow"><span class="dot"></span>Cyber resilience, without the jargon</span>
+    <h1>The <span class="g">SMB Cyber Trust Kit</span><br>protection your team will actually use</h1>
+    <p class="lede">Four plain-language tools for small and medium businesses — simple policies, a risk
+      heat-map, an incident communication script, and a guide to explaining cyber risk to non-technical
+      people. Everything below is live and interactive, driven by an on-page Trust Advisor.</p>
+    <div class="cta-row">
+      <a class="btn primary" href="#advisor">◐ Talk to the Trust Advisor</a>
+      <button class="btn ghost" id="dlKit">⤓ Download the whole kit</button>
+    </div>
+    <div class="deliverables">
+      <a class="dcard" href="#policies"><div class="n">01</div><div class="ic">📋</div>
+        <h3>Simple policy templates</h3><p>Eight fill-in-the-blank policies, personalised to your business name.</p></a>
+      <a class="dcard" href="#heatmap"><div class="n">02</div><div class="ic">🗺️</div>
+        <h3>Risk heat-map</h3><p>Score any risk on a 5×5 grid and see what to fix first.</p></a>
+      <a class="dcard" href="#incident"><div class="n">03</div><div class="ic">📣</div>
+        <h3>Incident comms script</h3><p>What to say — to staff, customers, regulators — and when.</p></a>
+      <a class="dcard" href="#guide"><div class="n">04</div><div class="ic">💬</div>
+        <h3>Talk without jargon</h3><p>Translate cyber risk into plain words leaders act on.</p></a>
+    </div>
+    <p class="summary-band">The SMB Cyber Trust Kit is a practical cyber-trust system for small and mid-sized
+      businesses. It helps you <b>assess</b> your risk, <b>organize</b> the right policies, <b>present</b> your
+      posture with confidence, and <b>operationalize</b> good security habits — in language a non-technical owner
+      understands and a technical stakeholder respects.</p>
+    <div class="trust-strip">
+      <span class="ti">🛡 <b>Governed</b> — read-only, human-approved</span>
+      <span class="ti">🇨🇦 <b>PIPEDA / PHIPA</b> aware</span>
+      <span class="ti">⚡ <b>Deploy today</b> — copy &amp; go templates</span>
+      <span class="ti">🔍 <b>No fabrication</b> — kit-grounded answers</span>
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE: AGENT + ENGINE -->
+  <section class="blk" id="architecture">
+    <div class="sec-head"><span class="num">◆</span><h2>Two connected layers: the Agent and the Engine</h2>
+      <p>The kit is more than documents. An adaptive <b>Agent</b> guides you to the right next step; a deterministic
+        <b>Engine</b> turns that into structured, repeatable output. Same source of truth, every time.</p></div>
+    <div class="arch">
+      <div class="arch-card">
+        <div class="tag">Layer 01 · Adaptive</div>
+        <h3>The Agent</h3>
+        <p class="sub">Analysis, guidance, and adaptive recommendations — the layer a person talks to.</p>
+        <ul>
+          <li><b>Reads your situation</b> — business size, maturity, and the pain point you name.</li>
+          <li><b>Recommends the next move</b> — which policy, which risk to fix first, what to say in an incident.</li>
+          <li><b>Explains in plain language</b> — no jargon, one clear action, backed by the kit.</li>
+          <li><b>Stays honest</b> — never invents controls, prices, or legal thresholds.</li>
+        </ul>
+      </div>
+      <div class="arch-card">
+        <div class="tag">Layer 02 · Deterministic</div>
+        <h3>The Engine</h3>
+        <p class="sub">Orchestration, repeatable generation, and structured output — the layer that produces the deliverables.</p>
+        <ul>
+          <li><b>Scores risk</b> — likelihood × impact, banded Low → Critical, the same way every run.</li>
+          <li><b>Renders policies</b> — eight templates personalised to your business name.</li>
+          <li><b>Assembles comms</b> — incident scripts by phase and audience, with approval gates.</li>
+          <li><b>One source of truth</b> — the page, the advisor, and the backend all read the same kit.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="arch-flow">
+      <span class="step">① Assess</span><span class="arrow">→</span>
+      <span class="step">② Generate</span><span class="arrow">→</span>
+      <span class="step">③ Present</span><span class="arrow">→</span>
+      <span class="step">④ Operationalize</span>
+    </div>
+  </section>
+
+  <!-- GUIDED START CONSOLE -->
+  <section class="blk" id="start">
+    <div class="sec-head"><span class="num">▶</span><h2>Guided start — find your first move in 10 seconds</h2>
+      <p>Tell the console where you are and what's on your mind. It recommends the deliverable to open first, then
+        drops you straight into it.</p></div>
+    <div class="maturity">
+      <div class="mat-panel">
+        <p class="mat-lbl">1 · Where is your business?</p>
+        <div class="mat-opts" id="matStage">
+          <button class="mat-opt" data-stage="0">Just getting started</button>
+          <button class="mat-opt" data-stage="1">Growing team</button>
+          <button class="mat-opt" data-stage="2">Established / being audited</button>
+        </div>
+        <p class="mat-lbl">2 · What's the biggest concern right now?</p>
+        <div class="mat-opts" id="matPain">
+          <button class="mat-opt" data-pain="policies">We have no written security rules</button>
+          <button class="mat-opt" data-pain="heatmap">Not sure what our biggest risks are</button>
+          <button class="mat-opt" data-pain="incident">Worried about a breach — what would we say?</button>
+          <button class="mat-opt" data-pain="guide">Need to explain risk to owners / the board</button>
+        </div>
+      </div>
+      <div class="mat-panel mat-rec" id="matRec">
+        <span class="pre">Your recommended starting point</span>
+        <h4>Pick a stage and a concern</h4>
+        <p>The console will point you to the deliverable that moves the needle fastest for a business like yours.</p>
+        <div class="cta-row" style="margin:0"><a class="btn ghost" href="#architecture">See how it works ↑</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADVISOR -->
+  <section class="blk" id="advisor">
+    <div class="sec-head"><span class="num">01</span><h2>Cyber Trust Advisor</h2>
+      <p>An on-page agent that works entirely from the kit. Ask it to score a risk, draft a policy, write an
+        incident message, or explain a term in plain language. It never invents controls, prices, or legal thresholds.</p></div>
+    <div class="grid2">
+      <div class="console">
+        <div class="chead">
+          <div class="av">◐</div>
+          <div><div class="ct">Trust Advisor</div><div class="cs">Kit-grounded · client-side</div></div>
+          <div class="clive"><i></i>LIVE</div>
+        </div>
+        <div class="log" id="log"></div>
+        <div class="chips" id="chips"></div>
+        <form class="cinput" id="cform" autocomplete="off">
+          <input id="cin" placeholder="e.g. score reused passwords, or explain ransomware">
+          <button type="submit">Send</button>
+        </form>
+      </div>
+      <div>
+        <div class="card">
+          <h3 style="margin:0 0 8px;font-size:15px">How the agent stays trustworthy</h3>
+          <ul style="margin:0;padding-left:18px;font-size:13px;color:var(--dim);line-height:1.7">
+            <li><b style="color:#fff">One source of truth.</b> The advisor, this page, and the Python backend all read the same kit content.</li>
+            <li><b style="color:#fff">No fabrication.</b> Answers come from the kit's policies, risk model, scripts, and glossary — nothing invented.</li>
+            <li><b style="color:#fff">Approval gates.</b> Regulator and media messages are drafts that need human sign-off before they go out.</li>
+            <li><b style="color:#fff">Not legal advice.</b> Breach-notification calls (PIPEDA / PHIPA) go to a qualified advisor.</li>
+          </ul>
+          <p class="aside-note">Built for the way small teams actually work: plain words, one clear next step, and
+            templates you can copy in seconds. The full agent specification lives in
+            <code>agents/smb_cyber_trust_kit/</code>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HEAT-MAP -->
+  <section class="blk" id="heatmap">
+    <div class="sec-head"><span class="num">02</span><h2>Risk Heat-Map Template</h2>
+      <p>Score each risk as <b>Likelihood × Impact</b> (1–5 each). The colour is the band; the to-do order is
+        worst-first. Click a cell to see the risks placed there, or move the sliders to score your own.</p></div>
+    <div class="grid2">
+      <div class="card">
+        <div class="hm-wrap">
+          <div class="yaxis">Impact →</div>
+          <div>
+            <div class="grid5" id="grid"></div>
+            <div class="xaxis"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+            <div class="axis-label">Likelihood →</div>
+          </div>
+        </div>
+        <div class="legend" id="legend"></div>
+        <div style="margin-top:18px;border-top:1px solid var(--line);padding-top:14px">
+          <div style="font-size:12px;color:var(--dim2);font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">Score your own risk</div>
+          <div class="scorer">
+            <div><label>Likelihood <span id="lkVal" class="mono" style="color:#fff">4</span></label>
+              <input type="range" id="lk" min="1" max="5" value="4"></div>
+            <div><label>Impact <span id="imVal" class="mono" style="color:#fff">4</span></label>
+              <input type="range" id="im" min="1" max="5" value="4"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card detail" id="detail"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3 style="margin:0 0 4px;font-size:15px">Starter register — your to-do order</h3>
+      <p style="margin:0 0 6px;font-size:12.5px;color:var(--dim)">The risks that actually hurt small businesses, scored and sorted worst-first. Edit the numbers for your business.</p>
+      <div id="ranked"></div>
+    </div>
+  </section>
+
+  <!-- POLICIES -->
+  <section class="blk" id="policies">
+    <div class="sec-head"><span class="num">03</span><h2>Simple Policy Templates</h2>
+      <p>Eight short, plain-language policies. Type your business name and they fill in automatically — then copy
+        or download. No legalese, just clear rules people will follow.</p></div>
+    <div class="field">
+      <label for="orgIn">Business name</label>
+      <input id="orgIn" placeholder="[Your Business Name]" style="min-width:220px">
+      <label for="contactIn" style="margin-left:6px">Incident contact</label>
+      <input id="contactIn" placeholder="[Incident Lead — name & number]" style="min-width:220px">
+    </div>
+    <div class="selrow" id="policyTabs"></div>
+    <div class="doc" id="policyDoc"></div>
+    <div class="copybar">
+      <button id="copyPolicy">⧉ Copy this policy</button>
+      <button id="dlPolicies">⤓ Download all 8 policies (.md)</button>
+    </div>
+  </section>
+
+  <!-- INCIDENT -->
+  <section class="blk" id="incident">
+    <div class="sec-head"><span class="num">04</span><h2>Communication During Incidents</h2>
+      <p>The hardest part of an incident is knowing what to say. Pick who you're talking to and the phase you're
+        in; the script appears with fill-in-the-blanks and the right approver.</p></div>
+    <div class="grid2">
+      <div class="card">
+        <div style="font-size:11px;color:var(--dim2);font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">Audience</div>
+        <div class="selrow" id="audTabs"></div>
+        <div style="font-size:11px;color:var(--dim2);font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;margin:6px 0 7px">Phase</div>
+        <div class="selrow" id="phaseTabs"></div>
+        <div style="margin-top:10px;font-size:11px;color:var(--dim2);font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">Golden rules</div>
+        <ul style="margin:0;padding-left:18px;font-size:12.5px;color:var(--dim);line-height:1.6" id="commsPrinciples"></ul>
+      </div>
+      <div class="card" id="scriptCard"></div>
+    </div>
+  </section>
+
+  <!-- GUIDE -->
+  <section class="blk" id="guide">
+    <div class="sec-head"><span class="num">05</span><h2>How to Talk to Non-Technical People About Cyber Risk</h2>
+      <p>Lead with the business, not the technology. Search the jargon translator, lift an analogy, and use the
+        "what to say when…" scripts to get a yes from an owner or a board.</p></div>
+    <div class="grid2">
+      <div class="card">
+        <h3 style="margin:0 0 10px;font-size:15px">The principles</h3>
+        <ul class="principles" id="guidePrinciples"></ul>
+      </div>
+      <div class="card">
+        <h3 style="margin:0 0 4px;font-size:15px">What to say when…</h3>
+        <div id="scenarios"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="field" style="margin-bottom:10px">
+        <label for="jargonIn">Jargon translator</label>
+        <input id="jargonIn" placeholder="Type a term — phishing, MFA, ransomware…" style="min-width:280px;flex:1">
+      </div>
+      <div class="glossary" id="glossary"></div>
+    </div>
+  </section>
+
+  <!-- CLOSER -->
+  <section class="closer">
+    <h2>Take the kit — then make it real</h2>
+    <p>Download the templates and use them today. When you're ready to put the controls in place, ClearGlass runs
+      fixed-scope hardening, posture reviews, and PHIPA-readiness work for Ontario businesses.</p>
+    <div class="cta-row">
+      <button class="btn primary" id="dlKit2">⤓ Get the whole kit — free</button>
+      <a class="btn ghost" href="offers/security-quick-audit.html">Start with a $249 Quick-Audit →</a>
+      <a class="btn ghost" href="pricing.html">See plans &amp; pricing</a>
+    </div>
+    <p style="font-size:12px;color:var(--dim2);margin-top:14px;font-family:var(--mono);letter-spacing:.04em">
+      Trusted by Ontario operators · Fixed scope · Written authorization · Evidence you can hand to an auditor</p>
+    <p class="disclaimer">The ClearGlass SMB Cyber Trust Kit provides practical guidance, not legal advice.
+      Breach-notification obligations under PIPEDA and PHIPA depend on the facts — confirm specifics with a
+      qualified privacy or legal advisor before notifying regulators or individuals.</p>
+  </section>
+
+</main>
+
+<footer class="foot">ClearGlass Inc. · Clarity Is Power · Burlington, Ontario · Engagements performed only with written authorization</footer>
+
+<div class="toast" id="toast"></div>
+
+<script type="application/json" id="kit-fallback">{"name":"ClearGlass SMB Cyber Trust Kit","version":"1.0.0","org":"[Your Business Name]","risk_model":{"likelihood_scale":{"1":"Rare — would be surprising (once in many years)","2":"Unlikely — possible but not expected this year","3":"Possible — could reasonably happen this year","4":"Likely — expect it within the year","5":"Almost certain — happening now or imminent"},"impact_scale":{"1":"Negligible — a nuisance, no real cost","2":"Minor — a few hours lost, small cost","3":"Moderate — a day or two down, noticeable cost","4":"Major — serious disruption, money + reputation","5":"Severe — business-threatening, legal/regulatory exposure"},"bands":[{"name":"Low","color":"#34d399","min_score":1,"max_score":4,"action":"Accept and monitor. Review at the normal cadence."},{"name":"Moderate","color":"#fbbf24","min_score":5,"max_score":9,"action":"Plan a fix. Assign an owner and a target date this quarter."},{"name":"High","color":"#fb7185","min_score":10,"max_score":15,"action":"Act soon. Put a control in place within 30 days."},{"name":"Critical","color":"#ef4444","min_score":16,"max_score":25,"action":"Act now. Escalate to the owner today; treat as a priority."}],"register":[{"id":"R1","title":"Phishing / business email compromise","category":"People","likelihood":4,"impact":4,"note":"Most common entry point. Fake invoice or 'CEO' wire request."},{"id":"R2","title":"Ransomware locks files / servers","category":"Systems","likelihood":3,"impact":5,"note":"Often arrives via phishing or an unpatched remote login."},{"id":"R3","title":"Stolen or reused passwords","category":"Identity","likelihood":4,"impact":4,"note":"One leaked password unlocks email, banking, and cloud apps."},{"id":"R4","title":"No multi-factor authentication (MFA)","category":"Identity","likelihood":4,"impact":5,"note":"Without MFA, a stolen password is a full account takeover."},{"id":"R5","title":"Lost or stolen laptop / phone","category":"Devices","likelihood":3,"impact":3,"note":"Unencrypted device = the data on it is gone with the device."},{"id":"R6","title":"No tested backups","category":"Recovery","likelihood":3,"impact":5,"note":"A backup you have never restored is a guess, not a safety net."},{"id":"R7","title":"Unpatched software / overdue updates","category":"Systems","likelihood":4,"impact":3,"note":"Known holes get exploited within days of a patch release."},{"id":"R8","title":"Ex-employee access not removed","category":"Identity","likelihood":3,"impact":4,"note":"Accounts that outlive the job are a quiet, standing risk."},{"id":"R9","title":"Sensitive data emailed in the clear","category":"Data","likelihood":3,"impact":3,"note":"Client PII / health info sent unprotected can trigger reporting."},{"id":"R10","title":"Vendor / supplier breach reaches you","category":"Third-party","likelihood":2,"impact":4,"note":"Their access and their breach become your incident."},{"id":"R11","title":"Website / customer portal defaced or down","category":"Systems","likelihood":2,"impact":3,"note":"Reputation and revenue both take the hit when it is public."},{"id":"R12","title":"Staff unsure who to call in an incident","category":"People","likelihood":4,"impact":3,"note":"Minutes lost in confusion are the most expensive minutes."}],"heat_map":[{"likelihood":1,"impact":5,"score":5,"band":"Moderate","color":"#fbbf24","risk_ids":[]},{"likelihood":2,"impact":5,"score":10,"band":"High","color":"#fb7185","risk_ids":[]},{"likelihood":3,"impact":5,"score":15,"band":"High","color":"#fb7185","risk_ids":["R2","R6"]},{"likelihood":4,"impact":5,"score":20,"band":"Critical","color":"#ef4444","risk_ids":["R4"]},{"likelihood":5,"impact":5,"score":25,"band":"Critical","color":"#ef4444","risk_ids":[]},{"likelihood":1,"impact":4,"score":4,"band":"Low","color":"#34d399","risk_ids":[]},{"likelihood":2,"impact":4,"score":8,"band":"Moderate","color":"#fbbf24","risk_ids":["R10"]},{"likelihood":3,"impact":4,"score":12,"band":"High","color":"#fb7185","risk_ids":["R8"]},{"likelihood":4,"impact":4,"score":16,"band":"Critical","color":"#ef4444","risk_ids":["R1","R3"]},{"likelihood":5,"impact":4,"score":20,"band":"Critical","color":"#ef4444","risk_ids":[]},{"likelihood":1,"impact":3,"score":3,"band":"Low","color":"#34d399","risk_ids":[]},{"likelihood":2,"impact":3,"score":6,"band":"Moderate","color":"#fbbf24","risk_ids":["R11"]},{"likelihood":3,"impact":3,"score":9,"band":"Moderate","color":"#fbbf24","risk_ids":["R5","R9"]},{"likelihood":4,"impact":3,"score":12,"band":"High","color":"#fb7185","risk_ids":["R7","R12"]},{"likelihood":5,"impact":3,"score":15,"band":"High","color":"#fb7185","risk_ids":[]},{"likelihood":1,"impact":2,"score":2,"band":"Low","color":"#34d399","risk_ids":[]},{"likelihood":2,"impact":2,"score":4,"band":"Low","color":"#34d399","risk_ids":[]},{"likelihood":3,"impact":2,"score":6,"band":"Moderate","color":"#fbbf24","risk_ids":[]},{"likelihood":4,"impact":2,"score":8,"band":"Moderate","color":"#fbbf24","risk_ids":[]},{"likelihood":5,"impact":2,"score":10,"band":"High","color":"#fb7185","risk_ids":[]},{"likelihood":1,"impact":1,"score":1,"band":"Low","color":"#34d399","risk_ids":[]},{"likelihood":2,"impact":1,"score":2,"band":"Low","color":"#34d399","risk_ids":[]},{"likelihood":3,"impact":1,"score":3,"band":"Low","color":"#34d399","risk_ids":[]},{"likelihood":4,"impact":1,"score":4,"band":"Low","color":"#34d399","risk_ids":[]},{"likelihood":5,"impact":1,"score":5,"band":"Moderate","color":"#fbbf24","risk_ids":[]}],"ranked":[{"likelihood":4,"impact":5,"score":20,"band":"Critical","color":"#ef4444","action":"Act now. Escalate to the owner today; treat as a priority."},{"likelihood":4,"impact":4,"score":16,"band":"Critical","color":"#ef4444","action":"Act now. Escalate to the owner today; treat as a priority."},{"likelihood":4,"impact":4,"score":16,"band":"Critical","color":"#ef4444","action":"Act now. Escalate to the owner today; treat as a priority."},{"likelihood":3,"impact":5,"score":15,"band":"High","color":"#fb7185","action":"Act soon. Put a control in place within 30 days."},{"likelihood":3,"impact":5,"score":15,"band":"High","color":"#fb7185","action":"Act soon. Put a control in place within 30 days."},{"likelihood":4,"impact":3,"score":12,"band":"High","color":"#fb7185","action":"Act soon. Put a control in place within 30 days."},{"likelihood":4,"impact":3,"score":12,"band":"High","color":"#fb7185","action":"Act soon. Put a control in place within 30 days."},{"likelihood":3,"impact":4,"score":12,"band":"High","color":"#fb7185","action":"Act soon. Put a control in place within 30 days."},{"likelihood":3,"impact":3,"score":9,"band":"Moderate","color":"#fbbf24","action":"Plan a fix. Assign an owner and a target date this quarter."},{"likelihood":3,"impact":3,"score":9,"band":"Moderate","color":"#fbbf24","action":"Plan a fix. Assign an owner and a target date this quarter."},{"likelihood":2,"impact":4,"score":8,"band":"Moderate","color":"#fbbf24","action":"Plan a fix. Assign an owner and a target date this quarter."},{"likelihood":2,"impact":3,"score":6,"band":"Moderate","color":"#fbbf24","action":"Plan a fix. Assign an owner and a target date this quarter."}]},"policies":[{"id":"acceptable-use","title":"Acceptable Use Policy","purpose":"Set clear, fair rules for using company devices, accounts, and data.","scope":"Everyone who uses {org} systems: staff, contractors, and volunteers.","rules":["Use company accounts and devices for work purposes; keep reasonable personal use lawful and minimal.","Do not install unapproved software or plug in unknown USB drives.","Do not share your login with anyone, including co-workers.","Lock your screen when you step away.","Report anything that looks suspicious — no blame for a fast report."],"owner_role":"Owner / Office Manager","review_cadence":"Annually, or after a major change"},{"id":"passwords-mfa","title":"Password & Multi-Factor Authentication Policy","purpose":"Keep accounts hard to break into, even if a password leaks.","scope":"All {org} accounts: email, banking, cloud apps, and admin logins.","rules":["Use a unique passphrase of 12+ characters for every account.","Use the company password manager — never a sticky note or a shared spreadsheet.","Turn on multi-factor authentication (MFA) on every account that offers it, especially email and banking.","Never approve an MFA prompt you did not start.","Change a password immediately if you suspect it was exposed."],"owner_role":"Owner / IT Lead","review_cadence":"Annually"},{"id":"data-protection","title":"Data Protection & Privacy Policy","purpose":"Protect customer and staff information and meet privacy obligations.","scope":"All personal and sensitive data {org} collects, stores, or shares.","rules":["Collect only the information you actually need.","Store sensitive data in approved systems — not personal email or personal cloud drives.","Encrypt laptops, phones, and backups.","Share sensitive data only over approved, protected channels.","Delete data you no longer need on a defined schedule.","Know your obligations under PIPEDA (and PHIPA for health data)."],"owner_role":"Owner / Privacy Lead","review_cadence":"Annually, or after a process change"},{"id":"incident-response","title":"Incident Response Policy","purpose":"Make sure everyone knows what to do in the first hour of an incident.","scope":"Any suspected breach, ransomware, lost device, or account takeover.","rules":["If you suspect an incident, report it to {incident_contact} immediately — speed beats certainty.","Do not turn the device off or 'clean it up' — preserve evidence.","The incident lead decides on containment (disconnect, reset passwords, isolate).","Follow the Communication During Incidents script for who to tell and when.","Write down what happened and when — a simple timeline is enough.","Hold a short blameless review within a week to fix root causes."],"owner_role":"Owner / Incident Lead","review_cadence":"Annually, plus after every incident"},{"id":"access-control","title":"Access Control (Joiners, Movers, Leavers) Policy","purpose":"Give people the access they need — and remove it the day they leave.","scope":"All accounts and physical access across {org}.","rules":["Grant the least access needed to do the job.","Set up new-starter access from a checklist on day one.","Review access when someone changes role.","Remove all access the same day someone leaves — accounts, devices, building keys, and shared passwords.","Review who has admin rights every quarter."],"owner_role":"Owner / Office Manager","review_cadence":"Quarterly access review"},{"id":"backup-recovery","title":"Backup & Recovery Policy","purpose":"Be able to get back to work quickly after loss, theft, or ransomware.","scope":"All business-critical data, files, and systems.","rules":["Follow 3-2-1: three copies, on two types of media, one off-site.","Automate backups daily for anything you cannot afford to retype.","Keep at least one backup offline or otherwise out of reach of ransomware.","Test a real restore at least quarterly — an untested backup is a guess.","Know your target recovery time for the systems that matter most."],"owner_role":"Owner / IT Lead","review_cadence":"Quarterly restore test"},{"id":"vendor-risk","title":"Vendor & Third-Party Risk Policy","purpose":"Make sure the suppliers you trust do not become your weak point.","scope":"Any vendor with access to {org} data, systems, or accounts.","rules":["Keep a simple list of vendors and what each can access.","Ask new vendors how they protect your data before you sign.","Give vendors the least access they need, and remove it when the work ends.","Require vendors to tell you promptly if they have a breach.","Review the vendor list once a year."],"owner_role":"Owner","review_cadence":"Annually"},{"id":"device-byod","title":"Device & Bring-Your-Own-Device (BYOD) Policy","purpose":"Keep work data safe on the phones and laptops people actually use.","scope":"Company and personal devices used for {org} work.","rules":["Protect every device with a passcode or biometric lock.","Keep operating systems and apps updated.","Encrypt devices that hold work data.","Enable remote-wipe for lost or stolen devices.","Report a lost or stolen device immediately so access can be cut."],"owner_role":"Owner / IT Lead","review_cadence":"Annually"}],"incident_comms":{"phases":["detect","contain","eradicate","recover","post-incident"],"principles":["Be first, be honest, be brief — silence reads as a cover-up.","Say what you know, what you don't yet know, and when you'll update next.","One approved spokesperson. Everyone else routes questions to them.","Never speculate on cause, numbers, or blame before the facts are in.","Write a timeline as you go — it protects you and speeds the review.","Tell people what to DO (the action) before why it happened."],"scripts":[{"id":"staff-alert","audience":"Internal staff","phase":"contain","channel":"Internal chat / all-hands","when_to_use":"First message to the team once an incident is confirmed.","approver":"Incident Lead","template":"Team — we are responding to a security incident affecting {systems_affected}. Please {staff_action} now. Do not discuss this outside the company or post about it. Direct all questions to {incident_contact}. Next update by {next_update_time}."},{"id":"staff-allclear","audience":"Internal staff","phase":"recover","channel":"Internal chat / all-hands","when_to_use":"When systems are restored and normal work resumes.","approver":"Incident Lead","template":"Update — the incident affecting {systems_affected} is resolved and systems are back to normal as of {resolved_time}. Thank you for your patience. If you notice anything unusual, tell {incident_contact}. A short review follows so we come out stronger."},{"id":"customer-notice","audience":"Customers","phase":"contain","channel":"Email / status page","when_to_use":"Early, honest notice while you are still responding.","approver":"Owner","template":"We are writing to let you know we identified a security issue on {date} affecting {systems_affected}. We acted quickly to contain it and are investigating with care. {customer_impact_statement} We will share another update by {next_update_time}. Questions: {support_contact}."},{"id":"customer-resolution","audience":"Customers","phase":"recover","channel":"Email / status page","when_to_use":"Closing the loop once service is restored.","approver":"Owner","template":"Update on the {date} security issue: it is now resolved. {what_we_did} {what_we_changed} We take the trust you place in us seriously and are sorry for any disruption. Questions: {support_contact}."},{"id":"breach-affected","audience":"Affected individuals","phase":"post-incident","channel":"Email / letter","when_to_use":"If personal information was exposed (PIPEDA / PHIPA may require notice).","approver":"Owner + Privacy Lead (consider legal review)","template":"We are notifying you that a security incident on {date} may have exposed the following information about you: {data_categories}. Here is what happened, what we have done, and steps you can take: {protective_steps}. We have reported this as required. For help, contact {privacy_contact}."},{"id":"regulator-notice","audience":"Privacy regulator","phase":"post-incident","channel":"Official form / letter","when_to_use":"Report to the Privacy Commissioner when a breach poses real risk of significant harm (PIPEDA) or per PHIPA for health information.","approver":"Owner + Privacy Lead (legal review recommended)","template":"Organization: {org}. Date of incident: {date}. Nature of breach: {breach_nature}. Personal information involved: {data_categories}. Estimated individuals affected: {affected_count}. Containment and remediation: {remediation}. Notification to individuals: {notice_status}. Contact: {privacy_contact}."},{"id":"partner-notice","audience":"Partners & vendors","phase":"contain","channel":"Email / phone","when_to_use":"When a partner's data or shared systems may be involved.","approver":"Owner","template":"We are managing a security incident that may touch our shared {shared_resource}. As a precaution we have {precaution_taken}. Please watch for {what_to_watch_for} and let us know of anything unusual. Coordination contact: {incident_contact}."},{"id":"media-holding","audience":"Media / public","phase":"contain","channel":"Spokesperson statement","when_to_use":"A short holding line if the incident becomes public. One spokesperson only.","approver":"Owner (single approved spokesperson)","template":"We are aware of a security incident and are responding with urgency. Protecting our customers' information is our priority. We have engaged the right expertise, are taking steps to contain it, and will share verified information as it becomes available."}]},"plain_language_guide":{"principles":["Lead with the business, not the technology: money, time, trust, reputation, and legal exposure.","Translate every risk into 'if this happens, then this is the cost.'","Use one analogy they already understand (a door, a key, insurance).","Give one clear recommendation, not five options.","Quantify with ranges, not false precision: 'a day or two offline.'","Replace fear with a next step — people act on direction, not dread.","Check for understanding: ask them to say it back in their own words."],"glossary":[{"term":"Phishing","plain":"A fake email or text that tricks someone into clicking, paying, or giving up a password.","analogy":"A con artist in a delivery uniform talking their way through the door."},{"term":"Ransomware","plain":"Malicious software that locks your files until you pay — and paying is no guarantee.","analogy":"A burglar who changes all your locks and sells you the new keys."},{"term":"Multi-factor authentication (MFA)","plain":"A second check beyond your password, like a code on your phone.","analogy":"A deadbolt on top of the doorknob lock."},{"term":"Patch / update","plain":"A fix the vendor releases to close a known security hole.","analogy":"Repairing a lock the manufacturer just warned everyone is pickable."},{"term":"Encryption","plain":"Scrambling data so it's useless to anyone without the key.","analogy":"A document shredder that can be perfectly un-shredded only by you."},{"term":"Firewall","plain":"A filter that decides what network traffic is allowed in or out.","analogy":"A bouncer checking everyone at the door against the guest list."},{"term":"Backup","plain":"A spare copy of your data you can restore after loss or attack.","analogy":"A photocopy of every important document, kept in a different building."},{"term":"Breach","plain":"An incident where data is accessed or taken by someone who shouldn't have it.","analogy":"Discovering the filing cabinet was opened and copied overnight."},{"term":"Endpoint","plain":"Any device that connects to your systems — laptop, phone, tablet.","analogy":"Every door and window into the building."},{"term":"Zero-day","plain":"A brand-new flaw that attackers know about before a fix exists.","analogy":"A lock flaw the locksmith hasn't learned about yet."},{"term":"Social engineering","plain":"Manipulating a person, not a computer, to get access.","analogy":"Sweet-talking the receptionist instead of breaking the lock."},{"term":"Attack surface","plain":"All the ways someone could possibly get in.","analogy":"The total number of doors, windows, and vents on the building."}],"scenarios":[{"situation":"Asking the owner to fund MFA","say_this":"For about the cost of a coffee per person each month, a stolen password stops being enough to drain the bank account.","not_this":"We need to deploy TOTP-based 2FA across the identity provider."},{"situation":"Explaining why backups matter","say_this":"If ransomware hit tomorrow, tested backups are the difference between a bad day and a closed business.","not_this":"We have no immutable, air-gapped recovery tier."},{"situation":"Justifying patching downtime","say_this":"A 20-minute update tonight closes a hole criminals are already using this week.","not_this":"There's an unpatched CVE with a public exploit in the wild."},{"situation":"Reporting an incident to the board","say_this":"Here's what happened, what it cost us, what we've fixed, and the one thing we're changing so it can't repeat.","not_this":"We observed anomalous lateral movement and exfiltration indicators."}]}}</script>
+<script>
+(function(){
+  "use strict";
+  var KIT=null;
+  function fallback(){try{return JSON.parse(document.getElementById("kit-fallback").textContent);}catch(e){return null;}}
+
+  // ---- helpers ----
+  var $=function(s,r){return (r||document).querySelector(s);};
+  var el=function(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+  function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+  function bandColor(name){var b=(KIT.risk_model.bands.filter(function(x){return x.name===name;})[0]);return b?b.color:"#94a0c0";}
+  function bandFor(score){var bs=KIT.risk_model.bands;for(var i=0;i<bs.length;i++){if(score>=bs[i].min_score&&score<=bs[i].max_score)return bs[i];}return bs[bs.length-1];}
+  function riskById(id){return KIT.risk_model.register.filter(function(r){return r.id===id;})[0];}
+  function fillOrg(t,org,contact){return t.replace(/\{org\}/g,org||"[Your Business Name]").replace(/\{incident_contact\}/g,contact||"[Incident Lead — name & number]");}
+  var toastT;
+  function toast(m){var t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove("on");},1700);}
+  function copy(text){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){toast("Copied to clipboard");},function(){toast("Copy failed — select and copy manually");});}else{var ta=el("textarea");ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("Copied to clipboard");}catch(e){toast("Copy failed");}document.body.removeChild(ta);}}
+  function download(name,text,type){var blob=new Blob([text],{type:type||"text/markdown"});var url=URL.createObjectURL(blob);var a=el("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(url);},400);}
+
+  // ---- markdown builders (mirror the engine) ----
+  function policyMd(p,org,contact){
+    var rules=p.rules.map(function(r,i){return (i+1)+". "+fillOrg(r,org,contact);}).join("\n");
+    return "### "+p.title+"\n\n**Purpose.** "+p.purpose+"\n\n**Who it covers.** "+fillOrg(p.scope,org,contact)+
+      "\n\n**The rules.**\n"+rules+"\n\n**Owner:** "+p.owner_role+"  \n**Review:** "+p.review_cadence+"\n";
+  }
+  function allPoliciesMd(org,contact){
+    return "# "+KIT.name+" — Policy Templates\n\n*Prepared for "+(org||"[Your Business Name]")+"*\n\n"+
+      KIT.policies.map(function(p){return policyMd(p,org,contact);}).join("\n");
+  }
+  function kitMd(org,contact){
+    var out="# "+KIT.name+"\n\n*Version "+KIT.version+" · prepared for "+(org||"[Your Business Name]")+"*\n\n";
+    out+="A plain-language cyber resilience starter pack for small and medium businesses.\n\n";
+    out+="> Practical guidance, not legal advice. Confirm PIPEDA / PHIPA breach obligations with a qualified advisor.\n\n";
+    out+="## 1. Simple Policy Templates\n\n"+KIT.policies.map(function(p){return policyMd(p,org,contact);}).join("\n")+"\n";
+    out+="## 2. Risk Heat-Map\n\n";
+    KIT.risk_model.bands.forEach(function(b){out+="- **"+b.name+"** ("+b.min_score+"-"+b.max_score+"): "+b.action+"\n";});
+    out+="\n";
+    KIT.risk_model.register.forEach(function(r){var s=r.likelihood*r.impact;out+="- **"+r.id+" "+r.title+"** ("+r.category+") — L"+r.likelihood+" × I"+r.impact+" = "+s+" ("+bandFor(s).name+"). "+r.note+"\n";});
+    out+="\n## 3. Communication During Incidents\n\n";
+    KIT.incident_comms.principles.forEach(function(p){out+="- "+p+"\n";});
+    out+="\n";
+    KIT.incident_comms.scripts.forEach(function(s){out+="#### "+s.audience+" — "+s.phase+" ("+s.channel+")\n*When:* "+s.when_to_use+"  \n*Approver:* "+s.approver+"\n\n> "+s.template+"\n\n";});
+    out+="## 4. How to Talk to Non-Technical People About Cyber Risk\n\n";
+    KIT.plain_language_guide.principles.forEach(function(p,i){out+=(i+1)+". "+p+"\n";});
+    out+="\n| Term | Plain words | Analogy |\n|---|---|---|\n";
+    KIT.plain_language_guide.glossary.forEach(function(t){out+="| "+t.term+" | "+t.plain+" | "+t.analogy+" |\n";});
+    out+="\n";
+    KIT.plain_language_guide.scenarios.forEach(function(s){out+="**"+s.situation+"**  \n✅ "+s.say_this+"  \n🚫 "+s.not_this+"\n\n";});
+    out+="---\n\n*ClearGlass Inc. · Clarity Is Power · Burlington, Ontario*\n";
+    return out;
+  }
+
+  // ---- heat-map ----
+  var selCell=null;
+  function renderHeatMap(){
+    var grid=$("#grid");grid.innerHTML="";
+    KIT.risk_model.heat_map.forEach(function(c){
+      var cell=el("div","cell");cell.style.background=c.color;cell.textContent=c.score;
+      cell.setAttribute("data-l",c.likelihood);cell.setAttribute("data-i",c.impact);
+      cell.title="Likelihood "+c.likelihood+" × Impact "+c.impact+" = "+c.score+" ("+c.band+")";
+      if(c.risk_ids.length){cell.appendChild(el("span","cnt",String(c.risk_ids.length)));}
+      cell.addEventListener("click",function(){
+        if(selCell)selCell.classList.remove("sel");selCell=cell;cell.classList.add("sel");
+        showCell(c);
+      });
+      grid.appendChild(cell);
+    });
+    var lg=$("#legend");lg.innerHTML="";
+    KIT.risk_model.bands.forEach(function(b){var s=el("span","lg");s.appendChild(el("i",null,""));s.lastChild.style.background=b.color;s.appendChild(document.createTextNode(b.name+" ("+b.min_score+"–"+b.max_score+")"));lg.appendChild(s);});
+  }
+  function showCell(c){
+    var b=bandFor(c.score),d=$("#detail");
+    var risks=c.risk_ids.map(riskById).filter(Boolean);
+    var html='<div style="display:flex;align-items:center;gap:14px;margin-bottom:6px">'+
+      '<div class="score-big" style="color:'+c.color+'">'+c.score+'</div>'+
+      '<div><span class="badge" style="color:'+c.color+';border-color:'+c.color+'">'+c.band+'</span>'+
+      '<div style="font-size:12px;color:var(--dim);margin-top:5px">Likelihood '+c.likelihood+' × Impact '+c.impact+'</div></div></div>'+
+      '<div style="font-size:12.5px;color:#dbe4ff;margin-bottom:6px">'+esc(b.action)+'</div>';
+    if(risks.length){
+      html+='<div style="font-size:11px;color:var(--dim2);font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;margin-top:6px">Risks here</div>';
+      risks.forEach(function(r){
+        html+='<div class="risk-li"><span class="rid" style="background:'+c.color+'">'+r.id+'</span>'+
+          '<div><div class="rt">'+esc(r.title)+'</div><div class="rn">'+esc(r.note)+'</div></div></div>';
+      });
+    }else{
+      html+='<div style="font-size:12px;color:var(--dim2);margin-top:8px">No starter risks in this cell. Use it to place your own.</div>';
+    }
+    d.innerHTML=html;
+  }
+  function renderRanked(){
+    var wrap=$("#ranked");wrap.innerHTML="";
+    var rows=KIT.risk_model.register.map(function(r){return {r:r,s:r.likelihood*r.impact};});
+    rows.sort(function(a,b){return b.s-a.s||a.r.id.localeCompare(b.r.id);});
+    rows.forEach(function(o){
+      var b=bandFor(o.s);
+      var li=el("div","risk-li");
+      li.innerHTML='<span class="rid" style="background:'+b.color+'">'+o.s+'</span>'+
+        '<div style="flex:1"><div class="rt">'+esc(o.r.title)+' <span style="font-weight:400;color:var(--dim2)">· '+esc(o.r.category)+'</span></div>'+
+        '<div class="rn">'+esc(b.action)+'</div></div>'+
+        '<span class="badge" style="color:'+b.color+';border-color:'+b.color+';align-self:center">'+b.name+'</span>';
+      wrap.appendChild(li);
+    });
+  }
+  function wireScorer(){
+    var lk=$("#lk"),im=$("#im");
+    function upd(){
+      $("#lkVal").textContent=lk.value;$("#imVal").textContent=im.value;
+      var l=+lk.value,i=+im.value,s=l*i,b=bandFor(s);
+      if(selCell)selCell.classList.remove("sel");selCell=null;
+      showCell({likelihood:l,impact:i,score:s,band:b.name,color:b.color,risk_ids:[]});
+    }
+    lk.addEventListener("input",upd);im.addEventListener("input",upd);upd();
+  }
+
+  // ---- policies ----
+  var curPolicy=0;
+  function renderPolicyTabs(){
+    var t=$("#policyTabs");t.innerHTML="";
+    KIT.policies.forEach(function(p,idx){
+      var b=el("button","seg"+(idx===curPolicy?" on":""),esc(p.title.replace(/ Policy.*$/,"").replace(/ \(.*$/,"")));
+      b.addEventListener("click",function(){curPolicy=idx;renderPolicyTabs();renderPolicy();});
+      t.appendChild(b);
+    });
+  }
+  function renderPolicy(){
+    var p=KIT.policies[curPolicy],org=$("#orgIn").value.trim(),contact=$("#contactIn").value.trim();
+    var rules=p.rules.map(function(r){return "<li>"+esc(fillOrg(r,org,contact))+"</li>";}).join("");
+    $("#policyDoc").innerHTML='<h4>'+esc(p.title)+'</h4>'+
+      '<div><b>Purpose.</b> '+esc(p.purpose)+'</div>'+
+      '<div style="margin-top:8px"><b>Who it covers.</b> '+esc(fillOrg(p.scope,org,contact))+'</div>'+
+      '<div style="margin-top:8px"><b>The rules.</b><ol>'+rules+'</ol></div>'+
+      '<div class="meta-line">Owner: '+esc(p.owner_role)+'  ·  Review: '+esc(p.review_cadence)+'</div>';
+  }
+
+  // ---- incident comms ----
+  var curAud=null,curPhase=null;
+  function audiences(){var seen=[];KIT.incident_comms.scripts.forEach(function(s){if(seen.indexOf(s.audience)<0)seen.push(s.audience);});return seen;}
+  function renderAudTabs(){
+    var t=$("#audTabs");t.innerHTML="";
+    audiences().forEach(function(a){
+      var b=el("button","seg"+(a===curAud?" on":""),esc(a));
+      b.addEventListener("click",function(){curAud=a;curPhase=null;renderAudTabs();renderPhaseTabs();renderScript();});
+      t.appendChild(b);
+    });
+  }
+  function phasesFor(aud){var ph=[];KIT.incident_comms.scripts.forEach(function(s){if(s.audience===aud&&ph.indexOf(s.phase)<0)ph.push(s.phase);});return ph;}
+  function renderPhaseTabs(){
+    var t=$("#phaseTabs");t.innerHTML="";
+    var ph=phasesFor(curAud);
+    if(ph.length<=1){t.innerHTML='<span style="font-size:11.5px;color:var(--dim2)">One script for this audience.</span>';return;}
+    ph.forEach(function(p){
+      var b=el("button","seg"+(p===curPhase?" on":""),esc(p));
+      b.addEventListener("click",function(){curPhase=p;renderPhaseTabs();renderScript();});
+      t.appendChild(b);
+    });
+  }
+  function currentScript(){
+    var list=KIT.incident_comms.scripts.filter(function(s){return s.audience===curAud;});
+    if(curPhase)list=list.filter(function(s){return s.phase===curPhase;});
+    return list[0]||KIT.incident_comms.scripts.filter(function(s){return s.audience===curAud;})[0];
+  }
+  function gated(aud){return aud==="Privacy regulator"||aud==="Media / public"||aud==="Affected individuals";}
+  function renderScript(){
+    var s=currentScript(),card=$("#scriptCard");
+    if(!s){card.innerHTML="";return;}
+    var tmpl=esc(s.template).replace(/\{([^}]+)\}/g,'<span class="ph">{$1}</span>');
+    var html='<div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:4px">'+
+      '<span class="badge" style="color:var(--sky);border-color:var(--line2)">'+esc(s.audience)+'</span>'+
+      '<span class="badge" style="color:var(--violet);border-color:var(--line2)">'+esc(s.phase)+'</span>'+
+      '<span style="font-size:11.5px;color:var(--dim2);font-family:var(--mono)">'+esc(s.channel)+'</span></div>'+
+      '<div style="font-size:12px;color:var(--dim);margin:6px 0 4px"><b style="color:#fff">When:</b> '+esc(s.when_to_use)+'</div>'+
+      '<div style="font-size:12px;color:var(--dim);margin-bottom:10px"><b style="color:#fff">Approver:</b> '+esc(s.approver)+'</div>'+
+      '<div class="quote">'+tmpl+'</div>';
+    if(gated(s.audience)){
+      html+='<div class="approve-flag"><span>⚠️</span><div><b>Approval gate.</b> This message can carry legal weight. '+
+        'Get human (and where noted, legal) sign-off before sending. PIPEDA / PHIPA notification decisions depend on the facts.</div></div>';
+    }
+    html+='<div class="copybar"><button data-copy-script>⧉ Copy script</button></div>';
+    card.innerHTML=html;
+    $("[data-copy-script]",card).addEventListener("click",function(){copy(s.template);});
+  }
+
+  // ---- guide ----
+  function renderGuide(){
+    var pr=$("#guidePrinciples");pr.innerHTML="";
+    KIT.plain_language_guide.principles.forEach(function(p){pr.appendChild(el("li",null,esc(p)));});
+    var sc=$("#scenarios");sc.innerHTML="";
+    KIT.plain_language_guide.scenarios.forEach(function(s){
+      var d=el("div","scenario");
+      d.innerHTML='<div class="st">'+esc(s.situation)+'</div>'+
+        '<div class="say do">✅ <b>Say:</b> '+esc(s.say_this)+'</div>'+
+        '<div class="say dont">🚫 <b>Not:</b> '+esc(s.not_this)+'</div>';
+      sc.appendChild(d);
+    });
+    renderGlossary("");
+  }
+  function renderGlossary(q){
+    var g=$("#glossary");g.innerHTML="";q=(q||"").toLowerCase();
+    var list=KIT.plain_language_guide.glossary.filter(function(t){
+      return !q||t.term.toLowerCase().indexOf(q)>=0||t.plain.toLowerCase().indexOf(q)>=0;
+    });
+    if(!list.length){g.innerHTML='<div style="font-size:12.5px;color:var(--dim2)">No match. Try “phishing”, “MFA”, “backup”, or “breach”.</div>';return;}
+    list.forEach(function(t){
+      var d=el("div","term");
+      d.innerHTML='<h4>'+esc(t.term)+'</h4><p class="pl">'+esc(t.plain)+'</p><div class="an">'+esc(t.analogy)+'</div>';
+      g.appendChild(d);
+    });
+  }
+
+  // ---- advisor (client-side intent routing, mirrors the system prompt) ----
+  var log=$("#log");
+  function bubble(who,html){var m=el("div","msg "+who,html);log.appendChild(m);log.scrollTop=log.scrollHeight;return m;}
+  function botSay(html){return bubble("bot",html);}
+  function scoreLine(l,i){var s=l*i,b=bandFor(s);return "Likelihood "+l+" × Impact "+i+" = <b>"+s+"</b> — <span class=\"pill\" style=\"color:"+b.color+"\">"+b.name+"</span>. "+esc(b.action);}
+
+  function findGlossary(text){
+    var t=text.toLowerCase();
+    return KIT.plain_language_guide.glossary.filter(function(g){
+      var term=g.term.toLowerCase();
+      if(t.indexOf(term)>=0)return true;
+      var base=term.split(" (")[0];
+      if(base.length>3&&t.indexOf(base)>=0)return true;
+      if(term.indexOf("mfa")>=0&&t.indexOf("mfa")>=0)return true;
+      return false;
+    })[0];
+  }
+  function findPolicy(text){
+    var t=text.toLowerCase();
+    var map=[["password","passwords-mfa"],["mfa","passwords-mfa"],["multi-factor","passwords-mfa"],
+      ["backup","backup-recovery"],["recover","backup-recovery"],["vendor","vendor-risk"],["supplier","vendor-risk"],
+      ["third-party","vendor-risk"],["device","device-byod"],["byod","device-byod"],["laptop","device-byod"],
+      ["access","access-control"],["joiner","access-control"],["leaver","access-control"],["offboard","access-control"],
+      ["data","data-protection"],["privacy","data-protection"],["acceptable use","acceptable-use"],
+      ["incident response","incident-response"],["acceptable","acceptable-use"]];
+    for(var i=0;i<map.length;i++){if(t.indexOf(map[i][0])>=0){return KIT.policies.filter(function(p){return p.id===map[i][1];})[0];}}
+    return null;
+  }
+  function findAudience(text){
+    var t=text.toLowerCase();
+    if(/media|press|public|reporter|journalist/.test(t))return "Media / public";
+    if(/regulator|commissioner|ipc|\breport\b/.test(t))return "Privacy regulator";
+    if(/customer|client/.test(t))return "Customers";
+    if(/staff|team|employee|internal/.test(t))return "Internal staff";
+    if(/partner|vendor|supplier/.test(t))return "Partners & vendors";
+    if(/affected|individual|notify people|breach notice/.test(t))return "Affected individuals";
+    return null;
+  }
+
+  function respond(text){
+    var t=text.toLowerCase().trim();
+    // 1) explicit two-number score "score 4 x 5" / "4 by 5"
+    var nums=t.match(/\b([1-5])\s*(?:x|×|by|,|\*|\/)\s*([1-5])\b/);
+    if(nums&&/score|risk|rate|likelihood|impact|how bad|×|x /.test(t)||nums&&/^[\s1-5x×by,*\/]+$/.test(t)){
+      botSay(scoreLine(+nums[1],+nums[2])+"<br><span class=\"aside-note\">That's likelihood × impact. Move the sliders in the heat-map to explore others.</span>");return;
+    }
+    // 2) "start / where do I begin" -> top ranked
+    if(/^(hi|hello|hey|start|begin|where do i|help|what can you)/.test(t)||t==="start"){
+      var rows=KIT.risk_model.register.map(function(r){return{r:r,s:r.likelihood*r.impact};}).sort(function(a,b){return b.s-a.s;}).slice(0,3);
+      var h="Let's start where the risk is highest. The three to act on first:<br><br>";
+      rows.forEach(function(o){var b=bandFor(o.s);h+="• <b>"+esc(o.r.title)+"</b> — "+o.s+" <span class=\"pill\" style=\"color:"+b.color+"\">"+b.name+"</span><br>";});
+      h+="<br>Tell me one — say <code>policy for passwords</code>, <code>score reused passwords</code>, or <code>explain ransomware</code>.";
+      botSay(h);return;
+    }
+    // 3) incident comms
+    if(/incident|breach|ransomware attack|we (got|were) (hit|hacked|breached)|what do i (tell|say)|hacked/.test(t)){
+      var aud=findAudience(t)||"Internal staff";
+      var s=KIT.incident_comms.scripts.filter(function(x){return x.audience===aud;})[0];
+      var tmpl=esc(s.template).replace(/\{([^}]+)\}/g,'<span style="color:#fbbf24">{$1}</span>');
+      var h="First: don't power off or “clean up” affected machines — preserve evidence — and route everyone to one spokesperson.<br><br>";
+      h+="Here's the <b>"+esc(aud)+"</b> message ("+esc(s.phase)+"):<br><br><span style=\"font-family:var(--mono);font-size:12px\">"+tmpl+"</span>";
+      if(gated(aud))h+="<br><br>⚠️ <b>"+esc(aud)+"</b> messages need human + legal sign-off before sending (PIPEDA / PHIPA).";
+      h+="<br><br>Open the <a href=\"#incident\" style=\"color:#38bdf8\">incident comms</a> section for every audience and phase.";
+      botSay(h);return;
+    }
+    // 4) policy
+    var pol=findPolicy(t);
+    if(pol&&/policy|template|rule|write|draft|need a/.test(t)||pol&&t.split(" ").length<=4){
+      var org=($("#orgIn").value.trim())||"[Your Business Name]";
+      var h="Here's your <b>"+esc(pol.title)+"</b>:<br><br><i>"+esc(pol.purpose)+"</i><br><br>";
+      pol.rules.slice(0,3).forEach(function(r){h+="• "+esc(fillOrg(r,org,""))+"<br>";});
+      h+="…and "+(pol.rules.length-3)+" more. Owner: "+esc(pol.owner_role)+".<br><br>See it in full and copy it in the <a href=\"#policies\" style=\"color:#38bdf8\">policy templates</a> section.";
+      botSay(h);return;
+    }
+    // 5) jargon
+    var g=findGlossary(t);
+    if(g){
+      botSay("<b>"+esc(g.term)+"</b> in plain words: "+esc(g.plain)+"<br><br>🔑 <i>"+esc(g.analogy)+"</i><br><br>That's the kind of line that gets a yes from a non-technical owner.");return;
+    }
+    // 6) score by risk name
+    var named=KIT.risk_model.register.filter(function(r){var w=r.title.toLowerCase().split(/[ \/]+/).filter(function(x){return x.length>4;});return w.some(function(x){return t.indexOf(x)>=0;});})[0];
+    if(named&&/score|risk|how bad|rate/.test(t)||named){
+      var b=bandFor(named.likelihood*named.impact);
+      botSay("<b>"+esc(named.title)+"</b>: "+scoreLine(named.likelihood,named.impact)+"<br><span class=\"aside-note\">"+esc(named.note)+"</span>");return;
+    }
+    // fallback
+    botSay("I work from the Cyber Trust Kit. I can:<br>• <b>Score a risk</b> — “score reused passwords” or “4 x 5”.<br>• <b>Draft a policy</b> — “policy for backups”.<br>• <b>Write an incident message</b> — “what do I tell customers”.<br>• <b>Explain a term</b> — “explain MFA”.<br><br>Which would help?");
+  }
+
+  function userSend(text){
+    if(!text.trim())return;
+    bubble("me",esc(text));
+    setTimeout(function(){respond(text);},180);
+  }
+
+  function renderChips(){
+    var chips=[["▶ Where do I start?","start"],["Score reused passwords","score reused passwords"],
+      ["Policy for passwords & MFA","I need a policy for passwords"],["What do I tell customers?","what do I tell customers in a breach"],
+      ["Explain ransomware","explain ransomware"]];
+    var c=$("#chips");c.innerHTML="";
+    chips.forEach(function(p){var b=el("button","chip",p[0]);b.addEventListener("click",function(){userSend(p[1]);});c.appendChild(b);});
+  }
+
+  // ---- boot ----
+  function boot(kit){
+    KIT=kit;
+    renderHeatMap();renderRanked();wireScorer();
+    if($("#grid").firstChild){$("#grid").children[8].click();} // default-select L4×I4 (Critical, R1/R3)
+    renderPolicyTabs();renderPolicy();
+    curAud=audiences()[0];renderAudTabs();renderPhaseTabs();renderScript();
+    var cp=$("#commsPrinciples");KIT.incident_comms.principles.forEach(function(p){cp.appendChild(el("li",null,esc(p)));});
+    renderGuide();
+    botSay("I'm your <b>ClearGlass Cyber Trust Advisor</b>. I help you get protected without the jargon — policies, a risk heat-map, incident messages, and plain-language explanations. What would you like to start with?");
+    renderChips();
+    // events
+    $("#cform").addEventListener("submit",function(e){e.preventDefault();var v=$("#cin").value;$("#cin").value="";userSend(v);});
+    $("#orgIn").addEventListener("input",renderPolicy);
+    $("#contactIn").addEventListener("input",renderPolicy);
+    $("#jargonIn").addEventListener("input",function(){renderGlossary(this.value);});
+    $("#copyPolicy").addEventListener("click",function(){copy(policyMd(KIT.policies[curPolicy],$("#orgIn").value.trim(),$("#contactIn").value.trim()));});
+    $("#dlPolicies").addEventListener("click",function(){download("clearglass-smb-policies.md",allPoliciesMd($("#orgIn").value.trim(),$("#contactIn").value.trim()));});
+    function dl(){download("clearglass-smb-cyber-trust-kit.md",kitMd($("#orgIn").value.trim(),$("#contactIn").value.trim()));}
+    $("#dlKit").addEventListener("click",dl);$("#dlKit2").addEventListener("click",dl);
+  }
+
+  // try live data first (stays in sync with the engine), fall back to embedded copy
+  if(window.fetch){
+    fetch("assets/data/smb-cyber-trust-kit.json").then(function(r){return r.ok?r.json():Promise.reject();})
+      .then(function(d){boot(d);}).catch(function(){var f=fallback();if(f)boot(f);});
+  }else{var f=fallback();if(f)boot(f);}
+})();
+</script>
+<script>
+/* Guided-start console — isolated recommender; maps stage + concern to a deliverable. */
+(function(){
+  "use strict";
+  var stage=null, pain=null;
+  var STAGES=["a business just getting started","a growing team","an established, audited business"];
+  var REC={
+    policies:{a:"#policies",t:"Simple Policy Templates",
+      d:"Adopt eight plain-language policies this week — acceptable use, passwords/MFA, data protection and more, personalised to your business name.",
+      cta:"Open the policy templates"},
+    heatmap:{a:"#heatmap",t:"Risk Heat-Map",
+      d:"Score your risks on a 5×5 grid and get a worst-first to-do list, so you fix what actually threatens the business first.",
+      cta:"Open the risk heat-map"},
+    incident:{a:"#incident",t:"Incident Communication Script",
+      d:"Ready-to-send holding statements for staff, customers, and regulators — so a bad day doesn't become a trust crisis.",
+      cta:"Open the incident scripts"},
+    guide:{a:"#guide",t:"Plain-Language Guide",
+      d:"Turn cyber risk into business language that gets a yes from owners and boards — analogies, translations, and what-to-say scripts.",
+      cta:"Open the plain-language guide"}
+  };
+  var STAGE_NOTE=[
+    "Since you're just starting, this gives you a credible baseline fast — no security team required.",
+    "For a growing team, this is where informal habits become written, repeatable discipline.",
+    "For an audited business, this is the documented evidence reviewers and clients ask to see."
+  ];
+  var $=function(s){return document.querySelector(s);};
+  function setActive(sel,attr,val){
+    document.querySelectorAll(sel+" .mat-opt").forEach(function(b){
+      b.classList.toggle("on", b.getAttribute(attr)===String(val));
+    });
+  }
+  function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+  function render(){
+    var box=$("#matRec"); if(!box||pain===null) return;
+    var r=REC[pain], note=stage!==null?" "+STAGE_NOTE[stage]:"";
+    box.innerHTML='<span class="pre">Recommended for '+esc(stage!==null?STAGES[stage]:"your business")+'</span>'+
+      '<h4>'+esc(r.t)+'</h4><p>'+esc(r.d+note)+'</p>'+
+      '<div class="cta-row" style="margin:0"><a class="btn primary" href="'+r.a+'">'+esc(r.cta)+' →</a></div>';
+  }
+  var sw=$("#matStage"), pw=$("#matPain");
+  if(sw)sw.addEventListener("click",function(e){var b=e.target.closest(".mat-opt");if(!b)return;
+    stage=+b.getAttribute("data-stage");setActive("#matStage","data-stage",stage);render();});
+  if(pw)pw.addEventListener("click",function(e){var b=e.target.closest(".mat-opt");if(!b)return;
+    pain=b.getAttribute("data-pain");setActive("#matPain","data-pain",pain);render();});
+})();
+</script>
+<script defer src="nav.js"></script>
+<script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="offers/index.html">Services &amp; Engagements</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="seo-authority-hub.html"><span><b>Previous</b>Cybersecurity &amp; AI Automation in Burlington</span></a>
+      <a href="offers/index.html"><span><b>Topic hub</b>Services &amp; Engagements</span></a>
+      <a href="smb.html"><span><b>Next in journey</b>SMB Suite</span></a>
+    </div>
+    <ul>
+      <li><a href="offers/hardening-sprint.html"><b>Hardening Sprint</b> — Microsoft 365 + Windows hardening engagement</a></li>
+      <li><a href="smb.html"><b>SMB Suite</b> — intelligent systems for small business</a></li>
+      <li><a href="offers/security-quick-audit.html"><b>Security Quick-Audit</b> — a focused $249 security review</a></li>
+      <li><a href="offers/autonomous-threat-modeling.html"><b>Autonomous Threat Modeling</b> — continuous threat-modeling assessment and implementation services</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<link rel="sitemap" type="application/xml" href="/sitemap.xml">
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>ClearTax AI™ — Precision Tax Intelligence · U.S. &amp; Canadian | ClearGlass Inc.</title>
+<meta name="description" content="ClearTax AI delivers audit-defensible U.S. and Canadian tax guidance for founders, corporations, and cross-border entities. IRC-grounded, CPA-level precision."/>
+<link rel="canonical" href="https://www.clearglassinc.com/tax.html"/>
+<meta property="og:title" content="ClearTax AI™ — Precision Tax Intelligence · ClearGlass Inc."/>
+<meta property="og:description" content="ClearTax AI delivers audit-defensible U.S. and Canadian tax guidance for founders, corporations, and cross-border entities. IRC-grounded, CPA-level precision."/>
+<meta property="og:url" content="https://www.clearglassinc.com/tax.html"/>
+<meta property="og:site_name" content="ClearGlass Inc."/>
+<meta property="og:type" content="website"/>
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="ClearTax AI™ — Precision Tax Intelligence · ClearGlass Inc."/>
+<meta name="twitter:description" content="Audit-defensible U.S. and Canadian tax guidance for founders, corporations, and cross-border entities."/>
+<meta name="twitter:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --white:#fafbfc;--off:#f3f5f8;--glass:rgba(255,255,255,0.55);--glass-border:rgba(0,0,0,0.06);--glass-strong:rgba(255,255,255,0.8);
+  --dark:#0a0c10;--dark-2:#1a1d25;--dark-3:#2a2d35;
+  --text:#0a0c10;--text-2:#3a3f4a;--text-3:#6b7280;--text-4:#9ca3af;
+  --amber:#480bf5;--amber-2:#5309d6;--amber-3:#5a09b4;--amber-light:rgba(72,11,245,0.08);--amber-border:rgba(72,11,245,0.2);
+  --gold-grad:linear-gradient(135deg,#480bf5 0%,#4929f6 40%,#871af5 80%,#e644ef 100%);
+  --prism-1:#38bdf8;--prism-2:#a78bfa;--prism-3:#f472b6;--prism-4:#34d399;--prism-5:#4929f6;--prism-6:#60a5fa;
+  --crystal:linear-gradient(135deg,#38bdf8 0%,#a78bfa 25%,#f472b6 50%,#4929f6 75%,#34d399 100%);
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'Urbanist',system-ui,sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.25rem,5vw,4rem);background:rgba(250,251,252,0.78);backdrop-filter:blur(30px) saturate(1.5);border-bottom:1px solid var(--glass-border);transition:all .4s}
+.nav.scrolled{background:rgba(250,251,252,0.94);box-shadow:0 1px 40px rgba(0,0,0,.04)}
+.nav-brand{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--text)}
+.nav-mark{width:44px;height:44px;border-radius:12px;overflow:hidden;background:#fff;display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.08);flex-shrink:0}.nav-mark img{width:100%;height:100%;object-fit:cover;display:block}
+.nav-name{font-family:var(--serif);font-size:22px;font-weight:600;letter-spacing:-.01em}.nav-name em{font-style:italic;font-weight:300;color:var(--text-3)}
+.nav-links{display:flex;align-items:center;gap:4px}.nav-links a{color:var(--text-3);text-decoration:none;font-size:14px;font-weight:600;padding:8px 16px;border-radius:999px;transition:all .25s}.nav-links a:hover{color:var(--text);background:rgba(0,0,0,.04)}
+.nav-links a.active{color:var(--amber);background:var(--amber-light)}
+.nav-cta{color:#fff!important;background:var(--dark)!important;font-weight:700!important;margin-left:10px}.nav-cta:hover{background:var(--dark-2)!important;transform:translateY(-1px)}
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px;color:var(--text)}.nav-toggle svg{width:24px;height:24px}
+.mobile-menu{display:none;position:fixed;inset:0;z-index:99;background:rgba(250,251,252,.97);backdrop-filter:blur(30px);flex-direction:column;align-items:center;justify-content:center;gap:8px}.mobile-menu.open{display:flex}.mobile-menu a{color:var(--text);text-decoration:none;font-family:var(--serif);font-size:28px;font-weight:400;padding:12px 32px;border-radius:12px}.mobile-menu a:hover{background:rgba(0,0,0,.04)}
+
+/* HERO */
+.hero{min-height:88vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:140px 2rem 80px;position:relative;overflow:hidden;background:linear-gradient(160deg,rgba(72,11,245,.04) 0%,rgba(73,41,246,.03) 40%,rgba(135,26,245,.03) 80%,rgba(250,251,252,1) 100%)}
+.hero-prism{position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(72,11,245,.07) 0%,rgba(73,41,246,.04) 30%,rgba(135,26,245,.02) 60%,transparent 75%);animation:prismPulse 10s ease-in-out infinite;pointer-events:none}
+@keyframes prismPulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.12)}}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;background:var(--amber-light);border:1px solid var(--amber-border);font-family:var(--mono);font-size:11px;font-weight:600;color:var(--amber-2);letter-spacing:.12em;margin-bottom:28px;animation:fadeUp .8s ease both}
+.hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--amber);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-family:var(--serif);font-size:clamp(2.8rem,7vw,6.5rem);font-weight:300;line-height:1.05;letter-spacing:-.03em;max-width:900px;animation:fadeUp .8s ease .1s both}
+.hero h1 strong{font-weight:600}
+.amber-text{background:var(--gold-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:clamp(1rem,1.6vw,1.2rem);color:var(--text-3);line-height:1.8;max-width:640px;margin-top:24px;animation:fadeUp .8s ease .2s both}
+.hero-jurisdictions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:28px;animation:fadeUp .8s ease .28s both}
+.juris-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:999px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.08em;border:1px solid var(--glass-border);background:rgba(255,255,255,.7);color:var(--text-3);backdrop-filter:blur(8px)}
+.juris-chip .flag{font-size:14px}
+.hero-stats{display:flex;gap:clamp(28px,5vw,64px);justify-content:center;margin-top:52px;flex-wrap:wrap;animation:fadeUp .8s ease .35s both}
+.hero-stat-num{font-family:var(--serif);font-size:clamp(2rem,4vw,3.2rem);font-weight:600;line-height:1;letter-spacing:-.03em;color:var(--text)}
+.hero-stat-num span{font-size:.6em;font-weight:300}
+.hero-stat-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--text-4);margin-top:6px;text-transform:uppercase}
+.hero-actions{display:flex;gap:14px;margin-top:44px;flex-wrap:wrap;justify-content:center;animation:fadeUp .8s ease .42s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:15px 32px;border-radius:999px;font-family:var(--sans);font-size:15px;font-weight:600;text-decoration:none;cursor:pointer;border:none;transition:all .3s}
+.btn-dark{color:#fff;background:var(--dark)}.btn-dark:hover{background:var(--dark-2);transform:translateY(-2px)}
+.btn-glass{color:var(--text);background:rgba(255,255,255,.6);border:1px solid var(--glass-border);backdrop-filter:blur(10px)}.btn-glass:hover{background:rgba(255,255,255,.9)}
+.btn-amber{color:#fff;background:var(--amber)}.btn-amber:hover{background:var(--amber-2);transform:translateY(-2px);box-shadow:0 8px 30px rgba(72,11,245,.3)}
+.btn-amber-outline{color:var(--amber-2);background:transparent;border:1.5px solid var(--amber-border)}.btn-amber-outline:hover{background:var(--amber-light)}
+
+/* LAYOUT */
+.container{width:min(1180px,92vw);margin:0 auto;padding:0 clamp(1rem,3vw,2rem)}
+.sect{padding:clamp(80px,10vw,130px) 0}
+.sect-dark{background:var(--dark);color:var(--white)}
+.sect-off{background:var(--off)}
+.sect-amber{background:linear-gradient(160deg,rgba(72,11,245,.04),rgba(73,41,246,.02),var(--white))}
+
+/* SECTION HEADER */
+.sh{margin-bottom:clamp(48px,6vw,72px)}
+.sh-tag{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.15em;color:var(--text-4);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.sh-tag::before{content:'';width:20px;height:1px;background:var(--text-4)}
+.sh-tag.amber::before{background:var(--amber)}
+.sh-tag.amber{color:var(--amber-2)}
+.sh h2{font-family:var(--serif);font-size:clamp(2.2rem,5vw,3.8rem);font-weight:300;line-height:1.1;letter-spacing:-.02em}
+.sh h2 strong{font-weight:600}
+.sh p{color:var(--text-3);font-size:clamp(1rem,1.4vw,1.1rem);line-height:1.75;max-width:620px;margin-top:18px}
+.sh-center{text-align:center}.sh-center p{margin-left:auto;margin-right:auto}
+.sh-dark h2{color:var(--white)}.sh-dark p{color:rgba(255,255,255,.5)}.sh-dark .sh-tag{color:rgba(255,255,255,.3)}.sh-dark .sh-tag::before{background:rgba(255,255,255,.2)}
+
+/* RV ANIMATION */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.rv.vis{opacity:1;transform:none}
+
+/* CAPABILITIES GRID */
+.cap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.cap-card{padding:clamp(28px,3.5vw,44px);background:var(--off);transition:all .35s;position:relative;overflow:hidden;cursor:default}
+.cap-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold-grad);opacity:0;transition:opacity .4s}
+.cap-card:hover{background:#fff;box-shadow:0 8px 40px rgba(0,0,0,.05)}
+.cap-card:hover::after{opacity:1}
+.cap-icon{font-size:28px;margin-bottom:18px;display:block}
+.cap-num{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--text-4);letter-spacing:.1em;margin-bottom:12px}
+.cap-card h3{font-family:var(--serif);font-size:clamp(1.3rem,2vw,1.8rem);font-weight:500;margin-bottom:10px;letter-spacing:-.01em}
+.cap-card p{color:var(--text-3);font-size:13.5px;line-height:1.75}
+.cap-irc{display:inline-flex;align-items:center;gap:5px;margin-top:14px;padding:4px 10px;border-radius:6px;background:var(--amber-light);border:1px solid var(--amber-border);font-family:var(--mono);font-size:10px;font-weight:600;color:var(--amber-3);letter-spacing:.06em}
+
+/* DEMO SECTION */
+.demo-wrap{border-radius:24px;border:1px solid var(--glass-border);background:var(--glass-strong);backdrop-filter:blur(20px);overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.07)}
+.demo-tabs{display:flex;border-bottom:1px solid var(--glass-border);background:var(--off);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.demo-tab{flex-shrink:0;padding:16px 22px;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--text-4);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .25s;white-space:nowrap}
+.demo-tab:hover{color:var(--text-2)}
+.demo-tab.active{color:var(--amber-2);border-bottom-color:var(--amber);background:rgba(255,255,255,.6)}
+.demo-body{display:none;padding:clamp(24px,4vw,44px);gap:clamp(20px,3vw,36px);align-items:flex-start}
+.demo-body.active{display:grid;grid-template-columns:1fr 1.15fr}
+.demo-query{flex-shrink:0}
+.demo-q-label{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;color:var(--text-4);margin-bottom:10px}
+.demo-q-bubble{padding:18px 20px;border-radius:14px 14px 14px 4px;background:var(--dark);color:rgba(255,255,255,.9);font-size:14px;line-height:1.7;font-family:var(--sans)}
+.demo-response{display:flex;flex-direction:column;gap:14px}
+.demo-r-label{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;color:var(--amber-2);margin-bottom:2px}
+.demo-block{border-radius:12px;border:1px solid var(--glass-border);background:#fff;overflow:hidden}
+.demo-block-head{padding:10px 16px;background:var(--off);border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between}
+.demo-block-title{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.1em;color:var(--text-3)}
+.demo-risk{padding:3px 9px;border-radius:999px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.08em}
+.risk-low{background:rgba(52,211,153,.12);color:#059669}
+.risk-mod{background:rgba(72,11,245,.12);color:#5309d6}
+.risk-high{background:rgba(230,68,239,.12);color:#d326dc}
+.demo-block-body{padding:14px 16px;font-size:13px;line-height:1.72;color:var(--text-2)}
+.demo-block-body strong{color:var(--text);font-weight:600}
+.demo-block-body .irc{font-family:var(--mono);font-size:11px;color:var(--amber-2);font-weight:600}
+.demo-block-body ul{padding-left:16px;margin-top:6px}
+.demo-block-body li{margin-bottom:4px}
+.demo-block-body .opt-chip{display:inline-flex;align-items:center;gap:5px;margin-right:6px;margin-top:4px;padding:4px 10px;border-radius:6px;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);font-size:11px;color:#047857;font-weight:600}
+
+/* PROCESS SECTION */
+.process-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.process-step{padding:clamp(28px,3vw,44px);position:relative}
+.process-step:not(:last-child)::after{content:'→';position:absolute;right:-12px;top:50%;transform:translateY(-50%);font-size:20px;color:var(--text-4);z-index:1}
+.ps-num{font-family:var(--serif);font-size:clamp(3rem,4vw,4.5rem);font-weight:300;color:var(--amber-light);line-height:1;margin-bottom:14px;-webkit-text-stroke:1px var(--amber-border)}
+.process-step h3{font-family:var(--serif);font-size:1.25rem;font-weight:500;margin-bottom:10px}
+.process-step p{color:var(--text-3);font-size:13.5px;line-height:1.72}
+
+/* CROSSBORDER */
+.cb-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch}
+.cb-card{padding:clamp(32px,4vw,52px);border-radius:24px;border:1px solid var(--glass-border);background:linear-gradient(145deg,rgba(255,255,255,.95),rgba(243,245,248,.9));backdrop-filter:blur(20px);box-shadow:0 16px 50px rgba(0,0,0,.04)}
+.cb-flag{font-size:40px;margin-bottom:20px;display:block}
+.cb-card h3{font-family:var(--serif);font-size:clamp(1.6rem,2.5vw,2.2rem);font-weight:500;margin-bottom:8px}
+.cb-card p{color:var(--text-3);font-size:14px;line-height:1.75;margin-bottom:18px}
+.cb-items{display:flex;flex-direction:column;gap:8px}
+.cb-item{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:var(--text-2);line-height:1.6}
+.cb-dot{width:6px;height:6px;border-radius:50%;background:var(--amber);margin-top:6px;flex-shrink:0}
+.cb-bridge{border-radius:24px;border:1px solid var(--amber-border);background:linear-gradient(145deg,var(--amber-light),rgba(135,26,245,.05));padding:clamp(32px,4vw,52px);grid-column:1/-1}
+.cb-bridge h3{font-family:var(--serif);font-size:clamp(1.6rem,2.5vw,2.2rem);font-weight:500;margin-bottom:12px}
+.cb-treaty-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:20px}
+.treaty-item{padding:16px 20px;border-radius:12px;background:rgba(255,255,255,.7);border:1px solid var(--amber-border)}
+.treaty-item .ti-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--amber-2);letter-spacing:.1em;margin-bottom:6px}
+.treaty-item p{font-size:13px;color:var(--text-2);line-height:1.6}
+
+/* DOMAIN CARDS (dark section) */
+.domain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.domain-card{padding:clamp(26px,3vw,36px);border-radius:20px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);backdrop-filter:blur(10px);transition:all .35s}
+.domain-card:hover{border-color:rgba(72,11,245,.25);background:rgba(72,11,245,.05);transform:translateY(-4px)}
+.dc-icon{font-size:26px;margin-bottom:16px;display:block}
+.domain-card h3{font-family:var(--sans);font-size:16px;font-weight:700;color:var(--white);margin-bottom:8px}
+.domain-card p{color:rgba(255,255,255,.45);font-size:13px;line-height:1.7}
+.dc-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:14px}
+.dc-tags span{padding:3px 9px;border-radius:999px;font-size:10px;font-weight:600;letter-spacing:.04em;background:rgba(255,255,255,.05);color:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.07)}
+
+/* STRUCTURED OUTPUT SHOWCASE */
+.output-wrap{border-radius:20px;overflow:hidden;border:1px solid var(--glass-border);box-shadow:0 16px 60px rgba(0,0,0,.06)}
+.output-header{background:var(--dark);padding:18px 24px;display:flex;align-items:center;gap:10px}
+.output-dots{display:flex;gap:6px}.output-dot{width:10px;height:10px;border-radius:50%}
+.output-title{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.4);margin-left:8px;letter-spacing:.08em}
+.output-body{background:#fff;padding:clamp(20px,3vw,36px);display:grid;gap:0}
+.output-section{border-bottom:1px solid var(--off);padding:16px 0}
+.output-section:last-child{border-bottom:none}
+.os-label{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.15em;color:var(--amber-2);margin-bottom:8px}
+.os-content{font-size:14px;line-height:1.75;color:var(--text-2)}
+.os-content strong{color:var(--text);font-weight:600}
+.os-content code{font-family:var(--mono);font-size:12px;background:var(--off);padding:2px 6px;border-radius:4px;color:var(--amber-3)}
+.os-risk-row{display:flex;align-items:center;gap:12px}
+.os-risk-badge{padding:6px 16px;border-radius:999px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.08em;background:rgba(52,211,153,.1);color:#059669;border:1px solid rgba(52,211,153,.2)}
+.os-opt-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.os-opt{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:8px;background:var(--amber-light);border:1px solid var(--amber-border);font-size:12px;font-weight:600;color:var(--amber-3)}
+
+/* DISCLAIMER */
+.disclaimer{padding:clamp(40px,6vw,64px) 0;border-top:1px solid var(--glass-border)}
+.disclaimer-inner{max-width:800px;margin:0 auto;text-align:center}
+.disclaimer-icon{font-size:24px;margin-bottom:12px;display:block}
+.disclaimer h3{font-family:var(--serif);font-size:1.4rem;font-weight:500;margin-bottom:10px}
+.disclaimer p{color:var(--text-3);font-size:13px;line-height:1.75}
+
+/* CTA */
+.cta-sect{padding:clamp(80px,12vw,140px) 0;background:linear-gradient(145deg,var(--dark),var(--dark-2));text-align:center;position:relative;overflow:hidden}
+.cta-glow{position:absolute;top:50%;left:50%;width:600px;height:600px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(72,11,245,.12) 0%,rgba(135,26,245,.06) 40%,transparent 70%);pointer-events:none}
+.cta-sect h2{font-family:var(--serif);font-size:clamp(2.2rem,5vw,4rem);font-weight:300;line-height:1.1;letter-spacing:-.02em;color:var(--white);max-width:700px;margin:0 auto;position:relative;z-index:1}
+.cta-sect h2 strong{font-weight:600}
+.cta-sect p{color:rgba(255,255,255,.5);font-size:1.05rem;line-height:1.8;max-width:520px;margin:20px auto 0;position:relative;z-index:1}
+.cta-actions{display:flex;gap:14px;justify-content:center;margin-top:40px;flex-wrap:wrap;position:relative;z-index:1}
+.btn-gold{color:var(--dark);background:var(--amber);font-weight:700}.btn-gold:hover{background:var(--amber-2);transform:translateY(-2px);box-shadow:0 8px 30px rgba(72,11,245,.35)}
+.btn-ghost{color:rgba(255,255,255,.7);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12)}.btn-ghost:hover{background:rgba(255,255,255,.1);color:#fff}
+
+/* FOOTER */
+.footer{background:var(--off);border-top:1px solid var(--glass-border);padding:clamp(56px,8vw,88px) 0 0}
+.footer-top{display:flex;gap:clamp(32px,5vw,64px);align-items:flex-start;flex-wrap:wrap}
+.footer-brand-block{flex-shrink:0}
+.footer-mark{width:40px;height:40px;border-radius:10px;overflow:hidden;background:#fff;display:grid;place-items:center;box-shadow:0 4px 16px rgba(0,0,0,.06);margin-bottom:12px}.footer-mark img{width:100%;height:100%;object-fit:cover}
+.footer-brand-name{font-family:var(--serif);font-size:18px;font-weight:600;display:block}
+.footer-brand-sub{font-family:var(--mono);font-size:10px;color:var(--text-4);letter-spacing:.1em;margin-top:4px;display:block}
+.footer-cols{display:flex;gap:clamp(28px,4vw,56px);flex-wrap:wrap;flex:1;justify-content:flex-end}
+.footer-col{min-width:100px}
+.footer-col-head{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;color:var(--text-4);text-transform:uppercase;margin-bottom:14px}
+.footer-col a{display:block;color:var(--text-3);text-decoration:none;font-size:13.5px;margin-bottom:8px;transition:color .2s}.footer-col a:hover{color:var(--text)}
+.footer-div{height:1px;background:var(--glass-border);margin:clamp(32px,4vw,48px) 0 24px}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:16px}
+.footer-copy{font-size:12px;color:var(--text-4)}
+.footer-util{display:flex;gap:20px;flex-wrap:wrap}
+.footer-util a{color:var(--text-4);text-decoration:none;font-size:12px;transition:color .25s}.footer-util a:hover{color:var(--text)}
+.footer-tagline{text-align:center;padding-top:22px;border-top:1px solid var(--glass-border);font-family:var(--serif);font-size:clamp(1rem,1.4vw,1.15rem);font-style:italic;font-weight:300;color:var(--text-4);padding-bottom:32px}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .cap-grid{grid-template-columns:repeat(2,1fr)}
+  .process-grid{grid-template-columns:1fr 1fr}
+  .process-step:not(:last-child)::after{display:none}
+  .cb-grid{grid-template-columns:1fr}
+  .demo-body.active{grid-template-columns:1fr}
+  .cb-bridge{grid-column:1}
+}
+@media(max-width:600px){
+  .nav-links{display:none}.nav-toggle{display:block}
+  .cap-grid{grid-template-columns:1fr}
+  .process-grid{grid-template-columns:1fr}
+  .footer-top{gap:28px}.footer-cols{gap:20px}.footer-col{min-width:90px}
+  .footer-bottom{flex-direction:column;align-items:flex-start}.footer-util{gap:12px}
+}
+</style>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="/assets/css/glass.css">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="navbar" role="navigation" aria-label="Main navigation">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-mark"><img src="assets/images/clearglass-logo.png" alt="ClearGlass logo" width="44" height="44"></div>
+    <div class="nav-name">ClearGlass <em>2040</em></div>
+  </a>
+  <div class="nav-links">
+    <a href="artemis.html">Artemis VI</a>
+    <a href="guardian.html">Guardian</a>
+    <a href="bluedesk.html" style="background:linear-gradient(90deg,#f43f5e,#a855f7 60%,#7e22ce);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:700">BLUEDESK</a>
+    <a href="smb.html">SMB Suite</a>
+    <a href="tax.html" class="active">ClearTax AI</a>
+    <a href="mailto:desmondotieno@icloud.com" class="nav-cta">Contact →</a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Open menu">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu" role="dialog" aria-label="Mobile navigation">
+  <a href="index.html" onclick="closeMob()">Home</a>
+  <a href="artemis.html" onclick="closeMob()">Artemis VI</a>
+  <a href="guardian.html" onclick="closeMob()">Guardian</a>
+  <a href="bluedesk.html" onclick="closeMob()" style="background:linear-gradient(90deg,#f43f5e,#a855f7 60%,#7e22ce);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:700">BLUEDESK</a>
+  <a href="smb.html" onclick="closeMob()">SMB Suite</a>
+  <a href="tax.html" onclick="closeMob()">ClearTax AI</a>
+  <a href="mailto:desmondotieno@icloud.com" onclick="closeMob()">Contact</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" role="banner">
+  <div class="hero-prism" aria-hidden="true"></div>
+  <div class="container" style="position:relative;z-index:1">
+    <div class="hero-badge"><span class="dot"></span>CLEARTAX AI™ · BETA ACCESS</div>
+    <h1>Precision Tax Intelligence<br><strong class="amber-text">at the speed of AI</strong></h1>
+    <p class="hero-sub">Audit-defensible tax guidance grounded in the IRC, CRA Act, and Canada–U.S. Tax Treaty — for founders, corporations, and cross-border entities operating in New York and Ontario.</p>
+    <div class="hero-jurisdictions">
+      <span class="juris-chip"><span class="flag">🇺🇸</span> U.S. Federal · IRC</span>
+      <span class="juris-chip"><span class="flag">🗽</span> New York State &amp; City</span>
+      <span class="juris-chip"><span class="flag">🇨🇦</span> Canada · CRA · ITA</span>
+      <span class="juris-chip"><span class="flag">🏙️</span> Ontario Provincial</span>
+      <span class="juris-chip"><span class="flag">⚡</span> Crypto &amp; Digital Assets</span>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">7<span>K+</span></div>
+        <div class="hero-stat-label">IRC Sections</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">3</div>
+        <div class="hero-stat-label">Treaty Frameworks</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">12</div>
+        <div class="hero-stat-label">Entity Structures</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">0</div>
+        <div class="hero-stat-label">Hallucinations Tolerated</div>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <a href="#demo" class="btn btn-amber">See It In Action →</a>
+      <a href="mailto:desmondotieno@icloud.com" class="btn btn-glass">Request Early Access</a>
+    </div>
+  </div>
+</section>
+
+<!-- CAPABILITIES GRID -->
+<section class="sect sect-off" id="capabilities">
+  <div class="container">
+    <div class="sh rv">
+      <div class="sh-tag amber">CORE CAPABILITIES</div>
+      <h2>Six domains.<br><strong>One authoritative engine.</strong></h2>
+      <p>ClearTax AI combines CPA-level depth with real-time reasoning across every area that matters to modern founders and enterprises.</p>
+    </div>
+    <div class="cap-grid">
+      <div class="cap-card rv">
+        <span class="cap-icon">🏛️</span>
+        <div class="cap-num">01</div>
+        <h3>Corporate Structure &amp; Entity Selection</h3>
+        <p>LLC vs. S-Corp vs. C-Corp analysis, salary-vs-distribution optimization, and QBI deduction strategies. Real numbers, real elections.</p>
+        <span class="cap-irc">IRC §199A · §1361 · §11</span>
+      </div>
+      <div class="cap-card rv">
+        <span class="cap-icon">₿</span>
+        <div class="cap-num">02</div>
+        <h3>Crypto &amp; Digital Asset Taxation</h3>
+        <p>Staking income, DeFi yield, NFT sales, hard forks, airdrops — capital vs. ordinary income analysis with defensible basis tracking methods.</p>
+        <span class="cap-irc">IRS Notice 2014-21 · Rev. Rul. 2019-24</span>
+      </div>
+      <div class="cap-card rv">
+        <span class="cap-icon">🌐</span>
+        <div class="cap-num">03</div>
+        <h3>Cross-Border U.S.–Canada</h3>
+        <p>Ontario/NY entity structures, FBAR compliance, Form T1135, W-8BEN-E, Closer Connection exceptions, and treaty benefit elections.</p>
+        <span class="cap-irc">IRC §7701 · Canada–U.S. Treaty Art. IV</span>
+      </div>
+      <div class="cap-card rv">
+        <span class="cap-icon">🤖</span>
+        <div class="cap-num">04</div>
+        <h3>AI &amp; Automation Income Streams</h3>
+        <p>Royalty vs. service income classification for AI-generated revenue, passive activity rules, and software IP structuring under domestic and Canadian regimes.</p>
+        <span class="cap-irc">IRC §469 · §861 · ITA §13</span>
+      </div>
+      <div class="cap-card rv">
+        <span class="cap-icon">🔍</span>
+        <div class="cap-num">05</div>
+        <h3>Audit Defense &amp; Documentation</h3>
+        <p>Contemporaneous documentation strategy, IRS audit risk scoring, penalty abatement arguments, and Form 8886 reportable transaction analysis.</p>
+        <span class="cap-irc">IRC §6662 · Treas. Reg. §1.6664-4</span>
+      </div>
+      <div class="cap-card rv">
+        <span class="cap-icon">📈</span>
+        <div class="cap-num">06</div>
+        <h3>High-Income Founder Planning</h3>
+        <p>QSBS exclusion eligibility, §1202 planning, deferred compensation, carried interest, and exit strategy tax minimization at Section 1045 rollover.</p>
+        <span class="cap-irc">IRC §1202 · §83(b) · §409A</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO SECTION -->
+<section class="sect" id="demo">
+  <div class="container">
+    <div class="sh sh-center rv">
+      <div class="sh-tag amber" style="justify-content:center">LIVE DEMO · STRUCTURED OUTPUT</div>
+      <h2>The AI that thinks like<br><strong>a Big Four partner</strong></h2>
+      <p>Every response follows a rigorous structure: Summary → Analysis → Legal Basis → Risk Level → Optimization. No guessing. No generics.</p>
+    </div>
+    <div class="demo-wrap rv">
+      <div class="demo-tabs" role="tablist">
+        <button class="demo-tab active" role="tab" aria-selected="true" onclick="switchTab(0)">SaaS / $500K Revenue</button>
+        <button class="demo-tab" role="tab" aria-selected="false" onclick="switchTab(1)">Crypto Staking Income</button>
+        <button class="demo-tab" role="tab" aria-selected="false" onclick="switchTab(2)">Ontario → NY Relocation</button>
+        <button class="demo-tab" role="tab" aria-selected="false" onclick="switchTab(3)">QSBS &amp; Founder Exit</button>
+      </div>
+
+      <!-- TAB 0: SaaS -->
+      <div class="demo-body active" id="tab-0">
+        <div class="demo-query">
+          <div class="demo-q-label">USER QUERY</div>
+          <div class="demo-q-bubble">"How do I minimize taxes on my SaaS business generating $500K/year? I'm currently an LLC filing as sole proprietor in New York."</div>
+        </div>
+        <div class="demo-response">
+          <div class="demo-r-label">CLEARTAX AI™ ANALYSIS</div>
+          <div class="demo-block">
+            <div class="demo-block-head"><span class="demo-block-title">SUMMARY</span></div>
+            <div class="demo-block-body">At $500K net, your current structure leaves <strong>$35–55K/yr on the table</strong>. An S-Corp election + reasonable salary strategy eliminates self-employment tax on distributions and unlocks the 20% QBI deduction.</div>
+          </div>
+          <div class="demo-block">
+            <div class="demo-block-head"><span class="demo-block-title">LEGAL BASIS</span></div>
+            <div class="demo-block-body"><span class="irc">IRC §1361</span> — S-Corp election via Form 2553 &nbsp;|&nbsp; <span class="irc">IRC §199A</span> — QBI deduction up to 20% for qualified trades &nbsp;|&nbsp; <span class="irc">IRC §3101</span> — SE tax avoided on distributions above reasonable salary</div>
+          </div>
+          <div class="demo-block">
+            <div class="demo-block-head"><span class="demo-block-title">RISK LEVEL</span><span class="demo-risk risk-low">LOW</span></div>
+            <div class="demo-block-body">Well-established position. IRS scrutiny focuses on unreasonably low salaries. Reasonable salary of $120–150K is defensible for a SaaS founder in NY.</div>
+          </div>
+          <div class="demo-block">
+            <div class="demo-block-head"><span class="demo-block-title">OPTIMIZATION</span></div>
+            <div class="demo-block-body">
+              <span class="opt-chip">✓ S-Corp Election</span>
+              <span class="opt-chip">✓ Solo 401(k) $66K</span>
+              <span class="opt-chip">✓ Augusta Rule §280A</span>
+              <span class="opt-chip">✓ QSEHRA Health Plan</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 1: Crypto -->
+      <div class="demo-body" id="tab-1">
+        <div class="demo-query">
+          <div class="demo-q-label">USER QUERY</div>
+          <div class="demo-q-bubble">"I earned $80K from Ethereum staking rewards in 2025. Do I pay ordinary income or capital gains? When is it taxable — when received or when sold?"</div>
+        </div>
+        <div class="demo-response">
+          <div class="demo-r-label">CLEARTAX AI™ ANALYSIS</div>
+          <div class="demo-block">
+            <div class="demo-block-head"><span class="demo-block-title">SUMMARY</span></div>
+            <div class="demo-block-body">Staking rewards are <strong>ordinary income at time of receipt</strong> under Rev. Rul. 2023-14. Your $80K is taxable in 2025 at ordinary rates. Subsequent sale triggers a second tax event (capital gain/loss).</div>
+          </div>
+          <div class="demo-block">
+            <div class="demo-block-head"><span class="demo-block-title">LEGAL BASIS</span></div>
+            <div class="demo-block-body"><span class="irc">Rev. Rul. 2023-14</span> — IRS confirmed staking rewards = gross income when received &nbsp;|&nbsp; <span class="irc">IRC §61</span> — Broad income definition &nbsp;|&nbsp; <span class="irc">IRC §1001</span> — Sale of rewards triggers second gain/loss event based on FMV at receipt as cost basis</div>
+          </div>
+          <div class="demo-block">
+            <div class="demo-block-head"><span class="demo-block-title">RISK LEVEL</span><span class="demo-risk risk-mod">MODERATE</span></div>
+            <div class="demo-block-body">Jarrett v. U.S. (M.D. Tenn. 2022) challenged this — court ruled for taxpayer on unique facts, but IRS rejected the reasoning. New stakers should follow Rev. Rul. 2023-14. Jarrett position is <strong>high-risk for audit</strong>.</div>
+          </div>
+          <div class="demo-block">
+            <div class="demo-block-head"><span class="demo-block-title">OPTIMIZATION</span></div>
+            <div class="demo-block-body">
+              <span class="opt-chip">✓ HIFO Lot Selection</span>
+              <span class="opt-chip">✓ Tax-Loss Harvesting</span>
+              <span class="opt-chip">✓ Qualified Opportunity Zone</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: Cross-border -->
+      <div class="demo-body" id="tab-2">
+        <div class="demo-query">
+          <div class="demo-q-label">USER QUERY</div>
+          <div class="demo-q-bubble">"I'm a Canadian citizen (Burlington, Ontario) moving to New York for 6 months per year to run my startup. What are my tax residency obligations in both countries?"</div>
+        </div>
+        <div class="demo-response">
+          <div class="demo-r-label">CLEARTAX AI™ ANALYSIS</div>
+          <div class="demo-block">
+            <div class="demo-block-head"><span class="demo-block-title">SUMMARY</span></div>
+            <div class="demo-block-body">You will likely be a <strong>dual tax resident</strong> — Canada under the ITA's factual residency test, and potentially U.S. under the Substantial Presence Test. Treaty tiebreaker provisions (Art. IV) will be critical to avoid double taxation.</div>
+          </div>
+          <div class="demo-block">
+            <div class="demo-block-head"><span class="demo-block-title">LEGAL BASIS</span></div>
+            <div class="demo-block-body"><span class="irc">IRC §7701(b)</span> — U.S. SPT: 183+ days in 3-year rolling formula &nbsp;|&nbsp; <span class="irc">ITA §250(3)</span> — Canadian factual residency (ties to Ontario) &nbsp;|&nbsp; <span class="irc">Canada–U.S. Treaty Art. IV(2)</span> — Tiebreaker: permanent home → habitual abode → nationality</div>
+          </div>
+          <div class="demo-block">
+            <div class="demo-block-head"><span class="demo-block-title">RISK LEVEL</span><span class="demo-risk risk-high">HIGH</span></div>
+            <div class="demo-block-body">Dual-filing without Treaty election = double taxation on global income. You must file Form 8840 (Closer Connection) or Form 8833 (Treaty position) with the IRS. CRA departure return may trigger deemed disposition of assets.</div>
+          </div>
+          <div class="demo-block">
+            <div class="demo-block-head"><span class="demo-block-title">OPTIMIZATION</span></div>
+            <div class="demo-block-body">
+              <span class="opt-chip">✓ Form 8840 Filing</span>
+              <span class="opt-chip">✓ T1161 Asset Reporting</span>
+              <span class="opt-chip">✓ FBAR Compliance</span>
+              <span class="opt-chip">✓ Treaty Art. IV Tiebreaker</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: QSBS -->
+      <div class="demo-body" id="tab-3">
+        <div class="demo-query">
+          <div class="demo-q-label">USER QUERY</div>
+          <div class="demo-q-bubble">"I'm planning to sell my C-Corp startup shares after 5 years. I invested $500K at founding. Can I exclude the gain under QSBS? What's the maximum exclusion?"</div>
+        </div>
+        <div class="demo-response">
+          <div class="demo-r-label">CLEARTAX AI™ ANALYSIS</div>
+          <div class="demo-block">
+            <div class="demo-block-head"><span class="demo-block-title">SUMMARY</span></div>
+            <div class="demo-block-body">If your shares qualify, you can exclude <strong>up to $10M (or 10× your basis — whichever is greater)</strong> from federal capital gains. Your $500K basis gives a $5M exclusion floor, but the $10M cap will likely apply. <strong>Zero federal tax</strong> on qualifying gain.</div>
+          </div>
+          <div class="demo-block">
+            <div class="demo-block-head"><span class="demo-block-title">LEGAL BASIS</span></div>
+            <div class="demo-block-body"><span class="irc">IRC §1202</span> — 100% exclusion for QSBS held &gt;5 years, acquired after Sept. 27, 2010 &nbsp;|&nbsp; Qualification: domestic C-Corp, active business, assets &lt;$50M at issuance &nbsp;|&nbsp; <span class="irc">IRC §1045</span> — Rollover if held &lt;5 years into new QSBS</div>
+          </div>
+          <div class="demo-block">
+            <div class="demo-block-head"><span class="demo-block-title">RISK LEVEL</span><span class="demo-risk risk-low">LOW</span></div>
+            <div class="demo-block-body">Well-established provision. Risk concentrates in qualification requirements: watch for service business exclusion (health, law, finance) and the $50M aggregate gross asset test at time of issuance. Early §83(b) election is critical.</div>
+          </div>
+          <div class="demo-block">
+            <div class="demo-block-head"><span class="demo-block-title">OPTIMIZATION</span></div>
+            <div class="demo-block-body">
+              <span class="opt-chip">✓ Stack Multiple Holders</span>
+              <span class="opt-chip">✓ §83(b) Election Day-1</span>
+              <span class="opt-chip">✓ §1045 Rollover Backup</span>
+              <span class="opt-chip">✓ State Tax Planning (CA excl.)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="sect sect-off" id="how">
+  <div class="container">
+    <div class="sh sh-center rv">
+      <div class="sh-tag amber" style="justify-content:center">HOW IT WORKS</div>
+      <h2>From question to<br><strong>audit-ready answer</strong></h2>
+    </div>
+    <div class="process-grid">
+      <div class="process-step rv">
+        <div class="ps-num">01</div>
+        <h3>Submit Your Scenario</h3>
+        <p>Describe your entity structure, jurisdiction, income type, and specific tax question in plain language.</p>
+      </div>
+      <div class="process-step rv">
+        <div class="ps-num">02</div>
+        <h3>IRC &amp; Treaty Analysis</h3>
+        <p>ClearTax AI cross-references IRC sections, Treasury Regulations, CRA guidance, and treaty provisions simultaneously.</p>
+      </div>
+      <div class="process-step rv">
+        <div class="ps-num">03</div>
+        <h3>Structured Output</h3>
+        <p>Receive a structured response: Summary, Detailed Analysis, Legal Basis, Risk Level (Low/Moderate/High), and Optimization opportunities.</p>
+      </div>
+      <div class="process-step rv">
+        <div class="ps-num">04</div>
+        <h3>Audit-Ready Documentation</h3>
+        <p>Every analysis cites the exact code sections, reg paragraphs, and IRS guidance needed to defend a filing position under examination.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CROSS-BORDER SECTION -->
+<section class="sect" id="crossborder">
+  <div class="container">
+    <div class="sh rv">
+      <div class="sh-tag amber">CROSS-BORDER EXPERTISE</div>
+      <h2>Built for the<br><strong>Ontario–New York corridor</strong></h2>
+      <p>ClearGlass operates at the intersection of Canadian and U.S. tax law — the most complex bilateral tax relationship in the world, with $900B+ in annual cross-border trade.</p>
+    </div>
+    <div class="cb-grid">
+      <div class="cb-card rv">
+        <span class="cb-flag">🇺🇸</span>
+        <h3>U.S. Federal &amp; New York</h3>
+        <p>From IRC §482 transfer pricing to New York's separate-entity unitary filing, ClearTax AI handles federal + state + NYC combined reporting.</p>
+        <div class="cb-items">
+          <div class="cb-item"><span class="cb-dot"></span><span>SALT deduction cap strategies (IRC §164)</span></div>
+          <div class="cb-item"><span class="cb-dot"></span><span>NY pass-through entity tax (PTET) election</span></div>
+          <div class="cb-item"><span class="cb-dot"></span><span>NYC UBT for unincorporated entities</span></div>
+          <div class="cb-item"><span class="cb-dot"></span><span>GILTI, FDII, and BEAT for multinationals</span></div>
+          <div class="cb-item"><span class="cb-dot"></span><span>FBAR (FinCEN 114) + Form 8938 dual compliance</span></div>
+        </div>
+      </div>
+      <div class="cb-card rv">
+        <span class="cb-flag">🇨🇦</span>
+        <h3>Canada · CRA · Ontario</h3>
+        <p>From SR&amp;ED credits to Ontario's small business deduction, ClearTax AI covers the full ITA alongside CRA interpretation bulletins.</p>
+        <div class="cb-items">
+          <div class="cb-item"><span class="cb-dot"></span><span>SR&amp;ED tax credit optimization (ITA §127)</span></div>
+          <div class="cb-item"><span class="cb-dot"></span><span>Lifetime Capital Gains Exemption (LCGE)</span></div>
+          <div class="cb-item"><span class="cb-dot"></span><span>Ontario Small Business Deduction (SBD)</span></div>
+          <div class="cb-item"><span class="cb-dot"></span><span>Corporate Attribution rules (ITA §74.4)</span></div>
+          <div class="cb-item"><span class="cb-dot"></span><span>T1135 Foreign Income Verification reporting</span></div>
+        </div>
+      </div>
+      <div class="cb-bridge rv">
+        <h3>The Canada–U.S. Tax Treaty: your most powerful tool</h3>
+        <p style="color:var(--text-3);font-size:14px;line-height:1.75;margin-bottom:0">ClearTax AI interprets all 30 articles of the Fifth Protocol Canada–U.S. Convention to minimize withholding, eliminate double taxation, and structure cross-border entities correctly from day one.</p>
+        <div class="cb-treaty-grid">
+          <div class="treaty-item">
+            <div class="ti-label">ARTICLE IV</div>
+            <p>Dual-residency tiebreaker rules — permanent home, habitual abode, centre of vital interests</p>
+          </div>
+          <div class="treaty-item">
+            <div class="ti-label">ARTICLE VII</div>
+            <p>Business profits attribution — permanent establishment thresholds and nexus analysis</p>
+          </div>
+          <div class="treaty-item">
+            <div class="ti-label">ARTICLE XI</div>
+            <p>Withholding on interest — reduced to 0% between related parties under Fifth Protocol</p>
+          </div>
+          <div class="treaty-item">
+            <div class="ti-label">ARTICLE XIII</div>
+            <p>Capital gains — exclusion for gains on shares of companies whose value derives from Canadian real property</p>
+          </div>
+          <div class="treaty-item">
+            <div class="ti-label">ARTICLE XVIII</div>
+            <p>Pensions — cross-border RRSP/IRA recognition, TFSA treatment, and §402 rollover eligibility</p>
+          </div>
+          <div class="treaty-item">
+            <div class="ti-label">ARTICLE XXVI-A</div>
+            <p>Mutual collection assistance — IRS and CRA share collection authority for cross-border liabilities</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOMAIN SPECIALIZATIONS (dark) -->
+<section class="sect sect-dark" id="domains">
+  <div class="container">
+    <div class="sh sh-dark sh-center rv">
+      <div class="sh-tag" style="justify-content:center;color:rgba(72,11,245,.6)">DOMAIN SPECIALIZATIONS</div>
+      <h2>Every angle.<br><strong>Every jurisdiction.</strong></h2>
+      <p>ClearTax AI covers the full spectrum of modern tax complexity — from DeFi protocols to international holding structures.</p>
+    </div>
+    <div class="domain-grid">
+      <div class="domain-card rv">
+        <span class="dc-icon">₿</span>
+        <h3>Crypto &amp; DeFi</h3>
+        <p>Staking, yield farming, NFT drops, wrapped tokens, DAO distributions, and FIFO/HIFO/Spec ID lot selection strategies.</p>
+        <div class="dc-tags"><span>Rev. Rul. 2023-14</span><span>Notice 2014-21</span><span>Form 8949</span></div>
+      </div>
+      <div class="domain-card rv">
+        <span class="dc-icon">🤖</span>
+        <h3>AI &amp; Automation Income</h3>
+        <p>IP royalty structuring, software licensing vs. service treatment, automated business passive activity classifications.</p>
+        <div class="dc-tags"><span>IRC §861</span><span>IRC §469</span><span>OECD Pillar Two</span></div>
+      </div>
+      <div class="domain-card rv">
+        <span class="dc-icon">🏗️</span>
+        <h3>Entity Structuring</h3>
+        <p>Delaware C-Corp, Ontario Corporation, LLC, ULC, holding company layering, and check-the-box election strategy.</p>
+        <div class="dc-tags"><span>IRC §7701</span><span>ITA §89</span><span>Form 8832</span></div>
+      </div>
+      <div class="domain-card rv">
+        <span class="dc-icon">🌍</span>
+        <h3>International Tax</h3>
+        <p>GILTI, Subpart F, CFC rules, transfer pricing, BEAT, FDII, and OECD BEPS compliance for global operations.</p>
+        <div class="dc-tags"><span>IRC §951A</span><span>IRC §482</span><span>TCJA §14102</span></div>
+      </div>
+      <div class="domain-card rv">
+        <span class="dc-icon">💰</span>
+        <h3>Founder &amp; VC Tax</h3>
+        <p>QSBS §1202 planning, §83(b) elections, carried interest, waterfall modeling, and secondary transaction structuring.</p>
+        <div class="dc-tags"><span>IRC §1202</span><span>IRC §83(b)</span><span>IRC §1231</span></div>
+      </div>
+      <div class="domain-card rv">
+        <span class="dc-icon">⚖️</span>
+        <h3>Audit &amp; Controversy</h3>
+        <p>IRS correspondence audit responses, substantial authority analysis, reasonable cause penalty defenses, and Appeals strategy.</p>
+        <div class="dc-tags"><span>IRC §6662</span><span>IRC §7491</span><span>Rev. Proc. 2023-15</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STRUCTURED OUTPUT SHOWCASE -->
+<section class="sect sect-amber" id="output">
+  <div class="container">
+    <div class="sh rv" style="max-width:560px">
+      <div class="sh-tag amber">STRUCTURED OUTPUT FORMAT</div>
+      <h2>Every answer is<br><strong>IRS-ready</strong></h2>
+      <p>ClearTax AI never responds with generic advice. Each analysis follows a six-section format designed to withstand IRS examination.</p>
+    </div>
+    <div class="output-wrap rv">
+      <div class="output-header">
+        <div class="output-dots">
+          <div class="output-dot" style="background:#f43fdb"></div>
+          <div class="output-dot" style="background:#4929f6"></div>
+          <div class="output-dot" style="background:#34d399"></div>
+        </div>
+        <span class="output-title">CLEARTAX AI™ · STRUCTURED RESPONSE FORMAT</span>
+      </div>
+      <div class="output-body">
+        <div class="output-section">
+          <div class="os-label">01 · SUMMARY</div>
+          <div class="os-content">Plain-English conclusion with the definitive answer and key numbers up front — no preamble, no disclaimers, no hedging.</div>
+        </div>
+        <div class="output-section">
+          <div class="os-label">02 · DETAILED ANALYSIS</div>
+          <div class="os-content">Step-by-step reasoning through the tax mechanics: income classification, timing rules, basis calculations, and election availability.</div>
+        </div>
+        <div class="output-section">
+          <div class="os-label">03 · LEGAL BASIS</div>
+          <div class="os-content">Exact citations: <code>IRC §199A</code>, <code>Treas. Reg. §1.199A-1</code>, <code>Rev. Rul. 2023-14</code>, relevant case law, and treaty articles — everything a tax attorney needs to draft a memorandum.</div>
+        </div>
+        <div class="output-section">
+          <div class="os-label">04 · RISK LEVEL</div>
+          <div class="os-content">
+            <div class="os-risk-row">
+              <span class="os-risk-badge">LOW · MODERATE · HIGH</span>
+              <span style="color:var(--text-3);font-size:13px">Calibrated audit risk with explanation of IRS scrutiny patterns and controversy history.</span>
+            </div>
+          </div>
+        </div>
+        <div class="output-section">
+          <div class="os-label">05 · OPTIMIZATION OPPORTUNITIES</div>
+          <div class="os-content">
+            <div class="os-opt-list">
+              <span class="os-opt">✓ Election Strategy</span>
+              <span class="os-opt">✓ Timing Optimization</span>
+              <span class="os-opt">✓ Entity Restructuring</span>
+              <span class="os-opt">✓ Treaty Benefit</span>
+            </div>
+          </div>
+        </div>
+        <div class="output-section">
+          <div class="os-label">06 · FOLLOW-UP QUESTIONS</div>
+          <div class="os-content">Targeted clarifying questions that unlock a more precise analysis — state residency, entity age, asset basis, prior elections made.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DISCLAIMER -->
+<section class="disclaimer">
+  <div class="container">
+    <div class="disclaimer-inner rv">
+      <span class="disclaimer-icon">⚠️</span>
+      <h3>Important: AI Guidance — Not a Substitute for Licensed Counsel</h3>
+      <p>ClearTax AI provides legally-grounded analysis for educational and planning purposes. It is not a substitute for advice from a licensed CPA, tax attorney, or enrolled agent. Tax law changes frequently — always verify current code sections and consult a qualified professional before filing or taking a tax position. ClearGlass Inc. does not establish an attorney-client or CPA-client relationship through ClearTax AI outputs.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sect" id="contact">
+  <div class="cta-glow" aria-hidden="true"></div>
+  <div class="container">
+    <h2 class="rv"><strong>Stop overpaying.</strong><br>Start with clarity.</h2>
+    <p class="rv">ClearTax AI is now in private beta for ClearGlass clients, Ontario–NY founders, and enterprise tax teams. Request early access or reach out to discuss your specific cross-border situation.</p>
+    <div class="cta-actions rv">
+      <a href="mailto:desmondotieno@icloud.com?subject=ClearTax AI Early Access&body=Hi Desmond, I'd like early access to ClearTax AI. My situation: " class="btn btn-gold">Request Early Access →</a>
+      <a href="index.html" class="btn btn-ghost">Explore ClearGlass →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand-block">
+        <div class="footer-mark"><img src="assets/images/clearglass-logo.png" alt="ClearGlass logo" width="40" height="40"></div>
+        <span class="footer-brand-name">ClearGlass</span>
+        <span class="footer-brand-sub">Tax Intelligence</span>
+      </div>
+      <nav class="footer-cols" aria-label="Footer navigation">
+        <div class="footer-col">
+          <div class="footer-col-head">ClearTax AI</div>
+          <a href="#capabilities">Capabilities</a>
+          <a href="#demo">Demo</a>
+          <a href="#crossborder">Cross-Border</a>
+          <a href="#domains">Domains</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-head">Products</div>
+          <a href="index.html">Home</a>
+          <a href="artemis.html">Artemis VI</a>
+          <a href="guardian.html">Guardian</a>
+          <a href="bluedesk.html" style="background:linear-gradient(90deg,#f43f5e,#a855f7 60%,#7e22ce);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:700">BLUEDESK</a>
+          <a href="smb.html">SMB Suite</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-head">Legal</div>
+          <a href="legal/terms.html">Terms</a>
+          <a href="legal/privacy.html">Privacy</a>
+          <a href="legal/">All Legal</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-head">Contact</div>
+          <a href="mailto:desmondotieno@icloud.com">Email Desmond</a>
+          <a href="https://github.com/ClearGlassInc" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-div"></div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© <span id="year"></span> ClearGlass Inc. All rights reserved. Burlington, Ontario, Canada</span>
+      <div class="footer-util">
+        <a href="legal/terms.html">Terms</a>
+        <a href="legal/privacy.html">Privacy</a>
+        <a href="index.html">Home</a>
+        <a href="mailto:desmondotieno@icloud.com">Contact</a>
+      </div>
+    </div>
+    <div class="footer-tagline">"Clarity is power. ClearTax AI gives it to every founder."</div>
+  </div>
+</footer>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+var nb = document.getElementById('navbar');
+window.addEventListener('scroll', function(){ nb.classList.toggle('scrolled', window.scrollY > 40); });
+
+var toggle = document.getElementById('navToggle');
+var mob = document.getElementById('mobileMenu');
+toggle.addEventListener('click', function(){ mob.classList.toggle('open'); });
+function closeMob(){ mob.classList.remove('open'); }
+
+var rvEls = document.querySelectorAll('.rv');
+var obs = new IntersectionObserver(function(entries){
+  entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('vis'); });
+}, {threshold:.1, rootMargin:'0px 0px -30px 0px'});
+rvEls.forEach(function(el){ obs.observe(el); });
+
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click', function(e){
+    var href = this.getAttribute('href');
+    if(href === '#') return;
+    var t = document.querySelector(href);
+    if(t){ e.preventDefault(); closeMob(); t.scrollIntoView({behavior:'smooth'}); }
+  });
+});
+
+function switchTab(idx){
+  document.querySelectorAll('.demo-tab').forEach(function(t,i){
+    t.classList.toggle('active', i === idx);
+    t.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+  });
+  document.querySelectorAll('.demo-body').forEach(function(b,i){
+    b.classList.toggle('active', i === idx);
+  });
+}
+</script>
+<script defer src="control-surface.js"></script>
+  <script defer src="ui.js"></script>
+  <script defer src="platform.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="legal/index.html">Legal, Tax &amp; Compliance</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="banking-law-advisor.html"><span><b>Previous</b>ClearBank Legal AI</span></a>
+      <a href="legal/index.html"><span><b>Topic hub</b>Legal Infrastructure</span></a>
+      <a href="procurement-legal-tech.html"><span><b>Next in journey</b>Procurement &amp; Legal-Tech Surface</span></a>
+    </div>
+    <ul>
+      <li><a href="procurement-legal-tech.html"><b>Procurement &amp; Legal-Tech Surface</b> — public-sector procurement intelligence</a></li>
+      <li><a href="legal/ai-liability.html"><b>AI Liability Framework</b> — how ClearGlass governs AI risk</a></li>
+      <li><a href="legal/legal-council.html"><b>AI Legal Council Framework</b> — structured multi-advisor legal review</a></li>
+      <li><a href="legal/privacy.html"><b>Privacy Policy</b> — how ClearGlass handles data</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="offers/index.html">Browse services &amp; engagements</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

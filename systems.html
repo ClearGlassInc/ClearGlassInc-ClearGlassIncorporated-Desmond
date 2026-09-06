@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8">
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Systems Control Surface — PERCIVAL Operations Console | ClearGlass Inc.</title>
+<meta name="description" content="ClearGlass Systems Control Surface — a live operations console monitoring site health, SEO, accessibility, brand consistency, deployments, and automation.">
+<link rel="canonical" href="https://www.clearglassinc.com/systems.html">
+<meta property="og:title" content="Systems Control Surface | ClearGlass Inc">
+<meta property="og:description" content="Private operations console: health, status, risk, priority, deploy — one unified panel governed by PERCIVAL.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.clearglassinc.com/systems.html">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Urbanist:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="ui.css">
+<style>
+  :root{
+    --bg:#070a14; --txt:#eaf0ff; --dim:#9aa6c8; --dim-2:#6b7596;
+    --panel:rgba(18,23,44,.55); --panel-2:rgba(13,17,34,.74); --line:rgba(124,150,255,.16);
+    --line-2:rgba(124,150,255,.32);
+    --ok:#34d399; --warn:#fbbf24; --bad:#f472b6; --sync:#38bdf8;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;color:var(--txt);font-family:var(--cg-sans,'Urbanist',system-ui,sans-serif);
+    background:
+      radial-gradient(1100px 700px at 85% -10%,rgba(167,139,250,.13),transparent 55%),
+      radial-gradient(900px 650px at -10% 15%,rgba(56,189,248,.13),transparent 52%),
+      var(--bg);
+    background-attachment:fixed;-webkit-font-smoothing:antialiased;line-height:1.55;padding-bottom:90px}
+  .wrap{width:min(1240px,94vw);margin:0 auto}
+  .mono{font-family:var(--cg-mono,'IBM Plex Mono',monospace)}
+
+  /* ── console header ── */
+  header.ops{position:sticky;top:0;z-index:50;backdrop-filter:blur(18px) saturate(1.1);
+    background:linear-gradient(180deg,rgba(9,12,24,.92),rgba(9,12,24,.78));
+    border-bottom:1px solid var(--line)}
+  .ops-in{display:flex;align-items:center;gap:14px;padding:13px 0}
+  .ops-logo{width:38px;height:38px;border-radius:10px;flex:0 0 auto;
+    box-shadow:0 0 16px rgba(124,150,255,.45)}
+  .ops-id .t{font-weight:800;letter-spacing:.02em;font-size:15.5px}
+  .ops-id .t b{background:var(--cg-crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .ops-id .s{font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim-2)}
+  .ops-right{margin-left:auto;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .pill{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 12px;border-radius:999px;
+    border:1px solid var(--line);background:var(--panel);font-size:11.5px;font-weight:600;color:var(--dim)}
+  .dot{width:7px;height:7px;border-radius:50%;background:#7c889c;flex:0 0 auto}
+  .dot.ok{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+  .dot.sync{background:var(--sync);box-shadow:0 0 8px var(--sync);animation:pulse 1.1s infinite}
+  .dot.warn{background:var(--warn);box-shadow:0 0 8px var(--warn)}
+  .dot.bad{background:var(--bad);box-shadow:0 0 8px var(--bad)}
+  @keyframes pulse{50%{opacity:.35}}
+  .clock{font-size:11px;color:var(--dim-2);letter-spacing:.08em}
+
+  /* ── tabs ── */
+  nav.tabs{display:flex;gap:6px;overflow-x:auto;padding:14px 0 0;scrollbar-width:none}
+  nav.tabs::-webkit-scrollbar{display:none}
+  .tab{appearance:none;border:1px solid transparent;background:none;color:var(--dim);cursor:pointer;
+    font:600 12.5px var(--cg-sans,'Urbanist',sans-serif);padding:9px 15px;border-radius:999px;white-space:nowrap;
+    transition:.18s var(--cg-ease,ease)}
+  .tab:hover{color:#fff;background:rgba(124,150,255,.1)}
+  .tab[aria-selected=true]{color:#fff;border-color:var(--line-2);
+    background:linear-gradient(100deg,rgba(96,165,250,.2),rgba(167,139,250,.08))}
+  .tab:focus-visible{outline:2px solid var(--sync);outline-offset:2px}
+
+  main{padding:26px 0}
+  [role=tabpanel]{outline:none}
+  [role=tabpanel][hidden]{display:none}
+
+  /* ── cards / grid ── */
+  .grid{display:grid;gap:14px}
+  .g4{grid-template-columns:repeat(4,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g2{grid-template-columns:repeat(2,1fr)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--cg-r-md,18px);
+    padding:18px 20px;backdrop-filter:blur(14px);transition:border-color .25s}
+  .card:hover{border-color:var(--line-2)}
+  .card h3{margin:0 0 4px;font:700 11px var(--cg-mono,monospace);letter-spacing:.18em;text-transform:uppercase;color:var(--dim-2)}
+  .kpi{font-family:var(--cg-serif,'Cormorant Garamond',serif);font-size:clamp(1.9rem,3.4vw,2.7rem);font-weight:500;line-height:1.05}
+  .kpi.crystal{background:var(--cg-crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .sub{font-size:12px;color:var(--dim)}
+  .sect{margin:26px 0 10px;display:flex;align-items:center;gap:10px;
+    font:700 11px var(--cg-mono,monospace);letter-spacing:.2em;text-transform:uppercase;color:var(--dim-2)}
+  .sect::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+
+  /* ── rows / list ── */
+  .rows{display:grid;gap:1px;border:1px solid var(--line);border-radius:var(--cg-r-md,18px);
+    overflow:hidden;background:var(--line)}
+  .row{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;
+    background:var(--panel-2);padding:13px 18px;font-size:13px}
+  .row .k{font-family:var(--cg-mono,monospace);font-size:10.5px;letter-spacing:.06em;color:var(--dim-2);min-width:84px}
+  .row .v{color:#dbe3f7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .row .v small{color:var(--dim-2)}
+  .badge{font:600 10px var(--cg-mono,monospace);letter-spacing:.1em;padding:4px 10px;border-radius:999px;border:1px solid}
+  .b-ok{color:var(--ok);border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.08)}
+  .b-warn{color:var(--warn);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.08)}
+  .b-bad{color:var(--bad);border-color:rgba(244,114,182,.35);background:rgba(244,114,182,.08)}
+  .b-info{color:var(--sync);border-color:rgba(56,189,248,.35);background:rgba(56,189,248,.08)}
+  .b-dim{color:var(--dim-2);border-color:var(--line)}
+  .empty{padding:30px;text-align:center;color:var(--dim-2);font-size:13px}
+  .loading{padding:26px;text-align:center;color:var(--dim-2);font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+  .loading::after{content:"";display:inline-block;width:12px;height:12px;margin-left:10px;vertical-align:-2px;
+    border-radius:50%;border:2px solid rgba(124,150,255,.3);border-top-color:var(--sync);animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .bar{height:4px;border-radius:2px;background:rgba(124,150,255,.12);overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:2px;background:linear-gradient(90deg,var(--cg-blue,#60a5fa),var(--cg-violet,#a78bfa))}
+  .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  details.acc{background:var(--panel);border:1px solid var(--line);border-radius:var(--cg-r-sm,12px);padding:2px 16px}
+  details.acc summary{cursor:pointer;padding:12px 0;font-weight:600;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;gap:12px;align-items:center}
+  details.acc summary::-webkit-details-marker{display:none}
+  details.acc summary::after{content:"+";color:var(--sync);font-family:var(--cg-mono,monospace)}
+  details.acc[open] summary::after{content:"–"}
+  details.acc summary:focus-visible{outline:2px solid var(--sync);outline-offset:3px;border-radius:6px}
+
+  @media(max-width:980px){.g4{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr}}
+  @media(max-width:620px){.g4,.g3,.g2{grid-template-columns:1fr}.ops-right .clock{display:none}.row .v{white-space:normal}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+  <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">Systems Control Surface — PERCIVAL Operations Console | ClearGlass Inc</h1>
+
+<header class="ops">
+  <div class="wrap">
+    <div class="ops-in">
+      <img class="ops-logo" src="icon.svg" alt="ClearGlass crystal mark" width="38" height="38">
+      <div class="ops-id">
+        <div class="t">Systems <b>Control Surface</b></div>
+        <div class="s">PERCIVAL operations console · www.clearglassinc.com</div>
+      </div>
+      <div class="ops-right">
+        <span class="pill"><span class="dot sync" id="dDeploy"></span><span id="tDeploy">Deploy: checking</span></span>
+        <span class="pill"><span class="dot sync" id="dScan"></span><span id="tScan">Audit: queued</span></span>
+        <span class="pill clock mono" id="clock" aria-label="UTC time">— UTC</span>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Console modules">
+      <button class="tab" role="tab" id="tb-overview"  aria-controls="tp-overview"  aria-selected="true">Overview</button>
+      <button class="tab" role="tab" id="tb-health"    aria-controls="tp-health"    aria-selected="false" tabindex="-1">Site health</button>
+      <button class="tab" role="tab" id="tb-seo"       aria-controls="tp-seo"       aria-selected="false" tabindex="-1">SEO · metadata</button>
+      <button class="tab" role="tab" id="tb-a11y"      aria-controls="tp-a11y"      aria-selected="false" tabindex="-1">Accessibility</button>
+      <button class="tab" role="tab" id="tb-content"   aria-controls="tp-content"   aria-selected="false" tabindex="-1">Content</button>
+      <button class="tab" role="tab" id="tb-auto"      aria-controls="tp-auto"      aria-selected="false" tabindex="-1">Automation</button>
+      <button class="tab" role="tab" id="tb-deploy"    aria-controls="tp-deploy"    aria-selected="false" tabindex="-1">Deploy</button>
+      <button class="tab" role="tab" id="tb-activity"  aria-controls="tp-activity"  aria-selected="false" tabindex="-1">Activity</button>
+      <button class="tab" role="tab" id="tb-alerts"    aria-controls="tp-alerts"    aria-selected="false" tabindex="-1">Alerts</button>
+      <button class="tab" role="tab" id="tb-brand"     aria-controls="tp-brand"     aria-selected="false" tabindex="-1">Brand</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- OVERVIEW -->
+  <section role="tabpanel" id="tp-overview" aria-labelledby="tb-overview" tabindex="0">
+    <div class="grid g4">
+      <div class="card"><h3>Pages monitored</h3><div class="kpi crystal" id="kPages">—</div><div class="sub">root estate · live fetch</div></div>
+      <div class="card"><h3>Open findings</h3><div class="kpi crystal" id="kFind">—</div><div class="sub" id="kFindSub">audit pending</div></div>
+      <div class="card"><h3>Deploy status</h3><div class="kpi" id="kDeploy" style="font-size:1.5rem;padding-top:10px">—</div><div class="sub">GitHub Actions · main</div></div>
+      <div class="card"><h3>Median page fetch</h3><div class="kpi crystal" id="kPerf">—</div><div class="sub">same-origin, this session</div></div>
+    </div>
+    <div class="sect">Priority queue — highest impact first</div>
+    <div class="rows" id="ovQueue"><div class="loading">Running governed audit</div></div>
+    <div class="acts">
+      <button class="cg-btn cg-btn--primary cg-btn--sm" id="btnRescan">Re-run audit</button>
+      <a class="cg-btn cg-btn--secondary cg-btn--sm" href="https://github.com/ClearGlassInc/ClearGlassInc.github.io/actions" target="_blank" rel="noopener">Open pipelines ↗</a>
+      <a class="cg-btn cg-btn--ghost cg-btn--sm" href="percival-os.html">PERCIVAL OS</a>
+      <a class="cg-btn cg-btn--ghost cg-btn--sm" href="Ontario-osint.html">🛰 Ontario OSINT Deck</a>
+    </div>
+  </section>
+
+  <!-- SITE HEALTH -->
+  <section role="tabpanel" id="tp-health" aria-labelledby="tb-health" tabindex="0" hidden>
+    <div class="sect">Per-page availability &amp; fetch time</div>
+    <div class="rows" id="healthRows"><div class="loading">Probing estate</div></div>
+  </section>
+
+  <!-- SEO -->
+  <section role="tabpanel" id="tp-seo" aria-labelledby="tb-seo" tabindex="0" hidden>
+    <div class="grid g3">
+      <div class="card"><h3>Titles</h3><div class="kpi crystal" id="kTitle">—</div><div class="sub">pages with &lt;title&gt;</div></div>
+      <div class="card"><h3>Meta descriptions</h3><div class="kpi crystal" id="kMeta">—</div><div class="sub">SERP snippet coverage</div></div>
+      <div class="card"><h3>Canonicals</h3><div class="kpi crystal" id="kCanon">—</div><div class="sub">duplicate-content guard</div></div>
+    </div>
+    <div class="sect">Metadata gaps</div>
+    <div class="rows" id="seoRows"><div class="loading">Auditing metadata</div></div>
+  </section>
+
+  <!-- A11Y -->
+  <section role="tabpanel" id="tp-a11y" aria-labelledby="tb-a11y" tabindex="0" hidden>
+    <div class="sect">Accessibility checks — lang, alt text</div>
+    <div class="rows" id="a11yRows"><div class="loading">Auditing accessibility</div></div>
+  </section>
+
+  <!-- CONTENT -->
+  <section role="tabpanel" id="tp-content" aria-labelledby="tb-content" tabindex="0" hidden>
+    <div class="sect">Content drift — sitemap vs live estate</div>
+    <div class="rows" id="contentRows"><div class="loading">Comparing sitemap</div></div>
+    <div class="sect">Copy surface</div>
+    <div class="rows" id="copyRows"><div class="loading">Measuring pages</div></div>
+  </section>
+
+  <!-- AUTOMATION -->
+  <section role="tabpanel" id="tp-auto" aria-labelledby="tb-auto" tabindex="0" hidden>
+    <div class="sect">Workflows — latest run per pipeline</div>
+    <div class="rows" id="autoRows"><div class="loading">Reading GitHub Actions</div></div>
+  </section>
+
+  <!-- DEPLOY -->
+  <section role="tabpanel" id="tp-deploy" aria-labelledby="tb-deploy" tabindex="0" hidden>
+    <div class="sect">Deployment — github-pages / main</div>
+    <div class="rows" id="deployRows"><div class="loading">Reading deploy history</div></div>
+  </section>
+
+  <!-- ACTIVITY -->
+  <section role="tabpanel" id="tp-activity" aria-labelledby="tb-activity" tabindex="0" hidden>
+    <div class="sect">Activity log — recent commits to main</div>
+    <div class="rows" id="actRows"><div class="loading">Reading history</div></div>
+  </section>
+
+  <!-- ALERTS -->
+  <section role="tabpanel" id="tp-alerts" aria-labelledby="tb-alerts" tabindex="0" hidden>
+    <div class="sect">Alerts &amp; issues — risk first</div>
+    <div class="rows" id="alertRows"><div class="loading">Correlating signals</div></div>
+  </section>
+
+  <!-- BRAND -->
+  <section role="tabpanel" id="tp-brand" aria-labelledby="tb-brand" tabindex="0" hidden>
+    <div class="sect">Brand consistency — blue-violet token discipline</div>
+    <div class="rows" id="brandRows"><div class="loading">Scanning palette</div></div>
+    <details class="acc" style="margin-top:14px">
+      <summary>Audit rules in force</summary>
+      <p class="sub" style="margin:0 0 14px">Warm off-token hues (red→amber drift) are flagged against the homepage prism
+      system. Alert-pink <span class="mono">#f472b6</span> is on-palette and preserved. Fix decisions follow PERCIVAL
+      governance: reversible metadata changes auto-fixable, structural changes escalate.</p>
+    </details>
+  </section>
+
+</main>
+
+<script>
+/* Systems Control Surface engine — keyless, same-origin audits mirroring
+   sentinel/sentinel/percival.py, plus public GitHub telemetry. */
+(function () {
+  "use strict";
+  var FEED = "/data/control-surface/";
+  var REPO = "ClearGlassInc/ClearGlassIncorporated-Desmond";
+  var EXEMPT = ["404.html","offline.html","cg-loader.html","button-system.html",
+    "hover-menu.html","button-lab.html","ClearGlass-NEXUS-v12-FINAL.html",
+    "google23RWyXWkoxqgArev8achU8IfVxYC5EIUAYBsuTYKLFM.html"];
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* ── tabs (WAI-ARIA, arrow keys) ── */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role=tab]'));
+  function select(tab) {
+    tabs.forEach(function (t) {
+      var on = t === tab;
+      t.setAttribute("aria-selected", String(on));
+      t.tabIndex = on ? 0 : -1;
+      $(t.getAttribute("aria-controls")).hidden = !on;
+    });
+    tab.focus();
+  }
+  tabs.forEach(function (t, i) {
+    t.addEventListener("click", function () { select(t); });
+    t.addEventListener("keydown", function (e) {
+      var j = e.key === "ArrowRight" ? i + 1 : e.key === "ArrowLeft" ? i - 1 :
+              e.key === "Home" ? 0 : e.key === "End" ? tabs.length - 1 : null;
+      if (j === null) return;
+      e.preventDefault(); select(tabs[(j + tabs.length) % tabs.length]);
+    });
+  });
+
+  /* ── clock ── */
+  setInterval(function () {
+    $("clock").textContent = new Date().toISOString().slice(11, 19) + " UTC";
+  }, 1000);
+
+  function row(k, v, badge, cls) {
+    return '<div class="row"><span class="k mono">' + k + '</span>' +
+      '<span class="v">' + v + '</span>' +
+      '<span class="badge ' + (cls || "b-dim") + '">' + badge + '</span></div>';
+  }
+  function fill(id, html, empty) {
+    $(id).innerHTML = html || '<div class="empty">' + (empty || "Nominal — nothing requiring action.") + '</div>';
+  }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  /* ── governed estate audit (same-origin, mirrors percival.py) ── */
+  function audit() {
+    $("dScan").className = "dot sync"; $("tScan").textContent = "Audit: running";
+    fetch("sitemap.xml").then(function (r) { return r.text(); }).then(function (sm) {
+      var locs = (sm.match(/<loc>([^<]+)<\/loc>/g) || []).map(function (m) {
+        return m.replace(/<\/?loc>/g, "").replace(/^https?:\/\/[^\/]+\//, "");
+      });
+      var rootPages = locs.filter(function (p) { return p.indexOf("/") < 0 && /\.html$/.test(p); });
+      // include known root pages not yet in sitemap via control-surface registry
+      var extra = ["index.html","percival-os.html","sentinel.html","aegis.html","agentmesh.html",
+        "systems.html","web-design.html","intelligence.html","guardian.html","artemis.html"];
+      extra.forEach(function (p) { if (rootPages.indexOf(p) < 0) rootPages.push(p); });
+      rootPages = rootPages.filter(function (p) { return EXEMPT.indexOf(p) < 0; });
+
+      var results = [], times = [];
+      var queue = rootPages.slice(0, 30); // bounded estate probe
+      return Promise.all(queue.map(function (p) {
+        var t0 = performance.now();
+        return fetch(p, { cache: "no-store" }).then(function (r) {
+          var ms = Math.round(performance.now() - t0);
+          times.push(ms);
+          if (!r.ok) { results.push({ page: p, kind: "unreachable", sev: "bad", ms: ms }); return null; }
+          return r.text().then(function (html) { return { p: p, html: html, ms: ms }; });
+        }).catch(function () { results.push({ page: p, kind: "unreachable", sev: "bad", ms: 0 }); return null; });
+      })).then(function (pages) {
+        pages = pages.filter(Boolean);
+        var seoOK = { title: 0, meta: 0, canon: 0 };
+        var health = [], seo = [], a11y = [], brand = [], copy = [];
+        pages.forEach(function (it) {
+          var h = it.html;
+          health.push({ page: it.p, ms: it.ms });
+          var hasTitle = /<title[^>]*>[^<]+<\/title>/i.test(h);
+          var hasMeta = /<meta\s+name=["']description["']/i.test(h);
+          var hasCanon = /<link\s+rel=["']canonical["']/i.test(h);
+          if (hasTitle) seoOK.title++; else seo.push({ page: it.p, kind: "missing title", sev: "warn" });
+          if (hasMeta) seoOK.meta++; else seo.push({ page: it.p, kind: "missing meta description", sev: "warn" });
+          if (hasCanon) seoOK.canon++; else seo.push({ page: it.p, kind: "missing canonical", sev: "info" });
+          if (!/<html[^>]*\blang=/i.test(h)) a11y.push({ page: it.p, kind: "html lang missing", sev: "warn" });
+          var imgs = h.match(/<img\b[^>]*>/gi) || [];
+          if (imgs.some(function (t) { return !/\balt=/i.test(t); }))
+            a11y.push({ page: it.p, kind: "img without alt", sev: "warn" });
+          var hexes = h.match(/#[0-9a-fA-F]{6}\b/g) || [];
+          for (var i = 0; i < hexes.length; i++) {
+            var x = hexes[i].slice(1).toLowerCase();
+            var r = parseInt(x.slice(0,2),16), g = parseInt(x.slice(2,4),16), b = parseInt(x.slice(4,6),16);
+            if (x !== "f472b6" && (r - b) >= 60 && r > 120 && g < 200) {
+              brand.push({ page: it.p, kind: "warm off-token #" + x, sev: "info" }); break;
+            }
+          }
+          var words = (h.replace(/<script[\s\S]*?<\/script>/gi,"").replace(/<[^>]+>/g," ").match(/\b\w+\b/g) || []).length;
+          copy.push({ page: it.p, words: words });
+        });
+        // content drift
+        var live = pages.map(function (x) { return x.p; });
+        var drift = [];
+        rootPages.forEach(function (p) {
+          if (locs.indexOf(p) < 0 && live.indexOf(p) >= 0)
+            drift.push({ page: p, kind: "not in sitemap", sev: "warn" });
+        });
+        locs.filter(function (p) { return p.indexOf("/") < 0 && /\.html$/.test(p); })
+          .forEach(function (p) {
+            if (EXEMPT.indexOf(p) < 0 && live.indexOf(p) < 0 && rootPages.indexOf(p) >= 0)
+              drift.push({ page: p, kind: "listed but unreachable", sev: "bad" });
+          });
+
+        render(pages.length, health, seo, a11y, brand, drift, copy, seoOK, times, results);
+      });
+    }).catch(function () {
+      $("dScan").className = "dot bad"; $("tScan").textContent = "Audit: offline";
+      ["ovQueue","healthRows","seoRows","a11yRows","contentRows","copyRows","brandRows","alertRows"]
+        .forEach(function (id) { fill(id, "", "Audit offline — estate unreachable from this session."); });
+    });
+  }
+
+  function render(n, health, seo, a11y, brand, drift, copy, seoOK, times, hard) {
+    $("kPages").textContent = n;
+    var all = [].concat(
+      hard.map(function (f) { return { p: 1, sev: "bad",  page: f.page, kind: "page unreachable" }; }),
+      drift.map(function (f) { return { p: 2, sev: f.sev, page: f.page, kind: f.kind }; }),
+      a11y.map(function (f) { return { p: 3, sev: f.sev, page: f.page, kind: f.kind }; }),
+      seo.map(function (f) { return { p: 4, sev: f.sev, page: f.page, kind: f.kind }; }),
+      brand.map(function (f) { return { p: 5, sev: f.sev, page: f.page, kind: f.kind }; })
+    ).sort(function (a, b) { return a.p - b.p; });
+    $("kFind").textContent = all.length;
+    $("kFindSub").textContent = all.length ? "ranked · risk first" : "estate nominal";
+    times.sort(function (a, b) { return a - b; });
+    $("kPerf").textContent = times.length ? times[Math.floor(times.length / 2)] + "ms" : "—";
+    $("dScan").className = "dot " + (all.some(function (f) { return f.sev === "bad"; }) ? "bad" :
+      all.length ? "warn" : "ok");
+    $("tScan").textContent = "Audit: " + (all.length ? all.length + " findings" : "nominal");
+
+    fill("ovQueue", all.slice(0, 10).map(function (f) {
+      return row("P" + f.p, esc(f.kind) + " <small>· " + esc(f.page) + "</small>",
+        f.sev === "bad" ? "RISK" : f.sev === "warn" ? "REVIEW" : "OPTIMIZE",
+        f.sev === "bad" ? "b-bad" : f.sev === "warn" ? "b-warn" : "b-info");
+    }).join(""));
+
+    fill("healthRows", health.sort(function (a, b) { return b.ms - a.ms; }).map(function (h) {
+      var pct = Math.min(100, Math.round(h.ms / 8));
+      return '<div class="row"><span class="k mono">' + h.ms + 'ms</span>' +
+        '<span class="v">' + esc(h.page) + '<div class="bar" style="margin-top:6px;max-width:340px"><i style="width:' + pct + '%"></i></div></span>' +
+        '<span class="badge ' + (h.ms < 250 ? "b-ok" : h.ms < 800 ? "b-warn" : "b-bad") + '">' +
+        (h.ms < 250 ? "FAST" : h.ms < 800 ? "OK" : "SLOW") + '</span></div>';
+    }).join(""));
+
+    $("kTitle").textContent = seoOK.title + "/" + n;
+    $("kMeta").textContent  = seoOK.meta + "/" + n;
+    $("kCanon").textContent = seoOK.canon + "/" + n;
+    fill("seoRows", seo.map(function (f) {
+      return row("SEO", esc(f.kind) + " <small>· " + esc(f.page) + "</small>", "REVIEW",
+        f.sev === "warn" ? "b-warn" : "b-info");
+    }).join(""), "Metadata coverage complete.");
+    fill("a11yRows", a11y.map(function (f) {
+      return row("A11Y", esc(f.kind) + " <small>· " + esc(f.page) + "</small>", "REVIEW", "b-warn");
+    }).join(""), "No accessibility gaps detected by static checks.");
+    fill("contentRows", drift.map(function (f) {
+      return row("DRIFT", esc(f.kind) + " <small>· " + esc(f.page) + "</small>",
+        f.sev === "bad" ? "RISK" : "SYNC", f.sev === "bad" ? "b-bad" : "b-warn");
+    }).join(""), "Sitemap and estate in sync.");
+    fill("copyRows", copy.sort(function (a, b) { return b.words - a.words; }).slice(0, 12).map(function (c) {
+      return row(c.words + "w", esc(c.page), c.words < 80 ? "THIN" : "OK",
+        c.words < 80 ? "b-warn" : "b-ok");
+    }).join(""));
+    fill("brandRows", brand.map(function (f) {
+      return row("HUE", esc(f.kind) + " <small>· " + esc(f.page) + "</small>", "OPTIMIZE", "b-info");
+    }).join(""), "Palette holds — blue-violet token discipline intact.");
+    fill("alertRows", all.filter(function (f) { return f.sev !== "info"; }).map(function (f) {
+      return row("P" + f.p, esc(f.kind) + " <small>· " + esc(f.page) + "</small>",
+        f.sev === "bad" ? "RISK" : "REVIEW", f.sev === "bad" ? "b-bad" : "b-warn");
+    }).join(""), "No active alerts. Estate nominal.");
+  }
+
+  /* ── Run telemetry ──────────────────────────────────────────────────────
+     Primary source is the same-origin feed published hourly by
+     control-surface-feeds.yml, which the Actions API fills in authenticated.
+     The keyless api.github.com path below stays as a fallback: it allows 60
+     requests/hour/IP and is blocked outright on many corporate networks, so on
+     its own it left these panels reading "offline" for most visitors. */
+  function gh(path) {
+    return fetch("https://api.github.com/repos/" + REPO + path,
+      { headers: { Accept: "application/vnd.github+json" } })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
+  }
+
+  /* Both sources normalise to { name, label, running, ok } before rendering. */
+  function renderRuns(items) {
+    var latest = items[0];
+    var running = items.some(function (r) { return r.running; });
+    var state = running ? ["sync", "Pipeline running"] :
+      latest && latest.ok ? ["ok", "Build healthy"] :
+      latest ? ["bad", "Pipeline failure"] : ["warn", "No runs"];
+    $("dDeploy").className = "dot " + state[0];
+    $("tDeploy").textContent = "Deploy: " + state[1];
+    $("kDeploy").innerHTML = '<span class="badge ' +
+      (state[0] === "ok" ? "b-ok" : state[0] === "sync" ? "b-info" : "b-bad") + '">' +
+      state[1].toUpperCase() + "</span>";
+    var seen = {};
+    fill("autoRows", items.filter(function (r) {
+      if (seen[r.name]) return false; seen[r.name] = 1; return true;
+    }).map(function (r) {
+      return row(r.when, esc(r.name), r.running ? "RUNNING" : r.ok ? "PASS" : "FAIL",
+        r.running ? "b-info" : r.ok ? "b-ok" : "b-bad");
+    }).join(""));
+    fill("deployRows", items.filter(function (r) { return /pages/i.test(r.name); }).slice(0, 8)
+      .map(function (r) {
+        return row(r.label, esc(r.name) + (r.note ? ' <small>· ' + esc(r.note) + "</small>" : ""),
+          r.running ? "DEPLOYING" : r.ok ? "LIVE" : "FAILED",
+          r.running ? "b-info" : r.ok ? "b-ok" : "b-bad");
+      }).join(""), "No deploy runs visible.");
+  }
+
+  function telemetryOffline() {
+    $("dDeploy").className = "dot"; $("tDeploy").textContent = "Deploy: offline";
+    $("kDeploy").innerHTML = '<span class="badge b-dim">STATUS OFFLINE</span>';
+    fill("autoRows", "", "Run telemetry offline (feed unreachable and keyless API rate limited).");
+    fill("deployRows", "", "Run telemetry offline.");
+  }
+
+  function telemetryFromApi() {
+    return gh("/actions/runs?per_page=20").then(function (d) {
+      renderRuns((d.workflow_runs || []).map(function (r) {
+        return {
+          name: r.name,
+          label: "#" + r.run_number,
+          note: (r.head_sha || "").slice(0, 7),
+          when: new Date(r.run_started_at).toISOString().slice(5, 16).replace("T", " "),
+          running: r.status !== "completed",
+          ok: r.conclusion === "success"
+        };
+      }));
+    });
+  }
+
+  /* Feed titles read "Workflow Name #1234"; detail leads with the raw state
+     ("in_progress · schedule on main") until a conclusion lands. */
+  function telemetryFromFeed() {
+    return fetch(FEED + "runs.json", { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (rows) {
+        if (!Array.isArray(rows)) throw new Error("shape");
+        renderRuns(rows.map(function (r) {
+          var title = String(r.title || "");
+          var hash = title.lastIndexOf(" #");
+          var head = String(r.detail || "").split("·")[0].trim();
+          return {
+            name: hash > 0 ? title.slice(0, hash) : title,
+            label: hash > 0 ? title.slice(hash + 1) : "—",
+            note: "",
+            when: String(r.timestamp || "").slice(5, 16).replace("T", " ") || r.time,
+            running: head === "in_progress" || head === "queued" || head === "pending" || head === "requested",
+            ok: r.status === "ok"
+          };
+        }));
+      });
+  }
+
+  function telemetry() {
+    telemetryFromFeed().catch(telemetryFromApi).catch(telemetryOffline);
+    /* No published feed carries commit history yet, so this panel is still
+       keyless-API-only and shows its offline note when that is unavailable. */
+    gh("/commits?per_page=12").then(function (commits) {
+      fill("actRows", commits.map(function (c) {
+        var msg = (c.commit.message || "").split("\n")[0];
+        return row(c.sha.slice(0, 7),
+          esc(msg) + ' <small>· ' + esc((c.commit.author || {}).name || "") + "</small>",
+          new Date(c.commit.author.date).toISOString().slice(0, 10), "b-dim");
+      }).join(""));
+    }).catch(function () { fill("actRows", "", "Commit history offline."); });
+  }
+
+  $("btnRescan").addEventListener("click", audit);
+  audit(); telemetry();
+  setInterval(telemetry, 300000);   // the feed is rewritten hourly
+})();
+</script>
+<script defer src="control-surface.js"></script>
+<script defer src="ui.js"></script>
+<script defer src="platform.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="percival-os.html">Command &amp; Autonomous Operations</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="control-surface.html"><span><b>Previous</b>Systems Control Surface v3.1</span></a>
+      <a href="percival-os.html"><span><b>Topic hub</b>PERCIVAL OS</span></a>
+      <a href="saas-platform.html"><span><b>Next in journey</b>Event Control Surface</span></a>
+    </div>
+    <ul>
+      <li><a href="saas-platform.html"><b>Event Control Surface</b> — event-driven platform operations</a></li>
+      <li><a href="CG-os.html"><b>CG OS</b> — the ClearGlass command HUD</a></li>
+      <li><a href="percival-build.html"><b>PERCIVAL BUILD</b> — spatial engineering workspace</a></li>
+      <li><a href="clearsight.html"><b>CLEARSIGHT</b> — edge-AI camera vision &amp; object detection</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="offers/index.html">Browse services &amp; engagements</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

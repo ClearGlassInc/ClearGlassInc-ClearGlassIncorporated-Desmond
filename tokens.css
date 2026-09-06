@@ -1,0 +1,65 @@
+/* ClearGlass · Design Tokens — single source of truth (v3.3)
+   ────────────────────────────────────────────────────────────────────────────
+   Extracted verbatim from the homepage (index.html) so every surface — nav,
+   buttons, palette, drawer, status — inherits ONE visual language. Foundation
+   tokens are universal brand primitives; semantic surface tokens carry the
+   dark-context defaults the floating control chrome sits on. Namespaced --cg-*
+   so they never collide with a page's own variables. */
+:root {
+  /* ── foundation · prism palette (homepage --prism-1..6) ─────────────────── */
+  --cg-prism-1: #38bdf8;   /* sky      */
+  --cg-prism-2: #a78bfa;   /* violet   */
+  --cg-prism-3: #f472b6;   /* pink     */
+  --cg-prism-4: #34d399;   /* mint     */
+  --cg-prism-5: #fbbf24;   /* amber    */
+  --cg-prism-6: #60a5fa;   /* blue     */
+  --cg-crystal: linear-gradient(135deg,#38bdf8 0%,#a78bfa 25%,#f472b6 50%,#fbbf24 75%,#34d399 100%);
+
+  /* brand convenience aliases (kept for buttons.css / control-surface.js) */
+  --cg-blue:   #60a5fa;
+  --cg-violet: #a78bfa;
+  --cg-pink:   #f472b6;
+  --cg-ink:    #0a0c10;
+  --cg-ink-2:  #1a1d25;
+
+  /* ── typography (homepage font logic) ───────────────────────────────────── */
+  --cg-serif: 'Cormorant Garamond', Georgia, serif;
+  --cg-sans:  'Urbanist', system-ui, -apple-system, sans-serif;
+  --cg-mono:  'IBM Plex Mono', ui-monospace, monospace;
+
+  /* ── radius (homepage geometry) ─────────────────────────────────────────── */
+  --cg-r-pill: 999px;
+  --cg-r-lg:   24px;
+  --cg-r-md:   18px;
+  --cg-r-sm:   12px;
+  --cg-r-xs:   10px;
+
+  /* ── spacing rhythm ─────────────────────────────────────────────────────── */
+  --cg-sp-1: 4px; --cg-sp-2: 8px; --cg-sp-3: 12px;
+  --cg-sp-4: 16px; --cg-sp-5: 24px; --cg-sp-6: 32px;
+
+  /* ── motion (homepage easing + spring) ──────────────────────────────────── */
+  --cg-ease:   cubic-bezier(.4,0,.2,1);
+  --cg-spring: cubic-bezier(.16,1,.3,1);
+  --cg-dur-1: .2s; --cg-dur-2: .35s; --cg-dur-3: .5s;
+
+  /* ── elevation ──────────────────────────────────────────────────────────── */
+  --cg-sh-1: 0 2px 20px rgba(0,0,0,.08);
+  --cg-sh-2: 0 12px 50px rgba(0,0,0,.06);
+  --cg-sh-3: 0 24px 60px -24px rgba(6,8,18,.8);
+
+  /* ── status (mapped to the prism, so chips match homepage badge hues) ───── */
+  --cg-status-ok:   var(--cg-prism-4);   /* NOMINAL  */
+  --cg-status-sync: var(--cg-prism-1);   /* SYNCING  */
+  --cg-status-warn: var(--cg-prism-5);   /* DEGRADED */
+  --cg-status-fail: var(--cg-prism-3);   /* FAILURE  */
+
+  /* ── semantic surfaces · dark-context defaults (floating chrome) ────────── */
+  --cg-surface:        rgba(18,22,42,.72);
+  --cg-surface-strong: rgba(20,24,44,.96);
+  --cg-hairline:       rgba(124,150,255,.28);
+  --cg-hairline-soft:  rgba(124,150,255,.16);
+  --cg-on-surface:     #e7ecff;
+  --cg-on-surface-dim: #9aa6c8;
+  --cg-glow:           rgba(96,165,250,.55);
+}

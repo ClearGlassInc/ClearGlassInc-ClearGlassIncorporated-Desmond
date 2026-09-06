@@ -1,0 +1,2957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>PERCIVAL OS · Mission-Ready Command Center — ClearGlass Inc.</title>
+<meta name="description" content="PERCIVAL — an Iron Man / JARVIS-class always-on intelligent command center. Holographic brain hub, agent swarm, live KPIs, threat monitor, and a voice + text."/>
+<link rel="canonical" href="https://www.clearglassinc.com/percival-os.html"/>
+<meta property="og:title" content="PERCIVAL OS · Mission-Ready Command Center — ClearGlass Inc."/>
+<meta property="og:description" content="An Iron Man-class brain command center: holographic dashboards, agent swarm, voice console, and live telemetry."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://www.clearglassinc.com/percival-os.html"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --orange:#a78bfa;--orange-2:#818cf8;--amber:#60a5fa;
+  --cyan:#60a5fa;--cyan-2:#3b82f6;--blue:#2b6cff;--ice:#bcd4ff;
+  --ink:#080a16;--ink-2:#0b0e1d;--panel:#0f1326;--panel-2:#131836;
+  --line:rgba(124,150,255,.16);--line-2:rgba(124,150,255,.30);
+  --txt:#e8eef7;--dim:#8aa0bd;--dim-2:#5b6678;
+  --ok:#34d399;--warn:#60a5fa;--bad:#f472b6;
+  --sans:'Inter',system-ui,-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--display:'Orbitron',var(--sans);
+}
+html,body{height:100%}
+body{
+  font-family:var(--sans);color:var(--txt);overflow:hidden;
+  background:radial-gradient(130% 100% at 50% -10%,#1a0619 0%,#0c030b 45%,#050205 100%);
+  -webkit-font-smoothing:antialiased;
+}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px);mix-blend-mode:overlay;opacity:.5}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:61;
+  background:radial-gradient(120% 90% at 50% 35%,transparent 55%,rgba(0,0,0,.55) 100%)}
+::-webkit-scrollbar{width:7px;height:7px}::-webkit-scrollbar-thumb{background:rgba(124,150,255,.25);border-radius:6px}
+::selection{background:rgba(124,150,255,.3)}
+
+/* ============ BOOT ============ */
+#boot{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 45%,#160612,#050204 70%);display:grid;place-items:center;transition:opacity .8s ease}
+#boot.gone{opacity:0;pointer-events:none}
+.boot-core{position:relative;width:200px;height:200px;display:grid;place-items:center}
+.boot-ring{position:absolute;border-radius:50%;border:2px solid transparent}
+.boot-ring.a{inset:0;border-top-color:var(--cyan);border-right-color:var(--cyan-2);animation:spin 1.6s linear infinite}
+.boot-ring.b{inset:18px;border-bottom-color:var(--orange);border-left-color:var(--amber);animation:spin 2.4s linear infinite reverse}
+.boot-ring.c{inset:40px;border:1px dashed rgba(124,150,255,.4);animation:spin 9s linear infinite}
+.boot-orb{width:62px;height:62px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#bcd4ff,#1a2350 55%,#1f041d);box-shadow:0 0 40px rgba(124,150,255,.8),0 0 90px rgba(124,150,255,.4) inset;animation:pulseCore 2.2s ease-in-out infinite}
+.boot-txt{position:absolute;bottom:-78px;text-align:center;width:340px}
+.boot-name{font-family:var(--display);font-weight:900;letter-spacing:.34em;font-size:20px;color:#eef2ff;text-shadow:0 0 18px rgba(124,150,255,.6)}
+.boot-log{font-family:var(--mono);font-size:11px;color:var(--cyan);margin-top:12px;height:16px;letter-spacing:.06em}
+.boot-bar{width:300px;height:3px;background:rgba(124,150,255,.15);border-radius:3px;margin:14px auto 0;overflow:hidden}
+.boot-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--orange));box-shadow:0 0 12px var(--cyan);animation:fill 3s ease forwards}
+@keyframes fill{to{width:100%}}
+
+/* ============ SHELL ============ */
+.shell{height:100vh;display:grid;grid-template-rows:auto 1fr;opacity:0;transition:opacity 1s ease}
+.shell.in{opacity:1}
+
+/* ---- Top bar ---- */
+.topbar{display:flex;align-items:center;gap:18px;padding:12px 20px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(16,20,46,.9),rgba(9,11,24,.6));backdrop-filter:blur(8px);position:relative;z-index:30}
+.brand{display:flex;align-items:center;gap:12px;min-width:230px}
+.brand .mark{width:34px;height:34px;border-radius:50%;position:relative;flex:0 0 auto;background:radial-gradient(circle at 40% 35%,#bcd4ff,#1a2350 60%,#1f041d);box-shadow:0 0 18px rgba(124,150,255,.7),0 0 6px rgba(124,150,255,.6) inset}
+.brand .mark::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:1px solid var(--cyan);border-right-color:transparent;animation:spin 4s linear infinite}
+.brand .b-name{font-family:var(--display);font-weight:900;letter-spacing:.22em;font-size:16px}
+.brand .b-name b{color:var(--cyan)}
+.brand .b-sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:var(--dim-2);text-transform:uppercase;margin-top:1px}
+.rings{display:flex;gap:18px;margin-left:6px}
+.gring{position:relative;width:46px;height:46px;display:grid;place-items:center;text-align:center}
+.gring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.gring .lbl{font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.05em}
+.gring .val{font-family:var(--display);font-size:11px;font-weight:700;color:#eef2ff;line-height:1}
+.spacer{flex:1}
+.modes{display:flex;gap:4px;background:rgba(124,150,255,.06);border:1px solid var(--line);border-radius:10px;padding:3px}
+.modes button{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);background:none;border:0;padding:6px 11px;border-radius:7px;cursor:pointer;transition:.2s}
+.modes button.on{background:linear-gradient(180deg,rgba(124,150,255,.25),rgba(124,150,255,.08));color:#eef2ff;box-shadow:0 0 14px rgba(124,150,255,.25)}
+.clock{font-family:var(--mono);text-align:right;min-width:128px}
+.clock .t{font-family:var(--display);font-weight:700;font-size:18px;color:#eef2ff;letter-spacing:.05em}
+.clock .d{font-size:9px;color:var(--dim);letter-spacing:.18em;text-transform:uppercase}
+.status-pill{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#f472b6;border:1px solid rgba(124,150,255,.4);background:rgba(124,150,255,.08);padding:7px 12px;border-radius:20px;box-shadow:0 0 18px rgba(124,150,255,.18)}
+.launch{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#7fe8db;text-decoration:none;border:1px solid rgba(47,212,192,.4);background:rgba(47,212,192,.08);padding:7px 12px;border-radius:20px;transition:.18s;white-space:nowrap}
+.launch:hover{color:#bff7ee;border-color:rgba(47,212,192,.7);background:rgba(47,212,192,.16);box-shadow:0 0 16px rgba(47,212,192,.3)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);animation:blink 2s ease-in-out infinite}
+@keyframes blink{50%{opacity:.35}}
+
+/* ---- Main grid ---- */
+.main{display:grid;grid-template-columns:248px 1fr 320px;gap:14px;padding:14px 18px 16px;min-height:0;position:relative;z-index:10}
+.panel{background:linear-gradient(180deg,rgba(19,24,54,.72),rgba(11,14,29,.72));border:1px solid var(--line);border-radius:14px;position:relative;overflow:hidden}
+.panel::before{content:"";position:absolute;top:0;left:14px;right:14px;height:1px;background:linear-gradient(90deg,transparent,rgba(188,212,255,.35),transparent)}
+.corner{position:absolute;width:12px;height:12px;border:1px solid var(--line-2);pointer-events:none}
+.corner.tl{top:6px;left:6px;border-right:0;border-bottom:0}.corner.tr{top:6px;right:6px;border-left:0;border-bottom:0}
+.corner.bl{bottom:6px;left:6px;border-right:0;border-top:0}.corner.br{bottom:6px;right:6px;border-left:0;border-top:0}
+.p-title{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);padding:13px 16px 10px}
+.p-title .ico{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.p-title small{margin-left:auto;color:var(--dim-2);font-size:9px;letter-spacing:.1em}
+
+/* ---- Left rail ---- */
+.rail{display:flex;flex-direction:column;min-height:0}
+.rail .scroll{overflow-y:auto;padding:0 10px 10px;display:flex;flex-direction:column;gap:7px}
+.mitem{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:10px;cursor:pointer;border:1px solid transparent;transition:.18s;background:rgba(255,255,255,.012)}
+.mitem:hover{border-color:var(--line);background:rgba(124,150,255,.06)}
+.mitem.on{border-color:var(--line-2);background:linear-gradient(100deg,rgba(124,150,255,.14),rgba(124,150,255,.03));box-shadow:0 0 16px rgba(124,150,255,.12)}
+.mitem .mi-ic{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:15px;background:rgba(124,150,255,.08);border:1px solid var(--line);flex:0 0 auto}
+.mitem .mi-tx{min-width:0}
+.mitem .mi-n{font-size:12.5px;font-weight:600;color:#f3ddf1}
+.mitem .mi-s{font-size:9.5px;color:var(--dim);font-family:var(--mono);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mitem .mi-b{margin-left:auto;font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:6px;background:rgba(167,139,250,.16);color:var(--amber);border:1px solid rgba(167,139,250,.3)}
+.mitem .mi-launch{margin-left:auto;text-decoration:none;color:#7fe8db;font-size:13px;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;border:1px solid rgba(47,212,192,.35);background:rgba(47,212,192,.08);transition:.15s}
+.mitem .mi-launch:hover{color:#bff7ee;border-color:rgba(47,212,192,.7);box-shadow:0 0 12px rgba(47,212,192,.35)}
+.mitem .mi-launch+.mi-b{margin-left:6px}
+.mitem.on .mi-ic{background:rgba(124,150,255,.18);color:var(--cyan)}
+
+/* ---- Center ---- */
+.center{display:grid;grid-template-rows:1fr auto;gap:14px;min-height:0}
+.stage{position:relative;border-radius:14px;overflow:hidden;background:radial-gradient(120% 110% at 50% 30%,#1e061d 0%,#120411 50%,#080207 100%);border:1px solid var(--line);min-height:0}
+#neural{position:absolute;inset:0;width:100%;height:100%}
+.stage-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(124,150,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.07) 1px,transparent 1px);background-size:34px 34px;-webkit-mask-image:radial-gradient(70% 70% at 50% 45%,#000,transparent);mask-image:radial-gradient(70% 70% at 50% 45%,#000,transparent)}
+.stage .tag{position:absolute;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:rgba(244,114,182,.6);text-transform:uppercase}
+.stage .tag.tl{top:12px;left:14px}.stage .tag.tr{top:12px;right:14px;text-align:right;line-height:1.7}
+.stage .tag.bl{bottom:12px;left:14px;line-height:1.7}.stage .tag.br{bottom:12px;right:14px;text-align:right}
+
+/* brain core */
+.core-wrap{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.core{position:relative;width:min(46vh,360px);aspect-ratio:1}
+.cr{position:absolute;border-radius:50%}
+.cr.r1{inset:0;border:1px solid rgba(124,150,255,.18)}
+.cr.r2{inset:7%;border:1px dashed rgba(124,150,255,.3);animation:spin 26s linear infinite}
+.cr.r3{inset:15%;border:1px solid rgba(167,139,250,.22)}
+.cr.arc{inset:0;border:2px solid transparent;border-top-color:var(--cyan);border-right-color:var(--cyan-2);animation:spin 7s linear infinite;filter:drop-shadow(0 0 8px rgba(124,150,255,.8))}
+.cr.arc2{inset:7%;border:2px solid transparent;border-bottom-color:var(--orange);border-left-color:var(--amber);animation:spin 11s linear infinite reverse;filter:drop-shadow(0 0 7px rgba(167,139,250,.7))}
+.cr.arc3{inset:15%;border:1px solid transparent;border-top-color:rgba(188,212,255,.7);animation:spin 4.5s linear infinite;filter:drop-shadow(0 0 5px rgba(188,212,255,.6))}
+.core-core{position:absolute;inset:30%;border-radius:50%;background:radial-gradient(circle at 42% 35%,#e4ebff,#c030bc 38%,#5a0c57 70%,#1f041d);box-shadow:0 0 50px rgba(124,150,255,.7),0 0 30px rgba(124,150,255,.6) inset;animation:pulseCore 3s ease-in-out infinite;display:grid;place-items:center}
+.core-core span{font-family:var(--display);font-weight:900;font-size:13px;letter-spacing:.08em;color:#04222f;text-shadow:0 1px 0 rgba(255,255,255,.4)}
+.tick{position:absolute;inset:0;border-radius:50%}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulseCore{0%,100%{box-shadow:0 0 44px rgba(124,150,255,.5),0 0 24px rgba(124,150,255,.45) inset}50%{box-shadow:0 0 70px rgba(124,150,255,.9),0 0 40px rgba(124,150,255,.75) inset}}
+/* orbiting subsystem nodes */
+.node{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:auto}
+.node .chip{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;gap:7px;background:rgba(13,16,38,.82);border:1px solid var(--line-2);border-radius:20px;padding:5px 10px 5px 6px;cursor:pointer;transition:.2s;backdrop-filter:blur(4px);white-space:nowrap}
+.node .chip:hover{border-color:var(--cyan);box-shadow:0 0 16px rgba(124,150,255,.35)}
+.node .chip .d{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;background:rgba(124,150,255,.12);border:1px solid var(--line)}
+.node .chip .nm{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;color:#dfe5ff}
+.node .chip .pct{font-family:var(--display);font-size:9px;font-weight:700;color:var(--cyan)}
+.node.warn .chip{border-color:rgba(96,165,250,.5)}.node.warn .chip .pct{color:var(--amber)}
+.node.bad .chip{border-color:rgba(244,114,182,.6);animation:alertPulse 1.4s ease-in-out infinite}.node.bad .chip .pct{color:var(--bad)}
+@keyframes alertPulse{50%{box-shadow:0 0 20px rgba(244,114,182,.5)}}
+
+/* ---- Console ---- */
+.console{display:flex;flex-direction:column;min-height:200px;max-height:42vh}
+.feed{flex:1;overflow-y:auto;padding:8px 16px 4px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:88%;font-size:13px;line-height:1.6}
+.msg.u{align-self:flex-end;text-align:right}
+.msg .who{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
+.msg.j .who{color:var(--cyan)}.msg.u .who{color:var(--amber)}
+.msg .body{padding:9px 13px;border-radius:12px;border:1px solid var(--line)}
+.msg.j .body{background:linear-gradient(180deg,rgba(124,150,255,.08),rgba(124,150,255,.02));border-color:var(--line-2);border-top-left-radius:3px}
+.msg.u .body{background:rgba(167,139,250,.09);border-color:rgba(167,139,250,.28);border-top-right-radius:3px;display:inline-block;text-align:left}
+.msg .body b{color:#eef2ff}
+.msg .conf{display:inline-flex;gap:6px;margin-top:7px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.msg .conf .c{padding:1px 6px;border-radius:5px;border:1px solid var(--line)}
+.plan{margin-top:8px;border-left:2px solid var(--line-2);padding-left:10px;display:flex;flex-direction:column;gap:5px}
+.step{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+.step .s-ic{width:14px;height:14px;border-radius:4px;border:1px solid var(--line-2);display:grid;place-items:center;font-size:8px;color:var(--cyan);flex:0 0 auto}
+.step.done .s-ic{background:rgba(52,211,153,.18);border-color:rgba(52,211,153,.4);color:var(--ok)}
+.step.done{color:#cdd6f5}
+.step .ag{margin-left:auto;font-size:8.5px;color:var(--dim-2)}
+.approve{margin-top:9px;border:1px solid rgba(96,165,250,.4);background:rgba(96,165,250,.06);border-radius:10px;padding:10px 12px}
+.approve .ah{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.approve .ab{font-size:12px;color:#f3ddf1;margin-bottom:9px}
+.approve .btns{display:flex;gap:7px}
+.approve button{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;border-radius:7px;cursor:pointer;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--dim);transition:.15s}
+.approve button.ok{border-color:rgba(52,211,153,.5);color:var(--ok);background:rgba(52,211,153,.1)}
+.approve button.no{border-color:rgba(244,114,182,.4);color:var(--bad)}
+.approve button:hover{filter:brightness(1.3)}
+.typing .body{display:inline-flex;gap:4px;align-items:center}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:tp 1.2s ease-in-out infinite}
+.typing i:nth-child(2){animation-delay:.18s}.typing i:nth-child(3){animation-delay:.36s}
+@keyframes tp{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+.composer{display:flex;align-items:center;gap:10px;padding:11px 14px;border-top:1px solid var(--line);background:rgba(9,11,24,.6)}
+.mic{width:40px;height:40px;border-radius:50%;flex:0 0 auto;border:1px solid var(--line-2);background:rgba(124,150,255,.08);color:var(--cyan);font-size:17px;cursor:pointer;display:grid;place-items:center;transition:.2s}
+.mic:hover{box-shadow:0 0 16px rgba(124,150,255,.4)}
+.mic.live{background:rgba(244,114,182,.16);border-color:var(--bad);color:var(--bad);animation:alertPulse 1.1s ease-in-out infinite}
+.composer input{flex:1;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;padding:11px 14px;color:var(--txt);font-family:var(--sans);font-size:13px;outline:none}
+.composer input:focus{border-color:var(--line-2);box-shadow:0 0 0 3px rgba(124,150,255,.08)}
+.composer input::placeholder{color:var(--dim-2)}
+.send{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:11px 16px;border-radius:10px;cursor:pointer;border:1px solid var(--line-2);background:linear-gradient(180deg,rgba(124,150,255,.22),rgba(124,150,255,.06));color:#eef2ff;transition:.15s}
+.send:hover{box-shadow:0 0 16px rgba(124,150,255,.3)}
+.chips{display:flex;gap:6px;padding:0 14px 11px;flex-wrap:wrap}
+.qchip{font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;color:var(--dim);border:1px solid var(--line);background:rgba(124,150,255,.04);padding:5px 9px;border-radius:14px;cursor:pointer;transition:.15s}
+.qchip:hover{border-color:var(--line-2);color:#dfe5ff;background:rgba(124,150,255,.1)}
+
+/* ---- Right column ---- */
+.rightcol{display:grid;grid-template-rows:auto 1fr auto;gap:14px;min-height:0}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:0 12px 12px}
+.kpi{background:rgba(124,150,255,.04);border:1px solid var(--line);border-radius:11px;padding:11px 12px;position:relative;overflow:hidden}
+.kpi .k-l{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.kpi .k-v{font-family:var(--display);font-weight:700;font-size:20px;color:#eef2ff;margin-top:4px;letter-spacing:.02em}
+.kpi .k-d{font-family:var(--mono);font-size:9px;margin-top:2px}
+.kpi .k-d.up{color:var(--ok)}.kpi .k-d.dn{color:var(--bad)}
+.kpi .spark{position:absolute;right:0;bottom:0;width:60%;height:40%;opacity:.5}
+.stream{display:flex;flex-direction:column;min-height:0}
+.stream .scroll{overflow-y:auto;padding:0 14px 12px;display:flex;flex-direction:column;gap:9px}
+.ev{display:flex;gap:9px;font-size:11.5px;line-height:1.45;padding-left:2px;animation:evIn .4s ease}
+@keyframes evIn{from{opacity:0;transform:translateX(8px)}}
+.ev .e-t{font-family:var(--mono);font-size:9px;color:var(--dim-2);flex:0 0 42px;padding-top:2px}
+.ev .e-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex:0 0 auto;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.ev.ok .e-dot{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.ev.warn .e-dot{background:var(--amber);box-shadow:0 0 8px var(--amber)}
+.ev.bad .e-dot{background:var(--bad);box-shadow:0 0 8px var(--bad)}
+.ev .e-b{color:#d3dcf7}.ev .e-b b{color:#eef2ff;font-weight:600}
+.ev .e-ag{font-family:var(--mono);font-size:8.5px;color:var(--dim-2);display:block;margin-top:1px;letter-spacing:.04em}
+.threat{padding:11px 14px;border-top:1px solid var(--line);background:rgba(244,114,182,.03)}
+.threat .th-h{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:9px}
+.threat .lvl{margin-left:auto;font-family:var(--display);font-weight:700;font-size:11px;color:var(--ok)}
+.tbar{height:7px;border-radius:5px;background:rgba(255,255,255,.06);overflow:hidden;margin-bottom:9px}
+.tbar i{display:block;height:100%;width:18%;border-radius:5px;background:linear-gradient(90deg,var(--ok),var(--amber));transition:width .8s ease,background .8s ease}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.tcell{text-align:center;border:1px solid var(--line);border-radius:9px;padding:8px 4px;background:rgba(0,0,0,.2)}
+.tcell .n{font-family:var(--display);font-weight:700;font-size:17px;color:#eef2ff}
+.tcell .l{font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:2px}
+
+/* focus toast */
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);z-index:80;background:rgba(14,18,42,.95);border:1px solid var(--line-2);border-radius:12px;padding:12px 18px;display:flex;align-items:center;gap:12px;opacity:0;transition:.35s;backdrop-filter:blur(8px);box-shadow:0 12px 40px rgba(0,0,0,.6)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast .ti{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:rgba(124,150,255,.12);border:1px solid var(--line);font-size:15px}
+.toast .tt b{font-size:12.5px;color:#eef2ff;display:block}
+.toast .tt span{font-family:var(--mono);font-size:9.5px;color:var(--dim);letter-spacing:.06em}
+
+.hint{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:70;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.1em;pointer-events:none}
+
+@media (max-width:1100px){
+  .main{grid-template-columns:1fr}
+  .rail,.rightcol{display:none}
+  .clock{display:none}.brand{min-width:0}
+}
+
+/* ═══════════════════ LIGHT GLASS THEME — override layer (wins by source order) ═══════════════════ */
+:root{
+  --txt:#1e2a3a; --dim:#52617a; --dim-2:#8c99b0;
+  --line:rgba(120,141,173,.22); --line-2:rgba(56,189,248,.40);
+  --panel:rgba(255,255,255,.62); --panel-2:rgba(255,255,255,.46);
+  --cyan:#0ea5e9; --cyan-2:#2563eb; --orange:#7c6cf0; --amber:#2563eb;
+  --ok:#10b981; --warn:#d97706; --bad:#e11d6b;
+}
+body{
+  color:var(--txt);
+  background:
+    radial-gradient(1200px 760px at 84% -8%, rgba(56,189,248,.16), transparent 56%),
+    radial-gradient(980px 680px at -10% 12%, rgba(99,102,241,.13), transparent 54%),
+    linear-gradient(165deg,#f8fbff 0%,#eef3fa 45%,#e3eaf4 100%) !important;
+}
+body::before{opacity:.16}
+body::after{background:radial-gradient(120% 90% at 50% 38%,transparent 60%,rgba(120,150,200,.14) 100%)}
+::-webkit-scrollbar-thumb{background:rgba(99,124,165,.3)}
+::selection{background:rgba(56,189,248,.25)}
+
+/* boot */
+#boot{background:radial-gradient(circle at 50% 45%,#f6fafe,#e7eef7 70%) !important}
+.boot-name{color:#143a6b !important;text-shadow:0 0 18px rgba(56,189,248,.35)}
+.boot-orb{background:radial-gradient(circle at 40% 35%,#ffffff,#7aa6ff 55%,#3f7bf0) !important;
+  box-shadow:0 0 40px rgba(56,189,248,.5),0 0 60px rgba(99,102,241,.3) inset}
+
+/* surfaces */
+.panel{background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.5)) !important;
+  border-color:rgba(255,255,255,.7);
+  box-shadow:0 18px 50px -28px rgba(31,52,96,.4),0 1px 0 rgba(255,255,255,.7) inset;
+  backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4)}
+.panel::before{background:linear-gradient(90deg,transparent,rgba(56,189,248,.4),transparent)}
+.topbar{background:linear-gradient(180deg,rgba(255,255,255,.86),rgba(255,255,255,.62)) !important;border-bottom-color:var(--line)}
+.stage{background:radial-gradient(120% 110% at 50% 30%,#eef5fd 0%,#e4ecf7 55%,#dbe4f1 100%) !important;border-color:rgba(255,255,255,.7)}
+.stage-grid{background-image:linear-gradient(rgba(56,130,246,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(56,130,246,.08) 1px,transparent 1px)}
+
+/* near-white text → ink/deep-blue */
+.b-name,.clock .t,.gring .val,.modes button.on,.msg .body b,.kpi .k-v,
+.tcell .n,.toast .tt b,.node .chip .nm,.ev .e-b b{color:#143a6b !important}
+.b-name b{color:var(--cyan) !important}
+.mi-n{color:#1e2a3a !important}
+.ev .e-b{color:#33415a !important}
+.approve .ab{color:#1e2a3a !important}
+.qchip:hover{color:#143a6b !important}
+
+/* rail */
+.mitem{background:rgba(255,255,255,.42)}
+.mitem:hover{background:rgba(56,189,248,.08)}
+.mitem.on{background:linear-gradient(100deg,rgba(56,189,248,.16),rgba(99,102,241,.06));box-shadow:0 0 16px rgba(56,189,248,.14)}
+.mitem .mi-ic{background:rgba(56,189,248,.10)}
+
+/* launch chips + status (override inline colors too) */
+.launch{color:#1e4d8b !important;border-color:rgba(56,189,248,.35) !important;background:rgba(255,255,255,.6) !important}
+.launch:hover{background:rgba(56,189,248,.14) !important;box-shadow:0 6px 16px -8px rgba(56,189,248,.5)}
+.status-pill{color:#1e4d8b !important;border-color:rgba(56,189,248,.4);background:rgba(255,255,255,.6)}
+.modes{background:rgba(255,255,255,.5);border-color:var(--line)}
+.modes button.on{background:linear-gradient(180deg,rgba(56,189,248,.22),rgba(99,102,241,.08))}
+
+/* console */
+.msg .body{border-color:var(--line)}
+.msg.j .body{background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(255,255,255,.55));border-color:rgba(255,255,255,.72)}
+.msg.u .body{background:rgba(99,102,241,.10);border-color:rgba(99,102,241,.28);color:#1e2a3a}
+.composer{background:rgba(255,255,255,.55) !important;border-top-color:var(--line)}
+.composer input{background:rgba(255,255,255,.7) !important;color:var(--txt) !important;border-color:var(--line)}
+.composer input::placeholder{color:var(--dim-2) !important}
+.mic{background:rgba(56,189,248,.10);color:var(--cyan)}
+.send{background:linear-gradient(180deg,rgba(56,189,248,.95),rgba(37,99,235,.95)) !important;color:#fff !important;border-color:transparent}
+.qchip{background:rgba(255,255,255,.5);color:var(--dim)}
+.approve{background:rgba(37,99,235,.05);border-color:rgba(56,189,248,.35)}
+
+/* orbit nodes */
+.node .chip{background:rgba(255,255,255,.82) !important;border-color:rgba(56,189,248,.3);box-shadow:0 6px 16px -10px rgba(31,52,96,.4)}
+.node .chip .d{background:rgba(56,189,248,.12)}
+
+/* right column */
+.kpi{background:rgba(255,255,255,.5) !important;border-color:var(--line)}
+.threat{background:rgba(56,189,248,.04);border-top-color:var(--line)}
+.tcell{background:rgba(255,255,255,.5);border-color:var(--line)}
+.tbar{background:rgba(99,124,165,.14)}
+
+/* toast */
+.toast{background:rgba(255,255,255,.92) !important;border-color:rgba(56,189,248,.3);box-shadow:0 18px 50px -20px rgba(31,52,96,.4)}
+.toast .ti{background:rgba(56,189,248,.12)}
+
+/* injected voice toggle */
+#voiceToggle{cursor:pointer}
+#voiceToggle.off{opacity:.55}
+</style>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ADVANCED WARFIGHTING DECK — additive style layer.
+     Last in <head> on purpose: source order beats the external stylesheets so
+     the deck renders identically no matter what the global design system ships.
+     Everything here is namespaced `dk-` and adds to the HUD; nothing overrides
+     or removes an existing rule.
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<style id="dk-styles">
+:root{
+  --dk-ink:#143a6b;
+  --dk-hostile:#e11d6b; --dk-friend:#10b981; --dk-unk:#f59e0b; --dk-neutral:#7c6cf0;
+  --dk-scope:#7dfcd0;
+  --dk-line:rgba(56,189,248,.30); --dk-line2:rgba(37,99,235,.40);
+  --dk-glass:rgba(255,255,255,.72); --dk-glass2:rgba(255,255,255,.50);
+}
+
+/* ---------- right-edge module launcher ---------- */
+/* Collapsed to a slim tab so it never covers the right-hand panels; expands on
+   hover, focus, or while a module is open. z-index sits above the module overlay
+   so you can switch modules without closing one first. */
+.dk-rail{position:fixed;right:10px;top:50%;transform:translateY(-50%);z-index:95;
+  display:flex;flex-direction:column;padding:6px;border-radius:14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.80),rgba(255,255,255,.58));
+  border:1px solid rgba(255,255,255,.75);backdrop-filter:blur(14px) saturate(1.35);
+  -webkit-backdrop-filter:blur(14px) saturate(1.35);transition:box-shadow .2s ease;
+  box-shadow:0 18px 50px -26px rgba(31,52,96,.55),0 1px 0 rgba(255,255,255,.8) inset}
+.dk-rail:hover,.dk-rail:focus-within,.dk-rail.open{box-shadow:0 22px 60px -22px rgba(31,52,96,.6),0 0 0 1px rgba(56,189,248,.28)}
+.dk-rail .dk-rh{cursor:pointer;font-family:var(--mono);font-size:8px;letter-spacing:.22em;color:var(--dim);
+  text-transform:uppercase;text-align:center;padding:8px 4px;border-radius:9px;
+  writing-mode:vertical-rl;user-select:none;transition:.16s}
+.dk-rail .dk-rh:hover{color:var(--cyan);background:rgba(56,189,248,.10)}
+.dk-rail .dk-tabs{display:flex;flex-direction:column;gap:6px;overflow:hidden;
+  max-height:0;opacity:0;transition:max-height .26s ease,opacity .2s ease,margin .26s ease}
+.dk-rail:hover .dk-tabs,.dk-rail:focus-within .dk-tabs,.dk-rail.open .dk-tabs{
+  max-height:340px;opacity:1;margin-top:6px}
+.dk-rail:hover .dk-rh,.dk-rail:focus-within .dk-rh,.dk-rail.open .dk-rh{
+  writing-mode:horizontal-tb;border-bottom:1px solid rgba(120,141,173,.18);border-radius:0;padding:1px 0 5px}
+.dk-tab{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;gap:0;cursor:pointer;
+  border:1px solid rgba(120,141,173,.20);background:rgba(255,255,255,.55);color:var(--dim);
+  font-size:15px;line-height:1;transition:.16s;position:relative}
+.dk-tab span{font-family:var(--mono);font-size:6.5px;letter-spacing:.08em;margin-top:2px;color:var(--dim-2)}
+.dk-tab:hover{border-color:var(--dk-line);color:var(--cyan);background:rgba(56,189,248,.10);
+  box-shadow:0 0 16px rgba(56,189,248,.22)}
+.dk-tab.on{border-color:var(--dk-line2);color:#fff;
+  background:linear-gradient(180deg,rgba(56,189,248,.95),rgba(37,99,235,.95));
+  box-shadow:0 6px 18px -6px rgba(37,99,235,.6)}
+.dk-tab.on span{color:rgba(255,255,255,.85)}
+.dk-tab .dk-nub{position:absolute;top:5px;right:5px;width:5px;height:5px;border-radius:50%;
+  background:var(--dk-hostile);box-shadow:0 0 7px var(--dk-hostile);display:none}
+.dk-tab.alert .dk-nub{display:block;animation:dk-blink 1.1s ease-in-out infinite}
+@keyframes dk-blink{50%{opacity:.25}}
+
+/* ---------- stage status ribbon ---------- */
+.dk-ribbon{position:absolute;top:11px;left:50%;transform:translateX(-50%);z-index:6;
+  display:flex;gap:4px;flex-wrap:wrap;justify-content:center;max-width:74%;pointer-events:auto}
+.dk-rb{display:flex;align-items:center;gap:6px;cursor:pointer;
+  font-family:var(--mono);font-size:8.5px;letter-spacing:.11em;text-transform:uppercase;
+  padding:4px 9px;border-radius:16px;color:var(--dim);
+  border:1px solid rgba(120,141,173,.22);background:rgba(255,255,255,.66);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:.16s;white-space:nowrap}
+.dk-rb:hover{border-color:var(--dk-line);color:var(--dk-ink);box-shadow:0 0 14px rgba(56,189,248,.2)}
+.dk-rb b{font-family:var(--display);font-size:9.5px;font-weight:700;color:var(--dk-ink);letter-spacing:.02em}
+.dk-rb i{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 7px var(--ok);flex:0 0 auto}
+.dk-rb.warn i{background:var(--dk-unk);box-shadow:0 0 7px var(--dk-unk)}
+.dk-rb.bad i{background:var(--dk-hostile);box-shadow:0 0 7px var(--dk-hostile);animation:dk-blink 1.1s ease-in-out infinite}
+.dk-rb.bad b{color:var(--dk-hostile)}
+
+/* ---------- outer orbit ring (advanced modules) ---------- */
+.dk-links{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.dk-links path{fill:none;stroke:rgba(56,189,248,.30);stroke-width:.9;stroke-dasharray:3 6;
+  animation:dk-flow 3.4s linear infinite}
+@keyframes dk-flow{to{stroke-dashoffset:-36}}
+.dk-onode{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:auto}
+.dk-ochip{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;gap:5px;cursor:pointer;
+  padding:4px 9px 4px 5px;border-radius:16px;white-space:nowrap;transition:.18s;
+  border:1px solid rgba(37,99,235,.28);background:rgba(255,255,255,.80);
+  backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
+  box-shadow:0 6px 16px -10px rgba(31,52,96,.45)}
+.dk-ochip:hover{border-color:var(--cyan);box-shadow:0 0 18px rgba(56,189,248,.4);transform:translate(-50%,-50%) scale(1.05)}
+.dk-ochip .di{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-size:10px;
+  background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.22)}
+.dk-ochip .dn{font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:#2a4a78}
+.dk-onode.on .dk-ochip{border-color:transparent;background:linear-gradient(180deg,rgba(56,189,248,.96),rgba(37,99,235,.96))}
+.dk-onode.on .dk-ochip .dn{color:#fff}
+.dk-onode.on .dk-ochip .di{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.35)}
+
+/* ---------- mission-rail: advanced section ---------- */
+.dk-sep{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim-2);
+  padding:11px 4px 4px;border-top:1px solid rgba(120,141,173,.18);margin-top:5px;display:flex;align-items:center;gap:7px}
+.dk-sep::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(56,189,248,.35),transparent)}
+.dk-mitem{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;cursor:pointer;
+  border:1px solid transparent;transition:.18s;background:rgba(255,255,255,.42)}
+.dk-mitem:hover{border-color:var(--line);background:rgba(56,189,248,.08)}
+.dk-mitem.on{border-color:var(--dk-line);background:linear-gradient(100deg,rgba(56,189,248,.16),rgba(99,102,241,.06))}
+.dk-mitem .mi-ic{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-size:13px;
+  background:rgba(37,99,235,.10);border:1px solid var(--line);flex:0 0 auto}
+.dk-mitem .mi-n{font-size:12px;font-weight:600;color:#1e2a3a}
+.dk-mitem .mi-s{font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.03em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dk-mitem .mi-x{margin-left:auto;font-family:var(--mono);font-size:8px;padding:2px 6px;border-radius:6px;
+  background:rgba(37,99,235,.10);color:#2563eb;border:1px solid rgba(37,99,235,.22)}
+
+/* ---------- overlay shell ---------- */
+/* right padding keeps the window clear of the launcher rail that floats above it */
+.dk-ov{position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:20px 84px 20px 20px;
+  background:rgba(16,28,52,.34);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
+  opacity:0;transition:opacity .24s ease}
+.dk-ov.in{opacity:1}
+.dk-ov[hidden]{display:none !important}
+.dk-win{width:min(1240px,100%);height:min(900px,100%);display:grid;grid-template-rows:auto 1fr auto;
+  border-radius:18px;overflow:hidden;transform:translateY(10px) scale(.99);transition:transform .24s ease;
+  background:linear-gradient(180deg,rgba(255,255,255,.90),rgba(246,250,255,.86));
+  border:1px solid rgba(255,255,255,.85);
+  box-shadow:0 40px 110px -40px rgba(16,32,64,.75),0 0 0 1px rgba(56,189,248,.18)}
+.dk-ov.in .dk-win{transform:none}
+.dk-head{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(255,255,255,.55))}
+.dk-head .dk-ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:16px;flex:0 0 auto;
+  background:linear-gradient(180deg,rgba(56,189,248,.18),rgba(37,99,235,.10));border:1px solid var(--dk-line)}
+.dk-head .dk-t{font-family:var(--display);font-weight:700;font-size:14px;letter-spacing:.14em;color:var(--dk-ink)}
+.dk-head .dk-s{font-family:var(--mono);font-size:9px;letter-spacing:.11em;color:var(--dim);margin-top:2px;text-transform:uppercase}
+.dk-badge{margin-left:auto;font-family:var(--mono);font-size:8px;letter-spacing:.18em;text-transform:uppercase;
+  color:#1e4d8b;padding:5px 10px;border-radius:14px;border:1px solid var(--dk-line);background:rgba(56,189,248,.08);text-align:center;line-height:1.5}
+.dk-x{width:32px;height:32px;border-radius:9px;cursor:pointer;flex:0 0 auto;font-size:14px;
+  border:1px solid var(--line);background:rgba(255,255,255,.6);color:var(--dim);transition:.15s}
+.dk-x:hover{color:var(--dk-hostile);border-color:rgba(225,29,107,.4);background:rgba(225,29,107,.08)}
+.dk-body{padding:13px 15px;overflow:auto;min-height:0}
+.dk-foot{padding:9px 16px;border-top:1px solid var(--line);background:rgba(255,255,255,.5);
+  font-family:var(--mono);font-size:8.5px;letter-spacing:.05em;color:var(--dim-2);line-height:1.7}
+.dk-foot b{color:var(--dim)}
+
+/* ---------- module building blocks ---------- */
+.dk-cols{display:grid;gap:11px;align-items:start}
+.dk-cols.c2{grid-template-columns:1.42fr .92fr}
+.dk-cols.c2b{grid-template-columns:1fr 1fr}
+.dk-cols.c3{grid-template-columns:1fr 1fr 1fr}
+.dk-card{border:1px solid var(--line);border-radius:12px;padding:10px 12px;
+  background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.48));
+  box-shadow:0 10px 30px -24px rgba(31,52,96,.5)}
+.dk-card.flush{padding:0;overflow:hidden}
+.dk-ch{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:9px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--cyan);margin-bottom:9px}
+.dk-ch::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--cyan);box-shadow:0 0 7px var(--cyan);flex:0 0 auto}
+.dk-ch small{margin-left:auto;color:var(--dim-2);letter-spacing:.09em;font-size:8.5px}
+.dk-scope{display:block;width:100%;border-radius:10px;border:1px solid rgba(56,189,248,.26);
+  background:linear-gradient(180deg,#071427,#040e1c);box-shadow:0 0 30px -14px rgba(56,189,248,.5) inset}
+.dk-kv{display:flex;align-items:baseline;gap:10px;font-family:var(--mono);font-size:10px;padding:3.4px 0;
+  border-bottom:1px dashed rgba(120,141,173,.18);color:var(--dim)}
+.dk-kv:last-child{border-bottom:0}
+.dk-kv b{margin-left:auto;color:var(--dk-ink);font-family:var(--display);font-size:10.5px;font-weight:700;letter-spacing:.02em}
+.dk-kv b.ok{color:var(--dk-friend)}.dk-kv b.warn{color:#b45309}.dk-kv b.bad{color:var(--dk-hostile)}
+.dk-btn{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;
+  padding:8px 12px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.62);
+  color:var(--dim);transition:.15s}
+.dk-btn:hover{border-color:var(--dk-line);color:var(--dk-ink);background:rgba(56,189,248,.10)}
+.dk-btn.pri{border-color:transparent;color:#fff;background:linear-gradient(180deg,rgba(56,189,248,.96),rgba(37,99,235,.96));
+  box-shadow:0 8px 20px -10px rgba(37,99,235,.7)}
+.dk-btn.pri:hover{filter:brightness(1.08)}
+.dk-btn.dan{border-color:rgba(225,29,107,.35);color:var(--dk-hostile);background:rgba(225,29,107,.07)}
+.dk-btn.dan:hover{background:rgba(225,29,107,.14)}
+.dk-btn[disabled]{opacity:.42;cursor:not-allowed;filter:grayscale(.5)}
+.dk-btn.on{border-color:transparent;color:#fff;background:linear-gradient(180deg,#10b981,#059669)}
+.dk-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.dk-tbl{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:9.5px}
+.dk-tbl th{text-align:left;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--dim-2);
+  font-size:8px;padding:5px 6px;border-bottom:1px solid var(--line)}
+.dk-tbl td{padding:5px 6px;border-bottom:1px solid rgba(120,141,173,.12);color:#33415a}
+.dk-tbl tr[data-sel="1"] td{background:rgba(56,189,248,.12)}
+.dk-tbl tr.pickable{cursor:pointer}
+.dk-tbl tr.pickable:hover td{background:rgba(56,189,248,.08)}
+.dk-tbl b{color:var(--dk-ink)}
+.dk-bar{height:6px;border-radius:4px;background:rgba(99,124,165,.16);overflow:hidden}
+.dk-bar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#38bdf8,#2563eb);
+  transition:width .45s ease,background .45s ease}
+.dk-bar.ok i{background:linear-gradient(90deg,#34d399,#10b981)}
+.dk-bar.warn i{background:linear-gradient(90deg,#fbbf24,#f59e0b)}
+.dk-bar.bad i{background:linear-gradient(90deg,#fb7185,#e11d6b)}
+.dk-pill{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:8px;letter-spacing:.11em;
+  text-transform:uppercase;padding:2px 7px;border-radius:11px;border:1px solid var(--line);color:var(--dim);background:rgba(255,255,255,.5)}
+.dk-pill.ok{color:#047857;border-color:rgba(16,185,129,.35);background:rgba(16,185,129,.1)}
+.dk-pill.warn{color:#b45309;border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.1)}
+.dk-pill.bad{color:var(--dk-hostile);border-color:rgba(225,29,107,.35);background:rgba(225,29,107,.1)}
+.dk-pill.info{color:#4338ca;border-color:rgba(99,102,241,.35);background:rgba(99,102,241,.1)}
+.dk-note{font-family:var(--mono);font-size:8.5px;line-height:1.75;color:var(--dim);letter-spacing:.03em;
+  margin-top:9px;padding-top:8px;border-top:1px dashed rgba(120,141,173,.22)}
+.dk-mono{font-family:var(--mono);font-size:10px;color:#33415a;line-height:1.75}
+.dk-mono b{color:var(--dk-ink)}
+.dk-log{font-family:var(--mono);font-size:9px;line-height:1.8;color:var(--dim);max-height:132px;overflow:auto}
+.dk-log div{display:flex;gap:8px}
+.dk-log span{color:var(--dim-2);flex:0 0 46px}
+.dk-log em{font-style:normal;color:#33415a}
+.dk-log .g em{color:#047857}.dk-log .r em{color:var(--dk-hostile)}.dk-log .y em{color:#b45309}
+
+/* stage chain (kill chain) */
+.dk-chain{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.dk-stg{border:1px solid var(--line);border-radius:9px;padding:8px 7px;background:rgba(255,255,255,.55);
+  position:relative;overflow:hidden;transition:.2s}
+.dk-stg.hot{border-color:rgba(225,29,107,.5);background:rgba(225,29,107,.07)}
+.dk-stg .sn{font-family:var(--mono);font-size:7.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);
+  line-height:1.35;min-height:22px}
+.dk-stg .sv{font-family:var(--display);font-size:15px;font-weight:700;color:var(--dk-ink);margin-top:5px}
+.dk-stg .sb{font-family:var(--mono);font-size:8px;color:#047857;margin-top:1px}
+.dk-stg .si{position:absolute;top:6px;right:7px;font-family:var(--mono);font-size:7px;color:var(--dim-2)}
+
+/* COA matrix */
+.dk-coa{width:100%;border-collapse:separate;border-spacing:3px;font-family:var(--mono);font-size:8.5px}
+.dk-coa th{font-weight:500;font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim-2);padding:2px 4px;text-align:center}
+.dk-coa th.rh{text-align:left;width:110px;color:var(--dim)}
+.dk-coa td{text-align:center;padding:5px 3px;border-radius:6px;border:1px solid rgba(120,141,173,.16);
+  background:rgba(255,255,255,.45);color:var(--dim-2);cursor:default;transition:.14s;line-height:1.3}
+.dk-coa td.live{cursor:pointer;color:var(--dim);border-color:rgba(120,141,173,.3);background:rgba(255,255,255,.7)}
+.dk-coa td.live:hover{border-color:var(--dk-line);color:var(--dk-ink)}
+.dk-coa td.armed{color:#065f46;border-color:rgba(16,185,129,.45);background:rgba(16,185,129,.14);font-weight:600}
+
+/* simplex diagram */
+.dk-simplex{width:100%;height:auto;display:block}
+.dk-simplex .bx{fill:rgba(255,255,255,.72);stroke:rgba(120,141,173,.35);stroke-width:1;rx:7}
+.dk-simplex .bx.act{fill:rgba(56,189,248,.16);stroke:#2563eb;stroke-width:1.6}
+.dk-simplex .bx.safe{fill:rgba(16,185,129,.16);stroke:#059669;stroke-width:1.6}
+.dk-simplex .lb{font-family:'IBM Plex Mono',monospace;font-size:7.4px;fill:#33415a;letter-spacing:.06em}
+.dk-simplex .lb.hd{font-size:8px;fill:#143a6b;font-weight:600;letter-spacing:.1em}
+.dk-simplex .ln{stroke:rgba(120,141,173,.45);stroke-width:1;fill:none;marker-end:url(#dkArrow)}
+.dk-simplex .ln.hot{stroke:#2563eb;stroke-width:1.8}
+.dk-simplex .ln.safe{stroke:#059669;stroke-width:1.8}
+
+/* invariant ledger */
+.dk-inv{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px dashed rgba(120,141,173,.18);
+  font-family:var(--mono);font-size:9.5px;color:#33415a}
+.dk-inv code{color:var(--dk-ink);font-size:9.5px;letter-spacing:.02em}
+.dk-inv .st{margin-left:auto;flex:0 0 auto}
+
+/* visible keyboard focus on every interactive surface the deck adds */
+.dk-tab:focus-visible,.dk-btn:focus-visible,.dk-x:focus-visible,.dk-rh:focus-visible,
+.dk-rb:focus-visible,.dk-ochip:focus-visible,.dk-mitem:focus-visible,.dk-coa td.live:focus-visible,
+.dk-tbl tr.pickable:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;border-radius:8px}
+.dk-onode:focus-visible{outline:none}
+
+@media (max-width:1000px){
+  .dk-cols.c2,.dk-cols.c2b,.dk-cols.c3{grid-template-columns:1fr}
+  /* rail drops to a bottom strip, so the window clears the bottom instead of the right */
+  .dk-ov{padding:14px 14px 76px}
+  .dk-win{width:100%;height:100%}
+  .dk-ribbon{display:none}
+  .dk-rail{top:auto;bottom:10px;left:50%;right:auto;transform:translateX(-50%);flex-direction:row;
+    max-width:calc(100vw - 20px);overflow-x:auto}
+  .dk-rail .dk-rh{display:none}
+  /* no room to collapse on a phone — always show the six launchers in a row */
+  .dk-rail .dk-tabs{flex-direction:row;max-height:none;opacity:1;margin-top:0}
+  .dk-coa th.rh{width:78px}
+}
+@media (prefers-reduced-motion:reduce){
+  .dk-links path{animation:none}
+  .dk-tab.alert .dk-nub,.dk-rb.bad i{animation:none}
+}
+</style>
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+  <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">PERCIVAL OS · Mission-Ready Command Center — ClearGlass Inc.</h1>
+
+<!-- ============ BOOT ============ -->
+<div id="boot">
+  <div class="boot-core">
+    <div class="boot-ring a"></div><div class="boot-ring b"></div><div class="boot-ring c"></div>
+    <div class="boot-orb"></div>
+    <div class="boot-txt">
+      <div class="boot-name">P E R C I V A L</div>
+      <div class="boot-log" id="bootLog">initializing reasoning core…</div>
+      <div class="boot-bar"><i></i></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SHELL ============ -->
+<div class="shell" id="shell">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark"></div>
+      <div>
+        <div class="b-name">PERCIVAL<b>·</b>OS</div>
+        <div class="b-sub">Mission-Ready Command Center</div>
+      </div>
+    </div>
+    <div class="rings" id="rings"></div>
+    <div class="spacer"></div>
+    <div class="modes" id="modes">
+      <button data-mode="formal">Formal</button>
+      <button class="on" data-mode="tactical">Tactical</button>
+      <button data-mode="technical">Technical</button>
+    </div>
+    <a class="launch" href="artemis-percival.html" title="Open AVALON — ARTEMIS fused into PERCIVAL" style="color:#bcd4ff;border-color:rgba(124,150,255,.6);background:rgba(124,150,255,.14)">⬣ AVALON FUSION</a>
+    <a class="launch" href="sentinel.html" title="Open SENTINEL geospatial + OSINT command center">◉ SENTINEL CC</a>
+    <a class="launch" href="aegis.html" title="Open AEGIS legal-process shield" style="color:#cdd9ff;border-color:rgba(96,165,250,.4);background:rgba(96,165,250,.08)">⚖ AEGIS</a>
+    <a class="launch" href="agentmesh.html" title="Open the OSINT Agent Mesh orchestration dashboard" style="color:#b9c0ff;border-color:rgba(155,123,255,.4);background:rgba(155,123,255,.08)">⌗ MESH</a>
+    <a class="launch" href="percival-build.html" title="Open PERCIVAL BUILD — the orbital spatial workspace" style="color:#cdd9ff;border-color:rgba(124,150,255,.45);background:rgba(124,150,255,.10)">⊞ BUILD</a>
+    <div class="status-pill"><span class="dot"></span>MISSION READY · ARMED</div>
+    <div class="clock"><div class="t" id="clk">--:--:--</div><div class="d" id="cdate">—</div></div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- LEFT RAIL -->
+    <div class="panel rail">
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <div class="p-title"><span class="ico"></span>Mission Rail <small>7 subsystems</small></div>
+      <div class="scroll" id="rail"></div>
+    </div>
+
+    <!-- CENTER -->
+    <div class="center">
+      <div class="stage">
+        <canvas id="neural"></canvas>
+        <div class="stage-grid"></div>
+        <div class="tag tl">PERCIVAL CORE · v1.0<br>NEURAL FIELD ACTIVE</div>
+        <div class="tag tr" id="tagTr">LAT 0.00 · LON 0.00<br>UPLINK SECURE</div>
+        <div class="tag bl" id="tagBl">AGENTS · 8 ONLINE<br>MEMORY · SYNCED</div>
+        <div class="tag br" id="tagBr">CYCLE 0</div>
+        <!-- advanced deck: live cross-module status ribbon (click to open a module) -->
+        <div class="dk-ribbon" id="dkRibbon"></div>
+        <div class="core-wrap">
+          <div class="core">
+            <div class="cr r1"></div><div class="cr r2"></div><div class="cr r3"></div>
+            <div class="cr arc"></div><div class="cr arc2"></div><div class="cr arc3"></div>
+            <svg class="tick" viewBox="0 0 100 100" id="tickSvg"></svg>
+            <div class="core-core"><span>CORE</span></div>
+          </div>
+          <div id="nodes"></div>
+          <!-- advanced deck: outer orbit ring + tether arcs back to the core -->
+          <svg class="dk-links" id="dkLinks" aria-hidden="true"></svg>
+          <div id="dkOrbit"></div>
+        </div>
+      </div>
+
+      <!-- CONSOLE -->
+      <div class="panel console">
+        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <div class="p-title"><span class="ico"></span>Command Console <small id="modeLbl">TACTICAL MODE</small></div>
+        <div class="feed" id="feed"></div>
+        <div class="chips" id="chips"></div>
+        <div class="composer">
+          <button class="mic" id="mic" title="Push to talk">🎙</button>
+          <input id="cmd" placeholder="Give PERCIVAL a command…  (try: brief me)" autocomplete="off"/>
+          <button class="send" id="send">Execute</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="rightcol">
+      <div class="panel">
+        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <div class="p-title"><span class="ico"></span>Live KPIs</div>
+        <div class="kpis" id="kpis"></div>
+      </div>
+
+      <div class="panel stream">
+        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <div class="p-title"><span class="ico"></span>Activity Stream <small id="evCount">live</small></div>
+        <div class="scroll" id="events"></div>
+      </div>
+
+      <div class="panel">
+        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <div class="threat">
+          <div class="th-h">⚠ Hazard Monitor <span class="lvl" id="thLvl">—</span><small id="geoLive" style="margin-left:auto;font-size:8px;letter-spacing:.1em;color:var(--dim-2)">LIVE · USGS+NWS</small></div>
+          <div class="tbar"><i id="thBar"></i></div>
+          <div class="tgrid">
+            <div class="tcell"><div class="n" id="thBlocked">—</div><div class="l">Quakes 24h</div></div>
+            <div class="tcell"><div class="n" id="thAnom">—</div><div class="l">Wx Alerts</div></div>
+            <div class="tcell"><div class="n" id="thEndp">—</div><div class="l">Max Mag</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"><div class="ti" id="toastIc">◐</div><div class="tt"><b id="toastT">—</b><span id="toastS">—</span></div></div>
+<div class="hint" id="hint"></div>
+
+<!-- ============ ADVANCED WARFIGHTING DECK ============
+     Six additional mission modules modelled on open, unclassified doctrine and
+     public program literature (DARPA Mosaic Warfare / CODE / Assured Autonomy /
+     GARD / XAI / RFMLS / ASPN; Lockheed Martin Cyber Kill Chain® and
+     Aegis-pattern track fusion). Everything runs client-side as a deterministic
+     simulation, exactly like the rest of this reference HUD. -->
+<div class="dk-rail" id="dkRail" role="toolbar" aria-label="Advanced warfighting deck">
+  <div class="dk-rh" id="dkRailToggle" tabindex="0" role="button" aria-expanded="false"
+       aria-controls="dkTabs" title="Advanced warfighting deck — six mission modules">⬢ DECK</div>
+  <div class="dk-tabs" id="dkTabs">
+    <button class="dk-tab" type="button" data-mod="mosaic"    title="MOSAIC — disaggregated kill-web composer">⬢<span>MOSAIC</span><i class="dk-nub"></i></button>
+    <button class="dk-tab" type="button" data-mod="killchain" title="Cyber Kill Chain® board + courses-of-action matrix">⛓<span>CHAIN</span><i class="dk-nub"></i></button>
+    <button class="dk-tab" type="button" data-mod="spectrum"  title="Cognitive electronic warfare — RF spectrum + adaptive countermeasures">📶<span>EW</span><i class="dk-nub"></i></button>
+    <button class="dk-tab" type="button" data-mod="fusion"    title="Aegis-pattern multi-source track fusion and TEWA">◎<span>FUSION</span><i class="dk-nub"></i></button>
+    <button class="dk-tab" type="button" data-mod="assure"    title="Assured autonomy — runtime assurance, adversarial-ML defense, explainability">✓<span>ASSURE</span><i class="dk-nub"></i></button>
+    <button class="dk-tab" type="button" data-mod="pnt"       title="All-source PNT — GNSS-denied navigation and integrity monitoring">✧<span>PNT</span><i class="dk-nub"></i></button>
+  </div>
+</div>
+
+<div class="dk-ov" id="dkOv" hidden>
+  <div class="dk-win" role="dialog" aria-modal="true" aria-labelledby="dkTitle">
+    <div class="dk-head">
+      <div class="dk-ic" id="dkIc">⬢</div>
+      <div>
+        <div class="dk-t" id="dkTitle">—</div>
+        <div class="dk-s" id="dkSub">—</div>
+      </div>
+      <div class="dk-badge" id="dkBadge">UNCLASSIFIED<br>CONCEPT DEMONSTRATION</div>
+      <button class="dk-x" id="dkX" type="button" title="Close (Esc)" aria-label="Close module">✕</button>
+    </div>
+    <div class="dk-body" id="dkBody"></div>
+    <div class="dk-foot" id="dkFoot"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ============================================================
+   PERCIVAL OS — reference command-center HUD (front-end only)
+   All "intelligence" here is a deterministic ai that
+   demonstrates the UX described in PERCIVAL_OS_BLUEPRINT.md.
+   ============================================================ */
+
+/* ---------- boot ---------- */
+const bootLines=["initializing reasoning core…","mounting long-term memory…","spinning up agent swarm…","syncing knowledge graph…","arming security monitor…","calibrating HUD telemetry…","PERCIVAL online — good day, Operator."];
+let bi=0;const bootLog=document.getElementById('bootLog');
+const bt=setInterval(()=>{bootLog.textContent=bootLines[bi++];if(bi>=bootLines.length)clearInterval(bt);},430);
+setTimeout(()=>{document.getElementById('boot').classList.add('gone');document.getElementById('shell').classList.add('in');startLife();},3300);
+
+/* ---------- clock ---------- */
+function tickClock(){const d=new Date();
+  document.getElementById('clk').textContent=d.toLocaleTimeString('en-GB');
+  document.getElementById('cdate').textContent=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});}
+setInterval(tickClock,1000);tickClock();
+
+/* ---------- top status rings ---------- */
+const ringDefs=[{l:'CPU',v:34},{l:'MEM',v:58},{l:'NET',v:72},{l:'AI',v:91}];
+function ring(d){const r=18,c=2*Math.PI*r,off=c*(1-d.v/100);
+  return `<div class="gring" data-l="${d.l}">
+    <svg width="46" height="46"><circle cx="23" cy="23" r="${r}" fill="none" stroke="rgba(124,150,255,.12)" stroke-width="3"/>
+    <circle cx="23" cy="23" r="${r}" fill="none" stroke="url(#g${d.l})" stroke-width="3" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}"/>
+    <defs><linearGradient id="g${d.l}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#60a5fa"/><stop offset="1" stop-color="#818cf8"/></linearGradient></defs></svg>
+    <div class="lbl">${d.l}</div><div class="val">${d.v}</div></div>`;}
+document.getElementById('rings').innerHTML=ringDefs.map(ring).join('');
+function refreshRings(){ringDefs.forEach(d=>{d.v=Math.max(8,Math.min(98,d.v+(Math.random()*14-7)|0));});
+  document.getElementById('rings').innerHTML=ringDefs.map(ring).join('');}
+
+/* ---------- subsystems (mission rail + orbit nodes) ---------- */
+const subsystems=[
+  {id:'command',ic:'📡',n:'Command Center',s:'inbox · tasks · briefings',health:97,badge:'4'},
+  {id:'orchestr',ic:'🧬',n:'Orchestration',s:'agent swarm · routing',health:99},
+  {id:'knowledge',ic:'🗂',n:'Knowledge Intel',s:'RAG · entity graph',health:95},
+  {id:'security',ic:'🛡',n:'Security & Monitor',s:'anomaly · zero-trust',health:88,badge:'!'},
+  {id:'automation',ic:'⚙',n:'Automation Engine',s:'workflows · triggers',health:96},
+  {id:'memory',ic:'🧠',n:'Memory & Personal',s:'long-term · prefs',health:99},
+  {id:'vault',ic:'🔐',n:'Secrets Vault',s:'envelope-encrypted',health:100},
+];
+const rail=document.getElementById('rail');
+rail.innerHTML=subsystems.map((x,i)=>`<div class="mitem ${i===0?'on':''}" data-id="${x.id}">
+  <div class="mi-ic">${x.ic}</div>
+  <div class="mi-tx"><div class="mi-n">${x.n}</div><div class="mi-s">${x.s}</div></div>
+  ${x.id==='security'?`<a class="mi-launch" href="sentinel.html" title="Open SENTINEL geospatial command center" onclick="event.stopPropagation()">◉</a>`:''}
+  ${x.badge?`<div class="mi-b">${x.badge}</div>`:''}</div>`).join('');
+
+/* orbit nodes */
+const nodesEl=document.getElementById('nodes');
+function placeNodes(){const R=()=>Math.min(window.innerWidth,window.innerHeight)*0.205;
+  const n=subsystems.length, rad=Math.max(150,Math.min(230,R()));
+  nodesEl.innerHTML=subsystems.map((x,i)=>{
+    const a=(i/n)*Math.PI*2-Math.PI/2;const px=Math.cos(a)*rad, py=Math.sin(a)*rad;
+    const cls=x.health<90?'bad':x.health<96?'warn':'';
+    return `<div class="node ${cls}" data-id="${x.id}" style="transform:translate(${px}px,${py}px)">
+      <div class="chip"><div class="d">${x.ic}</div><div class="nm">${x.n.split(' ')[0].toUpperCase()}</div><div class="pct">${x.health}%</div></div></div>`;
+  }).join('');
+  // connecting lines via canvas handled in neural draw
+  bindNodeClicks();
+}
+function bindNodeClicks(){
+  document.querySelectorAll('.node .chip').forEach(c=>c.onclick=()=>focusSub(c.closest('.node').dataset.id));
+}
+document.querySelectorAll('.mitem').forEach(m=>m.onclick=()=>focusSub(m.dataset.id));
+
+/* core tick marks */
+(function(){let s='';for(let i=0;i<60;i++){const a=i*6*Math.PI/180;const r1=i%5===0?42:45,r2=48;
+  const x1=50+Math.cos(a)*r1,y1=50+Math.sin(a)*r1,x2=50+Math.cos(a)*r2,y2=50+Math.sin(a)*r2;
+  s+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="rgba(124,150,255,${i%5===0?.5:.2})" stroke-width="${i%5===0?.8:.4}"/>`;}
+  document.getElementById('tickSvg').innerHTML=s;})();
+
+/* ---------- neural canvas ---------- */
+const cv=document.getElementById('neural'),ctx=cv.getContext('2d');
+let parts=[];
+function sizeCanvas(){const r=cv.parentElement.getBoundingClientRect();
+  cv.width=r.width*devicePixelRatio;cv.height=r.height*devicePixelRatio;ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  parts=[];const n=Math.min(90,Math.floor(r.width/16));
+  for(let i=0;i<n;i++)parts.push({x:Math.random()*r.width,y:Math.random()*r.height,vx:(Math.random()-.5)*.32,vy:(Math.random()-.5)*.32});
+  placeNodes();}
+function drawNeural(){const w=cv.width/devicePixelRatio,h=cv.height/devicePixelRatio;ctx.clearRect(0,0,w,h);
+  for(const p of parts){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;}
+  for(let i=0;i<parts.length;i++){for(let j=i+1;j<parts.length;j++){
+    const a=parts[i],b=parts[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy);
+    if(d<110){ctx.strokeStyle=`rgba(56,130,246,${0.20*(1-d/110)})`;ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}}}
+  for(const p of parts){ctx.fillStyle='rgba(99,102,241,.5)';ctx.beginPath();ctx.arc(p.x,p.y,1.3,0,7);ctx.fill();}
+  requestAnimationFrame(drawNeural);}
+window.addEventListener('resize',sizeCanvas);
+
+/* ---------- KPIs ---------- */
+const kpis=[
+  {l:'Revenue MTD',v:30000,fmt:v=>'$'+(v/1000).toFixed(1)+'K',d:'+12.4%',up:true,seed:[]},
+  {l:'Tasks Cleared',v:148,fmt:v=>v|0,d:'+23 today',up:true},
+  {l:'Uptime',v:99.98,fmt:v=>v.toFixed(2)+'%',d:'30d SLA',up:true},
+  {l:'Threats Blocked',v:1284,fmt:v=>(v|0).toLocaleString(),d:'+57 / hr',up:true},
+];
+function sparkPath(seed){let s='';for(let i=0;i<14;i++){const x=i/13*100;const y=20-(seed[i]||0)*16;s+=(i?'L':'M')+x.toFixed(0)+','+y.toFixed(1)+' ';}return s;}
+function renderKpis(){document.getElementById('kpis').innerHTML=kpis.map((k,idx)=>{
+  if(!k.seed)k.seed=Array.from({length:14},()=>Math.random());
+  return `<div class="kpi"><div class="k-l">${k.l}</div><div class="k-v" id="kv${idx}">${k.fmt(k.v)}</div>
+    <div class="k-d ${k.up?'up':'dn'}">${k.up?'▲':'▼'} ${k.d}</div>
+    <svg class="spark" viewBox="0 0 100 22" preserveAspectRatio="none"><path d="${sparkPath(k.seed)}" fill="none" stroke="${k.up?'#34d399':'#f472b6'}" stroke-width="1.4"/></svg></div>`;
+}).join('');}
+renderKpis();
+function pulseKpis(){kpis.forEach((k,idx)=>{
+  if(k.l==='Revenue MTD')k.v+=Math.random()*240;
+  else if(k.l==='Tasks Cleared')k.v+=Math.random()<.4?1:0;
+  else if(k.l==='Threats Blocked')k.v+=(Math.random()*4)|0;
+  k.seed.shift();k.seed.push(Math.random());
+  const el=document.getElementById('kv'+idx);if(el)el.textContent=k.fmt(k.v);});
+  renderKpis();}
+
+/* ---------- activity stream ---------- */
+const agents=['RESEARCH','EXECUTION','MONITOR','REPORTING','LEGAL','OSINT','BRAND','FINANCE'];
+const evSeed=[
+  ['ok','Inbox triaged — <b>3 urgent</b>, 11 routine, 2 opportunities','COMMAND'],
+  ['','Knowledge graph indexed <b>+42 docs</b>','KNOWLEDGE'],
+  ['warn','Anomalous login flagged on <b>endpoint-17</b>','MONITOR'],
+  ['ok','Draft reply generated for <b>Series-B thread</b>','EXECUTION'],
+  ['','Weekly strategy report compiled','REPORTING'],
+  ['ok','OSINT entity profile updated · confidence <b>HIGH</b>','OSINT'],
+  ['warn','Phishing pattern blocked from external domain','MONITOR'],
+  ['','Calendar optimized — <b>2.5h</b> recovered','COMMAND'],
+];
+const eventsEl=document.getElementById('events');
+function addEvent(kind,body,ag){const t=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const div=document.createElement('div');div.className='ev '+kind;
+  div.innerHTML=`<div class="e-t">${t}</div><div class="e-dot"></div><div class="e-b">${body}<span class="e-ag">${ag} · agent</span></div>`;
+  eventsEl.prepend(div);while(eventsEl.children.length>26)eventsEl.lastChild.remove();}
+evSeed.forEach(e=>addEvent(e[0],e[1],e[2]));
+const randEvents=[
+  ['','Memory salience scored — <b>4 promoted</b>','MEMORY'],
+  ['ok','Automation run complete · <b>CRM synced</b>','EXECUTION'],
+  ['','Citation provenance verified','KNOWLEDGE'],
+  ['warn','Rate limit approaching on integration','MONITOR'],
+  ['ok','Briefing delivered to Operator','REPORTING'],
+  ['','Topic graph expanded · <b>+7 entities</b>','OSINT'],
+  ['ok','Content repurposed for <b>LinkedIn + X</b>','BRAND'],
+  ['','Invoice reconciled · ledger balanced','FINANCE'],
+  ['warn','Policy gate: outbound email <b>held for approval</b>','EXECUTION'],
+  ['ok','Endpoint scan clean · <b>42/42</b>','MONITOR'],
+];
+
+/* ---------- threat monitor ---------- */
+let threat={blocked:0,anom:0,endp:0,level:8,quakes:0,maxMag:0,alerts:0,live:false};
+function renderThreat(){
+  document.getElementById('thBlocked').textContent=threat.live?threat.quakes.toLocaleString():'—';
+  document.getElementById('thAnom').textContent=threat.live?threat.alerts:'—';
+  document.getElementById('thEndp').textContent=threat.live?('M'+threat.maxMag.toFixed(1)):'—';
+  const bar=document.getElementById('thBar'),lvl=document.getElementById('thLvl');
+  bar.style.width=threat.level+'%';
+  let txt='LOW',col='var(--ok)',grad='linear-gradient(90deg,#34d399,#60a5fa)';
+  if(threat.level>66){txt='HIGH';col='var(--bad)';grad='linear-gradient(90deg,#60a5fa,#f472b6)';}
+  else if(threat.level>33){txt='ELEVATED';col='var(--amber)';}
+  bar.style.background=grad;lvl.textContent=threat.live?txt:'—';lvl.style.color=col;}
+renderThreat();
+
+/* ---------- LIVE geo-hazard feeds (USGS + NWS) -> Hazard Monitor + stream ---------- */
+function _fetchT(u,o,ms){const c=new AbortController();const t=setTimeout(()=>c.abort(),ms||9000);
+  return fetch(u,Object.assign({signal:c.signal},o||{})).finally(()=>clearTimeout(t));}
+function _setGeo(txt,col){const e=document.getElementById('geoLive');if(e){e.textContent=txt;e.style.color=col||'var(--dim-2)';}}
+async function loadGeoHazards(){
+  let ok=false;
+  try{
+    const r=await _fetchT('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson',{},10000);
+    const j=await r.json();const f=j.features||[];
+    threat.quakes=f.length;threat.maxMag=f.reduce((m,x)=>Math.max(m,x.properties.mag||0),0);
+    const big=f.filter(x=>(x.properties.mag||0)>=4.5).length;
+    threat.level=Math.min(96,12+big*14+(threat.maxMag>=5?30:threat.maxMag>=4?16:threat.maxMag>=2.5?6:0));
+    ok=true;
+    const top=[...f].sort((a,b)=>(b.properties.mag||0)-(a.properties.mag||0))[0];
+    if(top)addEvent(top.properties.mag>=4?'bad':top.properties.mag>=2.5?'warn':'',
+      `USGS · <b>M${(top.properties.mag||0).toFixed(1)}</b> ${(top.properties.place||'').slice(0,40)}`,'USGS');
+  }catch(e){}
+  try{
+    const r=await _fetchT('https://api.weather.gov/alerts/active?status=actual&limit=50',{headers:{'Accept':'application/geo+json'}},10000);
+    const j=await r.json();const a=j.features||[];
+    threat.alerts=a.length;
+    const sev=a.filter(x=>['Severe','Extreme'].includes(x.properties.severity)).length;
+    threat.level=Math.min(98,threat.level+sev*6);
+    ok=true;
+    if(a[0])addEvent('warn',`NWS · <b>${a[0].properties.event}</b> — ${(a[0].properties.areaDesc||'').slice(0,36)}`,'NWS');
+  }catch(e){}
+  threat.live=ok;renderThreat();
+  _setGeo(ok?('LIVE · USGS+NWS · '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})):'OFFLINE · feeds unreachable',ok?'var(--ok)':'var(--bad)');
+}
+
+/* ---------- modes ---------- */
+let mode='tactical';
+document.querySelectorAll('#modes button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#modes button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  mode=b.dataset.mode;document.getElementById('modeLbl').textContent=mode.toUpperCase()+' MODE';
+  jarvisSay({tactical:'Tactical mode. Decision-first, terse.',formal:'Formal mode engaged. I will keep responses polished and executive-ready.',technical:'Technical mode. Expect precise parameters, schemas, and code.'}[mode]);
+});
+
+/* ---------- console / "intelligence" ---------- */
+const feed=document.getElementById('feed');
+function scrollFeed(){feed.scrollTop=feed.scrollHeight;}
+function userSay(t){const d=document.createElement('div');d.className='msg u';
+  d.innerHTML=`<div class="who">Operator</div><div class="body">${esc(t)}</div>`;feed.appendChild(d);scrollFeed();}
+function jarvisNode(){const d=document.createElement('div');d.className='msg j';feed.appendChild(d);return d;}
+function jarvisSay(html,opts={}){
+  const typing=document.createElement('div');typing.className='msg j typing';
+  typing.innerHTML=`<div class="who">PERCIVAL</div><div class="body"><i></i><i></i><i></i></div>`;
+  feed.appendChild(typing);scrollFeed();
+  return new Promise(res=>setTimeout(()=>{typing.remove();const d=jarvisNode();
+    d.innerHTML=`<div class="who">PERCIVAL</div><div class="body">${html}${opts.conf?confBlock(opts.conf):''}${opts.plan?'':''}</div>`;
+    scrollFeed();if(opts.speak!==false)speak(stripTags(html));res(d);},opts.delay||650));}
+const CGSay=jarvisSay;  /* alias — several intents call CGSay(); keep them working (and spoken) */
+function confBlock(c){return `<div class="conf"><span class="c">SRC · ${c.src||3}</span><span class="c">CONF · ${c.lvl||'HIGH'}</span><span class="c">${c.ms||120}ms</span></div>`;}
+function esc(s){return s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));}
+function stripTags(s){return s.replace(/<[^>]+>/g,'');}
+
+async function runPlan(steps,agentList){
+  const host=jarvisNode();
+  host.innerHTML=`<div class="who">PERCIVAL</div><div class="body"><b>Decomposing intent → ${steps.length} steps.</b>
+    <div class="plan">${steps.map((s,i)=>`<div class="step" id="stp${i}"><span class="s-ic">${i+1}</span>${s}<span class="ag">${agentList[i%agentList.length]}</span></div>`).join('')}</div></div>`;
+  scrollFeed();
+  for(let i=0;i<steps.length;i++){await wait(560+Math.random()*260);
+    const el=host.querySelector('#stp'+i);el.classList.add('done');el.querySelector('.s-ic').textContent='✓';scrollFeed();
+    addEvent('ok',steps[i].replace(/<[^>]+>/g,'').slice(0,52),agentList[i%agentList.length]);}
+  return host;
+}
+function approvalCard(title,body,onOk){
+  const d=jarvisNode();
+  d.innerHTML=`<div class="who">PERCIVAL</div><div class="body">${title}
+    <div class="approve"><div class="ah">⚠ Confirmation required · sensitive action</div><div class="ab">${body}</div>
+    <div class="btns"><button class="ok">Approve</button><button class="no">Deny</button><button class="ex">Explain</button></div></div></div>`;
+  feed.appendChild(d);scrollFeed();
+  d.querySelector('.ok').onclick=async()=>{d.querySelector('.approve').innerHTML='<div class="ah" style="color:var(--ok)">✓ Approved · executed · logged to audit trail</div>';addEvent('ok','Operator approved: '+stripTags(title).slice(0,40),'EXECUTION');if(onOk)onOk();};
+  d.querySelector('.no').onclick=()=>{d.querySelector('.approve').innerHTML='<div class="ah" style="color:var(--bad)">✕ Denied · action discarded · logged</div>';addEvent('warn','Operator denied an action','EXECUTION');};
+  d.querySelector('.ex').onclick=()=>jarvisSay("I recommended this because it advances the active mission and is reversible. Inputs, sources, and confidence are attached to the audit entry. Nothing is sent until you approve.");
+}
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* intent router (deterministic demo) */
+async function handle(raw){
+  const q=raw.trim();if(!q)return;userSay(q);const t=q.toLowerCase();
+
+  if(/brief|briefing|morning|catch me up|summary/.test(t)){
+    focusSub('command');
+    await runPlan(['Pull inbox + chat + calendar','Score urgency × impact × deadline','Cross-check active missions','Compose executive briefing'],['COMMAND','MONITOR','MEMORY','REPORTING']);
+    return jarvisSay(`<b>Daily briefing — ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'})}.</b><br>
+      • <b>3 urgent:</b> Series-B counter-signature, vendor SLA breach, board deck v4.<br>
+      • <b>2 opportunities:</b> inbound partnership (warm), press request from a tier-1 outlet.<br>
+      • <b>Today:</b> 4 meetings — I cleared 2.5h of low-value blocks.<br>
+      • <b>Risk:</b> one anomalous login on endpoint-17 (contained, watching).<br>
+      <b>Recommended first move:</b> approve the Series-B counter — it unblocks 3 downstream items.`,{conf:{src:9,lvl:'HIGH',ms:142}});
+  }
+  if(/inbox|email|triage|reply|draft/.test(t)){
+    focusSub('command');
+    await runPlan(['Classify 16 unread threads','Detect urgent + opportunity + risk','Draft replies in your voice','Queue sends for approval'],['COMMAND','KNOWLEDGE','EXECUTION','EXECUTION']);
+    await jarvisSay(`Inbox triaged: <b>3 urgent · 11 routine · 2 opportunities</b>. Drafts are ready in your voice.`,{conf:{src:16,lvl:'HIGH',ms:98}});
+    return approvalCard('Send the 3 drafted urgent replies?','Recipients: counsel@, vendor-ops@, board-chair@. Tone: formal. Reversible: drafts retained.',()=>jarvisSay('Sent. Threads tagged, follow-ups scheduled for +48h.'));
+  }
+  if(/threat|security|attack|breach|anomal|monitor|endpoint/.test(t)){
+    focusSub('security');threat.level=Math.min(78,threat.level+34);threat.anom++;renderThreat();markNode('security','bad');
+    await runPlan(['Correlate auth logs across endpoints','Geo + device fingerprint anomaly','Check threat-intel feeds','Build incident timeline'],['MONITOR','MONITOR','OSINT','REPORTING']);
+    await jarvisSay(`<b>Threat summary.</b> Anomalous login on <b>endpoint-17</b> from an unrecognized ASN, 02:14 UTC. No lateral movement. Session isolated, token revoked.<br><b>Recommendation:</b> force re-auth + step-up MFA for the affected identity.`,{conf:{src:6,lvl:'MED',ms:210}});
+    return approvalCard('Quarantine endpoint-17 and force re-auth?','Action is reversible. Affected user will be notified. Kill-switch remains available.',()=>{threat.level=14;threat.anom=Math.max(0,threat.anom-1);renderThreat();markNode('security','');jarvisSay('Endpoint quarantined, identity re-authed. Threat level returned to LOW.');});
+  }
+  if(/research|osint|entity|investigat|find out|look up/.test(t)){
+    focusSub('knowledge');
+    await runPlan(['Spawn Research + OSINT agents','Gather open sources','Score source confidence','Build entity profile + topic graph'],['RESEARCH','OSINT','KNOWLEDGE','REPORTING']);
+    return jarvisSay(`Research complete. Built an <b>entity profile</b> with 7 linked entities and a topic graph. Findings carry per-source confidence; 2 sources conflict on a date — I flagged the contradiction rather than guessing.`,{conf:{src:11,lvl:'MED',ms:340}});
+  }
+  if(/automat|workflow|schedule|script|code|python|sql/.test(t)){
+    focusSub('automation');
+    await runPlan(['Define trigger + steps','Generate code (sandboxed)','Dry-run in isolated env','Stage for approval'],['EXECUTION','EXECUTION','MONITOR','EXECUTION']);
+    await jarvisSay(`Workflow generated and dry-run in a sandbox (network-egress controlled). Here is the core step:`);
+    const d=jarvisNode();d.innerHTML=`<div class="who">PERCIVAL</div><div class="body" style="font-family:var(--mono);font-size:11.5px;line-height:1.6"># scheduled · weekdays 07:00<br>brief = percival.compose_briefing(sources=["inbox","calendar","crm"])<br>percival.deliver(brief, channel="push", approval=<b>"auto"</b>)</div>`;scrollFeed();
+    return approvalCard('Activate this scheduled workflow?','Runs weekdays 07:00. Safe + reversible. You can pause or roll back anytime.',()=>jarvisSay('Workflow active. First run tomorrow 07:00. Logged to audit trail.'));
+  }
+  if(/\bbuild\b|spatial|workspace|orbital desktop|open build|launch build/.test(t)){
+    focusSub('orchestr');
+    await CGSay(`Opening <b>PERCIVAL BUILD</b> — the orbital spatial workspace. Floating widgets (clock, spectrum, telemetry, mixer) over a live space scene, with an app dock and command bar.`);
+    addEvent('ok','PERCIVAL BUILD spatial workspace launched','EXECUTION');
+    setTimeout(()=>{window.location.href='percival-build.html';},900);
+    return;
+  }
+  if(/who are you|what are you|capab|help|what can you/.test(t)){
+    return jarvisSay(`I am <b>PERCIVAL</b> — your always-on command center. I run a swarm of specialized agents across <b>command, orchestration, knowledge, security, and automation</b>. Try: <i>brief me</i>, <i>triage my inbox</i>, <i>any threats?</i>, <i>research this entity</i>, or <i>build an automation</i>. I show my plan, cite sources with confidence, and never take sensitive actions without your approval.`);
+  }
+  if(/kpi|revenue|metric|dashboard|number|status/.test(t)){
+    focusSub('command');
+    return CGSay(`<b>Live status.</b> Revenue MTD <b>${kpis[0].fmt(kpis[0].v)}</b> (▲12.4%) · Tasks cleared <b>${kpis[1].v|0}</b> · Uptime <b>99.98%</b> · Threats blocked <b>${threat.blocked.toLocaleString()}</b>. All subsystems nominal; security watching one contained anomaly.`,{conf:{src:5,lvl:'HIGH',ms:60}});
+  }
+  if(/memory|remember|forget|preference/.test(t)){
+    focusSub('memory');
+    return CGSay(`Long-term memory holds your <b>preferences, projects, contacts, goals, and recurring workflows</b> — separate from session memory. You can view, edit, export, or delete any record; a "forget" cascades to the vector index. Provenance and timestamps are attached to every fact.`);
+  }
+  // fallback
+  return CGSay(`Acknowledged. In a live deployment I'd route "<i>${esc(q)}</i>" to the right agent, decompose it into steps, and report back with sources and confidence. For this demo, try: <i>brief me</i> · <i>triage inbox</i> · <i>any threats?</i> · <i>research entity</i> · <i>build automation</i>.`);
+}
+
+/* ---------- focus subsystem ---------- */
+function markNode(id,cls){const n=document.querySelector(`.node[data-id="${id}"]`);if(n){n.classList.remove('warn','bad');if(cls)n.classList.add(cls);}}
+function focusSub(id){
+  document.querySelectorAll('.mitem').forEach(m=>m.classList.toggle('on',m.dataset.id===id));
+  const s=subsystems.find(x=>x.id===id);if(!s)return;
+  const toast=document.getElementById('toast');
+  document.getElementById('toastIc').textContent=s.ic;document.getElementById('toastT').textContent=s.n;
+  document.getElementById('toastS').textContent='Subsystem focused · '+s.s;
+  toast.classList.add('show');clearTimeout(focusSub._t);focusSub._t=setTimeout(()=>toast.classList.remove('show'),2600);
+}
+
+/* ---------- input wiring ---------- */
+const cmd=document.getElementById('cmd');
+function submit(){const v=cmd.value;cmd.value='';handle(v);}
+document.getElementById('send').onclick=submit;
+cmd.addEventListener('keydown',e=>{if(e.key==='Enter')submit();});
+const quick=['Brief me','Triage my inbox','Any threats?','Open Build','Build an automation','Show KPIs'];
+document.getElementById('chips').innerHTML=quick.map(q=>`<button class="qchip">${q}</button>`).join('');
+document.querySelectorAll('.qchip').forEach(c=>c.onclick=()=>handle(c.textContent));
+
+/* ---------- voice (Web Speech API, graceful fallback) ---------- */
+const micBtn=document.getElementById('mic');
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let rec=null,listening=false;
+if(SR){rec=new SR();rec.lang='en-US';rec.interimResults=false;
+  rec.onresult=e=>{const t=e.results[0][0].transcript;cmd.value=t;handle(t);};
+  rec.onend=()=>{listening=false;micBtn.classList.remove('live');};
+}
+micBtn.onclick=()=>{
+  if(!rec){CGSay('Voice input needs a browser that supports the Web Speech API (Chrome/Edge). Text command works perfectly here.');return;}
+  if(listening){rec.stop();return;}
+  try{rec.start();listening=true;micBtn.classList.add('live');}catch(_){}
+};
+/* ---------- PERCIVAL voice — elegant British female (Web Speech API) ---------- */
+let VOICE_ON=true, voicePrimed=false, britVoice=null;
+function pickBritishVoice(){
+  if(!window.speechSynthesis)return null;
+  const vs=window.speechSynthesis.getVoices()||[];
+  const female=/(sonia|libby|hazel|serena|kate|stephanie|amelia|emily|fiona|martha|female|woman)/i;
+  return vs.find(v=>/en-GB/i.test(v.lang)&&female.test(v.name))      // British + female name
+      || vs.find(v=>/Google UK English Female/i.test(v.name))         // Chrome's UK female
+      || vs.find(v=>/en-GB/i.test(v.lang))                            // any British English
+      || vs.find(v=>/^en/i.test(v.lang)&&female.test(v.name))         // any English female
+      || vs.find(v=>/^en/i.test(v.lang)) || vs[0] || null;            // any English / anything
+}
+if(window.speechSynthesis){
+  britVoice=pickBritishVoice();
+  try{window.speechSynthesis.addEventListener('voiceschanged',()=>{britVoice=pickBritishVoice();});}catch(_){}
+}
+function speak(text){
+  if(!VOICE_ON||!window.speechSynthesis||!text)return;
+  try{
+    let clean=String(text).replace(/\s+/g,' ').trim();
+    if(!clean)return;
+    if(clean.length>320)clean=(clean.slice(0,320).replace(/[^.!?]*$/,'').trim())||clean.slice(0,320);
+    const u=new SpeechSynthesisUtterance(clean);
+    if(!britVoice)britVoice=pickBritishVoice();
+    if(britVoice){u.voice=britVoice;u.lang=britVoice.lang;}else{u.lang='en-GB';}
+    u.rate=.98;u.pitch=1.02;u.volume=1;                 // measured, elegant cadence
+    window.speechSynthesis.cancel();window.speechSynthesis.speak(u);
+  }catch(_){}
+}
+/* voice toggle in the top bar + first-gesture unlock (browsers gate speech on a user gesture) */
+(function(){
+  const btn=document.createElement('button');
+  btn.className='launch';btn.id='voiceToggle';btn.type='button';
+  btn.title='PERCIVAL voice — elegant British female · click to mute / unmute';
+  btn.innerHTML='🔊 VOICE';
+  const pill=document.querySelector('.status-pill'),bar=document.querySelector('.topbar');
+  if(pill)pill.insertAdjacentElement('beforebegin',btn);else if(bar)bar.appendChild(btn);
+  function greet(){speak('Good day, Operator. PERCIVAL is online — all subsystems nominal. How may I assist?');}
+  function unlock(){if(voicePrimed)return;voicePrimed=true;if(VOICE_ON)greet();
+    window.removeEventListener('pointerdown',onGesture);window.removeEventListener('keydown',onGesture);}
+  function onGesture(e){if(e&&e.target&&e.target.closest&&e.target.closest('#voiceToggle'))return;unlock();}
+  window.addEventListener('pointerdown',onGesture,{passive:true});
+  window.addEventListener('keydown',onGesture,{passive:true});
+  btn.onclick=function(){
+    if(!voicePrimed){voicePrimed=true;VOICE_ON=true;btn.classList.remove('off');btn.innerHTML='🔊 VOICE';greet();
+      window.removeEventListener('pointerdown',onGesture);window.removeEventListener('keydown',onGesture);return;}
+    VOICE_ON=!VOICE_ON;btn.classList.toggle('off',!VOICE_ON);btn.innerHTML=VOICE_ON?'🔊 VOICE':'🔇 MUTED';
+    if(VOICE_ON)greet();else{try{window.speechSynthesis.cancel();}catch(_){}}
+  };
+})();
+
+/* ---------- life loop ---------- */
+let cycle=0;
+function startLife(){
+  sizeCanvas();drawNeural();
+  jarvisSay("Good day, Operator. PERCIVAL is online — all subsystems nominal. Say the word, or type a command.",{delay:400,speak:false});
+  setInterval(()=>{const e=randEvents[Math.floor(Math.random()*randEvents.length)];addEvent(e[0],e[1],e[2]);},3800);
+  setInterval(pulseKpis,4200);
+  setInterval(refreshRings,5000);
+  loadGeoHazards();                       // live USGS + NWS into the Hazard Monitor
+  setInterval(loadGeoHazards,120000);
+  setInterval(()=>{cycle++;document.getElementById('tagBr').textContent='CYCLE '+cycle;
+    document.getElementById('tagTr').innerHTML=`LAT ${(33.7+Math.random()*.2).toFixed(2)} · LON ${(-118.2-Math.random()*.2).toFixed(2)}<br>UPLINK SECURE`;},2000);
+}
+</script>
+<!-- ═══════ ADVANCED WARFIGHTING DECK — runtime ═══════ -->
+<script>
+(function(){
+"use strict";
+/* ══════════════════════════════════════════════════════════════════════════════
+   PERCIVAL OS — ADVANCED WARFIGHTING DECK
+   Six additional mission modules layered on top of the existing HUD. Nothing in
+   the original console is replaced: this file only adds.
+
+   Modelled on open, unclassified doctrine and published program literature —
+   DARPA Mosaic Warfare / CODE / SoSITE (composable kill-webs), Assured Autonomy
+   (runtime assurance & the Simplex pattern), GARD (adversarial-ML defense), XAI
+   (explainable decisions), RFMLS + ARC (RF machine learning and adaptive
+   countermeasures), ASPN (all-source position, navigation & timing) — and the
+   Lockheed Martin Cyber Kill Chain® with its courses-of-action matrix, plus
+   Aegis-pattern multi-source track fusion and TEWA.
+
+   Like the rest of this page, every number here is a deterministic client-side
+   simulation. No external system is contacted, nothing is controlled, and no
+   engagement path exists that does not first stop at an operator approval.
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* ---------- micro-helpers ---------- */
+var $=function(s,r){return (r||document).querySelector(s);};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+var clamp=function(v,a,b){return Math.max(a,Math.min(b,v));};
+var rnd=function(a,b){return a+Math.random()*(b-a);};
+var irnd=function(a,b){return Math.floor(rnd(a,b+1));};
+var pick=function(a){return a[Math.floor(Math.random()*a.length)];};
+var f1=function(v){return (Math.round(v*10)/10).toFixed(1);};
+var f2=function(v){return (Math.round(v*100)/100).toFixed(2);};
+var pct=function(v){return Math.round(v*100)+'%';};
+var E=function(s){return String(s).replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];});};
+var hhmmss=function(){return new Date().toLocaleTimeString('en-GB',{hour12:false});};
+
+/* bridges into the existing HUD — always guarded so the deck degrades quietly.
+   WARM suppresses the stream while the simulations are wound forward at load. */
+var WARM=true;
+function ev(kind,body,agent){
+  if(WARM)return;
+  try{if(typeof addEvent==='function')addEvent(kind,body,agent);}catch(_){}
+}
+function say(html,opts){try{if(typeof jarvisSay==='function')return jarvisSay(html,opts);}catch(_){}return Promise.resolve();}
+function gate(title,body,onOk){
+  try{if(typeof approvalCard==='function'){approvalCard(title,body,onOk);return true;}}catch(_){}
+  if(onOk)onOk();return false;
+}
+
+/* raf / interval lifecycle helpers — every module hands back one cleanup fn */
+function loop(fn){var stop=false,id=0;var step=function(t){if(stop)return;try{fn(t);}catch(_){}id=requestAnimationFrame(step);};
+  id=requestAnimationFrame(step);return function(){stop=true;cancelAnimationFrame(id);};}
+function every(ms,fn){var id=setInterval(function(){try{fn();}catch(_){}},ms);return function(){clearInterval(id);};}
+function bundle(){var fns=Array.prototype.slice.call(arguments);
+  return function(){fns.forEach(function(f){try{if(f)f();}catch(_){}});};}
+/* resize the backing store only when it actually changed — reallocating a canvas
+   every animation frame is expensive, and every caller below clears or fully
+   overpaints, so there is nothing to preserve */
+function fitCanvas(c){
+  var r=c.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);
+  var W=Math.max(1,Math.round(r.width*dpr)),H=Math.max(1,Math.round(r.height*dpr));
+  if(c.width!==W||c.height!==H){c.width=W;c.height=H;}
+  var x=c.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:x,w:r.width||1,h:r.height||1};
+}
+/* log lines are always plain text — escaped here so no call site has to remember */
+function logLine(host,cls,text){
+  if(!host)return;
+  var d=document.createElement('div');d.className=cls||'';
+  d.innerHTML='<span>'+hhmmss().slice(3)+'</span><em>'+E(text)+'</em>';
+  host.insertBefore(d,host.firstChild);
+  while(host.children.length>60)host.removeChild(host.lastChild);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SHARED DECK STATE — the always-on layer.
+   State ticks whether or not a module is open, so the stage ribbon, the KPI
+   panel and the launcher badges stay live. Views only render it.
+   ══════════════════════════════════════════════════════════════════════════════ */
+var DECK={
+  ooda:{i:0,ms:118,cycle:0},
+  alerts:{mosaic:false,killchain:false,spectrum:false,fusion:false,assure:false,pnt:false}
+};
+var OODA=['OBSERVE','ORIENT','DECIDE','ACT'];
+
+/* ─────────────────────────── 1 · MOSAIC KILL-WEB ─────────────────────────── */
+var MW={
+  nodes:[
+    {id:'OPIR-LEO', k:'sensor',  n:'OPIR · LEO',       d:'overhead persistent IR',          caps:['find','assess'],                lat:140,x:.09,y:.13},
+    {id:'HALE-ISR', k:'sensor',  n:'HALE ISR',         d:'wide-area MTI / SAR',             caps:['find','fix','track','assess'],  lat:95, x:.09,y:.39},
+    {id:'ESM-GEO',  k:'sensor',  n:'PASSIVE ESM',      d:'RF geolocation · emissions-safe', caps:['find','fix','track'],           lat:60, x:.09,y:.64},
+    {id:'SURF-RDR', k:'sensor',  n:'SURFACE RADAR',    d:'S-band volume search',            caps:['fix','track','assess'],         lat:45, x:.09,y:.89},
+    {id:'ATT-UAS',  k:'sensor',  n:'ATTRITABLE UAS',   d:'penetrating · expendable',        caps:['fix','track','assess','relay'], lat:70, x:.31,y:.24},
+    {id:'MESH-RLY', k:'relay',   n:'MESH RELAY',       d:'LPI/LPD transport layer',         caps:['relay'],                        lat:18, x:.31,y:.63},
+    {id:'EDGE-FUSE',k:'decider', n:'EDGE FUSION',      d:'on-board autonomy at the edge',   caps:['track','target'],               lat:30, x:.55,y:.29},
+    {id:'C2-CELL',  k:'decider', n:'C2 CELL',          d:'mission command · human on loop', caps:['target'],                       lat:55, x:.55,y:.68},
+    {id:'STANDOFF', k:'effector',n:'STANDOFF STRIKE',  d:'long-range kinetic',              caps:['engage'],pk:.82,dom:'kinetic',   tof:472,lat:210,x:.82,y:.15},
+    {id:'LOITER',   k:'effector',n:'LOITERING MUN',    d:'short-dwell kinetic',             caps:['engage'],pk:.74,dom:'kinetic',   tof:138,lat:160,x:.82,y:.39},
+    {id:'EW-EFF',   k:'effector',n:'EW EFFECT',        d:'non-kinetic · reversible',        caps:['engage'],pk:.61,dom:'nonkinetic',tof:4,  lat:40, x:.82,y:.64},
+    {id:'CYB-EFF',  k:'effector',n:'CYBER EFFECT',     d:'non-kinetic · reversible',        caps:['engage'],pk:.55,dom:'nonkinetic',tof:11, lat:25, x:.82,y:.88}
+  ],
+  /* engagement windows are how long the target stays prosecutable — the real
+     tension in a composed package is time-to-effect against that window */
+  targets:[
+    {id:'TGT-01',n:'MOBILE SAM · TEL',    cls:'GROUND · RELOCATABLE',  pri:'HIGH',    win:520},
+    {id:'TGT-02',n:'INTEGRATED AD C2',    cls:'FIXED · HARDENED',      pri:'CRITICAL',win:1265},
+    {id:'TGT-03',n:'FAST ATTACK CRAFT',   cls:'SURFACE · MANEUVERING', pri:'MEDIUM',  win:210}
+  ],
+  stages:[['FIND','find'],['FIX','fix'],['TRACK','track'],['TARGET','target'],['ENGAGE','engage'],['ASSESS','assess']],
+  target:0, pref:'auto', chain:null, chains:0, recomposeMs:0, engaged:0, log:[]
+};
+MW.nodes.forEach(function(n){n.alive=true;});
+
+function mwCands(cap,pref){
+  return MW.nodes.filter(function(n){
+    if(!n.alive||n.caps.indexOf(cap)<0)return false;
+    if(cap==='engage'&&pref&&pref!=='auto'&&n.dom!==pref)return false;
+    return true;
+  });
+}
+/* an effector that cannot arrive inside the window is worth very little,
+   however good its probability of kill */
+function mwScore(n){
+  var win=MW.targets[MW.target].win,tof=n.tof||0;
+  return n.pk*0.52+(1-clamp(tof/600,0,1))*0.28+(tof<=win?0.55:0);
+}
+function mwCompose(){
+  var chain=[],total=0,alts=1,weak=null;
+  for(var i=0;i<MW.stages.length;i++){
+    var label=MW.stages[i][0],cap=MW.stages[i][1];
+    var c=mwCands(cap,MW.pref);
+    if(!c.length){MW.chain=null;MW.chains=0;return null;}
+    var best=cap==='engage'
+      ? c.slice().sort(function(a,b){return mwScore(b)-mwScore(a);})[0]
+      : c.slice().sort(function(a,b){return a.lat-b.lat;})[0];
+    if(!weak||c.length<weak.count)weak={stage:label,count:c.length};
+    alts*=c.length;
+    total+=best.lat;
+    chain.push({label:label,cap:cap,node:best});
+  }
+  var relay=MW.nodes.filter(function(n){return n.alive&&n.caps.indexOf('relay')>=0;})
+    .sort(function(a,b){return a.lat-b.lat;})[0];
+  total+=relay?relay.lat:52;               /* mesh down → degraded transport penalty */
+  var eff=chain[4].node;
+  MW.chain={chain:chain,total:total,relay:relay||null,weak:weak,
+            pk:eff.pk,dom:eff.dom,tof:eff.tof||0,
+            ttEffect:total/1000+(eff.tof||0)};
+
+  MW.chains=Math.min(alts,9999);
+  return MW.chain;
+}
+mwCompose();
+
+/* ─────────────────────── 2 · CYBER KILL CHAIN® BOARD ─────────────────────── */
+var KC={
+  stages:[
+    {k:'recon',  n:'Reconnaissance',       d:'target research · harvesting'},
+    {k:'weap',   n:'Weaponization',        d:'coupling exploit + payload'},
+    {k:'deliv',  n:'Delivery',             d:'transmission to the target'},
+    {k:'exploit',n:'Exploitation',         d:'triggering the exploit'},
+    {k:'install',n:'Installation',         d:'persistence on the asset'},
+    {k:'c2',     n:'Command &amp; Control',d:'hands-on-keyboard channel'},
+    {k:'action', n:'Actions on Objectives',d:'exfiltrate · tamper · spread'}
+  ],
+  /* the courses-of-action matrix as published in the Lockheed Martin
+     intrusion-kill-chain paper — one mitigation per stage × action */
+  coaCols:['Detect','Deny','Disrupt','Degrade','Deceive','Destroy'],
+  coa:{
+    recon:  ['Web analytics','Firewall ACL','—','—','—','—'],
+    weap:   ['NIDS','NIPS','—','—','—','—'],
+    deliv:  ['Vigilant user','Proxy filter','In-line AV','Queuing','—','—'],
+    exploit:['HIDS','Patch','DEP','—','—','—'],
+    install:['HIDS','chroot jail','AV','—','—','—'],
+    c2:     ['NIDS','Firewall ACL','NIPS','Tarpit','DNS redirect','—'],
+    action: ['Audit log','—','—','Quality of service','Honeypot','—']
+  },
+  armed:{},
+  seen:{},broken:{},
+  live:[],impacts:0,totalSeen:0,totalBroken:0,breakSum:0,
+  campaigns:[
+    {id:'THETA-7',  n:'commodity crimeware · opportunistic', ind:0,conf:.31},
+    {id:'KESTREL',  n:'targeted · persistent · patient',     ind:0,conf:.22},
+    {id:'ORACLE-9', n:'supply-chain oriented',               ind:0,conf:.14}
+  ],
+  log:[]
+};
+KC.stages.forEach(function(s){KC.seen[s.k]=0;KC.broken[s.k]=0;});
+/* sensible default posture — the operator can arm or disarm any live cell */
+[['recon',0],['deliv',1],['deliv',2],['exploit',0],['exploit',1],['install',0],['c2',0],['c2',2],['action',0]]
+  .forEach(function(p){KC.armed[p[0]+':'+p[1]]=true;});
+
+function kcArmedAt(stageKey){
+  var row=KC.coa[stageKey],n=0;
+  for(var i=0;i<row.length;i++)if(row[i]!=='—'&&KC.armed[stageKey+':'+i])n++;
+  return n;
+}
+function kcSpawn(){
+  if(KC.live.length>7)return;
+  var c=pick(KC.campaigns);
+  KC.live.push({id:'INT-'+irnd(1000,9999),c:c.id,si:0,age:0,x:0});
+  c.ind++;c.conf=clamp(c.conf+0.035,0,.97);
+}
+function kcTick(){
+  if(Math.random()<0.55)kcSpawn();
+  for(var i=KC.live.length-1;i>=0;i--){
+    var it=KC.live[i];it.age++;
+    if(it.age%2)continue;
+    var st=KC.stages[it.si];
+    KC.seen[st.k]++;KC.totalSeen++;
+    /* every armed course of action at this stage raises the odds of breaking it */
+    var p=0.10+kcArmedAt(st.k)*0.19;
+    if(Math.random()<p){
+      KC.broken[st.k]++;KC.totalBroken++;KC.breakSum+=it.si;
+      KC.log.unshift({c:'g',t:it.id+' broken at '+st.n.replace('&amp;','&')+' · '+it.c});
+      KC.live.splice(i,1);continue;
+    }
+    it.si++;
+    if(it.si>=KC.stages.length){
+      KC.impacts++;
+      KC.log.unshift({c:'r',t:it.id+' reached ACTIONS ON OBJECTIVES · '+it.c});
+      ev('bad','Kill chain · <b>'+it.id+'</b> reached actions on objectives','KILLCHAIN');
+      DECK.alerts.killchain=true;
+      KC.live.splice(i,1);
+    }
+  }
+  KC.log.length=Math.min(KC.log.length,50);
+}
+
+/* ─────────────────── 3 · COGNITIVE EW · RF SPECTRUM ─────────────────── */
+var EW={
+  emcon:'B',
+  emitters:[
+    {id:'E-01',f:.13,bw:.014,amp:.70,base:.70,type:'PULSE-DOPPLER', role:'ACQUISITION RADAR',      band:'S',  prf:'2.9 kHz',mod:'LFM CHIRP', conf:.20,ceil:.97,rate:.014,threat:'HIGH',    pulse:true},
+    {id:'E-02',f:.34,bw:.005,amp:.54,base:.54,type:'FREQ-HOP',      role:'TACTICAL DATA LINK',     band:'L',  prf:'—',      mod:'FH-QPSK',   conf:.14,ceil:.91,rate:.009,threat:'MEDIUM',  hop:true},
+    {id:'E-03',f:.52,bw:.003,amp:.82,base:.82,type:'CONTINUOUS WAVE',role:'ILLUMINATOR · TGT LOCK',band:'X',  prf:'CW',     mod:'CW',        conf:.31,ceil:.99,rate:.020,threat:'CRITICAL'},
+    {id:'E-04',f:.70,bw:.085,amp:.44,base:.44,type:'BARRAGE NOISE', role:'STANDOFF JAMMER',        band:'X',  prf:'—',      mod:'AWGN',      conf:.22,ceil:.95,rate:.013,threat:'HIGH'},
+    {id:'E-05',f:.86,bw:.055,amp:.17,base:.17,type:'DSSS · LPI/LPD',role:'LOW-INTERCEPT LINK',     band:'Ku', prf:'—',      mod:'DSSS-BPSK', conf:.05,ceil:.62,rate:.003,threat:'LOW'},
+    {id:'E-06',f:.24,bw:.007,amp:.28,base:.28,type:'NARROWBAND FM', role:'MOBILE COMMS NET',       band:'UHF',prf:'—',      mod:'NBFM',      conf:.26,ceil:.93,rate:.012,threat:'LOW'}
+  ],
+  sel:'E-03', arc:null, log:[], suppressed:0
+};
+EW.emitters.forEach(function(e){e.on=true;e.f0=e.f;});
+function ewTick(){
+  EW.emitters.forEach(function(e){
+    e.conf=clamp(e.conf+e.rate*rnd(.5,1.4),0,e.ceil);
+    if(e.hop)e.f=clamp(e.f0+rnd(-.05,.05),.02,.98);
+  });
+  var crit=EW.emitters.some(function(e){return e.on&&e.threat==='CRITICAL'&&e.conf>.7&&!e.sup;});
+  DECK.alerts.spectrum=crit;
+}
+
+/* ───────────── 4 · AEGIS-PATTERN TRACK FUSION + TEWA ───────────── */
+var FZ={
+  tracks:[], doctrine:'SEMI-AUTO', shots:[], log:[], sweep:0, engagements:0, kills:0,
+  siap:{complete:.94,ambig:.03,spurious:.02,corr:.97}
+};
+var FZ_CLASSES=[
+  {cls:'AIR',    iff:'HOSTILE', spd:[380,520], alt:[18000,34000]},
+  {cls:'AIR',    iff:'FRIEND',  spd:[300,460], alt:[20000,36000]},
+  {cls:'AIR',    iff:'UNKNOWN', spd:[240,420], alt:[9000,28000]},
+  {cls:'MISSILE',iff:'HOSTILE', spd:[900,1450],alt:[400,9000]},
+  {cls:'SURFACE',iff:'NEUTRAL', spd:[8,22],    alt:[0,0]},
+  {cls:'SURFACE',iff:'HOSTILE', spd:[26,44],   alt:[0,0]}
+];
+function fzSpawn(seedRange){
+  var t=pick(FZ_CLASSES),ang=rnd(0,Math.PI*2),r=seedRange||rnd(28,98);
+  var spd=rnd(t.spd[0],t.spd[1]);
+  /* mostly inbound so the picture stays interesting */
+  var head=ang+Math.PI+rnd(-.6,.6);
+  return {
+    id:'T-'+irnd(1000,9999),cls:t.cls,iff:t.iff,
+    x:Math.cos(ang)*r,y:Math.sin(ang)*r,
+    vx:Math.cos(head)*spd/60,vy:Math.sin(head)*spd/60,   /* nmi per minute */
+    spd:spd,alt:Math.round(rnd(t.alt[0],t.alt[1])/100)*100,
+    emits:Math.random()<.55,tq:1,srcs:[],engaged:false,dead:false,age:0
+  };
+}
+for(var _i=0;_i<10;_i++)FZ.tracks.push(fzSpawn());
+function fzRange(t){return Math.hypot(t.x,t.y);}
+function fzSources(t){
+  var s=[],r=fzRange(t);
+  if(r<=86&&!(t.cls==='SURFACE'&&r>52))s.push('SPY');   /* horizon-limited for surface */
+  if(r<=38)s.push('IRST');
+  if(t.emits)s.push('ESM');
+  if(r>62)s.push('LINK16');
+  return s;
+}
+function fzTick(dt){
+  FZ.tracks.forEach(function(t){
+    if(t.dead)return;
+    t.age++;
+    t.x+=t.vx*dt;t.y+=t.vy*dt;
+    t.srcs=fzSources(t);
+    var want=clamp(1+t.srcs.length*1.7+(t.srcs.indexOf('SPY')>=0?1:0),1,7);
+    t.tq=t.tq+(want-t.tq)*0.25;
+    if(fzRange(t)>128||fzRange(t)<1.2)t.dead=true;
+  });
+  FZ.tracks=FZ.tracks.filter(function(t){return !t.dead;});
+  while(FZ.tracks.length<10)FZ.tracks.push(fzSpawn(rnd(80,110)));
+  /* SIAP quality drifts with how much of the picture is multi-source fused */
+  var multi=FZ.tracks.filter(function(t){return t.srcs.length>1;}).length;
+  FZ.siap.complete=clamp(0.72+multi/FZ.tracks.length*0.27,0,.999);
+  FZ.siap.ambig=clamp(0.09-multi*0.006,0,.2);
+  FZ.siap.spurious=clamp(0.05-multi*0.003,0,.15);
+  FZ.siap.corr=clamp(0.86+multi/FZ.tracks.length*0.13,0,.999);
+  var inbound=FZ.tracks.filter(function(t){return t.iff==='HOSTILE'&&fzRange(t)<45;}).length;
+  DECK.alerts.fusion=inbound>0;
+}
+function fzThreat(t){
+  var r=fzRange(t),closing=-(t.x*t.vx+t.y*t.vy)/Math.max(r,.1);   /* nmi per minute, +ve = closing */
+  var tti=closing>0.1?r/closing:999;
+  var w=t.cls==='MISSILE'?3.2:t.cls==='AIR'?1.6:1;
+  return {r:r,closing:closing,tti:tti,score:(t.iff==='HOSTILE'?1:t.iff==='UNKNOWN'?.45:0)*w*(120/Math.max(tti,1))};
+}
+function fzWeapon(t){
+  var a=fzThreat(t),r=a.r;
+  if(t.cls==='MISSILE'&&r<12) return {w:'CIWS · POINT DEFENSE',pk:.72};
+  if(t.cls==='MISSILE')       return {w:'ESSM-CLASS · SELF DEFENSE',pk:.83};
+  if(t.cls==='SURFACE')       return {w:'SOFT-KILL DECOY + EW',pk:.66};
+  if(r>45)                    return {w:'SM-CLASS · LONG RANGE',pk:.88};
+  return {w:'ESSM-CLASS · SELF DEFENSE',pk:.81};
+}
+
+/* ────────── 5 · ASSURED AUTONOMY · RUNTIME ASSURANCE ────────── */
+var AA={
+  s:0,v:0,ctrl:'ADV',bound:.86,revert:.78,resume:.18,
+  reversions:0,lastRevert:null,trust:.96,hist:[],
+  adv:{state:'NOMINAL',ood:.04,eps:'8/255',radius:.31,canaries:64,canaryOk:64,model:'PRIMARY · LEARNED'},
+  invariants:[
+    {c:'□ (agl ≥ floor_agl)',                 s:'MODEL-CHECKED',   k:'ok'},
+    {c:'□ (engage → authorized ∧ identified)', s:'PROOF DISCHARGED',k:'ok'},
+    {c:'□ (‖u‖ ≤ u_max)',                     s:'RUNTIME MONITOR', k:'info'},
+    {c:'□ (comms_loss → safe_return)',         s:'MODEL-CHECKED',   k:'ok'},
+    {c:'□ (¬reachable_undefined_behaviour)',   s:'VERIFIED KERNEL', k:'ok'},
+    {c:'◇≤T (mission_complete ∨ abort)',       s:'BOUNDED LIVENESS',k:'info'}
+  ],
+  xai:{
+    decision:'CLASSIFY TRACK T-4471 → HOSTILE',
+    feats:[['Emitter signature match · X-band FC',.41],['Closure rate 412 kt on protected axis',.27],['No IFF mode-5 reply',.19],['Origin outside published corridor',.13]],
+    cf:'Had the closure rate been below 180 kt, the classification would have flipped to NEUTRAL.',
+    prov:'sha256:9f31c4…7ab2'
+  },
+  log:[]
+};
+function aaTick(){
+  if(AA.ctrl==='ADV'){
+    /* mildly self-correcting most of the time, with occasional aggressive
+       manoeuvres that are what actually walk the state toward the envelope */
+    if(Math.random()<0.014)AA.push=rnd(-.085,.085);
+    AA.push=(AA.push||0)*0.965;
+    AA.v+=rnd(-.032,.032)-AA.s*0.030+AA.push;
+  }else{
+    AA.v+=(-AA.s*0.17-AA.v*0.38);
+  }
+  AA.v=clamp(AA.v,-.16,.16);
+  AA.s=clamp(AA.s+AA.v,-1.1,1.1);
+  if(AA.ctrl==='ADV'&&Math.abs(AA.s)>AA.revert){
+    AA.ctrl='SAFE';AA.reversions++;AA.lastRevert=hhmmss();
+    AA.trust=clamp(AA.trust-0.014,.55,.995);
+    AA.log.unshift({c:'y',t:'Decision module reverted to VERIFIED SAFETY CONTROLLER · envelope margin '+f2(AA.bound-Math.abs(AA.s))});
+    ev('warn','Runtime assurance · reverted to <b>verified controller</b>','ASSURE');
+  }else if(AA.ctrl==='SAFE'&&Math.abs(AA.s)<AA.resume){
+    AA.ctrl='ADV';
+    AA.log.unshift({c:'g',t:'State recovered inside envelope · advanced controller restored'});
+  }
+  AA.trust=clamp(AA.trust+(AA.adv.state==='NOMINAL'?0.0022:-0.004),.55,.995);
+  AA.adv.ood=clamp(AA.adv.ood+(AA.adv.state==='NOMINAL'?rnd(-.006,.005):rnd(-.01,.004)),.01,.99);
+  AA.hist.push(AA.s);if(AA.hist.length>190)AA.hist.shift();
+  AA.log.length=Math.min(AA.log.length,50);
+  DECK.alerts.assure=AA.adv.state!=='NOMINAL';
+}
+/* wind the trajectory forward so the chart opens with real history, then reset
+   the counters that history would otherwise inflate */
+for(var _h=0;_h<190;_h++)aaTick();
+AA.reversions=0;AA.trust=.96;AA.lastRevert=null;AA.log.length=0;
+
+/* ──────────── 6 · ALL-SOURCE PNT · GNSS-DENIED NAV ──────────── */
+var PN={
+  mode:'NOMINAL',              /* NOMINAL | JAMMED | SPOOFED */
+  cep:3.4, al:25, pl:6.1, cn0:44, js:0, holdover:0, resid:0.4,
+  raim:'AVAILABLE', factors:1284, hist:[],
+  src:[
+    {id:'GNSS',n:'GNSS L1/L5 · anti-spoof',  w:.42,h:1,drift:0.00,note:'primary absolute fix'},
+    {id:'IMU', n:'Nav-grade MEMS IMU',       w:.16,h:1,drift:2.10,note:'unbounded free-inertial drift'},
+    {id:'VBN', n:'Vision / terrain-reference',w:.13,h:1,drift:0.42,note:'bounded by map correlation'},
+    {id:'CEL', n:'Celestial star tracker',   w:.08,h:1,drift:0.26,note:'attitude + slow position aid'},
+    {id:'SOOP',n:'Signals of opportunity',   w:.11,h:1,drift:0.55,note:'LEO comms + broadcast TDOA'},
+    {id:'MAG', n:'Magnetic anomaly matching',w:.06,h:1,drift:0.78,note:'map-matched, terrain dependent'},
+    {id:'CSAC',n:'Chip-scale atomic clock',  w:.04,h:1,drift:0.12,note:'timing holdover when GNSS is lost'}
+  ],
+  log:[]
+};
+function pnNorm(){
+  var tot=PN.src.reduce(function(a,s){return a+s.w*s.h;},0)||1;
+  PN.src.forEach(function(s){s.eff=(s.w*s.h)/tot;});
+}
+pnNorm();
+function pnTick(){
+  var g=PN.src[0];
+  g.h=PN.mode==='NOMINAL'?1:0;
+  pnNorm();
+  var drift=PN.src.reduce(function(a,s){return a+s.eff*s.drift;},0);
+  if(PN.mode==='NOMINAL'){
+    PN.cep=clamp(PN.cep+(3.4-PN.cep)*0.22,1.5,600);
+    PN.holdover=clamp(PN.holdover-14,0,1e6);
+    PN.js=clamp(PN.js-6,0,80);PN.cn0=clamp(PN.cn0+1.6,22,46);
+    PN.raim='AVAILABLE';PN.resid=clamp(0.4+rnd(-.1,.1),0,9);
+  }else{
+    PN.cep=clamp(PN.cep+drift*rnd(.7,1.3),1.5,600);
+    PN.holdover+=1.6;                                   /* ns of clock error accrued */
+    PN.js=clamp(PN.js+(PN.mode==='JAMMED'?5:1.5),0,80);
+    PN.cn0=clamp(PN.cn0-(PN.mode==='JAMMED'?2.4:0.6),12,46);
+    PN.raim=PN.mode==='SPOOFED'?'FAULT DETECTED · SV SET EXCLUDED':'UNAVAILABLE · GNSS DENIED';
+    PN.resid=clamp(PN.resid+(PN.mode==='SPOOFED'?rnd(.2,.6):rnd(0,.12)),0,9);
+  }
+  PN.pl=clamp(PN.cep*1.8+1.4,1,900);
+  PN.factors=Math.round(1180+Math.sin(Date.now()/9000)*120+PN.src.filter(function(s){return s.h;}).length*14);
+  PN.hist.push(PN.cep);if(PN.hist.length>180)PN.hist.shift();
+  DECK.alerts.pnt=PN.pl>PN.al;
+}
+for(var _p=0;_p<180;_p++)pnTick();
+WARM=false;   /* simulations are wound forward — the activity stream is live from here */
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   MODULE VIEWS
+   ══════════════════════════════════════════════════════════════════════════════ */
+var LEGAL='<b>Concept demonstration.</b> Built from open, unclassified doctrine and public program literature. '+
+  'Not affiliated with, endorsed by, or containing technology of DARPA or Lockheed Martin Corporation. '+
+  'Cyber Kill Chain® is a registered trademark of Lockheed Martin Corporation. All telemetry on this page is simulated in your browser.';
+
+/* ---------------------------- MOSAIC VIEW ---------------------------- */
+function mountMosaic(host){
+  host.innerHTML=
+   '<div class="dk-cols c2">'+
+    '<div class="dk-card flush"><canvas id="mwCv" class="dk-scope" style="height:392px"></canvas></div>'+
+    '<div>'+
+      '<div class="dk-card" style="margin-bottom:10px">'+
+        '<div class="dk-ch">Target &amp; effect selection</div>'+
+        '<div class="dk-row" id="mwTargets" style="margin-bottom:8px"></div>'+
+        '<div class="dk-row" id="mwPref"></div>'+
+        '<div class="dk-row" style="margin-top:9px">'+
+          '<button class="dk-btn pri" id="mwGo">Compose force package</button>'+
+          '<button class="dk-btn dan" id="mwKill">Simulate attrition</button>'+
+          '<button class="dk-btn" id="mwRestore">Restore web</button>'+
+        '</div>'+
+        '<div class="dk-note">Click any node on the web to attrit or restore it by hand. '+
+          'Composition is recomputed on every change — that is the whole point of a web rather than a fixed chain.</div>'+
+      '</div>'+
+      '<div class="dk-card" style="margin-bottom:10px">'+
+        '<div class="dk-ch">Composed chain <small id="mwF2">F2T2EA</small></div>'+
+        '<table class="dk-tbl"><thead><tr><th>Stage</th><th>Assigned node</th><th style="text-align:right">Δt</th></tr></thead>'+
+        '<tbody id="mwChain"></tbody></table>'+
+        '<div id="mwMetrics" style="margin-top:9px"></div>'+
+        '<div class="dk-row" style="margin-top:9px"><button class="dk-btn pri" id="mwEngage" style="flex:1">Request engagement authority</button></div>'+
+      '</div>'+
+      '<div class="dk-card"><div class="dk-ch">Composer log</div><div class="dk-log" id="mwLog"></div></div>'+
+    '</div>'+
+   '</div>';
+
+  var cv=$('#mwCv',host),logEl=$('#mwLog',host);
+  var flow=0;
+
+  function paintTargets(){
+    $('#mwTargets',host).innerHTML=MW.targets.map(function(t,i){
+      return '<button class="dk-btn'+(i===MW.target?' pri':'')+'" data-t="'+i+'">'+E(t.id)+' · '+E(t.n)+'</button>';
+    }).join('');
+    $$('#mwTargets [data-t]',host).forEach(function(b){
+      b.onclick=function(){MW.target=+b.dataset.t;paintTargets();compose(true);};
+    });
+    $('#mwPref',host).innerHTML=[['auto','Auto'],['nonkinetic','Non-kinetic only'],['kinetic','Kinetic only']].map(function(p){
+      return '<button class="dk-btn'+(MW.pref===p[0]?' on':'')+'" data-p="'+p[0]+'">'+p[1]+'</button>';
+    }).join('');
+    $$('#mwPref [data-p]',host).forEach(function(b){
+      b.onclick=function(){MW.pref=b.dataset.p;paintTargets();compose(true);};
+    });
+  }
+  function paintChain(){
+    var c=MW.chain,tb=$('#mwChain',host),mt=$('#mwMetrics',host);
+    if(!c){
+      tb.innerHTML='<tr><td colspan="3" style="color:var(--dk-hostile)">No viable chain — a required capability has no surviving node.</td></tr>';
+      mt.innerHTML='<div class="dk-kv">Chain status <b class="bad">BROKEN</b></div>';
+      return;
+    }
+    tb.innerHTML=c.chain.map(function(s){
+      var extra=s.cap==='engage'&&s.node.tof?' <span style="color:var(--dim-2)">+'+s.node.tof+'s flyout</span>':'';
+      return '<tr><td><b>'+s.label+'</b></td><td>'+E(s.node.n)+extra+'</td>'+
+        '<td style="text-align:right">'+s.node.lat+' ms</td></tr>';
+    }).join('');
+    var t=MW.targets[MW.target];
+    var fits=c.ttEffect<=t.win;
+    mt.innerHTML=
+      '<div class="dk-kv">Decision latency <b>'+c.total+' ms</b></div>'+
+      '<div class="dk-kv">Effect delivery <b>'+c.tof+' s</b></div>'+
+      '<div class="dk-kv">Total time to effect <b class="'+(fits?'ok':'bad')+'">'+f1(c.ttEffect)+' s</b></div>'+
+      '<div class="dk-kv">Target engagement window <b>'+t.win+' s</b></div>'+
+      '<div class="dk-kv">Fits the window <b class="'+(fits?'ok':'bad')+'">'+(fits?'YES':'NO — TARGET ESCAPES')+'</b></div>'+
+      '<div class="dk-kv"><span>Effector P<sub>k</sub> estimate</span> <b>'+pct(c.pk)+'</b></div>'+
+      '<div class="dk-kv">Effect domain <b class="'+(c.dom==='nonkinetic'?'ok':'')+'">'+(c.dom==='nonkinetic'?'NON-KINETIC · REVERSIBLE':'KINETIC')+'</b></div>'+
+      '<div class="dk-kv">Viable alternate chains <b class="'+(MW.chains>40?'ok':MW.chains>6?'warn':'bad')+'">'+MW.chains.toLocaleString()+'</b></div>'+
+      '<div class="dk-kv">Thinnest capability <b class="'+(c.weak.count>1?'':'bad')+'">'+c.weak.stage+' · '+c.weak.count+' node'+(c.weak.count===1?'':'s')+'</b></div>'+
+      '<div class="dk-kv">Transport <b class="'+(c.relay?'ok':'warn')+'">'+(c.relay?E(c.relay.n):'DEGRADED · DIRECT')+'</b></div>';
+  }
+  function compose(announce){
+    var t0=performance.now();
+    mwCompose();
+    MW.recomposeMs=Math.round(performance.now()-t0)+irnd(3,11);
+    paintChain();
+    if(announce){
+      logLine(logEl,MW.chain?'g':'r',MW.chain
+        ? 'Force package composed in '+MW.recomposeMs+' ms · '+MW.chain.total+' ms decision, '+f1(MW.chain.ttEffect)+' s to effect'
+        : 'Composition failed — capability gap in the surviving web');
+    }
+  }
+
+  paintTargets();paintChain();
+  logLine(logEl,'','Kill-web online · '+MW.nodes.length+' nodes · '+MW.chains.toLocaleString()+' viable chains');
+
+  $('#mwGo',host).onclick=function(){
+    compose(true);
+    ev('ok','Mosaic · force package composed for <b>'+MW.targets[MW.target].id+'</b>','MOSAIC');
+  };
+  $('#mwKill',host).onclick=function(){
+    var alive=MW.nodes.filter(function(n){return n.alive;});
+    if(alive.length<3)return;
+    var victim=pick(MW.chain?MW.chain.chain.map(function(s){return s.node;}).filter(function(n){return n.alive;}):alive);
+    victim.alive=false;
+    var before=MW.chain?MW.chain.total:0;
+    compose(false);
+    var delta=MW.chain?(MW.chain.total-before):0;
+    logLine(logEl,'y',victim.n+' lost — recomposed in '+MW.recomposeMs+' ms ('+(delta>=0?'+':'')+delta+' ms)');
+    ev('warn','Mosaic · <b>'+victim.n+'</b> attrited, web recomposed in '+MW.recomposeMs+' ms','MOSAIC');
+    DECK.alerts.mosaic=!MW.chain;
+    paintChain();
+  };
+  $('#mwRestore',host).onclick=function(){
+    MW.nodes.forEach(function(n){n.alive=true;});
+    compose(false);DECK.alerts.mosaic=false;
+    logLine(logEl,'g','Web restored · '+MW.chains.toLocaleString()+' viable chains');
+    paintChain();
+  };
+  $('#mwEngage',host).onclick=function(){
+    if(!MW.chain){logLine(logEl,'r','Engagement refused — no viable chain');return;}
+    var t=MW.targets[MW.target],c=MW.chain;
+    logLine(logEl,'y','Engagement authority requested · routed to the command console');
+    gate('Authorize '+c.dom+' engagement of '+t.id+'?',
+      t.n+' ('+t.cls+'). Effector: '+c.chain[4].node.n+'. Estimated P<sub>k</sub> '+pct(c.pk)+
+      ', time to effect '+f1(c.ttEffect)+' s against a '+t.win+' s window. Positive identification is carried by '+c.chain[0].node.n+
+      ' and '+c.chain[2].node.n+'. This demo never releases an effect without this approval.',
+      function(){
+        MW.engaged++;
+        logLine(logEl,'g','Authority granted · '+t.id+' prosecuted · BDA tasked to '+c.chain[5].node.n);
+        ev('ok','Mosaic · <b>'+t.id+'</b> prosecuted under operator authority','MOSAIC');
+      });
+  };
+
+  /* ---- canvas ---- */
+  function pos(n,w,h){return {x:28+n.x*(w-56),y:24+n.y*(h-48)};}
+  var KIND={sensor:'#38bdf8',decider:'#a78bfa',effector:'#fb7185',relay:'#34d399'};
+  function draw(){
+    var g=fitCanvas(cv),c=g.ctx,w=g.w,h=g.h;
+    c.clearRect(0,0,w,h);
+    /* faint column headers */
+    c.font='7.5px "IBM Plex Mono",monospace';c.textAlign='center';
+    c.fillStyle='rgba(125,252,208,.34)';
+    c.fillText('SENSING',28+0.09*(w-56),14);
+    c.fillText('TRANSPORT',28+0.31*(w-56),14);
+    c.fillText('DECIDING',28+0.55*(w-56),14);
+    c.fillText('EFFECTING',28+0.82*(w-56),14);
+    /* candidate links */
+    c.lineWidth=.6;
+    MW.nodes.forEach(function(a){
+      MW.nodes.forEach(function(b){
+        var link=(a.k==='sensor'&&b.k==='decider')||(a.k==='decider'&&b.k==='effector')||
+                 (a.k==='relay'&&b.k!=='relay')||(a.k==='sensor'&&b.k==='relay');
+        if(!link)return;
+        var pa=pos(a,w,h),pb=pos(b,w,h);
+        c.strokeStyle=(a.alive&&b.alive)?'rgba(125,252,208,.10)':'rgba(255,120,150,.06)';
+        c.beginPath();c.moveTo(pa.x,pa.y);c.lineTo(pb.x,pb.y);c.stroke();
+      });
+    });
+    /* active chain */
+    if(MW.chain){
+      var seq=[],last=null;
+      MW.chain.chain.forEach(function(s){if(s.node!==last){seq.push(s.node);last=s.node;}});
+      var pts=seq.map(function(n){return pos(n,w,h);});
+      c.lineWidth=2;c.strokeStyle='rgba(56,189,248,.85)';
+      c.shadowColor='rgba(56,189,248,.8)';c.shadowBlur=10;
+      c.beginPath();pts.forEach(function(p,i){i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y);});c.stroke();
+      c.shadowBlur=0;
+      /* flowing packets along the chain */
+      flow=(flow+0.006)%1;
+      for(var k=0;k<3;k++){
+        var u=(flow+k/3)%1,seg=u*(pts.length-1),i0=Math.min(pts.length-2,Math.floor(seg)),f=seg-i0;
+        var px=pts[i0].x+(pts[i0+1].x-pts[i0].x)*f,py=pts[i0].y+(pts[i0+1].y-pts[i0].y)*f;
+        c.fillStyle='rgba(190,240,255,.95)';c.beginPath();c.arc(px,py,2.6,0,7);c.fill();
+      }
+    }
+    /* nodes */
+    MW.nodes.forEach(function(n){
+      var p=pos(n,w,h),col=KIND[n.k]||'#38bdf8';
+      var inChain=MW.chain&&MW.chain.chain.some(function(s){return s.node===n;});
+      c.globalAlpha=n.alive?1:.32;
+      if(inChain&&n.alive){
+        c.strokeStyle='rgba(56,189,248,.55)';c.lineWidth=1;
+        c.beginPath();c.arc(p.x,p.y,17,0,7);c.stroke();
+      }
+      c.fillStyle=n.alive?col:'#64748b';
+      c.beginPath();c.arc(p.x,p.y,11,0,7);c.fill();
+      c.fillStyle='rgba(4,14,28,.9)';c.font='9px "IBM Plex Mono",monospace';c.textAlign='center';
+      c.fillText({sensor:'S',decider:'D',effector:'E',relay:'R'}[n.k],p.x,p.y+3.2);
+      if(!n.alive){
+        c.strokeStyle='#fb7185';c.lineWidth=1.6;
+        c.beginPath();c.moveTo(p.x-7,p.y-7);c.lineTo(p.x+7,p.y+7);c.moveTo(p.x+7,p.y-7);c.lineTo(p.x-7,p.y+7);c.stroke();
+      }
+      c.globalAlpha=n.alive?.92:.4;
+      c.fillStyle='#cfe6ff';c.font='7.4px "IBM Plex Mono",monospace';
+      c.fillText(n.n,p.x,p.y+23);
+      c.fillStyle='rgba(125,252,208,.6)';
+      c.fillText(n.lat+'ms'+(n.pk?' · Pk '+Math.round(n.pk*100)+'% · '+n.tof+'s':''),p.x,p.y+32);
+      c.globalAlpha=1;
+    });
+  }
+  cv.onclick=function(e){
+    var r=cv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;
+    MW.nodes.forEach(function(n){
+      var p=pos(n,r.width,r.height);
+      if(Math.hypot(p.x-mx,p.y-my)<17){
+        n.alive=!n.alive;compose(false);
+        logLine(logEl,n.alive?'g':'y',n.n+(n.alive?' restored':' taken offline')+' · recomposed in '+MW.recomposeMs+' ms');
+        DECK.alerts.mosaic=!MW.chain;paintChain();
+      }
+    });
+  };
+  return bundle(loop(draw));
+}
+
+/* --------------------------- KILL CHAIN VIEW --------------------------- */
+function mountKillChain(host){
+  host.innerHTML=
+   '<div class="dk-card" style="margin-bottom:10px">'+
+     '<div class="dk-ch">Intrusion kill chain <small>live attempts · broken vs observed at each stage</small></div>'+
+     '<div class="dk-chain" id="kcChain"></div>'+
+   '</div>'+
+   '<div class="dk-cols c2">'+
+     '<div class="dk-card">'+
+       '<div class="dk-ch">Courses-of-action matrix <small>click a cell to arm or disarm</small></div>'+
+       '<table class="dk-coa" id="kcCoa"></table>'+
+       '<div class="dk-note">Every armed mitigation raises the probability of breaking an intrusion at that stage. '+
+       'Breaking the chain <em style="font-style:normal;color:#047857">early</em> is what imposes cost on the intruder — '+
+       'the same logic as the published Lockheed Martin model.</div>'+
+       '<div class="dk-ch" style="margin:14px 0 8px">Stage reference</div>'+
+       '<div id="kcRef"></div>'+
+     '</div>'+
+     '<div>'+
+       '<div class="dk-card" style="margin-bottom:10px">'+
+         '<div class="dk-ch">Defensive posture</div><div id="kcMetrics"></div>'+
+       '</div>'+
+       '<div class="dk-card" style="margin-bottom:10px">'+
+         '<div class="dk-ch">Campaign attribution <small>indicator clustering</small></div><div id="kcCamp"></div>'+
+       '</div>'+
+       '<div class="dk-card"><div class="dk-ch">Intrusion log</div><div class="dk-log" id="kcLog"></div></div>'+
+     '</div>'+
+   '</div>';
+
+  function paintChain(){
+    $('#kcChain',host).innerHTML=KC.stages.map(function(s,i){
+      var hot=KC.live.some(function(l){return l.si===i;});
+      var b=KC.broken[s.k],n=KC.seen[s.k];
+      return '<div class="dk-stg'+(hot?' hot':'')+'">'+
+        '<div class="si">'+(i+1)+'</div>'+
+        '<div class="sn">'+s.n+'</div>'+
+        '<div class="sv">'+b+'</div>'+
+        '<div class="sb">broken of '+n+' seen</div>'+
+        '<div class="dk-bar ok" style="margin-top:6px"><i style="width:'+(n?Math.round(b/n*100):0)+'%"></i></div>'+
+      '</div>';
+    }).join('');
+  }
+  function paintCoa(){
+    var h='<tr><th class="rh">Stage</th>'+KC.coaCols.map(function(c){return '<th>'+c+'</th>';}).join('')+'</tr>';
+    h+=KC.stages.map(function(s){
+      return '<tr><th class="rh">'+s.n+'</th>'+KC.coa[s.k].map(function(m,i){
+        var live=m!=='—',armed=live&&KC.armed[s.k+':'+i];
+        return '<td class="'+(live?'live':'')+(armed?' armed':'')+'" data-k="'+s.k+'" data-i="'+i+'">'+E(m)+'</td>';
+      }).join('')+'</tr>';
+    }).join('');
+    var t=$('#kcCoa',host);t.innerHTML=h;
+    $$('#kcCoa td.live',host).forEach(function(td){
+      td.onclick=function(){
+        var key=td.dataset.k+':'+td.dataset.i;
+        KC.armed[key]=!KC.armed[key];
+        paintCoa();paintMetrics();
+        logLine($('#kcLog',host),KC.armed[key]?'g':'y',
+          (KC.armed[key]?'Armed':'Disarmed')+' · '+td.textContent+' at '+
+          KC.stages.filter(function(s){return s.k===td.dataset.k;})[0].n.replace('&amp;','&'));
+      };
+    });
+  }
+  function paintMetrics(){
+    var armed=KC.stages.reduce(function(a,s){return a+kcArmedAt(s.k);},0);
+    var rate=KC.totalSeen?KC.totalBroken/(KC.totalBroken+KC.impacts||1):0;
+    var meanBreak=KC.totalBroken?(KC.breakSum/KC.totalBroken+1):0;
+    var cover=KC.stages.filter(function(s){return kcArmedAt(s.k)>0;}).length;
+    $('#kcMetrics',host).innerHTML=
+      '<div class="dk-kv">Mitigations armed <b>'+armed+'</b></div>'+
+      '<div class="dk-kv">Stages with coverage <b class="'+(cover===7?'ok':cover>4?'warn':'bad')+'">'+cover+' / 7</b></div>'+
+      '<div class="dk-kv">Intrusions broken <b class="ok">'+KC.totalBroken+'</b></div>'+
+      '<div class="dk-kv">Reached objectives <b class="'+(KC.impacts?'bad':'ok')+'">'+KC.impacts+'</b></div>'+
+      '<div class="dk-kv">Break rate <b class="'+(rate>.9?'ok':rate>.7?'warn':'bad')+'">'+pct(rate)+'</b></div>'+
+      '<div class="dk-kv">Mean break-point <b>stage '+f1(meanBreak)+'</b></div>'+
+      '<div class="dk-kv">Active intrusions <b>'+KC.live.length+'</b></div>'+
+      '<div class="dk-note">Mean break-point is the cost metric that matters: the lower the stage number, '+
+      'the earlier the intruder is stopped and the more of their investment is wasted.</div>';
+  }
+  function paintCamp(){
+    $('#kcCamp',host).innerHTML=KC.campaigns.map(function(c){
+      var k=c.conf>.75?'bad':c.conf>.45?'warn':'';
+      return '<div style="margin-bottom:9px">'+
+        '<div class="dk-kv" style="border:0;padding-bottom:3px">'+E(c.id)+' <b class="'+k+'">'+pct(c.conf)+'</b></div>'+
+        '<div class="dk-bar '+(k||'')+'"><i style="width:'+Math.round(c.conf*100)+'%"></i></div>'+
+        '<div style="font-family:var(--mono);font-size:8px;color:var(--dim-2);margin-top:3px">'+
+        E(c.n)+' · '+c.ind+' clustered indicators</div></div>';
+    }).join('');
+  }
+  $('#kcRef',host).innerHTML=KC.stages.map(function(s,i){
+    return '<div class="dk-kv"><span style="color:var(--dim-2)">'+(i+1)+'</span> '+
+      '<b style="margin-left:0;font-family:var(--mono);font-size:9.5px;font-weight:500">'+s.n+'</b>'+
+      '<span style="margin-left:auto;color:var(--dim-2);font-size:9px">'+E(s.d)+'</span></div>';
+  }).join('');
+
+  paintChain();paintCoa();paintMetrics();paintCamp();
+  KC.log.slice(0,14).reverse().forEach(function(l){logLine($('#kcLog',host),l.c,l.t);});
+  var seenLog=KC.log.length;
+
+  return every(900,function(){
+    paintChain();paintMetrics();paintCamp();
+    if(KC.log.length!==seenLog){
+      var fresh=KC.log.slice(0,Math.max(0,KC.log.length-seenLog));
+      fresh.reverse().forEach(function(l){logLine($('#kcLog',host),l.c,l.t);});
+      seenLog=KC.log.length;
+    }
+  });
+}
+
+/* ---------------------------- SPECTRUM VIEW ---------------------------- */
+function mountSpectrum(host){
+  host.innerHTML=
+   '<div class="dk-cols c2">'+
+     '<div>'+
+       '<div class="dk-card flush" style="margin-bottom:10px">'+
+         '<canvas id="ewWf" class="dk-scope" style="height:250px"></canvas>'+
+       '</div>'+
+       '<div class="dk-card flush" style="margin-bottom:10px">'+
+         '<canvas id="ewPsd" class="dk-scope" style="height:96px"></canvas>'+
+       '</div>'+
+       '<div class="dk-card">'+
+         '<div class="dk-ch">Machine-learned emitter classification <small>click a row to cue it</small></div>'+
+         '<table class="dk-tbl"><thead><tr><th>ID</th><th>Classification</th><th>Band</th><th>Mod</th><th>PRF</th><th>Confidence</th><th>Threat</th></tr></thead>'+
+         '<tbody id="ewList"></tbody></table>'+
+       '</div>'+
+     '</div>'+
+     '<div>'+
+       '<div class="dk-card" style="margin-bottom:10px">'+
+         '<div class="dk-ch">Emission control</div>'+
+         '<div class="dk-row" id="ewEmcon"></div>'+
+         '<div class="dk-note" id="ewEmconNote"></div>'+
+       '</div>'+
+       '<div class="dk-card" style="margin-bottom:10px">'+
+         '<div class="dk-ch">Adaptive countermeasure synthesis <small id="ewSelLbl">—</small></div>'+
+         '<div id="ewArc"></div>'+
+         '<div class="dk-row" style="margin-top:9px">'+
+           '<button class="dk-btn pri" id="ewSyn" style="flex:1">Synthesize countermeasure</button>'+
+         '</div>'+
+         '<div class="dk-note">Closed-loop: characterize the observed waveform, model the victim receiver, '+
+         'synthesize a counter-waveform, then measure its effect and iterate. Radiating anything still needs '+
+         'both an emission-control state that permits it and an operator approval.</div>'+
+       '</div>'+
+       '<div class="dk-card"><div class="dk-ch">EW log</div><div class="dk-log" id="ewLog"></div></div>'+
+     '</div>'+
+   '</div>';
+
+  var BINS=256,ROWS=170;
+  var off=document.createElement('canvas');off.width=BINS;off.height=ROWS;
+  var octx=off.getContext('2d');
+  var img=octx.createImageData(BINS,ROWS);
+  for(var q=3;q<img.data.length;q+=4)img.data[q]=255;
+  var wf=$('#ewWf',host),psd=$('#ewPsd',host),logEl=$('#ewLog',host);
+  var frame=0,row=new Float32Array(BINS);
+
+  function heat(v){
+    v=clamp(v,0,1);
+    var st=[[4,14,28],[10,58,88],[16,148,140],[124,220,124],[250,240,178],[255,255,255]];
+    var t=v*(st.length-1),i=Math.min(st.length-2,t|0),f=t-i,a=st[i],b=st[i+1];
+    return [a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f,a[2]+(b[2]-a[2])*f];
+  }
+  function computeRow(){
+    for(var i=0;i<BINS;i++)row[i]=0.05+Math.random()*0.045;
+    EW.emitters.forEach(function(e){
+      if(!e.on)return;
+      var duty=e.pulse?((frame%9)<4?1:0.12):1;
+      var c=e.f*BINS,bw=Math.max(1,e.bw*BINS);
+      var lo=Math.max(0,Math.floor(c-bw*2.6)),hi=Math.min(BINS,Math.ceil(c+bw*2.6));
+      for(var i=lo;i<hi;i++){
+        var d=(i-c)/bw;
+        row[i]+=e.amp*duty*Math.exp(-d*d*1.5)*rnd(.85,1.12);
+      }
+    });
+  }
+  function scroll(){
+    img.data.copyWithin(BINS*4,0,BINS*4*(ROWS-1));
+    for(var i=0;i<BINS;i++){
+      var c=heat(row[i]),o=i*4;
+      img.data[o]=c[0];img.data[o+1]=c[1];img.data[o+2]=c[2];img.data[o+3]=255;
+    }
+    octx.putImageData(img,0,0);
+  }
+  function drawWf(){
+    var g=fitCanvas(wf),c=g.ctx,w=g.w,h=g.h;
+    c.imageSmoothingEnabled=true;
+    c.drawImage(off,0,0,BINS,ROWS,0,0,w,h);
+    c.font='7.5px "IBM Plex Mono",monospace';c.textAlign='left';
+    c.fillStyle='rgba(125,252,208,.5)';
+    c.fillText('TIME ↓',6,12);
+    c.textAlign='right';c.fillText('2 – 18 GHz SWEPT SUPERHET',w-6,12);
+    /* emitter cursors */
+    EW.emitters.forEach(function(e){
+      if(!e.on)return;
+      var x=e.f*w;
+      c.strokeStyle=e.id===EW.sel?'rgba(255,255,255,.55)':'rgba(125,252,208,.18)';
+      c.setLineDash(e.id===EW.sel?[]:[2,4]);c.lineWidth=e.id===EW.sel?1.2:.7;
+      c.beginPath();c.moveTo(x,16);c.lineTo(x,h);c.stroke();c.setLineDash([]);
+      c.fillStyle=e.id===EW.sel?'#fff':'rgba(125,252,208,.7)';
+      c.textAlign='center';c.font='7px "IBM Plex Mono",monospace';
+      c.fillText(e.id,x,25);
+    });
+  }
+  function drawPsd(){
+    var g=fitCanvas(psd),c=g.ctx,w=g.w,h=g.h;
+    c.clearRect(0,0,w,h);
+    c.strokeStyle='rgba(125,252,208,.10)';c.lineWidth=.6;
+    for(var k=1;k<5;k++){var y=h*k/5;c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke();}
+    c.beginPath();
+    for(var i=0;i<BINS;i++){
+      var x=i/(BINS-1)*w,y=h-6-clamp(row[i],0,1.15)*(h-14);
+      i?c.lineTo(x,y):c.moveTo(x,y);
+    }
+    c.strokeStyle='rgba(125,252,208,.9)';c.lineWidth=1.1;
+    c.shadowColor='rgba(125,252,208,.6)';c.shadowBlur=6;c.stroke();c.shadowBlur=0;
+    c.fillStyle='rgba(125,252,208,.45)';c.font='7px "IBM Plex Mono",monospace';c.textAlign='left';
+    c.fillText('INSTANTANEOUS PSD · dB (rel)',6,11);
+  }
+  function paintEmcon(){
+    $('#ewEmcon',host).innerHTML=[['A','EMCON A · total silence'],['B','EMCON B · restricted'],['C','EMCON C · unrestricted']]
+      .map(function(m){return '<button class="dk-btn'+(EW.emcon===m[0]?' pri':'')+'" data-e="'+m[0]+'">'+m[1]+'</button>';}).join('');
+    $$('#ewEmcon [data-e]',host).forEach(function(b){
+      b.onclick=function(){
+        EW.emcon=b.dataset.e;paintEmcon();
+        logLine(logEl,'','Emission control state set to EMCON '+EW.emcon);
+      };
+    });
+    $('#ewEmconNote',host).innerHTML=EW.emcon==='A'
+      ? 'EMCON A: receive only. Countermeasures may be synthesized and staged, but nothing radiates — synthesis will complete and hold.'
+      : EW.emcon==='B'
+      ? 'EMCON B: radiating is permitted against classified threat emitters once an operator approves the release.'
+      : 'EMCON C: unrestricted. Approval is still required here by design — the demo has no unattended release path.';
+  }
+  function paintList(){
+    $('#ewList',host).innerHTML=EW.emitters.map(function(e){
+      var k=e.threat==='CRITICAL'?'bad':e.threat==='HIGH'?'warn':e.threat==='MEDIUM'?'info':'';
+      return '<tr class="pickable" data-e="'+e.id+'" data-sel="'+(e.id===EW.sel?1:0)+'">'+
+        '<td><b>'+e.id+'</b></td>'+
+        '<td>'+E(e.type)+'<br><span style="color:var(--dim-2);font-size:8px">'+E(e.role)+(e.sup?' · SUPPRESSED':'')+'</span></td>'+
+        '<td>'+e.band+'</td><td>'+E(e.mod)+'</td><td>'+E(e.prf)+'</td>'+
+        '<td style="min-width:72px"><div class="dk-bar"><i style="width:'+Math.round(e.conf*100)+'%"></i></div>'+
+        '<span style="font-size:8px;color:var(--dim-2)">'+pct(e.conf)+'</span></td>'+
+        '<td><span class="dk-pill '+k+'">'+e.threat+'</span></td></tr>';
+    }).join('');
+    $$('#ewList tr[data-e]',host).forEach(function(tr){
+      tr.onclick=function(){EW.sel=tr.dataset.e;paintList();paintArc();};
+    });
+  }
+  var ARC_STEPS=['Characterize observed waveform','Estimate victim receiver chain','Synthesize counter-waveform','Closed-loop effectiveness assessment'];
+  var arcIv=0;
+  function selEmitter(){return EW.emitters.filter(function(e){return e.id===EW.sel;})[0];}
+  function paintArc(){
+    var e=selEmitter();
+    $('#ewSelLbl',host).textContent=e?e.id+' · '+e.type:'—';
+    var a=EW.arc;
+    $('#ewArc',host).innerHTML=ARC_STEPS.map(function(s,i){
+      var done=a&&a.step>i,cur=a&&a.step===i;
+      return '<div class="dk-kv" style="padding:5px 0">'+
+        '<span style="color:'+(done?'#047857':cur?'#2563eb':'var(--dim-2)')+'">'+(done?'✓':cur?'◐':'○')+'</span> '+
+        s+' <b class="'+(done?'ok':'')+'">'+(done?'DONE':cur?'RUNNING':'—')+'</b></div>';
+    }).join('')+
+    (a&&a.eff!=null?'<div class="dk-kv" style="margin-top:6px">Predicted effectiveness <b class="'+(a.eff>.7?'ok':'warn')+'">'+pct(a.eff)+'</b></div>':'')+
+    (e?'<div class="dk-kv">Classifier confidence <b>'+pct(e.conf)+'</b></div>':'');
+  }
+  $('#ewSyn',host).onclick=function(){
+    var e=selEmitter();if(!e||EW.arc&&EW.arc.step<ARC_STEPS.length)return;
+    EW.arc={step:0,eff:null};paintArc();
+    logLine(logEl,'','Countermeasure synthesis started against '+e.id+' ('+e.type+')');
+    arcIv=setInterval(function(){
+      EW.arc.step++;paintArc();
+      if(EW.arc.step>=ARC_STEPS.length){
+        clearInterval(arcIv);arcIv=0;
+        EW.arc.eff=clamp(e.conf*0.78+rnd(.05,.18),0,.97);
+        paintArc();
+        logLine(logEl,'g','Counter-waveform synthesized · predicted effectiveness '+pct(EW.arc.eff));
+        if(EW.emcon==='A'){
+          logLine(logEl,'y','Held: EMCON A forbids radiating. Countermeasure staged, not released.');
+          say('Counter-waveform for <b>'+e.id+'</b> is synthesized and staged. We are in <b>EMCON A</b>, so nothing radiates until you change the emission-control state.');
+          return;
+        }
+        gate('Radiate the synthesized countermeasure against '+e.id+'?',
+          e.type+' — '+e.role+'. Predicted effectiveness '+pct(EW.arc.eff)+' at classifier confidence '+pct(e.conf)+
+          '. Radiating reveals own position to any listener; current state is EMCON '+EW.emcon+'. The effect is reversible — it stops when you stop.',
+          function(){
+            e.amp=e.base*0.16;e.sup=true;EW.suppressed++;
+            logLine(logEl,'g',e.id+' suppressed · residual energy '+pct(0.16));
+            ev('ok','Cognitive EW · <b>'+e.id+'</b> suppressed under operator authority','EW');
+            paintList();
+          });
+      }
+    },760);
+  };
+
+  /* wind the waterfall forward so it opens already showing history rather than
+     filling in from the top over the next several seconds */
+  for(var pre=0;pre<ROWS;pre++){frame++;computeRow();scroll();}
+
+  paintEmcon();paintList();paintArc();
+  logLine(logEl,'','Receiver online · '+EW.emitters.length+' emitters held · EMCON '+EW.emcon);
+
+  var slow=0;
+  return bundle(
+    loop(function(){
+      frame++;
+      computeRow();
+      if(frame%2===0)scroll();
+      drawWf();drawPsd();
+    }),
+    every(1100,function(){slow++;paintList();if(slow%3===0)paintArc();}),
+    function(){if(arcIv)clearInterval(arcIv);}
+  );
+}
+
+/* ----------------------------- FUSION VIEW ----------------------------- */
+function mountFusion(host){
+  host.innerHTML=
+   '<div class="dk-cols c2">'+
+     '<div class="dk-card flush"><canvas id="fzPpi" class="dk-scope" style="height:452px"></canvas></div>'+
+     '<div>'+
+       '<div class="dk-card" style="margin-bottom:10px">'+
+         '<div class="dk-ch">Single integrated air picture <small>SIAP quality</small></div>'+
+         '<div id="fzSiap"></div>'+
+       '</div>'+
+       '<div class="dk-card" style="margin-bottom:10px">'+
+         '<div class="dk-ch">Threat evaluation &amp; weapon assignment <small>click a track</small></div>'+
+         '<table class="dk-tbl"><thead><tr><th>Track</th><th>Class</th><th>Rng</th><th>TTI</th><th>TQ</th><th>Pairing</th></tr></thead>'+
+         '<tbody id="fzTewa"></tbody></table>'+
+         '<div class="dk-row" style="margin-top:9px" id="fzDoct"></div>'+
+         '<div class="dk-row" style="margin-top:7px"><button class="dk-btn pri" id="fzEngage" style="flex:1">Request weapons release</button></div>'+
+       '</div>'+
+       '<div class="dk-card"><div class="dk-ch">Fusion log</div><div class="dk-log" id="fzLog"></div></div>'+
+     '</div>'+
+   '</div>';
+
+  var ppi=$('#fzPpi',host),logEl=$('#fzLog',host);
+  var sel=null,MAXR=110;
+  var IFFCOL={FRIEND:'#38bdf8',HOSTILE:'#fb7185',UNKNOWN:'#fbbf24',NEUTRAL:'#34d399'};
+
+  function paintSiap(){
+    var s=FZ.siap;
+    var multi=FZ.tracks.filter(function(t){return t.srcs.length>1;}).length;
+    $('#fzSiap',host).innerHTML=
+      '<div class="dk-kv">Tracks held <b>'+FZ.tracks.length+'</b></div>'+
+      '<div class="dk-kv">Multi-source fused <b class="ok">'+multi+'</b></div>'+
+      '<div class="dk-kv">Completeness <b class="'+(s.complete>.9?'ok':'warn')+'">'+pct(s.complete)+'</b></div>'+
+      '<div class="dk-kv">Track ambiguity <b class="'+(s.ambig<.05?'ok':'warn')+'">'+pct(s.ambig)+'</b></div>'+
+      '<div class="dk-kv">Spurious-track rate <b class="'+(s.spurious<.04?'ok':'warn')+'">'+pct(s.spurious)+'</b></div>'+
+      '<div class="dk-kv">Correlation accuracy <b class="ok">'+pct(s.corr)+'</b></div>'+
+      '<div class="dk-kv">Engagements / kills <b>'+FZ.engagements+' / '+FZ.kills+'</b></div>'+
+      '<div class="dk-note">Contributing sources per track: <b>SPY</b> volume search, <b>IRST</b> passive infrared, '+
+      '<b>ESM</b> emitter bearing, <b>LINK16</b> remote track from a cooperating unit. A track carried only by '+
+      'LINK16 lies beyond own-sensor horizon — prosecuting it is an <em style="font-style:normal">engage-on-remote</em> decision.</div>';
+  }
+  function paintTewa(){
+    var rank=FZ.tracks.map(function(t){return {t:t,a:fzThreat(t)};})
+      .filter(function(o){return o.a.score>0;})
+      .sort(function(a,b){return b.a.score-a.a.score;}).slice(0,7);
+    if(sel&&FZ.tracks.indexOf(sel)<0)sel=null;
+    $('#fzTewa',host).innerHTML=rank.length?rank.map(function(o){
+      var w=fzWeapon(o.t),remote=o.t.srcs.length===1&&o.t.srcs[0]==='LINK16';
+      return '<tr class="pickable" data-id="'+o.t.id+'" data-sel="'+(sel===o.t?1:0)+'">'+
+        '<td><b>'+o.t.id+'</b>'+(o.t.engaged?' <span class="dk-pill bad">ENGAGED</span>':'')+'</td>'+
+        '<td>'+o.t.cls+'<br><span style="font-size:8px;color:'+IFFCOL[o.t.iff]+'">'+o.t.iff+'</span></td>'+
+        '<td>'+f1(o.a.r)+'<br><span style="font-size:8px;color:var(--dim-2)">nmi</span></td>'+
+        '<td>'+(o.a.tti>900?'—':f1(o.a.tti)+'m')+'</td>'+
+        '<td>'+Math.round(o.t.tq)+'/7'+(remote?'<br><span style="font-size:7.5px;color:#b45309">REMOTE</span>':'')+'</td>'+
+        '<td style="font-size:8.5px">'+w.w+'<br><span style="color:var(--dim-2)">Pk '+pct(w.pk)+'</span></td></tr>';
+    }).join('')
+    :'<tr><td colspan="6" style="color:var(--dim-2)">No hostile or unknown contacts in the picture.</td></tr>';
+    $$('#fzTewa tr[data-id]',host).forEach(function(tr){
+      tr.onclick=function(){
+        sel=FZ.tracks.filter(function(t){return t.id===tr.dataset.id;})[0]||null;
+        paintTewa();
+      };
+    });
+  }
+  function paintDoct(){
+    $('#fzDoct',host).innerHTML=['MANUAL','SEMI-AUTO','AUTO-SPECIAL'].map(function(d){
+      return '<button class="dk-btn'+(FZ.doctrine===d?' pri':'')+'" data-d="'+d+'">'+d+'</button>';
+    }).join('')+'<div class="dk-note" style="width:100%">Doctrine statement selects how much of the '+
+      'engagement sequence is pre-delegated. In this demonstration every release still stops at an operator '+
+      'approval regardless of the setting — there is no unattended firing path in the code.</div>';
+    $$('#fzDoct [data-d]',host).forEach(function(b){
+      b.onclick=function(){
+        FZ.doctrine=b.dataset.d;paintDoct();
+        logLine(logEl,'','Doctrine statement set to '+FZ.doctrine);
+      };
+    });
+  }
+  $('#fzEngage',host).onclick=function(){
+    if(!sel){logLine(logEl,'y','Select a track in the TEWA table first');return;}
+    if(sel.engaged){logLine(logEl,'y',sel.id+' is already engaged');return;}
+    var w=fzWeapon(sel),a=fzThreat(sel),remote=sel.srcs.length===1&&sel.srcs[0]==='LINK16';
+    gate('Release '+w.w+' against '+sel.id+'?',
+      sel.cls+' · declared '+sel.iff+' · range '+f1(a.r)+' nmi · track quality '+Math.round(sel.tq)+'/7 · '+
+      'sources '+sel.srcs.join(' + ')+'. Estimated P<sub>k</sub> '+pct(w.pk)+'. '+
+      (remote?'This is an ENGAGE-ON-REMOTE decision — the track is held only by a cooperating unit, not by own sensors. ':'')+
+      'Doctrine: '+FZ.doctrine+'.',
+      function(){
+        sel.engaged=true;FZ.engagements++;
+        FZ.shots.push({t:sel,x:0,y:0,p:0,pk:w.pk,w:w.w});
+        logLine(logEl,'y','Weapons released · '+w.w+' → '+sel.id);
+        ev('warn','Fusion · weapons released against <b>'+sel.id+'</b> under operator authority','FUSION');
+        paintTewa();
+      });
+  };
+
+  function draw(){
+    var g=fitCanvas(ppi),c=g.ctx,w=g.w,h=g.h;
+    var cx=w/2,cy=h/2,R=Math.min(w,h)/2-22;
+    c.clearRect(0,0,w,h);
+    var sc=function(v){return v/MAXR*R;};
+    /* range rings + bearing spokes */
+    c.strokeStyle='rgba(125,252,208,.16)';c.lineWidth=.7;
+    [25,50,75,100].forEach(function(r){
+      c.beginPath();c.arc(cx,cy,sc(r),0,7);c.stroke();
+      c.fillStyle='rgba(125,252,208,.35)';c.font='7px "IBM Plex Mono",monospace';c.textAlign='left';
+      c.fillText(r+' nmi',cx+3,cy-sc(r)-3);
+    });
+    for(var b=0;b<12;b++){
+      var a=b*Math.PI/6;
+      c.strokeStyle='rgba(125,252,208,.09)';
+      c.beginPath();c.moveTo(cx,cy);c.lineTo(cx+Math.cos(a)*R,cy+Math.sin(a)*R);c.stroke();
+    }
+    /* sweep */
+    FZ.sweep=(FZ.sweep+0.0075)%(Math.PI*2);
+    c.save();c.translate(cx,cy);c.rotate(FZ.sweep-Math.PI/2);
+    var lg=c.createLinearGradient(0,0,R,0);
+    lg.addColorStop(0,'rgba(125,252,208,.30)');lg.addColorStop(1,'rgba(125,252,208,0)');
+    c.strokeStyle=lg;c.lineWidth=2.4;
+    c.beginPath();c.moveTo(0,0);c.lineTo(R,0);c.stroke();
+    for(var t2=1;t2<=14;t2++){
+      c.rotate(-0.026);
+      c.strokeStyle='rgba(125,252,208,'+(0.11*(1-t2/14))+')';c.lineWidth=2.4;
+      c.beginPath();c.moveTo(0,0);c.lineTo(R,0);c.stroke();
+    }
+    c.restore();
+    /* own unit */
+    c.fillStyle='#7dfcd0';c.beginPath();c.arc(cx,cy,3.4,0,7);c.fill();
+    c.strokeStyle='rgba(125,252,208,.5)';c.lineWidth=.8;
+    c.beginPath();c.arc(cx,cy,8,0,7);c.stroke();
+    /* tracks */
+    FZ.tracks.forEach(function(t){
+      var r=fzRange(t);if(r>MAXR)return;
+      var x=cx+sc(t.x),y=cy+sc(t.y),col=IFFCOL[t.iff]||'#fbbf24';
+      var q=clamp(t.tq/7,.15,1);
+      /* covariance ellipse — big when track quality is poor */
+      c.strokeStyle='rgba(255,255,255,'+(0.06+(1-q)*0.16)+')';c.lineWidth=.7;
+      c.beginPath();c.ellipse(x,y,(1-q)*20+5,(1-q)*13+4,Math.atan2(t.vy,t.vx),0,7);c.stroke();
+      /* velocity leader */
+      c.strokeStyle=col;c.globalAlpha=.5;c.lineWidth=1;
+      c.beginPath();c.moveTo(x,y);c.lineTo(x+sc(t.vx*3),y+sc(t.vy*3));c.stroke();c.globalAlpha=1;
+      /* symbol by identity */
+      c.strokeStyle=col;c.fillStyle=t===sel?col:'rgba(4,14,28,.55)';c.lineWidth=t===sel?2:1.3;
+      c.beginPath();
+      if(t.iff==='HOSTILE'){c.moveTo(x,y-7);c.lineTo(x+7,y);c.lineTo(x,y+7);c.lineTo(x-7,y);c.closePath();}
+      else if(t.iff==='FRIEND'){c.arc(x,y,6.4,0,7);}
+      else if(t.iff==='NEUTRAL'){c.rect(x-6,y-6,12,12);}
+      else {c.moveTo(x-6,y+6);c.lineTo(x-6,y-2);c.quadraticCurveTo(x,y-11,x+6,y-2);c.lineTo(x+6,y+6);}
+      c.fill();c.stroke();
+      if(t.engaged){
+        c.strokeStyle='#fb7185';c.lineWidth=1;
+        c.beginPath();c.arc(x,y,12,0,7);c.stroke();
+      }
+      /* label */
+      c.fillStyle='rgba(210,240,255,.85)';c.font='7px "IBM Plex Mono",monospace';c.textAlign='left';
+      c.fillText(t.id,x+10,y-2);
+      c.fillStyle='rgba(125,252,208,.55)';
+      c.fillText((t.alt?Math.round(t.alt/100)+' · ':'')+Math.round(t.spd)+'kt',x+10,y+6);
+      c.fillStyle='rgba(160,190,220,.5)';
+      c.fillText(t.srcs.join('+')||'—',x+10,y+14);
+    });
+    /* interceptors in flight */
+    for(var i=FZ.shots.length-1;i>=0;i--){
+      var s=FZ.shots[i];
+      if(FZ.tracks.indexOf(s.t)<0){FZ.shots.splice(i,1);continue;}   /* track left the picture */
+      s.p+=0.014;
+      var tx=cx+sc(s.t.x),ty=cy+sc(s.t.y);
+      var px=cx+(tx-cx)*s.p,py=cy+(ty-cy)*s.p;
+      c.fillStyle='#fff';c.beginPath();c.arc(px,py,2.6,0,7);c.fill();
+      c.strokeStyle='rgba(255,255,255,.35)';c.lineWidth=.8;
+      c.beginPath();c.moveTo(cx,cy);c.lineTo(px,py);c.stroke();
+      if(s.p>=1){
+        FZ.shots.splice(i,1);
+        var hit=Math.random()<s.pk;
+        if(hit){
+          FZ.kills++;s.t.dead=true;
+          logLine(logEl,'g','Assessment: '+s.t.id+' — TARGET DESTROYED');
+          ev('ok','Fusion · <b>'+s.t.id+'</b> assessed destroyed','FUSION');
+        }else{
+          s.t.engaged=false;
+          logLine(logEl,'r','Assessment: '+s.t.id+' — MISS · reattack recommended');
+          ev('warn','Fusion · engagement of <b>'+s.t.id+'</b> assessed a miss','FUSION');
+        }
+        paintTewa();
+      }
+    }
+    c.fillStyle='rgba(125,252,208,.45)';c.font='7.5px "IBM Plex Mono",monospace';c.textAlign='left';
+    c.fillText('PPI · OWN UNIT CENTRED · '+MAXR+' NMI',8,13);
+    c.textAlign='right';
+    c.fillText('DOCTRINE · '+FZ.doctrine,w-8,13);
+  }
+
+  paintSiap();paintTewa();paintDoct();
+  logLine(logEl,'','Fusion engine online · SPY + IRST + ESM + LINK16 correlated');
+  return bundle(loop(draw),every(1200,function(){paintSiap();paintTewa();}));
+}
+
+/* ----------------------------- ASSURE VIEW ----------------------------- */
+function mountAssure(host){
+  host.innerHTML=
+   '<div class="dk-cols c2">'+
+     '<div>'+
+       '<div class="dk-card" style="margin-bottom:10px">'+
+         '<div class="dk-ch">Runtime assurance architecture <small id="aaCtrl">—</small></div>'+
+         '<svg class="dk-simplex" id="aaSvg" viewBox="0 0 520 148">'+
+           '<defs><marker id="dkArrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">'+
+           '<path d="M0 0 L8 4 L0 8 z" fill="rgba(120,141,173,.6)"/></marker></defs>'+
+           '<rect class="bx" rx="7" id="bxAdv" x="14" y="12" width="132" height="46"/>'+
+           '<rect class="bx" rx="7" id="bxSafe" x="14" y="88" width="132" height="46"/>'+
+           '<rect class="bx" rx="7" id="bxDec" x="196" y="50" width="132" height="48"/>'+
+           '<rect class="bx" rx="7" id="bxPlant" x="378" y="50" width="128" height="48"/>'+
+           '<text class="lb hd" x="24" y="30">ADVANCED CTRL</text>'+
+           '<text class="lb" x="24" y="43">learned · high performance</text>'+
+           '<text class="lb" x="24" y="53">unverified by construction</text>'+
+           '<text class="lb hd" x="24" y="106">VERIFIED SAFETY CTRL</text>'+
+           '<text class="lb" x="24" y="119">provably safe · conservative</text>'+
+           '<text class="lb" x="24" y="129">formally model-checked</text>'+
+           '<text class="lb hd" x="206" y="70">DECISION MODULE</text>'+
+           '<text class="lb" x="206" y="83">envelope monitor</text>'+
+           '<text class="lb" x="206" y="93">switch on margin loss</text>'+
+           '<text class="lb hd" x="388" y="70">PLANT</text>'+
+           '<text class="lb" x="388" y="83">effectors + vehicle</text>'+
+           '<text class="lb" x="388" y="93">state feedback →</text>'+
+           '<path class="ln" id="lnAdv"  d="M146 35 L190 62"/>'+
+           '<path class="ln" id="lnSafe" d="M146 111 L190 86"/>'+
+           '<path class="ln" id="lnOut"  d="M328 74 L372 74"/>'+
+           '<path class="ln" d="M442 98 L442 140 L80 140 L80 62" style="marker-end:none;stroke-dasharray:3 4"/>'+
+         '</svg>'+
+       '</div>'+
+       '<div class="dk-card flush" style="margin-bottom:10px">'+
+         '<canvas id="aaCv" class="dk-scope" style="height:186px"></canvas>'+
+       '</div>'+
+       '<div class="dk-card">'+
+         '<div class="dk-ch">Formal assurance ledger <small>invariants carried into runtime</small></div>'+
+         '<div id="aaInv"></div>'+
+       '</div>'+
+     '</div>'+
+     '<div>'+
+       '<div class="dk-card" style="margin-bottom:10px">'+
+         '<div class="dk-ch">Calibrated trust</div><div id="aaTrust"></div>'+
+       '</div>'+
+       '<div class="dk-card" style="margin-bottom:10px">'+
+         '<div class="dk-ch">Adversarial-ML defense <small id="aaAdvState">—</small></div>'+
+         '<div id="aaAdv"></div>'+
+         '<div class="dk-row" style="margin-top:9px">'+
+           '<button class="dk-btn dan" id="aaEvade">Inject evasion attack</button>'+
+           '<button class="dk-btn dan" id="aaPoison">Inject data poisoning</button>'+
+           '<button class="dk-btn" id="aaClear">Clear</button>'+
+         '</div>'+
+       '</div>'+
+       '<div class="dk-card" style="margin-bottom:10px">'+
+         '<div class="dk-ch">Explainable decision <small>last classification</small></div>'+
+         '<div id="aaXai"></div>'+
+       '</div>'+
+       '<div class="dk-card"><div class="dk-ch">Assurance log</div><div class="dk-log" id="aaLog"></div></div>'+
+     '</div>'+
+   '</div>';
+
+  var cv=$('#aaCv',host),logEl=$('#aaLog',host);
+  function paintInv(){
+    $('#aaInv',host).innerHTML=AA.invariants.map(function(i){
+      return '<div class="dk-inv"><code>'+E(i.c)+'</code>'+
+        '<span class="st dk-pill '+(i.k==='ok'?'ok':'info')+'">'+i.s+'</span></div>';
+    }).join('')+
+    '<div class="dk-note">Invariants proven offline are re-checked at runtime by the decision module. '+
+    'The engagement invariant is the same rule the rest of this console enforces: no effect without authorization.</div>';
+  }
+  function paintTrust(){
+    var t=AA.trust;
+    $('#aaTrust',host).innerHTML=
+      '<div class="dk-kv">Autonomy trust score <b class="'+(t>.9?'ok':t>.75?'warn':'bad')+'">'+f2(t)+'</b></div>'+
+      '<div class="dk-bar '+(t>.9?'ok':t>.75?'warn':'bad')+'" style="margin:4px 0 9px"><i style="width:'+Math.round(t*100)+'%"></i></div>'+
+      '<div class="dk-kv">Active controller <b class="'+(AA.ctrl==='ADV'?'':'warn')+'">'+(AA.ctrl==='ADV'?'ADVANCED':'VERIFIED SAFETY')+'</b></div>'+
+      '<div class="dk-kv">Envelope margin <b class="'+((AA.bound-Math.abs(AA.s))>.25?'ok':'warn')+'">'+f2(AA.bound-Math.abs(AA.s))+'</b></div>'+
+      '<div class="dk-kv">Reversions this session <b>'+AA.reversions+'</b></div>'+
+      '<div class="dk-kv">Last reversion <b>'+(AA.lastRevert||'—')+'</b></div>';
+  }
+  function paintAdv(){
+    var a=AA.adv,bad=a.state!=='NOMINAL';
+    $('#aaAdvState',host).textContent=a.state;
+    $('#aaAdv',host).innerHTML=
+      '<div class="dk-kv">Detector state <b class="'+(bad?'bad':'ok')+'">'+a.state+'</b></div>'+
+      '<div class="dk-kv">Serving model <b>'+E(a.model)+'</b></div>'+
+      '<div class="dk-kv">Perturbation budget <b>ℓ<sub>∞</sub> ≤ '+a.eps+'</b></div>'+
+      '<div class="dk-kv">Certified radius <b class="'+(a.radius>.25?'ok':'warn')+'">'+f2(a.radius)+'</b></div>'+
+      '<div class="dk-kv">Out-of-distribution score <b class="'+(a.ood>.5?'bad':a.ood>.25?'warn':'ok')+'">'+f2(a.ood)+'</b></div>'+
+      '<div class="dk-bar '+(a.ood>.5?'bad':a.ood>.25?'warn':'ok')+'" style="margin:4px 0 8px"><i style="width:'+Math.round(a.ood*100)+'%"></i></div>'+
+      '<div class="dk-kv">Poisoning canaries intact <b class="'+(a.canaryOk===a.canaries?'ok':'bad')+'">'+a.canaryOk+' / '+a.canaries+'</b></div>';
+  }
+  function paintXai(){
+    var x=AA.xai;
+    $('#aaXai',host).innerHTML=
+      '<div class="dk-mono" style="margin-bottom:8px"><b>'+E(x.decision)+'</b></div>'+
+      x.feats.map(function(f){
+        return '<div style="margin-bottom:6px">'+
+          '<div style="display:flex;font-family:var(--mono);font-size:8.5px;color:var(--dim)"><span>'+E(f[0])+'</span>'+
+          '<b style="margin-left:auto;color:var(--dk-ink)">'+pct(f[1])+'</b></div>'+
+          '<div class="dk-bar" style="height:5px;margin-top:3px"><i style="width:'+Math.round(f[1]*100)+'%"></i></div></div>';
+      }).join('')+
+      '<div class="dk-note">Counterfactual: '+E(x.cf)+'<br>Decision provenance: <b>'+E(x.prov)+'</b></div>';
+  }
+  function draw(){
+    var g=fitCanvas(cv),c=g.ctx,w=g.w,h=g.h;
+    c.clearRect(0,0,w,h);
+    var mid=h/2,scale=(h/2-16)/1.15;
+    /* envelope band */
+    c.fillStyle='rgba(16,185,129,.07)';
+    c.fillRect(0,mid-AA.bound*scale,w,AA.bound*scale*2);
+    c.strokeStyle='rgba(251,113,133,.55)';c.lineWidth=1;c.setLineDash([4,4]);
+    [-1,1].forEach(function(s){
+      c.beginPath();c.moveTo(0,mid+s*AA.bound*scale);c.lineTo(w,mid+s*AA.bound*scale);c.stroke();
+    });
+    c.strokeStyle='rgba(251,191,36,.4)';
+    [-1,1].forEach(function(s){
+      c.beginPath();c.moveTo(0,mid+s*AA.revert*scale);c.lineTo(w,mid+s*AA.revert*scale);c.stroke();
+    });
+    c.setLineDash([]);
+    c.strokeStyle='rgba(125,252,208,.18)';
+    c.beginPath();c.moveTo(0,mid);c.lineTo(w,mid);c.stroke();
+    /* trajectory */
+    c.beginPath();
+    AA.hist.forEach(function(v,i){
+      var x=i/(AA.hist.length-1)*w,y=mid-v*scale;
+      i?c.lineTo(x,y):c.moveTo(x,y);
+    });
+    c.strokeStyle=AA.ctrl==='ADV'?'rgba(56,189,248,.95)':'rgba(52,211,153,.95)';
+    c.lineWidth=1.4;c.shadowColor=c.strokeStyle;c.shadowBlur=7;c.stroke();c.shadowBlur=0;
+    c.fillStyle='rgba(125,252,208,.5)';c.font='7px "IBM Plex Mono",monospace';c.textAlign='left';
+    c.fillText('SAFETY ENVELOPE · STATE TRAJECTORY',6,12);
+    c.fillText('reversion threshold',6,mid-AA.revert*scale-3);
+    c.textAlign='right';
+    c.fillStyle=AA.ctrl==='ADV'?'rgba(56,189,248,.9)':'rgba(52,211,153,.9)';
+    c.fillText(AA.ctrl==='ADV'?'ADVANCED CONTROLLER':'VERIFIED SAFETY CONTROLLER',w-6,12);
+  }
+  function paintSvg(){
+    var adv=AA.ctrl==='ADV';
+    $('#bxAdv',host).setAttribute('class','bx'+(adv?' act':''));
+    $('#bxSafe',host).setAttribute('class','bx'+(adv?'':' safe'));
+    $('#bxDec',host).setAttribute('class','bx act');
+    $('#lnAdv',host).setAttribute('class','ln'+(adv?' hot':''));
+    $('#lnSafe',host).setAttribute('class','ln'+(adv?'':' safe'));
+    $('#lnOut',host).setAttribute('class','ln '+(adv?'hot':'safe'));
+    $('#aaCtrl',host).textContent=adv?'ADVANCED CONTROLLER IN COMMAND':'REVERTED · VERIFIED CONTROLLER IN COMMAND';
+  }
+
+  $('#aaEvade',host).onclick=function(){
+    AA.adv.state='EVASION DETECTED';AA.adv.ood=clamp(rnd(.62,.88),0,1);
+    AA.adv.model='CERTIFIED-ROBUST ENSEMBLE';AA.adv.radius=0.19;
+    AA.trust=clamp(AA.trust-0.07,.5,.995);
+    AA.log.unshift({c:'r',t:'Adversarial perturbation detected within ℓ∞ budget · failed over to the certified-robust ensemble'});
+    logLine(logEl,'r','Evasion attack detected · serving model switched to the certified-robust ensemble');
+    ev('bad','GARD-pattern detector · <b>evasion attack</b> contained, robust ensemble serving','ASSURE');
+    paintAdv();paintTrust();
+  };
+  $('#aaPoison',host).onclick=function(){
+    AA.adv.state='POISONING SUSPECTED';AA.adv.canaryOk=AA.adv.canaries-irnd(3,11);
+    AA.adv.model='SIGNED CHECKPOINT · ROLLED BACK';
+    AA.trust=clamp(AA.trust-0.05,.5,.995);
+    AA.log.unshift({c:'r',t:'Canary set tripped · training corpus quarantined, model rolled back to the last signed checkpoint'});
+    logLine(logEl,'r','Poisoning canaries tripped ('+(AA.adv.canaries-AA.adv.canaryOk)+') · rolled back to signed checkpoint');
+    ev('bad','GARD-pattern canaries tripped · <b>training corpus quarantined</b>','ASSURE');
+    paintAdv();paintTrust();
+  };
+  $('#aaClear',host).onclick=function(){
+    AA.adv.state='NOMINAL';AA.adv.model='PRIMARY · LEARNED';AA.adv.radius=.31;
+    AA.adv.canaryOk=AA.adv.canaries;AA.adv.ood=.05;
+    AA.log.unshift({c:'g',t:'Defenses reset · primary model restored after clean revalidation'});
+    logLine(logEl,'g','Defenses reset · primary model restored');
+    paintAdv();paintTrust();
+  };
+
+  paintInv();paintTrust();paintAdv();paintXai();paintSvg();
+  AA.log.slice(0,10).reverse().forEach(function(l){logLine(logEl,l.c,l.t);});
+  var seen=AA.log.length;
+
+  return bundle(loop(draw),every(650,function(){
+    paintTrust();paintSvg();paintAdv();
+    if(AA.log.length!==seen){
+      AA.log.slice(0,Math.max(0,AA.log.length-seen)).reverse().forEach(function(l){logLine(logEl,l.c,l.t);});
+      seen=AA.log.length;
+    }
+  }));
+}
+
+/* ------------------------------- PNT VIEW ------------------------------- */
+function mountPnt(host){
+  host.innerHTML=
+   '<div class="dk-cols c2">'+
+     '<div>'+
+       '<div class="dk-card flush" style="margin-bottom:10px">'+
+         '<canvas id="pnCv" class="dk-scope" style="height:214px"></canvas>'+
+       '</div>'+
+       '<div class="dk-card">'+
+         '<div class="dk-ch">All-source fusion weights <small>factor-graph estimator</small></div>'+
+         '<table class="dk-tbl"><thead><tr><th>Source</th><th>Health</th><th>Weight</th><th>Drift</th></tr></thead>'+
+         '<tbody id="pnSrc"></tbody></table>'+
+         '<div class="dk-note">When GNSS drops out the estimator re-weights onto the remaining sources. '+
+         'Free-inertial drift is unbounded; vision, celestial, magnetic and signals-of-opportunity fixes bound it again. '+
+         'That bounding is the whole design goal of an all-source architecture.</div>'+
+       '</div>'+
+     '</div>'+
+     '<div>'+
+       '<div class="dk-card" style="margin-bottom:10px">'+
+         '<div class="dk-ch">Navigation integrity <small id="pnMode">—</small></div>'+
+         '<div id="pnInteg"></div>'+
+       '</div>'+
+       '<div class="dk-card" style="margin-bottom:10px">'+
+         '<div class="dk-ch">Threat injection</div>'+
+         '<div class="dk-row">'+
+           '<button class="dk-btn dan" id="pnJam">Simulate GNSS jamming</button>'+
+           '<button class="dk-btn dan" id="pnSpoof">Simulate spoofing</button>'+
+           '<button class="dk-btn" id="pnRestore">Restore GNSS</button>'+
+         '</div>'+
+         '<div class="dk-note">Jamming denies the signal; spoofing counterfeits it. The integrity monitor '+
+         'catches the second one by watching measurement residuals disagree across independent sources, then '+
+         'excludes the offending set rather than trusting it.</div>'+
+       '</div>'+
+       '<div class="dk-card"><div class="dk-ch">PNT log</div><div class="dk-log" id="pnLog"></div></div>'+
+     '</div>'+
+   '</div>';
+
+  var cv=$('#pnCv',host),logEl=$('#pnLog',host);
+  function paintSrc(){
+    $('#pnSrc',host).innerHTML=PN.src.map(function(s){
+      return '<tr><td><b>'+s.id+'</b><br><span style="font-size:8px;color:var(--dim-2)">'+E(s.n)+'</span></td>'+
+        '<td><span class="dk-pill '+(s.h?'ok':'bad')+'">'+(s.h?'ONLINE':'DENIED')+'</span></td>'+
+        '<td style="min-width:64px"><div class="dk-bar"><i style="width:'+Math.round(s.eff*100)+'%"></i></div>'+
+        '<span style="font-size:8px;color:var(--dim-2)">'+pct(s.eff)+'</span></td>'+
+        '<td>'+f2(s.drift)+'<br><span style="font-size:8px;color:var(--dim-2)">m/min</span></td></tr>';
+    }).join('');
+  }
+  function paintInteg(){
+    var breach=PN.pl>PN.al;
+    $('#pnMode',host).textContent=PN.mode;
+    $('#pnInteg',host).innerHTML=
+      '<div class="dk-kv"><span>Position error (CEP<sub>50</sub>)</span> <b class="'+(PN.cep<10?'ok':PN.cep<40?'warn':'bad')+'">'+f1(PN.cep)+' m</b></div>'+
+      '<div class="dk-kv">Protection level <b class="'+(breach?'bad':'ok')+'">'+f1(PN.pl)+' m</b></div>'+
+      '<div class="dk-kv">Alert limit <b>'+PN.al+' m</b></div>'+
+      '<div class="dk-bar '+(breach?'bad':'ok')+'" style="margin:4px 0 9px"><i style="width:'+Math.round(clamp(PN.pl/PN.al,0,1)*100)+'%"></i></div>'+
+      '<div class="dk-kv">Integrity monitor <b class="'+(PN.raim==='AVAILABLE'?'ok':'bad')+'">'+E(PN.raim)+'</b></div>'+
+      '<div class="dk-kv">Carrier-to-noise <b class="'+(PN.cn0>35?'ok':PN.cn0>25?'warn':'bad')+'">'+f1(PN.cn0)+' dB-Hz</b></div>'+
+      '<div class="dk-kv">Jam-to-signal <b class="'+(PN.js<20?'ok':PN.js<50?'warn':'bad')+'">'+Math.round(PN.js)+' dB</b></div>'+
+      '<div class="dk-kv">Measurement residual <b class="'+(PN.resid<1.2?'ok':'bad')+'">'+f2(PN.resid)+' σ</b></div>'+
+      '<div class="dk-kv">Clock holdover error <b class="'+(PN.holdover<500?'ok':'warn')+'">'+Math.round(PN.holdover)+' ns</b></div>'+
+      '<div class="dk-kv">Graph factors optimized <b>'+PN.factors.toLocaleString()+'</b></div>';
+  }
+  function draw(){
+    var g=fitCanvas(cv),c=g.ctx,w=g.w,h=g.h;
+    c.clearRect(0,0,w,h);
+    var maxV=Math.max(PN.al*1.4,Math.max.apply(null,PN.hist)*1.15,12);
+    c.strokeStyle='rgba(125,252,208,.10)';c.lineWidth=.6;
+    for(var k=1;k<4;k++){var y=h*k/4;c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke();}
+    /* alert limit */
+    var ay=h-8-(PN.al/maxV)*(h-22);
+    c.strokeStyle='rgba(251,113,133,.6)';c.setLineDash([4,4]);c.lineWidth=1;
+    c.beginPath();c.moveTo(0,ay);c.lineTo(w,ay);c.stroke();c.setLineDash([]);
+    c.fillStyle='rgba(251,113,133,.7)';c.font='7px "IBM Plex Mono",monospace';c.textAlign='right';
+    c.fillText('ALERT LIMIT '+PN.al+' m',w-6,ay-4);
+    /* CEP trace */
+    c.beginPath();
+    PN.hist.forEach(function(v,i){
+      var x=i/(PN.hist.length-1)*w,y=h-8-clamp(v/maxV,0,1)*(h-22);
+      i?c.lineTo(x,y):c.moveTo(x,y);
+    });
+    var col=PN.mode==='NOMINAL'?'rgba(52,211,153,.95)':'rgba(251,191,36,.95)';
+    c.strokeStyle=col;c.lineWidth=1.4;c.shadowColor=col;c.shadowBlur=7;c.stroke();c.shadowBlur=0;
+    c.lineTo(w,h);c.lineTo(0,h);c.closePath();
+    c.fillStyle=PN.mode==='NOMINAL'?'rgba(52,211,153,.10)':'rgba(251,191,36,.10)';c.fill();
+    c.fillStyle='rgba(125,252,208,.5)';c.textAlign='left';
+    c.fillText('POSITION ERROR · CEP50 (m) · 3 min window',6,12);
+    c.textAlign='right';c.fillStyle=col;
+    c.fillText(f1(PN.cep)+' m · '+PN.mode,w-6,h-6);
+  }
+  function setMode(m,msg,cls){
+    PN.mode=m;
+    logLine(logEl,cls,msg);
+    paintSrc();paintInteg();
+  }
+  $('#pnJam',host).onclick=function(){
+    setMode('JAMMED','GNSS denied — jam-to-signal rising, estimator re-weighting onto inertial + vision + celestial','r');
+    ev('bad','All-source PNT · <b>GNSS jamming</b> detected, navigating on alternate sources','PNT');
+  };
+  $('#pnSpoof',host).onclick=function(){
+    setMode('SPOOFED','Residual disagreement across independent sources — counterfeit constellation excluded','r');
+    ev('bad','All-source PNT · <b>spoofing detected</b>, offending SV set excluded','PNT');
+  };
+  $('#pnRestore',host).onclick=function(){
+    setMode('NOMINAL','GNSS reacquired · integrity restored, clock re-disciplined','g');
+    ev('ok','All-source PNT · GNSS reacquired, integrity restored','PNT');
+  };
+
+  paintSrc();paintInteg();
+  logLine(logEl,'','All-source estimator online · '+PN.src.length+' navigation sources');
+  return bundle(loop(draw),every(700,function(){paintSrc();paintInteg();}));
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   MODULE REGISTRY + OVERLAY SHELL
+   ══════════════════════════════════════════════════════════════════════════════ */
+var MODULES={
+  mosaic:{ic:'⬢',name:'MOSAIC KILL-WEB',sub:'Disaggregated force-package composition · F2T2EA',agent:'MOSAIC',
+    rail:['Mosaic Kill-Web','composable force packages'],orbit:'MOSAIC',mount:mountMosaic,
+    foot:'Pattern: composable, attritable kill-webs rather than a single monolithic chain — recomposition on node loss is the measured capability. '},
+  killchain:{ic:'⛓',name:'INTRUSION KILL CHAIN',sub:'Cyber Kill Chain® board + courses-of-action matrix',agent:'KILLCHAIN',
+    rail:['Intrusion Kill Chain','7 stages · COA matrix'],orbit:'CHAIN',mount:mountKillChain,
+    foot:'Pattern: intelligence-driven defense — break the intrusion as early in the chain as possible and make the intruder pay to rebuild. '},
+  spectrum:{ic:'📶',name:'COGNITIVE ELECTRONIC WARFARE',sub:'RF machine learning · adaptive countermeasure synthesis',agent:'EW',
+    rail:['Cognitive EW','spectrum · countermeasures'],orbit:'EW',mount:mountSpectrum,
+    foot:'Pattern: learn the emitter from what it radiates, synthesize a counter-waveform in a closed loop, and hold it behind emission-control discipline. '},
+  fusion:{ic:'◎',name:'MULTI-SOURCE TRACK FUSION',sub:'Aegis-pattern integrated air picture · TEWA',agent:'FUSION',
+    rail:['Track Fusion & TEWA','SPY · IRST · ESM · LINK16'],orbit:'FUSION',mount:mountFusion,
+    foot:'Pattern: one integrated picture from many disagreeing sensors, scored by SIAP quality metrics, with weapon pairing recommended and never auto-released. '},
+  assure:{ic:'✓',name:'ASSURED AUTONOMY',sub:'Runtime assurance · adversarial-ML defense · explainability',agent:'ASSURE',
+    rail:['Assured Autonomy','runtime assurance · XAI'],orbit:'ASSURE',mount:mountAssure,
+    foot:'Pattern: let an unverified learned controller fly, but keep a provably safe controller and a monitor that can take the stick back. '},
+  pnt:{ic:'✧',name:'ALL-SOURCE PNT',sub:'GNSS-denied navigation · integrity monitoring',agent:'PNT',
+    rail:['All-Source PNT','GNSS-denied navigation'],orbit:'PNT',mount:mountPnt,
+    foot:'Pattern: never depend on one signal — fuse many, watch them disagree, and exclude the liar instead of averaging it in. '}
+};
+
+var OV=document.getElementById('dkOv'),BODY=document.getElementById('dkBody');
+var active=null,cleanup=null,hideTimer=0;
+
+function markTabs(key){
+  $$('.dk-tab,.dk-onode,.dk-mitem').forEach(function(b){
+    b.classList.toggle('on',!!key&&b.dataset.mod===key);
+  });
+}
+function teardown(){
+  if(cleanup){try{cleanup();}catch(_){}}
+  cleanup=null;active=null;BODY.innerHTML='';markTabs(null);
+}
+function openMod(key){
+  var m=MODULES[key];if(!m||!OV)return;
+  if(active===key){closeMod();return;}
+  teardown();
+  clearTimeout(hideTimer);
+  document.getElementById('dkIc').textContent=m.ic;
+  document.getElementById('dkTitle').textContent=m.name;
+  document.getElementById('dkSub').textContent=m.sub;
+  document.getElementById('dkFoot').innerHTML=m.foot+LEGAL;
+  OV.hidden=false;
+  requestAnimationFrame(function(){OV.classList.add('in');});
+  active=key;markTabs(key);railOpen(true);
+  try{cleanup=m.mount(BODY)||null;}catch(err){
+    BODY.innerHTML='<div class="dk-card"><div class="dk-ch">Module unavailable</div>'+
+      '<div class="dk-mono">This module needs a browser feature that is not available here.</div></div>';
+  }
+  DECK.alerts[key]=false;
+  ev('','<b>'+m.name+'</b> module engaged',m.agent);
+  if(typeof focusSub==='function'&&key==='killchain'){try{focusSub('security');}catch(_){}}
+}
+function closeMod(){
+  if(!OV||OV.hidden)return;
+  teardown();railOpen(false);
+  OV.classList.remove('in');
+  hideTimer=setTimeout(function(){if(!active)OV.hidden=true;},260);
+}
+if(OV){
+  document.getElementById('dkX').onclick=closeMod;
+  OV.addEventListener('pointerdown',function(e){if(e.target===OV)closeMod();});
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&active)closeMod();
+});
+$$('.dk-tab').forEach(function(b){b.onclick=function(){openMod(b.dataset.mod);};});
+
+/* the launcher stays collapsed until hovered, focused, pinned, or a module is open */
+var railEl=document.getElementById('dkRail'),railTog=document.getElementById('dkRailToggle');
+function railOpen(on){
+  if(!railEl)return;
+  railEl.classList.toggle('open',!!on);
+  if(railTog)railTog.setAttribute('aria-expanded',on?'true':'false');
+}
+if(railTog){
+  railTog.onclick=function(){railOpen(!railEl.classList.contains('open'));};
+  railTog.onkeydown=function(e){
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();railTog.onclick();}
+  };
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   HUD INTEGRATION — orbit ring, stage ribbon, mission rail, KPIs, intents
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* ---- outer orbit ring on the neural stage ---- */
+var orbitEl=document.getElementById('dkOrbit'),linksEl=document.getElementById('dkLinks');
+function placeOrbit(){
+  if(!orbitEl||!linksEl)return;
+  var stage=document.querySelector('.stage');if(!stage)return;
+  var r=stage.getBoundingClientRect();
+  /* the viewport check matters independently of the stage box: the top bar can
+     stretch the layout wider than the screen, so a wide stage is not proof of room */
+  if(r.width<680||r.height<340||window.innerWidth<1000){orbitEl.innerHTML='';linksEl.innerHTML='';return;}
+  var keys=Object.keys(MODULES),n=keys.length;
+  var rx=Math.min(r.width*0.395,440),ry=Math.min(r.height*0.395,300);
+  var inner=Math.max(150,Math.min(230,Math.min(window.innerWidth,window.innerHeight)*0.205));
+  var cx=r.width/2,cy=r.height/2,html='',paths='';
+  keys.forEach(function(k,i){
+    var a=-Math.PI/2+(i+0.5)*(Math.PI*2/n);
+    var ox=Math.cos(a)*rx,oy=Math.sin(a)*ry;
+    var ix=Math.cos(a)*(inner+16),iy=Math.sin(a)*(inner+16);
+    /* only tether when the outer chip actually sits outside the inner ring */
+    if(Math.hypot(ox,oy)>Math.hypot(ix,iy)+8)
+      paths+='<path d="M'+(cx+ix).toFixed(1)+' '+(cy+iy).toFixed(1)+' L'+(cx+ox*.88).toFixed(1)+' '+(cy+oy*.88).toFixed(1)+'"/>';
+    html+='<div class="dk-onode'+(active===k?' on':'')+'" data-mod="'+k+'" style="transform:translate('+ox.toFixed(1)+'px,'+oy.toFixed(1)+'px)">'+
+      '<div class="dk-ochip" title="'+E(MODULES[k].sub)+'"><div class="di">'+MODULES[k].ic+'</div>'+
+      '<div class="dn">'+MODULES[k].orbit+'</div></div></div>';
+  });
+  linksEl.setAttribute('viewBox','0 0 '+r.width+' '+r.height);
+  linksEl.innerHTML=paths;
+  orbitEl.innerHTML=html;
+  $$('.dk-onode',orbitEl).forEach(function(el){
+    el.querySelector('.dk-ochip').onclick=function(){openMod(el.dataset.mod);};
+  });
+}
+
+/* ---- stage status ribbon ---- */
+var ribbonEl=document.getElementById('dkRibbon');
+function paintRibbon(){
+  if(!ribbonEl)return;
+  var o=DECK.ooda;
+  var kcRate=KC.totalSeen?KC.totalBroken/(KC.totalBroken+KC.impacts||1):1;
+  var items=[
+    {mod:'mosaic',  k:'', l:'OODA',   v:OODA[o.i]+' · '+o.ms+'ms'},
+    {mod:'mosaic',  k:MW.chain?(MW.chains>40?'':'warn'):'bad', l:'KILL-WEB', v:MW.chain?MW.chains.toLocaleString()+' CHAINS':'BROKEN'},
+    {mod:'killchain',k:KC.impacts?'bad':kcRate>.85?'':'warn', l:'CHAIN', v:KC.totalBroken+' BROKEN'},
+    {mod:'spectrum',k:EW.emcon==='A'?'':'warn', l:'EMCON', v:EW.emcon},
+    {mod:'fusion',  k:DECK.alerts.fusion?'bad':'', l:'PICTURE', v:FZ.tracks.length+' TRK · '+pct(FZ.siap.complete)},
+    {mod:'assure',  k:AA.adv.state!=='NOMINAL'?'bad':AA.ctrl==='ADV'?'':'warn', l:'TRUST', v:f2(AA.trust)},
+    {mod:'pnt',     k:PN.pl>PN.al?'bad':PN.mode==='NOMINAL'?'':'warn', l:'PNT', v:f1(PN.cep)+'m'}
+  ];
+  ribbonEl.innerHTML=items.map(function(it){
+    return '<div class="dk-rb '+it.k+'" data-mod="'+it.mod+'" title="Open the '+E(MODULES[it.mod].name)+' module"><i></i>'+
+      it.l+' <b>'+it.v+'</b></div>';
+  }).join('');
+  $$('.dk-rb',ribbonEl).forEach(function(el){el.onclick=function(){openMod(el.dataset.mod);};});
+}
+
+/* ---- mission rail: advanced systems section ---- */
+(function(){
+  var rail=document.getElementById('rail');if(!rail)return;
+  var sep=document.createElement('div');
+  sep.className='dk-sep';sep.textContent='Advanced Systems';
+  rail.appendChild(sep);
+  Object.keys(MODULES).forEach(function(k){
+    var m=MODULES[k],d=document.createElement('div');
+    d.className='dk-mitem';d.dataset.mod=k;
+    d.innerHTML='<div class="mi-ic">'+m.ic+'</div>'+
+      '<div class="mi-tx"><div class="mi-n">'+E(m.rail[0])+'</div><div class="mi-s">'+E(m.rail[1])+'</div></div>'+
+      '<div class="mi-x">OPEN</div>';
+    d.onclick=function(){openMod(k);};
+    rail.appendChild(d);
+  });
+  var lbl=document.querySelector('.rail .p-title small');
+  if(lbl)lbl.textContent=(7+Object.keys(MODULES).length)+' subsystems';
+})();
+
+/* ---- two extra KPIs fed by the deck ---- */
+(function(){
+  if(typeof kpis==='undefined'||!Array.isArray(kpis))return;
+  kpis.push({l:'Kill-Web Chains',v:MW.chains,fmt:function(v){return (v|0).toLocaleString();},
+    d:'recompose '+MW.recomposeMs+'ms',up:true,seed:Array.from({length:14},function(){return Math.random();})});
+  kpis.push({l:'Autonomy Trust',v:AA.trust,fmt:function(v){return f2(v);},
+    d:'0 reversions',up:true,seed:Array.from({length:14},function(){return Math.random();})});
+  if(typeof renderKpis==='function')renderKpis();
+})();
+function syncKpis(){
+  if(typeof kpis==='undefined'||!Array.isArray(kpis))return;
+  kpis.forEach(function(k){
+    if(k.l==='Kill-Web Chains'){
+      k.v=MW.chains;k.up=!!MW.chain;
+      k.d=MW.chain?('recompose '+MW.recomposeMs+'ms'):'chain broken';
+    }else if(k.l==='Autonomy Trust'){
+      k.v=AA.trust;k.up=AA.ctrl==='ADV'&&AA.adv.state==='NOMINAL';
+      k.d=AA.reversions+' reversion'+(AA.reversions===1?'':'s');
+    }
+  });
+}
+
+/* ---- launcher alert badges ---- */
+function paintAlerts(){
+  $$('.dk-tab').forEach(function(b){
+    b.classList.toggle('alert',!!DECK.alerts[b.dataset.mod]&&active!==b.dataset.mod);
+  });
+}
+
+/* ---- console intents (wraps the existing router, never replaces it) ---- */
+(function(){
+  if(typeof window.handle!=='function')return;
+  var prev=window.handle;
+  var routes=[
+    {re:/kill.?web|mosaic|force package|f2t2ea|recompos/i,mod:'mosaic',
+     line:'Opening the <b>MOSAIC kill-web composer</b>. Sensors, deciders and effectors are held as a web rather than a fixed chain, so losing a node recomposes the package instead of breaking it. Nothing prosecutes without your authority.'},
+    {re:/kill.?chain|intrusion|courses of action|coa matrix|apt|campaign/i,mod:'killchain',
+     line:'Opening the <b>intrusion kill chain</b> board. Seven stages, a courses-of-action matrix you can arm cell by cell, and campaign attribution built from clustered indicators. Breaking the chain early is what imposes cost.'},
+    {re:/spectrum|electronic warfare|\bew\b|jammer|emitter|emcon|waterfall|rf\b/i,mod:'spectrum',
+     line:'Opening <b>cognitive electronic warfare</b>. The receiver classifies emitters from what they radiate, and countermeasures are synthesized in a closed loop — but nothing radiates until emission control permits it and you approve it.'},
+    {re:/air picture|track fusion|\btewa\b|aegis|radar picture|siap|weapon assign/i,mod:'fusion',
+     line:'Opening <b>multi-source track fusion</b>. SPY, infrared, passive ESM and remote LINK16 tracks are correlated into one picture, scored by SIAP quality, with weapon pairing recommended. Release always stops at your approval.'},
+    {re:/runtime assurance|assured autonomy|simplex|adversarial|explainab|\bxai\b|trust score|invariant/i,mod:'assure',
+     line:'Opening <b>assured autonomy</b>. A learned controller flies, a formally verified controller stands by, and a monitor takes the stick back the moment the safety envelope narrows. Adversarial-ML defenses and decision explanations sit alongside it.'},
+    {re:/gps.?denied|gnss|spoof|\bpnt\b|navigation|position.*denied|jamming/i,mod:'pnt',
+     line:'Opening <b>all-source PNT</b>. GNSS, inertial, vision, celestial, magnetic and signals-of-opportunity are fused in a factor graph, with an integrity monitor that excludes a lying source rather than averaging it in.'},
+    {re:/deck|advanced (features|systems|modules)|darpa|lockheed|warfighting/i,mod:null,
+     line:'The <b>advanced warfighting deck</b> adds six modules to this console: <b>MOSAIC</b> kill-web composition, the <b>intrusion kill chain</b> board, <b>cognitive EW</b>, <b>multi-source track fusion</b>, <b>assured autonomy</b>, and <b>all-source PNT</b>. They are on the right-hand launcher, the outer orbit ring, and the mission rail. Each one is a concept demonstration built from open, unclassified literature — and every effect in them stops at an operator approval.'}
+  ];
+  window.handle=function(raw){
+    var q=String(raw||'').trim();
+    for(var i=0;i<routes.length;i++){
+      if(routes[i].re.test(q)){
+        try{if(typeof userSay==='function')userSay(q);}catch(_){}
+        if(routes[i].mod)setTimeout(function(m){return function(){openMod(m);};}(routes[i].mod),700);
+        return say(routes[i].line,{conf:{src:6,lvl:'HIGH',ms:88}});
+      }
+    }
+    return prev.apply(this,arguments);
+  };
+})();
+
+/* ---- extra quick chips ---- */
+(function(){
+  var chips=document.getElementById('chips');if(!chips)return;
+  ['Compose a kill web','Kill chain','Spectrum','Air picture','Runtime assurance','GPS denied']
+    .forEach(function(q){
+      var b=document.createElement('button');
+      b.className='qchip';b.textContent=q;
+      b.onclick=function(){if(typeof window.handle==='function')window.handle(q);};
+      chips.appendChild(b);
+    });
+})();
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   ALWAYS-ON TICKERS
+   ══════════════════════════════════════════════════════════════════════════════ */
+setInterval(function(){
+  DECK.ooda.i=(DECK.ooda.i+1)%4;
+  if(DECK.ooda.i===0)DECK.ooda.cycle++;
+  DECK.ooda.ms=irnd(74,196);
+},1400);
+setInterval(function(){aaTick();},420);
+setInterval(function(){fzTick(0.07);},420);
+setInterval(function(){pnTick();},700);
+setInterval(function(){ewTick();},1000);
+setInterval(function(){kcTick();},1500);
+setInterval(function(){paintRibbon();paintAlerts();syncKpis();},1000);
+
+/* occasional deck traffic into the existing activity stream */
+var DECK_EVENTS=[
+  ['','Kill-web recomposed · <b>alternate path</b> selected','MOSAIC'],
+  ['ok','Emitter reclassified · confidence promoted','EW'],
+  ['','Track correlated across <b>3 sources</b>','FUSION'],
+  ['ok','Runtime monitor: all invariants holding','ASSURE'],
+  ['','Factor graph re-optimized · residual nominal','PNT'],
+  ['ok','Intrusion broken at <b>delivery</b>','KILLCHAIN'],
+  ['warn','Emitter cued · classification pending','EW'],
+  ['','Attritable node returned to the web','MOSAIC']
+];
+setInterval(function(){
+  var e=pick(DECK_EVENTS);ev(e[0],e[1],e[2]);
+},9000);
+
+/* ---- placement + resize ---- */
+function relayout(){placeOrbit();}
+window.addEventListener('resize',relayout);
+if(window.ResizeObserver){
+  var stage=document.querySelector('.stage');
+  if(stage)new ResizeObserver(relayout).observe(stage);
+}
+/* the shell fades in ~3.3 s after load — place once it exists, then keep it fresh */
+setTimeout(relayout,300);
+setTimeout(relayout,3600);
+paintRibbon();paintAlerts();
+
+/* one-time console note so the capability is discoverable without hunting */
+setTimeout(function(){
+  say('Advanced deck online — <b>MOSAIC</b> kill-web, <b>intrusion kill chain</b>, <b>cognitive EW</b>, '+
+      '<b>track fusion</b>, <b>assured autonomy</b> and <b>all-source PNT</b> are on the right-hand launcher '+
+      'and the outer ring. Ask for any of them by name.',{delay:900,speak:false});
+},9000);
+
+})();
+</script>
+<script defer src="control-surface.js"></script>
+  <script defer src="ui.js"></script>
+  <script defer src="platform.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- Command-center atmosphere. Messages describe THIS interface (a demonstration
+     HUD), not real external operations — consistent with the page's simulation note. -->
+<script type="application/json" id="cc-messages">[
+  "Interface calibrated.",
+  "Telemetry stream synchronized.",
+  "Command mesh nominal.",
+  "Agent cluster heartbeat received.",
+  "Render pipeline optimized.",
+  "Analytics view refreshed."
+]</script>
+<script defer src="/command-center.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related" class="cgr-dock">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}#cg-related.cgr-dock{position:fixed;left:14px;bottom:14px;margin:0;padding:0;max-width:none;z-index:2147483000}#cg-related.cgr-dock .cgr-tab{display:inline-block;cursor:pointer;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#dbe4ff;padding:8px 12px;border-radius:9px;border:1px solid rgba(124,150,255,.42);background:linear-gradient(180deg,rgba(18,20,42,.92),rgba(11,12,28,.92));box-shadow:0 6px 22px rgba(0,0,0,.4);backdrop-filter:blur(6px);user-select:none}#cg-related.cgr-dock .cgr-tab:hover{color:#fff;border-color:rgba(124,150,255,.85)}#cg-related.cgr-dock .cgr-box{display:none;position:absolute;bottom:calc(100% + 8px);left:0;width:min(400px,92vw);max-height:62vh;overflow-y:auto}#cg-related.cgr-dock:hover .cgr-box,#cg-related.cgr-dock:focus-within .cgr-box{display:block}#cg-related.cgr-dock ul{grid-template-columns:1fr}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › Command &amp; Autonomous Operations</p>
+    <h2>Inside Command &amp; Autonomous Operations</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="command-center.html"><span><b>Previous</b>Command Center</span></a>
+      <a href="percival-os.html"><span><b>Topic hub</b>PERCIVAL OS</span></a>
+      <a href="artemis-percival.html"><span><b>Next in journey</b>AVALON</span></a>
+    </div>
+    <ul>
+      <li><a href="blog/ai-agent-governance-governed-autonomy.html"><b>AI Agent Governance</b> — the governed-autonomy playbook</a></li>
+      <li><a href="artemis-percival.html"><b>AVALON</b> — the ARTEMIS ⊕ PERCIVAL unified fusion core</a></li>
+      <li><a href="agentmesh.html"><b>Agent Mesh</b> — multi-agent OSINT orchestration</a></li>
+      <li><a href="ai-operator.html"><b>AI Operator Workspace</b> — human-in-the-loop agent operations</a></li>
+      <li><a href="advanced-features-tools-systems.html"><b>Advanced Features, Tools &amp; Systems</b> — the governed systems, agent and audit architecture catalog</a></li>
+      <li><a href="automap.html"><b>AutoMap Orchestration</b> — architecture-aware orchestration and system relationship mapping</a></li>
+      <li><a href="conduit.html"><b>CONDUIT</b> — self-hosted open-source workflow automation</a></li>
+      <li><a href="postloop.html"><b>PostLoop</b> — autonomous multi-account content engine</a></li>
+      <li><a href="command-console.html"><b>Command Console</b> — cyber intelligence operations hub</a></li>
+      <li><a href="control-surface.html"><b>Systems Control Surface v3.1</b> — the live command dashboard</a></li>
+      <li><a href="systems.html"><b>Systems Console</b> — PERCIVAL operations console</a></li>
+      <li><a href="legal/index.html"><b>Legal Infrastructure</b> — the ClearGlass corporate legal stack</a></li>
+      <li><a href="clearpulse.html"><b>ClearPulse</b> — healthcare intelligence pipeline</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="offers/index.html">Browse services &amp; engagements</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+  <div class="cgr-tab" tabindex="0" role="button" aria-label="Show related ClearGlass pages">⌁ Explore ClearGlass</div>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

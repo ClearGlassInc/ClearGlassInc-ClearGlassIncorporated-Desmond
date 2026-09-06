@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8">
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pricing & Engagements — Start with ClearGlass | ClearGlass</title>
+<meta name="description" content="Fixed-fee cybersecurity and web engineering engagements from ClearGlass Inc, Ontario — security quick-audit, Microsoft 365 hardening sprint, PHIPA readiness.">
+<link rel="canonical" href="https://www.clearglassinc.com/pricing.html">
+<meta property="og:title" content="Pricing & Engagements | ClearGlass Inc">
+<meta property="og:description" content="Transparent fixed-fee security and web engineering engagements. Book in minutes.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.clearglassinc.com/pricing.html">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Urbanist:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="ui.css">
+<style>
+  :root{ --bg:#070a14; --txt:#eaf0ff; --dim:#9aa6c8; --dim2:#6b7596;
+    --panel:rgba(18,23,44,.55); --panel2:rgba(13,17,33,.72); --line:rgba(124,150,255,.16); }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;color:var(--txt);font-family:var(--cg-sans,'Urbanist',system-ui,sans-serif);line-height:1.6;
+    background:radial-gradient(1200px 800px at 84% -8%,rgba(167,139,250,.13),transparent 55%),
+      radial-gradient(1000px 700px at -8% 12%,rgba(56,189,248,.13),transparent 52%),var(--bg);
+    background-attachment:fixed;-webkit-font-smoothing:antialiased}
+  .wrap{width:min(1180px,92vw);margin:0 auto}
+  .eyebrow{font-family:var(--cg-mono,'IBM Plex Mono',monospace);font-size:12px;font-weight:600;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--dim2);display:inline-flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--dim2)}
+  h1,h2,h3{font-family:var(--cg-serif,'Cormorant Garamond',Georgia,serif);font-weight:400;letter-spacing:-.02em;line-height:1.08}
+  .crystal{background:var(--cg-crystal,linear-gradient(135deg,#38bdf8,#a78bfa,#f472b6,#34d399));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  header.hero{padding:clamp(80px,12vw,140px) 0 clamp(34px,5vw,60px);text-align:center}
+  header.hero img{width:46px;height:46px;border-radius:12px;box-shadow:0 0 22px rgba(124,150,255,.5);margin-bottom:22px}
+  header.hero h1{font-size:clamp(2.6rem,6.5vw,4.8rem);max-width:16ch;margin:14px auto 0}
+  header.hero h1 strong{font-weight:600}
+  header.hero p{color:var(--dim);font-size:clamp(1.05rem,1.7vw,1.25rem);max-width:56ch;margin:22px auto 0}
+
+  .grid{display:grid;gap:18px;grid-template-columns:repeat(2,1fr);margin-top:30px}
+  .plan{background:var(--panel);border:1px solid var(--line);border-radius:var(--cg-r-lg,24px);padding:30px 28px;
+    backdrop-filter:blur(14px);display:flex;flex-direction:column;position:relative;transition:transform .35s var(--cg-ease,ease),border-color .35s}
+  .plan:hover{transform:translateY(-4px);border-color:rgba(124,150,255,.4)}
+  .plan.feat{background:linear-gradient(160deg,rgba(56,189,248,.08),rgba(167,139,250,.05),var(--panel2));border-color:rgba(124,150,255,.34)}
+  .tag{position:absolute;top:18px;right:20px;font-family:var(--cg-mono,monospace);font-size:9.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:#bcd0ff;background:rgba(124,150,255,.12);border:1px solid var(--line);border-radius:999px;padding:4px 11px}
+  .plan h3{font-size:1.7rem;font-weight:500;margin:0}
+  .plan .blurb{color:var(--dim);font-size:13.5px;margin:8px 0 18px;min-height:42px}
+  .price{font-family:var(--cg-serif,serif);font-size:2.6rem;font-weight:500;line-height:1}
+  .price .u{font-family:var(--cg-mono,monospace);font-size:12px;color:var(--dim2);letter-spacing:.04em;margin-left:8px}
+  ul.feats{list-style:none;padding:0;margin:20px 0 24px;display:grid;gap:10px}
+  ul.feats li{display:grid;grid-template-columns:auto 1fr;gap:11px;color:var(--dim);font-size:13.5px}
+  ul.feats .ck{width:19px;height:19px;border-radius:6px;display:grid;place-items:center;font-size:10px;font-weight:700;
+    background:rgba(52,211,153,.13);color:#34d399;border:1px solid rgba(52,211,153,.3)}
+  .plan .cta{margin-top:auto}
+  .plan .cta a{width:100%}
+  .paynote{font-family:var(--cg-mono,monospace);font-size:10px;letter-spacing:.04em;color:var(--dim2);text-align:center;margin-top:10px}
+
+  .band{padding:clamp(50px,8vw,90px) 0}
+  .sh{max-width:680px;margin-bottom:30px}
+  .sh h2{font-size:clamp(1.9rem,4vw,3rem);margin:14px 0 0}
+  .sh p{color:var(--dim);margin-top:14px}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:var(--cg-r-sm,12px);padding:20px 18px}
+  .step .n{font-family:var(--cg-mono,monospace);font-size:11px;color:var(--cg-prism-1,#38bdf8);letter-spacing:.1em}
+  .step h3{font-size:1.1rem;font-weight:600;font-family:var(--cg-sans,sans-serif);margin:10px 0 6px;letter-spacing:0}
+  .step p{color:var(--dim);font-size:12.5px;margin:0}
+  .trust{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .chip{font-family:var(--cg-mono,monospace);font-size:12px;color:#cdd6f5;background:var(--panel);border:1px solid var(--line);
+    border-radius:999px;padding:9px 15px}
+  .pay-explain{background:rgba(52,211,153,.05);border:1px solid rgba(52,211,153,.2);border-radius:16px;padding:20px 24px;margin-top:26px;
+    color:var(--dim);font-size:13.5px;display:flex;gap:13px;align-items:flex-start}
+  .pay-explain b{color:#34d399}
+  .paymethods{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+  .pm{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px;backdrop-filter:blur(12px)}
+  .pm-h{display:flex;align-items:center;gap:9px;font-weight:600;font-size:14px}
+  .pm-i{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:13px;
+    background:linear-gradient(135deg,rgba(56,189,248,.16),rgba(167,139,250,.12));border:1px solid var(--line)}
+  .pm-live{margin-left:auto;font-family:var(--cg-mono,monospace);font-size:9px;letter-spacing:.1em;color:#34d399;
+    border:1px solid rgba(52,211,153,.35);background:rgba(52,211,153,.08);border-radius:999px;padding:3px 9px}
+  .pm-soon{margin-left:auto;font-family:var(--cg-mono,monospace);font-size:9px;letter-spacing:.1em;color:var(--dim2);
+    border:1px solid var(--line);border-radius:999px;padding:3px 9px}
+  .pm-b{color:var(--dim);font-size:12.5px;margin:10px 0 14px;line-height:1.55}
+  @media(max-width:820px){.paymethods{grid-template-columns:1fr}}
+  footer{padding:40px 0 80px;border-top:1px solid var(--line);margin-top:40px;color:var(--dim2);font-size:12.5px;text-align:center}
+  footer a{color:var(--dim);text-decoration:none}
+  @media(max-width:820px){.grid{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}}
+  @media(max-width:520px){.steps{grid-template-columns:1fr}}
+  @media(prefers-reduced-motion:reduce){.plan{transition:none}html{scroll-behavior:auto}}
+</style>
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","@id":"https://www.clearglassinc.com/pricing.html#page","name":"Pricing & Engagements — ClearGlass Inc.","description":"Fixed-fee cybersecurity and web engineering engagements from ClearGlass Inc, Ontario — security quick-audit, Microsoft 365 hardening sprint, PHIPA readiness.","url":"https://www.clearglassinc.com/pricing.html","isPartOf":{"@id":"https://www.clearglassinc.com/#website"},"about":{"@id":"https://www.clearglassinc.com/#org"}},{"@type":"OfferCatalog","@id":"https://www.clearglassinc.com/pricing.html#catalog","name":"ClearGlass Inc. fixed-fee engagements","provider":{"@id":"https://www.clearglassinc.com/#org"},"itemListElement":[{"@type":"Offer","name":"Security Quick Audit","url":"https://www.clearglassinc.com/offers/security-quick-audit.html","priceCurrency":"CAD","availability":"https://schema.org/InStock","itemOffered":{"@type":"Service","name":"Security Quick Audit","serviceType":"Cybersecurity assessment","provider":{"@id":"https://www.clearglassinc.com/#org"}}},{"@type":"Offer","name":"Microsoft 365 / Entra ID Hardening Sprint","url":"https://www.clearglassinc.com/offers/hardening-sprint.html","priceCurrency":"CAD","availability":"https://schema.org/InStock","itemOffered":{"@type":"Service","name":"Hardening Sprint","serviceType":"Microsoft 365 and Entra ID security hardening","provider":{"@id":"https://www.clearglassinc.com/#org"}}},{"@type":"Offer","name":"PHIPA Readiness","url":"https://www.clearglassinc.com/offers/phipa-readiness.html","priceCurrency":"CAD","availability":"https://schema.org/InStock","itemOffered":{"@type":"Service","name":"PHIPA Readiness","serviceType":"Ontario health privacy compliance readiness","provider":{"@id":"https://www.clearglassinc.com/#org"}}},{"@type":"Offer","name":"Website Design & Development","url":"https://www.clearglassinc.com/web-design.html","priceCurrency":"CAD","availability":"https://schema.org/InStock","itemOffered":{"@id":"https://www.clearglassinc.com/web-design.html#service"}}]},{"@type":"BreadcrumbList","@id":"https://www.clearglassinc.com/pricing.html#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.clearglassinc.com/"},{"@type":"ListItem","position":2,"name":"Pricing & Engagements","item":"https://www.clearglassinc.com/pricing.html"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <img src="assets/images/clearglass-logo.png" alt="ClearGlass Inc. logo" width="46" height="46">
+    <span class="eyebrow" style="justify-content:center">Engagements · Ontario, Canada</span>
+    <h1>Start with a <strong class="crystal">fixed-fee engagement.</strong></h1>
+    <p>Transparent pricing, scoped deliverables, and a clear path from first call to results.
+       Choose an engagement and book in minutes.</p>
+    <p style="margin-top:16px">
+      <a href="store.html"
+         style="display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:999px;background:rgba(124,150,255,.1);border:1px solid rgba(124,150,255,.3);color:inherit;text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.03em">🛒 Visit the ClearGlass storefront →</a>
+    </p>
+  </div>
+</header>
+
+<section class="band" style="padding-top:0">
+  <div class="wrap">
+    <div class="grid" id="plans">
+      <!-- Security Quick-Audit -->
+      <article class="plan" data-reveal data-tilt="5" data-sku="quick-audit">
+        <span class="tag">Best first step</span>
+        <h3>Security Quick-Audit</h3>
+        <div class="blurb">A read-only posture review with a branded findings report. Low-commitment way to start.</div>
+        <div class="price">CAD&nbsp;$249<span class="u">one-time</span></div>
+        <ul class="feats">
+          <li><span class="ck">✓</span> External exposure &amp; attack-surface scan</li>
+          <li><span class="ck">✓</span> Microsoft 365 / identity hygiene review</li>
+          <li><span class="ck">✓</span> Prioritized findings report (3–5 business days)</li>
+          <li><span class="ck">✓</span> 30-minute readout call</li>
+        </ul>
+        <div class="cta"><a class="cg-btn cg-btn--primary cg-btn--block" data-buy>Book the audit →</a>
+          <div class="paynote" data-pay></div></div>
+      </article>
+
+      <!-- Hardening Sprint -->
+      <article class="plan feat" data-reveal data-tilt="5" data-sku="hardening">
+        <span class="tag">Most popular</span>
+        <h3>M365 + Windows Hardening Sprint</h3>
+        <div class="blurb">A fixed-fee 1–2 week sprint to harden Microsoft 365 / Entra ID and Windows endpoints to CIS-aligned baselines.</div>
+        <div class="price">from CAD&nbsp;$2,500<span class="u">fixed fee</span></div>
+        <ul class="feats">
+          <li><span class="ck">✓</span> CIS-aligned M365 / Entra ID baseline</li>
+          <li><span class="ck">✓</span> Windows endpoint hardening</li>
+          <li><span class="ck">✓</span> MFA, conditional access &amp; logging review</li>
+          <li><span class="ck">✓</span> Prioritized remediation report + evidence</li>
+        </ul>
+        <div class="cta"><a class="cg-btn cg-btn--primary cg-btn--block" data-buy>Deploy a sprint →</a>
+          <div class="paynote" data-pay></div></div>
+      </article>
+
+      <!-- PHIPA Readiness -->
+      <article class="plan" data-reveal data-tilt="5" data-sku="phipa">
+        <span class="tag">Health sector</span>
+        <h3>PHIPA Readiness</h3>
+        <div class="blurb">A free readiness checklist for Ontario health-sector orgs, plus a fixed-fee privacy &amp; security assessment.</div>
+        <div class="price">from CAD&nbsp;$3,000<span class="u">assessment</span></div>
+        <ul class="feats">
+          <li><span class="ck">✓</span> Free PHIPA readiness checklist</li>
+          <li><span class="ck">✓</span> Privacy &amp; security gap assessment</li>
+          <li><span class="ck">✓</span> Safeguard &amp; breach-readiness review</li>
+          <li><span class="ck">✓</span> Board-ready remediation roadmap</li>
+        </ul>
+        <div class="cta"><a class="cg-btn cg-btn--primary cg-btn--block" data-buy>Start the assessment →</a>
+          <div class="paynote" data-pay></div></div>
+      </article>
+
+      <!-- Managed Monitoring -->
+      <article class="plan" data-reveal data-tilt="5" data-sku="monitoring">
+        <span class="tag">Ongoing</span>
+        <h3>Managed Monitoring</h3>
+        <div class="blurb">Continuous exposure &amp; posture monitoring with monthly executive reporting — governed by PERCIVAL.</div>
+        <div class="price">from CAD&nbsp;$600<span class="u">/ month</span></div>
+        <ul class="feats">
+          <li><span class="ck">✓</span> Continuous attack-surface monitoring</li>
+          <li><span class="ck">✓</span> KEV / advisory watch for your stack</li>
+          <li><span class="ck">✓</span> Monthly executive risk report</li>
+          <li><span class="ck">✓</span> Priority response window</li>
+        </ul>
+        <div class="cta"><a class="cg-btn cg-btn--primary cg-btn--block" data-buy>Enquire →</a>
+          <div class="paynote" data-pay></div></div>
+      </article>
+    </div>
+
+    <div class="pay-explain">
+      <span>🔒</span>
+      <div><b>How payment works.</b> Reserve an engagement and we confirm scope on a short call. Pay whichever way suits you:
+        <b>Interac e‑Transfer</b> (Canada) to <a href="mailto:desmondotieno@icloud.com" style="color:#34d399">desmondotieno@icloud.com</a> —
+        auto‑deposited, no fees; secure <b>card checkout</b> per engagement as it's enabled; or a standard <b>invoice</b>.
+        Every button routes to a confirmed booking either way, so nothing blocks you from starting today.</div>
+    </div>
+
+    <div class="paymethods" id="paymethods" aria-label="Payment methods">
+      <div class="pm">
+        <div class="pm-h"><span class="pm-i">⇄</span> Interac e‑Transfer <span class="pm-live">LIVE</span></div>
+        <div class="pm-b">Send to <b>desmondotieno@icloud.com</b> with the engagement name in the message. Auto‑deposited to our account — no card fees.</div>
+        <a class="cg-btn cg-btn--secondary cg-btn--sm" id="etransfer" href="mailto:desmondotieno@icloud.com?subject=Interac%20e-Transfer%20%E2%80%94%20engagement&amp;body=Engagement%3A%20%0AAmount%20(CAD)%3A%20%0AOrganization%3A%20%0A%0AI'll%20send%20the%20Interac%20e-Transfer%20to%20desmondotieno%40icloud.com%20and%20include%20the%20engagement%20name%20in%20the%20message.">Get e‑Transfer details →</a>
+      </div>
+      <div class="pm">
+        <div class="pm-h"><span class="pm-i">▭</span> Card checkout <span class="pm-soon" id="cardState">PER ENGAGEMENT</span></div>
+        <div class="pm-b">Encrypted card payment on each engagement's button as it's enabled. Powered by Stripe — your card details never touch this site.</div>
+      </div>
+      <div class="pm">
+        <div class="pm-h"><span class="pm-i">§</span> Invoice</div>
+        <div class="pm-b">Prefer procurement / NET‑30? We issue a standard invoice after the scope call. Wire or e‑Transfer on receipt.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div class="sh">
+      <span class="eyebrow">How it works</span>
+      <h2>From first call to <strong>results.</strong></h2>
+      <p>A predictable engagement with clear deliverables at every stage.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="n">01</div><h3>Reserve</h3><p>Pick an engagement and send the prefilled booking request.</p></div>
+      <div class="step"><div class="n">02</div><h3>Scope call</h3><p>A 30-minute call confirms scope, timeline, and success criteria.</p></div>
+      <div class="step"><div class="n">03</div><h3>Execute</h3><p>We deliver the engagement against a fixed fee and clear milestones.</p></div>
+      <div class="step"><div class="n">04</div><h3>Report</h3><p>You receive prioritized findings, evidence, and a remediation roadmap.</p></div>
+    </div>
+    <div class="trust">
+      <span class="chip">Ontario, Canada</span>
+      <span class="chip">Fixed-fee · no surprises</span>
+      <span class="chip">PHIPA / privacy aware</span>
+      <span class="chip">CIS-aligned baselines</span>
+      <span class="chip">Evidence &amp; audit-ready</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    ClearGlass Inc. · Ontario · <a href="mailto:desmondotieno@icloud.com">desmondotieno@icloud.com</a>
+    &nbsp;·&nbsp; <a href="index.html">Home</a> &nbsp;·&nbsp; <a href="web-design.html">Web engineering</a> &nbsp;·&nbsp; <a href="offers/index.html">Full services</a>
+    <div style="margin-top:9px;color:var(--dim2)">Transparent pricing · book in minutes · start today.</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var EMAIL = "desmondotieno@icloud.com";
+
+  // ── PAYMENT CONFIG ───────────────────────────────────────────────────────
+  // Paste a Stripe Payment Link (https://buy.stripe.com/...) for any SKU to turn
+  // its button into live card checkout. Empty = books via confirmed-invoice flow.
+  // Live Stripe Payment Links — must stay identical to store.html, which the
+  // storefront smoke bot enforces: a SKU purchasable on one page and not the other
+  // is a broken promise to whichever visitor lands on the wrong one.
+  var CHECKOUT = {
+    "quick-audit": "https://buy.stripe.com/8x2eVe7ZG0mFam00LG4Ni03",
+    "hardening":   "https://buy.stripe.com/cNi7sMa7Ob1j2Ty8e84Ni04",
+    "phipa":       "https://buy.stripe.com/fZu14o6VC4CV0Lq9ic4Ni05",
+    "monitoring":  "https://buy.stripe.com/dRm28sa7OglDbq41PK4Ni06"
+  };
+
+  var LABEL = {
+    "quick-audit": "Security Quick-Audit (CAD $249)",
+    "hardening":   "M365 + Windows Hardening Sprint (from CAD $2,500)",
+    "phipa":       "PHIPA Readiness assessment (from CAD $3,000)",
+    "monitoring":  "Managed Monitoring (from CAD $600/mo)"
+  };
+
+  function booking(sku){
+    var subj = encodeURIComponent("Engagement: " + (LABEL[sku] || sku));
+    var body = encodeURIComponent(
+      "Hi ClearGlass,\n\nI'd like to reserve the following engagement:\n  • " + (LABEL[sku] || sku) +
+      "\n\nOrganization:\nName:\nBest time for a scope call:\n\nThanks.");
+    return "mailto:" + EMAIL + "?subject=" + subj + "&body=" + body;
+  }
+
+  document.querySelectorAll(".plan").forEach(function(plan){
+    var sku = plan.getAttribute("data-sku");
+    var a = plan.querySelector("[data-buy]");
+    var note = plan.querySelector("[data-pay]");
+    var link = CHECKOUT[sku];
+    if (link && /^https:\/\/(buy|book|checkout)\.stripe\.com\//.test(link)) {
+      a.setAttribute("href", link);
+      a.setAttribute("rel", "noopener");
+      a.textContent = "Secure checkout →";
+      note.textContent = "🔒 Stripe · encrypted card payment";
+    } else {
+      a.setAttribute("href", booking(sku));
+      note.textContent = "Confirmed booking · invoice on scope call";
+    }
+  });
+})();
+</script>
+<script defer src="control-surface.js"></script>
+<script defer src="ui.js"></script>
+<script defer src="platform.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="offers/index.html">Services &amp; Engagements</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="store.html"><span><b>Previous</b>ClearGlass Store</span></a>
+      <a href="offers/index.html"><span><b>Topic hub</b>Services &amp; Engagements</span></a>
+      <a href="plans.html"><span><b>Next in journey</b>Guardian Plans &amp; Pricing</span></a>
+    </div>
+    <ul>
+      <li><a href="plans.html"><b>Guardian Plans &amp; Pricing</b> — per-seat subscription tiers for the Guardian console</a></li>
+      <li><a href="workspace.html"><b>ClearGlass Workspace</b> — business email, storage and collaboration plans per person</a></li>
+      <li><a href="checkout/index.html"><b>Secure Checkout</b> — purchase an audit or protection plan</a></li>
+      <li><a href="seo-authority-hub.html"><b>Cybersecurity &amp; AI Automation in Burlington</b> — the local authority hub for ClearGlass services</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

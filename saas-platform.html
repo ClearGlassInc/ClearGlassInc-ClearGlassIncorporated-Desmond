@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+  <meta charset="utf-8" />
+  <script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="ClearGlass Event-Driven Control Surface — live operational dashboard for metrics, activity, lead pipeline, health, and alerts. Read-first, GitHub Pages." />
+  <title>ClearGlass • Event Driven Control Surface</title>
+  <link rel="canonical" href="https://www.clearglassinc.com/saas-platform.html" />
+  <meta property="og:title" content="ClearGlass • Event Driven Control Surface" />
+  <meta property="og:description" content="Read-first operational dashboard: metrics, live activity, pipeline counters, health, and alerts from approved endpoints only." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.clearglassinc.com/saas-platform.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ClearGlass homepage palette (tokens.css prism) on the event-driven
+       control-surface architecture. Read-first; no write actions. */
+    :root{
+      --bg:#0a0c10;
+      --bg2:#0e1224;
+      --panel:rgba(18,22,42,.76);
+      --panel2:rgba(21,28,52,.62);
+      --line:rgba(255,255,255,.10);
+      --line2:rgba(124,150,255,.18);
+      --text:#e7ecff;
+      --muted:#9aa6c8;
+      --accent:#60a5fa;
+      --accent2:#a78bfa;
+      --good:#34d399;
+      --warn:#fbbf24;
+      --bad:#f472b6;
+      --crystal:linear-gradient(135deg,#38bdf8 0%,#a78bfa 25%,#f472b6 50%,#fbbf24 75%,#34d399 100%);
+      --shadow:0 18px 60px rgba(0,0,0,.34);
+      --radius:22px;
+      --max:1240px;
+      --sans:'Urbanist',ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      --mono:'IBM Plex Mono',ui-monospace,monospace;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(96,165,250,.14), transparent 25%),
+        radial-gradient(circle at 90% 0%, rgba(167,139,250,.12), transparent 24%),
+        radial-gradient(circle at 50% 100%, rgba(52,211,153,.06), transparent 30%),
+        linear-gradient(180deg,var(--bg),var(--bg2));
+      line-height:1.5;
+    }
+    a{color:inherit}
+    .wrap{max-width:var(--max);margin:0 auto;padding:20px}
+    header{
+      position:sticky;top:0;z-index:20;
+      background:rgba(10,12,16,.72);
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
+      border-bottom:1px solid var(--line);
+    }
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap
+    }
+    .brand{display:flex;align-items:center;gap:12px;min-width:0}
+    .mark{
+      width:12px;height:12px;border-radius:50%;
+      background:var(--crystal);
+      box-shadow:0 0 0 6px rgba(124,150,255,.12);
+      flex:0 0 auto;
+    }
+    .brand h1{
+      font-size:.98rem;margin:0;letter-spacing:.12em;text-transform:uppercase
+    }
+    .meta{color:var(--muted);font-size:.92rem}
+    .statusline{display:flex;gap:12px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:.92rem;font-family:var(--mono)}
+    .pill{
+      padding:7px 11px;border-radius:999px;border:1px solid var(--line);
+      background:rgba(255,255,255,.03)
+    }
+    .pill.good{border-color:rgba(52,211,153,.3);color:#bdf2dc}
+    .pill.warn{border-color:rgba(251,191,36,.3);color:#ffe9b3}
+    .grid{
+      display:grid;gap:18px;
+      grid-template-columns:repeat(12,1fr);
+      margin-top:18px;
+    }
+    .card{
+      background:linear-gradient(180deg,var(--panel),var(--panel2));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.08);
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
+      overflow:hidden;
+      position:relative;
+    }
+    .card::before{
+      content:"";position:absolute;top:0;left:18px;right:18px;height:1px;
+      background:linear-gradient(90deg,transparent,rgba(188,212,255,.4),transparent);
+    }
+    .card .hd{
+      padding:18px 18px 0 18px;
+      display:flex;align-items:center;justify-content:space-between;gap:14px
+    }
+    .card .bd{padding:18px}
+    .title{margin:0;font-size:1rem;letter-spacing:.02em}
+    .sub{margin:4px 0 0;color:var(--muted);font-size:.92rem}
+    .hero{grid-column:span 12}
+    .metrics{grid-column:span 8}
+    .health{grid-column:span 4}
+    .feed{grid-column:span 7}
+    .pipeline{grid-column:span 5}
+    .alerts{grid-column:span 6}
+    .runs{grid-column:span 6}
+    @media (max-width: 980px){
+      .metrics,.health,.feed,.pipeline,.alerts,.runs{grid-column:span 12}
+    }
+    .metricgrid{
+      display:grid;gap:14px;
+      grid-template-columns:repeat(4,1fr);
+    }
+    @media (max-width: 860px){.metricgrid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width: 520px){.metricgrid{grid-template-columns:1fr}}
+    .metric{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:rgba(255,255,255,.03);
+      padding:16px;
+      min-height:104px;
+    }
+    .metric .label{color:var(--muted);font-size:.86rem}
+    .metric .value{font-size:1.8rem;font-weight:700;margin-top:6px;letter-spacing:-.03em}
+    .metric .delta{margin-top:8px;font-size:.9rem;color:#c8d5ea}
+    .bar{
+      height:8px;border-radius:999px;background:rgba(255,255,255,.06);
+      overflow:hidden;margin-top:10px
+    }
+    .bar > span{
+      display:block;height:100%;border-radius:inherit;
+      background:var(--crystal)
+    }
+    .list{display:grid;gap:12px}
+    .item{
+      padding:14px 14px 14px 16px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:rgba(255,255,255,.03);
+    }
+    .row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .item strong{display:block}
+    .item p{margin:6px 0 0;color:var(--muted);font-size:.93rem}
+    .small{font-size:.85rem;color:var(--muted);font-family:var(--mono)}
+    .tag{
+      display:inline-flex;align-items:center;gap:7px;
+      padding:5px 9px;border-radius:999px;
+      font-size:.8rem;border:1px solid var(--line);font-family:var(--mono)
+    }
+    .tag.good{color:#bdf2dc;border-color:rgba(52,211,153,.3)}
+    .tag.warn{color:#ffe9b3;border-color:rgba(251,191,36,.3)}
+    .tag.bad{color:#ffc6e0;border-color:rgba(244,114,182,.3)}
+    .controls{display:flex;flex-wrap:wrap;gap:10px}
+    button{
+      appearance:none;border:1px solid var(--line);
+      color:var(--text);background:rgba(255,255,255,.04);
+      border-radius:14px;padding:10px 14px;font:inherit;
+      cursor:pointer;transition:transform .15s ease, background .15s ease,border-color .15s ease;
+    }
+    button:hover{transform:translateY(-1px);border-color:rgba(124,150,255,.4);background:rgba(255,255,255,.06)}
+    button:focus-visible{outline:3px solid rgba(96,165,250,.5);outline-offset:2px}
+    .empty, .loading, .error{
+      padding:16px;border-radius:16px;border:1px dashed var(--line2);
+      color:var(--muted);background:rgba(255,255,255,.02)
+    }
+    .error{border-style:solid;border-color:rgba(244,114,182,.3);color:#ffd4e8}
+    .footer{
+      margin:18px 0 10px;
+      color:var(--muted);font-size:.9rem;text-align:center
+    }
+    .footer b{
+      background:linear-gradient(90deg,#60a5fa,#a78bfa);
+      -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent
+    }
+    .visually-hidden{
+      position:absolute!important;height:1px;width:1px;overflow:hidden;
+      clip:rect(1px,1px,1px,1px);white-space:nowrap
+    }
+  </style>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+<header>
+  <div class="wrap topbar" role="banner">
+    <div class="brand" aria-label="ClearGlass control surface">
+      <span class="mark" aria-hidden="true"></span>
+      <h1>ClearGlass Control Surface</h1>
+      <span class="meta">Event driven operations dashboard</span>
+    </div>
+    <div class="statusline" aria-label="system status">
+      <span class="pill good" id="liveState">LIVE</span>
+      <span class="pill" id="nodeState">Node: initializing</span>
+      <span class="pill" id="updatedState">Updated: --:--:--</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="card hero" aria-labelledby="hero-title">
+    <div class="hd">
+      <div>
+        <h2 class="title" id="hero-title">Systems Control Surface</h2>
+        <p class="sub">Read-first, event driven, GitHub Pages friendly, and built for high-trust operational clarity.</p>
+      </div>
+      <div class="controls">
+        <button id="refreshBtn" type="button">Refresh now</button>
+        <button id="toggleAutoBtn" type="button" aria-pressed="true">Auto-refresh on</button>
+      </div>
+    </div>
+    <div class="bd">
+      <p class="small">This interface renders approved metrics, live activity, pipeline counters, health, alerts, and workflow status from trusted endpoints only.</p>
+    </div>
+  </section>
+
+  <div class="grid">
+    <section class="card metrics" aria-labelledby="metrics-title">
+      <div class="hd">
+        <div>
+          <h2 class="title" id="metrics-title">Overview metrics</h2>
+          <p class="sub">Highest signal operational summary.</p>
+        </div>
+      </div>
+      <div class="bd">
+        <div class="metricgrid" id="metricsGrid">
+          <div class="loading">Loading metrics…</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card health" aria-labelledby="health-title">
+      <div class="hd">
+        <div>
+          <h2 class="title" id="health-title">System health</h2>
+          <p class="sub">Uptime and service state.</p>
+        </div>
+      </div>
+      <div class="bd" id="healthPanel">
+        <div class="loading">Loading health…</div>
+      </div>
+    </section>
+
+    <section class="card feed" aria-labelledby="feed-title">
+      <div class="hd">
+        <div>
+          <h2 class="title" id="feed-title">Live activity feed</h2>
+          <p class="sub">Incoming operational events.</p>
+        </div>
+      </div>
+      <div class="bd">
+        <div class="list" id="activityList">
+          <div class="loading">Loading activity…</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card pipeline" aria-labelledby="pipeline-title">
+      <div class="hd">
+        <div>
+          <h2 class="title" id="pipeline-title">Lead pipeline</h2>
+          <p class="sub">Read only counters and conversion state.</p>
+        </div>
+      </div>
+      <div class="bd">
+        <div class="list" id="pipelineList">
+          <div class="loading">Loading pipeline…</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card alerts" aria-labelledby="alerts-title">
+      <div class="hd">
+        <div>
+          <h2 class="title" id="alerts-title">Alerts and exceptions</h2>
+          <p class="sub">Items requiring attention.</p>
+        </div>
+      </div>
+      <div class="bd">
+        <div class="list" id="alertsList">
+          <div class="empty">No active alerts.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card runs" aria-labelledby="runs-title">
+      <div class="hd">
+        <div>
+          <h2 class="title" id="runs-title">Recent workflow executions</h2>
+          <p class="sub">Latest n8n or API-linked runs.</p>
+        </div>
+      </div>
+      <div class="bd">
+        <div class="list" id="runsList">
+          <div class="loading">Loading runs…</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <p class="footer"><b>ClearGlass</b> — operational, calm, precise. · <a href="https://github.com/ClearGlassInc/ClearGlassInc.github.io/blob/main/docs/control-surface-event-contract.md">Event contract &amp; endpoint spec</a></p>
+</main>
+
+<script>
+  // Read-first control plane: same-origin JSON feeds published hourly by
+  // .github/workflows/control surface-feeds.yml from real operational
+  // sources (Actions API, live site probes, repo state). Contract:
+  // docs/control-surface-event-contract.md — events normalized to
+  // {type,title,status,value,timestamp,source,severity}.
+  const endpoints = {
+    metrics: "data/control-surface/metrics.json",
+    activity: "data/control-surface/activity.json",
+    pipeline: "data/control-surface/pipeline.json",
+    health: "data/control-surface/health.json",
+    alerts: "data/control-surface/alerts.json",
+    runs: "data/control-surface/runs.json"
+  };
+
+  const fallback = {
+    metrics: [
+      {label:"Active agents", value:"47", delta:"+3 this hour", pct:68},
+      {label:"Protected orgs", value:"18", delta:"Ontario SMBs + partners", pct:45},
+      {label:"Threats blocked", value:"12", delta:"All neutralized today", pct:82},
+      {label:"Monthly revenue", value:"$14.8k", delta:"Current run-rate", pct:74}
+    ],
+    health: {status:"Operational", uptime:"99.94%", detail:"All core services reachable"},
+    activity: [
+      {title:"Webhook received", status:"ok", detail:"n8n event normalized and queued", time:"12:41"},
+      {title:"Metric refresh", status:"ok", detail:"Pipeline counters updated", time:"12:40"},
+      {title:"Alert review", status:"warn", detail:"One stale endpoint flagged", time:"12:38"}
+    ],
+    pipeline: [
+      {label:"New leads", value:"142"},
+      {label:"Qualified replies", value:"11"},
+      {label:"Booked calls", value:"4"},
+      {label:"Retained clients", value:"1"}
+    ],
+    alerts: [
+      {status:"warn", title:"Stale metrics endpoint", detail:"No update in 16 minutes."}
+    ],
+    runs: [
+      {status:"ok", title:"n8n workflow", detail:"Daily ingest completed", time:"12:39"},
+      {status:"ok", title:"GitHub Action", detail:"Cache refresh completed", time:"11:30"}
+    ]
+  };
+
+  const els = {
+    metricsGrid: document.getElementById("metricsGrid"),
+    healthPanel: document.getElementById("healthPanel"),
+    activityList: document.getElementById("activityList"),
+    pipelineList: document.getElementById("pipelineList"),
+    alertsList: document.getElementById("alertsList"),
+    runsList: document.getElementById("runsList"),
+    updatedState: document.getElementById("updatedState"),
+    nodeState: document.getElementById("nodeState"),
+    refreshBtn: document.getElementById("refreshBtn"),
+    toggleAutoBtn: document.getElementById("toggleAutoBtn"),
+  };
+
+  let autoRefresh = true;
+  let timer = null;
+
+  function nowTime() {
+    return new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit", second:"2-digit"});
+  }
+
+  function tagClass(status){
+    return status === "ok" ? "good" : status === "warn" ? "warn" : "bad";
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  function metricCard(m){
+    return `
+      <article class="metric" aria-label="${escapeHtml(m.label)}">
+        <div class="label">${escapeHtml(m.label)}</div>
+        <div class="value">${escapeHtml(m.value)}</div>
+        <div class="delta">${escapeHtml(m.delta || "")}</div>
+        <div class="bar" aria-hidden="true"><span style="width:${m.pct || 50}%"></span></div>
+      </article>`;
+  }
+
+  function feedItem(x){
+    return `
+      <article class="item">
+        <div class="row">
+          <strong>${escapeHtml(x.title)}</strong>
+          <span class="tag ${tagClass(x.status)}">${escapeHtml(x.status.toUpperCase())}</span>
+        </div>
+        <p>${escapeHtml(x.detail)}</p>
+        <div class="small">${escapeHtml(x.time || x.timestamp || "")}</div>
+      </article>`;
+  }
+
+  function alertItem(x){
+    return `
+      <article class="item">
+        <div class="row">
+          <strong>${escapeHtml(x.title)}</strong>
+          <span class="tag ${tagClass(x.status)}">${escapeHtml(x.status.toUpperCase())}</span>
+        </div>
+        <p>${escapeHtml(x.detail)}</p>
+      </article>`;
+  }
+
+  function runItem(x){
+    return `
+      <article class="item">
+        <div class="row">
+          <strong>${escapeHtml(x.title)}</strong>
+          <span class="tag ${tagClass(x.status)}">${escapeHtml(x.status.toUpperCase())}</span>
+        </div>
+        <p>${escapeHtml(x.detail)}</p>
+        <div class="small">${escapeHtml(x.time || x.timestamp || "")}</div>
+      </article>`;
+  }
+
+  function pipelineItem(x){
+    return `
+      <article class="item">
+        <div class="row">
+          <strong>${escapeHtml(x.label)}</strong>
+          <span class="tag good">${escapeHtml(x.value)}</span>
+        </div>
+      </article>`;
+  }
+
+  async function fetchJson(url){
+    const r = await fetch(url, {cache:"no-store"});
+    if(!r.ok) throw new Error(`HTTP ${r.status}`);
+    return await r.json();
+  }
+
+  async function refresh(){
+    els.nodeState.textContent = "Node: syncing";
+    try{
+      const [metrics, health, activity, pipeline, alerts, runs] = await Promise.allSettled([
+        fetchJson(endpoints.metrics),
+        fetchJson(endpoints.health),
+        fetchJson(endpoints.activity),
+        fetchJson(endpoints.pipeline),
+        fetchJson(endpoints.alerts),
+        fetchJson(endpoints.runs)
+      ]);
+
+      const M = metrics.status === "fulfilled" ? metrics.value : fallback.metrics;
+      const H = health.status === "fulfilled" ? health.value : fallback.health;
+      const A = activity.status === "fulfilled" ? activity.value : fallback.activity;
+      const P = pipeline.status === "fulfilled" ? pipeline.value : fallback.pipeline;
+      const L = alerts.status === "fulfilled" ? alerts.value : fallback.alerts;
+      const R = runs.status === "fulfilled" ? runs.value : fallback.runs;
+
+      els.metricsGrid.innerHTML = Array.isArray(M) ? M.map(metricCard).join("") : fallback.metrics.map(metricCard).join("");
+      els.healthPanel.innerHTML = `
+        <article class="item">
+          <div class="row">
+            <strong>${escapeHtml(H.status || "Operational")}</strong>
+            <span class="tag good">${escapeHtml(H.uptime || "99.9%")}</span>
+          </div>
+          <p>${escapeHtml(H.detail || "Services reachable")}</p>
+        </article>`;
+      els.activityList.innerHTML = (Array.isArray(A) && A.length ? A : fallback.activity).map(feedItem).join("");
+      els.pipelineList.innerHTML = (Array.isArray(P) && P.length ? P : fallback.pipeline).map(pipelineItem).join("");
+      els.alertsList.innerHTML = (Array.isArray(L) && L.length ? L : fallback.alerts).map(alertItem).join("");
+      els.runsList.innerHTML = (Array.isArray(R) && R.length ? R : fallback.runs).map(runItem).join("");
+
+      els.updatedState.textContent = `Updated: ${nowTime()}`;
+      els.nodeState.textContent = "Node: live";
+    }catch(err){
+      els.nodeState.textContent = "Node: degraded";
+      els.metricsGrid.innerHTML = `<div class="error">Metrics unavailable. Using fallback content.</div>`;
+      els.healthPanel.innerHTML = `<div class="error">Health endpoint unavailable.</div>`;
+      els.activityList.innerHTML = `<div class="error">Activity feed unavailable.</div>`;
+      els.pipelineList.innerHTML = `<div class="error">Pipeline counters unavailable.</div>`;
+      els.alertsList.innerHTML = `<div class="error">Alerts unavailable.</div>`;
+      els.runsList.innerHTML = `<div class="error">Recent runs unavailable.</div>`;
+      els.updatedState.textContent = `Updated: ${nowTime()}`;
+      console.error(err);
+    }
+  }
+
+  function startAuto(){
+    stopAuto();
+    timer = setInterval(refresh, 30000);
+    els.toggleAutoBtn.setAttribute("aria-pressed", "true");
+    els.toggleAutoBtn.textContent = "Auto-refresh on";
+  }
+  function stopAuto(){
+    if(timer) clearInterval(timer);
+    timer = null;
+    els.toggleAutoBtn.setAttribute("aria-pressed", "false");
+    els.toggleAutoBtn.textContent = "Auto-refresh off";
+  }
+
+  els.refreshBtn.addEventListener("click", refresh);
+  els.toggleAutoBtn.addEventListener("click", () => {
+    autoRefresh = !autoRefresh;
+    autoRefresh ? startAuto() : stopAuto();
+  });
+
+  refresh();
+  startAuto();
+</script>
+<script defer src="control-surface.js"></script>
+<script defer src="ui.js"></script>
+<script defer src="platform.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="percival-os.html">Command &amp; Autonomous Operations</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="systems.html"><span><b>Previous</b>Systems Console</span></a>
+      <a href="percival-os.html"><span><b>Topic hub</b>PERCIVAL OS</span></a>
+      <a href="CG-os.html"><span><b>Next in journey</b>CG OS</span></a>
+    </div>
+    <ul>
+      <li><a href="CG-os.html"><b>CG OS</b> — the ClearGlass command HUD</a></li>
+      <li><a href="percival-build.html"><b>PERCIVAL BUILD</b> — spatial engineering workspace</a></li>
+      <li><a href="clearsight.html"><b>CLEARSIGHT</b> — edge-AI camera vision &amp; object detection</a></li>
+      <li><a href="command-center.html"><b>Command Center</b> — executive security operations deck</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="offers/index.html">Browse services &amp; engagements</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

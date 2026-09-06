@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<link rel="canonical" href="https://www.clearglassinc.com/stegoforge.html">
+<meta property="og:title" content="StegoForge | ClearGlass Inc">
+<meta property="og:description" content="StegoForge is a steganography toolkit for embedding and extracting hidden data.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.clearglassinc.com/stegoforge.html">
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>STEGOFORGE · ClearGlassInc Artemis Cybersecurity Terminal</title>
+<meta name="description" content="STEGOFORGE is the futuristic cybersecurity terminal for ClearGlassInc Artemis with steganography, AES-256-GCM workflows, covert channels, and forensic AI."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#04040b;--panel:#0b0f1f;--blue:#1ecbff;--violet:#9c6bff;--cyan:#52fff4;--text:#d7e9ff;--muted:#89a4c4;--danger:#ff5db1;--ok:#58ff95}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:radial-gradient(circle at 20% 10%,rgba(30,203,255,.16),transparent 35%),radial-gradient(circle at 78% 8%,rgba(156,107,255,.24),transparent 42%),linear-gradient(160deg,#050511 0%,#06071a 50%,#03040d 100%);color:var(--text);font-family:'Share Tech Mono',monospace;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(transparent 96%,rgba(82,255,244,.06) 97%);background-size:100% 4px;mix-blend-mode:screen;animation:scan 10s linear infinite}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(90deg,rgba(255,255,255,.02),rgba(255,255,255,.02) 1px,transparent 1px,transparent 80px);opacity:.25}
+@keyframes scan{from{transform:translateY(-20%)}to{transform:translateY(20%)}}
+.wrapper{width:min(1300px,94vw);margin:2.4rem auto;padding:1rem}
+.topbar{display:flex;justify-content:space-between;align-items:center;border:1px solid rgba(156,107,255,.35);border-radius:14px;padding:10px 16px;background:linear-gradient(145deg,rgba(11,15,31,.8),rgba(6,8,20,.85));box-shadow:0 0 30px rgba(30,203,255,.15)}
+.brand{font-family:'Orbitron',sans-serif;font-size:clamp(1.8rem,6vw,4rem);font-weight:900;letter-spacing:.16em;background:linear-gradient(90deg,var(--blue),var(--violet),var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 18px rgba(30,203,255,.45),0 0 34px rgba(156,107,255,.4);animation:glitch 3.2s infinite}
+@keyframes glitch{0%,100%{transform:translateX(0)}2%{transform:translateX(2px)}3%{transform:translateX(-2px)}4%{transform:translateX(0)}}
+.status{font-size:.9rem;color:var(--muted)}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-top:16px}
+.panel{background:linear-gradient(160deg,rgba(10,14,30,.9),rgba(6,9,23,.86));border:1px solid rgba(30,203,255,.2);border-radius:14px;padding:14px;position:relative;overflow:hidden}
+.panel::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent,rgba(82,255,244,.04),transparent);transform:translateX(-100%);animation:sheen 9s linear infinite}
+@keyframes sheen{to{transform:translateX(120%)}}
+.section-title{font-family:'Orbitron',sans-serif;color:var(--blue);font-size:.95rem;letter-spacing:.15em;margin-bottom:10px}
+.log{height:430px;overflow:auto;font-size:.9rem;line-height:1.5;color:#b7ceea;padding-right:8px}
+.log p{padding:2px 0;white-space:nowrap}
+.log p span{color:var(--cyan)}
+.log p.warn span{color:var(--danger)}
+.log p.ok span{color:var(--ok)}
+.modules{display:grid;grid-template-columns:repeat(2,minmax(150px,1fr));gap:10px;margin-top:8px}
+.mod{border:1px solid rgba(156,107,255,.35);border-radius:10px;padding:10px;background:rgba(11,14,30,.65)}
+.mod h3{font-family:'Orbitron',sans-serif;font-size:.8rem;color:#c9b8ff;margin-bottom:6px}
+.mod p{font-size:.82rem;color:var(--muted)}
+.commands{margin-top:12px;border:1px solid rgba(30,203,255,.3);border-radius:12px;padding:10px;background:rgba(5,8,20,.7)}
+.cmd-title{font-family:'Orbitron',sans-serif;font-size:.78rem;letter-spacing:.16em;color:var(--cyan);margin-bottom:8px}
+.menu{display:grid;grid-template-columns:repeat(3,minmax(90px,1fr));gap:8px}
+.menu button{font-family:'Share Tech Mono',monospace;font-size:.9rem;letter-spacing:.06em;padding:10px;border-radius:8px;border:1px solid rgba(82,255,244,.35);background:linear-gradient(160deg,rgba(20,42,63,.55),rgba(12,14,35,.8));color:#d4f7ff;cursor:pointer;transition:.2s}
+.menu button:hover{transform:translateY(-1px);border-color:var(--blue);box-shadow:0 0 18px rgba(30,203,255,.25)}
+.stream{margin-top:14px;height:84px;border-radius:10px;border:1px solid rgba(30,203,255,.3);background:linear-gradient(90deg,rgba(30,203,255,.15),rgba(156,107,255,.2),rgba(30,203,255,.15));position:relative;overflow:hidden}
+.stream::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.09),rgba(255,255,255,.09) 2px,transparent 2px,transparent 26px);animation:flow 3s linear infinite}
+@keyframes flow{from{transform:translateX(-26px)}to{transform:translateX(0)}}
+.footer-note{margin-top:12px;font-size:.82rem;color:var(--muted)}
+@media (max-width:920px){.grid{grid-template-columns:1fr}.log{height:300px}.menu{grid-template-columns:repeat(2,minmax(90px,1fr))}}
+</style>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+  <main class="wrapper">
+    <header class="topbar">
+      <h1 class="brand">STEGOFORGE</h1>
+      <div class="status">CLEARGLASSINC ARTEMIS // AI-DRIVEN FORENSIC COMMAND // UPLINK STABLE</div>
+    </header>
+
+    <section class="grid">
+      <article class="panel">
+        <h2 class="section-title">SYSTEM INITIALIZATION LOGS</h2>
+        <div class="log" id="logPane">
+          <p><span>[BOOT]</span> Kernel handshake complete · Runtime profile: DARPA-OPS-L7</p>
+          <p><span>[AI]</span> Forensic copilot lattice instantiated (triage, correlate, recommend)</p>
+          <p><span>[CRYPTO]</span> AES-256-GCM engine mounted · Key provenance verified</p>
+          <p><span>[STEGO]</span> Adaptive pixel-map encoder seeded with entropy mask</p>
+          <p><span>[COVERT]</span> Covert network channel multiplexer online · jitter randomization active</p>
+          <p><span>[DFIR]</span> Forensic invisibility toolkit loaded · anti-tamper beacons armed</p>
+          <p><span>[SCAN]</span> Metadata ghosting analyzer running across image/audio containers</p>
+          <p class="ok"><span>[OK]</span> Chain-of-custody ledger append confirmed</p>
+          <p class="warn"><span>[ALERT]</span> Simulated hostile beacon detected in sandbox subnet</p>
+          <p><span>[RESP]</span> Autonomous recommendation prepared — awaiting operator approval</p>
+        </div>
+
+        <div class="commands">
+          <div class="cmd-title">COMMAND MENU</div>
+          <div class="menu">
+            <button>ENCODE</button><button>DECODE</button><button>DETECT</button>
+            <button>SCAN</button><button>ENCRYPT</button><button>DIFF</button>
+          </div>
+        </div>
+      </article>
+
+      <aside class="panel">
+        <h2 class="section-title">CRYPTOGRAPHIC + FORENSIC MODULES</h2>
+        <div class="modules">
+          <div class="mod"><h3>Steganography Encoding</h3><p>Carrier optimization, payload dispersion, bit-plane shaping, deniable extraction.</p></div>
+          <div class="mod"><h3>AES-256-GCM</h3><p>Authenticated encryption with rotating nonces and mission-scoped key material.</p></div>
+          <div class="mod"><h3>Covert Channels</h3><p>Low-signature transport over blended protocol envelopes with anomaly camouflage.</p></div>
+          <div class="mod"><h3>Forensic Invisibility</h3><p>Artifact minimization, timestomp mitigation alerts, immutable provenance traces.</p></div>
+          <div class="mod"><h3>AI Correlation</h3><p>Cross-domain graph reasoning for signal fusion and threat intent scoring.</p></div>
+          <div class="mod"><h3>Live Diff Engine</h3><p>Temporal delta extraction for image, packet, and metadata-level evidence drift.</p></div>
+        </div>
+        <div class="stream" aria-hidden="true"></div>
+        <p class="footer-note">Holographic overlays and glitch telemetry simulate continuous battlefield-grade cyber activity.</p>
+      </aside>
+    </section>
+  </main>
+
+<script>
+const pane = document.getElementById('logPane');
+const events = [
+  '[STEGO] Wavelet embedding profile auto-tuned for anti-detection stealth',
+  '[CRYPTO] Session rekey complete — AES-256-GCM nonce stream rotated',
+  '[AI] Forensic triage agent linked entity graph to case #ARC-7741',
+  '[COVERT] Channel noise normalization passed · packet camouflage stable',
+  '[SCAN] Deep container scan found 0 unresolved hidden payload conflicts',
+  '[DFIR] Evidence locker sync complete with immutable chain-of-custody hash'
+];
+setInterval(()=>{
+  const row = document.createElement('p');
+  row.innerHTML = `<span>[LIVE]</span> ${events[Math.floor(Math.random()*events.length)]}`;
+  pane.appendChild(row);
+  if (pane.children.length > 24) pane.removeChild(pane.children[0]);
+  pane.scrollTop = pane.scrollHeight;
+}, 1700);
+</script>
+<script defer src="control-surface.js"></script>
+  <script defer src="ui.js"></script>
+  <script defer src="platform.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="cyber-defense-console.html">Cyber Defense &amp; Security Operations</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="artemis-blue-team.html"><span><b>Previous</b>Artemis Blue Team</span></a>
+      <a href="cyber-defense-console.html"><span><b>Topic hub</b>Cyber Defense Console</span></a>
+      <a href="attack-prompt-core.html"><span><b>Next in journey</b>ATT&amp;CK Prompt Integrator</span></a>
+    </div>
+    <ul>
+      <li><a href="attack-prompt-core.html"><b>ATT&amp;CK Prompt Integrator</b> — MITRE ATT&amp;CK-aligned analysis prompts</a></li>
+      <li><a href="environmental-cyber-risk.html"><b>Environmental Cyber-Risk</b> — OT and environmental threat monitoring</a></li>
+      <li><a href="bluedesk-mobile.html"><b>BLUEDESK Mobile</b> — the CISO risk console on a phone-first canvas</a></li>
+      <li><a href="sentinel.html"><b>SENTINEL</b> — live geospatial security command center</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="offers/security-quick-audit.html">Start with the $249 Security Quick-Audit</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

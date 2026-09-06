@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>ClearGlass Critical Minerals Intelligence | Canada Supply-Chain Risk</title>
+  <meta name="description" content="ClearGlass Critical Minerals Intelligence provides source-transparent mineral profiles, feed health, policy monitoring, supply-concentration tools, scenario analysis, and compliance decision support.">
+  <link rel="canonical" href="https://www.clearglassinc.com/minerals.html">
+  <meta property="og:title" content="ClearGlass Critical Minerals Intelligence">
+  <meta property="og:description" content="Transparent critical-minerals intelligence, provenance, risk analytics, and compliance decision support.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.clearglassinc.com/minerals.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="/minerals.css">
+  <script src="/minerals.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to critical minerals intelligence</a>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="ClearGlass home">
+      <span class="brand-mark" aria-hidden="true">CG</span>
+      <span><strong>ClearGlass</strong><small>Critical Minerals Intelligence</small></span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <a href="/">Home</a>
+      <a href="/products.html">Products</a>
+      <a href="/store.html">Store</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main id="main-content">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="eyebrow">CLEARGLASS // MINERALS INTELLIGENCE</div>
+      <h1 id="page-title">Critical Minerals Intelligence</h1>
+      <p class="hero-copy">A public-data-safe command surface for source provenance, feed health, policy monitoring, deterministic analytics, and compliance decision support. Missing data is reported as <strong>UNKNOWN</strong>; unavailable feeds are never presented as live.</p>
+      <div class="hero-actions">
+        <a class="button primary" href="#mineral-search">Search minerals</a>
+        <a class="button" href="#feed-health">Inspect feed health</a>
+      </div>
+    </section>
+
+    <section class="status-panel glass" aria-labelledby="system-status-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">OPERATIONS STATUS</p>
+          <h2 id="system-status-title">System health</h2>
+        </div>
+        <span id="system-status-badge" class="status unknown">LOADING</span>
+      </div>
+      <div class="status-grid" aria-live="polite">
+        <div><span>System status</span><strong id="system-status">LOADING</strong></div>
+        <div><span>Feeds healthy</span><strong id="feeds-healthy">—</strong></div>
+        <div><span>Feeds degraded</span><strong id="feeds-degraded">—</strong></div>
+        <div><span>Last sync</span><strong id="last-sync">—</strong></div>
+        <div><span>Data pipeline</span><strong id="pipeline-status">LOADING</strong></div>
+        <div><span>Manifest version</span><strong id="manifest-version">—</strong></div>
+      </div>
+      <p id="manifest-message" class="state-message">Loading manifest…</p>
+    </section>
+
+    <section id="mineral-search" class="section-block" aria-labelledby="mineral-search-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">MINERAL DIRECTORY</p>
+          <h2 id="mineral-search-title">Searchable mineral intelligence</h2>
+        </div>
+        <span id="mineral-count" class="counter">0 minerals</span>
+      </div>
+      <label class="search-box" for="mineral-query">
+        <span>Search by mineral, symbol, category, or industrial use</span>
+        <input id="mineral-query" type="search" autocomplete="off" placeholder="Lithium, copper, rare earth elements…">
+      </label>
+      <div id="mineral-grid" class="mineral-grid" aria-live="polite">
+        <div class="skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton-card" aria-hidden="true"></div>
+      </div>
+      <p id="mineral-empty" class="state-message" hidden>No matching minerals.</p>
+    </section>
+
+    <section id="feed-health" class="section-block glass" aria-labelledby="feed-health-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">DATA PROVENANCE</p>
+          <h2 id="feed-health-title">Feed health and freshness</h2>
+        </div>
+      </div>
+      <div class="table-shell" tabindex="0" role="region" aria-label="Critical minerals data feed health table">
+        <table>
+          <thead>
+            <tr><th>Feed</th><th>Provider</th><th>Cadence</th><th>Status</th><th>Source update</th><th>Retrieved</th><th>Records</th></tr>
+          </thead>
+          <tbody id="feed-table-body">
+            <tr><td colspan="7">Loading feed manifest…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="legal-note">Status is derived from manifest metadata and expected publishing cadence. “Live” is used only when a source is actually delivering appropriately fresh data.</p>
+    </section>
+
+    <section class="analytics-grid section-block" aria-label="Deterministic mineral analytics">
+      <article class="glass analytics-card">
+        <p class="eyebrow">SUPPLY CONCENTRATION</p>
+        <h2>HHI calculator</h2>
+        <p>Enter market or production shares as percentages. This calculator uses only the values you provide.</p>
+        <label for="share-input">Shares, comma separated</label>
+        <input id="share-input" type="text" inputmode="decimal" placeholder="60, 20, 10, 10">
+        <button id="calculate-hhi" class="button primary" type="button">Calculate concentration</button>
+        <div id="hhi-result" class="result-panel" aria-live="polite">Awaiting input.</div>
+      </article>
+
+      <article class="glass analytics-card">
+        <p class="eyebrow">WHAT-IF ANALYSIS</p>
+        <h2>Supply shock scenario</h2>
+        <p>Scenario analysis is deterministic and user-supplied. It is not a forecast.</p>
+        <label for="producer-share">Affected producer share (%)</label>
+        <input id="producer-share" type="number" min="0" max="100" step="0.1" value="25">
+        <label for="output-shock">Output reduction (%)</label>
+        <input id="output-shock" type="number" min="0" max="100" step="0.1" value="20">
+        <button id="calculate-scenario" class="button primary" type="button">Run scenario</button>
+        <div id="scenario-result" class="result-panel" aria-live="polite">SCENARIO ANALYSIS — NOT A FORECAST</div>
+      </article>
+    </section>
+
+    <section class="section-block glass" aria-labelledby="policy-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">POLICY RADAR</p>
+          <h2 id="policy-title">Authoritative policy and news signals</h2>
+        </div>
+        <span id="policy-status" class="status unknown">LOADING</span>
+      </div>
+      <div id="policy-list" class="policy-list" aria-live="polite">
+        <p class="state-message">Loading policy feed…</p>
+      </div>
+    </section>
+
+    <section class="section-block compliance" aria-labelledby="compliance-title">
+      <div>
+        <p class="eyebrow">COMPLIANCE BOUNDARY</p>
+        <h2 id="compliance-title">Decision support, not legal determination</h2>
+      </div>
+      <p>The ClearGlass Minerals surface supports risk-based due diligence, source provenance, supplier identification, risk assessment, mitigation, audit, reporting, and continuous monitoring. Sanctions and export-control information is decision-support only. Formal compliance determinations require qualified legal and regulatory review.</p>
+      <div class="provenance-legend" aria-label="Provenance levels">
+        <span>DECLARED</span><span>DOCUMENTED</span><span>VERIFIED</span><span>INDEPENDENTLY VERIFIED</span><span>UNKNOWN</span>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>ClearGlass Inc. · Critical Minerals Intelligence · Public-data-safe architecture</p>
+    <p><a href="/legal/privacy.html">Privacy</a> · <a href="/legal/terms.html">Terms</a> · <a href="/#contact">Contact</a></p>
+  </footer>
+</body>
+</html>

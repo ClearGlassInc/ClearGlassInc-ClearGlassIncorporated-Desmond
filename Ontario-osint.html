@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>ClearGlassInc · Ontario OSINT Control Deck</title>
+<meta name="description" content="Ontario crime & governance OSINT control deck — live status stream, investigation task queue with optimistic updates, and a cited crime-intel feed sourced."/>
+<link rel="canonical" href="https://www.clearglassinc.com/Ontario-osint.html"/>
+<meta name="robots" content="index,follow"/>
+<meta property="og:title" content="ClearGlass · Ontario OSINT Control Deck"/>
+<meta property="og:description" content="Operator workstation for Ontario public-source intelligence: live status, investigation tasks, and a cited crime-intel feed. Halton/Burlington home base, province-wide coverage."/>
+<meta property="og:type" content="website"/>
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&family=Urbanist:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  /* ClearGlass homepage crystal-glass palette */
+  --bg:#fafbfc; --bg-2:#f3f5f8; --panel:rgba(255,255,255,0.72); --panel-2:rgba(255,255,255,0.9);
+  --line:rgba(10,12,16,0.08); --line-2:rgba(10,12,16,0.14);
+  --text:#0a0c10; --text-2:#3a3f4a; --text-3:#6b7280;
+  --cyan:#0e9bbd; --cyan-dim:#0e7490; --green:#0f9d6b; --amber:#d97706; --red:#e11d48; --violet:#7c3aed;
+  --prism-1:#38bdf8; --prism-2:#a78bfa; --prism-3:#f472b6; --prism-4:#34d399; --prism-5:#fbbf24;
+  --crystal:linear-gradient(135deg,#38bdf8 0%,#a78bfa 25%,#f472b6 50%,#fbbf24 75%,#34d399 100%);
+  --mono:'IBM Plex Mono',ui-monospace,monospace; --sans:'Urbanist',system-ui,-apple-system,sans-serif;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sidebar-w:248px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 20%, rgba(56,189,248,0.08), transparent 60%),
+    radial-gradient(ellipse 50% 45% at 85% 80%, rgba(167,139,250,0.07), transparent 60%),
+    radial-gradient(circle at 50% 50%, var(--bg), var(--bg-2));
+  color:var(--text); font-family:var(--sans); font-size:14px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.mono{font-family:var(--mono)}
+button{font-family:inherit;cursor:pointer}
+a{color:var(--cyan);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ---------- Shell ---------- */
+.shell{display:grid;grid-template-columns:var(--sidebar-w) 1fr;min-height:100vh}
+.sidebar{
+  background:linear-gradient(180deg,var(--bg-2),var(--bg));
+  border-right:1px solid var(--line); padding:18px 14px; position:sticky;top:0;height:100vh;
+  display:flex;flex-direction:column;gap:6px;
+}
+.brand{display:flex;align-items:center;gap:10px;padding:6px 8px 14px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.brand .logo{width:36px;height:36px;border-radius:10px;overflow:hidden;display:block;flex:0 0 auto;border:1px solid var(--line-2);background:#fff;box-shadow:0 2px 12px rgba(56,189,248,0.12)}
+.brand .logo img{width:100%;height:100%;object-fit:cover;display:block}
+.brand .dot{width:10px;height:10px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan);animation:pulse 2.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.brand .t1{font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.08em}
+.brand .t2{font-size:10px;color:var(--text-2);letter-spacing:.05em}
+.navlink{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:var(--text-2);
+  font-family:var(--mono);font-size:12px;letter-spacing:.04em;border:1px solid transparent;text-align:left;width:100%;background:none;
+}
+.navlink:hover{background:var(--panel);color:var(--text)}
+.navlink.active{background:var(--panel-2);color:var(--cyan);border-color:var(--line-2)}
+.navlink .ic{width:16px;text-align:center}
+.navlink .badge{margin-left:auto;font-size:10px;background:var(--cyan-dim);color:#fff;border-radius:10px;padding:1px 7px;font-weight:700}
+.sidebar .foot{margin-top:auto;font-size:10px;color:var(--text-3);line-height:1.6;padding:10px 8px;border-top:1px solid var(--line)}
+
+.main{display:flex;flex-direction:column;min-width:0}
+.topbar{
+  display:flex;align-items:center;gap:14px;padding:14px 22px;border-bottom:1px solid var(--line);
+  background:rgba(250,251,252,0.72);backdrop-filter:blur(10px);position:sticky;top:0;z-index:20;
+}
+.topbar h1{font-family:var(--mono);font-size:14px;font-weight:600;letter-spacing:.06em}
+.topbar .sub{font-size:11px;color:var(--text-2)}
+.topbar .spacer{flex:1}
+.topbar .cg-badge{width:34px;height:34px;border-radius:9px;overflow:hidden;display:block;flex:0 0 auto;border:1px solid var(--line-2);background:#fff;box-shadow:0 2px 12px rgba(56,189,248,0.18);transition:transform .18s,box-shadow .18s}
+.topbar .cg-badge:hover{transform:translateY(-1px) scale(1.05);box-shadow:0 5px 18px rgba(167,139,250,0.3)}
+.topbar .cg-badge img{width:100%;height:100%;object-fit:cover;display:block}
+.pill{font-family:var(--mono);font-size:11px;padding:5px 11px;border-radius:20px;border:1px solid var(--line-2);color:var(--text-2);display:flex;align-items:center;gap:7px}
+.pill .lv{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.pill.off .lv{background:var(--text-3);box-shadow:none}
+.clock{font-family:var(--mono);font-size:11px;color:var(--text-2)}
+.content{padding:22px;max-width:1180px;width:100%}
+
+/* ---------- Generic ---------- */
+.row{display:flex;gap:14px;flex-wrap:wrap}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.card h3{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-2);margin-bottom:10px;font-weight:600}
+.btn{background:var(--panel-2);border:1px solid var(--line-2);color:var(--text);padding:8px 14px;border-radius:8px;font-size:12px;font-family:var(--mono);letter-spacing:.03em}
+.btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn.primary{background:var(--cyan);color:#fff;border-color:var(--cyan);font-weight:700}
+.btn.primary:hover{filter:brightness(1.06);color:#fff}
+.btn.sm{padding:5px 10px;font-size:11px}
+select,input,textarea{
+  background:var(--bg-2);border:1px solid var(--line-2);color:var(--text);border-radius:7px;padding:8px 10px;font-family:var(--mono);font-size:12px;width:100%;
+}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--cyan)}
+.muted{color:var(--text-2)}
+.tiny{font-size:10px}
+.tag{display:inline-block;font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:20px;border:1px solid var(--line-2);color:var(--text-2);margin:2px 4px 2px 0}
+.sev{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:6px;font-weight:700;letter-spacing:.05em}
+.sev.high{background:rgba(248,113,113,0.15);color:var(--red);border:1px solid rgba(248,113,113,0.4)}
+.sev.med{background:rgba(251,191,36,0.12);color:var(--amber);border:1px solid rgba(251,191,36,0.35)}
+.sev.low{background:rgba(52,211,153,0.12);color:var(--green);border:1px solid rgba(52,211,153,0.32)}
+
+/* stat tiles */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:18px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat .k{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2)}
+.stat .v{font-family:var(--mono);font-size:26px;font-weight:700;margin-top:6px}
+.stat .d{font-size:11px;color:var(--text-2);margin-top:4px}
+.up{color:var(--green)} .down{color:var(--cyan)} .warn{color:var(--amber)}
+
+/* stream */
+.stream{display:flex;flex-direction:column;gap:0}
+.ev{display:grid;grid-template-columns:64px 1fr auto;gap:14px;padding:13px 4px;border-bottom:1px solid var(--line);align-items:start;animation:slidein .35s ease}
+@keyframes slidein{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.ev .ts{font-family:var(--mono);font-size:10px;color:var(--text-3);padding-top:2px}
+.ev .ti{font-weight:600;font-size:13px}
+.ev .de{font-size:12px;color:var(--text-2);margin-top:2px}
+.ev .meta{font-family:var(--mono);font-size:10px;color:var(--text-3);margin-top:5px}
+
+/* tasks */
+.taskcol{margin-bottom:18px}
+.taskcol h4{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);margin-bottom:8px;display:flex;gap:8px;align-items:center}
+.taskcol h4 .ct{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:0 8px;font-size:10px}
+.task{display:grid;grid-template-columns:1fr auto;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:8px;transition:border-color .15s}
+.task:hover{border-color:var(--line-2)}
+.task.pending{opacity:.55;border-style:dashed}
+.task .ti{font-weight:600;font-size:13px}
+.task .de{font-size:12px;color:var(--text-2);margin-top:3px}
+.task .ctl{display:flex;flex-direction:column;gap:6px;align-items:flex-end;min-width:148px}
+.prio{font-family:var(--mono);font-size:10px;font-weight:700;padding:1px 7px;border-radius:5px}
+.prio.high{color:var(--red)} .prio.med{color:var(--amber)} .prio.low{color:var(--text-2)}
+
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(3,6,10,0.72);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:60;padding:20px}
+.modal{background:var(--panel);border:1px solid var(--line-2);border-radius:14px;padding:22px;width:100%;max-width:520px}
+.modal h3{font-family:var(--mono);font-size:13px;margin-bottom:16px;color:var(--cyan)}
+.field{margin-bottom:14px}
+.field label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-2);margin-bottom:6px}
+.modal .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+
+/* toasts */
+.toasts{position:fixed;right:20px;bottom:20px;display:flex;flex-direction:column;gap:10px;z-index:80;max-width:340px}
+.toast{background:var(--panel-2);border:1px solid var(--line-2);border-left-width:3px;border-radius:9px;padding:12px 14px;font-size:12px;animation:slidein .3s ease;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.toast.success{border-left-color:var(--green)}
+.toast.error{border-left-color:var(--red)}
+.toast.info{border-left-color:var(--cyan)}
+.toast .tt{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-2);margin-bottom:3px}
+
+/* intel feed */
+.src{display:flex;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px solid var(--line);align-items:center}
+.src .ty{font-family:var(--mono);font-size:10px;color:var(--text-3);border:1px solid var(--line);border-radius:5px;padding:1px 7px}
+.notice{background:rgba(34,211,238,0.06);border:1px solid var(--line-2);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--text-2);margin-bottom:16px}
+.errband{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.4);border-radius:10px;padding:16px;color:var(--text)}
+
+.hide{display:none}
+
+/* ---------- Print / PDF briefing ---------- */
+@media print{
+  .sidebar,.topbar,.indstrip,.toasts,.cmdk{display:none !important}
+  .shell{display:block}
+  .content{padding:0;max-width:100%}
+  body{background:#fff}
+  .card,.snap,.notice{break-inside:avoid;box-shadow:none}
+  .mapwrap{display:none}
+}
+
+/* ---------- Live-indicator strip ---------- */
+.indstrip{display:flex;gap:18px;flex-wrap:wrap;align-items:center;padding:8px 22px;border-bottom:1px solid var(--line);background:var(--panel);font-family:var(--mono);font-size:11px;color:var(--text-2)}
+.indstrip .ind{display:flex;align-items:center;gap:6px}
+.indstrip .ind.sep{margin-left:auto}
+
+/* ---------- Executive snapshot ---------- */
+.snap{background:linear-gradient(135deg,rgba(52,211,153,0.08),rgba(56,189,248,0.05));border:1px solid var(--line-2);border-radius:12px;padding:16px 18px;margin-bottom:18px}
+.snap-h{font-family:var(--mono);font-size:12px;letter-spacing:.06em;font-weight:600;display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.verdict-pill{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;background:var(--green);color:#04140d;border-radius:6px;padding:2px 8px}
+body.theme-dark .verdict-pill{color:#04140d}
+.snap-body{font-size:14px;line-height:1.6}
+.snap-note{font-size:12px;color:var(--text-2);margin-top:10px;line-height:1.6;padding-left:12px;border-left:2px solid var(--line-2)}
+
+/* ---------- Briefing evidence / recommendations ---------- */
+.evi{padding:10px 0;border-bottom:1px solid var(--line)}
+.evi:last-child{border-bottom:0}
+.evi-t{font-weight:600;font-size:13px}
+.evi-d{font-size:12px;color:var(--text-2);margin-top:3px;line-height:1.6}
+.rec{display:flex;gap:12px;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.rec:last-child{border-bottom:0}
+.rftable{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+.rftable th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:6px 10px;border-bottom:1px solid var(--line-2)}
+.rftable td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.conf{font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap}
+.conf.high{background:rgba(248,113,113,0.15);color:var(--red)} .conf.med{background:rgba(251,191,36,0.14);color:var(--amber)} .conf.low{background:rgba(52,211,153,0.14);color:var(--green)}
+
+/* ---------- Network map (pending) ---------- */
+.pending-band{display:flex;gap:12px;align-items:flex-start;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.35);border-radius:12px;padding:14px 16px;margin-bottom:16px}
+.pending-dot{width:10px;height:10px;border-radius:50%;background:var(--amber);box-shadow:0 0 10px var(--amber);margin-top:4px;animation:pulse 2s infinite;flex:0 0 auto}
+.netgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:4px}
+.netnode{background:var(--bg-2);border:1px dashed var(--line-2);border-radius:10px;padding:12px 14px}
+.nn-t{font-weight:600;font-size:13px} .nn-tag{font-family:var(--mono);font-size:10px;color:var(--text-3);margin-top:4px}
+
+/* ---------- Tactical dark mode (operator toggle) ---------- */
+body.theme-dark{
+  --bg:#070b10; --bg-2:#0b1119; --panel:#0e1622; --panel-2:#111c2b;
+  --line:rgba(120,170,210,0.14); --line-2:rgba(120,170,210,0.25);
+  --text:#dbe7f2; --text-2:#8aa2b8; --text-3:#5d7488;
+  --cyan:#22d3ee; --cyan-dim:#0e7490; --green:#34d399; --amber:#fbbf24; --red:#f87171;
+}
+body.theme-dark .topbar{background:rgba(7,11,16,0.7)}
+body.theme-dark .brand .logo,body.theme-dark .topbar .cg-badge{background:#0b1119}
+
+/* ---------- Threat meter ---------- */
+.threat{display:flex;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:18px}
+.threat .lvl{font-family:var(--mono);font-weight:700;font-size:18px;letter-spacing:.06em;white-space:nowrap}
+.threat .bar{flex:1;height:10px;border-radius:6px;background:var(--bg-2);overflow:hidden;border:1px solid var(--line)}
+.threat .fill{height:100%;transition:width .5s,background .5s}
+.threat .desc{font-family:var(--mono);font-size:11px;color:var(--text-2);white-space:nowrap}
+
+/* ---------- Filters ---------- */
+.filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.chip{font-family:var(--mono);font-size:11px;padding:5px 11px;border-radius:20px;border:1px solid var(--line-2);color:var(--text-2);background:var(--panel);cursor:pointer;user-select:none}
+.chip.on{color:var(--cyan);border-color:var(--cyan)}
+.chip.high.on{color:var(--red);border-color:var(--red)} .chip.med.on{color:var(--amber);border-color:var(--amber)} .chip.low.on{color:var(--green);border-color:var(--green)}
+.search{max-width:280px}
+.count-note{font-family:var(--mono);font-size:10px;color:var(--text-3);margin-left:auto}
+
+/* ---------- Map embed ---------- */
+.mapwrap{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg-2)}
+.mapwrap iframe{width:100%;height:380px;border:0;display:block}
+
+/* ---------- Command palette ---------- */
+.cmdk{position:fixed;inset:0;background:rgba(3,6,10,0.55);backdrop-filter:blur(4px);display:flex;align-items:flex-start;justify-content:center;padding-top:12vh;z-index:90}
+.cmdk .box{width:100%;max-width:540px;background:var(--panel);border:1px solid var(--line-2);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.4)}
+.cmdk input{border:0;border-bottom:1px solid var(--line);border-radius:0;padding:14px 16px;font-size:14px;background:transparent}
+.cmdk .items{max-height:50vh;overflow:auto}
+.cmdk .it{display:flex;align-items:center;gap:12px;padding:11px 16px;font-family:var(--mono);font-size:12px;color:var(--text-2);cursor:pointer;border-bottom:1px solid var(--line)}
+.cmdk .it .ic{width:18px;text-align:center}
+.cmdk .it .sub{margin-left:auto;font-size:10px;color:var(--text-3)}
+.cmdk .it.sel,.cmdk .it:hover{background:var(--panel-2);color:var(--cyan)}
+.cmdk .hint{padding:8px 16px;font-family:var(--mono);font-size:10px;color:var(--text-3);display:flex;gap:14px}
+kbd{font-family:var(--mono);font-size:10px;border:1px solid var(--line-2);border-radius:5px;padding:1px 6px;color:var(--text-2)}
+
+@media(max-width:820px){
+  .shell{grid-template-columns:1fr}
+  .sidebar{position:static;height:auto;flex-direction:row;flex-wrap:wrap;overflow-x:auto}
+  .sidebar .brand,.sidebar .foot{width:100%}
+}
+
+/* ---------- Analytics charts (dependency-free SVG) ---------- */
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.chart{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.chart h3{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-2);margin-bottom:12px;font-weight:600}
+.chart svg{width:100%;height:auto;display:block;overflow:visible}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;font-family:var(--mono);font-size:10px;color:var(--text-2)}
+.legend .lg{display:flex;align-items:center;gap:6px}
+.legend .sw{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+/* ---------- Institutional relationship graph ---------- */
+.graphwrap{position:relative;background:var(--bg-2);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.graphwrap svg{width:100%;height:auto;display:block}
+.gnode{cursor:pointer}
+.gnode circle{transition:r .15s,fill .15s}
+.gnode:hover circle{fill:var(--cyan);fill-opacity:.18}
+.gnode text{font-family:var(--mono);font-size:9px;fill:var(--text-2);pointer-events:none}
+.gedge{stroke:var(--line-2);stroke-width:1.2}
+
+/* ---------- Evidence locker ---------- */
+.evidrow{display:grid;grid-template-columns:1fr auto;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.evidrow .src-name{font-weight:600;font-size:13px}
+.evidrow .hash{font-family:var(--mono);font-size:10px;color:var(--text-3);word-break:break-all;margin-top:6px}
+.evidrow .ctl{display:flex;flex-direction:column;gap:6px;align-items:flex-end;min-width:120px}
+</style>
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+  <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">ClearGlassInc · Ontario OSINT Control Deck</h1>
+<div id="app"></div>
+<div class="toasts" id="toasts"></div>
+
+<script>
+/* ============================================================
+   ClearGlassInc · OSINT Control Deck
+   Self-contained, dependency-free. Deploys directly on GitHub Pages.
+   - Live status stream  : mock realtime via EventTarget (~8.5s)
+   - Investigation tasks : optimistic CRUD + rollback + toasts + localStorage
+   - Crime intel feed    : cited public-source summary (data/Ontario-osint/intel.json)
+   - Config / sources    : source registry + stream controls
+   All data = lawful public sources only.
+   ============================================================ */
+(function(){
+"use strict";
+
+/* ---------- tiny DOM helpers ---------- */
+const $ = (s,r=document)=>r.querySelector(s);
+const el = (tag,attrs={},...kids)=>{
+  const n=document.createElement(tag);
+  for(const k in attrs){
+    if(k==="class")n.className=attrs[k];
+    else if(k==="html")n.innerHTML=attrs[k];
+    else if(k.startsWith("on")&&typeof attrs[k]==="function")n.addEventListener(k.slice(2),attrs[k]);
+    else if(attrs[k]!=null)n.setAttribute(k,attrs[k]);
+  }
+  for(const c of kids.flat()){if(c==null)continue;n.appendChild(typeof c==="string"?document.createTextNode(c):c);}
+  return n;
+};
+const fmtTime = d => new Date(d).toLocaleTimeString("en-CA",{hour12:false});
+const uid = () => "id-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,7);
+
+/* ---------- toast system ---------- */
+const Toast = {
+  push(kind,title,msg,ttl=4200){
+    const node = el("div",{class:"toast "+kind},
+      el("div",{class:"tt"},title),
+      el("div",{},msg));
+    $("#toasts").appendChild(node);
+    setTimeout(()=>{node.style.opacity="0";node.style.transition="opacity .3s";setTimeout(()=>node.remove(),300);},ttl);
+  },
+  success:(t,m)=>Toast.push("success",t,m),
+  error:(t,m)=>Toast.push("error",t,m),
+  info:(t,m)=>Toast.push("info",t,m),
+};
+
+/* ---------- store (Zustand-lite) ---------- */
+function createStore(initial){
+  let state = initial; const subs = new Set();
+  return {
+    get:()=>state,
+    set:(patch)=>{state={...state,...(typeof patch==="function"?patch(state):patch)};subs.forEach(f=>f(state));},
+    subscribe:(f)=>{subs.add(f);return ()=>subs.delete(f);}
+  };
+}
+
+/* ---------- mock async "API" (simulates network + failures) ---------- */
+const Api = {
+  // fail rate lets us demonstrate optimistic rollback
+  failRate: 0,
+  delay:(ms=420)=>new Promise(r=>setTimeout(r,ms)),
+  async mutate(label){
+    await Api.delay(360+Math.random()*380);
+    if(Math.random()<Api.failRate) throw new Error(label+" rejected by upstream (simulated).");
+    return true;
+  }
+};
+
+/* ---------- mock realtime stream via EventTarget ---------- */
+class StatusStream extends EventTarget{
+  constructor(){
+    super(); this.timer=null; this.running=false; this.interval=8500;
+    this.pool=[
+      {sev:"high",ti:"Firearms recovery — traffic stop",de:"HRPS recovered a loaded handgun during a vehicle stop near Guelph Line & Dundas St. One adult charged.",cat:"FIREARMS",src:"HRPS media release"},
+      {sev:"med",ti:"Auto-theft enforcement action",de:"Targeted operation disrupted a vehicle re-VIN ring; two vehicles recovered in the Burlington/Oakville corridor.",cat:"AUTO-THEFT",src:"HRPS media release"},
+      {sev:"low",ti:"Missing person located safe",de:"Previously reported missing adult located and confirmed safe. File closed.",cat:"MISSING",src:"HRPS media release"},
+      {sev:"med",ti:"Residential B&E series advisory",de:"Public advisory regarding daytime break-and-enters; residents asked to report suspicious activity.",cat:"PROPERTY",src:"HRPS community alert"},
+      {sev:"low",ti:"Crime Severity Index update",de:"Quarterly CSI snapshot consistent with Halton's lowest-in-province trend; no anomalies detected.",cat:"STATS",src:"StatsCan / HRPS"},
+      {sev:"high",ti:"Impaired driving checkpoint — incident",de:"RIDE program checkpoint flagged an impaired operator; vehicle impounded, charges laid.",cat:"TRAFFIC",src:"HRPS media release"},
+      {sev:"low",ti:"Council closed-meeting report posted",de:"City of Burlington posted a closed-session summary to the public record. Queued for governance audit.",cat:"GOVERNANCE",src:"City of Burlington minutes"},
+      {sev:"med",ti:"OLT filing — land-use appeal",de:"New Ontario Land Tribunal filing logged for a Burlington development; cross-reference with procurement watchlist.",cat:"GOVERNANCE",src:"OLT case search"},
+      {sev:"low",ti:"Fraud awareness bulletin",de:"Regional bulletin on grandparent/CRA telephone scams; no local cluster identified.",cat:"FRAUD",src:"HRPS bulletin"},
+      {sev:"med",ti:"OPP province-wide auto-theft blitz",de:"OPP report multi-jurisdiction vehicle-theft enforcement across the GTA and Highway 401 corridor; recoveries logged.",cat:"AUTO-THEFT",src:"OPP media release"},
+      {sev:"low",ti:"StatsCan — Ontario crime statistics release",de:"Statistics Canada published updated police-reported crime data for Ontario; Halton retains lowest CSI among large services.",cat:"STATS",src:"Statistics Canada"},
+      {sev:"high",ti:"Toronto Police — firearms interdiction",de:"Province-wide firearms tracing flags a recovery linked to a GTA investigation; intelligence shared regionally.",cat:"FIREARMS",src:"Toronto Police Service"},
+      {sev:"med",ti:"Ottawa — procurement integrity review",de:"Ontario municipal procurement audit referenced in a public council report; cross-checked against provincial watchlist.",cat:"GOVERNANCE",src:"Ontario municipal records"},
+      {sev:"low",ti:"Ontario Open Data — dataset refresh",de:"data.ontario.ca refreshed a public safety dataset; ingestion queued for the intel baseline.",cat:"STATS",src:"data.ontario.ca"},
+    ];
+  }
+  _emit(){
+    const t=this.pool[Math.floor(Math.random()*this.pool.length)];
+    const ev={...t,id:uid(),ts:Date.now()};
+    this.dispatchEvent(new CustomEvent("incident",{detail:ev}));
+  }
+  start(){ if(this.running)return; this.running=true; this.timer=setInterval(()=>this._emit(),this.interval); }
+  stop(){ this.running=false; clearInterval(this.timer); this.timer=null; }
+  pulse(){ this._emit(); }
+}
+const stream = new StatusStream();
+
+/* ---------- persistence ---------- */
+const LS_KEY="cg.burlington.osint.tasks.v1";
+function loadTasks(){
+  try{const r=localStorage.getItem(LS_KEY);if(r)return JSON.parse(r);}catch(e){}
+  return SEED_TASKS();
+}
+function saveTasks(tasks){ try{localStorage.setItem(LS_KEY,JSON.stringify(tasks));}catch(e){} }
+
+const LS_EVID="cg.ontario.osint.evidence.v1";
+function loadEvidence(){
+  try{const r=localStorage.getItem(LS_EVID);if(r)return JSON.parse(r);}catch(e){}
+  return [];
+}
+function saveEvidence(list){ try{localStorage.setItem(LS_EVID,JSON.stringify(list));}catch(e){} }
+
+function SEED_TASKS(){
+  const now=Date.now();
+  return [
+    {id:uid(),title:"OSINT sweep — Burlington ON core",desc:"Baseline public-source sweep of council, procurement, governance, and crime records for Burlington.",status:"completed",priority:"med",tags:["osint","burlington","baseline"],created:now-86400000*5},
+    {id:uid(),title:"Deep-dive Integrity Commissioner reports (2020–2023)",desc:"Read and index all published Integrity Commissioner reports; flag any adverse findings.",status:"in_progress",priority:"high",tags:["integrity","governance","records"],created:now-86400000*2},
+    {id:uid(),title:"Analyze DC reduction vote records & public submissions",desc:"Pull the development-charge reduction vote records and public submissions; map councillor positions.",status:"open",priority:"high",tags:["DC","votes","FOI"],created:now-3600000*26},
+    {id:uid(),title:"Provincial FOI impact assessment on municipal ops",desc:"Assess how provincial FOI/transparency amendments affect Burlington/MFIPPA processes.",status:"open",priority:"med",tags:["FOI","provincial","transparency"],created:now-3600000*22},
+    {id:uid(),title:"Generate exportable PDF briefing",desc:"Render the Active Investigations briefing to a print/PDF export for stakeholders.",status:"open",priority:"med",tags:["report","pdf","ready"],created:now-3600000*4},
+    {id:uid(),title:"Millcroft Greens — OLT / procurement cross-check",desc:"Reconcile Ontario Land Tribunal filings against council procurement records for the Millcroft development.",status:"in_progress",priority:"high",tags:["land-use","procurement","OLT"],created:now-86400000*3},
+    {id:uid(),title:"HRPS crime-map monitoring (weekly)",desc:"Pull weekly deltas from the Halton Regional Police ArcGIS crime map; log anomalies by ward.",status:"open",priority:"med",tags:["HRPS","crime-map","recurring"],created:now-86400000*2},
+    {id:uid(),title:"Closed-meeting report audit (2025–2026)",desc:"Index every closed-session summary published by the City of Burlington and flag procurement/land items.",status:"open",priority:"med",tags:["governance","FOI","council"],created:now-86400000},
+    {id:uid(),title:"FOI request — 2025 vendor performance reports",desc:"Draft and file a freedom-of-information request for 2025 municipal vendor performance evaluations.",status:"blocked",priority:"high",tags:["FOI","vendors"],created:now-3600000*8},
+    {id:uid(),title:"Baseline CSI dossier (2008–2024)",desc:"Compile the 17-year Crime Severity Index baseline for Halton from StatsCan tables.",status:"completed",priority:"low",tags:["stats","baseline"],created:now-86400000*6},
+    {id:uid(),title:"Ontario CSI comparison — Big 12 services",desc:"Benchmark Halton against Ontario's twelve largest police services using StatsCan police-reported crime tables.",status:"open",priority:"med",tags:["ontario","stats","benchmark"],created:now-86400000*4},
+    {id:uid(),title:"OPP / 401-corridor auto-theft tracking",desc:"Monitor OPP province-wide auto-theft releases and map recoveries along the Highway 401 corridor.",status:"open",priority:"high",tags:["ontario","OPP","auto-theft"],created:now-3600000*20},
+    {id:uid(),title:"data.ontario.ca public-safety dataset ingest",desc:"Catalogue relevant Ontario open datasets (public safety, procurement, land use) for the intel baseline.",status:"in_progress",priority:"med",tags:["ontario","open-data","ingest"],created:now-3600000*30},
+  ];
+}
+
+/* ============================================================ */
+const store = createStore({
+  route:"dashboard",
+  events: seedEvents(),
+  tasks: loadTasks(),
+  evidence: loadEvidence(),
+  streamOn:true,
+  intel:null,
+  intelError:false,
+  streamFilter:{high:true,med:true,low:true},
+  theme:(function(){try{return localStorage.getItem("cg.osint.theme")||"light";}catch(e){return "light";}})(),
+});
+
+function seedEvents(){
+  const base=Date.now();
+  return [
+    {id:uid(),sev:"low",ti:"Deck initialized",de:"Master Investigator deck online. Public-source feeds armed (Burlington ON core, Canada brief).",cat:"SYSTEM",src:"ClearGlass",ts:base-1000},
+    {id:uid(),sev:"low",ti:"Integrity Commissioner reports indexed (2020–2023)",de:"No major adverse findings surfaced in published summaries.",cat:"GOVERNANCE",src:"Burlington Integrity Commissioner",ts:base-60000},
+    {id:uid(),sev:"med",ti:"Development Charges reduction motion advanced",de:"Public criticism on cost-shifting noted; multi-hour council debate.",cat:"GOVERNANCE",src:"City of Burlington council",ts:base-300000},
+    {id:uid(),sev:"med",ti:"Provincial FOI amendments flagged",de:"Transparency impact on municipalities flagged for monitoring (provincial origin).",cat:"FOI",src:"Province of Ontario",ts:base-720000},
+    {id:uid(),sev:"low",ti:"No new whistleblower escalations / audit red flags",de:"No adverse signals in open sources this cycle.",cat:"AUDIT",src:"City Auditor / Whistleblower program",ts:base-1100000},
+    {id:uid(),sev:"low",ti:"Greenbelt / Halton quarry tensions contextualized",de:"Provincial origin; no direct municipal-council linkage in open sources.",cat:"LAND-USE",src:"Public coverage",ts:base-1500000},
+  ];
+}
+
+/* ---------- intel feed loader (with embedded fallback) ---------- */
+// Burlington, ON satellite-imagery link (Google Maps satellite layer)
+const SAT_URL = "https://www.google.com/maps/@43.3316,-79.7989,13z/data=!3m1!1e3";
+const INTEL_FALLBACK = {
+  updated:"2026-06-15",
+  region:"Ontario — Halton/Burlington home base, province-wide coverage",
+  summary:"Province-wide Ontario OSINT picture with Halton/Burlington as the home base. Halton holds the lowest Crime Severity Index among Ontario's large police services. Provincial sources (OPP, Statistics Canada, Ontario open data) supplement regional records; procurement and land-use governance concerns are tracked separately from crime statistics.",
+  metrics:[
+    {label:"Crime Severity Index rank",value:"Lowest of Ontario's \"Big 12\"",trend:"down",note:"17 consecutive years (2008–2024).",source:"StatsCan CSI / HRPS annual reports"},
+    {label:"Overall crime per 100k (H1 2025)",value:"-11.7% YoY",trend:"down",note:"H1 2025 vs H1 2024, rate per 100,000.",source:"HRPS H1 2025 statistics"},
+    {label:"Property crime (B&E + auto theft)",value:"-15.9% YoY",trend:"down",note:"Targeted auto-theft enforcement.",source:"HRPS H1 2025 statistics"},
+    {label:"Violent crime rate",value:"Lowest regional rate in province",trend:"flat",note:"Stable year over year.",source:"StatsCan / HRPS"},
+  ],
+  satellite:{
+    label:"Burlington, ON — satellite imagery", lat:43.3255, lng:-79.799,
+    primary:SAT_URL,
+    links:[
+      {name:"Google Maps — satellite view (Burlington)",url:"https://www.google.com/maps/@43.3316,-79.7989,13z/data=!3m1!1e3",provider:"Google"},
+      {name:"Sentinel Hub EO Browser — live Sentinel-2 imagery (Burlington)",url:"https://apps.sentinel-hub.com/eo-browser/?zoom=13&lat=43.3255&lng=-79.799",provider:"Copernicus / ESA"},
+      {name:"Esri World Imagery — ArcGIS basemap (Burlington)",url:"https://www.arcgis.com/apps/mapviewer/index.html?center=-79.799,43.3255&level=13",provider:"Esri"},
+    ],
+  },
+  sources:[
+    {name:"Satellite imagery — Burlington (Google Maps)",url:"https://www.google.com/maps/@43.3316,-79.7989,13z/data=!3m1!1e3",type:"Satellite"},
+    {name:"Satellite imagery — Burlington (Sentinel-2 / EO Browser)",url:"https://apps.sentinel-hub.com/eo-browser/?zoom=13&lat=43.3255&lng=-79.799",type:"Satellite"},
+    {name:"Halton Regional Police — Crime Map (ArcGIS)",url:"https://www.haltonpolice.ca/en/about-us/crime-map.aspx",type:"Live map"},
+    {name:"Halton Regional Police — Media Releases",url:"https://www.haltonpolice.ca/en/news/",type:"Press releases"},
+    {name:"Statistics Canada — Crime Severity Index",url:"https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=3510002601",type:"Open data"},
+    {name:"Ontario Provincial Police (OPP) — News Releases",url:"https://www.opp.ca/index.php?id=115",type:"Press releases"},
+    {name:"Ontario Open Data Catalogue — data.ontario.ca",url:"https://data.ontario.ca/",type:"Open data"},
+    {name:"City of Burlington — Council Meetings / Minutes",url:"https://www.burlington.ca/en/city-hall/council-and-committee-meetings.aspx",type:"Public records"},
+    {name:"Ontario Land Tribunal — Case Search",url:"https://olt.gov.on.ca/",type:"Public records"},
+  ],
+  notes:[
+    "All entries reference 100% lawful, publicly available sources.",
+    "Recent public activity: targeted auto-theft enforcement, firearms recoveries, routine missing-persons cases.",
+    "Verify against linked primary sources before publication or filing.",
+  ],
+};
+async function loadIntel(){
+  try{
+    const res=await fetch("data/Ontario-osint/intel.json",{cache:"no-store"});
+    if(!res.ok)throw new Error("HTTP "+res.status);
+    const data=await res.json();
+    store.set({intel:data,intelError:false});
+  }catch(e){
+    store.set({intel:INTEL_FALLBACK,intelError:false});
+  }
+}
+
+/* ============================================================
+   TASK ACTIONS — optimistic with rollback
+   ============================================================ */
+async function addTask(input){
+  const tasks=store.get().tasks;
+  const optimistic={...input,id:uid(),created:Date.now(),_pending:true};
+  store.set({tasks:[optimistic,...tasks]}); // optimistic insert
+  try{
+    await Api.mutate("Create task");
+    store.set(s=>({tasks:s.tasks.map(t=>t.id===optimistic.id?{...t,_pending:false}:t)}));
+    saveTasks(store.get().tasks);
+    Toast.success("Task created",input.title);
+  }catch(err){
+    store.set({tasks}); // rollback
+    Toast.error("Create failed — rolled back",err.message);
+  }
+}
+async function updateTaskStatus(id,status){
+  const prev=store.get().tasks;
+  store.set(s=>({tasks:s.tasks.map(t=>t.id===id?{...t,status,_pending:true}:t)}));
+  try{
+    await Api.mutate("Status change");
+    store.set(s=>({tasks:s.tasks.map(t=>t.id===id?{...t,_pending:false}:t)}));
+    saveTasks(store.get().tasks);
+    Toast.success("Status updated","Moved to "+status.replace("_"," "));
+  }catch(err){
+    store.set({tasks:prev}); // rollback
+    Toast.error("Update failed — rolled back",err.message);
+  }
+}
+async function deleteTask(id){
+  const prev=store.get().tasks;
+  const t=prev.find(x=>x.id===id);
+  store.set(s=>({tasks:s.tasks.filter(x=>x.id!==id)})); // optimistic remove
+  try{
+    await Api.mutate("Delete task");
+    saveTasks(store.get().tasks);
+    Toast.info("Task removed",t?t.title:id);
+  }catch(err){
+    store.set({tasks:prev}); // rollback
+    Toast.error("Delete failed — rolled back",err.message);
+  }
+}
+
+/* ============================================================
+   VIEWS
+   ============================================================ */
+const SEV_LABEL={high:"HIGH",med:"MED",low:"LOW"};
+const STATUSES=[["open","Open"],["in_progress","In progress"],["completed","Completed"],["blocked","Blocked"]];
+// DOM-local search queries (kept out of the store so typing doesn't trigger re-render)
+let STREAM_Q="", TASK_Q="";
+function applyDomFilter(listSel,countSel,q){
+  const list=$(listSel); if(!list)return;
+  let shown=0,total=0;
+  list.querySelectorAll("[data-s]").forEach(row=>{
+    total++;
+    const hit=!q || row.getAttribute("data-s").includes(q.toLowerCase());
+    row.style.display=hit?"":"none"; if(hit)shown++;
+  });
+  const c=$(countSel); if(c)c.textContent=shown+" / "+total+" shown";
+}
+
+function threatLevel(events){
+  const recent=events.slice(0,24);
+  const high=recent.filter(e=>e.sev==="high").length;
+  const med=recent.filter(e=>e.sev==="med").length;
+  const score=Math.min(100,high*28+med*10);
+  let level="LOW",color="var(--green)";
+  if(score>=60){level="ELEVATED";color="var(--red)";}
+  else if(score>=28){level="GUARDED";color="var(--amber)";}
+  return {level,color,score,high,med};
+}
+function ViewStatus(s){
+  const wrap=el("div",{});
+  const sorted=s.events.slice().sort((a,b)=>b.ts-a.ts);
+  const high=s.events.filter(e=>e.sev==="high").length;
+  const t=threatLevel(sorted);
+  // threat-level meter
+  wrap.appendChild(el("div",{class:"threat"},
+    el("div",{class:"lvl",style:"color:"+t.color},"⬢ "+t.level),
+    el("div",{class:"bar"},el("div",{class:"fill",style:"width:"+Math.max(6,t.score)+"%;background:"+t.color})),
+    el("div",{class:"desc"},"threat index "+t.score+"/100 · "+t.high+" high / "+t.med+" med (recent)"),
+  ));
+  wrap.appendChild(el("div",{class:"stats"},
+    statTile("Stream","LIVE",s.streamOn?"up":"warn",s.streamOn?"EventTarget · ~8.5s":"paused"),
+    statTile("Events buffered",String(s.events.length),"down","since session start"),
+    statTile("High-severity",String(high),high?"warn":"up",high?"review queue":"all clear"),
+    statTile("Region","ONTARIO","down","Halton/Burlington base"),
+  ));
+  const ctl=el("div",{class:"row",style:"margin-bottom:16px;align-items:center"},
+    el("button",{class:"btn primary sm",onclick:()=>stream.pulse()},"⊕ Inject test event"),
+    el("button",{class:"btn sm",onclick:()=>toggleStream()},s.streamOn?"⏸ Pause stream":"▶ Resume stream"),
+    el("span",{class:"muted tiny mono"},"High-severity incidents auto-raise an alert toast."),
+  );
+  wrap.appendChild(ctl);
+  // severity (store-driven) + text (DOM-local) filters
+  const f=s.streamFilter;
+  const setSev=(k)=>store.set(st=>({streamFilter:{...st.streamFilter,[k]:!st.streamFilter[k]}}));
+  const search=el("input",{class:"search",placeholder:"filter events…",value:STREAM_Q,
+    oninput:e=>{STREAM_Q=e.target.value;applyDomFilter("#ev-list","#ev-count",STREAM_Q);}});
+  const sevFiltered=sorted.filter(ev=>f[ev.sev]!==false);
+  wrap.appendChild(el("div",{class:"filters"},
+    el("span",{class:"chip high"+(f.high?" on":""),onclick:()=>setSev("high")},"HIGH"),
+    el("span",{class:"chip med"+(f.med?" on":""),onclick:()=>setSev("med")},"MED"),
+    el("span",{class:"chip low"+(f.low?" on":""),onclick:()=>setSev("low")},"LOW"),
+    search,
+    el("span",{class:"count-note",id:"ev-count"},sevFiltered.length+" / "+sorted.length+" shown"),
+  ));
+  const card=el("div",{class:"card"},el("h3",{},"Live status stream"));
+  const list=el("div",{class:"stream",id:"ev-list"});
+  if(!sevFiltered.length)list.appendChild(el("div",{class:"muted tiny",style:"padding:10px"},"— no events match the current severity filter —"));
+  sevFiltered.forEach(ev=>list.appendChild(eventRow(ev)));
+  card.appendChild(list);
+  wrap.appendChild(card);
+  return wrap;
+}
+function eventRow(ev){
+  return el("div",{class:"ev","data-s":(ev.ti+" "+ev.de+" "+ev.cat+" "+ev.src).toLowerCase()},
+    el("div",{class:"ts mono"},fmtTime(ev.ts)),
+    el("div",{},
+      el("div",{class:"ti"},ev.ti),
+      el("div",{class:"de"},ev.de),
+      el("div",{class:"meta"},ev.cat+" · src: "+ev.src),
+    ),
+    el("span",{class:"sev "+ev.sev},SEV_LABEL[ev.sev]||ev.sev),
+  );
+}
+function statTile(k,v,cls,d){
+  return el("div",{class:"stat"},
+    el("div",{class:"k"},k),
+    el("div",{class:"v "+(cls||"")},v),
+    el("div",{class:"d"},d||""));
+}
+
+function ViewTasks(s){
+  const wrap=el("div",{id:"task-root"});
+  wrap.appendChild(el("div",{class:"row",style:"justify-content:space-between;align-items:center;margin-bottom:12px"},
+    el("div",{class:"muted tiny mono"},"Optimistic CRUD · automatic rollback on failure · persisted to localStorage"),
+    el("button",{class:"btn primary",onclick:()=>openTaskModal()},"+ New investigation task"),
+  ));
+  wrap.appendChild(el("div",{class:"filters"},
+    el("input",{class:"search",placeholder:"search tasks…",value:TASK_Q,
+      oninput:e=>{TASK_Q=e.target.value;applyDomFilter("#task-root","#task-count",TASK_Q);}}),
+    el("span",{class:"count-note",id:"task-count"},""),
+  ));
+  const order=["open","in_progress","blocked","completed"];
+  order.forEach(st=>{
+    const items=s.tasks.filter(t=>t.status===st);
+    const col=el("div",{class:"taskcol"},
+      el("h4",{},st.replace("_"," ").toUpperCase(),el("span",{class:"ct"},String(items.length))));
+    if(!items.length)col.appendChild(el("div",{class:"muted tiny",style:"padding:2px 2px 6px"},"— none —"));
+    items.forEach(t=>col.appendChild(taskRow(t)));
+    wrap.appendChild(col);
+  });
+  return wrap;
+}
+function taskRow(t){
+  const sel=el("select",{onchange:e=>updateTaskStatus(t.id,e.target.value)});
+  STATUSES.forEach(([v,l])=>{const o=el("option",{value:v},l);if(v===t.status)o.selected=true;sel.appendChild(o);});
+  return el("div",{class:"task"+(t._pending?" pending":""),"data-s":(t.title+" "+(t.desc||"")+" "+(t.tags||[]).join(" ")+" "+t.priority+" "+t.status).toLowerCase()},
+    el("div",{},
+      el("div",{class:"ti"},t.title," ",el("span",{class:"prio "+t.priority},"["+t.priority.toUpperCase()+"]")),
+      t.desc?el("div",{class:"de"},t.desc):null,
+      el("div",{style:"margin-top:6px"},...(t.tags||[]).map(tg=>el("span",{class:"tag"},"#"+tg))),
+    ),
+    el("div",{class:"ctl"},
+      sel,
+      el("button",{class:"btn sm",onclick:()=>deleteTask(t.id),title:"Delete"},"✕ remove"),
+      t._pending?el("span",{class:"tiny warn mono"},"syncing…"):null,
+    ),
+  );
+}
+
+function openTaskModal(){
+  const overlay=el("div",{class:"overlay",onclick:e=>{if(e.target===overlay)overlay.remove();}});
+  const titleI=el("input",{placeholder:"e.g. FOI request — 2025 vendor performance reports"});
+  const descI=el("textarea",{rows:"3",placeholder:"Scope / objective…"});
+  const prioI=el("select",{}); [["high","High"],["med","Medium"],["low","Low"]].forEach(([v,l])=>{const o=el("option",{value:v},l);if(v==="med")o.selected=true;prioI.appendChild(o);});
+  const statI=el("select",{}); STATUSES.forEach(([v,l])=>prioStat(statI,v,l));
+  const tagsI=el("input",{placeholder:"comma,separated,tags"});
+  const modal=el("div",{class:"modal"},
+    el("h3",{},"▦ New investigation task"),
+    field("Title",titleI),
+    field("Description",descI),
+    el("div",{class:"row"},
+      el("div",{style:"flex:1;min-width:140px"},field("Priority",prioI)),
+      el("div",{style:"flex:1;min-width:140px"},field("Status",statI)),
+    ),
+    field("Tags",tagsI),
+    el("div",{class:"actions"},
+      el("button",{class:"btn",onclick:()=>overlay.remove()},"Cancel"),
+      el("button",{class:"btn primary",onclick:()=>{
+        const title=titleI.value.trim();
+        if(!title){Toast.error("Missing title","A task needs a title.");titleI.focus();return;}
+        const tags=tagsI.value.split(",").map(x=>x.trim()).filter(Boolean);
+        addTask({title,desc:descI.value.trim(),priority:prioI.value,status:statI.value,tags});
+        overlay.remove();
+      }},"Create task"),
+    ),
+  );
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+  titleI.focus();
+}
+function prioStat(sel,v,l){const o=el("option",{value:v},l);if(v==="open")o.selected=true;sel.appendChild(o);}
+function field(label,input){return el("div",{class:"field"},el("label",{},label),input);}
+
+function ViewIntel(s){
+  const wrap=el("div",{});
+  if(!s.intel){wrap.appendChild(el("div",{class:"card muted"},"Loading public-source intel…"));return wrap;}
+  const d=s.intel;
+  wrap.appendChild(el("div",{class:"notice"},
+    "🛈 ",el("b",{},"Lawful public-source intelligence only. "),
+    "Figures are operator snapshots for triage — verify against the linked primary sources below before publication or filing."));
+  wrap.appendChild(el("div",{class:"stats"},
+    ...d.metrics.map(m=>el("div",{class:"stat"},
+      el("div",{class:"k"},m.label),
+      el("div",{class:"v "+(m.trend==="down"?"down":m.trend==="up"?"warn":""),style:"font-size:18px;line-height:1.25;margin-top:8px"},m.value),
+      el("div",{class:"d"},m.note),
+      el("div",{class:"tiny mono",style:"color:var(--text-3);margin-top:6px"},"src: "+m.source),
+    ))));
+  wrap.appendChild(el("div",{class:"card",style:"margin-bottom:16px"},
+    el("h3",{},"Regional picture — "+d.region),
+    el("div",{class:"muted",style:"font-size:13px"},d.summary)));
+  if(d.satellite){
+    const sat=d.satellite;
+    const satCard=el("div",{class:"card",style:"margin-bottom:16px"},
+      el("h3",{},"🛰 Satellite imagery — "+sat.label),
+      el("div",{class:"row",style:"margin-bottom:10px;align-items:center"},
+        el("a",{class:"btn primary sm",href:sat.primary,target:"_blank",rel:"noopener noreferrer"},"🛰 Open satellite view ↗"),
+        el("span",{class:"muted tiny mono"},"lat "+sat.lat+" · lng "+sat.lng)));
+    (sat.links||[]).forEach(l=>satCard.appendChild(el("div",{class:"src"},
+      el("a",{href:l.url,target:"_blank",rel:"noopener noreferrer"},l.name+" ↗"),
+      el("span",{class:"ty"},l.provider))));
+    // embedded live map (OpenStreetMap — keyless, iframe-safe)
+    satCard.appendChild(el("div",{class:"mapwrap",style:"margin-top:12px"},
+      el("iframe",{loading:"lazy",title:"Ontario map — Burlington area",
+        src:"https://www.openstreetmap.org/export/embed.html?bbox="+(sat.lng-0.18)+"%2C"+(sat.lat-0.09)+"%2C"+(sat.lng+0.18)+"%2C"+(sat.lat+0.09)+"&layer=mapnik&marker="+sat.lat+"%2C"+sat.lng})));
+    wrap.appendChild(satCard);
+  }
+  const srcCard=el("div",{class:"card",style:"margin-bottom:16px"},el("h3",{},"Cited public sources"));
+  d.sources.forEach(src=>srcCard.appendChild(el("div",{class:"src"},
+    el("a",{href:src.url,target:"_blank",rel:"noopener noreferrer"},src.name+" ↗"),
+    el("span",{class:"ty"},src.type))));
+  wrap.appendChild(srcCard);
+  const notes=el("div",{class:"card"},el("h3",{},"Operator notes"),
+    el("ul",{style:"padding-left:18px;color:var(--text-2);font-size:12px;line-height:1.8"},
+      ...d.notes.map(n=>el("li",{},n))));
+  wrap.appendChild(notes);
+  wrap.appendChild(el("div",{class:"tiny mono",style:"color:var(--text-3);margin-top:14px"},"Intel snapshot updated: "+d.updated));
+  return wrap;
+}
+
+function ViewConfig(s){
+  const wrap=el("div",{});
+  wrap.appendChild(el("div",{class:"card",style:"margin-bottom:16px"},
+    el("h3",{},"Realtime stream controls"),
+    el("div",{class:"row",style:"align-items:center"},
+      el("button",{class:"btn "+(s.streamOn?"":"primary")+" sm",onclick:()=>toggleStream()},s.streamOn?"⏸ Pause stream":"▶ Resume stream"),
+      el("button",{class:"btn sm",onclick:()=>stream.pulse()},"⊕ Inject test event"),
+      el("span",{class:"muted tiny mono"},"Interval: ~8.5s · transport: in-page EventTarget (mock)"))));
+
+  const fr=el("select",{onchange:e=>{Api.failRate=parseFloat(e.target.value);Toast.info("Failure injection",(Api.failRate*100)+"% of mutations will fail");}});
+  [["0","0% (off)"],["0.25","25%"],["0.5","50%"],["1","100% (force rollback)"]].forEach(([v,l])=>{const o=el("option",{value:v},l);if(parseFloat(v)===Api.failRate)o.selected=true;fr.appendChild(o);});
+  wrap.appendChild(el("div",{class:"card",style:"margin-bottom:16px"},
+    el("h3",{},"Optimistic-UI fault injection"),
+    el("div",{class:"muted tiny",style:"margin-bottom:10px"},"Simulate upstream mutation failures to demonstrate automatic rollback on task create / status / delete."),
+    el("div",{style:"max-width:240px"},fr)));
+
+  wrap.appendChild(el("div",{class:"card",style:"margin-bottom:16px"},
+    el("h3",{},"Data sources / integration registry"),
+    el("ul",{style:"padding-left:18px;color:var(--text-2);font-size:12px;line-height:1.9"},
+      el("li",{},"HRPS ArcGIS crime map — ",el("span",{class:"mono tiny"},"ready to wire (REST query)")),
+      el("li",{},"Statistics Canada CSI tables — ",el("span",{class:"mono tiny"},"open data, CSV/JSON")),
+      el("li",{},"City of Burlington council minutes — ",el("span",{class:"mono tiny"},"scrape / FOI")),
+      el("li",{},"Ontario Land Tribunal case search — ",el("span",{class:"mono tiny"},"manual / scrape")),
+      el("li",{},"intel.json snapshot — ",el("span",{class:"mono tiny"},"data/Ontario-osint/intel.json")),
+    )));
+
+  wrap.appendChild(el("div",{class:"card"},
+    el("h3",{},"Local data"),
+    el("div",{class:"row"},
+      el("button",{class:"btn sm",onclick:()=>{
+        const blob=new Blob([JSON.stringify(store.get().tasks,null,2)],{type:"application/json"});
+        const a=el("a",{href:URL.createObjectURL(blob),download:"ontario-osint-tasks.json"});a.click();
+        Toast.info("Export","Task queue exported as JSON.");
+      }},"⤓ Export tasks (JSON)"),
+      el("button",{class:"btn sm",onclick:()=>{
+        const rows=[["timestamp","severity","category","title","detail","source"]]
+          .concat(store.get().events.map(e=>[new Date(e.ts).toISOString(),e.sev,e.cat,e.ti,e.de,e.src]));
+        const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(",")).join("\n");
+        const a=el("a",{href:URL.createObjectURL(new Blob([csv],{type:"text/csv"})),download:"ontario-osint-events.csv"});a.click();
+        Toast.info("Export","Status stream exported as CSV.");
+      }},"⤓ Export events (CSV)"),
+      el("button",{class:"btn sm",onclick:()=>{
+        store.set({route:"briefing"});
+        Toast.info("PDF briefing","Opening print dialog — choose 'Save as PDF'.");
+        setTimeout(()=>window.print(),400);
+      }},"⤓ PDF briefing"),
+      el("button",{class:"btn sm",onclick:()=>{
+        if(!confirm("Reset task queue to seeded Ontario tasks? This clears local changes."))return;
+        const seeded=SEED_TASKS();store.set({tasks:seeded});saveTasks(seeded);Toast.info("Reset","Task queue restored to seed.");
+      }},"↺ Reset to seed"),
+    ),
+    el("div",{class:"muted tiny mono",style:"margin-top:10px"},"Tasks persist in your browser (localStorage). Nothing is transmitted off-device.")));
+  return wrap;
+}
+
+function toggleStream(){
+  const on=!store.get().streamOn;
+  store.set({streamOn:on});
+  if(on){stream.start();Toast.info("Stream resumed","Live status feed armed.");}
+  else{stream.stop();Toast.info("Stream paused","Live status feed halted.");}
+}
+
+/* ============================================================
+   INVESTIGATION BRIEFING — Burlington ON Core (evidence-based)
+   ============================================================ */
+const BRIEFING={
+  verdict:"No high-confidence evidence of systemic corruption, bribery, rigged procurement, or criminal misconduct by current City of Burlington council or staff in publicly available records (2023–2026 focus).",
+  snapshot:[
+    "Governance structures are present and functional: Integrity Commissioner (public reports), Audit Committee (with community members), and a Whistleblower Program (implemented 2025–2026 via City Auditor + HR). Procurement policies include standard conflict-of-interest declarations and anti-collusion clauses.",
+    "Dominant pattern: heated policy debates around development charges (DCs), housing-supply pressures, and provincial preemption — not proven personal enrichment or procedural fraud.",
+  ],
+  context:"Burlington, ON (part of Halton Region, Golden Horseshoe) faces intense development pressures amid Ontario's housing crisis. Provincial policy emphasizes supply increases, sometimes via Greenbelt adjustments and DC flexibility. Council manages DCs to fund infrastructure while debating reductions to stimulate building. Mayor Marianne Meed Ward (since 2018) leads; a historical 2018 election-ad controversy was resolved with withdrawn charges.",
+  evidence:[
+    {t:"Development Charges policy shift (2025–2026)",d:"Council advanced a temporary 2-year elimination/reduction of residential DCs. Backed by home builders as market stimulus; criticized locally as shifting infrastructure costs to taxpayers. Tense multi-hour meetings with councillor friction."},
+    {t:"Accountability infrastructure",d:"Active Integrity Commissioner with published reports; Audit Committee; Whistleblower portal/program rolled out ~2025–2026."},
+    {t:"Procurement framework",d:"Standard by-laws with COI disclosure, bid anti-collusion language, and reserved rights for rejection. No public evidence of widespread bid-rigging or kickbacks."},
+    {t:"Provincial overlap — Greenbelt (2022–2023)",d:"~7,400 acres removed favoring specific developers (RCMP noted in coverage). Burlington/Halton impacted by related development/quarry pressures (e.g., Nelson Aggregate). No direct municipal-council linkage found in open sources."},
+    {t:"FOI / transparency",d:"Provincial proposals to limit access to premier/cabinet/lobbyist records criticized as reducing accountability. Municipal MFIPPA processes operational; no Burlington-specific secrecy scandals identified."},
+    {t:"2018 election",d:"Third-party advertiser charged by OPP for spending violations targeting the Mayor; charges withdrawn 2022. No findings against municipal actors."},
+  ],
+  redflags:[
+    {flag:"DC reductions favoring developers",conf:"Medium",desc:"Potential cost-shift to existing taxpayers; pro-development tilt amid provincial housing push.",why:"Observable policy outcome + public criticism; no evidence of personal financial benefit or collusion."},
+    {flag:"Provincial FOI tightening",conf:"Medium (provincial)",desc:"Limits public insight into high-level influence/lobbying.",why:"Recent legislative moves; indirect municipal impact via reduced transparency."},
+    {flag:"Development-industry influence",conf:"Low–Medium",desc:"Broader Ontario pattern of developer proximity to approvals.",why:"Common critique; no Burlington-specific smoking-gun contracts or donations traced."},
+    {flag:"Historical election-ad issue",conf:"Low",desc:"Resolved, withdrawn charges.",why:"No ongoing findings against city officials."},
+  ],
+  vulnerabilities:"DC funding-model sensitivity to economic cycles; provincial preemption on land use/housing; potential for perceived (vs. actual) regulatory capture by the development sector.",
+  conclusion:"Clean on major corruption indicators. Focus area = policy accountability and transparency enhancements rather than criminal referral. Comparable to many Ontario municipalities under housing pressure — debates exist, but governance guardrails are in place.",
+  recommendations:[
+    {t:"FOI / Records Pull",d:"Target specific DC-related council votes, any linked developer correspondence, and full Integrity Commissioner reports.",pri:"high",tags:["FOI","DC","records"]},
+    {t:"Financial Flow Mapping",d:"Cross-reference development-charge reserve statements with major approvals (2024–2026).",pri:"high",tags:["finance","DC","mapping"]},
+    {t:"Network Scan",d:"Halton Region procurement overlap + any public lobbyist disclosures.",pri:"med",tags:["network","procurement","lobbyist"]},
+    {t:"Whistleblower / Audit Monitor",d:"Track new program outputs for internal flags.",pri:"med",tags:["audit","whistleblower"]},
+    {t:"Public Reporting",d:"Draft a neutral briefing for local stakeholders / ethics review.",pri:"low",tags:["reporting","ethics"]},
+  ],
+};
+const CONF_CLS=c=>/^low\b/i.test(c)?"low":/medium/i.test(c)?"med":"high";
+
+function ViewDashboard(s){
+  const wrap=el("div",{});
+  wrap.appendChild(el("div",{class:"snap"},
+    el("div",{class:"snap-h"},el("span",{class:"verdict-pill"},"VERDICT · CLEAN"),"Executive Snapshot — Overall Finding"),
+    el("div",{class:"snap-body"},BRIEFING.verdict),
+    ...BRIEFING.snapshot.map(p=>el("div",{class:"snap-note"},p)),
+  ));
+  // headline metrics from intel feed (if loaded)
+  if(s.intel&&s.intel.metrics){
+    wrap.appendChild(el("div",{class:"stats"},
+      ...s.intel.metrics.slice(0,4).map(m=>el("div",{class:"stat"},
+        el("div",{class:"k"},m.label),
+        el("div",{class:"v "+(m.trend==="down"?"down":m.trend==="up"?"warn":""),style:"font-size:16px;line-height:1.25;margin-top:8px"},m.value),
+        el("div",{class:"d"},m.note),
+      ))));
+  }
+  wrap.appendChild(el("div",{class:"row",style:"margin-top:4px"},
+    el("button",{class:"btn primary sm",onclick:()=>store.set({route:"briefing"})},"🔎 Open full briefing"),
+    el("button",{class:"btn sm",onclick:()=>store.set({route:"tasks"})},"▦ Task queue"),
+    el("button",{class:"btn sm",onclick:()=>store.set({route:"reports"})},"📤 Reports & exports"),
+    el("span",{class:"muted tiny mono"},"Confidence floor: evidence-based only · all claims sourced or labelled speculative."),
+  ));
+  return wrap;
+}
+
+function ViewBriefing(s){
+  const wrap=el("div",{});
+  wrap.appendChild(el("div",{class:"notice"},"🛈 Scope: Burlington, ON core (Halton Region), 2023–2026 focus. Evidence-tied; provincial items labelled as such. Suitable for legal/media review."));
+  wrap.appendChild(el("div",{class:"snap"},
+    el("div",{class:"snap-h"},el("span",{class:"verdict-pill"},"VERDICT · CLEAN"),"Current verdict"),
+    el("div",{class:"snap-body"},BRIEFING.verdict)));
+  wrap.appendChild(el("div",{class:"card",style:"margin-bottom:14px"},el("h3",{},"1 · Context"),el("div",{class:"muted",style:"font-size:13px"},BRIEFING.context)));
+  const ev=el("div",{class:"card",style:"margin-bottom:14px"},el("h3",{},"2 · Evidence (key verifiable items)"));
+  BRIEFING.evidence.forEach(e=>ev.appendChild(el("div",{class:"evi"},el("div",{class:"evi-t"},e.t),el("div",{class:"evi-d"},e.d))));
+  wrap.appendChild(ev);
+  // red-flag table
+  const rf=el("div",{class:"card",style:"margin-bottom:14px"},el("h3",{},"3 · Analysis — red flags (with confidence)"));
+  const tbl=el("table",{class:"rftable"},
+    el("thead",{},el("tr",{},el("th",{},"Red flag"),el("th",{},"Confidence"),el("th",{},"Description / justification"))));
+  const tb=el("tbody",{});
+  BRIEFING.redflags.forEach(r=>tb.appendChild(el("tr",{},
+    el("td",{},el("b",{},r.flag)),
+    el("td",{},el("span",{class:"conf "+CONF_CLS(r.conf)},r.conf)),
+    el("td",{},el("div",{},r.desc),el("div",{class:"muted tiny",style:"margin-top:4px"},"Why: "+r.why)),
+  )));
+  tbl.appendChild(tb); rf.appendChild(tbl);
+  rf.appendChild(el("div",{class:"muted tiny",style:"margin-top:10px"},"Distinction: primarily policy & transparency debates, not proven corruption (no bid-rigging, embezzlement, or bribery chains identified). Systemic vulnerabilities: "+BRIEFING.vulnerabilities));
+  wrap.appendChild(rf);
+  wrap.appendChild(el("div",{class:"card",style:"margin-bottom:14px"},el("h3",{},"4 · Conclusion"),el("div",{class:"muted",style:"font-size:13px"},BRIEFING.conclusion)));
+  // recommendations -> deployable to task queue
+  const rec=el("div",{class:"card"},el("h3",{},"Actionable recommendations (deploy to task queue)"));
+  BRIEFING.recommendations.forEach(r=>rec.appendChild(el("div",{class:"rec"},
+    el("div",{},el("div",{class:"evi-t"},r.t),el("div",{class:"evi-d"},r.d)),
+    el("button",{class:"btn sm",onclick:()=>{addTask({title:r.t,desc:r.d,priority:r.pri,status:"open",tags:r.tags});store.set({route:"tasks"});}},"+ Queue"),
+  )));
+  wrap.appendChild(rec);
+  return wrap;
+}
+
+/* ============================================================
+   ADVANCED: ANALYTICS · INSTITUTIONAL GRAPH · EVIDENCE LOCKER
+   Dependency-free. Operates only on aggregate, in-app, and
+   public-source data — no per-individual lookups or tracking.
+   ============================================================ */
+const SVGNS="http://www.w3.org/2000/svg";
+function svgEl(tag,attrs={},...kids){
+  const n=document.createElementNS(SVGNS,tag);
+  for(const k in attrs){if(attrs[k]!=null)n.setAttribute(k,attrs[k]);}
+  for(const c of kids.flat()){if(c==null)continue;n.appendChild(typeof c==="string"?document.createTextNode(c):c);}
+  return n;
+}
+/* pure helpers (unit-tested below) */
+function tally(arr,keyFn){const o={};for(const x of arr){const k=keyFn(x);o[k]=(o[k]||0)+1;}return o;}
+function parseDelta(v){const m=String(v).match(/-?\d+(\.\d+)?/);return m?parseFloat(m[0]):null;}
+/* SHA-256 of text -> hex (browser-native SubtleCrypto; requires https context) */
+async function sha256(text){
+  if(!(window.crypto&&crypto.subtle))throw new Error("SubtleCrypto unavailable (needs https context)");
+  const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+
+const SEV_COLOR={high:"var(--red)",med:"var(--amber)",low:"var(--green)"};
+/* illustrative CSI index trend (shape only — verify exact values at the cited StatsCan table) */
+const CSI_TREND=[
+  {y:"'08",v:78},{y:"'10",v:74},{y:"'12",v:70},{y:"'14",v:66},
+  {y:"'16",v:63},{y:"'18",v:61},{y:"'20",v:58},{y:"'22",v:55},{y:"'24",v:52},
+];
+
+function donut(counts,labels){
+  const entries=Object.keys(labels).filter(k=>counts[k]).map(k=>({k,n:counts[k],color:labels[k]}));
+  const total=entries.reduce((a,b)=>a+b.n,0)||1;
+  const r=52,C=2*Math.PI*r,cx=70,cy=70;
+  const svg=svgEl("svg",{viewBox:"0 0 140 140",role:"img"});
+  svg.appendChild(svgEl("circle",{cx,cy,r,fill:"none",stroke:"var(--line)","stroke-width":18}));
+  let off=0;
+  entries.forEach(e=>{const len=e.n/total*C;
+    svg.appendChild(svgEl("circle",{cx,cy,r,fill:"none",stroke:e.color,"stroke-width":18,
+      "stroke-dasharray":len+" "+(C-len),"stroke-dashoffset":-off,transform:"rotate(-90 "+cx+" "+cy+")"}));
+    off+=len;});
+  svg.appendChild(svgEl("text",{x:cx,y:cy-2,"text-anchor":"middle","font-family":"var(--mono)","font-size":"22","font-weight":"700",fill:"var(--text)"},String(total)));
+  svg.appendChild(svgEl("text",{x:cx,y:cy+14,"text-anchor":"middle","font-family":"var(--mono)","font-size":"8",fill:"var(--text-3)"},"TOTAL"));
+  return svg;
+}
+function legend(counts,labels,names){
+  return el("div",{class:"legend"},...Object.keys(labels).filter(k=>counts[k]).map(k=>
+    el("span",{class:"lg"},el("span",{class:"sw",style:"background:"+labels[k]}),(names[k]||k)+" · "+counts[k])));
+}
+function barsChart(data){
+  const max=Math.max(1,...data.map(d=>d.value));
+  const w=300,bh=26,gap=12,h=data.length*(bh+gap);
+  const svg=svgEl("svg",{viewBox:"0 0 "+w+" "+h,role:"img"});
+  data.forEach((d,i)=>{const y=i*(bh+gap);const bw=Math.max(2,(d.value/max)*(w-90));
+    svg.appendChild(svgEl("rect",{x:80,y,width:bw,height:bh,rx:5,fill:d.color,opacity:"0.85"}));
+    svg.appendChild(svgEl("text",{x:74,y:y+bh/2+3,"text-anchor":"end","font-family":"var(--mono)","font-size":"9",fill:"var(--text-2)"},d.label));
+    svg.appendChild(svgEl("text",{x:84+bw,y:y+bh/2+3,"font-family":"var(--mono)","font-size":"10","font-weight":"700",fill:"var(--text)"},String(d.value)));
+  });
+  return svg;
+}
+function lineChart(series){
+  const w=320,h=120,pad=10;const vals=series.map(s=>s.v);const mn=Math.min(...vals),mx=Math.max(...vals);
+  const x=i=>pad+i*((w-2*pad)/(series.length-1));
+  const y=v=>h-pad-((v-mn)/((mx-mn)||1))*(h-2*pad-14);
+  const pts=series.map((s,i)=>x(i)+","+y(s.v)).join(" ");
+  const svg=svgEl("svg",{viewBox:"0 0 "+w+" "+h,role:"img"});
+  svg.appendChild(svgEl("polyline",{points:pts,fill:"none",stroke:"var(--cyan)","stroke-width":2,"stroke-linejoin":"round","stroke-linecap":"round"}));
+  series.forEach((s,i)=>{svg.appendChild(svgEl("circle",{cx:x(i),cy:y(s.v),r:2.5,fill:"var(--cyan)"}));
+    svg.appendChild(svgEl("text",{x:x(i),y:h-1,"text-anchor":"middle","font-family":"var(--mono)","font-size":"8",fill:"var(--text-3)"},s.y));});
+  return svg;
+}
+
+function ViewAnalytics(s){
+  const wrap=el("div",{});
+  wrap.appendChild(el("div",{class:"notice"},"🛈 ",el("b",{},"Aggregate metrics only. "),
+    "Charts are computed from in-app activity and operator-supplied public-source snapshots — verify exact figures against the cited primary sources."));
+  if(s.intel&&s.intel.metrics){
+    wrap.appendChild(el("div",{class:"stats"},...s.intel.metrics.map(m=>el("div",{class:"stat"},
+      el("div",{class:"k"},m.label),
+      el("div",{class:"v "+(m.trend==="down"?"down":m.trend==="up"?"warn":""),style:"font-size:16px;margin-top:8px"},m.value),
+      el("div",{class:"d"},m.note),
+      el("div",{class:"tiny mono",style:"color:var(--text-3);margin-top:6px"},"src: "+m.source)))));
+  }
+  const sev=tally(s.events,e=>e.sev);
+  const tsk=tally(s.tasks,t=>t.status);
+  const charts=el("div",{class:"charts"});
+  const c1=el("div",{class:"chart"},el("h3",{},"Status-stream severity mix"));
+  c1.appendChild(donut(sev,SEV_COLOR));
+  c1.appendChild(legend(sev,SEV_COLOR,{high:"High",med:"Medium",low:"Low"}));
+  charts.appendChild(c1);
+  const c2=el("div",{class:"chart"},el("h3",{},"Investigation tasks by status"));
+  c2.appendChild(barsChart([
+    {label:"OPEN",value:tsk.open||0,color:"var(--cyan)"},
+    {label:"IN PROG",value:tsk.in_progress||0,color:"var(--violet)"},
+    {label:"BLOCKED",value:tsk.blocked||0,color:"var(--red)"},
+    {label:"DONE",value:tsk.completed||0,color:"var(--green)"},
+  ]));
+  charts.appendChild(c2);
+  const c3=el("div",{class:"chart"},el("h3",{},"Halton CSI — long-run trend (illustrative)"));
+  c3.appendChild(lineChart(CSI_TREND));
+  c3.appendChild(el("div",{class:"muted tiny",style:"margin-top:8px"},"Shape illustrative; confirm exact values at ",
+    el("a",{href:"https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=3510002601",target:"_blank",rel:"noopener noreferrer"},"StatsCan 35-10-0026-01 ↗")));
+  charts.appendChild(c3);
+  wrap.appendChild(charts);
+  return wrap;
+}
+
+const GRAPH={
+  center:{id:"council",label:"Burlington Council",tag:"municipal"},
+  nodes:[
+    {id:"integrity",label:"Integrity Comm.",tag:"oversight"},
+    {id:"audit",label:"Audit Cttee",tag:"oversight"},
+    {id:"whistle",label:"Whistleblower",tag:"oversight"},
+    {id:"procure",label:"Procurement",tag:"procurement"},
+    {id:"olt",label:"Land Tribunal",tag:"land-use"},
+    {id:"devfiles",label:"Dev. Charges",tag:"land-use"},
+    {id:"halton",label:"Halton Region",tag:"regional"},
+    {id:"lobby",label:"Lobbyist Reg.",tag:"influence"},
+    {id:"hrps",label:"HRPS",tag:"public-safety"},
+    {id:"province",label:"Province of ON",tag:"provincial"},
+  ],
+  edges:[
+    ["integrity","council"],["audit","council"],["whistle","council"],
+    ["procure","council"],["devfiles","council"],["olt","devfiles"],
+    ["halton","council"],["lobby","council"],["hrps","halton"],
+    ["province","olt"],["province","council"],["devfiles","procure"],
+  ],
+};
+function ViewNetwork(s){
+  const wrap=el("div",{});
+  wrap.appendChild(el("div",{class:"notice"},"🛈 ",el("b",{},"Institutional relationship map. "),
+    "Nodes are public bodies and record types — not individuals. Tap a node for its public-record context."));
+  const cx=330,cy=205,R=150,w=660,h=420;
+  const svg=svgEl("svg",{viewBox:"0 0 "+w+" "+h,role:"img","aria-label":"Institutional relationship graph"});
+  const pos={};
+  GRAPH.nodes.forEach((n,i)=>{const a=-Math.PI/2+i*2*Math.PI/GRAPH.nodes.length;pos[n.id]={x:cx+R*Math.cos(a),y:cy+R*Math.sin(a)};});
+  pos[GRAPH.center.id]={x:cx,y:cy};
+  GRAPH.edges.forEach(([a,b])=>{const pa=pos[a],pb=pos[b];if(!pa||!pb)return;
+    svg.appendChild(svgEl("line",{class:"gedge",x1:pa.x,y1:pa.y,x2:pb.x,y2:pb.y}));});
+  const drawNode=(node,p,center)=>{
+    const g=svgEl("g",{class:"gnode"});
+    g.appendChild(svgEl("circle",{cx:p.x,cy:p.y,r:center?26:15,fill:center?"var(--cyan)":"var(--panel-2)",stroke:center?"var(--cyan)":"var(--line-2)","stroke-width":center?0:1.4}));
+    g.appendChild(svgEl("text",{x:p.x,y:p.y+(center?42:28),"text-anchor":"middle"},node.label));
+    g.addEventListener("click",()=>Toast.info(node.label,(node.tag?("["+node.tag+"] "):"")+"Public-record entity — citations in Crime Intel & Reports."));
+    return g;
+  };
+  GRAPH.nodes.forEach(n=>svg.appendChild(drawNode(n,pos[n.id],false)));
+  svg.appendChild(drawNode(GRAPH.center,pos[GRAPH.center.id],true));
+  wrap.appendChild(el("div",{class:"graphwrap",style:"padding:8px"},svg));
+  if(s.intel&&s.intel.satellite){
+    const sat=s.intel.satellite;
+    wrap.appendChild(el("div",{class:"card",style:"margin-top:14px"},
+      el("h3",{},"🗺 Geographic base map — "+sat.label),
+      el("div",{class:"mapwrap"},el("iframe",{loading:"lazy",title:"Ontario map — Burlington area",
+        src:"https://www.openstreetmap.org/export/embed.html?bbox="+(sat.lng-0.18)+"%2C"+(sat.lat-0.09)+"%2C"+(sat.lng+0.18)+"%2C"+(sat.lat+0.09)+"&layer=mapnik&marker="+sat.lat+"%2C"+sat.lng})),
+      el("div",{class:"row",style:"margin-top:10px"},el("a",{class:"btn primary sm",href:sat.primary,target:"_blank",rel:"noopener noreferrer"},"🛰 Open satellite view ↗"))));
+  }
+  return wrap;
+}
+
+function addEvidence(rec){const list=[rec,...store.get().evidence];store.set({evidence:list});saveEvidence(list);}
+function deleteEvidence(id){const list=store.get().evidence.filter(e=>e.id!==id);store.set({evidence:list});saveEvidence(list);}
+function ViewEvidence(s){
+  const wrap=el("div",{});
+  wrap.appendChild(el("div",{class:"notice"},"🔐 ",el("b",{},"Chain-of-custody log. "),
+    "Record each public source you rely on. The deck stores a SHA-256 fingerprint of the captured text (not the text itself), the URL, and the retrieval time — so you can later prove a citation hasn't changed. Everything stays in your browser."));
+  const nameI=el("input",{placeholder:"Source name — e.g. HRPS H1 2025 statistics"});
+  const urlI=el("input",{placeholder:"https://…  (public source URL)"});
+  const whenI=el("input",{type:"datetime-local"});
+  try{whenI.value=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);}catch(e){}
+  const txtI=el("textarea",{rows:"3",placeholder:"Paste the exact excerpt you're citing (hashed locally for integrity; not stored verbatim)"});
+  const confI=el("select",{});[["high","High confidence"],["med","Medium"],["low","Low / unverified"]].forEach(([v,l])=>{const o=el("option",{value:v},l);if(v==="med")o.selected=true;confI.appendChild(o);});
+  const notesI=el("input",{placeholder:"notes (optional)"});
+  wrap.appendChild(el("div",{class:"card",style:"margin-bottom:16px"},
+    el("h3",{},"➕ Log a public source"),
+    field("Source name",nameI),field("URL",urlI),
+    el("div",{class:"row"},el("div",{style:"flex:1;min-width:180px"},field("Retrieved at",whenI)),el("div",{style:"flex:1;min-width:140px"},field("Confidence",confI))),
+    field("Cited excerpt (hashed locally)",txtI),
+    field("Notes",notesI),
+    el("div",{class:"actions"},
+      el("button",{class:"btn primary",onclick:async()=>{
+        const name=nameI.value.trim();if(!name){Toast.error("Missing name","Give the source a name.");nameI.focus();return;}
+        let hash="(no excerpt)";const excerpt=txtI.value.trim();
+        if(excerpt){try{hash=await sha256(excerpt);}catch(e){hash="(hash unavailable — needs https)";}}
+        addEvidence({id:uid(),name,url:urlI.value.trim(),retrieved:whenI.value||new Date().toISOString(),hash,len:excerpt.length,conf:confI.value,notes:notesI.value.trim(),logged:Date.now()});
+        Toast.success("Source logged",name);
+        nameI.value=urlI.value=txtI.value=notesI.value="";
+      }},"Log source"))));
+  const list=el("div",{});
+  if(!s.evidence.length)list.appendChild(el("div",{class:"card muted"},"No sources logged yet. Add your first citation above."));
+  s.evidence.forEach(e=>list.appendChild(el("div",{class:"evidrow"},
+    el("div",{},
+      el("div",{class:"src-name"},e.name," ",el("span",{class:"conf "+CONF_CLS(e.conf)},e.conf)),
+      e.url?el("div",{style:"margin-top:3px"},el("a",{href:e.url,target:"_blank",rel:"noopener noreferrer"},e.url+" ↗")):null,
+      el("div",{class:"muted tiny mono",style:"margin-top:5px"},"retrieved: "+e.retrieved+(e.len?" · excerpt "+e.len+" chars":"")),
+      el("div",{class:"hash"},"sha256: "+e.hash),
+      e.notes?el("div",{class:"muted tiny",style:"margin-top:5px"},e.notes):null),
+    el("div",{class:"ctl"},
+      el("button",{class:"btn sm",onclick:()=>{if(navigator.clipboard)navigator.clipboard.writeText(e.hash);Toast.info("Copied","SHA-256 copied to clipboard.");}},"⧉ copy hash"),
+      el("button",{class:"btn sm",onclick:()=>{deleteEvidence(e.id);Toast.info("Removed",e.name);}},"✕ remove")))));
+  wrap.appendChild(list);
+  if(s.evidence.length){
+    wrap.appendChild(el("div",{class:"row",style:"margin-top:14px"},
+      el("button",{class:"btn sm",onclick:()=>{
+        const blob=new Blob([JSON.stringify(s.evidence,null,2)],{type:"application/json"});
+        const a=el("a",{href:URL.createObjectURL(blob),download:"ontario-osint-evidence.json"});a.click();
+        Toast.info("Export","Evidence log exported as JSON.");
+      }},"⤓ Export evidence log (JSON)")));
+  }
+  return wrap;
+}
+
+/* ============================================================
+   ERROR BOUNDARY + RENDER
+   ============================================================ */
+const NAV=[
+  ["dashboard","▣","DASHBOARD"],
+  ["briefing","🔎","ACTIVE INVESTIGATIONS"],
+  ["analytics","📊","ANALYTICS"],
+  ["status","◉","STATUS STREAM"],
+  ["intel","🌐","CRIME INTEL"],
+  ["tasks","▦","TASK QUEUE"],
+  ["network","🕸","NETWORK MAP"],
+  ["evidence","🔐","EVIDENCE LOCKER"],
+  ["reports","📤","REPORTS & EXPORTS"],
+];
+const VIEWS={dashboard:ViewDashboard,briefing:ViewBriefing,analytics:ViewAnalytics,status:ViewStatus,tasks:ViewTasks,network:ViewNetwork,evidence:ViewEvidence,reports:ViewConfig,intel:ViewIntel,config:ViewConfig};
+const TITLES={dashboard:"Dashboard · Executive Snapshot",briefing:"Active Investigations · Burlington ON Core",analytics:"Analytics · Public-Source Metrics",status:"Status Stream (Mock Realtime)",tasks:"Task Queue (Optimistic Patching)",network:"Network Map · Institutional Graph",evidence:"Evidence Locker · Chain of Custody",reports:"Reports & Exports",intel:"Crime Intelligence Feed",config:"Reports & Exports"};
+
+function render(){
+  const s=store.get();
+  const app=$("#app");
+  document.body.className=s.theme==="dark"?"theme-dark":"";
+  let body;
+  try{ body=(VIEWS[s.route]||ViewStatus)(s); }
+  catch(err){
+    body=el("div",{class:"errband"},
+      el("div",{class:"mono",style:"color:var(--red);font-weight:700;margin-bottom:8px"},"⚠ Render error caught by boundary"),
+      el("div",{class:"muted",style:"font-size:12px;margin-bottom:10px"},String(err&&err.message||err)),
+      el("button",{class:"btn sm",onclick:()=>render()},"↻ Retry view"));
+    console.error(err);
+  }
+  const highCount=s.events.filter(e=>e.sev==="high").length;
+  app.replaceChildren(
+    el("div",{class:"shell"},
+      el("aside",{class:"sidebar"},
+        el("div",{class:"brand"},
+          el("a",{class:"logo",href:"index.html","aria-label":"ClearGlass — home",title:"ClearGlass — home"},
+            el("img",{src:"assets/images/clearglass-logo.png",alt:"ClearGlass logo",decoding:"async"})),
+          el("div",{},
+            el("div",{class:"t1"},"OSINT DECK"),
+            el("div",{class:"t2"},"Ontario · Halton/Burlington"))),
+        ...NAV.map(([r,ic,label])=>{
+          const n=el("button",{class:"navlink"+(s.route===r?" active":""),onclick:()=>{store.set({route:r});}},
+            el("span",{class:"ic"},ic),label);
+          if(r==="status"&&highCount)n.appendChild(el("span",{class:"badge"},String(highCount)));
+          if(r==="tasks")n.appendChild(el("span",{class:"badge"},String(s.tasks.filter(t=>t.status!=="completed").length)));
+          if(r==="network")n.appendChild(el("span",{class:"badge"},String(GRAPH.nodes.length+1)));
+          if(r==="evidence"&&s.evidence.length)n.appendChild(el("span",{class:"badge"},String(s.evidence.length)));
+          return n;
+        }),
+        el("div",{class:"foot"},
+          el("div",{},"Operator: D. Otieno"),
+          el("div",{},"ClearGlass Inc."),
+          el("div",{style:"margin-top:6px;color:var(--cyan-dim)"},"Lawful public sources only"),
+          el("div",{style:"margin-top:8px"},el("a",{href:"index.html"},"← www.clearglassinc.com")),
+        )),
+      el("section",{class:"main"},
+        el("header",{class:"topbar"},
+          el("div",{},
+            el("h1",{},TITLES[s.route]||""),
+            el("div",{class:"sub"},"Master Investigator · Burlington ON & the whole of Canada Brief")),
+          el("div",{class:"spacer"}),
+          el("button",{class:"pill",style:"cursor:pointer",onclick:()=>openPalette(),title:"Command palette (Ctrl/Cmd+K)"},"⌘K"),
+          el("button",{class:"pill",style:"cursor:pointer",onclick:()=>toggleTheme(),title:"Toggle tactical dark mode"},s.theme==="dark"?"☀ LIGHT":"🌙 DARK"),
+          el("a",{class:"pill",href:(s.intel&&s.intel.satellite&&s.intel.satellite.primary)||SAT_URL,target:"_blank",rel:"noopener noreferrer",title:"Open Ontario satellite imagery"},"🛰 SAT LINK"),
+          el("span",{class:"pill"+(s.streamOn?"":" off")},el("span",{class:"lv"}),s.streamOn?"STREAM LIVE":"STREAM PAUSED"),
+          el("span",{class:"clock",id:"clk"},clockStr()),
+          el("a",{class:"cg-badge",href:"index.html","aria-label":"ClearGlass — home",title:"ClearGlass — home"},
+            el("img",{src:"assets/images/clearglass-logo.png",alt:"ClearGlass logo",decoding:"async"})),
+        ),
+        el("div",{class:"indstrip"},
+          el("span",{class:"ind"},"🟢 OSINT Sources Synced"),
+          el("span",{class:"ind"},"🟡 Provincial FOI Watch"),
+          el("span",{class:"ind"},"🔵 Audit/Integrity Active"),
+          el("span",{class:"ind sep"},"Last Sync: moments ago"),
+          el("span",{class:"ind"},"Confidence Floor: evidence-based only"),
+        ),
+        el("div",{class:"content"},body)),
+    )
+  );
+  // re-apply DOM-local search filters after the view rebuilds
+  if(s.route==="status")applyDomFilter("#ev-list","#ev-count",STREAM_Q);
+  if(s.route==="tasks")applyDomFilter("#task-root","#task-count",TASK_Q);
+}
+
+function toggleTheme(){
+  const next=store.get().theme==="dark"?"light":"dark";
+  try{localStorage.setItem("cg.osint.theme",next);}catch(e){}
+  store.set({theme:next});
+  Toast.info("Theme",next==="dark"?"Tactical dark mode engaged.":"Crystal-glass mode.");
+}
+
+/* ---------- command palette (Ctrl/Cmd+K) ---------- */
+function paletteItems(){
+  return [
+    {ic:"▣",label:"Go: Dashboard",sub:"view",run:()=>store.set({route:"dashboard"})},
+    {ic:"🔎",label:"Go: Active Investigations",sub:"view",run:()=>store.set({route:"briefing"})},
+    {ic:"📊",label:"Go: Analytics",sub:"view",run:()=>store.set({route:"analytics"})},
+    {ic:"◉",label:"Go: Status Stream",sub:"view",run:()=>store.set({route:"status"})},
+    {ic:"🌐",label:"Go: Crime Intel Feed",sub:"view",run:()=>store.set({route:"intel"})},
+    {ic:"▦",label:"Go: Task Queue",sub:"view",run:()=>store.set({route:"tasks"})},
+    {ic:"🕸",label:"Go: Network Map",sub:"view",run:()=>store.set({route:"network"})},
+    {ic:"🔐",label:"Go: Evidence Locker",sub:"view",run:()=>store.set({route:"evidence"})},
+    {ic:"📤",label:"Go: Reports & Exports",sub:"view",run:()=>store.set({route:"reports"})},
+    {ic:"⊕",label:"Inject test event",sub:"action",run:()=>stream.pulse()},
+    {ic:"＋",label:"New investigation task",sub:"action",run:()=>{store.set({route:"tasks"});openTaskModal();}},
+    {ic:store.get().streamOn?"⏸":"▶",label:store.get().streamOn?"Pause stream":"Resume stream",sub:"action",run:()=>toggleStream()},
+    {ic:"🌙",label:"Toggle tactical dark mode",sub:"action",run:()=>toggleTheme()},
+    {ic:"🛰",label:"Open Ontario satellite map",sub:"link",run:()=>window.open(SAT_URL,"_blank","noopener")},
+  ];
+}
+function openPalette(){
+  if($(".cmdk"))return;
+  let items=paletteItems(), sel=0;
+  const overlay=el("div",{class:"cmdk",onclick:e=>{if(e.target===overlay)overlay.remove();}});
+  const input=el("input",{placeholder:"Type a command or view…"});
+  const listEl=el("div",{class:"items"});
+  const box=el("div",{class:"box"},input,listEl,
+    el("div",{class:"hint"},el("span",{},el("kbd",{},"↑↓")," navigate"),el("span",{},el("kbd",{},"↵")," run"),el("span",{},el("kbd",{},"esc")," close")));
+  overlay.appendChild(box);
+  function draw(){
+    const q=input.value.toLowerCase();
+    const f=items.filter(it=>it.label.toLowerCase().includes(q));
+    if(sel>=f.length)sel=Math.max(0,f.length-1);
+    listEl.replaceChildren(...f.map((it,i)=>el("div",{class:"it"+(i===sel?" sel":""),onclick:()=>{overlay.remove();it.run();}},
+      el("span",{class:"ic"},it.ic),it.label,el("span",{class:"sub"},it.sub))));
+    listEl._f=f;
+  }
+  input.addEventListener("input",draw);
+  input.addEventListener("keydown",e=>{
+    const f=listEl._f||[];
+    if(e.key==="ArrowDown"){e.preventDefault();sel=Math.min(f.length-1,sel+1);draw();}
+    else if(e.key==="ArrowUp"){e.preventDefault();sel=Math.max(0,sel-1);draw();}
+    else if(e.key==="Enter"){e.preventDefault();if(f[sel]){overlay.remove();f[sel].run();}}
+    else if(e.key==="Escape"){overlay.remove();}
+  });
+  document.body.appendChild(overlay);
+  draw(); input.focus();
+}
+
+function clockStr(){return new Date().toLocaleString("en-CA",{hour12:false,timeZone:"America/Toronto"})+" ET";}
+
+/* ============================================================
+   WIRE-UP
+   ============================================================ */
+function syncHash(){const r=store.get().route;if(("#"+r)!==location.hash){try{history.replaceState(null,"","#"+r);}catch(e){}}}
+window.addEventListener("hashchange",()=>{const r=location.hash.replace(/^#/,"");if(VIEWS[r]&&r!==store.get().route)store.set({route:r});});
+store.subscribe(()=>{render();syncHash();});
+
+stream.addEventListener("incident",e=>{
+  const ev=e.detail;
+  store.set(s=>({events:[ev,...s.events].slice(0,80)}));
+  if(ev.sev==="high")Toast.error("⚠ High-severity incident",ev.ti);
+});
+
+window.addEventListener("error",e=>{Toast.error("Runtime error",e.message||"unknown");});
+window.addEventListener("unhandledrejection",e=>{Toast.error("Async error",(e.reason&&e.reason.message)||"promise rejected");});
+
+// ⌘K / Ctrl+K command palette
+window.addEventListener("keydown",e=>{
+  if((e.metaKey||e.ctrlKey)&&(e.key==="k"||e.key==="K")){e.preventDefault();if($(".cmdk"))$(".cmdk").remove();else openPalette();}
+});
+
+// live clock without full re-render
+setInterval(()=>{const c=$("#clk");if(c)c.textContent=clockStr();},1000);
+
+(function(){const r=location.hash.replace(/^#/,"");if(VIEWS[r])store.set({route:r});})();
+render();
+stream.start();
+loadIntel();
+
+/* expose a tiny test surface (used by the page's self-test below) */
+window.__deck={uid,fmtTime,createStore,SEED_TASKS,Api,tally,parseDelta,sha256};
+})();
+</script>
+
+<!-- ============================================================
+     Lightweight in-page self-tests (parity with the Vitest spec:
+     id generation, time formatting, optimistic patch + rollback).
+     Run by appending ?selftest to the URL. Logs to console.
+     ============================================================ -->
+<script>
+(function(){
+  if(!/[?&]selftest/.test(location.search))return;
+  const D=window.__deck; const results=[];
+  const ok=(name,cond)=>results.push((cond?"PASS":"FAIL")+" · "+name);
+  // 1. uid uniqueness
+  ok("uid() generates unique ids", new Set(Array.from({length:500},()=>D.uid())).size===500);
+  // 2. fmtTime returns HH:MM:SS
+  ok("fmtTime() formats clock", /^\d{2}:\d{2}:\d{2}$/.test(D.fmtTime(Date.now())));
+  // 3. store optimistic patch + rollback semantics
+  const s=D.createStore({tasks:[{id:"a",status:"open"}]});
+  const prev=s.get().tasks;
+  s.set(st=>({tasks:st.tasks.map(t=>t.id==="a"?{...t,status:"completed"}:t)}));
+  ok("optimistic patch applies", s.get().tasks[0].status==="completed");
+  s.set({tasks:prev});
+  ok("rollback restores previous", s.get().tasks[0].status==="open");
+  // 4. seed shape
+  const seed=D.SEED_TASKS();
+  ok("seed tasks have required fields", seed.every(t=>t.id&&t.title&&t.status&&t.priority));
+  // 5. tally aggregates by key
+  ok("tally() counts by key", (function(){const t=D.tally([{s:"a"},{s:"a"},{s:"b"}],x=>x.s);return t.a===2&&t.b===1;})());
+  // 6. parseDelta pulls a signed number from a metric string
+  ok("parseDelta() extracts number", D.parseDelta("-11.7% YoY")===-11.7 && D.parseDelta("n/a")===null);
+  // 7. sha256 known vector (async — logs separately)
+  if(D.sha256){D.sha256("abc").then(h=>console.log("%c"+(h==="ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"?"PASS":"FAIL")+" · sha256('abc') known vector", h.startsWith("ba78")?"color:#34d399":"color:#f87171")).catch(()=>{});}
+  console.log("%c[Burlington OSINT Deck] self-tests","color:#22d3ee;font-weight:bold");
+  results.forEach(r=>console.log((r.startsWith("PASS")?"%c":"%c")+r, r.startsWith("PASS")?"color:#34d399":"color:#f87171"));
+})();
+</script>
+
+<script defer src="nav.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="intelligence.html">Intelligence &amp; OSINT</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="clearglass-nexus.html"><span><b>Previous</b>ClearGlass NEXUS</span></a>
+      <a href="intelligence.html"><span><b>Topic hub</b>Intelligence</span></a>
+      <a href="clearglass.html"><span><b>Next in journey</b>Network Flow Intelligence</span></a>
+    </div>
+    <ul>
+      <li><a href="clearglass.html"><b>Network Flow Intelligence</b> — see network traffic as living structure</a></li>
+      <li><a href="intelligence-command-surface.html"><b>Intelligence Command Surface</b> — one unified operational picture</a></li>
+      <li><a href="intelligence-interface.html"><b>Intelligence Interface 2027</b> — next-generation analyst workspace</a></li>
+      <li><a href="intelligence-platform.html"><b>Intelligence Platform Architecture</b> — brand and platform blueprint</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

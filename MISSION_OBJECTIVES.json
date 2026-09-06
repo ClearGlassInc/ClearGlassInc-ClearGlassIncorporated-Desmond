@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema_version": "1.0.0",
+  "organization": "ClearGlassInc Artemis",
+  "market": {"primary": "Burlington, Ontario", "secondary": ["Oakville, Ontario", "Hamilton, Ontario", "Milton, Ontario", "Dundas, Ontario"]},
+  "measurement_window_days": 90,
+  "status": "targets_not_results",
+  "baseline_required": true,
+  "terms": ["software architect Burlington", "AI automation Burlington", "cybersecurity consultant Burlington", "ClearGlass Burlington"],
+  "objectives": [
+    {"id": "geo_grid_visibility", "metric": "green_cell_rate", "definition": "eligible measured cells with organic local-pack rank 1-3 / all valid measured cells", "baseline_source": "geo_grid_baseline.json", "target": {"relative_increase_min_pct": 30, "relative_increase_stretch_pct": 50, "deadline_days": 90}, "segments": ["keyword", "grid_point"], "minimum_evidence": "Identical grid, query set, device/language, provider and collection method at baseline and comparison; record unavailable/blocked cells rather than ranking them.", "owner": "GrowthReporter"},
+    {"id": "local_organic_sessions", "metric": "local_organic_sessions", "definition": "consented analytics sessions attributed to organic search and city/region in the declared market", "baseline_source": "baseline_metrics.json", "target": {"relative_increase_pct": 40, "deadline_days": 90}, "segments": ["city", "landing_page"], "minimum_evidence": "GA4 or approved analytics export with unchanged filters and documented consent/thresholding.", "owner": "GrowthReporter"},
+    {"id": "qualified_local_leads", "metric": "qualified_local_leads_per_month", "definition": "unique, non-test inquiries meeting documented fit criteria and containing consented local context, deduplicated by CRM lead ID", "target": {"minimum_count": 10, "deadline_days": 90}, "segments": ["source", "campaign", "city"], "minimum_evidence": "CRM disposition plus first-touch and last-touch UTM/source; no inferred location from sensitive data.", "owner": "GrowthReporter"},
+    {"id": "brand_surface_area", "metric": "verified_local_mentions_per_month", "definition": "distinct, editorially valid local media, organization, event, or partner pages mentioning ClearGlassInc Artemis", "baseline_source": "baseline_metrics.json", "target": {"minimum_count": 2, "deadline_days": 90}, "segments": ["entity_type", "domain"], "minimum_evidence": "Canonical URL, publication date, capture timestamp, and manual relevance review; exclude self-published and paid placements unless separately labelled.", "owner": "CommunityPartnershipScout"}
+  ],
+  "guardrails": {
+    "prohibited": ["review gating", "fabricated reviews or locations", "incentives conditioned on review sentiment", "keyword-stuffed or duplicate doorway pages", "automated mass outreach", "paid-link schemes", "unapproved production publishing"],
+    "approval_required": ["GBP edits or posts", "public content publication", "new personal-data integration", "review or outreach send", "site-wide schema or routing change", "paid sponsorship"],
+    "stop_conditions": ["GBP warning or suspension signal", "consent or unsubscribe failure", "material NAP conflict", "analytics data-quality break", "complaint-rate threshold set by compliance is exceeded"]
+  }
+}

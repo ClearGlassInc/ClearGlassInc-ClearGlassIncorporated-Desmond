@@ -1,0 +1,167 @@
+/* ClearGlass · Security Stack Fusion Dock
+   Additive override for Aegis Glass + Stealth Glass. Keeps the controls fused,
+   readable, touch-safe, and clear of the paired scroll arrows. */
+
+:root{
+  --cg-security-edge:18px;
+  --cg-security-bottom:18px;
+  --cg-security-reserve:118px;
+  --cg-mobile-fusion-clearance:92px;
+  --cg-mobile-fusion-right-lane:76px;
+}
+
+body.cg-security-dock-mounted{padding-bottom:calc(var(--cg-security-reserve) + env(safe-area-inset-bottom))}
+
+/* Aegis × Sentinel Fusion Dock */
+#cg-security-stack{
+  position:fixed!important;
+  right:max(var(--cg-security-edge),env(safe-area-inset-right))!important;
+  bottom:max(var(--cg-security-bottom),env(safe-area-inset-bottom))!important;
+  left:auto!important;
+  top:auto!important;
+  z-index:2147483647!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  justify-content:flex-end!important;
+  gap:.46rem!important;
+  width:min(292px,calc(100vw - 36px))!important;
+  min-width:0!important;
+  padding:8px!important;
+  border:1px solid rgba(211,238,255,.30)!important;
+  border-radius:24px!important;
+  background:
+    radial-gradient(circle at 18% 8%,rgba(255,255,255,.22),transparent 38%),
+    radial-gradient(circle at 86% 18%,rgba(115,204,255,.18),transparent 42%),
+    radial-gradient(circle at 18% 100%,rgba(167,139,250,.16),transparent 48%),
+    linear-gradient(145deg,rgba(24,36,58,.58),rgba(6,13,28,.46) 55%,rgba(13,19,38,.52))!important;
+  -webkit-backdrop-filter:blur(34px) saturate(190%) contrast(110%)!important;
+  backdrop-filter:blur(34px) saturate(190%) contrast(110%)!important;
+  box-shadow:
+    0 18px 44px rgba(0,0,0,.34),
+    0 0 0 1px rgba(118,218,255,.10),
+    0 0 34px rgba(96,165,250,.12),
+    inset 0 1px 0 rgba(255,255,255,.26),
+    inset 0 -1px 0 rgba(116,211,255,.08)!important;
+  pointer-events:none!important;
+  isolation:isolate!important;
+  overflow:hidden!important;
+  transform:translateZ(0)!important;
+  transform-origin:right bottom!important;
+  contain:layout paint!important;
+}
+
+#cg-security-stack::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,.035) 44%,rgba(105,231,255,.13) 72%,rgba(167,139,250,.14)),
+    linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
+  opacity:.78;
+  mix-blend-mode:screen;
+}
+
+#cg-security-stack::after{
+  content:"";
+  position:absolute;
+  inset:3px;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:20px;
+  pointer-events:none;
+  box-shadow:inset 0 0 22px rgba(255,255,255,.035);
+}
+
+#cg-security-stack>*{pointer-events:auto!important;position:relative!important;z-index:1!important;max-width:100%!important;min-width:0!important;margin:0!important}
+
+#cg-security-stack #cg-stealth-btn{
+  align-self:stretch!important;
+  width:100%!important;
+  height:36px!important;
+  min-height:36px!important;
+  right:auto!important;
+  bottom:auto!important;
+  justify-content:center!important;
+  padding:0 15px!important;
+  border-radius:999px!important;
+  border:1px solid rgba(193,219,255,.28)!important;
+  background:
+    radial-gradient(circle at 16% 18%,rgba(255,255,255,.22),transparent 36%),
+    linear-gradient(155deg,rgba(42,54,88,.58),rgba(11,18,36,.46))!important;
+  -webkit-backdrop-filter:blur(24px) saturate(175%)!important;
+  backdrop-filter:blur(24px) saturate(175%)!important;
+  box-shadow:
+    0 10px 22px rgba(0,0,0,.22),
+    0 0 0 1px rgba(150,178,255,.08),
+    inset 0 1px 0 rgba(255,255,255,.22),
+    inset 0 -1px 0 rgba(255,255,255,.05)!important;
+}
+
+#cg-security-stack #cg-stealth-btn.is-on{
+  border-color:rgba(150,255,235,.42)!important;
+  background:
+    radial-gradient(circle at 16% 18%,rgba(210,255,248,.24),transparent 36%),
+    linear-gradient(155deg,rgba(12,48,48,.62),rgba(5,20,28,.50))!important;
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.26),
+    0 0 26px rgba(120,224,200,.18),
+    inset 0 1px 0 rgba(220,255,250,.22)!important;
+}
+
+#cg-security-stack #aegis-glass-status{
+  align-self:center!important;
+  width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  text-align:center!important;
+  padding:7px 10px!important;
+  border:1px solid rgba(105,231,255,.24)!important;
+  border-radius:999px!important;
+  background:linear-gradient(180deg,rgba(8,30,42,.34),rgba(4,19,31,.24))!important;
+  -webkit-backdrop-filter:blur(18px) saturate(165%)!important;
+  backdrop-filter:blur(18px) saturate(165%)!important;
+  color:rgba(225,252,255,.94)!important;
+  font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace!important;
+  font-size:8px!important;
+  font-weight:700!important;
+  line-height:1.1!important;
+  letter-spacing:.09em!important;
+  text-transform:uppercase!important;
+}
+
+@media(max-width:720px){
+  body.cg-security-dock-mounted{padding-bottom:calc(var(--cg-mobile-fusion-clearance) + env(safe-area-inset-bottom))}
+  #cg-security-stack{
+    right:max(10px,env(safe-area-inset-right))!important;
+    bottom:calc(12px + env(safe-area-inset-bottom))!important;
+    width:clamp(148px,44vw,188px)!important;
+    padding:5px!important;
+    gap:4px!important;
+    border-radius:19px!important;
+    -webkit-backdrop-filter:blur(30px) saturate(190%) contrast(110%)!important;
+    backdrop-filter:blur(30px) saturate(190%) contrast(110%)!important;
+  }
+  #cg-security-stack::after{inset:2px;border-radius:16px}
+  #cg-security-stack #cg-stealth-btn{
+    height:32px!important;
+    min-height:32px!important;
+    padding:0 10px!important;
+    gap:5px!important;
+    font-size:clamp(7px,1.8vw,8px)!important;
+    letter-spacing:.13em!important;
+  }
+  #cg-security-stack #cg-stealth-btn .cg-sg-ic{width:11px!important;height:11px!important}
+  #cg-security-stack #aegis-glass-status{display:none!important}
+}
+
+@media(max-width:390px){
+  #cg-security-stack{right:max(8px,env(safe-area-inset-right))!important;width:clamp(142px,46vw,176px)!important}
+  #cg-security-stack #cg-stealth-btn{height:30px!important;min-height:30px!important;font-size:6.8px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  #cg-security-stack,#cg-security-stack *{transition:none!important;animation:none!important}
+}

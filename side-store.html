@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ClearGlass Side Store — Electronics, Cables & Components | ClearGlass Inc</title>
+<meta name="description" content="Shop dependable cables, adapters, components, tools, and accessories — every item under CAD $10. Automatic bundle discounts (3+ items 10% off, 5+ 15%), free shipping over $25. Clear Canadian pricing from Burlington, Ontario.">
+<link rel="canonical" href="https://www.clearglassinc.com/side-store.html">
+<meta property="og:title" content="ClearGlass Side Store — Electronics That Keep Your Setup Moving">
+<meta property="og:description" content="Dependable cables, adapters, components, and accessories under CAD $10. Automatic bundle discounts + free shipping over $25. Burlington, Ontario.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.clearglassinc.com/side-store.html">
+<meta property="og:site_name" content="ClearGlass Inc.">
+<meta property="og:locale" content="en_CA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ClearGlass Side Store — Electronics That Keep Your Setup Moving">
+<meta name="twitter:description" content="Cables, adapters, components, and accessories under CAD $10 with clear Canadian pricing and secure email checkout.">
+<meta name="theme-color" content="#f7f8fa">
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="ui.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Store",
+  "name": "ClearGlass Side Store",
+  "description": "Dependable low-cost wires, cables, connectors, adapters, components, and accessories — every item under CAD $10.",
+  "url": "https://www.clearglassinc.com/side-store.html",
+  "parentOrganization": {"@type": "Organization", "name": "ClearGlass Inc.", "url": "https://www.clearglassinc.com/"},
+  "address": {"@type": "PostalAddress", "addressLocality": "Burlington", "addressRegion": "ON", "addressCountry": "CA"},
+  "currenciesAccepted": "CAD",
+  "priceRange": "$"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "ClearGlass Inc.",
+  "url": "https://www.clearglassinc.com/",
+  "slogan": "Clarity Is Power",
+  "address": {"@type": "PostalAddress", "addressLocality": "Burlington", "addressRegion": "ON", "addressCountry": "CA"}
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "ClearGlass Inc.", "item": "https://www.clearglassinc.com/"},
+    {"@type": "ListItem", "position": 2, "name": "Side Store", "item": "https://www.clearglassinc.com/side-store.html"}
+  ]
+}
+</script>
+<!-- ClearGlass Global Design System — homepage is the design source of truth.
+     This page opts out of the white-glass override and ships the dark ClearGlass command-center skin natively (see the dark command skin style block). -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+<style>
+  :root{
+    --st-ink:#0c0e12; --st-ink2:#374151; --st-ink3:#55627a;
+    --st-cyan:#0891b2; --st-cyan-deep:#155e75; --st-violet:#6d28d9; --st-violet-deep:#4c1d95;
+    --st-bg:#f7f8fa; --st-surface:#ffffff; --st-soft:#f1f4f8;
+    --st-line:rgba(12,14,18,.09); --st-line-strong:rgba(12,14,18,.16);
+    --st-shadow:0 1px 2px rgba(12,14,18,.05),0 8px 24px rgba(12,14,18,.06);
+    --st-shadow-lift:0 2px 4px rgba(12,14,18,.06),0 16px 40px rgba(12,14,18,.10);
+    --st-radius:16px;
+    --st-mono:'JetBrains Mono',ui-monospace,monospace;
+    --st-sans:'Inter',system-ui,-apple-system,sans-serif;
+    --st-tint:linear-gradient(135deg,rgba(8,145,178,.07),rgba(109,40,217,.06));
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:84px}
+  body{margin:0;font-family:var(--st-sans);line-height:1.55;color:var(--st-ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .st-wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+  .st-mono{font-family:var(--st-mono);font-variant-numeric:tabular-nums}
+  .st-skip{position:absolute;left:-999px;top:8px;z-index:300;background:var(--st-ink);color:#fff !important;padding:10px 16px;border-radius:10px;font-weight:700;font-size:14px}
+  .st-skip:focus{left:8px}
+  :focus-visible{outline:2px solid var(--st-cyan-deep);outline-offset:2px}
+
+  /* ── Header / navigation ─────────────────────────────── */
+  .st-header{position:sticky;top:0;z-index:100;border-bottom:1px solid var(--st-line)}
+  .st-header-in{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:18px;padding:10px 20px;min-height:64px}
+  .st-brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;letter-spacing:-.02em;font-size:16px;white-space:nowrap}
+  .st-brand-mk{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--st-cyan),var(--st-violet));display:grid;place-items:center;flex:0 0 auto;box-shadow:0 2px 8px rgba(8,145,178,.30)}
+  .st-brand-mk svg{width:19px;height:19px;stroke:#fff}
+  .st-brand small{display:block;font-size:10px;font-weight:600;letter-spacing:.10em;text-transform:uppercase;color:var(--st-ink3)}
+  .st-navlinks{display:flex;align-items:center;gap:2px;margin:0 auto}
+  .st-navlinks a{font-size:14px;font-weight:600;text-decoration:none;padding:9px 13px;border-radius:10px}
+  .st-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+  .st-iconbtn{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:9px 13px;border-radius:12px;border:1px solid var(--st-line);background:var(--st-surface);color:var(--st-ink2);font:600 13.5px var(--st-sans);cursor:pointer;text-decoration:none;transition:background .15s,border-color .15s}
+  .st-iconbtn:hover{background:var(--st-soft);border-color:var(--st-line-strong)}
+  .st-iconbtn svg{width:17px;height:17px;stroke:currentColor;flex:0 0 auto}
+  .st-cart{display:inline-flex;align-items:center;gap:9px;min-height:44px;padding:9px 16px;border-radius:12px;border:0;background:var(--st-ink);color:#fff;font:700 14px var(--st-sans);cursor:pointer;transition:background .15s,transform .15s;box-shadow:0 2px 8px rgba(12,14,18,.18)}
+  .st-cart:hover{background:#1f2430;transform:translateY(-1px)}
+  .st-cart svg{width:18px;height:18px;stroke:#fff}
+  .st-cartn{background:var(--st-cyan);color:#fff;border-radius:999px;min-width:22px;height:22px;display:grid;place-items:center;font:700 12px var(--st-mono);padding:0 6px}
+  @media(max-width:920px){.st-navlinks{display:none}}
+  @media(max-width:560px){
+    .st-hide-s{display:none}
+    .st-header-in{gap:8px;padding:8px 12px;min-height:56px}
+    .st-brand{font-size:13.5px}
+    .st-brand small{display:none}
+    .st-iconbtn{padding:9px 11px}
+    .st-cart{padding:9px 12px}
+  }
+
+  /* ── Hero ────────────────────────────────────────────── */
+  .st-hero{padding:44px 0 26px;display:grid;grid-template-columns:minmax(300px,7fr) minmax(260px,5fr);gap:36px;align-items:center}
+  .st-eyebrow{display:inline-flex;align-items:center;gap:8px;font:600 11px var(--st-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--st-cyan-deep);background:rgba(8,145,178,.08);border:1px solid rgba(8,145,178,.22);border-radius:999px;padding:7px 14px}
+  .st-eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--st-cyan);flex:0 0 auto}
+  .st-hero h1{font-size:clamp(34px,4.6vw,58px);line-height:1.04;letter-spacing:-.035em;margin:18px 0 0;font-weight:800}
+  .st-hero h1 em{font-style:normal;background:linear-gradient(100deg,var(--st-cyan-deep),var(--st-violet));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .st-hero .st-lede{max-width:600px;margin:16px 0 0;font-size:16.5px;line-height:1.6}
+  .st-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+  .st-cta{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:50px;padding:13px 26px;border-radius:14px;border:0;font:700 15.5px var(--st-sans);cursor:pointer;text-decoration:none;transition:transform .15s,box-shadow .15s,background .15s}
+  .st-cta.btn-primary{background:var(--st-ink);color:#f7f8fa}
+  .st-cta.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(12,14,18,.22)}
+  .st-cta-ghost{background:var(--st-surface);color:var(--st-ink) !important;border:1.5px solid var(--st-line-strong)}
+  .st-cta-ghost:hover{border-color:var(--st-ink);transform:translateY(-1px)}
+  .st-trust{display:flex;gap:8px 20px;flex-wrap:wrap;margin-top:20px;padding:0;list-style:none}
+  .st-trust li{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:600;color:var(--st-ink2)}
+  .st-trust svg{width:16px;height:16px;stroke:var(--st-cyan-deep);flex:0 0 auto}
+  .st-hero-art{position:relative;min-height:300px;display:grid;place-items:center}
+  .st-hero-art svg{width:100%;max-width:430px;height:auto;display:block}
+  @media(prefers-reduced-motion:no-preference){
+    .st-float{animation:stFloat 7s ease-in-out infinite}
+    .st-float2{animation:stFloat 9s ease-in-out -3s infinite}
+    @keyframes stFloat{50%{transform:translateY(-7px)}}
+  }
+  .st-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:8px 0 12px}
+  .st-fact{background:var(--st-surface);border:1px solid var(--st-line);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:11px;box-shadow:var(--st-shadow)}
+  .st-fact svg{width:20px;height:20px;stroke:var(--st-violet-deep);flex:0 0 auto}
+  .st-fact b{display:block;font-size:13.5px;letter-spacing:-.01em}
+  .st-fact span{display:block;font-size:12px;color:var(--st-ink3)}
+  @media(max-width:880px){.st-hero{grid-template-columns:1fr;padding-top:30px}.st-hero-art{min-height:0;order:-1}.st-hero-art svg{max-width:330px}}
+  @media(max-width:560px){.st-hero-art{display:none}}
+
+  /* ── Section scaffolding ─────────────────────────────── */
+  .st-sec{padding:34px 0 10px}
+  .st-sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+  .st-sec-head h2{font-size:clamp(22px,2.6vw,30px);letter-spacing:-.025em;margin:0;font-weight:800}
+  .st-sec-head p{margin:5px 0 0;font-size:14.5px;max-width:640px}
+  .st-more{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;text-decoration:none;border:1px solid var(--st-line);border-radius:999px;padding:9px 16px;background:var(--st-surface);white-space:nowrap;transition:border-color .15s,background .15s}
+  .st-more:hover{border-color:var(--st-ink);background:var(--st-soft)}
+
+  /* ── Controls (search / filter / sort) ───────────────── */
+  .st-controls{position:sticky;top:64px;z-index:60;background:rgba(255,255,255,.90);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);border:1px solid var(--st-line);border-radius:var(--st-radius);padding:12px;box-shadow:var(--st-shadow);display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+  .st-controls-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .st-search-wrap{position:relative;flex:1;min-width:230px}
+  .st-search-wrap svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:17px;height:17px;stroke:var(--st-ink3);pointer-events:none}
+  #search{width:100%;min-height:46px;border:1px solid var(--st-line-strong);border-radius:12px;padding:11px 14px 11px 40px;font:500 14.5px var(--st-sans);color:var(--st-ink);background:#fff}
+  .st-select{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--st-ink3)}
+  .st-select select{min-height:46px;border:1px solid var(--st-line-strong);border-radius:12px;padding:10px 12px;font:600 13.5px var(--st-sans);color:var(--st-ink);background:#fff;cursor:pointer}
+  .st-cats{display:flex;gap:8px;flex-wrap:wrap}
+  .st-cat{min-height:40px;font:600 13px var(--st-sans);color:var(--st-ink2);background:var(--st-soft);border:1px solid var(--st-line);border-radius:999px;padding:8px 16px;cursor:pointer;transition:background .15s,border-color .15s,color .15s;white-space:nowrap}
+  .st-cat:hover{border-color:var(--st-line-strong);background:#e9edf3}
+  .st-cat[aria-pressed="true"]{background:var(--st-ink);border-color:var(--st-ink);color:#fff}
+  @media(max-width:760px){.st-controls{top:58px}.st-cats{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}}
+
+  /* ── Product grid & cards ────────────────────────────── */
+  .st-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding-bottom:26px}
+  .st-row-scroll{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  @media(max-width:1150px){.st-grid,.st-row-scroll{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:880px){.st-grid,.st-row-scroll{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:430px){.st-grid{grid-template-columns:1fr}}
+  @media(max-width:880px){.st-row-scroll{display:flex;overflow-x:auto;gap:14px;padding-bottom:10px;-webkit-overflow-scrolling:touch}.st-row-scroll>*{flex:0 0 min(72vw,270px)}}
+  .st-card{border-radius:var(--st-radius);padding:14px;display:flex;flex-direction:column;transition:transform .18s ease,box-shadow .18s ease;position:relative}
+  .st-card:hover{transform:translateY(-3px)}
+  .st-visual{position:relative;border-radius:12px;background:var(--st-tint);border:1px solid var(--st-line);min-height:120px;display:grid;place-items:center;margin-bottom:12px;overflow:hidden}
+  .st-visual svg{width:52px;height:52px;stroke:var(--st-cyan-deep)}
+  .st-flags{position:absolute;top:9px;left:9px;display:flex;gap:6px;flex-wrap:wrap}
+  .st-flag{font:700 10.5px var(--st-sans);letter-spacing:.03em;border-radius:999px;padding:4px 10px}
+  .st-flag-best{background:var(--st-ink);color:#fff}
+  .st-flag-value{background:rgba(109,40,217,.10);color:var(--st-violet-deep);border:1px solid rgba(109,40,217,.22)}
+  .st-flag-bundle{background:rgba(8,145,178,.10);color:var(--st-cyan-deep);border:1px solid rgba(8,145,178,.25)}
+  .st-wish{position:absolute;top:8px;right:8px;width:36px;height:36px;border-radius:10px;border:1px solid var(--st-line);background:rgba(255,255,255,.9);display:grid;place-items:center;cursor:pointer;transition:border-color .15s}
+  .st-wish svg{width:17px;height:17px;stroke:var(--st-ink3);fill:none;transition:fill .15s,stroke .15s}
+  .st-wish:hover{border-color:var(--st-line-strong)}
+  .st-wish[aria-pressed="true"] svg{fill:#dc2626;stroke:#dc2626}
+  .st-cat-tag{font:600 10.5px var(--st-mono);letter-spacing:.13em;text-transform:uppercase;color:var(--st-ink3)}
+  .st-card h3{margin:6px 0 4px;font-size:15px;font-weight:700;line-height:1.32;letter-spacing:-.01em}
+  .st-card h3 button{all:unset;cursor:pointer;font:inherit;color:inherit}
+  .st-card h3 button:hover{text-decoration:underline;text-underline-offset:3px}
+  .st-desc{font-size:13px;color:var(--st-ink2);flex:1;line-height:1.5;margin:0}
+  .st-priceline{display:flex;align-items:baseline;gap:7px;margin:11px 0 10px}
+  .st-price{font:800 19px var(--st-sans);letter-spacing:-.02em;color:var(--st-ink)}
+  .st-cur{font:600 11.5px var(--st-mono);color:var(--st-ink3)}
+  .st-buy{display:flex;gap:8px;align-items:stretch}
+  .st-qtysel{display:inline-flex;align-items:center;border:1px solid var(--st-line-strong);border-radius:12px;overflow:hidden;background:#fff;flex:0 0 auto}
+  .st-qtysel button{width:34px;min-height:44px;border:0;background:none;color:var(--st-ink2);font:700 17px var(--st-sans);cursor:pointer}
+  .st-qtysel button:hover{background:var(--st-soft)}
+  .st-qtysel output{min-width:24px;text-align:center;font:700 14px var(--st-mono);color:var(--st-ink)}
+  .st-add{flex:1;min-height:44px;border:0;border-radius:12px;background:var(--st-ink);color:#fff;font:700 14px var(--st-sans);cursor:pointer;transition:background .15s,transform .15s;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .st-add:hover{background:#1f2430;transform:translateY(-1px)}
+  .st-add svg{width:16px;height:16px;stroke:#fff}
+  .st-empty{grid-column:1/-1;padding:44px 18px;text-align:center;color:var(--st-ink3);font-size:14.5px;background:var(--st-surface);border:1px dashed var(--st-line-strong);border-radius:var(--st-radius)}
+  .st-note{margin:0 0 8px;font-size:13px;color:var(--st-ink3)}
+
+  /* ── Recently viewed ─────────────────────────────────── */
+  .st-recent{display:flex;gap:10px;overflow-x:auto;padding:4px 0 12px;-webkit-overflow-scrolling:touch}
+  .st-recent a{flex:0 0 auto;display:inline-flex;align-items:center;gap:9px;text-decoration:none;background:var(--st-surface);border:1px solid var(--st-line);border-radius:12px;padding:9px 14px;font-size:13px;font-weight:600}
+  .st-recent a:hover{border-color:var(--st-line-strong)}
+  .st-recent .st-mono{color:var(--st-ink3);font-size:12px}
+
+  /* ── Bundles banner ──────────────────────────────────── */
+  .st-bundle-note{display:flex;gap:14px;align-items:flex-start;background:linear-gradient(120deg,rgba(8,145,178,.07),rgba(109,40,217,.07));border:1px solid rgba(8,145,178,.20);border-radius:var(--st-radius);padding:16px 18px;margin-bottom:18px}
+  .st-bundle-note svg{width:26px;height:26px;stroke:var(--st-cyan-deep);flex:0 0 auto;margin-top:2px}
+  .st-bundle-note p{margin:0;font-size:14px}
+
+  /* ── Why / trust ─────────────────────────────────────── */
+  .st-why{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+  .st-why-card{border-radius:var(--st-radius);padding:18px}
+  .st-why-card svg{width:22px;height:22px;stroke:var(--st-cyan-deep)}
+  .st-why-card h3{margin:10px 0 5px;font-size:15.5px;letter-spacing:-.01em}
+  .st-why-card p{margin:0;font-size:13.5px;line-height:1.55}
+
+  /* ── Intelligence / system status ────────────────────── */
+  .st-intel{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-bottom:16px}
+  #sysdetails{border:1px solid var(--st-line);border-radius:var(--st-radius);background:var(--st-surface);box-shadow:var(--st-shadow);overflow:hidden}
+  #sysdetails>summary{list-style:none;display:flex;align-items:center;gap:12px;padding:16px 18px;cursor:pointer;font:700 14.5px var(--st-sans);min-height:52px}
+  #sysdetails>summary::-webkit-details-marker{display:none}
+  #sysdetails>summary:hover{background:var(--st-soft)}
+  #sysdetails>summary .st-chev{margin-left:auto;transition:transform .2s}
+  #sysdetails[open]>summary .st-chev{transform:rotate(180deg)}
+  #sysdetails>summary svg{width:18px;height:18px;stroke:var(--st-ink2)}
+  .st-sim{font:600 10px var(--st-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--st-ink3);border:1px solid var(--st-line);border-radius:999px;padding:4px 10px}
+  .st-ops{padding:6px 16px 18px;border-top:1px solid var(--st-line)}
+  .st-modules{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+  .st-module{display:inline-flex;align-items:center;gap:8px;font:600 10.5px var(--st-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--st-ink2);border:1px solid var(--st-line);border-radius:999px;padding:7px 12px;background:var(--st-soft)}
+  .st-module i{width:7px;height:7px;border-radius:50%;background:#16a34a;flex:0 0 auto}
+  .st-module b{color:var(--st-ink);font-weight:700}
+  .st-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+  .st-stat{border:1px solid var(--st-line);border-radius:12px;padding:12px 14px;background:#fff}
+  .st-stat .sl{font:600 9.5px var(--st-mono);letter-spacing:.13em;text-transform:uppercase;color:var(--st-ink3)}
+  .st-stat .sv{font:700 19px var(--st-mono);margin-top:5px;color:var(--st-ink)}
+  .st-stat .sv small{font-size:11px;color:var(--st-ink3);margin-left:2px;font-weight:600}
+  .st-charts{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:10px;margin-top:12px}
+  .st-chartbox{border:1px solid var(--st-line);border-radius:12px;padding:12px;background:#fff;min-height:150px}
+  .st-chartbox .pt{font:700 10px var(--st-mono);letter-spacing:.13em;text-transform:uppercase;color:var(--st-ink3);margin-bottom:9px}
+  .st-chartbox canvas{width:100%;height:110px;display:block}
+  .st-rings{display:flex;gap:8px;justify-content:space-around;align-items:center;height:110px}
+  .st-ringw{text-align:center}
+  .st-ringw svg{transform:rotate(-90deg);display:block;margin:0 auto}
+  .st-ringw .rv{font:600 11px var(--st-mono);color:var(--st-ink);margin-top:5px}
+  .st-ringw .rl{font:600 8px var(--st-mono);letter-spacing:.10em;color:var(--st-ink3);text-transform:uppercase;margin-top:1px}
+  @media(max-width:880px){.st-charts{grid-template-columns:1fr}}
+
+  /* ── Support / about ─────────────────────────────────── */
+  .st-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:6px}
+  .st-step{border-radius:var(--st-radius);padding:18px;position:relative}
+  .st-step .n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:10px;background:var(--st-tint);border:1px solid var(--st-line);font:700 13px var(--st-mono);color:var(--st-cyan-deep)}
+  .st-step h3{margin:10px 0 5px;font-size:15px}
+  .st-step p{margin:0;font-size:13.5px;line-height:1.55}
+
+  /* ── Footer ──────────────────────────────────────────── */
+  .st-foot{margin-top:44px;border-top:1px solid var(--st-line);padding:30px 0 90px}
+  .st-foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:24px;margin-bottom:22px}
+  .st-foot h4{margin:0 0 10px;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+  .st-foot ul{list-style:none;margin:0;padding:0}
+  .st-foot li{margin:7px 0;font-size:13.5px}
+  .st-foot-line{font:500 12px var(--st-mono);letter-spacing:.05em;text-align:center;border-top:1px solid var(--st-line);padding-top:18px}
+  @media(max-width:720px){.st-foot-grid{grid-template-columns:1fr}}
+
+  /* ── Cart drawer ─────────────────────────────────────── */
+  .st-scrim{position:fixed;inset:0;background:rgba(12,14,18,.42);opacity:0;pointer-events:none;transition:opacity .22s;z-index:120}
+  .st-scrim.on{opacity:1;pointer-events:auto}
+  .st-drawer{position:fixed;top:0;right:0;height:100%;width:min(430px,94vw);z-index:121;transform:translateX(103%);transition:transform .3s cubic-bezier(.16,1,.3,1);background:#fff;border-left:1px solid var(--st-line);box-shadow:-24px 0 60px rgba(12,14,18,.16);display:flex;flex-direction:column}
+  .st-drawer.on{transform:translateX(0)}
+  .st-dhead{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--st-line)}
+  .st-dhead h2{font-size:16.5px;margin:0;letter-spacing:-.01em}
+  .st-dx{margin-left:auto;width:40px;height:40px;border-radius:10px;background:var(--st-soft);border:1px solid var(--st-line);color:var(--st-ink2);font-size:17px;cursor:pointer}
+  .st-dx:hover{background:#e9edf3}
+  .st-ditems{flex:1;overflow-y:auto;padding:6px 18px}
+  .st-li{display:flex;gap:10px;align-items:center;padding:13px 0;border-bottom:1px solid var(--st-line)}
+  .st-li .ln{flex:1;font-size:13.5px;font-weight:600;line-height:1.35}
+  .st-li .lp{display:block;font:500 12px var(--st-mono);color:var(--st-ink3);margin-top:2px}
+  .st-qty{display:flex;align-items:center;gap:2px;border:1px solid var(--st-line-strong);border-radius:10px;overflow:hidden}
+  .st-qty button{width:32px;height:36px;border:0;background:none;color:var(--st-ink2);cursor:pointer;font:700 15px var(--st-sans)}
+  .st-qty button:hover{background:var(--st-soft)}
+  .st-qty span{font:700 13px var(--st-mono);min-width:22px;text-align:center}
+  .st-dempty{padding:44px 18px;text-align:center;color:var(--st-ink3);font-size:14px}
+  .st-summary{border-top:1px solid var(--st-line);padding:14px 18px 18px;background:var(--st-bg)}
+  .st-sline{display:flex;justify-content:space-between;font-size:13.5px;margin:5px 0;color:var(--st-ink2)}
+  .st-sline.tot{color:var(--st-ink);font-weight:800;font-size:17px;margin-top:9px;padding-top:10px;border-top:1px solid var(--st-line-strong)}
+  .st-disc{color:#15803d !important;font-weight:700}
+  .st-shipbar{height:7px;border-radius:99px;background:#e5e9f0;overflow:hidden;margin:10px 0 4px}
+  .st-shipbar i{display:block;height:100%;background:linear-gradient(90deg,var(--st-cyan),var(--st-violet));border-radius:99px;transition:width .3s}
+  .st-hint{font-size:12.5px;color:var(--st-ink2);margin:6px 0 12px;line-height:1.5}
+  .st-checkout{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:50px;border-radius:13px;background:var(--st-ink);color:#f7f8fa !important;font:700 15px var(--st-sans);text-decoration:none;cursor:pointer;transition:background .15s}
+  .st-checkout:hover{background:#1f2430}
+  .st-paynote{font-size:11.5px;color:var(--st-ink3);text-align:center;margin:9px 0 0;line-height:1.5}
+
+  /* ── Quick view dialog ───────────────────────────────── */
+  #qv{border:1px solid var(--st-line);border-radius:20px;padding:0;width:min(480px,92vw);box-shadow:var(--st-shadow-lift)}
+  #qv::backdrop{background:rgba(12,14,18,.44)}
+  .st-qv-in{padding:20px}
+  .st-qv-head{display:flex;align-items:flex-start;gap:12px}
+  .st-qv-head .st-visual{width:86px;min-height:86px;margin:0;flex:0 0 auto}
+  .st-qv-head .st-visual svg{width:38px;height:38px}
+  .st-qv-close{margin-left:auto;width:38px;height:38px;border-radius:10px;background:var(--st-soft);border:1px solid var(--st-line);cursor:pointer;font-size:16px;color:var(--st-ink2);flex:0 0 auto}
+  #qv h3{margin:12px 0 6px;font-size:19px;letter-spacing:-.02em}
+  #qv .st-desc{margin-bottom:6px}
+  #qv .sku{font:500 11.5px var(--st-mono);color:var(--st-ink3)}
+
+  /* ── Mobile cart bar ─────────────────────────────────── */
+  .st-cartbar{position:fixed;left:12px;right:12px;bottom:12px;z-index:110;display:none;align-items:center;gap:12px;background:var(--st-ink);color:#fff;border-radius:16px;padding:12px 16px;box-shadow:0 12px 36px rgba(12,14,18,.30);padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+  .st-cartbar .cb-meta{flex:1;min-width:0}
+  .st-cartbar .cb-meta b{display:block;font-size:14px}
+  .st-cartbar .cb-meta span{font:500 12px var(--st-mono);color:#c8d2e2}
+  .st-cartbar button{min-height:44px;border:0;border-radius:11px;background:var(--st-cyan);color:#fff;font:700 14px var(--st-sans);padding:10px 20px;cursor:pointer}
+  @media(max-width:760px){.st-cartbar.on{display:flex}}
+
+  /* ── Toast ───────────────────────────────────────────── */
+  .st-toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(16px);opacity:0;background:var(--st-ink);color:#fff;border-radius:12px;padding:12px 20px;font:600 13.5px var(--st-sans);pointer-events:none;transition:.22s;z-index:130;box-shadow:0 10px 30px rgba(12,14,18,.28)}
+  .st-toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  @media(max-width:760px){.st-toast{bottom:88px}}
+
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important}
+    html{scroll-behavior:auto}
+  }
+</style>
+<style>
+  /* ═══ Dark command skin — page-scoped override of the light tokens.
+     This page opts out of the white-glass override (see head comment) and
+     ships the ClearGlass command-center aesthetic natively. ═══ */
+  :root{
+    --st-ink:#f1f9ff; --st-ink2:#a7bdda; --st-ink3:#7f95b5;
+    --st-cyan:#32d7ff; --st-cyan-deep:#53dfff; --st-violet:#b271ff; --st-violet-deep:#c9a6ff;
+    --st-bg:#02040d; --st-surface:rgba(13,22,44,.52); --st-soft:rgba(124,150,255,.10);
+    --st-line:rgba(125,225,255,.17); --st-line-strong:rgba(125,225,255,.36);
+    --st-shadow:inset 0 1px rgba(255,255,255,.14),0 10px 30px rgba(0,0,0,.30);
+    --st-shadow-lift:inset 0 1px rgba(255,255,255,.20),0 20px 56px rgba(0,0,0,.42),0 0 34px rgba(50,215,255,.14);
+    --st-tint:linear-gradient(135deg,rgba(50,215,255,.12),rgba(178,113,255,.12));
+    --st-glass:linear-gradient(140deg,rgba(255,255,255,.14),rgba(255,255,255,.04) 38%,rgba(70,211,255,.08) 74%,rgba(178,113,255,.07));
+    --st-neon:linear-gradient(100deg,var(--st-cyan),var(--st-violet));
+  }
+  @property --stEa{syntax:'<angle>';initial-value:0deg;inherits:false}
+  @keyframes stPulse{50%{opacity:1;filter:brightness(1.4)}}
+  @keyframes stCore{50%{box-shadow:0 0 26px rgba(77,218,255,.9),0 0 60px rgba(178,113,255,.55);transform:scale(1.04)}}
+  @keyframes stSheen{0%,55%{transform:translateX(-130%)}85%,100%{transform:translateX(130%)}}
+  @keyframes stEdge{to{--stEa:360deg}}
+  @keyframes stCrimson{50%{opacity:.5;transform:scale(1.06)}}
+  html{background:#02040d}
+  body{color:var(--st-ink);background:
+    radial-gradient(900px 620px at 82% 12%,rgba(64,218,255,.16),transparent 58%),
+    radial-gradient(880px 620px at 12% 4%,rgba(172,113,255,.15),transparent 56%),
+    radial-gradient(1100px 800px at 50% 120%,rgba(255,97,216,.06),transparent 60%),
+    linear-gradient(180deg,#040815 0%,#02040d 46%,#020409 100%)}
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--st-cyan);outline-offset:2px}
+  .st-skip{background:var(--st-cyan);color:#02040d !important}
+
+  /* injected site topbar → dark glass */
+  .cg-topbar,.cg-topbar.scrolled{background:rgba(4,8,20,.82);border-bottom:1px solid var(--st-line);color:#e8f4ff;box-shadow:0 14px 44px rgba(0,0,0,.35)}
+  .cg-topbar a{color:#e8f4ff}
+
+  /* header / nav */
+  .st-header{background:linear-gradient(180deg,rgba(4,8,20,.84),rgba(4,8,20,.52));backdrop-filter:blur(30px) saturate(1.5);-webkit-backdrop-filter:blur(30px) saturate(1.5)}
+  .st-header::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--st-cyan) 35%,#ff61d8 65%,transparent);opacity:.45;pointer-events:none}
+  .st-header{position:sticky}
+  .st-brand-mk{box-shadow:0 0 20px rgba(77,218,255,.7),0 0 44px rgba(178,113,255,.4);animation:stCore 3.4s ease-in-out infinite}
+  .st-brand small{color:var(--st-ink3)}
+  .st-navlinks a:hover{background:var(--st-soft)}
+  .st-iconbtn{background:rgba(10,18,38,.55);border-color:var(--st-line);color:var(--st-ink2)}
+  .st-iconbtn:hover{background:rgba(124,150,255,.14);border-color:var(--st-line-strong)}
+  .st-cart{position:relative;overflow:hidden;background:linear-gradient(120deg,rgba(50,215,255,.24),rgba(178,113,255,.20) 60%,rgba(255,97,216,.14)),rgba(8,14,30,.55);border:1px solid rgba(125,225,255,.42);color:#eaf7ff;backdrop-filter:blur(16px);box-shadow:inset 0 1px rgba(255,255,255,.35),0 0 24px rgba(50,215,255,.24)}
+  .st-cart:hover{background:linear-gradient(120deg,rgba(50,215,255,.32),rgba(178,113,255,.28) 60%,rgba(255,97,216,.18)),rgba(8,14,30,.55);box-shadow:inset 0 1px rgba(255,255,255,.45),0 0 38px rgba(50,215,255,.4)}
+  .st-cart::before{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 0 30%,rgba(255,255,255,.28) 42%,transparent 54%);transform:translateX(-130%);animation:stSheen 5.5s ease-in-out infinite;pointer-events:none}
+  .st-cartn{background:var(--st-neon);color:#02040d;box-shadow:0 0 12px rgba(50,215,255,.5)}
+
+  /* hero */
+  .st-eyebrow{color:var(--st-cyan);background:rgba(56,189,248,.09);border-color:rgba(125,225,255,.34);box-shadow:inset 0 1px rgba(255,255,255,.16),0 0 24px rgba(50,215,255,.14)}
+  .st-eyebrow i{background:#39ffbf;box-shadow:0 0 10px #39ffbf;animation:stPulse 2.4s ease-in-out infinite}
+  .st-hero h1{text-shadow:0 0 34px rgba(112,204,255,.22),0 0 90px rgba(178,113,255,.12)}
+  .st-hero h1 em{background:linear-gradient(100deg,#43e7ff,#8da2ff 30%,#c177ff 55%,#ff7adf 78%,#4cffc4);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .st-lede{color:var(--st-ink2)}
+  .st-cta.btn-primary{background:var(--st-neon);color:#02040d;box-shadow:0 0 28px rgba(50,215,255,.30),inset 0 1px rgba(255,255,255,.45)}
+  .st-cta.btn-primary:hover{box-shadow:0 8px 30px rgba(0,0,0,.4),0 0 44px rgba(50,215,255,.5)}
+  .st-cta-ghost{background:rgba(10,18,38,.55);color:var(--st-ink) !important;border-color:var(--st-line-strong);backdrop-filter:blur(12px)}
+  .st-cta-ghost:hover{border-color:var(--st-cyan)}
+  .st-trust li{color:var(--st-ink2)}
+  .st-trust svg{stroke:#39ffbf}
+  .st-hero-art svg{filter:drop-shadow(0 0 26px rgba(56,217,255,.22)) drop-shadow(0 0 60px rgba(157,124,255,.14))}
+  .st-fact{background:var(--st-glass);border-color:var(--st-line);backdrop-filter:blur(20px) saturate(1.5);box-shadow:var(--st-shadow)}
+  .st-fact svg{stroke:var(--st-violet-deep)}
+  .st-fact span{color:var(--st-ink3)}
+
+  /* sections */
+  .st-sec-head p{color:var(--st-ink2)}
+  .st-more{background:rgba(10,18,38,.55);border-color:var(--st-line);color:var(--st-ink)}
+  .st-more:hover{border-color:var(--st-cyan);background:rgba(124,150,255,.12);box-shadow:0 0 20px rgba(50,215,255,.16)}
+
+  /* controls */
+  .st-controls{background:rgba(8,14,30,.62);border-color:var(--st-line);box-shadow:0 18px 60px rgba(0,0,0,.36),inset 0 1px rgba(255,255,255,.14)}
+  #search,.st-select select{background:rgba(2,6,17,.6);border-color:var(--st-line-strong);color:#fff}
+  #search:focus{border-color:var(--st-cyan);box-shadow:0 0 26px rgba(50,215,255,.22)}
+  .st-search-wrap svg{stroke:var(--st-ink3)}
+  .st-select{color:var(--st-ink3)}
+  .st-cat{background:rgba(124,150,255,.09);border-color:var(--st-line);color:#d8efff}
+  .st-cat:hover{background:rgba(124,170,255,.15);border-color:rgba(125,235,255,.45);box-shadow:0 0 16px rgba(50,215,255,.14)}
+  .st-cat[aria-pressed="true"]{background:linear-gradient(110deg,rgba(50,215,255,.32),rgba(178,113,255,.26));border-color:rgba(140,230,255,.7);color:#fff;box-shadow:0 0 22px rgba(50,215,255,.26),inset 0 1px rgba(255,255,255,.28);text-shadow:0 0 10px rgba(160,240,255,.7)}
+  .st-note{color:var(--st-ink3)}
+
+  /* product cards — engineered glass objects */
+  .st-card{background:var(--st-glass);border:1px solid var(--st-line);backdrop-filter:blur(24px) saturate(1.55);box-shadow:var(--st-shadow)}
+  .st-card:hover{border-color:rgba(79,225,255,.55);box-shadow:var(--st-shadow-lift)}
+  .st-card::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(230px circle at var(--gx,50%) var(--gy,0%),rgba(64,218,255,.16),transparent 65%);opacity:0;transition:opacity .3s}
+  .st-card:hover::before{opacity:1}
+  .st-edge{position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;background:conic-gradient(from var(--stEa),transparent 0 8%,rgba(50,215,255,.85) 16%,rgba(178,113,255,.85) 28%,transparent 40%,transparent 58%,rgba(255,97,216,.5) 70%,transparent 82%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;animation:stEdge 6s linear infinite;opacity:0;transition:opacity .25s}
+  .st-card:hover .st-edge{opacity:1}
+  .st-visual{background:var(--st-tint);border-color:var(--st-line);box-shadow:inset 0 0 40px rgba(50,215,255,.06)}
+  .st-visual svg{stroke:var(--st-cyan-deep);filter:drop-shadow(0 0 10px rgba(56,217,255,.45))}
+  .st-flag-best{background:var(--st-neon);color:#02040d}
+  .st-flag-value{background:rgba(178,113,255,.14);color:var(--st-violet-deep);border-color:rgba(178,113,255,.34)}
+  .st-flag-bundle{background:rgba(50,215,255,.12);color:var(--st-cyan-deep);border-color:rgba(50,215,255,.34)}
+  .st-wish{background:rgba(10,18,38,.72);border-color:var(--st-line)}
+  .st-wish svg{stroke:var(--st-ink3)}
+  .st-wish:hover{border-color:var(--st-cyan)}
+  .st-wish[aria-pressed="true"] svg{fill:#ff5c8a;stroke:#ff5c8a}
+  .st-cat-tag{color:var(--st-ink3)}
+  .st-cat-tag::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:#39ffbf;box-shadow:0 0 8px #39ffbf;margin-right:7px;vertical-align:1px;animation:stPulse 2.8s ease-in-out infinite}
+  .st-desc{color:var(--st-ink2)}
+  .st-price{background:linear-gradient(100deg,#eaffff,#8ee9ff 55%,#c9a6ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .st-cur{color:var(--st-ink3)}
+  .st-qtysel{background:rgba(2,6,17,.55);border-color:var(--st-line-strong)}
+  .st-qtysel button{color:var(--st-ink2)}
+  .st-qtysel button:hover{background:rgba(124,150,255,.14)}
+  .st-qtysel output{color:var(--st-ink)}
+  .st-add{position:relative;overflow:hidden;background:rgba(124,150,255,.14);border:1px solid var(--st-line-strong);color:#ecf6ff;box-shadow:inset 0 1px rgba(255,255,255,.2)}
+  .st-add svg{stroke:currentColor}
+  .st-add:hover{background:var(--st-neon);color:#02040d;border-color:transparent;box-shadow:0 0 26px rgba(50,215,255,.4),inset 0 1px rgba(255,255,255,.5)}
+  .st-empty{background:rgba(10,18,38,.45);border-color:var(--st-line-strong);color:var(--st-ink3)}
+  .st-recent a{background:rgba(10,18,38,.55);border-color:var(--st-line)}
+  .st-recent a:hover{border-color:var(--st-cyan)}
+  .st-recent .st-mono{color:var(--st-ink3)}
+
+  /* bundles / why / steps */
+  .st-bundle-note{background:linear-gradient(120deg,rgba(50,215,255,.09),rgba(178,113,255,.09));border-color:rgba(50,215,255,.28)}
+  .st-bundle-note svg{stroke:var(--st-cyan-deep)}
+  .st-why-card,.st-step{background:var(--st-glass);border:1px solid var(--st-line);backdrop-filter:blur(20px) saturate(1.5);box-shadow:var(--st-shadow)}
+  .st-why-card svg{stroke:var(--st-cyan-deep)}
+  .st-why-card p,.st-step p{color:var(--st-ink2)}
+  .st-step .n{background:var(--st-tint);border-color:var(--st-line);color:var(--st-cyan-deep)}
+
+  /* system status — the command deck */
+  #sysdetails{background:linear-gradient(160deg,rgba(10,16,34,.6),rgba(4,8,20,.7));border-color:var(--st-line);backdrop-filter:blur(26px) saturate(1.5);box-shadow:var(--st-shadow)}
+  #sysdetails>summary:hover{background:rgba(124,150,255,.08)}
+  #sysdetails>summary svg{stroke:var(--st-ink2)}
+  .st-sim{color:var(--st-ink3);border-color:var(--st-line)}
+  .st-ops{border-top-color:var(--st-line);position:relative;overflow:hidden}
+  .st-ops::before{content:"";position:absolute;inset:-30%;background:radial-gradient(closest-side at 18% 82%,rgba(255,64,96,.11),transparent 60%),radial-gradient(closest-side at 86% 16%,rgba(255,64,96,.07),transparent 55%);animation:stCrimson 9s ease-in-out infinite;pointer-events:none}
+  .st-ops>*{position:relative;z-index:1}
+  .st-module{background:rgba(10,18,38,.55);border-color:var(--st-line);color:var(--st-ink2)}
+  .st-module i{background:#39ffbf;box-shadow:0 0 10px #39ffbf;animation:stPulse 2.2s ease-in-out infinite}
+  .st-module b{color:#eaf7ff}
+  .st-stat,.st-chartbox{background:var(--st-glass);border-color:var(--st-line);backdrop-filter:blur(16px)}
+  .st-stat .sl,.st-chartbox .pt{color:var(--st-ink3)}
+  .st-stat .sv{background:linear-gradient(100deg,#eaffff,#8ee9ff 60%,#c9a6ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .st-stat .sv small{-webkit-text-fill-color:var(--st-ink3);color:var(--st-ink3)}
+  .st-ringw .rv{color:#dff4ff}
+  .st-ringw .rl{color:var(--st-ink3)}
+
+  /* footer */
+  .st-foot{border-top-color:var(--st-line)}
+  .st-foot::before{content:"";display:block;height:1px;margin-top:-31px;margin-bottom:30px;background:linear-gradient(90deg,transparent,rgba(50,215,255,.45),rgba(255,97,216,.35),transparent)}
+  .st-foot li a{color:var(--st-ink2)}
+  .st-foot li a:hover{color:#fff}
+  .st-foot-line{border-top-color:var(--st-line);color:var(--st-ink3)}
+
+  /* drawer / cart */
+  .st-scrim{background:rgba(1,3,10,.66);backdrop-filter:blur(8px)}
+  .st-drawer{background:linear-gradient(180deg,rgba(12,22,44,.92),rgba(4,8,20,.97));border-left-color:var(--st-line-strong);box-shadow:-32px 0 110px -22px rgba(50,215,255,.22);backdrop-filter:blur(30px) saturate(1.6)}
+  .st-drawer::before{content:"";position:absolute;left:-1px;top:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,var(--st-cyan) 35%,#ff61d8 65%,transparent);opacity:.7;pointer-events:none}
+  .st-dhead{border-bottom-color:var(--st-line)}
+  .st-dx{background:rgba(124,150,255,.10);border-color:var(--st-line);color:var(--st-ink2)}
+  .st-dx:hover{background:rgba(124,150,255,.2);color:#fff}
+  .st-li{border-bottom-color:var(--st-line)}
+  .st-li .lp{color:var(--st-ink3)}
+  .st-qty{border-color:var(--st-line-strong)}
+  .st-qty button{color:var(--st-ink2)}
+  .st-qty button:hover{background:rgba(124,150,255,.14)}
+  .st-dempty{color:var(--st-ink3)}
+  .st-summary{background:rgba(8,12,26,.6);border-top-color:var(--st-line-strong)}
+  .st-sline{color:var(--st-ink2)}
+  .st-sline.tot{color:#fff;border-top-color:var(--st-line-strong)}
+  .st-disc{color:#39ffbf !important}
+  .st-shipbar{background:rgba(255,255,255,.08)}
+  .st-shipbar i{box-shadow:0 0 12px rgba(50,215,255,.5)}
+  .st-hint{color:var(--st-ink2)}
+  .st-checkout{position:relative;overflow:hidden;background:var(--st-neon);color:#02040d !important;box-shadow:0 0 28px rgba(50,215,255,.32),inset 0 1px rgba(255,255,255,.45)}
+  .st-checkout:hover{box-shadow:0 0 44px rgba(50,215,255,.5),inset 0 1px rgba(255,255,255,.55)}
+  .st-checkout::before{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 0 30%,rgba(255,255,255,.35) 42%,transparent 54%);transform:translateX(-130%);animation:stSheen 5s ease-in-out infinite;pointer-events:none}
+  .st-paynote{color:var(--st-ink3)}
+
+  /* quick view */
+  #qv{background:linear-gradient(160deg,rgba(12,22,44,.97),rgba(4,8,20,.99));border-color:var(--st-line-strong);color:var(--st-ink)}
+  #qv::backdrop{background:rgba(1,3,10,.7)}
+  #qv .sku{color:var(--st-ink3)}
+  .st-qv-close{background:rgba(124,150,255,.10);border-color:var(--st-line);color:var(--st-ink2)}
+
+  /* mobile cart bar + toast */
+  .st-cartbar{background:rgba(10,18,38,.94);border:1px solid var(--st-line-strong);backdrop-filter:blur(20px);box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 30px rgba(50,215,255,.16)}
+  .st-cartbar .cb-meta span{color:var(--st-ink2)}
+  .st-cartbar button{background:var(--st-neon);color:#02040d}
+  .st-toast{background:rgba(12,22,44,.94);border:1px solid var(--st-line-strong);backdrop-filter:blur(20px);box-shadow:0 0 36px rgba(50,215,255,.2),inset 0 1px rgba(255,255,255,.2)}
+
+  .st-cta,.st-cat{position:relative;overflow:hidden}
+  /* ripple energy on interactive elements */
+  .st-ripple{position:absolute;width:120px;height:120px;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(140,235,255,.55),transparent 65%);transform:translate(-50%,-50%) scale(0);animation:stRip .55s ease-out forwards;mix-blend-mode:screen}
+  @keyframes stRip{to{transform:translate(-50%,-50%) scale(1.6);opacity:0}}
+</style>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<!-- data-cg-no-fx: documented design-system opt-out — the store ships its own
+     sticky nav, and scroll-reveal would hide below-the-fold product cards. -->
+<body data-cg-no-fx data-cg-topbar-title="ClearGlass·Store" data-cg-topbar-sub="Electronics &amp; Components">
+
+<a class="st-skip" href="#shop">Skip to products</a>
+
+<header class="st-header" id="navbar">
+  <div class="st-header-in">
+    <a class="st-brand" href="#top" aria-label="ClearGlass Side Store — home">
+      <span class="st-brand-mk" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h8a4 4 0 0 1 0 8H4"/><circle cx="19" cy="8" r="2"/></svg>
+      </span>
+      <span>ClearGlass Side Store<small>Electronics &amp; Components</small></span>
+    </a>
+    <nav class="st-navlinks" aria-label="Store sections">
+      <a href="#shop">Shop</a>
+      <a href="#best-sellers">Best Sellers</a>
+      <a href="#categories">Categories</a>
+      <a href="#bundles">Bundles</a>
+      <a href="#support">About</a>
+    </nav>
+    <div class="st-actions">
+      <button class="st-iconbtn" id="navSearch" type="button" aria-label="Search products">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <span class="st-hide-s">Search</span>
+      </button>
+      <a class="st-iconbtn" href="#support" aria-label="Account and order support">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-3.5 4.5-5 8-5s6.5 1.5 8 5"/></svg>
+        <span class="st-hide-s">Account</span>
+      </a>
+      <button class="st-cart" id="openCart" type="button" aria-label="Open shopping cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.6"/><circle cx="17" cy="20" r="1.6"/><path d="M3 4h2l2.5 11h10L20 7H6"/></svg>
+        <span class="st-hide-s">Cart</span> <span class="st-cartn" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="st-wrap">
+
+    <!-- ═══ Hero ═══ -->
+    <section class="st-hero" aria-labelledby="heroTitle">
+      <div>
+        <span class="st-eyebrow"><i aria-hidden="true"></i>ClearGlass Side Store · Burlington, Ontario</span>
+        <h1 id="heroTitle">Electronics That Keep <em>Your Setup Moving</em></h1>
+        <p class="st-lede">Shop dependable cables, adapters, components, tools, and accessories selected for workstations, labs, home offices, repairs, and blue-team builds. Clear Canadian pricing with secure checkout.</p>
+        <div class="st-ctas">
+          <a class="st-cta btn-primary" href="#best-sellers">Shop Best Sellers</a>
+          <a class="st-cta st-cta-ghost" href="#shop">Browse All Products</a>
+        </div>
+        <ul class="st-trust">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="m9.5 12 2 2 3.5-4"/></svg>Secure Checkout</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 2v20M17 6.5c0-1.9-2.2-3-5-3s-5 1.1-5 3 1.8 2.6 5 3.2 5 1.4 5 3.3-2.2 3-5 3-5-1.1-5-3"/></svg>Canadian Pricing</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 13 4 4L19 7"/></svg>Carefully Selected Products</li>
+        </ul>
+      </div>
+      <div class="st-hero-art" aria-hidden="true">
+        <svg viewBox="0 0 420 320" fill="none">
+          <defs>
+            <linearGradient id="hgA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0891b2"/><stop offset="1" stop-color="#6d28d9"/></linearGradient>
+            <linearGradient id="hgB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#eef2f7"/></linearGradient>
+          </defs>
+          <g class="st-float">
+            <rect x="70" y="60" width="200" height="140" rx="16" fill="url(#hgB)" stroke="rgba(12,14,18,.12)"/>
+            <rect x="92" y="84" width="66" height="44" rx="8" fill="none" stroke="url(#hgA)" stroke-width="2.5"/>
+            <path d="M104 100h14M104 110h22" stroke="#0891b2" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="196" cy="106" r="17" stroke="#6d28d9" stroke-width="2.5"/>
+            <circle cx="196" cy="106" r="6" fill="#6d28d9"/>
+            <path d="M92 150h150M92 164h108" stroke="rgba(12,14,18,.18)" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="236" cy="86" r="3.5" fill="#0891b2"/><circle cx="250" cy="86" r="3.5" fill="#6d28d9"/>
+          </g>
+          <g class="st-float2">
+            <rect x="240" y="170" width="120" height="86" rx="14" fill="url(#hgB)" stroke="rgba(12,14,18,.12)"/>
+            <path d="M258 196c22-18 44 18 66 0" stroke="url(#hgA)" stroke-width="3" stroke-linecap="round"/>
+            <rect x="252" y="216" width="26" height="16" rx="4" stroke="#0891b2" stroke-width="2.5"/>
+            <rect x="288" y="216" width="26" height="16" rx="4" stroke="#6d28d9" stroke-width="2.5"/>
+            <rect x="324" y="216" width="26" height="16" rx="4" stroke="rgba(12,14,18,.35)" stroke-width="2.5"/>
+          </g>
+          <path d="M40 260c60 26 130 30 190 12" stroke="url(#hgA)" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 10"/>
+          <rect x="22" y="240" width="40" height="24" rx="7" fill="url(#hgB)" stroke="rgba(12,14,18,.14)"/>
+          <path d="M32 248v8M42 248v8M52 248v8" stroke="#0891b2" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ═══ Store facts (real policies only) ═══ -->
+    <section class="st-facts" aria-label="Store policies">
+      <div class="st-fact"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 2v20M17 6.5c0-1.9-2.2-3-5-3s-5 1.1-5 3 1.8 2.6 5 3.2 5 1.4 5 3.3-2.2 3-5 3-5-1.1-5-3"/></svg><div><b>Everything under $10 CAD</b><span>Impulse-friendly price cap on every SKU</span></div></div>
+      <div class="st-fact"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8H3v10h18zM3 8l2-4h14l2 4M12 12v3"/></svg><div><b>Bundle &amp; save automatically</b><span>3+ items 10% off · 5+ items 15% off</span></div></div>
+      <div class="st-fact"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v8H3zM14 10h4l3 3v2h-7zM7 18a1.8 1.8 0 1 0 0-.01M18 18a1.8 1.8 0 1 0 0-.01"/></svg><div><b>Free shipping over $25</b><span>Flat $4.99 below the threshold</span></div></div>
+      <div class="st-fact"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c4.5-3.5 8-7.5 8-11.5A8 8 0 0 0 4 9.5C4 13.5 7.5 17.5 12 21z"/><circle cx="12" cy="9.5" r="2.6"/></svg><div><b>Burlington, Ontario</b><span>Prices in CAD · 13% HST at checkout</span></div></div>
+    </section>
+
+    <!-- ═══ Best sellers ═══ -->
+    <section class="st-sec" id="best-sellers" aria-labelledby="bsTitle">
+      <div class="st-sec-head">
+        <div>
+          <h2 id="bsTitle">Best Sellers</h2>
+          <p>Our hand-picked staples — the parts most setups reach for first.</p>
+        </div>
+        <a class="st-more" href="#shop">Shop all products →</a>
+      </div>
+      <div class="st-row-scroll" id="rowBest"></div>
+    </section>
+
+    <!-- ═══ Full catalogue ═══ -->
+    <section class="st-sec" id="shop" aria-labelledby="shopTitle">
+      <div class="st-sec-head">
+        <div>
+          <h2 id="shopTitle">Shop All Products</h2>
+          <p>Search, filter, and compare the full catalogue — every item under $10 CAD.</p>
+        </div>
+      </div>
+
+      <div class="st-controls" id="categories">
+        <div class="st-controls-row">
+          <div class="st-search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="search" type="search" placeholder="Search cables, adapters, components, tools, and accessories" autocomplete="off" aria-label="Search products">
+          </div>
+          <label class="st-select">Sort
+            <select id="sort" aria-label="Sort products">
+              <option value="featured">Featured</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="name">Name: A to Z</option>
+            </select>
+          </label>
+          <label class="st-select">Price
+            <select id="pricef" aria-label="Filter by price">
+              <option value="all">All prices</option>
+              <option value="u4">Under $4</option>
+              <option value="4to7">$4 – $7</option>
+              <option value="7to10">$7 – $10</option>
+            </select>
+          </label>
+        </div>
+        <div class="st-cats" id="cats" role="group" aria-label="Filter by category"></div>
+      </div>
+
+      <p class="st-note" id="noteLine" role="status"></p>
+      <div class="st-grid" id="grid"></div>
+
+      <div id="recentWrap" hidden>
+        <h3 style="font-size:16px;margin:6px 0 10px">Recently viewed</h3>
+        <div class="st-recent" id="recent"></div>
+      </div>
+    </section>
+
+    <!-- ═══ Merchandising rows ═══ -->
+    <section class="st-sec" id="essentials" aria-labelledby="esTitle">
+      <div class="st-sec-head">
+        <div>
+          <h2 id="esTitle">Everyday Essentials</h2>
+          <p>Cables, chargers, adapters, and accessories you'll reach for constantly.</p>
+        </div>
+        <a class="st-more" href="#shop" data-jump-cat="USB Cables">Shop cables →</a>
+      </div>
+      <div class="st-row-scroll" id="rowEssentials"></div>
+    </section>
+
+    <section class="st-sec" id="kit" aria-labelledby="kitTitle">
+      <div class="st-sec-head">
+        <div>
+          <h2 id="kitTitle">Build Your Electronics Kit</h2>
+          <p>Components, jumper wires, breadboards, resistors, capacitors, and prototyping staples.</p>
+        </div>
+        <a class="st-more" href="#shop" data-jump-cat="Components">Shop components →</a>
+      </div>
+      <div class="st-row-scroll" id="rowKit"></div>
+    </section>
+
+    <section class="st-sec" id="workstation" aria-labelledby="wsTitle">
+      <div class="st-sec-head">
+        <div>
+          <h2 id="wsTitle">Workstation Upgrades</h2>
+          <p>USB hubs, card readers, HDMI adapters, phone stands, and cable management.</p>
+        </div>
+        <a class="st-more" href="#shop" data-jump-cat="Accessories">Shop accessories →</a>
+      </div>
+      <div class="st-row-scroll" id="rowWorkstation"></div>
+    </section>
+
+    <section class="st-sec" id="bundles" aria-labelledby="bdTitle">
+      <div class="st-sec-head">
+        <div>
+          <h2 id="bdTitle">Bundle and Save</h2>
+          <p>Ready-made kits — and an automatic multi-item discount on every order.</p>
+        </div>
+        <a class="st-more" href="#shop" data-jump-cat="Bundles">Shop bundles →</a>
+      </div>
+      <div class="st-bundle-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8H3v10h18zM3 8l2-4h14l2 4M12 12v3"/></svg>
+        <p><strong>Real savings, applied automatically at checkout:</strong> add any <strong>3+ items</strong> for <strong>10% off</strong> your whole order, or <strong>5+ items</strong> for <strong>15% off</strong>. Discounted subtotals over $25 also ship free.</p>
+      </div>
+      <div class="st-row-scroll" id="rowBundles"></div>
+    </section>
+
+    <!-- ═══ Intelligence (compact, expandable) ═══ -->
+    <section class="st-sec" id="intelligence" aria-labelledby="intTitle">
+      <div class="st-sec-head">
+        <div>
+          <h2 id="intTitle">Powered by ClearGlass Intelligence</h2>
+          <p>The same engineering discipline behind ClearGlass security platforms runs this store — quietly, in the background.</p>
+        </div>
+      </div>
+      <div class="st-intel">
+        <div class="st-why-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="m9.5 12 2 2 3.5-4"/></svg>
+          <h3>Secure checkout monitoring</h3>
+          <p>Checkout runs on a simple, transparent request flow. No payment details are collected or stored on this site — payment happens by Interac e-Transfer after you send your order.</p>
+        </div>
+        <div class="st-why-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5"/></svg>
+          <h3>Inventory synchronization</h3>
+          <p>The catalogue is verified against a single source of truth, so names, SKUs, categories, and prices stay consistent everywhere they appear.</p>
+        </div>
+        <div class="st-why-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 13 4 4L19 7"/></svg>
+          <h3>Product verification</h3>
+          <p>Every item carries a unique SKU and passes automated checks — including a strict under-$10 price cap — before it reaches this page.</p>
+        </div>
+        <div class="st-why-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l4-8 3 5 3-9 4 12"/><path d="M2 21h20"/></svg>
+          <h3>System reliability</h3>
+          <p>Automated tests and continuous checks run on every site update, so pricing math and checkout behaviour are exercised before anything ships.</p>
+        </div>
+      </div>
+      <details id="sysdetails">
+        <summary>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          View System Status
+          <span class="st-sim">Simulated demo data</span>
+          <svg class="st-chev" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="st-ops" aria-label="ClearGlass operations telemetry — simulated demo data">
+          <div class="st-modules" id="modules"></div>
+          <div class="st-stats" id="stats"></div>
+          <div class="st-charts">
+            <div class="st-chartbox"><div class="pt">Request Throughput</div><canvas id="lineChart"></canvas></div>
+            <div class="st-chartbox"><div class="pt">AI Confidence</div><div class="st-rings" id="rings"></div></div>
+            <div class="st-chartbox"><div class="pt">Threat Radar</div><canvas id="radar"></canvas></div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ═══ Why shop ═══ -->
+    <section class="st-sec" id="why" aria-labelledby="whyTitle">
+      <div class="st-sec-head">
+        <div>
+          <h2 id="whyTitle">Why Shop ClearGlass</h2>
+          <p>A straightforward store, run with the clarity we put into everything else.</p>
+        </div>
+      </div>
+      <div class="st-why">
+        <div class="st-why-card"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="m9.5 12 2 2 3.5-4"/></svg><h3>Secure checkout</h3><p>Order by email and pay by Interac e-Transfer — no card details ever touch this site.</p></div>
+        <div class="st-why-card"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 2v20M17 6.5c0-1.9-2.2-3-5-3s-5 1.1-5 3 1.8 2.6 5 3.2 5 1.4 5 3.3-2.2 3-5 3-5-1.1-5-3"/></svg><h3>Transparent Canadian pricing</h3><p>Every price is in CAD with 13% HST shown at checkout. No surprises, no hidden fees.</p></div>
+        <div class="st-why-card"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 13 4 4L19 7"/></svg><h3>Practical, carefully selected products</h3><p>A tight catalogue of parts that earn their place — no filler, everything under $10.</p></div>
+        <div class="st-why-card"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8.5 8.5 0 0 1-12.4 7.5L4 21l1.6-4.3A8.5 8.5 0 1 1 21 12z"/></svg><h3>Responsive customer support</h3><p>Questions and orders go straight to a real inbox, with confirmation within one business day.</p></div>
+        <div class="st-why-card"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><h3>Clear product specifications</h3><p>Practical one-line specs on every card — lengths, gauges, counts, and connector types.</p></div>
+        <div class="st-why-card"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v8H3zM14 10h4l3 3v2h-7zM7 18a1.8 1.8 0 1 0 0-.01M18 18a1.8 1.8 0 1 0 0-.01"/></svg><h3>Straightforward order experience</h3><p>Add to cart, send the order, e-Transfer, done. Free shipping kicks in over $25.</p></div>
+      </div>
+    </section>
+
+    <!-- ═══ About / support / account ═══ -->
+    <section class="st-sec" id="support" aria-labelledby="supTitle">
+      <div class="st-sec-head">
+        <div>
+          <h2 id="supTitle">About the Side Store</h2>
+          <p>The low-cost hardware counter of ClearGlass Inc. — small parts, clear prices, quick email-based ordering from Burlington, Ontario. No account needed: orders, questions, and support all run through email.</p>
+        </div>
+      </div>
+      <div class="st-steps">
+        <div class="st-step"><span class="n">1</span><h3>Add to cart</h3><p>Pick your parts. Bundle discounts apply automatically at 3+ and 5+ items.</p></div>
+        <div class="st-step"><span class="n">2</span><h3>Send your order</h3><p>Checkout opens a pre-filled email with your itemized order — review and hit send.</p></div>
+        <div class="st-step"><span class="n">3</span><h3>Pay by e-Transfer</h3><p>Send an Interac e-Transfer for the total and reply with your shipping address.</p></div>
+        <div class="st-step"><span class="n">4</span><h3>Confirmed within 1 business day</h3><p>We confirm your order and shipping details by email — <a href="mailto:desmondotieno@icloud.com">desmondotieno@icloud.com</a>.</p></div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="st-foot">
+  <div class="st-wrap">
+    <div class="st-foot-grid">
+      <div>
+        <h4>ClearGlass Side Store</h4>
+        <p style="font-size:13.5px;max-width:380px;margin:0">Dependable electronics under $10 CAD — cables, adapters, components, and accessories for workstations, labs, and blue-team builds.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="#best-sellers">Best Sellers</a></li>
+          <li><a href="#shop">All Products</a></li>
+          <li><a href="#bundles">Bundle and Save</a></li>
+          <li><a href="#kit">Electronics Kits</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/index.html">ClearGlass Inc.</a></li>
+          <li><a href="#support">Ordering &amp; Support</a></li>
+          <li><a href="#intelligence">System Status</a></li>
+          <li><a href="mailto:desmondotieno@icloud.com">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="st-foot-line">ClearGlass Inc. · Clarity Is Power · Burlington, Ontario · Prices in CAD, incl. 13% HST at checkout</div>
+  </div>
+</footer>
+
+<!-- Persistent mobile cart bar -->
+<div class="st-cartbar" id="cartbar" role="region" aria-label="Cart summary">
+  <div class="cb-meta"><b id="cbCount">0 items</b><span id="cbTotal" class="st-mono"></span></div>
+  <button type="button" id="cbOpen">View Cart</button>
+</div>
+
+<div class="st-scrim" id="scrim"></div>
+<aside class="st-drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Shopping cart">
+  <div class="st-dhead"><h2>Your cart</h2><button class="st-dx" id="closeCart" aria-label="Close cart">✕</button></div>
+  <div class="st-ditems" id="ditems"></div>
+  <div class="st-summary" id="summary"></div>
+</aside>
+
+<dialog id="qv" aria-label="Product quick view"></dialog>
+
+<div class="st-toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="application/json" id="catalog">[{"id":"sku_001","sku":"USB-C-C-1M","name":"USB-C to USB-C Cable 1m","category":"USB Cables","price":6.99,"description":"60W fast-charge, braided."},{"id":"sku_002","sku":"USB-C-C-2M","name":"USB-C to USB-C Cable 2m","category":"USB Cables","price":8.49,"description":"60W fast-charge, braided."},{"id":"sku_003","sku":"USB-C-A-1M","name":"USB-C to USB-A Cable 1m","category":"USB Cables","price":4.99,"description":"3A charge + data sync."},{"id":"sku_004","sku":"USB-MICRO-1M","name":"Micro-USB Cable 1m","category":"USB Cables","price":3.49,"description":"Legacy device charging."},{"id":"sku_005","sku":"USB-A-B-1M","name":"USB-A to USB-B Printer Cable 1m","category":"USB Cables","price":5.49,"description":"For printers/scanners."},{"id":"sku_006","sku":"USB-C-LIGHT-1M","name":"USB-C to Lightning Cable 1m","category":"USB Cables","price":9.49,"description":"MFi-style fast charge."},{"id":"sku_007","sku":"USB-EXT-2M","name":"USB-A Extension Cable 2m","category":"USB Cables","price":4.29,"description":"Male-to-female extender."},{"id":"sku_008","sku":"WALL-20W","name":"20W USB-C Wall Charger","category":"Power Adapters","price":9.99,"description":"PD fast wall adapter."},{"id":"sku_009","sku":"WALL-2PORT","name":"Dual-Port USB Wall Charger","category":"Power Adapters","price":8.99,"description":"USB-A + USB-C."},{"id":"sku_010","sku":"CAR-30W","name":"30W USB-C Car Charger","category":"Power Adapters","price":7.99,"description":"PD car adapter."},{"id":"sku_011","sku":"CAR-2PORT","name":"Dual-USB Car Charger","category":"Power Adapters","price":5.99,"description":"12V dual output."},{"id":"sku_012","sku":"AUX-3.5-1M","name":"3.5mm AUX Cable 1m","category":"Audio / Video","price":2.99,"description":"Stereo male-to-male."},{"id":"sku_013","sku":"AUX-3.5-2M","name":"3.5mm AUX Cable 2m","category":"Audio / Video","price":3.99,"description":"Stereo male-to-male."},{"id":"sku_014","sku":"RCA-2X-1.5M","name":"RCA Stereo Cable 1.5m","category":"Audio / Video","price":4.49,"description":"2x RCA male-to-male."},{"id":"sku_015","sku":"HDMI-1.5M","name":"HDMI 2.0 Cable 1.5m","category":"Audio / Video","price":7.49,"description":"4K@60Hz."},{"id":"sku_016","sku":"HDMI-3M","name":"HDMI 2.0 Cable 3m","category":"Audio / Video","price":9.99,"description":"4K@60Hz."},{"id":"sku_017","sku":"AUX-SPLIT","name":"3.5mm Headphone Splitter","category":"Audio / Video","price":3.29,"description":"1-to-2 audio splitter."},{"id":"sku_018","sku":"DUPONT-120","name":"Dupont Jumper Connector Pack (120)","category":"Connector Packs","price":6.49,"description":"M-M, M-F, F-F."},{"id":"sku_019","sku":"JST-PACK-40","name":"JST-XH Connector Kit (40)","category":"Connector Packs","price":5.99,"description":"2-6 pin housings + crimps."},{"id":"sku_020","sku":"BANANA-10","name":"Banana Plugs (10-pack)","category":"Connector Packs","price":4.99,"description":"Screw-type 4mm."},{"id":"sku_021","sku":"SPADE-50","name":"Spade Terminal Pack (50)","category":"Connector Packs","price":3.99,"description":"Insulated crimp spades."},{"id":"sku_022","sku":"RING-50","name":"Ring Terminal Pack (50)","category":"Connector Packs","price":3.99,"description":"Assorted gauges."},{"id":"sku_023","sku":"BARREL-PACK","name":"DC Barrel Jack Pack (10)","category":"Connector Packs","price":4.29,"description":"5.5x2.1mm M/F."},{"id":"sku_024","sku":"JUMP-M-M-40","name":"Jumper Wires M-M (40)","category":"Wires","price":4.49,"description":"20cm breadboard wires."},{"id":"sku_025","sku":"JUMP-M-F-40","name":"Jumper Wires M-F (40)","category":"Wires","price":4.49,"description":"20cm breadboard wires."},{"id":"sku_026","sku":"JUMP-F-F-40","name":"Jumper Wires F-F (40)","category":"Wires","price":4.49,"description":"20cm breadboard wires."},{"id":"sku_027","sku":"HOOKUP-22AWG","name":"22AWG Hookup Wire 6x3m","category":"Wires","price":8.99,"description":"Solid core, 6 colours."},{"id":"sku_028","sku":"STRAND-24AWG","name":"24AWG Stranded Wire 6x3m","category":"Wires","price":8.49,"description":"Flexible, 6 colours."},{"id":"sku_029","sku":"RIBBON-1M","name":"40-pin Ribbon Cable 1m","category":"Wires","price":3.79,"description":"Rainbow IDC ribbon."},{"id":"sku_030","sku":"SPEAKER-5M","name":"Speaker Wire 18AWG 5m","category":"Wires","price":6.49,"description":"Oxygen-free copper."},{"id":"sku_031","sku":"RES-600","name":"Resistor Assortment (600)","category":"Components","price":7.99,"description":"30 values, 1/4W."},{"id":"sku_032","sku":"CAP-CER-300","name":"Ceramic Capacitor Kit (300)","category":"Components","price":6.99,"description":"30 values."},{"id":"sku_033","sku":"CAP-ELE-120","name":"Electrolytic Capacitor Kit (120)","category":"Components","price":7.49,"description":"24 values."},{"id":"sku_034","sku":"LED-200","name":"LED Assortment (200)","category":"Components","price":5.49,"description":"5 colours, 3/5mm."},{"id":"sku_035","sku":"DIODE-100","name":"Rectifier Diode Pack (100)","category":"Components","price":4.49,"description":"1N4007 etc."},{"id":"sku_036","sku":"TRANS-50","name":"NPN/PNP Transistor Kit (50)","category":"Components","price":5.99,"description":"Common types."},{"id":"sku_037","sku":"BREAD-830","name":"Breadboard 830-point","category":"Components","price":4.99,"description":"Solderless."},{"id":"sku_038","sku":"BREAD-400","name":"Breadboard 400-point","category":"Components","price":3.49,"description":"Solderless mini."},{"id":"sku_039","sku":"HEADER-40","name":"Pin Header Strips (40x)","category":"Components","price":3.29,"description":"2.54mm snap-apart."},{"id":"sku_040","sku":"POT-15","name":"Potentiometer Kit (15)","category":"Components","price":6.49,"description":"Assorted values."},{"id":"sku_041","sku":"SWITCH-30","name":"Tactile Push Button Kit (30)","category":"Components","price":3.99,"description":"6x6mm."},{"id":"sku_042","sku":"FUSE-60","name":"Glass Fuse Assortment (60)","category":"Components","price":4.29,"description":"5x20mm."},{"id":"sku_043","sku":"CABLE-TIES-100","name":"Reusable Cable Ties (100)","category":"Accessories","price":3.99,"description":"Hook-and-loop straps."},{"id":"sku_044","sku":"CABLE-CLIPS-20","name":"Adhesive Cable Clips (20)","category":"Accessories","price":2.99,"description":"Desk cable management."},{"id":"sku_045","sku":"CABLE-SLEEVE-2M","name":"Braided Cable Sleeve 2m","category":"Accessories","price":4.49,"description":"Cut-to-length."},{"id":"sku_046","sku":"LABELS-3","name":"Cable Label Pack (3 sheets)","category":"Accessories","price":2.49,"description":"Write-on wrap labels."},{"id":"sku_047","sku":"PHONE-STAND","name":"Adjustable Phone Stand","category":"Accessories","price":6.99,"description":"Aluminium desk stand."},{"id":"sku_048","sku":"HEATSHRINK-560","name":"Heat-Shrink Tube Kit (560)","category":"Accessories","price":7.49,"description":"Assorted sizes/colours."},{"id":"sku_049","sku":"VELCRO-ROLL","name":"Cable Wrap Roll 3m","category":"Accessories","price":3.49,"description":"Cut-to-length fastener."},{"id":"sku_050","sku":"USB-LIGHT","name":"USB LED Light","category":"Accessories","price":2.99,"description":"Flexible keyboard light."},{"id":"sku_051","sku":"CARD-READER","name":"USB-C SD Card Reader","category":"Accessories","price":8.49,"description":"SD + microSD."},{"id":"sku_052","sku":"OTG-ADAPT","name":"USB-C to USB-A OTG Adapter","category":"Accessories","price":3.99,"description":"Connect USB drives."},{"id":"sku_053","sku":"HDMI-VGA","name":"HDMI to VGA Adapter","category":"Accessories","price":8.99,"description":"1080p, with audio."},{"id":"sku_054","sku":"USB-HUB-4","name":"4-Port USB-A Hub","category":"Accessories","price":9.49,"description":"USB 3.0 splitter."},{"id":"sku_055","sku":"BUNDLE-STARTER","name":"Starter Wire Kit","category":"Bundles","price":9.99,"description":"10 wires + 5 connectors + 1 adapter."},{"id":"sku_056","sku":"BUNDLE-CABLE","name":"Everyday Cable Pack","category":"Bundles","price":9.49,"description":"USB-C, AUX, and Micro-USB."},{"id":"sku_057","sku":"BUNDLE-MAKER","name":"Maker Components Pack","category":"Bundles","price":9.99,"description":"Resistors, LEDs, breadboard."}]</script>
+<script>
+(function(){
+  "use strict";
+  var CATALOG=[];
+  try{CATALOG=JSON.parse(document.getElementById("catalog").textContent);}catch(e){CATALOG=[];}
+  var byId={};CATALOG.forEach(function(i){byId[i.id]=i;});
+
+  // Pricing rules — mirror of apps/autostore/storefront/lib/pricing.mjs
+  var FREE_SHIP=2500, FLAT_SHIP=499, TAX_RATE=0.13, ORDER_EMAIL="desmondotieno@icloud.com";
+  function cents(p){return Math.round(Number(p)*100);}
+  function fmt(c){return "$"+(c/100).toFixed(2);}
+  function bundleRate(q){var r=0;if(q>=5)r=0.15;else if(q>=3)r=0.10;return Math.min(r,0.15);}
+  function price(cart){
+    var lines=[],sub=0,qty=0;
+    Object.keys(cart).forEach(function(id){
+      var it=byId[id],q=cart[id];if(!it||q<=0)return;
+      var unit=cents(it.price),lt=unit*q;sub+=lt;qty+=q;
+      lines.push({id:id,name:it.name,unit:unit,qty:q,lt:lt});
+    });
+    var rate=bundleRate(qty),disc=Math.round(sub*rate),dsub=sub-disc;
+    var ship=(lines.length&&dsub<FREE_SHIP)?FLAT_SHIP:0;
+    var tax=Math.round((dsub+ship)*TAX_RATE),tot=dsub+ship+tax;
+    return {lines:lines,qty:qty,rate:rate,pct:Math.round(rate*100),sub:sub,disc:disc,ship:ship,tax:tax,tot:tot};
+  }
+
+  var $=function(s){return document.querySelector(s);};
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+
+  // Curated merchandising (edit these SKU lists to re-merchandise the page)
+  var BEST=["sku_001","sku_008","sku_015","sku_006","sku_037","sku_031","sku_043","sku_051"];
+  var ESSENTIALS=["sku_003","sku_009","sku_012","sku_049"];
+  var KIT=["sku_024","sku_027","sku_032","sku_034"];
+  var WORKSTATION=["sku_054","sku_053","sku_047","sku_045"];
+  var BUNDLE_ROW=["sku_055","sku_056","sku_057"];
+
+  // Friendly labels for real catalogue categories
+  var CAT_LABELS={"All":"All","USB Cables":"Cables","Power Adapters":"Power","Audio / Video":"Audio & Video","Connector Packs":"Connectors","Wires":"Wires","Components":"Components","Accessories":"Accessories","Bundles":"Bundles"};
+
+  // Category glyphs (decorative; product name is the accessible label)
+  var GLYPHS={
+    "USB Cables":'<path d="M4 15c4 0 4-6 8-6h4"/><rect x="16" y="6" width="5" height="6" rx="1.5"/><path d="M4 15v3"/>',
+    "Power Adapters":'<path d="M13 2 5 13h6l-1 9 9-12h-6z"/>',
+    "Audio / Video":'<rect x="3" y="5" width="18" height="13" rx="2"/><path d="m10 9 5 2.5L10 14z"/>',
+    "Connector Packs":'<rect x="4" y="8" width="16" height="10" rx="2"/><path d="M8 8V5M12 8V5M16 8V5M8 13h.01M12 13h.01M16 13h.01"/>',
+    "Wires":'<path d="M3 8c4-4 6 4 9 0s5 4 9 0M3 16c4-4 6 4 9 0s5 4 9 0"/>',
+    "Components":'<rect x="7" y="7" width="10" height="10" rx="2"/><path d="M10 7V4M14 7V4M10 20v-3M14 20v-3M7 10H4M7 14H4M20 10h-3M20 14h-3"/>',
+    "Accessories":'<path d="M8 5h8a3 3 0 0 1 0 6H8a3 3 0 0 0 0 6h8"/>',
+    "Bundles":'<path d="M12 3 3 8l9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8"/>'
+  };
+  function glyph(cat){return '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(GLYPHS[cat]||GLYPHS.Accessories)+'</svg>';}
+  function flags(it){
+    var out=[];
+    if(BEST.indexOf(it.id)>=0)out.push('<span class="st-flag st-flag-best">Best Seller</span>');
+    if(it.category==="Bundles")out.push('<span class="st-flag st-flag-bundle">Bundle &amp; Save</span>');
+    else if(it.price<=3.99)out.push('<span class="st-flag st-flag-value">Great Value</span>');
+    return out.join("");
+  }
+
+  // Persistent state
+  var cart={};try{cart=JSON.parse(localStorage.getItem("cg_side_cart")||"{}")||{};}catch(e){cart={};}
+  function save(){try{localStorage.setItem("cg_side_cart",JSON.stringify(cart));}catch(e){}}
+  var wish=[];try{wish=JSON.parse(localStorage.getItem("cg_side_wishlist")||"[]")||[];}catch(e){wish=[];}
+  function saveWish(){try{localStorage.setItem("cg_side_wishlist",JSON.stringify(wish));}catch(e){}}
+  var viewed=[];try{viewed=JSON.parse(localStorage.getItem("cg_side_viewed")||"[]")||[];}catch(e){viewed=[];}
+  function markViewed(id){
+    viewed=viewed.filter(function(v){return v!==id;});viewed.unshift(id);viewed=viewed.slice(0,8);
+    try{localStorage.setItem("cg_side_viewed",JSON.stringify(viewed));}catch(e){}
+    renderRecent();
+  }
+
+  var toastT;function toast(m){var t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove("on");},1600);}
+
+  /* ── card rendering ─────────────────────────────────── */
+  function cardHTML(it){
+    var wished=wish.indexOf(it.id)>=0;
+    return '<article class="st-card" id="'+esc(it.sku)+'" data-id="'+it.id+'">'+
+      '<i class="st-edge" aria-hidden="true"></i>'+
+      '<div class="st-visual">'+glyph(it.category)+
+        '<div class="st-flags">'+flags(it)+'</div>'+
+        '<button class="st-wish" type="button" data-act="wish" aria-pressed="'+wished+'" aria-label="'+(wished?"Remove from":"Save to")+' wishlist: '+esc(it.name)+'">'+
+        '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5C7 16.5 3.5 13.4 3.5 9.7A4.6 4.6 0 0 1 12 7a4.6 4.6 0 0 1 8.5 2.7c0 3.7-3.5 6.8-8.5 10.8z"/></svg></button>'+
+      '</div>'+
+      '<span class="st-cat-tag">'+esc(CAT_LABELS[it.category]||it.category)+'</span>'+
+      '<h3><button type="button" data-act="qv" aria-haspopup="dialog">'+esc(it.name)+'</button></h3>'+
+      '<p class="st-desc">'+esc(it.description)+'</p>'+
+      '<div class="st-priceline"><span class="st-price">'+fmt(cents(it.price))+'</span><span class="st-cur">CAD</span></div>'+
+      '<div class="st-buy">'+
+        '<div class="st-qtysel" role="group" aria-label="Quantity for '+esc(it.name)+'">'+
+          '<button type="button" data-act="qminus" aria-label="Decrease quantity">−</button>'+
+          '<output data-role="qty" aria-live="polite">1</output>'+
+          '<button type="button" data-act="qplus" aria-label="Increase quantity">+</button>'+
+        '</div>'+
+        '<button class="st-add" type="button" data-act="add">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.6"/><circle cx="17" cy="20" r="1.6"/><path d="M3 4h2l2.5 11h10L20 7H6"/></svg>Add to Cart</button>'+
+      '</div>'+
+    '</article>';
+  }
+  function renderRow(sel,ids){
+    var box=$(sel);if(!box)return;
+    box.innerHTML=ids.map(function(id){return byId[id]?cardHTML(byId[id]):"";}).join("");
+  }
+
+  /* ── shop state / grid ──────────────────────────────── */
+  var activeCat="All", q="", priceBand="all", sortMode="featured";
+  function categories(){var s=["All"];CATALOG.forEach(function(i){if(s.indexOf(i.category)<0)s.push(i.category);});return s;}
+  function renderCats(){
+    var c=$("#cats");c.innerHTML="";
+    categories().forEach(function(cat){
+      var b=document.createElement("button");
+      b.type="button";b.className="st-cat";
+      b.setAttribute("aria-pressed",cat===activeCat?"true":"false");
+      b.textContent=CAT_LABELS[cat]||cat;b.dataset.cat=cat;
+      b.addEventListener("click",function(){activeCat=cat;renderCats();renderGrid();});
+      c.appendChild(b);
+    });
+    if(wish.length){
+      var w=document.createElement("button");
+      w.type="button";w.className="st-cat";w.dataset.cat="__wish";
+      w.setAttribute("aria-pressed",activeCat==="__wish"?"true":"false");
+      w.textContent="♥ Saved ("+wish.length+")";
+      w.addEventListener("click",function(){activeCat="__wish";renderCats();renderGrid();});
+      c.appendChild(w);
+    }
+  }
+  function inPriceBand(p){
+    if(priceBand==="u4")return p<4;
+    if(priceBand==="4to7")return p>=4&&p<7;
+    if(priceBand==="7to10")return p>=7;
+    return true;
+  }
+  function renderGrid(){
+    var g=$("#grid");
+    var list=CATALOG.filter(function(i){
+      var okCat=activeCat==="All"||(activeCat==="__wish"?wish.indexOf(i.id)>=0:i.category===activeCat);
+      var okQ=!q||(i.name+" "+i.description+" "+i.sku+" "+i.category).toLowerCase().indexOf(q)>=0;
+      return okCat&&okQ&&inPriceBand(i.price);
+    });
+    if(sortMode==="price-asc")list=list.slice().sort(function(a,b){return a.price-b.price;});
+    else if(sortMode==="price-desc")list=list.slice().sort(function(a,b){return b.price-a.price;});
+    else if(sortMode==="name")list=list.slice().sort(function(a,b){return a.name.localeCompare(b.name);});
+    $("#noteLine").textContent=list.length+" of "+CATALOG.length+" products shown · all prices in CAD, 13% HST at checkout.";
+    if(!list.length){g.innerHTML='<div class="st-empty">No products match. Try another search or clear the filters.</div>';return;}
+    g.innerHTML=list.map(cardHTML).join("");
+  }
+
+  /* ── card actions (event delegation) ────────────────── */
+  function handleCardClick(e){
+    var btn=e.target.closest?e.target.closest("[data-act]"):null;if(!btn)return;
+    var card=btn.closest(".st-card");if(!card)return;
+    var it=byId[card.dataset.id];if(!it)return;
+    var act=btn.dataset.act;
+    var out=card.querySelector('[data-role="qty"]');
+    var qv=out?parseInt(out.value||out.textContent,10)||1:1;
+    if(act==="qminus"){if(qv>1)qv--;out.value=qv;out.textContent=qv;}
+    else if(act==="qplus"){if(qv<99)qv++;out.value=qv;out.textContent=qv;}
+    else if(act==="add"){
+      cart[it.id]=(cart[it.id]||0)+qv;save();syncCount();renderCart();
+      toast("Added "+qv+" × "+it.name);
+      if(out){out.value=1;out.textContent=1;}
+    }
+    else if(act==="wish"){
+      var i=wish.indexOf(it.id);
+      if(i>=0){wish.splice(i,1);btn.setAttribute("aria-pressed","false");toast("Removed from saved items");}
+      else{wish.push(it.id);btn.setAttribute("aria-pressed","true");toast("Saved "+it.name);}
+      saveWish();renderCats();
+      if(activeCat==="__wish")renderGrid();
+    }
+    else if(act==="qv"){openQuickView(it);}
+  }
+  document.addEventListener("click",handleCardClick);
+
+  /* ── quick view ─────────────────────────────────────── */
+  var qvEl=document.getElementById("qv");
+  function openQuickView(it){
+    markViewed(it.id);
+    qvEl.innerHTML='<div class="st-qv-in">'+
+      '<div class="st-qv-head"><div class="st-visual">'+glyph(it.category)+'</div>'+
+      '<div><span class="st-cat-tag">'+esc(CAT_LABELS[it.category]||it.category)+'</span>'+
+      '<div class="sku">SKU '+esc(it.sku)+'</div></div>'+
+      '<button class="st-qv-close" type="button" aria-label="Close quick view">✕</button></div>'+
+      '<h3>'+esc(it.name)+'</h3>'+
+      '<p class="st-desc">'+esc(it.description)+'</p>'+
+      '<div class="st-priceline"><span class="st-price">'+fmt(cents(it.price))+'</span><span class="st-cur">CAD · 13% HST at checkout</span></div>'+
+      '<div class="st-card" data-id="'+it.id+'" style="padding:0;border:0;box-shadow:none!important;background:none!important">'+
+        '<div class="st-buy">'+
+          '<div class="st-qtysel" role="group" aria-label="Quantity">'+
+            '<button type="button" data-act="qminus" aria-label="Decrease quantity">−</button>'+
+            '<output data-role="qty">1</output>'+
+            '<button type="button" data-act="qplus" aria-label="Increase quantity">+</button>'+
+          '</div>'+
+          '<button class="st-add" type="button" data-act="add">Add to Cart</button>'+
+        '</div>'+
+      '</div></div>';
+    qvEl.querySelector(".st-qv-close").addEventListener("click",function(){qvEl.close();});
+    if(typeof qvEl.showModal==="function")qvEl.showModal();
+  }
+  qvEl.addEventListener("click",function(e){if(e.target===qvEl)qvEl.close();});
+
+  /* ── recently viewed ────────────────────────────────── */
+  function renderRecent(){
+    var wrap=$("#recentWrap"),box=$("#recent");
+    var items=viewed.map(function(id){return byId[id];}).filter(Boolean);
+    if(!items.length){wrap.hidden=true;return;}
+    wrap.hidden=false;
+    box.innerHTML=items.map(function(it){
+      return '<a href="#'+esc(it.sku)+'" data-recent="'+it.id+'">'+esc(it.name)+' <span class="st-mono">'+fmt(cents(it.price))+'</span></a>';
+    }).join("");
+  }
+  $("#recent").addEventListener("click",function(e){
+    var a=e.target.closest?e.target.closest("[data-recent]"):null;if(!a)return;
+    var it=byId[a.dataset.recent];
+    if(it&&!document.getElementById(it.sku)){e.preventDefault();openQuickView(it);}
+  });
+
+  /* ── cart / drawer ──────────────────────────────────── */
+  function syncCount(){
+    var n=0;Object.keys(cart).forEach(function(k){n+=cart[k];});
+    $("#cartCount").textContent=n;
+    var bar=$("#cartbar");
+    if(n>0){
+      bar.classList.add("on");
+      var p=price(cart);
+      $("#cbCount").textContent=n+(n===1?" item":" items");
+      $("#cbTotal").textContent=fmt(p.tot)+" total incl. HST";
+    }else bar.classList.remove("on");
+  }
+  function renderCart(){
+    var box=$("#ditems"),ids=Object.keys(cart).filter(function(k){return cart[k]>0;});
+    box.innerHTML="";
+    if(!ids.length){box.innerHTML='<div class="st-dempty">Your cart is empty.<br>Add a few cables to get started.</div>';$("#summary").innerHTML="";return;}
+    ids.forEach(function(id){
+      var it=byId[id];if(!it)return;
+      var li=document.createElement("div");li.className="st-li";
+      li.innerHTML='<div class="ln">'+esc(it.name)+'<span class="lp">'+fmt(cents(it.price))+' each</span></div>';
+      var qwrap=document.createElement("div");qwrap.className="st-qty";
+      var minus=document.createElement("button"),cnt=document.createElement("span"),plus=document.createElement("button");
+      minus.textContent="−";minus.setAttribute("aria-label","Decrease quantity of "+it.name);
+      plus.textContent="+";plus.setAttribute("aria-label","Increase quantity of "+it.name);
+      cnt.textContent=String(cart[id]);
+      minus.addEventListener("click",function(){cart[id]--;if(cart[id]<=0)delete cart[id];save();syncCount();renderCart();});
+      plus.addEventListener("click",function(){cart[id]++;save();syncCount();renderCart();});
+      qwrap.appendChild(minus);qwrap.appendChild(cnt);qwrap.appendChild(plus);
+      li.appendChild(qwrap);
+      box.appendChild(li);
+    });
+    var p=price(cart);
+    var s=$("#summary");
+    var disc=p.disc>0?'<div class="st-sline"><span>Bundle discount ('+p.pct+'%)</span><span class="st-mono st-disc">−'+fmt(p.disc)+'</span></div>':"";
+    var shipTxt=p.ship===0?'<span class="st-mono st-disc">FREE</span>':'<span class="st-mono">'+fmt(p.ship)+'</span>';
+    var dsub=p.sub-p.disc,away=Math.max(0,FREE_SHIP-dsub);
+    var prog=Math.min(100,Math.round(dsub/FREE_SHIP*100));
+    var hint=away>0?'Add '+fmt(away)+' more for free shipping.':'You’ve unlocked free shipping. 🎉';
+    if(p.qty<3){hint+=' Add '+(3-p.qty)+'+ item(s) for a 10% bundle discount.';}
+    else if(p.qty<5){hint+=' Add '+(5-p.qty)+' more item(s) to reach 15% off.';}
+    s.innerHTML='<div class="st-shipbar" aria-hidden="true"><i style="width:'+prog+'%"></i></div>'+
+      '<div class="st-hint">'+hint+'</div>'+
+      '<div class="st-sline"><span>Subtotal</span><span class="st-mono">'+fmt(p.sub)+'</span></div>'+disc+
+      '<div class="st-sline"><span>Shipping</span>'+shipTxt+'</div>'+
+      '<div class="st-sline"><span>HST (13%)</span><span class="st-mono">'+fmt(p.tax)+'</span></div>'+
+      '<div class="st-sline tot"><span>Total</span><span class="st-mono">'+fmt(p.tot)+'</span></div>'+
+      '<a class="st-checkout" id="checkout">'+(API_BASE?"Pay securely by card →":"Order by Interac e-Transfer →")+'</a>'+
+      '<p class="st-paynote" id="checkoutError" role="alert" hidden style="color:#ff8095"></p>'+
+      '<p class="st-paynote">'+(API_BASE
+        ?"Card payment is handled by Stripe on their secure page. No card details are entered on this site."
+        :"Checkout opens a pre-filled order email. No card details are collected on this site.")+'</p>';
+    $("#checkout").addEventListener("click",placeOrder);
+  }
+  // Control plane base URL. When set, checkout goes through Stripe: the server
+  // re-prices the cart from its own catalogue (app/cart.py) and opens a Checkout
+  // Session, so the amount charged never depends on anything in this page or in
+  // localStorage. Left empty — or unreachable — the buttons keep the existing
+  // e-Transfer flow, so the store never becomes unusable because an API is down.
+  var API_BASE="";
+
+  function placeOrder(e){
+    var p=price(cart);
+    if(!p.lines.length){if(e)e.preventDefault();return;}
+    if(API_BASE){
+      if(e)e.preventDefault();
+      cardCheckout(p);
+      return;
+    }
+    var body="ClearGlass Side Store — Order request%0D%0A%0D%0A";
+    p.lines.forEach(function(l){body+=encodeURIComponent(l.qty+" x "+l.name+" ("+fmt(l.unit)+" ea) = "+fmt(l.lt))+"%0D%0A";});
+    body+="%0D%0A"+encodeURIComponent("Subtotal: "+fmt(p.sub));
+    if(p.disc>0)body+="%0D%0A"+encodeURIComponent("Bundle discount ("+p.pct+"%): -"+fmt(p.disc));
+    body+="%0D%0A"+encodeURIComponent("Shipping: "+(p.ship===0?"FREE":fmt(p.ship)));
+    body+="%0D%0A"+encodeURIComponent("HST (13%): "+fmt(p.tax));
+    body+="%0D%0A"+encodeURIComponent("TOTAL: "+fmt(p.tot))+"%0D%0A%0D%0A";
+    body+=encodeURIComponent("Send payment by Interac e-Transfer to "+ORDER_EMAIL+" and reply with your shipping address. We confirm within 1 business day.");
+    var href="mailto:"+ORDER_EMAIL+"?subject="+encodeURIComponent("Side Store order — "+fmt(p.tot))+"&body="+body;
+    $("#checkout").setAttribute("href",href);
+    // allow the mailto to proceed via the anchor href
+  }
+
+  // Send ids and quantities only. The server prices the cart; the totals shown
+  // above are a preview, and if the two ever disagree the server's number is the
+  // one charged. Any failure falls back to the e-Transfer flow rather than
+  // stranding a shopper who is ready to buy.
+  function cardCheckout(p){
+    var btn=$("#checkout");
+    var original=btn.textContent;
+    btn.textContent="Opening secure checkout…";
+    var items=p.lines.map(function(l){return {id:l.id,quantity:l.qty};});
+    var attempt="cg_"+(window.crypto&&crypto.randomUUID?crypto.randomUUID():Date.now()+"_"+Math.random().toString(36).slice(2,10));
+    fetch(API_BASE+"/sidestore/checkout/session",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({items:items,client_reference_id:attempt})
+    }).then(function(r){
+      return r.json().then(function(b){
+        if(!r.ok)throw new Error(b&&b.detail?b.detail:"checkout failed ("+r.status+")");
+        return b;
+      });
+    }).then(function(session){
+      window.location.href=session.url;
+    }).catch(function(err){
+      btn.textContent=original;
+      // Rebuild the e-Transfer mailto and let the shopper complete the order.
+      var saved=API_BASE;API_BASE="";placeOrder(null);API_BASE=saved;
+      var note=$("#checkoutError");
+      if(note){
+        note.textContent="Card checkout is unavailable ("+err.message+"). Use the e-Transfer option below.";
+        note.hidden=false;
+      }
+      window.location.href=btn.getAttribute("href");
+    });
+  }
+  var lastFocus=null;
+  function openCart(){
+    lastFocus=document.activeElement;
+    renderCart();$("#scrim").classList.add("on");$("#drawer").classList.add("on");
+    $("#closeCart").focus();
+  }
+  function closeCart(){
+    $("#scrim").classList.remove("on");$("#drawer").classList.remove("on");
+    if(lastFocus&&lastFocus.focus)lastFocus.focus();
+  }
+
+  /* ── controls wiring ────────────────────────────────── */
+  $("#openCart").addEventListener("click",openCart);
+  $("#cbOpen").addEventListener("click",openCart);
+  $("#closeCart").addEventListener("click",closeCart);
+  $("#scrim").addEventListener("click",closeCart);
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")closeCart();});
+  $("#search").addEventListener("input",function(){q=this.value.toLowerCase().trim();renderGrid();});
+  $("#sort").addEventListener("change",function(){sortMode=this.value;renderGrid();});
+  $("#pricef").addEventListener("change",function(){priceBand=this.value;renderGrid();});
+  $("#navSearch").addEventListener("click",function(){
+    var s=$("#search");
+    s.scrollIntoView({behavior:"smooth",block:"center"});
+    setTimeout(function(){s.focus({preventScroll:true});},350);
+  });
+  // "Shop X →" links jump to the grid with the right category applied
+  document.addEventListener("click",function(e){
+    var a=e.target.closest?e.target.closest("[data-jump-cat]"):null;if(!a)return;
+    activeCat=a.dataset.jumpCat;renderCats();renderGrid();
+  });
+
+  /* ── product structured data (from the live catalogue) ─ */
+  function injectSchema(){
+    try{
+      var base="https://www.clearglassinc.com/side-store.html";
+      var ld={"@context":"https://schema.org","@type":"ItemList","name":"ClearGlass Side Store catalogue",
+        "numberOfItems":CATALOG.length,
+        "itemListElement":CATALOG.map(function(it,i){
+          return {"@type":"ListItem","position":i+1,"item":{
+            "@type":"Product","name":it.name,"sku":it.sku,"description":it.description,
+            "category":it.category,"url":base+"#"+it.sku,
+            "offers":{"@type":"Offer","price":it.price.toFixed(2),"priceCurrency":"CAD","url":base+"#"+it.sku,
+              "seller":{"@type":"Organization","name":"ClearGlass Inc."}}
+          }};
+        })};
+      var s=document.createElement("script");
+      s.type="application/ld+json";s.textContent=JSON.stringify(ld);
+      document.head.appendChild(s);
+    }catch(e){}
+  }
+
+  /* ── boot ───────────────────────────────────────────── */
+  renderCats();renderGrid();syncCount();renderRecent();
+  renderRow("#rowBest",BEST);
+  renderRow("#rowEssentials",ESSENTIALS);
+  renderRow("#rowKit",KIT);
+  renderRow("#rowWorkstation",WORKSTATION);
+  renderRow("#rowBundles",BUNDLE_ROW);
+  injectSchema();
+})();
+</script>
+<script>
+/* System status panel — simulated demo telemetry, rendered only when the
+   customer expands "View System Status". Neon marks on the dark
+   command surface; all motion respects reduced-motion. */
+(function(){
+  "use strict";
+  var details=document.getElementById("sysdetails");
+  if(!details)return;
+  var motionOK=true;try{motionOK=!matchMedia("(prefers-reduced-motion: reduce)").matches;}catch(e){}
+  var DPR=Math.min(window.devicePixelRatio||1,1.5);
+  var booted=false,running=false;
+
+  var MODULES=[["Mission Status","ONLINE"],["AI Cluster","ACTIVE"],["Security Mesh","ENABLED"],["Zero Trust","VERIFIED"],["Automation Engine","RUNNING"],["OSINT Scanner","COLLECTING"],["Forensics","READY"],["Neural Engine","LEARNING"]];
+  var STATS=[
+    {l:"Threat Level",v:98.7,d:1,u:"%"},{l:"Global Nodes Protected",v:18492,d:0,u:""},
+    {l:"Active AI Agents",v:243,d:0,u:""},{l:"Requests Processed",v:17.8,d:1,u:"M"},
+    {l:"Security Events Today",v:1298,d:0,u:""},{l:"Response Time",v:12,d:0,u:"ms"},
+    {l:"Model Confidence",v:99.92,d:2,u:"%"},{l:"Automation Savings",v:4820,d:0,u:"hrs"}
+  ];
+  var RINGS=[{l:"Model Confidence",v:99.92},{l:"Detection Accuracy",v:99.98},{l:"API Health",v:99.97}];
+
+  function fnum(v,d){var s=v.toFixed(d);var p=s.split(".");p[0]=p[0].replace(/\B(?=(\d{3})+(?!\d))/g,",");return p.join(".");}
+  function fit(cv){var r=cv.getBoundingClientRect();cv.width=Math.max(1,r.width*DPR);cv.height=Math.max(1,r.height*DPR);return cv.getContext("2d");}
+
+  var lc,lctx,rc,rctx,SERIES=[],N=70,wander=.5,lastPush=0,ang=0,blips=[];
+
+  function build(){
+    var mbox=document.getElementById("modules");
+    MODULES.forEach(function(m){
+      var d=document.createElement("span");d.className="st-module";
+      d.innerHTML="<i aria-hidden='true'></i>"+m[0]+" <b>"+m[1]+"</b>";mbox.appendChild(d);
+    });
+    var sbox=document.getElementById("stats"),svEls=[];
+    STATS.forEach(function(st){
+      var d=document.createElement("div");d.className="st-stat";
+      d.innerHTML='<div class="sl">'+st.l+'</div><div class="sv"><span>0</span><small>'+st.u+'</small></div>';
+      sbox.appendChild(d);svEls.push(d.querySelector(".sv span"));
+    });
+    if(!motionOK){STATS.forEach(function(st,i){svEls[i].textContent=fnum(st.v,st.d);});}
+    else{
+      var t0=performance.now(),dur=1200;
+      (function tick(now){
+        var k=Math.min(1,(now-t0)/dur);k=1-Math.pow(1-k,3);
+        STATS.forEach(function(st,i){svEls[i].textContent=fnum(st.v*k,st.d);});
+        if(k<1)requestAnimationFrame(tick);
+      })(t0);
+    }
+    var rbox=document.getElementById("rings"),C=2*Math.PI*24;
+    RINGS.forEach(function(r,i){
+      var w=document.createElement("div");w.className="st-ringw";
+      w.innerHTML='<svg width="58" height="58" viewBox="0 0 58 58" aria-hidden="true">'+
+        '<circle cx="29" cy="29" r="24" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/>'+
+        '<circle class="arc" cx="29" cy="29" r="24" fill="none" stroke="#39dcff" stroke-width="4" stroke-linecap="round" stroke-dasharray="'+C+'" stroke-dashoffset="'+C+'"/></svg>'+
+        '<div class="rv">'+r.v.toFixed(2)+'%</div><div class="rl">'+r.l+'</div>';
+      rbox.appendChild(w);
+      var arc=w.querySelector(".arc"),target=C*(1-r.v/100*.96);
+      if(!motionOK){arc.style.strokeDashoffset=target;return;}
+      arc.style.transition="stroke-dashoffset 1.4s cubic-bezier(.16,1,.3,1) "+(i*.15)+"s";
+      requestAnimationFrame(function(){requestAnimationFrame(function(){arc.style.strokeDashoffset=target;});});
+    });
+    lc=document.getElementById("lineChart");rc=document.getElementById("radar");
+    lctx=fit(lc);rctx=fit(rc);
+    for(var i=0;i<N;i++)SERIES.push(.5);
+    for(var b=0;b<7;b++)blips.push({a:Math.random()*6.28,r:.25+Math.random()*.7,hot:Math.random()<.3});
+  }
+
+  function drawLine(now){
+    if(now-lastPush>140){lastPush=now;wander+=(Math.random()-.5)*.16;wander=Math.max(.15,Math.min(.85,wander));SERIES.push(wander+(Math.random()-.5)*.06);SERIES.shift();}
+    var w=lc.width,h=lc.height;lctx.clearRect(0,0,w,h);
+    lctx.strokeStyle="rgba(125,225,255,.10)";lctx.lineWidth=1;
+    [0.25,0.5,0.75].forEach(function(k){lctx.beginPath();lctx.moveTo(0,h*k);lctx.lineTo(w,h*k);lctx.stroke();});
+    var grd=lctx.createLinearGradient(0,0,0,h);grd.addColorStop(0,"rgba(50,215,255,.26)");grd.addColorStop(1,"rgba(50,215,255,0)");
+    lctx.beginPath();
+    SERIES.forEach(function(v,i){var x=i/(N-1)*w,y=h-(v*h*.82)-h*.06;i?lctx.lineTo(x,y):lctx.moveTo(x,y);});
+    lctx.strokeStyle="rgba(140,235,255,.25)";lctx.lineWidth=5*DPR;lctx.stroke();lctx.strokeStyle="#53dfff";lctx.lineWidth=1.6*DPR;lctx.stroke();
+    lctx.lineTo(w,h);lctx.lineTo(0,h);lctx.closePath();lctx.fillStyle=grd;lctx.fill();
+  }
+  function drawRadar(){
+    var w=rc.width,h=rc.height,cx=w/2,cy=h/2,R=Math.min(w,h)/2-4*DPR;
+    rctx.clearRect(0,0,w,h);
+    rctx.strokeStyle="rgba(125,225,255,.18)";rctx.lineWidth=1;
+    [1,.66,.33].forEach(function(k){rctx.beginPath();rctx.arc(cx,cy,R*k,0,6.29);rctx.stroke();});
+    rctx.beginPath();rctx.moveTo(cx-R,cy);rctx.lineTo(cx+R,cy);rctx.moveTo(cx,cy-R);rctx.lineTo(cx,cy+R);rctx.stroke();
+    var g=rctx.createConicGradient?rctx.createConicGradient(ang,cx,cy):null;
+    if(g){g.addColorStop(0,"rgba(57,255,191,.34)");g.addColorStop(.12,"rgba(57,255,191,0)");g.addColorStop(1,"rgba(57,255,191,0)");
+      rctx.beginPath();rctx.moveTo(cx,cy);rctx.arc(cx,cy,R,ang,ang+.9);rctx.closePath();rctx.fillStyle=g;rctx.fill();}
+    blips.forEach(function(bl){
+      var d=(ang-bl.a)%6.28;if(d<0)d+=6.28;var glow=Math.max(0,1-d/2.2);
+      var x=cx+Math.cos(bl.a)*R*bl.r,y=cy+Math.sin(bl.a)*R*bl.r;
+      rctx.beginPath();rctx.arc(x,y,(1.6+glow*1.6)*DPR,0,6.29);
+      rctx.fillStyle=bl.hot?"rgba(255,97,140,"+(.30+glow*.6)+")":"rgba(57,255,191,"+(.30+glow*.6)+")";rctx.fill();
+    });
+    ang+=.022;
+    if(Math.random()<.004)blips[Math.floor(Math.random()*blips.length)]={a:Math.random()*6.28,r:.25+Math.random()*.7,hot:Math.random()<.3};
+  }
+  function loop(now){
+    if(!running)return;
+    requestAnimationFrame(loop);
+    if(document.hidden)return;
+    drawLine(now);drawRadar();
+  }
+
+  details.addEventListener("toggle",function(){
+    if(details.open){
+      if(!booted){booted=true;build();}
+      else{lctx=fit(lc);rctx=fit(rc);}
+      if(motionOK&&!running){running=true;requestAnimationFrame(loop);}
+      if(!motionOK){drawLine(1e9);drawRadar();}
+    }else running=false;
+  });
+  var rsT;window.addEventListener("resize",function(){
+    if(!booted||!details.open)return;
+    clearTimeout(rsT);rsT=setTimeout(function(){lctx=fit(lc);rctx=fit(rc);if(!motionOK){drawLine(1e9);drawRadar();}},180);
+  });
+})();
+</script>
+<script defer src="nav.js"></script>
+<script defer src="/logo-badge.js"></script>
+<script type="application/json" id="cc-messages">[
+  "Threat intelligence synchronized.",
+  "Security verification complete.",
+  "Catalog integrity verified \u2014 57 SKUs.",
+  "Bundle discount graph recompiled.",
+  "Checkout mesh integrity verified.",
+  "Analytics updated.",
+  "Agent cluster nominal.",
+  "AI detected 14 optimization opportunities."
+]</script>
+<script>
+(function(){
+  "use strict";
+  var motionOK=true;try{motionOK=!matchMedia("(prefers-reduced-motion: reduce)").matches;}catch(e){}
+  // open the command deck by default on wide screens
+  var det=document.getElementById("sysdetails");
+  if(det&&window.innerWidth>880)det.open=true;
+  if(!motionOK)return;
+  // cursor-tracking neon bloom on product cards
+  document.addEventListener("pointermove",function(e){
+    var c=e.target.closest?e.target.closest(".st-card"):null;if(!c)return;
+    var r=c.getBoundingClientRect();
+    c.style.setProperty("--gx",((e.clientX-r.left)/r.width*100).toFixed(1)+"%");
+    c.style.setProperty("--gy",((e.clientY-r.top)/r.height*100).toFixed(1)+"%");
+  },{passive:true});
+  // ripple energy on primary actions
+  document.addEventListener("click",function(e){
+    var t=e.target.closest?e.target.closest(".st-add,.st-cat,.st-cart,.st-checkout,.st-cta"):null;
+    if(!t)return;
+    var r=t.getBoundingClientRect(),sp=document.createElement("span");
+    sp.className="st-ripple";sp.style.left=(e.clientX-r.left)+"px";sp.style.top=(e.clientY-r.top)+"px";
+    t.appendChild(sp);setTimeout(function(){sp.remove();},600);
+  });
+  // magnetic cart button
+  var cart=document.getElementById("openCart"),hdr=document.querySelector(".st-header");
+  if(cart&&hdr){
+    hdr.addEventListener("pointermove",function(e){
+      var r=cart.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+      var dx=e.clientX-cx,dy=e.clientY-cy,d=Math.hypot(dx,dy);
+      if(d<110&&d>0){var k=(1-d/110)*4;cart.style.transform="translate("+(dx/d*k)+"px,"+(dy/d*k)+"px)";}
+      else cart.style.transform="";
+    },{passive:true});
+    hdr.addEventListener("pointerleave",function(){cart.style.transform="";});
+  }
+})();
+</script>
+<!-- Command-center atmosphere (visual only; no telemetry copy on the store). -->
+<script defer src="/command-center.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="offers/index.html">Services &amp; Engagements</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="revenue-engine.html"><span><b>Previous</b>Revenue Engine</span></a>
+      <a href="offers/index.html"><span><b>Topic hub</b>Services &amp; Engagements</span></a>
+      <a href="products.html"><span><b>Next in journey</b>ClearGlass Products</span></a>
+    </div>
+    <ul>
+      <li><a href="products.html"><b>ClearGlass Products</b> — the unified ClearGlass product catalog</a></li>
+      <li><a href="business-productivity-suite.html"><b>Business Productivity Suite</b> — Canadian-first business productivity planning</a></li>
+      <li><a href="global-growth-engine.html"><b>Global Growth Engine</b> — governed multi-market growth intelligence</a></li>
+      <li><a href="apps/command-center/index.html"><b>Growth Command Centre</b> — governed Burlington growth operations and approvals</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

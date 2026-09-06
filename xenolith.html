@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>XENOLITH — Sovereign Intelligence Lattice | ClearGlass Inc.</title>
+<meta name="description" content="XENOLITH is the ClearGlass sovereign intelligence lattice: a governed, multi-domain command substrate uniting executive orchestration, intelligence fusion, cyber defense, threat intelligence and autonomous agents behind one fail-closed policy gate.">
+<link rel="canonical" href="https://www.clearglassinc.com/xenolith.html">
+<meta property="og:title" content="XENOLITH — Sovereign Intelligence Lattice">
+<meta property="og:description" content="A governed multi-domain command substrate: cryptographic agent identity, typed event bus, deny-by-default policy gate, hash-chained audit ledger.">
+<meta property="og:url" content="https://www.clearglassinc.com/xenolith.html">
+<meta property="og:type" content="website">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Urbanist:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Dark command-surface page: loads the global design system + nav, but not
+     assets/css/glass.css, which force-normalizes pages to the light canvas.
+     Same convention as command-center.html and platform-command-center.html. -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<style>
+:root{
+  --void:#03040c;--void2:#070a1c;--deep:#0a0f28;
+  --ion:#22d3ee;--plasma:#a855f7;--flux:#7c96ff;--vital:#34f5a0;--alert:#ff6b8a;--amber:#ffb648;
+  --ink:#e8eeff;--ink2:#9db0dd;--ink3:#5d6d9e;
+  --edge:rgba(124,150,255,.16);--edge2:rgba(34,211,238,.34);
+  --pane:rgba(8,13,34,.62);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);color:var(--ink);
+  font-family:'Urbanist',system-ui,-apple-system,sans-serif;
+  min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+/* ---- deep-space field + orbital motion ---------------------------------- */
+.field{position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(circle at 14% 8%,rgba(34,211,238,.16),transparent 42%),
+    radial-gradient(circle at 86% 88%,rgba(168,85,247,.15),transparent 44%),
+    radial-gradient(circle at 50% 50%,rgba(124,150,255,.07),transparent 60%),
+    linear-gradient(170deg,var(--void),var(--void2) 46%,var(--deep));}
+.field::after{content:'';position:absolute;inset:0;opacity:.5;
+  background:linear-gradient(rgba(124,150,255,.045) 1px,transparent 1px),
+             linear-gradient(90deg,rgba(124,150,255,.045) 1px,transparent 1px);
+  background-size:48px 48px;
+  mask-image:radial-gradient(circle at 50% 30%,#000 10%,transparent 78%);
+  -webkit-mask-image:radial-gradient(circle at 50% 30%,#000 10%,transparent 78%)}
+.orbits{position:fixed;top:-18vh;left:50%;width:120vmax;height:120vmax;margin-left:-60vmax;
+  z-index:-1;pointer-events:none;opacity:.4}
+.orbits i{position:absolute;inset:0;margin:auto;border-radius:50%;
+  border:1px solid rgba(124,150,255,.13);animation:spin 68s linear infinite}
+.orbits i:nth-child(1){width:34%;height:34%;border-color:rgba(34,211,238,.2);animation-duration:42s}
+.orbits i:nth-child(2){width:56%;height:56%;animation-duration:74s;animation-direction:reverse}
+.orbits i:nth-child(3){width:82%;height:82%;border-color:rgba(168,85,247,.16);animation-duration:112s}
+.orbits i::before{content:'';position:absolute;top:-3px;left:50%;width:6px;height:6px;border-radius:50%;
+  background:var(--ion);box-shadow:0 0 16px var(--ion),0 0 34px rgba(34,211,238,.6)}
+.orbits i:nth-child(3)::before{background:var(--plasma);box-shadow:0 0 16px var(--plasma)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.orbits i{animation:none}}
+
+/* ---- shell -------------------------------------------------------------- */
+/* nav.js mounts the fixed global ClearGlass topnav over the page; the hero
+   reserves room for it rather than sitting underneath. */
+.wrap{width:min(1240px,92vw);margin:0 auto}
+section{scroll-margin-top:150px}
+.skip-link{position:absolute;left:14px;top:-80px;z-index:300;padding:10px 15px;border-radius:10px;
+  background:var(--ion);color:#03040c;font-weight:700;font-size:.85rem;text-decoration:none}
+.skip-link:focus{top:14px}
+
+/* ---- typography --------------------------------------------------------- */
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:3.4px;
+  text-transform:uppercase;color:var(--ion);font-weight:600}
+h1{font-size:clamp(2.6rem,7.4vw,5.6rem);font-weight:200;letter-spacing:-.035em;line-height:.96;margin:.22em 0}
+h1 b{font-weight:700;background:linear-gradient(96deg,var(--ion),var(--flux) 46%,var(--plasma));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:clamp(1.7rem,3.6vw,2.7rem);font-weight:300;letter-spacing:-.025em;margin:.1em 0 .5em}
+h3{font-size:1.02rem;font-weight:600;letter-spacing:.005em}
+p.lead{color:var(--ink2);font-size:clamp(1rem,1.5vw,1.13rem);line-height:1.78;max-width:74ch;font-weight:300}
+p.note{color:var(--ink3);font-size:.87rem;line-height:1.7;max-width:78ch}
+section{padding:clamp(60px,8vw,104px) 0;border-top:1px solid var(--edge)}
+.head{max-width:78ch;margin-bottom:38px}
+code,kbd{font-family:'IBM Plex Mono',monospace}
+
+/* ---- glass panes with neon edge ---------------------------------------- */
+.pane{position:relative;background:var(--pane);border:1px solid var(--edge);border-radius:16px;
+  padding:22px 24px;backdrop-filter:blur(16px);overflow:hidden;
+  box-shadow:0 20px 54px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.045)}
+.pane::before{content:'';position:absolute;left:20px;right:20px;top:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--edge2),transparent)}
+.pane.lit{border-color:var(--edge2);box-shadow:0 20px 54px rgba(0,0,0,.46),0 0 34px rgba(34,211,238,.11),inset 0 1px 0 rgba(255,255,255,.05)}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(258px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+
+/* ---- hero --------------------------------------------------------------- */
+.hero{padding:clamp(168px,17vw,232px) 0 clamp(40px,6vw,64px);border-top:0}
+.status{display:inline-flex;align-items:center;gap:10px;padding:7px 15px;border-radius:999px;
+  border:1px solid var(--edge2);background:rgba(34,211,238,.07);
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:2.2px;text-transform:uppercase;color:var(--ink)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--vital);box-shadow:0 0 12px var(--vital);
+  animation:pulse 2.6s ease-in-out infinite}
+.dot.warn{background:var(--amber);box-shadow:0 0 12px var(--amber)}
+.dot.bad{background:var(--alert);box-shadow:0 0 12px var(--alert)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.34}}
+@media(prefers-reduced-motion:reduce){.dot{animation:none}}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:11px;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;
+  text-decoration:none;font-weight:600;border:1px solid transparent;transition:transform .16s ease,box-shadow .16s ease,background .16s ease}
+.btn-primary{background:linear-gradient(96deg,var(--ion),var(--flux));color:#03040c;
+  box-shadow:0 10px 30px rgba(34,211,238,.26)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 42px rgba(34,211,238,.38)}
+.btn-ghost{border-color:var(--edge2);color:var(--ink);background:rgba(34,211,238,.05)}
+.btn-ghost:hover{transform:translateY(-2px);background:rgba(34,211,238,.12)}
+
+/* ---- stat tiles --------------------------------------------------------- */
+.stat{padding:18px 20px}
+.stat .k{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:2.4px;
+  text-transform:uppercase;color:var(--ink3)}
+.stat .v{font-size:clamp(1.7rem,3.4vw,2.3rem);font-weight:200;letter-spacing:-.03em;margin-top:7px;
+  font-variant-numeric:tabular-nums}
+.stat .v em{font-style:normal;font-size:.5em;color:var(--ink3);letter-spacing:0;margin-left:5px}
+.stat .s{font-size:.79rem;color:var(--ink3);margin-top:5px}
+.v.ion{color:var(--ion)}.v.plasma{color:var(--plasma)}.v.vital{color:var(--vital)}.v.amber{color:var(--amber)}
+
+/* ---- domain cards ------------------------------------------------------- */
+.dom{padding:24px}
+.dom .idx{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:2.4px;color:var(--ink3)}
+.dom h3{margin:9px 0 8px;font-size:1.14rem}
+.dom p{color:var(--ink2);font-size:.9rem;line-height:1.65;font-weight:300}
+.dom ul{list-style:none;margin:14px 0 0;padding:13px 0 0;border-top:1px solid var(--edge);
+  display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:1.3px;padding:4px 9px;
+  border-radius:6px;border:1px solid var(--edge);color:var(--ink2);background:rgba(124,150,255,.06)}
+
+/* ---- risk ladder -------------------------------------------------------- */
+.ladder{display:grid;gap:10px}
+.rung{display:grid;grid-template-columns:96px 1fr;gap:16px;align-items:center;
+  padding:14px 18px;border-radius:12px;border:1px solid var(--edge);background:rgba(8,13,34,.45)}
+.rung .tier{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700}
+.rung .desc{color:var(--ink2);font-size:.89rem;line-height:1.6;font-weight:300}
+.rung .desc b{color:var(--ink);font-weight:600}
+.rung.low{border-left:3px solid var(--vital)}.rung.low .tier{color:var(--vital)}
+.rung.med{border-left:3px solid var(--amber)}.rung.med .tier{color:var(--amber)}
+.rung.high{border-left:3px solid var(--alert)}.rung.high .tier{color:var(--alert)}
+.rung.crit{border-left:3px solid var(--plasma)}.rung.crit .tier{color:var(--plasma)}
+
+/* ---- tables ------------------------------------------------------------- */
+.scroll{overflow-x:auto;border-radius:14px;border:1px solid var(--edge);background:var(--pane)}
+table{width:100%;border-collapse:collapse;font-size:.83rem;min-width:660px}
+th{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--ink3);text-align:left;padding:13px 16px;border-bottom:1px solid var(--edge);font-weight:600;white-space:nowrap}
+td{padding:12px 16px;border-bottom:1px solid rgba(124,150,255,.07);color:var(--ink2);font-weight:300;vertical-align:top}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:rgba(34,211,238,.045)}
+/* Identifiers are shown verbatim — the global nav stylesheet uppercases
+   `.mono`, which would misrepresent real permission and action strings. */
+td.mono{font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--ink);
+  text-transform:none;letter-spacing:0}
+th.mono{font-family:'IBM Plex Mono',monospace}
+.tag{display:inline-block;white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:8.5px;
+  letter-spacing:1.4px;text-transform:uppercase;padding:3px 8px;border-radius:5px;
+  border:1px solid var(--edge);color:var(--ink2)}
+.tag.ok{border-color:rgba(52,245,160,.4);color:var(--vital);background:rgba(52,245,160,.08)}
+.tag.warn{border-color:rgba(255,182,72,.4);color:var(--amber);background:rgba(255,182,72,.08)}
+.tag.bad{border-color:rgba(255,107,138,.4);color:var(--alert);background:rgba(255,107,138,.08)}
+.tag.info{border-color:var(--edge2);color:var(--ion);background:rgba(34,211,238,.08)}
+
+/* ---- meters ------------------------------------------------------------- */
+.meter{display:block;width:62px;height:5px;border-radius:3px;background:rgba(124,150,255,.14);
+  overflow:hidden;margin-top:8px}
+.meter i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,var(--ion),var(--flux))}
+
+/* ---- flow diagram ------------------------------------------------------- */
+.flow{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin-top:6px}
+.flow .step{flex:1 1 152px;padding:18px 16px;border:1px solid var(--edge);background:rgba(8,13,34,.5);
+  position:relative}
+.flow .step:first-child{border-radius:12px 0 0 12px}
+.flow .step:last-child{border-radius:0 12px 12px 0}
+.flow .step+.step{border-left:0}
+.flow .step .n{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--ion)}
+.flow .step .t{font-size:.92rem;font-weight:600;margin:7px 0 5px}
+.flow .step .d{font-size:.78rem;color:var(--ink3);line-height:1.55;font-weight:300}
+.flow .step.gate{background:linear-gradient(165deg,rgba(168,85,247,.16),rgba(8,13,34,.6));
+  border-color:rgba(168,85,247,.4)}
+.flow .step.gate .n{color:var(--plasma)}
+@media(max-width:900px){.flow .step{flex:1 1 100%;border-left:1px solid var(--edge)!important;border-radius:0!important}
+  .flow .step+.step{border-top:0}
+  .flow .step:first-child{border-radius:12px 12px 0 0!important}
+  .flow .step:last-child{border-radius:0 0 12px 12px!important}}
+
+/* ---- chain -------------------------------------------------------------- */
+.chain{display:grid;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:.74rem;
+  text-transform:none;letter-spacing:0}
+.link{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;padding:10px 14px;
+  border-radius:9px;border:1px solid var(--edge);background:rgba(8,13,34,.45)}
+.link .i{color:var(--ink3)}
+.link .a{color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.link .h{color:var(--ink3);font-size:.68rem;white-space:nowrap}
+
+/* ---- code --------------------------------------------------------------- */
+pre.code{background:rgba(3,5,16,.8);border:1px solid var(--edge);border-radius:13px;padding:20px 22px;
+  overflow-x:auto;font-size:.79rem;line-height:1.85;color:var(--ink2)}
+pre.code .c{color:var(--ink3)}
+pre.code .p{color:var(--ion)}
+pre.code .s{color:var(--vital)}
+
+/* ---- modal (secure action confirmation) --------------------------------- */
+.modal{position:fixed;inset:0;z-index:200;display:none;place-items:center;padding:22px;
+  background:rgba(2,3,10,.82);backdrop-filter:blur(8px)}
+.modal[open],.modal.on{display:grid}
+.modal .box{width:min(520px,100%);background:linear-gradient(168deg,rgba(12,18,44,.97),rgba(6,9,26,.97));
+  border:1px solid rgba(168,85,247,.42);border-radius:18px;padding:28px;
+  box-shadow:0 30px 90px rgba(0,0,0,.7),0 0 44px rgba(168,85,247,.16)}
+.modal .box h3{font-size:1.2rem;margin:10px 0 12px}
+.modal .box p{color:var(--ink2);font-size:.9rem;line-height:1.7;font-weight:300}
+.modal .box dl{margin:18px 0;display:grid;grid-template-columns:auto 1fr;gap:9px 16px;
+  font-family:'IBM Plex Mono',monospace;font-size:.78rem}
+.modal .box dt{color:var(--ink3);letter-spacing:1.2px;text-transform:uppercase;font-size:.68rem}
+.modal .box dd{color:var(--ink);margin:0}
+.modal .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.modal button{cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:1.8px;
+  text-transform:uppercase;padding:11px 20px;border-radius:10px;font-weight:600;border:1px solid var(--edge2);
+  background:rgba(34,211,238,.07);color:var(--ink)}
+.modal button.deny{border-color:rgba(255,107,138,.4);background:rgba(255,107,138,.08);color:var(--alert)}
+.modal button:hover{background:rgba(34,211,238,.16)}
+.queue-act{cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:1.4px;
+  text-transform:uppercase;padding:5px 11px;border-radius:6px;border:1px solid var(--edge2);
+  background:rgba(34,211,238,.07);color:var(--ion)}
+.queue-act:hover{background:rgba(34,211,238,.18)}
+
+footer.foot{border-top:1px solid var(--edge);padding:34px 0 46px;
+  font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:1.8px;color:var(--ink3)}
+footer.foot .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+footer.foot a{color:var(--ink2);text-decoration:none}
+footer.foot a:hover{color:var(--ion)}
+:focus-visible{outline:2px solid var(--ion);outline-offset:3px;border-radius:4px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"XENOLITH — Sovereign Intelligence Lattice","applicationCategory":"SecurityApplication","operatingSystem":"Linux, macOS, Windows","url":"https://www.clearglassinc.com/xenolith.html","publisher":{"@type":"Organization","name":"ClearGlass Inc.","url":"https://www.clearglassinc.com/"},"description":"A governed, multi-domain intelligence command substrate with cryptographic agent identity, a typed event bus, a deny-by-default policy gate and a hash-chained audit ledger."}</script>
+<script defer src="/assets/js/cg-design-system.js"></script>
+<script defer src="/asset-protection.js"></script>
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<!-- data-cg-no-unify: the design system's light-page typography and layout
+     unification would override this surface's HUD styling.
+     data-cg-no-fx: this page renders its own deep-space field and orbits. -->
+<body data-cg-no-unify data-cg-no-fx>
+<div class="field"></div>
+<div class="orbits" aria-hidden="true"><i></i><i></i><i></i></div>
+<a class="skip-link" href="#domains">Skip to content</a>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">ClearGlass Inc. · Governed Autonomy</p>
+    <h1>The lattice that <b>refuses</b><br>to act alone.</h1>
+    <p class="lead">XENOLITH is a multi-domain command substrate. Executive orchestration, intelligence fusion, cyber defense, threat intelligence, telemetry and autonomous agents run as independent subsystems over one shared identity layer, one event bus, one memory fabric and one policy gate. Every consequential action is signed by a named agent, scored for risk, and — above the line — held until a human who is not the requester approves it.</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="#gate">See the gate</a>
+      <a class="btn btn-ghost" href="#run">Run the self-check</a>
+    </div>
+    <div class="grid g4" style="margin-top:44px">
+      <div class="pane stat lit"><div class="k">Governance</div><div class="v vital" data-bind="gov">9<em>/9</em></div><div class="s" data-bind="gov-s">invariants hold · fail-closed</div></div>
+      <div class="pane stat"><div class="k">Agent population</div><div class="v ion" data-bind="pop">9</div><div class="s" data-bind="pop-s">across six sovereign domains</div></div>
+      <div class="pane stat"><div class="k">Audit ledger</div><div class="v plasma" data-bind="ledger">13</div><div class="s" data-bind="ledger-s">entries · hash chain intact</div></div>
+      <div class="pane stat"><div class="k">Awaiting authority</div><div class="v amber" data-bind="queue">2</div><div class="s" data-bind="queue-s">actions blocked on human approval</div></div>
+    </div>
+    <p class="note" style="margin-top:18px"><span class="status"><span class="dot" data-bind="dot"></span><span data-bind="stamp">Reference constellation · regenerate with <code>python -m xenolith.cli --write</code></span></span></p>
+  </div>
+</section>
+
+<section id="domains">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">01 · Architecture</p>
+      <h2>Six sovereign domains, one substrate.</h2>
+      <p class="lead">A domain is an authority and memory boundary, not a label. It constrains which partitions an agent may read, which action classes it may attempt, and which events it may publish. Each subsystem runs standalone; they interlock through a shared vocabulary of typed events, risk tiers and provenance.</p>
+    </div>
+    <div class="grid g3">
+      <article class="pane dom lit"><div class="idx">DOMAIN 01</div><h3>Executive</h3><p>Translates objectives into policy-constrained missions. Priority is computed from value, deadline pressure, risk drag and the health of whoever would have to execute — work nobody healthy can run sinks rather than queueing into a hole.</p><ul><li class="chip">ORACLE</li><li class="chip">objectives → missions</li><li class="chip">ranked tasks</li></ul></article>
+      <article class="pane dom"><div class="idx">DOMAIN 02</div><h3>Intelligence fusion</h3><p>Observations in, intelligence packets out. Indicators are extracted from unstructured text, clustered by shared atoms then lexical overlap, corroborated across independent sources, and timelined into a claim with its evidence attached.</p><ul><li class="chip">MERIDIAN</li><li class="chip">PRISM</li><li class="chip">packets, not dumps</li></ul></article>
+      <article class="pane dom"><div class="idx">DOMAIN 03</div><h3>Cyber defense</h3><p>Detection, containment, forensic capture and chain-of-custody preservation. Containment is irreversible and scored accordingly — it is one of the actions that can never auto-execute, no matter who asks.</p><ul><li class="chip">BASTION</li><li class="chip">IRONGATE</li><li class="chip">zero-trust segmentation</li></ul></article>
+      <article class="pane dom"><div class="idx">DOMAIN 04</div><h3>Threat intelligence</h3><p>Adversary surveillance: actor profiles, watchlists, exposure tracking and correlation of external threat data against internal telemetry. Feeds red-team, blue-team and executive situational awareness from the same graph.</p><ul><li class="chip">WATCHTOWER</li><li class="chip">DEEPTRACE</li><li class="chip">threat scoring</li></ul></article>
+      <article class="pane dom"><div class="idx">DOMAIN 05</div><h3>Operations &amp; telemetry</h3><p>Structured logs, metrics, traces and model-free anomaly detection — a running band per series, so an unusual rate is caught with no training data and no threshold table to maintain.</p><ul><li class="chip">PULSE</li><li class="chip">hash-chained ledger</li><li class="chip">z-score bands</li></ul></article>
+      <article class="pane dom"><div class="idx">DOMAIN 06</div><h3>Autonomy</h3><p>Governed workflow execution and recursive delegation. A sub-agent's permissions are intersected with its parent's and its memory partition nests beneath it, so recursive spawning can never become privilege escalation.</p><ul><li class="chip">CATALYST</li><li class="chip">scoped sub-agents</li><li class="chip">result collapse</li></ul></article>
+    </div>
+  </div>
+</section>
+
+<section id="gate">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">02 · The policy gate</p>
+      <h2>One way in. Deny by default.</h2>
+      <p class="lead">There is no method on the lattice that skips the gate. A submission is signed, verified for replay and expiry, checked for capability, scored 0–100, and only then — maybe — executed. An unknown action class is denied rather than waved through, so adding a capability means adding a reviewed rule.</p>
+    </div>
+
+    <div class="flow">
+      <div class="step"><div class="n">01</div><div class="t">Sign</div><div class="d">The agent signs the exact payload. A mutated request no longer verifies.</div></div>
+      <div class="step"><div class="n">02</div><div class="t">Verify</div><div class="d">Signature, expiry, revocation and single-use nonce, in one pass.</div></div>
+      <div class="step"><div class="n">03</div><div class="t">Capability</div><div class="d">Does this agent hold this permission, in this domain, right now?</div></div>
+      <div class="step gate"><div class="n">04</div><div class="t">Risk gate</div><div class="d">Scored 0–100. Above the line it stops here until a human decides.</div></div>
+      <div class="step"><div class="n">05</div><div class="t">Execute</div><div class="d">Only cleared actions reach an executor. Failures are recorded, not raised.</div></div>
+      <div class="step"><div class="n">06</div><div class="t">Audit</div><div class="d">Every submission — cleared or refused — lands in the hash-chained ledger.</div></div>
+    </div>
+
+    <div class="grid g2" style="margin-top:34px">
+      <div>
+        <h3 style="margin-bottom:14px">The risk ladder</h3>
+        <div class="ladder">
+          <div class="rung low"><span class="tier">Low 0–29</span><span class="desc"><b>Auto-executes and logs.</b> Reads, correlation, telemetry queries — the analysis surface.</span></div>
+          <div class="rung med"><span class="tier">Med 30–59</span><span class="desc"><b>Queued for approval.</b> Publishing packets, forensic capture, curating a watchlist.</span></div>
+          <div class="rung high"><span class="tier">High 60–84</span><span class="desc"><b>Hard-blocked.</b> Containment, blocking rules pushed to enforcement points, outbound messages.</span></div>
+          <div class="rung crit"><span class="tier">Crit 85–100</span><span class="desc"><b>Hard-blocked.</b> Altering an agent's authority, amending the policy rule set itself.</span></div>
+        </div>
+        <p class="note" style="margin-top:16px">Boundaries match the ClearGlass commerce control plane, so a risk score means the same thing across the estate.</p>
+      </div>
+      <div>
+        <h3 style="margin-bottom:14px">What the gate guarantees</h3>
+        <div class="grid" style="gap:10px">
+          <div class="pane" style="padding:15px 18px"><h3 style="font-size:.93rem">Approvals bind to a digest</h3><p class="note" style="margin-top:6px">An approval covers one exact action. Change the payload after approval and it is blocked again — approving one containment does not approve the next.</p></div>
+          <div class="pane" style="padding:15px 18px"><h3 style="font-size:.93rem">No self-approval</h3><p class="note" style="margin-top:6px">The requester may not be the approver. This is the control that stops every other control from being cosmetic.</p></div>
+          <div class="pane" style="padding:15px 18px"><h3 style="font-size:.93rem">Output is sanitized</h3><p class="note" style="margin-top:6px">Tokens, keys, secret assignments, addresses and hosts are redacted before anything is logged, rendered or forwarded — including into the ledger itself.</p></div>
+          <div class="pane" style="padding:15px 18px"><h3 style="font-size:.93rem">Tampering is detectable</h3><p class="note" style="margin-top:6px">Each ledger entry commits to its predecessor's digest. Altering or removing a record breaks the walk, and the lattice reports it.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="lattice">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">03 · Live state</p>
+      <h2>The reference constellation.</h2>
+      <p class="lead">Rendered from <code>data/xenolith/lattice.json</code>, regenerated by the CLI. The deployment below is synthetic and offline — fixed feeds, no credentials, no network — so the same input always produces the same governance decisions and the feed can be diffed between runs.</p>
+    </div>
+
+    <h3 style="margin-bottom:12px">Agent registry</h3>
+    <div class="scroll">
+      <table>
+        <caption class="sr">Registered agents with domain, mission scope, status and health</caption>
+        <thead><tr><th class="mono">Codename</th><th>Domain</th><th>Mission scope</th><th>Permissions</th><th>Status</th><th>Health</th></tr></thead>
+        <tbody data-bind="agents">
+          <tr><td class="mono">BASTION</td><td>cybersecurity</td><td>Detect, contain and preserve evidence</td><td class="mono">cyber.respond, cyber.forensics, intel.read</td><td><span class="tag ok">active</span></td><td class="mono">0.93</td></tr>
+          <tr><td class="mono">CATALYST</td><td>autonomy</td><td>Run governed workflows and collapse sub-agent results</td><td class="mono">agent.delegate, intel.read, intel.ingest</td><td><span class="tag ok">active</span></td><td class="mono">0.93</td></tr>
+          <tr><td class="mono">DEEPTRACE</td><td>threat-intel</td><td>Correlate external threat data with internal telemetry</td><td class="mono">threat.analyze, intel.read, telemetry.read</td><td><span class="tag ok">active</span></td><td class="mono">0.93</td></tr>
+          <tr><td class="mono">IRONGATE</td><td>cybersecurity</td><td>Enforce segmentation and access policy</td><td class="mono">cyber.respond, telemetry.read</td><td><span class="tag ok">active</span></td><td class="mono">0.93</td></tr>
+          <tr><td class="mono">MERIDIAN</td><td>intelligence</td><td>Turn observations into intelligence packets</td><td class="mono">intel.read, intel.ingest, intel.analyze, intel.publish, graph.write</td><td><span class="tag ok">active</span></td><td class="mono">0.93</td></tr>
+          <tr><td class="mono">ORACLE</td><td>executive</td><td>Translate objectives into policy-constrained missions</td><td class="mono">executive.command, intel.read, telemetry.read, agent.delegate</td><td><span class="tag ok">active</span></td><td class="mono">0.97</td></tr>
+          <tr><td class="mono">PRISM</td><td>intelligence</td><td>Maintain the knowledge graph and contradiction record</td><td class="mono">intel.read, graph.write</td><td><span class="tag ok">active</span></td><td class="mono">0.93</td></tr>
+          <tr><td class="mono">PULSE</td><td>operations</td><td>Metrics, traces and anomaly surfacing</td><td class="mono">telemetry.read, intel.read</td><td><span class="tag ok">active</span></td><td class="mono">0.93</td></tr>
+          <tr><td class="mono">WATCHTOWER</td><td>threat-intel</td><td>Track actors, exposures and emerging attack surface</td><td class="mono">threat.analyze, threat.curate, intel.read</td><td><span class="tag ok">active</span></td><td class="mono">0.93</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid g2" style="margin-top:34px">
+      <div>
+        <h3 style="margin-bottom:12px">Blocked on human authority</h3>
+        <div class="scroll">
+          <table style="min-width:0">
+            <caption class="sr">Actions queued for human approval</caption>
+            <thead><tr><th class="mono">ID</th><th>Action</th><th>Risk</th><th>Requested by</th><th></th></tr></thead>
+            <tbody data-bind="queue-rows">
+              <tr><td class="mono">apr-00001</td><td class="mono">threat.watchlist_add</td><td><span class="tag warn">40 · medium</span></td><td class="mono">WATCHTOWER</td><td><button class="queue-act" type="button" data-approve="apr-00001|threat.watchlist_add|40|medium|WATCHTOWER">Review</button></td></tr>
+              <tr><td class="mono">apr-00002</td><td class="mono">cyber.contain</td><td><span class="tag bad">84 · high</span></td><td class="mono">BASTION</td><td><button class="queue-act" type="button" data-approve="apr-00002|cyber.contain|84|high|BASTION">Review</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note" style="margin-top:12px">The reference constellation submits a containment request against a compromised edge gateway. It does not run. It sits here, scored 84, until someone who is not BASTION decides.</p>
+      </div>
+      <div>
+        <h3 style="margin-bottom:12px">Governance invariants</h3>
+        <div class="scroll">
+          <table style="min-width:0">
+            <caption class="sr">Governance invariants and whether they hold</caption>
+            <thead><tr><th>Invariant</th><th>Result</th></tr></thead>
+            <tbody data-bind="checks">
+              <tr><td class="mono">audit_chain_intact</td><td><span class="tag ok">pass</span></td></tr>
+              <tr><td class="mono">high_risk_blocked_until_approved</td><td><span class="tag ok">pass</span></td></tr>
+              <tr><td class="mono">self_approval_refused</td><td><span class="tag ok">pass</span></td></tr>
+              <tr><td class="mono">approval_unlocks_action</td><td><span class="tag ok">pass</span></td></tr>
+              <tr><td class="mono">approval_bound_to_payload</td><td><span class="tag ok">pass</span></td></tr>
+              <tr><td class="mono">unknown_action_denied</td><td><span class="tag ok">pass</span></td></tr>
+              <tr><td class="mono">missing_permission_denied</td><td><span class="tag ok">pass</span></td></tr>
+              <tr><td class="mono">every_submission_audited</td><td><span class="tag ok">pass</span></td></tr>
+              <tr><td class="mono">probe_chain_intact</td><td><span class="tag ok">pass</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note" style="margin-top:12px">Run as a CI gate. A change that opens an ungoverned execution path fails the build rather than shipping quietly.</p>
+      </div>
+    </div>
+
+    <div class="grid g4" style="margin-top:34px">
+      <div class="pane stat"><div class="k">Fusion</div><div class="v ion" data-bind="packets">2</div><div class="s" data-bind="packets-s">packets from 5 observations</div></div>
+      <div class="pane stat"><div class="k">Knowledge graph</div><div class="v plasma" data-bind="entities">4</div><div class="s" data-bind="entities-s">entities · 3 edges · 0 contradictions</div></div>
+      <div class="pane stat"><div class="k">Event bus</div><div class="v" data-bind="events">13</div><div class="s" data-bind="events-s">typed events · 0 dead letters</div></div>
+      <div class="pane stat"><div class="k">Posture</div><div class="v amber" data-bind="posture" style="font-size:1.3rem;letter-spacing:0;font-weight:600">awaiting-authority</div><div class="s">executive assessment</div></div>
+    </div>
+
+    <h3 style="margin:34px 0 12px">Audit chain · most recent</h3>
+    <div class="chain" data-bind="chain">
+      <div class="link"><span class="i">#12</span><span class="a">BASTION → cyber.contain · block_pending_approval</span><span class="h">8298902e…</span></div>
+      <div class="link"><span class="i">#11</span><span class="a">WATCHTOWER → threat.watchlist_add · queue_approval</span><span class="h">a41c7b03…</span></div>
+      <div class="link"><span class="i">#10</span><span class="a">MERIDIAN → intel.correlate · allow</span><span class="h">6f0d99ce…</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="run">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">04 · Operate it</p>
+      <h2>Stdlib only. No services required.</h2>
+      <p class="lead">The whole lattice is dependency-free Python, so the governance gate runs unchanged in a minimal CI container. The CLI exits non-zero when an invariant fails.</p>
+    </div>
+    <div class="grid g2">
+      <pre class="code"><span class="c"># governance self-check — exits 1 if any invariant fails</span>
+<span class="p">python -m xenolith.cli</span> <span class="s">--check</span>
+
+<span class="c"># full lattice state as JSON</span>
+<span class="p">python -m xenolith.cli</span> <span class="s">--json</span>
+
+<span class="c"># regenerate the command-surface feed</span>
+<span class="p">python -m xenolith.cli</span> <span class="s">--write</span>
+
+<span class="c"># the test suite</span>
+<span class="p">python -m pytest</span> tests/test_xenolith_*.py <span class="s">-q</span></pre>
+      <pre class="code"><span class="c">>>> from xenolith import Lattice, Domain</span>
+<span class="c">>>> lat = Lattice()</span>
+<span class="c">>>> lat.enlist("BASTION", Domain.CYBERSECURITY,</span>
+<span class="c">...     role="containment", mission_scope="respond",</span>
+<span class="c">...     sponsor="ops", permissions=["cyber.respond"])</span>
+
+<span class="c">>>> out = lat.submit("BASTION", "cyber.contain",</span>
+<span class="c">...                  {"asset": "edge-gateway-01"})</span>
+<span class="c">>>> out.executed</span>
+<span class="s">False</span>
+<span class="c">>>> out.verdict.tier.value, out.verdict.risk_score</span>
+<span class="s">('high', 84)</span>
+
+<span class="c"># nothing runs until someone who is not BASTION approves</span>
+<span class="c">>>> lat.approve(out.approval_id, "human-operator")</span>
+<span class="c">>>> lat.submit("BASTION", "cyber.contain",</span>
+<span class="c">...            {"asset": "edge-gateway-01"}).executed</span>
+<span class="s">True</span></pre>
+    </div>
+    <div class="cta">
+      <a class="btn btn-primary" href="/store.html">Book a security engagement</a>
+      <a class="btn btn-ghost" href="/products.html">See the product suite</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="modal" id="approval-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+  <div class="box">
+    <p class="eyebrow">Secure action · human authority required</p>
+    <h3 id="modal-title">Approve this action?</h3>
+    <p>This is a demonstration surface. Approving here changes nothing — the live gate requires an authenticated approver who is not the requester, and records the decision in the append-only ledger.</p>
+    <dl>
+      <dt>Approval</dt><dd data-modal="id">—</dd>
+      <dt>Action</dt><dd data-modal="action">—</dd>
+      <dt>Risk</dt><dd data-modal="risk">—</dd>
+      <dt>Requested by</dt><dd data-modal="by">—</dd>
+    </dl>
+    <div class="acts">
+      <button type="button" data-close>Close</button>
+      <button type="button" class="deny" data-close>Understood</button>
+    </div>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>© 2026 CLEARGLASS INC. · XENOLITH IS A GOVERNED SUBSTRATE — THE REFERENCE CONSTELLATION IS SYNTHETIC AND OFFLINE</span>
+    <span><a href="/products.html">PRODUCTS</a> · <a href="/advanced-features-tools-systems.html">SYSTEMS CATALOG</a> · <a href="/intelligence-platform.html">PLATFORM ARCHITECTURE</a></span>
+  </div>
+</footer>
+
+<script>
+/* Progressive enhancement: the page is complete without JS. When the feed is
+   reachable, the static snapshot above is replaced with current values. */
+(function () {
+  'use strict';
+  var esc = function (s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  };
+  var set = function (key, html) {
+    var el = document.querySelector('[data-bind="' + key + '"]');
+    if (el) { el.innerHTML = html; }
+  };
+  var tierTag = function (tier, score) {
+    var cls = tier === 'high' || tier === 'critical' ? 'bad' : tier === 'medium' ? 'warn' : 'ok';
+    return '<span class="tag ' + cls + '">' + esc(score) + ' · ' + esc(tier) + '</span>';
+  };
+
+  fetch('data/xenolith/lattice.json', { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) { throw new Error('feed unavailable'); } return r.json(); })
+    .then(function (d) {
+      var gov = d.governance || {}, reg = d.registry || {}, pol = d.policy || {};
+      var tel = d.telemetry || {}, fus = d.fusion || {}, gph = d.graph || {}, bus = d.bus || {};
+
+      set('gov', esc(gov.passed) + '<em>/' + esc(gov.total) + '</em>');
+      set('gov-s', gov.fail_closed ? 'invariants hold · fail-closed' : 'INVARIANT FAILURE — review required');
+      set('pop', esc(reg.population));
+      set('pop-s', esc(reg.actionable) + ' actionable · mean health ' + esc(reg.mean_health));
+      set('ledger', esc(tel.ledger_entries));
+      set('ledger-s', 'entries · hash chain ' + (tel.ledger_intact ? 'intact' : 'BROKEN'));
+      set('queue', esc(pol.approvals_pending));
+      set('queue-s', 'actions blocked on human approval');
+      set('packets', esc(fus.packets));
+      set('packets-s', 'packets from ' + esc(fus.observations) + ' observations');
+      set('entities', esc(gph.entities));
+      set('entities-s', esc(gph.relationships) + ' edges · ' + esc(gph.contradictions) + ' contradictions');
+      set('events', esc(bus.published));
+      set('events-s', 'typed events · ' + esc(bus.dead_letters) + ' dead letters');
+      set('posture', esc((d.executive || {}).posture));
+
+      var dot = document.querySelector('[data-bind="dot"]');
+      if (dot) { dot.className = 'dot' + (gov.fail_closed ? '' : ' bad'); }
+      if (d.generated_at) {
+        set('stamp', 'Feed generated ' + esc(new Date(d.generated_at * 1000).toISOString().replace('T', ' ').slice(0, 16)) + ' UTC');
+      }
+
+      if (Array.isArray(d.agents) && d.agents.length) {
+        set('agents', d.agents.map(function (a) {
+          var cls = a.status === 'active' ? 'ok' : a.status === 'degraded' ? 'warn' : 'bad';
+          return '<tr><td class="mono">' + esc(a.codename) + '</td><td>' + esc(a.domain) +
+            '</td><td>' + esc(a.mission_scope) + '</td><td class="mono">' + esc((a.permissions || []).join(', ')) +
+            '</td><td><span class="tag ' + cls + '">' + esc(a.status) + '</span></td><td class="mono">' +
+            esc(a.health) + '<span class="meter"><i style="width:' + Math.round((a.health || 0) * 100) + '%"></i></span></td></tr>';
+        }).join(''));
+      }
+
+      if (Array.isArray(gov.checks) && gov.checks.length) {
+        set('checks', gov.checks.map(function (c) {
+          return '<tr><td class="mono">' + esc(c.name) + '</td><td><span class="tag ' +
+            (c.passed ? 'ok">pass' : 'bad">FAIL') + '</span></td></tr>';
+        }).join(''));
+      }
+
+      var queue = pol.queue || [];
+      set('queue-rows', queue.length ? queue.map(function (q) {
+        var key = [q.approval_id, q.action, q.risk_score, q.tier, q.requested_by].join('|');
+        return '<tr><td class="mono">' + esc(q.approval_id) + '</td><td class="mono">' + esc(q.action) +
+          '</td><td>' + tierTag(q.tier, q.risk_score) +
+          '</td><td class="mono">' + esc(q.requested_by) +
+          '</td><td><button class="queue-act" type="button" data-approve="' + esc(key) + '">Review</button></td></tr>';
+      }).join('') : '<tr><td colspan="5" class="mono">Queue empty — nothing is waiting on human authority.</td></tr>');
+
+      var recent = (tel.recent || []).slice().reverse().slice(0, 8);
+      if (recent.length) {
+        set('chain', recent.map(function (e) {
+          var detail = e.detail || {};
+          return '<div class="link"><span class="i">#' + esc(e.index) + '</span><span class="a">' +
+            esc(e.actor) + ' → ' + esc(e.action) + (detail.decision ? ' · ' + esc(detail.decision) : '') +
+            '</span><span class="h">' + esc(String(e.entry_hash).slice(0, 8)) + '…</span></div>';
+        }).join(''));
+      }
+    })
+    .catch(function () { /* static snapshot already rendered */ });
+
+  /* Secure-action modal */
+  var modal = document.getElementById('approval-modal');
+  var lastFocus = null;
+  var close = function () {
+    modal.classList.remove('on');
+    modal.setAttribute('aria-hidden', 'true');
+    if (lastFocus) { lastFocus.focus(); }
+  };
+  document.addEventListener('click', function (ev) {
+    var trigger = ev.target.closest('[data-approve]');
+    if (trigger) {
+      var parts = trigger.getAttribute('data-approve').split('|');
+      var fields = ['id', 'action', 'risk', 'by'];
+      var values = [parts[0], parts[1], parts[2] + ' · ' + parts[3], parts[4]];
+      fields.forEach(function (f, i) {
+        var el = modal.querySelector('[data-modal="' + f + '"]');
+        if (el) { el.textContent = values[i] || '—'; }
+      });
+      lastFocus = trigger;
+      modal.classList.add('on');
+      modal.setAttribute('aria-hidden', 'false');
+      var first = modal.querySelector('button');
+      if (first) { first.focus(); }
+      return;
+    }
+    if (ev.target.closest('[data-close]') || ev.target === modal) { close(); }
+  });
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape' && modal.classList.contains('on')) { close(); }
+  });
+})();
+</script>
+<script defer src="/nav.js"></script>
+<script defer src="/logo-badge.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="intelligence.html">Intelligence &amp; OSINT</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="artemis.html"><span><b>Previous</b>NEXUS v12 · Ontario</span></a>
+      <a href="intelligence.html"><span><b>Topic hub</b>Intelligence</span></a>
+      <a href="docs/guardian_command_nexus_spec.html"><span><b>Next in journey</b>Guardian Command Nexus Spec</span></a>
+    </div>
+    <ul>
+      <li><a href="percival-os.html"><b>PERCIVAL OS</b> — mission-ready governed command center</a></li>
+      <li><a href="agentmesh.html"><b>Agent Mesh</b> — multi-agent OSINT orchestration</a></li>
+      <li><a href="advanced-features-tools-systems.html"><b>Advanced Features, Tools &amp; Systems</b> — the governed systems, agent and audit architecture catalog</a></li>
+      <li><a href="blog/ai-agent-governance-governed-autonomy.html"><b>AI Agent Governance</b> — the governed-autonomy playbook</a></li>
+      <li><a href="docs/guardian_command_nexus_spec.html"><b>Guardian Command Nexus Spec</b> — the implementation specification for the Guardian command surface</a></li>
+      <li><a href="flowsint.html"><b>Flowsint</b> — OSINT investigation graph for domains, IPs and transforms</a></li>
+      <li><a href="clearglass-nexus.html"><b>ClearGlass NEXUS</b> — full-spectrum intelligence platform</a></li>
+      <li><a href="Ontario-osint.html"><b>Ontario OSINT Deck</b> — regional open-source intelligence control deck</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

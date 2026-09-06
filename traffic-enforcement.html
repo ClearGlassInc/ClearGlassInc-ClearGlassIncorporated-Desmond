@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8">
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Traffic Enforcement — Speed Vision AI | ClearGlass Inc</title>
+<meta name="description" content="ClearGlass Traffic Enforcement — a real-time camera speed enforcement surface. Vehicle detection, bird's-eye-view speed estimation, colour-coded speed bands, and automatic violation capture with plate read and owner lookup.">
+<link rel="canonical" href="https://www.clearglassinc.com/traffic-enforcement.html"/>
+<meta property="og:title" content="Traffic Enforcement — Speed Vision AI | ClearGlass Inc"/>
+<meta property="og:description" content="Real-time camera speed enforcement: detection, bird's-eye-view speed estimation, colour-coded bands, and automatic violation capture."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://www.clearglassinc.com/traffic-enforcement.html"/>
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Urbanist:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --white:#f8fbff; --off:#eef3fa; --off-2:#e3eaf4; --off-3:#dbe4f1;
+    --ink:#1e2a3a; --ink-2:#52617a; --ink-3:#8c99b0; --deep:#143a6b;
+    --prism-1:#38bdf8; --prism-2:#a78bfa; --prism-3:#f472b6; --prism-4:#34d399; --prism-5:#fbbf24; --prism-6:#60a5fa;
+    --blue:#2563eb; --sky:#38bdf8; --cyan:#06b6d4; --indigo:#6366f1;
+    --crystal:linear-gradient(135deg,#38bdf8 0%,#a78bfa 25%,#f472b6 50%,#fbbf24 75%,#34d399 100%);
+    --glass:rgba(255,255,255,.60); --glass-2:rgba(255,255,255,.42); --glass-strong:rgba(255,255,255,.80);
+    --silver:rgba(226,233,244,.66); --hair:rgba(120,141,173,.22); --hair-2:rgba(120,141,173,.34);
+    --glow-cyan:rgba(56,189,248,.55); --glow-blue:rgba(37,99,235,.40);
+    --ok:#10b981; --warn:#f59e0b; --bad:#ef4476; --live:#06b6d4;
+    --r-lg:24px; --r-md:18px; --r-sm:13px; --pill:999px;
+    --ease:cubic-bezier(.22,1,.36,1);
+    --sans:'Urbanist',system-ui,-apple-system,'Segoe UI',sans-serif;
+    --serif:'Cormorant Garamond',Georgia,serif;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;color:var(--ink);font-family:var(--sans);line-height:1.55;min-height:100vh;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;
+    padding-bottom:60px;position:relative;
+    background:
+      radial-gradient(1200px 760px at 84% -8%, rgba(56,189,248,.16), transparent 56%),
+      radial-gradient(980px 680px at -10% 12%, rgba(99,102,241,.13), transparent 54%),
+      radial-gradient(900px 720px at 50% 120%, rgba(37,99,235,.10), transparent 60%),
+      linear-gradient(165deg, var(--white) 0%, var(--off) 42%, var(--off-2) 78%, var(--off-3) 100%);
+    background-attachment:fixed;
+  }
+  .shell{width:min(1180px,92vw);margin:0 auto;position:relative;z-index:5}
+  .grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.42;
+    background-image:linear-gradient(rgba(99,124,165,.07) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(99,124,165,.07) 1px,transparent 1px);
+    background-size:54px 54px;
+    -webkit-mask-image:radial-gradient(circle at 50% 26%,#000,transparent 76%);
+            mask-image:radial-gradient(circle at 50% 26%,#000,transparent 76%);
+    animation:gridPan 44s linear infinite}
+  @keyframes gridPan{to{background-position:54px 54px}}
+
+  /* HUD header */
+  header.hud{position:sticky;top:14px;z-index:60;margin-top:18px}
+  .hud-glass{position:relative;display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    padding:14px 20px;border-radius:var(--r-lg);
+    background:linear-gradient(180deg,var(--glass-strong),var(--glass));
+    border:1px solid rgba(255,255,255,.8);
+    backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);
+    box-shadow:0 18px 50px -22px rgba(31,52,96,.42),0 2px 0 rgba(255,255,255,.7) inset;overflow:hidden}
+  .hud-glass::after{content:"";position:absolute;left:18px;right:18px;bottom:0;height:2px;border-radius:2px;
+    background:linear-gradient(90deg,transparent,var(--sky),var(--cyan),var(--blue),transparent);
+    background-size:220% 100%;box-shadow:0 0 16px var(--glow-cyan);animation:accent 6s linear infinite}
+  @keyframes accent{to{background-position:220% 0}}
+  .mark{width:46px;height:46px;border-radius:13px;flex:0 0 auto;position:relative;display:grid;place-items:center;
+    background:conic-gradient(from 140deg,#38bdf8,#6366f1,#06b6d4,#a78bfa,#38bdf8);
+    box-shadow:0 8px 22px -8px var(--glow-blue),0 0 0 1px rgba(255,255,255,.6) inset;font-size:22px}
+  .mark::after{content:"";position:absolute;inset:3px;border-radius:10px;
+    background:linear-gradient(160deg,rgba(255,255,255,.95),rgba(255,255,255,.55));box-shadow:0 1px 6px rgba(31,52,96,.18) inset}
+  .mark span{position:relative;z-index:1}
+  .id .t{font-weight:800;font-size:17px;letter-spacing:.01em;color:var(--deep);display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .id .t .ver{font:600 10px/1 var(--mono);letter-spacing:.12em;color:var(--blue);
+    padding:3px 8px;border-radius:var(--pill);background:rgba(37,99,235,.10);border:1px solid rgba(37,99,235,.22)}
+  .id .s{font:600 9.5px/1.4 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);margin-top:5px}
+  .hud-actions{margin-left:auto;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .chip{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:var(--pill);
+    background:var(--glass-2);border:1px solid var(--hair);color:var(--ink-2);text-decoration:none;
+    font:700 11.5px var(--sans);backdrop-filter:blur(8px);transition:transform .25s var(--ease),border-color .25s}
+  .chip:hover{transform:translateY(-1px);border-color:var(--hair-2);color:var(--deep)}
+  .chip .dot{width:8px;height:8px;border-radius:50%;background:var(--live);position:relative}
+  .chip .dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1.5px solid var(--live);opacity:0;animation:ring 1.9s ease-out infinite}
+  @keyframes ring{0%{transform:scale(.7);opacity:.7}100%{transform:scale(1.95);opacity:0}}
+
+  main{padding:34px 0 0}
+  .hero{text-align:left;max-width:820px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font:700 10.5px/1 var(--mono);letter-spacing:.22em;
+    text-transform:uppercase;color:var(--blue);padding:7px 13px;border-radius:var(--pill);
+    background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.18)}
+  .hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(38px,6vw,64px);line-height:1.04;
+    letter-spacing:-.02em;margin:20px 0 14px;color:var(--deep)}
+  .hero h1 em{font-style:italic;font-weight:400;background:var(--crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero p{font-size:18px;color:var(--ink-2);max-width:680px}
+
+  .legend{display:flex;gap:12px;flex-wrap:wrap;margin:26px 0 8px}
+  .band{display:flex;align-items:center;gap:10px;padding:11px 16px;border-radius:var(--r-md);
+    background:var(--glass);border:1px solid var(--hair);box-shadow:0 10px 28px -20px rgba(31,52,96,.5)}
+  .band b{font-size:15px;color:var(--deep)} .band small{display:block;font:600 10px/1.3 var(--mono);letter-spacing:.12em;color:var(--ink-3);text-transform:uppercase}
+  .swatch{width:16px;height:16px;border-radius:5px;flex:0 0 auto;box-shadow:0 0 0 3px rgba(255,255,255,.6)}
+  .sw-green{background:#16c60c}.sw-yellow{background:#f5b400}.sw-red{background:#ef2b2b}
+
+  .divider{display:flex;align-items:center;gap:14px;margin:48px 0 20px}
+  .divider .lbl{font:800 12px var(--sans);letter-spacing:.04em;color:var(--deep);text-transform:uppercase;display:flex;align-items:center;gap:8px}
+  .divider .lbl i{width:7px;height:7px;border-radius:50%;background:var(--crystal)}
+  .divider .ln{flex:1;height:1px;background:linear-gradient(90deg,var(--hair-2),transparent)}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+  .card{position:relative;padding:22px;border-radius:var(--r-md);background:var(--glass);
+    border:1px solid rgba(255,255,255,.7);box-shadow:0 16px 44px -26px rgba(31,52,96,.5),0 1px 0 rgba(255,255,255,.7) inset;
+    backdrop-filter:blur(14px);transition:transform .3s var(--ease),box-shadow .3s}
+  .card:hover{transform:translateY(-3px);box-shadow:0 26px 60px -28px rgba(31,52,96,.55)}
+  .card .ic{font-size:24px;margin-bottom:12px}
+  .card .step{font:700 10px/1 var(--mono);letter-spacing:.18em;color:var(--blue);text-transform:uppercase}
+  .card h3{margin:8px 0 8px;font-size:17px;color:var(--deep)}
+  .card p{margin:0;font-size:13.5px;color:var(--ink-2)}
+
+  .split{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:stretch}
+  @media(max-width:820px){.split{grid-template-columns:1fr}}
+  .panel{padding:24px;border-radius:var(--r-md);background:var(--glass);border:1px solid rgba(255,255,255,.7);
+    box-shadow:0 16px 44px -26px rgba(31,52,96,.5);backdrop-filter:blur(14px)}
+  .panel h3{margin:0 0 12px;font-size:18px;color:var(--deep)}
+  .panel ul{margin:0;padding-left:18px;color:var(--ink-2);font-size:14px}
+  .panel li{margin:7px 0}
+  .panel li b{color:var(--ink)}
+
+  .code{font-family:var(--mono);font-size:12.5px;line-height:1.7;color:var(--ink);background:rgba(20,32,52,.04);
+    border:1px solid var(--hair);border-radius:var(--r-sm);padding:16px 18px;overflow:auto}
+  .code .k{color:var(--blue)} .code .c{color:var(--ink-3)} .code .n{color:#b4308a} .code .g{color:var(--ok)}
+
+  footer{margin-top:54px;padding-top:22px;border-top:1px solid var(--hair);
+    display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-3)}
+  footer a{color:var(--blue);text-decoration:none;font-weight:700} footer a:hover{text-decoration:underline}
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+</style>
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/glass.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="shell">
+
+  <header class="hud">
+    <div class="hud-glass">
+      <div class="mark"><span>🚦</span></div>
+      <div class="id">
+        <div class="t">Traffic Enforcement <span class="ver">SPEED VISION v1.0</span></div>
+        <div class="s">ClearGlass Inc · Camera Speed Surface</div>
+      </div>
+      <div class="hud-actions">
+        <span class="chip"><span class="dot"></span>Live detection</span>
+        <a class="chip" href="control-surface.html">← Control Surface</a>
+        <a class="chip" href="index.html">ClearGlass Home</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero reveal">
+      <span class="eyebrow">Real-time speed enforcement</span>
+      <h1>See every vehicle. <em>Measure every speed.</em></h1>
+      <p>A single roadside camera becomes an automated speed enforcement officer. The surface detects every
+        vehicle in frame, measures its true ground speed through a bird's-eye-view projection, and the moment a
+        car exceeds the limit it captures the clip, reads the plate, and identifies the registered owner.</p>
+
+      <div class="legend">
+        <div class="band"><span class="swatch sw-green"></span><div><b>Under 60 km/h</b><small>Within flow</small></div></div>
+        <div class="band"><span class="swatch sw-yellow"></span><div><b>60 – 100 km/h</b><small>Monitored</small></div></div>
+        <div class="band"><span class="swatch sw-red"></span><div><b>Over 100 km/h</b><small>Violation · captured</small></div></div>
+      </div>
+    </section>
+
+    <div class="divider reveal"><span class="lbl"><i></i>Pipeline</span><span class="ln"></span></div>
+    <div class="cards">
+      <div class="card reveal"><div class="ic">🎥</div><div class="step">01 · Detect</div><h3>Vehicle detection</h3>
+        <p>Every frame is scanned for cars, trucks, buses and motorcycles, each locked in a tracked bounding box.</p></div>
+      <div class="card reveal"><div class="ic">📐</div><div class="step">02 · Project</div><h3>Bird's-eye speed</h3>
+        <p>A per-carriageway homography maps camera pixels to metres, so motion converts to true ground speed in km/h.</p></div>
+      <div class="card reveal"><div class="ic">🎨</div><div class="step">03 · Classify</div><h3>Colour-coded bands</h3>
+        <p>Each box is drawn green, yellow or red against the limit, with a live km/h label above the vehicle.</p></div>
+      <div class="card reveal"><div class="ic">🚨</div><div class="step">04 · Enforce</div><h3>Capture &amp; identify</h3>
+        <p>Over-limit vehicles trigger a clip, a plate read, an owner lookup, and a structured violation report.</p></div>
+    </div>
+
+    <div class="divider reveal"><span class="lbl"><i></i>How the speed is measured</span><span class="ln"></span></div>
+    <div class="split">
+      <div class="panel reveal">
+        <h3>Bird's-eye-view calibration</h3>
+        <p style="margin:0 0 12px;color:var(--ink-2);font-size:14px">Accuracy comes entirely from calibration. Each
+          carriageway is pinned by four road-edge points, mapped onto a rectified top-down view where one metre is a
+          fixed number of pixels. A vehicle's ground-contact point is projected into that view, and distance over time
+          gives speed.</p>
+        <ul>
+          <li><b>Per-carriageway homography</b> — left and right roadways calibrated independently</li>
+          <li><b>Scaled top-down grid</b> — pixels resolve to real metres on the road</li>
+          <li><b>Smoothed tracking</b> — speed averaged over several frames to kill jitter</li>
+          <li><b>Limit-aware bands</b> — green &lt; 60, yellow 60–100, red &gt; 100 km/h</li>
+        </ul>
+      </div>
+      <div class="panel reveal">
+        <h3>Calibration source</h3>
+        <pre class="code"><span class="c"># road geometry → bird's-eye view</span>
+LANE_WIDTH_M  = <span class="n">3.75</span>
+BEV_SCALE     = <span class="n">18</span>   <span class="c"># px / m</span>
+VISIBLE_LEN_M = <span class="n">70</span>
+
+<span class="c"># left carriageway edge points (px)</span>
+SRC_ROAD_L = [
+  [<span class="n">155</span>,  <span class="n">415</span>],   <span class="c"># far-left</span>
+  [<span class="n">600</span>,  <span class="n">395</span>],   <span class="c"># far-right</span>
+  [<span class="n">845</span>, <span class="n">1079</span>],   <span class="c"># near-right</span>
+  [  <span class="n">0</span>, <span class="n">1079</span>],   <span class="c"># near-left</span>
+]
+<span class="k">speed_kmh</span> = (dist_m / dt_s) * <span class="n">3.6</span></pre>
+      </div>
+    </div>
+
+    <div class="divider reveal"><span class="lbl"><i></i>Violation record</span><span class="ln"></span></div>
+    <div class="panel reveal">
+      <h3>Every over-limit pass is captured as evidence</h3>
+      <p style="margin:0 0 14px;color:var(--ink-2);font-size:14px">A confirmed violation writes a video clip with
+        pre-event padding, a cropped vehicle image, and a structured report — speed, amount over the limit, plate, and
+        owner — ready for review.</p>
+      <pre class="code">{
+  <span class="n">"speed_kmh"</span>: <span class="g">118.4</span>,
+  <span class="n">"speed_limit_kmh"</span>: <span class="g">100</span>,
+  <span class="n">"over_limit_kmh"</span>: <span class="g">18.4</span>,
+  <span class="n">"license_plate"</span>: <span class="g">"HK1234"</span>,
+  <span class="n">"owner"</span>: { <span class="n">"name"</span>: <span class="g">"Chan Tai Man"</span>, <span class="n">"phone"</span>: <span class="g">"+852 5551 0001"</span> },
+  <span class="n">"clip"</span>: <span class="g">"violation_track7.mp4"</span>
+}</pre>
+    </div>
+
+    <footer>
+      <div><a href="index.html">ClearGlass Inc</a> · Traffic Enforcement — Speed Vision AI</div>
+      <div>Deploy only where authorised · plate &amp; owner data handled under applicable privacy law</div>
+    </footer>
+  </main>
+</div>
+
+<script>
+  (function(){
+    if(!("IntersectionObserver" in window)){document.querySelectorAll(".reveal").forEach(function(el){el.classList.add("in");});return;}
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}});},{threshold:.12});
+    document.querySelectorAll(".reveal").forEach(function(el,i){el.style.transitionDelay=(Math.min(i,8)*45)+"ms";io.observe(el);});
+  })();
+</script>
+<script defer src="/logo-badge.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="government.html">Government &amp; Procurement</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="counter-uas-commercialization-os.html"><span><b>Previous</b>Counter-UAS OS</span></a>
+      <a href="government.html"><span><b>Topic hub</b>Government Solutions</span></a>
+      <a href="sats-digital-twin.html"><span><b>Next in journey</b>SATS Digital Twin</span></a>
+    </div>
+    <ul>
+      <li><a href="air-control.html"><b>ZEPHYR</b> — air systems control surface</a></li>
+      <li><a href="sats-digital-twin.html"><b>SATS Digital Twin</b> — storm-adaptive transit simulation with governed operations</a></li>
+      <li><a href="operations/procurement-readiness.html"><b>Procurement Readiness</b> — verified supplier-registration status</a></li>
+      <li><a href="operations/federal-supplier-handoff.html"><b>Federal Supplier Handoff</b> — supplier registration runbook</a></li>
+      <li><a href="counter-uas-commercialization-os.html"><b>Counter-UAS OS</b> — counter-drone commercialization platform</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="operations/procurement-readiness.html">Check our procurement readiness</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>
