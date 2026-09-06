@@ -1,0 +1,25 @@
+{
+  "plan_id": "plan-ada7-001",
+  "model": {
+    "registry": "mlflow",
+    "name": "ranker",
+    "version": "2.4.0",
+    "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "target": {
+    "runtime": "kserve",
+    "cluster": "prod-east",
+    "namespace": "ml",
+    "strategy": "canary",
+    "canary_steps": [5, 50, 100]
+  },
+  "policy": {
+    "max_p95_ms": 200,
+    "cost_ceiling_usd_per_1k": 1.0,
+    "max_error_rate": 0.01,
+    "require_signed": true
+  },
+  "secrets_ref": "ml/prod/api",
+  "image_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "rollback_on_fail": true
+}

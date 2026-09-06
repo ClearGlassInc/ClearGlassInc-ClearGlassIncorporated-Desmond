@@ -1,0 +1,159 @@
+{
+  "version": "2.0",
+  "description": "ClearGlass bot registry — source of truth for bot metadata and scheduling",
+  "bots": [
+    {
+      "id": "marketing",
+      "module": "bots.marketing_bot",
+      "group": "content",
+      "schedule": "daily",
+      "description": "Content generation and social media scheduling",
+      "output_dir": "marketing/output",
+      "depends_on": []
+    },
+    {
+      "id": "growth",
+      "module": "bots.artemis_growth_bot",
+      "group": "analytics",
+      "schedule": "daily",
+      "description": "Growth metrics and forecast generation",
+      "output_dir": "marketing/output",
+      "depends_on": []
+    },
+    {
+      "id": "daily_priority",
+      "module": "bots.artemis_daily_priority_bot",
+      "group": "ops",
+      "schedule": "daily",
+      "description": "Daily executive priority briefing",
+      "output_dir": "operations/output",
+      "depends_on": []
+    },
+    {
+      "id": "campaign_reporter",
+      "module": "bots.campaign_reporter",
+      "group": "analytics",
+      "schedule": "daily",
+      "description": "Campaign performance synthesis and reporting",
+      "output_dir": "marketing/output",
+      "depends_on": ["marketing"]
+    },
+    {
+      "id": "sales",
+      "module": "bots.guardian_artemis_sales_bot",
+      "group": "content",
+      "schedule": "daily",
+      "description": "Audience-tuned sales narratives for investors, enterprise, and government",
+      "output_dir": "marketing/output/sales_guardian_artemis",
+      "depends_on": ["growth"]
+    },
+    {
+      "id": "cpa_partner",
+      "module": "bots.cpa_partner_outreach_bot",
+      "group": "content",
+      "schedule": "weekly",
+      "description": "CPA / fractional CFO partner-channel outreach: compliant templates, one-pager, weekly execution plan, revenue model",
+      "output_dir": "marketing/output/cpa_partner",
+      "depends_on": []
+    },
+    {
+      "id": "operations",
+      "module": "bots.operations_finance_bot",
+      "group": "ops",
+      "schedule": "daily",
+      "description": "Operations and finance aggregation",
+      "output_dir": "operations/output",
+      "depends_on": ["daily_priority"]
+    },
+    {
+      "id": "site_health",
+      "module": "bots.site_health_bot",
+      "group": "monitoring",
+      "schedule": "daily",
+      "description": "Live site availability and SEO structure checks",
+      "output_dir": "operations/output",
+      "depends_on": []
+    },
+    {
+      "id": "content_collector",
+      "module": "bots.content_collector_bot",
+      "group": "content",
+      "schedule": "daily",
+      "description": "Crawls every page and stores all site content into a structured knowledge store",
+      "output_dir": "operations/output",
+      "depends_on": []
+    },
+    {
+      "id": "seo_optimizer",
+      "module": "bots.seo_optimizer_bot",
+      "group": "seo",
+      "schedule": "weekly",
+      "description": "On-page SEO audit across all HTML files",
+      "output_dir": "operations/output",
+      "depends_on": []
+    },
+    {
+      "id": "release_notes",
+      "module": "bots.release_notes_bot",
+      "group": "ops",
+      "schedule": "weekly",
+      "description": "Structured release notes generated from git history",
+      "output_dir": "operations/output",
+      "depends_on": []
+    },
+    {
+      "id": "alert_dispatcher",
+      "module": "bots.alert_dispatcher_bot",
+      "group": "monitoring",
+      "schedule": "daily",
+      "description": "Reads bot outputs for failures and creates GitHub Issues for critical alerts",
+      "output_dir": "operations/output",
+      "depends_on": ["site_health", "growth", "operations"]
+    },
+    {
+      "id": "defender",
+      "module": "bots.defender",
+      "group": "monitoring",
+      "schedule": "daily",
+      "description": "Defensive security orchestrator: scans workflow integrity, secret exposure, dependency and command-injection risk; classifies via JSON policy; alerts and writes an advisory (non-destructive) quarantine record",
+      "output_dir": "operations/output/defender",
+      "depends_on": []
+    },
+    {
+      "id": "wealth_ladder",
+      "module": "bots.wealth_ladder_bot",
+      "group": "strategy",
+      "schedule": "daily",
+      "description": "Sequenced wealth engine: Revenue → Corporation → Business Credit → Investment Assets → Trust (trust gated behind real assets)",
+      "output_dir": "operations/wealth_ladder",
+      "depends_on": []
+    },
+    {
+      "id": "smb_cyber_trust_kit",
+      "module": "bots.smb_cyber_trust_kit_bot",
+      "group": "content",
+      "schedule": "weekly",
+      "description": "Generates the SMB Cyber Trust Kit (plain-language policies, risk heat-map, incident communication script, non-technical guide) as Markdown + JSON and refreshes the web console data file",
+      "output_dir": "operations/smb_cyber_trust_kit",
+      "depends_on": []
+    },
+    {
+      "id": "self_evolving",
+      "module": "bots.self_evolving_engine",
+      "group": "orchestration",
+      "schedule": "daily",
+      "description": "Generational controller: scores fleet fitness, auto-tunes weights, proposes approval-gated mutations",
+      "output_dir": "operations/output/self_evolving",
+      "depends_on": ["wealth_ladder", "operations", "site_health"]
+    },
+    {
+      "id": "master_orchestrator",
+      "module": "bots.master_orchestrator",
+      "group": "orchestration",
+      "schedule": "daily",
+      "description": "Coordinates all bots with dependency ordering and parallel execution",
+      "output_dir": "operations/output",
+      "depends_on": []
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "version": "1.0",
+  "name": "ClearGlass Defender Policy",
+  "description": "Single source of truth for the ClearGlass Defender orchestrator. Encodes supply-chain, secret, dependency, and command-injection rules plus the graded response plan. Tune severities and allowlists here; the engine reads this file and never hard-codes rules.",
+  "enforcement": {
+    "fail_build_on": ["critical"],
+    "annotate_on": ["critical", "high", "medium"],
+    "quarantine_on": ["critical", "high"],
+    "open_issue_on": ["critical"]
+  },
+  "scan": {
+    "code_extensions": [
+      ".py", ".js", ".mjs", ".cjs", ".ts", ".tsx",
+      ".sh", ".bash", ".ps1", ".yml", ".yaml",
+      ".json", ".toml", ".cfg", ".ini", ".env"
+    ],
+    "command_scan_paths": [
+      ".github/workflows", "scripts", "bots", "automation",
+      "deployment", "infra", "runner", "services"
+    ],
+    "exclude_dirs": [
+      ".git", "node_modules", "downloads", "dist", "build",
+      "__pycache__", ".venv", "venv", ".mypy_cache", ".pytest_cache"
+    ],
+    "allowlist_paths": [
+      "operations/output/defender/",
+      "bots/config/defender_policy.json",
+      "downloads/",
+      "tests/",
+      "**/*.example.json",
+      "**/*.example",
+      "**/.env.example",
+      "security/endpoints_example.json",
+      "scripts/access_control_audit.example.json"
+    ],
+    "max_file_bytes": 2097152
+  },
+  "workflow_rules": {
+    "require_permissions_block": {
+      "severity": "high",
+      "title": "Workflow has no permissions block",
+      "detail": "GITHUB_TOKEN defaults to broad permissions when no permissions: block is declared. Add an explicit least-privilege permissions block (e.g. contents: read)."
+    },
+    "forbid_write_all": {
+      "severity": "high",
+      "title": "Workflow grants permissions: write-all",
+      "detail": "write-all gives the workflow token full read/write to the repository. Scope permissions to only what each job needs."
+    },
+    "require_sha_pinned_actions": {
+      "severity": "high",
+      "title": "Third-party action is not pinned to a full commit SHA",
+      "detail": "Tag and branch refs are mutable and can be re-pointed at malicious code. Pin actions to a full 40-character commit SHA (keep the version in a trailing comment)."
+    },
+    "forbid_latest_ref": {
+      "severity": "high",
+      "title": "Action pinned to @latest / a moving branch",
+      "detail": "@latest and branch refs resolve to whatever the upstream pushes. Pin to an immutable commit SHA."
+    },
+    "flag_pull_request_target": {
+      "severity": "high",
+      "title": "Workflow uses pull_request_target",
+      "detail": "pull_request_target runs with repository secrets in the context of fork PRs. Review carefully; never check out and execute untrusted PR head code in this trigger."
+    },
+    "forbid_script_injection": {
+      "severity": "critical",
+      "title": "Untrusted context interpolated directly into a run step",
+      "detail": "Interpolating attacker-controllable ${{ github.event.* }} values into a shell run step allows command injection. Pass the value through an env: variable and reference it as \"$ENV\" instead."
+    }
+  },
+  "injectable_contexts": [
+    "github.event.issue.title",
+    "github.event.issue.body",
+    "github.event.pull_request.title",
+    "github.event.pull_request.body",
+    "github.event.comment.body",
+    "github.event.review.body",
+    "github.event.review_comment.body",
+    "github.event.discussion.title",
+    "github.event.discussion.body",
+    "github.event.commits",
+    "github.event.head_commit.message",
+    "github.event.pages",
+    "github.head_ref"
+  ],
+  "secret_patterns": [
+    { "id": "aws_access_key_id", "severity": "critical", "title": "AWS access key id", "pattern": "AKIA[0-9A-Z]{16}" },
+    { "id": "github_pat_classic", "severity": "critical", "title": "GitHub personal access token", "pattern": "ghp_[A-Za-z0-9]{36}" },
+    { "id": "github_pat_server", "severity": "critical", "title": "GitHub server token", "pattern": "ghs_[A-Za-z0-9]{36}" },
+    { "id": "github_oauth_token", "severity": "critical", "title": "GitHub OAuth token", "pattern": "gho_[A-Za-z0-9]{36}" },
+    { "id": "gitlab_pat", "severity": "critical", "title": "GitLab personal access token", "pattern": "glpat-[A-Za-z0-9_\\-]{20}" },
+    { "id": "slack_token", "severity": "critical", "title": "Slack token", "pattern": "xox[baprs]-[0-9A-Za-z-]{10,48}" },
+    { "id": "private_key_block", "severity": "critical", "title": "Private key block", "pattern": "-----BEGIN (RSA|EC|DSA|OPENSSH|PGP) PRIVATE KEY-----" },
+    { "id": "google_api_key", "severity": "high", "title": "Google API key", "pattern": "AIza[0-9A-Za-z_\\-]{35}" },
+    { "id": "generic_secret_assignment", "severity": "medium", "title": "Possible hardcoded secret", "pattern": "(?i)(secret|password|passwd|token|api[_-]?key)\\s*[:=]\\s*[\"'][A-Za-z0-9_\\-/+=]{16,}[\"']" }
+  ],
+  "suspicious_commands": [
+    { "id": "curl_pipe_shell", "severity": "high", "title": "Remote script piped straight into a shell", "pattern": "curl\\s+[^|\\n]*\\|\\s*(bash|sh|zsh)\\b" },
+    { "id": "wget_pipe_shell", "severity": "high", "title": "Remote script piped straight into a shell", "pattern": "wget\\s+[^|\\n]*\\|\\s*(bash|sh|zsh)\\b" },
+    { "id": "remote_invoke_expression", "severity": "high", "title": "PowerShell download-and-execute", "pattern": "(?i)(Invoke-Expression|\\bIEX\\b)\\s*\\(?\\s*\\(?\\s*(New-Object|Invoke-WebRequest|iwr|curl|wget)" },
+    { "id": "powershell_encoded_command", "severity": "high", "title": "PowerShell encoded command", "pattern": "(?i)-e(nc|ncodedcommand)\\b\\s+[A-Za-z0-9+/=]{12,}" },
+    { "id": "base64_decode", "severity": "medium", "title": "Base64 decode (possible obfuscation)", "pattern": "base64\\s+(-d|--decode)\\b" },
+    { "id": "chmod_777", "severity": "medium", "title": "World-writable/executable chmod 777", "pattern": "chmod\\s+(-R\\s+)?0?777\\b" },
+    { "id": "netcat_reverse_shell", "severity": "critical", "title": "Netcat reverse shell", "pattern": "(?:^|[^A-Za-z])nc\\s+[^\\n]*\\s-e\\b" },
+    { "id": "rm_rf_root", "severity": "critical", "title": "Recursive delete of a root/home path", "pattern": "\\brm\\s+-[rRfvay]*\\s+(/|/\\*|~|\\$HOME|\\$\\{HOME\\})(\\s|;|$)" },
+    { "id": "dd_device_wipe", "severity": "critical", "title": "Raw device write (disk wipe)", "pattern": "\\bdd\\s+if=/dev/(zero|u?random)\\s+of=/dev/" }
+  ],
+  "severity_actions": {
+    "critical": ["quarantine_for_review", "alert_owner", "open_incident_issue", "block_merge", "revoke_token_review"],
+    "high": ["require_review", "alert_owner", "open_incident_issue", "block_merge"],
+    "medium": ["open_issue", "annotate"],
+    "low": ["annotate", "log"],
+    "info": ["log"]
+  },
+  "correlation": {
+    "secret_plus_workflow_change": {
+      "severity": "critical",
+      "title": "Possible exfiltration setup: secret exposure correlated with workflow change",
+      "detail": "A secret was detected in the same scan as a workflow integrity finding. Treat as a potential token-exfiltration attempt and review author, diff, and token usage together."
+    },
+    "prtarget_plus_injection": {
+      "severity": "critical",
+      "title": "pull_request_target combined with untrusted interpolation",
+      "detail": "A pull_request_target workflow also interpolates untrusted context into a run step — a classic privileged-injection chain. Quarantine and require review before any merge."
+    }
+  }
+}
