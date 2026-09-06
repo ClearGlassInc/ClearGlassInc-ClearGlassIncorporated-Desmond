@@ -1,0 +1,41 @@
+# Systemd unit for the ClearGlassInc GitHub Actions self-hosted runner.
+# The svc.sh installer generates the real unit file; this is the hardened
+# reference template — copy/merge values if you need to reinstall manually.
+#
+# Install path after svc.sh:
+#   /etc/systemd/system/actions.runner.<owner>.<repo>.<name>.service
+
+[Unit]
+Description=GitHub Actions Runner — ClearGlassInc
+After=network-online.target docker.service
+Wants=network-online.target docker.service
+
+[Service]
+Type=simple
+User=github-runner
+Group=github-runner
+WorkingDirectory=/opt/actions-runner
+ExecStart=/opt/actions-runner/run.sh
+Restart=always
+RestartSec=10s
+KillMode=process
+KillSignal=SIGTERM
+TimeoutStopSec=5min
+
+# Environment
+Environment=RUNNER_ALLOW_RUNASROOT=false
+Environment=DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+
+# Hardening
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=yes
+ReadWritePaths=/opt/actions-runner /tmp /var/www/clearglass
+
+# Limits — raise for heavy build jobs
+LimitNOFILE=65536
+LimitNPROC=4096
+
+[Install]
+WantedBy=multi-user.target

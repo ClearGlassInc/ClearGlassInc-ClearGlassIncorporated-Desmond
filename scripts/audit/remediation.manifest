@@ -1,0 +1,14 @@
+# Remediation manifest — explicit, reviewed edits applied by remediate.sh.
+#
+# Format (one edit per line):   <relative/path/to/file><TAB><sed-expression>
+#   - Blank lines and lines starting with '#' are ignored.
+#   - The path MUST be a single file. Pointing at a directory (e.g. the old
+#     `.github/workflows` bug) is detected and skipped, never executed.
+#   - Run dry-run first to review the unified diff; only APPLY=1 commits.
+#
+# This file ships empty on purpose: remediations are opt-in and reviewed, not a
+# standing wildcard sweep across repos. Add a line, run dry-run, eyeball the
+# diff, then APPLY=1.
+#
+# Example (commented out — copy, adjust, uncomment to use):
+#   .github/workflows/ci.yml<TAB>s|actions/checkout@v3|actions/checkout@v4|

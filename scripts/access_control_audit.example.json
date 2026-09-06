@@ -1,0 +1,51 @@
+{
+  "authorization": {
+    "confirmed": false,
+    "scope": "Describe exactly which systems and time window you are authorized to test.",
+    "authorized_by": "Name / ticket reference for the engagement authorization."
+  },
+  "settings": {
+    "timeout_seconds": 10,
+    "delay_seconds": 1.0,
+    "max_requests": 200,
+    "allow_write_methods": false,
+    "allow_placeholder_hosts": false,
+    "compare_bodies": true
+  },
+  "accounts": {
+    "user_a": {
+      "headers": {
+        "Authorization": "Bearer <token-for-user-a>"
+      },
+      "cookies": {
+        "session": "<session-for-user-a>"
+      }
+    },
+    "user_b": {
+      "headers": {
+        "Authorization": "Bearer <token-for-user-b>"
+      },
+      "cookies": {
+        "session": "<session-for-user-b>"
+      }
+    }
+  },
+  "endpoints": [
+    {
+      "name": "Get order (path id)",
+      "method": "GET",
+      "url": "https://example.com/api/v1/orders/456",
+      "owner": "user_a",
+      "cross_account": "user_b",
+      "body": null,
+      "expect_owner_status": [
+        200
+      ],
+      "expect_denied_status": [
+        401,
+        403,
+        404
+      ]
+    }
+  ]
+}

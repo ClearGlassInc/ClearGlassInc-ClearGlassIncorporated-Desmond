@@ -1,0 +1,71 @@
+# platform/delivery/rollout-canary.yaml
+#
+# Progressive delivery reference: Argo Rollouts canary with SLO-gated promotion.
+# Traffic shifts in rings; an AnalysisTemplate queries Prometheus between rings
+# and automatically aborts + rolls back on any SLO breach. No human watches a
+# dashboard at 3 AM.
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: artemis
+spec:
+  replicas: 6
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: artemis
+  template:
+    metadata:
+      labels:
+        app: artemis
+    spec:
+      containers:
+        - name: artemis
+          image: ghcr.io/clearglassinc/artemis:latest # admission control pins to digest
+          ports:
+            - containerPort: 8080
+  strategy:
+    canary:
+      maxSurge: "25%"
+      maxUnavailable: 0
+      analysis:
+        # Run the analysis continuously alongside every step; abort -> rollback.
+        templates:
+          - templateName: success-rate-latency
+        startingStep: 1
+      steps:
+        - setWeight: 5
+        - pause: { duration: 5m }
+        - setWeight: 25
+        - pause: { duration: 10m }
+        - setWeight: 50
+        - pause: { duration: 10m }
+        - setWeight: 100
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: success-rate-latency
+spec:
+  metrics:
+    - name: error-rate
+      interval: 1m
+      failureLimit: 0          # any breach aborts the rollout
+      provider:
+        prometheus:
+          address: http://prometheus.monitoring.svc:9090
+          query: |
+            sum(rate(http_requests_total{status=~"5..",app="artemis"}[2m]))
+            /
+            sum(rate(http_requests_total{app="artemis"}[2m]))
+      successCondition: result[0] <= 0.01
+    - name: p95-latency
+      interval: 1m
+      failureLimit: 1
+      provider:
+        prometheus:
+          address: http://prometheus.monitoring.svc:9090
+          query: |
+            histogram_quantile(0.95,
+              sum(rate(http_request_duration_seconds_bucket{app="artemis"}[2m])) by (le))
+      successCondition: result[0] <= 0.5

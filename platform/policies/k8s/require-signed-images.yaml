@@ -1,0 +1,53 @@
+# platform/policies/k8s/require-signed-images.yaml
+#
+# Kyverno cluster policy: deploy-time admission control. A Pod is admitted only
+# if its image was built by ClearGlass CI (keyless OIDC identity) AND carries a
+# verifiable SLSA provenance attestation. A stolen registry credential is
+# therefore worthless — unsigned/unattested images are rejected at the cluster.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-signed-attested-images
+  annotations:
+    policies.kyverno.io/title: Require Signed & Attested Images
+    policies.kyverno.io/category: Supply Chain Security
+    policies.kyverno.io/severity: critical
+spec:
+  validationFailureAction: Enforce
+  background: false
+  webhookTimeoutSeconds: 30
+  failurePolicy: Fail
+  rules:
+    - name: verify-signature-and-provenance
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      verifyImages:
+        - imageReferences:
+            - "ghcr.io/clearglassinc/*"
+          mutateDigest: true   # pin tag -> immutable digest on admission
+          required: true
+          attestors:
+            - count: 1
+              entries:
+                - keyless:
+                    issuer: "https://token.actions.githubusercontent.com"
+                    subject: "https://github.com/clearglassinc/*"
+                    rekor:
+                      url: https://rekor.sigstore.dev
+          attestations:
+            - type: https://slsa.dev/provenance/v1
+              attestors:
+                - count: 1
+                  entries:
+                    - keyless:
+                        issuer: "https://token.actions.githubusercontent.com"
+                        subject: "https://github.com/clearglassinc/*"
+              conditions:
+                - all:
+                    # Provenance must prove the build ran from our org on GitHub-hosted infra.
+                    - key: "{{ buildDefinition.externalParameters.workflow.repository }}"
+                      operator: AnyIn
+                      value: ["https://github.com/clearglassinc/*"]

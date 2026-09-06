@@ -1,0 +1,31 @@
+# platform/catalog/catalog-info.yaml
+# Backstage service catalog entry. Registering components here makes ownership,
+# docs, and CI status discoverable from one pane — the foundation of the IDP.
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: clearglass-web
+  title: ClearGlass Public Web & STEGOFORGE
+  description: >-
+    Public-facing site (GitHub Pages) hosting the ARTEMIS marketing surface and
+    the STEGOFORGE cybersecurity terminal.
+  annotations:
+    github.com/project-slug: ClearGlassInc/ClearGlassInc.github.io
+    backstage.io/techdocs-ref: dir:.
+  tags:
+    - static-site
+    - security
+    - artemis
+spec:
+  type: website
+  lifecycle: production
+  owner: group:clearglassinc/web-team
+  system: clearglass-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: clearglass-platform
+  description: Internal Developer Platform — golden paths, policy, supply chain.
+spec:
+  owner: group:clearglassinc/founders

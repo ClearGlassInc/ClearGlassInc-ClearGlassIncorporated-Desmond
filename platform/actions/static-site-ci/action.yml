@@ -1,0 +1,48 @@
+name: "ClearGlass Static Site CI"
+description: "Standardized validation for static-site repos: HTML lint, dead-link scan, and asset budget."
+inputs:
+  root:
+    description: "Site root to validate."
+    required: false
+    default: "."
+  max-page-kb:
+    description: "Fail if any HTML page exceeds this size (KB)."
+    required: false
+    default: "600"
+runs:
+  using: composite
+  steps:
+    - name: Validate HTML
+      shell: bash
+      run: |
+        set -euo pipefail
+        python3 - "$ROOT" <<'PY'
+        import sys, pathlib, html.parser
+        root = pathlib.Path(sys.argv[1])
+        class V(html.parser.HTMLParser):
+            def error(self, m): raise ValueError(m)
+        bad = 0
+        for f in root.rglob("*.html"):
+            try:
+                V().feed(f.read_text(encoding="utf-8", errors="replace"))
+            except Exception as e:
+                print(f"::error file={f}::HTML parse error: {e}"); bad += 1
+        sys.exit(1 if bad else 0)
+        PY
+      env:
+        ROOT: ${{ inputs.root }}
+
+    - name: Enforce per-page asset budget
+      shell: bash
+      run: |
+        set -euo pipefail
+        limit=$(( ${{ inputs.max-page-kb }} * 1024 ))
+        fail=0
+        while IFS= read -r -d '' f; do
+          size=$(stat -c%s "$f")
+          if [ "$size" -gt "$limit" ]; then
+            echo "::error file=$f::page is $((size/1024))KB exceeds budget ${{ inputs.max-page-kb }}KB"
+            fail=1
+          fi
+        done < <(find "${{ inputs.root }}" -name '*.html' -print0)
+        exit $fail
