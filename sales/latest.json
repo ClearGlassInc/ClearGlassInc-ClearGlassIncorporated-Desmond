@@ -1,0 +1,178 @@
+{
+  "run_utc": "2026-05-25T11:51:17+00:00",
+  "total_verticals": 3,
+  "output_dir": "marketing/output/sales",
+  "sequences": [
+    {
+      "vertical_key": "government_defense",
+      "vertical_label": "Government / Defense",
+      "icp": "CISOs, Deputy CIOs, Procurement Officers at federal agencies and defense contractors",
+      "cold_email_variants": [
+        {
+          "variant": "A",
+          "subject": "[Government / Defense] The compliance gap your next audit will find",
+          "body": "{{first_name}},\n\nMost government / defense leaders I speak with say the same thing: CMMC 2.0 and FedRAMP compliance gaps creating audit liability.\n\nThe problem isn't awareness \u2014 it's that your current stack wasn't built to surface that risk automatically.\n\nClearGlassInc Artemis was. Zero-trust architecture validated against NIST SP 800-207.\n\nTrusted by organizations operating under ITAR, FedRAMP, and CMMC frameworks.\n\nI'd like to show you a 20-minute live view of what your exposure looks like right now \u2014 no slides, just your threat surface.\n\nRequest a 20-minute classified-architecture briefing?\n\n\u2014 {{sender_name}}\nClearGlassInc | Clarity Is Power\nwww.clearglassinc.com\n"
+        },
+        {
+          "variant": "B",
+          "subject": "Quick question about your Q1 security posture",
+          "body": "{{first_name}},\n\nRecent breach at peer agency (visibility + accountability pressure) \u2014 which means your board is probably asking tougher questions than they were 90 days ago.\n\nHere's what we consistently find when we run a posture review for organizations in your position: Autonomous threat triage \u2014 reduces analyst queue by 70%+.\n\nClearGlassInc Artemis closes that gap autonomously \u2014 no new headcount, no rip-and-replace.\n\nWorth 20 minutes to see it on your environment?\n\nRequest a 20-minute classified-architecture briefing.\n\n\u2014 {{sender_name}}\nClearGlassInc | www.clearglassinc.com\n"
+        }
+      ],
+      "follow_up_sequence": [
+        {
+          "day": 3,
+          "channel": "email",
+          "subject": "One number that usually surprises {{first_name}}",
+          "body": "{{first_name}},\n\nSent a note 3 days ago \u2014 wanted to add one data point before you close the loop.\n\nOrganizations in your vertical average 21 days of attacker dwell time before detection. ClearGlassInc Artemis customers detect in under 4 hours.\n\nThat gap is the difference between a contained incident and a regulatory headline.\n\nDownload our FedRAMP alignment datasheet \u2014 takes 5 minutes, no commitment.\n\n\u2014 {{sender_name}}\n"
+        },
+        {
+          "day": 7,
+          "channel": "linkedin",
+          "subject": "LinkedIn follow-up (Day 7)",
+          "body": "Hi {{first_name}},\n\nReached out by email last week \u2014 dropping a quick note here in case that's a better channel.\n\nWe've been helping government / defense teams solve lateral movement risks from legacy system exposure \u2014 without adding headcount or replacing existing tooling.\n\nHappy to send a 2-page brief if that's useful, or jump on a 15-minute call whenever your schedule opens up.\n\nBest,\n{{sender_name}}\n"
+        },
+        {
+          "day": 14,
+          "channel": "email",
+          "subject": "Closing the loop, {{first_name}}",
+          "body": "{{first_name}},\n\nI'll keep this short \u2014 following up one last time before I close out my outreach to you.\n\nIf Autonomous threat triage \u2014 reduces analyst queue by 70%+ isn't on your radar right now, no problem \u2014 timing matters.\n\nBut if it is, I'd hate for you to navigate that without seeing what Artemis can do.\n\nRequest a 20-minute classified-architecture briefing? I'll send a calendar link, takes 20 minutes.\n\nEither way \u2014 appreciate your time, and hope to connect when the moment is right.\n\n\u2014 {{sender_name}}\nClearGlassInc | www.clearglassinc.com\n"
+        },
+        {
+          "day": 30,
+          "channel": "email",
+          "subject": "[Re-engaging] New capability relevant to {{company_name}}",
+          "body": "{{first_name}},\n\nReaching back out \u2014 we recently released a capability directly relevant to government / defense teams: Full audit trail with cryptographic integrity for IG-grade accountability.\n\nGiven what your organization is navigating, I thought it was worth a quick note.\n\nIf now is a better time to connect, Request a 20-minute classified-architecture briefing.\n\n\u2014 {{sender_name}}\nClearGlassInc\n"
+        }
+      ],
+      "linkedin": {
+        "connection_request": "Hi {{first_name}}, I work with government / defense teams on CMMC risk \u2014 we've built something that addresses this without adding headcount. Would value connecting.",
+        "follow_up_dm": "Thanks for connecting, {{first_name}}.\n\nQuick context on why I reached out: Zero-trust architecture validated against NIST SP 800-207.\n\nWe built ClearGlassInc Artemis specifically for organizations in your position \u2014 Trusted by organizations operating under ITAR, FedRAMP, and CMMC frameworks.\n\nWorth a 15-minute conversation? Happy to send a brief first if you'd prefer to review before committing time.\n\n\u2014 {{sender_name}}"
+      },
+      "kpis": {
+        "target_reply_rate": "8\u201312%",
+        "target_meeting_book_rate": "3\u20135% of cold touches",
+        "target_pipeline_value_per_deal": "$150,000\u2013$500,000 ACV",
+        "sequence_length_days": "30",
+        "ab_test_metric": "subject line open rate (variant A vs B, minimum 50 sends each)",
+        "follow_up_channels": "email (D3, D14, D30) + LinkedIn (D7)",
+        "icp_qualifier": "CISOs, Deputy CIOs, Procurement Officers at federal agencies and defense contractors",
+        "disqualifier": "SMB < 500 employees, non-regulated industry, no active compliance obligation"
+      }
+    },
+    {
+      "vertical_key": "financial_institutions",
+      "vertical_label": "Financial Institutions",
+      "icp": "CISOs, CROs, Head of Information Security at banks, credit unions, asset managers",
+      "cold_email_variants": [
+        {
+          "variant": "A",
+          "subject": "[Financial Institutions] The compliance gap your next audit will find",
+          "body": "{{first_name}},\n\nMost financial institutions leaders I speak with say the same thing: SOC/DORA/FFIEC audit findings creating regulatory capital risk.\n\nThe problem isn't awareness \u2014 it's that your current stack wasn't built to surface that risk automatically.\n\nClearGlassInc Artemis was. Real-time third-party risk surface monitoring across entire vendor chain.\n\nBuilt to satisfy FFIEC CAT, SOC 2 Type II, and DORA technical requirements.\n\nI'd like to show you a 20-minute live view of what your exposure looks like right now \u2014 no slides, just your threat surface.\n\nBook a risk exposure assessment (no obligation, 30 minutes)?\n\n\u2014 {{sender_name}}\nClearGlassInc | Clarity Is Power\nwww.clearglassinc.com\n"
+        },
+        {
+          "variant": "B",
+          "subject": "Quick question about your Q4 security posture",
+          "body": "{{first_name}},\n\nUpcoming OCC / FDIC examination cycle \u2014 which means your board is probably asking tougher questions than they were 90 days ago.\n\nHere's what we consistently find when we run a posture review for organizations in your position: Mean time to detect (MTTD) < 4 hours vs. industry average 21 days.\n\nClearGlassInc Artemis closes that gap autonomously \u2014 no new headcount, no rip-and-replace.\n\nWorth 20 minutes to see it on your environment?\n\nBook a risk exposure assessment (no obligation, 30 minutes).\n\n\u2014 {{sender_name}}\nClearGlassInc | www.clearglassinc.com\n"
+        }
+      ],
+      "follow_up_sequence": [
+        {
+          "day": 3,
+          "channel": "email",
+          "subject": "One number that usually surprises {{first_name}}",
+          "body": "{{first_name}},\n\nSent a note 3 days ago \u2014 wanted to add one data point before you close the loop.\n\nOrganizations in your vertical average 21 days of attacker dwell time before detection. ClearGlassInc Artemis customers detect in under 4 hours.\n\nThat gap is the difference between a contained incident and a regulatory headline.\n\nSee the FFIEC compliance dashboard live \u2014 takes 5 minutes, no commitment.\n\n\u2014 {{sender_name}}\n"
+        },
+        {
+          "day": 7,
+          "channel": "linkedin",
+          "subject": "LinkedIn follow-up (Day 7)",
+          "body": "Hi {{first_name}},\n\nReached out by email last week \u2014 dropping a quick note here in case that's a better channel.\n\nWe've been helping financial institutions teams solve third-party vendor exposure invisible to current monitoring stack \u2014 without adding headcount or replacing existing tooling.\n\nHappy to send a 2-page brief if that's useful, or jump on a 15-minute call whenever your schedule opens up.\n\nBest,\n{{sender_name}}\n"
+        },
+        {
+          "day": 14,
+          "channel": "email",
+          "subject": "Closing the loop, {{first_name}}",
+          "body": "{{first_name}},\n\nI'll keep this short \u2014 following up one last time before I close out my outreach to you.\n\nIf Mean time to detect (MTTD) < 4 hours vs. industry average 21 days isn't on your radar right now, no problem \u2014 timing matters.\n\nBut if it is, I'd hate for you to navigate that without seeing what Artemis can do.\n\nBook a risk exposure assessment (no obligation, 30 minutes)? I'll send a calendar link, takes 20 minutes.\n\nEither way \u2014 appreciate your time, and hope to connect when the moment is right.\n\n\u2014 {{sender_name}}\nClearGlassInc | www.clearglassinc.com\n"
+        },
+        {
+          "day": 30,
+          "channel": "email",
+          "subject": "[Re-engaging] New capability relevant to {{company_name}}",
+          "body": "{{first_name}},\n\nReaching back out \u2014 we recently released a capability directly relevant to financial institutions teams: Audit-ready compliance dashboard exportable to examiners on-demand.\n\nGiven what your organization is navigating, I thought it was worth a quick note.\n\nIf now is a better time to connect, Book a risk exposure assessment (no obligation, 30 minutes).\n\n\u2014 {{sender_name}}\nClearGlassInc\n"
+        }
+      ],
+      "linkedin": {
+        "connection_request": "Hi {{first_name}}, I work with financial institutions teams on SOC/DORA/FFIEC risk \u2014 we've built something that addresses this without adding headcount. Would value connecting.",
+        "follow_up_dm": "Thanks for connecting, {{first_name}}.\n\nQuick context on why I reached out: Real-time third-party risk surface monitoring across entire vendor chain.\n\nWe built ClearGlassInc Artemis specifically for organizations in your position \u2014 Built to satisfy FFIEC CAT, SOC 2 Type II, and DORA technical requirements.\n\nWorth a 15-minute conversation? Happy to send a brief first if you'd prefer to review before committing time.\n\n\u2014 {{sender_name}}"
+      },
+      "kpis": {
+        "target_reply_rate": "8\u201312%",
+        "target_meeting_book_rate": "3\u20135% of cold touches",
+        "target_pipeline_value_per_deal": "$150,000\u2013$500,000 ACV",
+        "sequence_length_days": "30",
+        "ab_test_metric": "subject line open rate (variant A vs B, minimum 50 sends each)",
+        "follow_up_channels": "email (D3, D14, D30) + LinkedIn (D7)",
+        "icp_qualifier": "CISOs, CROs, Head of Information Security at banks, credit unions, asset managers",
+        "disqualifier": "SMB < 500 employees, non-regulated industry, no active compliance obligation"
+      }
+    },
+    {
+      "vertical_key": "enterprise_technology",
+      "vertical_label": "Enterprise Technology",
+      "icp": "CISOs, VP Engineering, Head of Platform Security at Series C+ tech companies",
+      "cold_email_variants": [
+        {
+          "variant": "A",
+          "subject": "[Enterprise Technology] The compliance gap your next audit will find",
+          "body": "{{first_name}},\n\nMost enterprise technology leaders I speak with say the same thing: CI/CD pipeline compromise enabling supply chain attacks at scale.\n\nThe problem isn't awareness \u2014 it's that your current stack wasn't built to surface that risk automatically.\n\nClearGlassInc Artemis was. Continuous pipeline integrity monitoring \u2014 detects poisoned builds in < 60s.\n\nIntegrated with GitHub, GitLab, Terraform, and the OWASP DevSecOps maturity model.\n\nI'd like to show you a 20-minute live view of what your exposure looks like right now \u2014 no slides, just your threat surface.\n\nSchedule a pipeline security walkthrough (your stack, live demo)?\n\n\u2014 {{sender_name}}\nClearGlassInc | Clarity Is Power\nwww.clearglassinc.com\n"
+        },
+        {
+          "variant": "B",
+          "subject": "Quick question about your Q1 security posture",
+          "body": "{{first_name}},\n\nRecent supply chain incident at competitor (board asking hard questions) \u2014 which means your board is probably asking tougher questions than they were 90 days ago.\n\nHere's what we consistently find when we run a posture review for organizations in your position: Secrets detection and rotation with zero-touch developer workflow.\n\nClearGlassInc Artemis closes that gap autonomously \u2014 no new headcount, no rip-and-replace.\n\nWorth 20 minutes to see it on your environment?\n\nSchedule a pipeline security walkthrough (your stack, live demo).\n\n\u2014 {{sender_name}}\nClearGlassInc | www.clearglassinc.com\n"
+        }
+      ],
+      "follow_up_sequence": [
+        {
+          "day": 3,
+          "channel": "email",
+          "subject": "One number that usually surprises {{first_name}}",
+          "body": "{{first_name}},\n\nSent a note 3 days ago \u2014 wanted to add one data point before you close the loop.\n\nOrganizations in your vertical average 21 days of attacker dwell time before detection. ClearGlassInc Artemis customers detect in under 4 hours.\n\nThat gap is the difference between a contained incident and a regulatory headline.\n\nGet our DevSecOps maturity assessment checklist \u2014 takes 5 minutes, no commitment.\n\n\u2014 {{sender_name}}\n"
+        },
+        {
+          "day": 7,
+          "channel": "linkedin",
+          "subject": "LinkedIn follow-up (Day 7)",
+          "body": "Hi {{first_name}},\n\nReached out by email last week \u2014 dropping a quick note here in case that's a better channel.\n\nWe've been helping enterprise technology teams solve cloud misconfiguration exposure growing faster than security headcount \u2014 without adding headcount or replacing existing tooling.\n\nHappy to send a 2-page brief if that's useful, or jump on a 15-minute call whenever your schedule opens up.\n\nBest,\n{{sender_name}}\n"
+        },
+        {
+          "day": 14,
+          "channel": "email",
+          "subject": "Closing the loop, {{first_name}}",
+          "body": "{{first_name}},\n\nI'll keep this short \u2014 following up one last time before I close out my outreach to you.\n\nIf Secrets detection and rotation with zero-touch developer workflow isn't on your radar right now, no problem \u2014 timing matters.\n\nBut if it is, I'd hate for you to navigate that without seeing what Artemis can do.\n\nSchedule a pipeline security walkthrough (your stack, live demo)? I'll send a calendar link, takes 20 minutes.\n\nEither way \u2014 appreciate your time, and hope to connect when the moment is right.\n\n\u2014 {{sender_name}}\nClearGlassInc | www.clearglassinc.com\n"
+        },
+        {
+          "day": 30,
+          "channel": "email",
+          "subject": "[Re-engaging] New capability relevant to {{company_name}}",
+          "body": "{{first_name}},\n\nReaching back out \u2014 we recently released a capability directly relevant to enterprise technology teams: SOC 2 evidence automation \u2014 cut audit prep from 6 weeks to 3 days.\n\nGiven what your organization is navigating, I thought it was worth a quick note.\n\nIf now is a better time to connect, Schedule a pipeline security walkthrough (your stack, live demo).\n\n\u2014 {{sender_name}}\nClearGlassInc\n"
+        }
+      ],
+      "linkedin": {
+        "connection_request": "Hi {{first_name}}, I work with enterprise technology teams on CI/CD risk \u2014 we've built something that addresses this without adding headcount. Would value connecting.",
+        "follow_up_dm": "Thanks for connecting, {{first_name}}.\n\nQuick context on why I reached out: Continuous pipeline integrity monitoring \u2014 detects poisoned builds in < 60s.\n\nWe built ClearGlassInc Artemis specifically for organizations in your position \u2014 Integrated with GitHub, GitLab, Terraform, and the OWASP DevSecOps maturity model.\n\nWorth a 15-minute conversation? Happy to send a brief first if you'd prefer to review before committing time.\n\n\u2014 {{sender_name}}"
+      },
+      "kpis": {
+        "target_reply_rate": "8\u201312%",
+        "target_meeting_book_rate": "3\u20135% of cold touches",
+        "target_pipeline_value_per_deal": "$150,000\u2013$500,000 ACV",
+        "sequence_length_days": "30",
+        "ab_test_metric": "subject line open rate (variant A vs B, minimum 50 sends each)",
+        "follow_up_channels": "email (D3, D14, D30) + LinkedIn (D7)",
+        "icp_qualifier": "CISOs, VP Engineering, Head of Platform Security at Series C+ tech companies",
+        "disqualifier": "SMB < 500 employees, non-regulated industry, no active compliance obligation"
+      }
+    }
+  ]
+}
