@@ -1,98 +1,125 @@
-# ClearGlass Autonomous Agent OS v8.0 — Runtime
+# ClearGlass Autonomous E‑Commerce Operator
 
-Runnable, stdlib-only, fail-closed implementation of the agent definition in
-[`agents/clearglass_agent_os/`](../agents/clearglass_agent_os/). The definition
-is the *contract*; this package is the *executable governance runtime* behind it.
+A repo‑first, **governed** commerce engine. The system can *draft, detect, score, and
+recommend* automatically — but pricing, refunds, payments, fulfillment and legal‑exposure
+changes always pass through a **human approval gate**. Every material change is written to an
+append‑only audit ledger with a risk score.
 
-## Modules
+> Controlled autonomy, not a money printer. Read‑only analysis → draft → approval → execution.
 
-| Module | Responsibility |
-|--------|----------------|
-| `governance.py` | Risk scoring (0–100) + approval gating. The single auto-execute vs. escalate decision point. Fails closed. |
-| `roster.py` | The thirteen specialist sub-agents as data (responsibilities + produced artifacts). |
-| `planning.py` | Objective → executable DAG: parallel waves (Kahn) + critical-path estimate. Cycles fail closed. |
-| `executive.py` | Expected-value strategy ranking + priority queue (`p·value − cost − risk·value`). |
-| `intelligence.py` | Multi-source cross-reference; single-source cap, contradiction detection, min-confidence aggregation. |
-| `memory.py` | Ranked persistent recall (`accuracy × recency × authority`); missing memory reported as missing. |
-| `recovery.py` | Root-cause classification + bounded exponential-backoff retry + escalation. |
-| `state_machine.py` | ARTEMIS // FAWL incident lifecycle transitions with attribution, evidence, policy decisions, correlation IDs, and tamper-evident audit entries. |
-| `learning.py` | Outcome capture, deterministic metrics, lessons, optimization opportunities. |
-| `audit.py` | Append-only, tamper-evident SHA-256 hash-chain ledger with `verify()`. |
-| `orchestrator.py` | The executive loop. Composes the above into the mandated 13-field `MissionReport`. No side effects. |
-| `self_check.py` | Governance + structural + audit self-check and a demo executive report. CI entrypoint. |
-| `__main__.py` | `python -m agent_os` — end-to-end governed demo mission as JSON. |
+## Architecture
 
-## Run it
-
-```bash
-python -m agent_os                     # end-to-end governed demo mission
-python -m agent_os.self_check          # human-readable self-check + report
-python -m agent_os.self_check --json   # machine-readable
-pytest tests/test_agent_os.py tests/test_agent_os_advanced.py tests/test_agent_os_state_machine.py -q
+```
+clearglass-commerce/
+├── control-plane/        FastAPI service that governs every change + writes the audit ledger
+│   ├── app/
+│   │   ├── main.py           app factory, routers, request audit
+│   │   ├── config.py         env-driven settings (pydantic-settings)
+│   │   ├── db.py             SQLAlchemy engine/session
+│   │   ├── models.py         ORM tables (products … events, approvals)
+│   │   ├── schemas.py        request/response contracts
+│   │   ├── audit.py          append-only event writer
+│   │   ├── governance.py     risk scoring + approval gating (the safety core)
+│   │   ├── daily_loop.py     stdlib-only daily executive report (runs in CI)
+│   │   └── routers/          store / orders / inventory / metrics / events / approvals
+│   ├── migrations/       001_init.sql, 002_seed.sql
+│   └── tests/            governance + smoke tests
+├── agents/               master prompt + per-role prompts + output JSON schemas
+├── storefront/           Next.js public shop (scaffold)
+├── admin/                Next.js admin cockpit (scaffold)
+├── docker-compose.yml    postgres + control-plane + storefront + admin
+└── .env.example          configuration template (no secrets committed)
 ```
 
-## Safety invariant (enforced in code)
+## Build order
 
-`read-only analysis → draft → human approval → execution`
+1. **FastAPI control plane** — `control-plane/app`
+2. **Postgres schema + migrations** — `control-plane/migrations`
+3. **Next.js storefront + admin** — `storefront/`, `admin/`
+4. **Audit ledger** — `events` table + `app/audit.py`
+5. **Automation jobs** — `.github/workflows/commerce-daily-loop.yml`
+6. **Agents** — `agents/`
+7. **Analytics & alerting** — `routers/metrics.py`, `daily_loop.py`
 
-The self-check **fails the build** if any of these can auto-execute: an
-always-escalate action (money, production deploy, access-control change, data
-deletion, secret rotation, mass outbound); an unknown action; an action whose
-confidence is unavailable; a conclusion with no supporting evidence. It also
-fails if the audit chain does not detect tampering. Incident recovery workflows
-are constrained by `state_machine.py`: an action cannot jump from detection to
-execution, terminal states cannot be reopened by automation, and every accepted
-transition requires actor, evidence, policy decision, correlation ID, timestamp,
-and reason before being appended to the audit hash chain.
-
-Mission confidence is reported as the **minimum** observed signal — the OS never
-inflates certainty. The orchestrator performs no external side effects; it
-decides and reports, leaving gated actions behind the human approval gate.
-
-## The Operator (front door)
-
-`orchestrator.py` can plan, score, and report — but it has to be *handed* tasks
-and proposed actions. `operator.py` is the piece that turns a plain-language
-objective into them, so you can ask the OS for something instead of hand-building
-a mission:
+## Quick start
 
 ```bash
-python -m agent_os.operator --list                  # what it can actually do
-python -m agent_os.operator "audit the site"        # plan only (default)
-python -m agent_os.operator "audit the site" --execute
-python -m agent_os.operator "regenerate links" --execute --allow-writes
-python -m agent_os.operator --sweep                 # every read-only capability
+cp .env.example .env            # fill in DATABASE_URL, STRIPE_*, etc.
+docker compose up --build       # postgres + control-plane (:8000) + storefront (:3000) + admin (:3001)
+# apply schema:
+docker compose exec db psql -U commerce -d commerce -f /migrations/001_init.sql
 ```
 
-Four properties make it safe to leave running:
+Control-plane only, no Docker:
 
-1. **The registry is real.** Every `Capability` maps to a command that exists and
-   runs in this repo; `test_agent_os_operator.py` fails if one points at a
-   missing file. An objective that matches nothing returns `unmatched` and a list
-   of what *is* registered — the operator never improvises an action.
-2. **Governance decides.** Each capability becomes a `ProposedAction` scored by
-   `score_action`. Only actions the mission report lists as auto-executable run;
-   unknown action names score 85 (HIGH) and are gated, so new capabilities fail
-   closed until deliberately classified.
-3. **Two locks on writes.** A capability that touches the working tree sets
-   `writes=True` and is additionally refused unless the caller passes
-   `--allow-writes`.
-4. **Opt-in execution.** `handle()` plans; it only shells out with `execute=True`.
+```bash
+cd control-plane
+pip install -r requirements.txt
+uvicorn app.main:app --reload      # http://localhost:8000/docs
+```
 
-### Adding a capability
+## Governance — what is gated
 
-Append a `Capability` to `CAPABILITIES` in `operator.py` with the phrases that
-should route to it, the governance action name that classifies its risk, and the
-argv to run. Read-only work uses `run_audit`; anything that modifies the repo
-sets `writes=True`. That is the whole extension point — the sweep, the audit
-chain, and the approval gate pick it up automatically.
+`app/governance.py` scores every proposed action 0–100 and routes it:
 
-## CI
+| Risk | Examples | Behaviour |
+|------|----------|-----------|
+| **low** (auto) | generate copy, read metrics, reconcile reports, draft messages | execute + log |
+| **medium** (review) | content publish, non-price catalog edits, campaign drafts | queue approval |
+| **high / critical** (block) | pricing, payment/tax settings, refunds, fulfillment rules, low-stock reorders, mass outbound | **approval required** before any execution |
 
-- **Python Tests** (`ci.yml`) runs `pytest tests/`, which includes
-  `tests/test_agent_os.py`, `tests/test_agent_os_advanced.py`, and
-  `tests/test_agent_os_operator.py`.
-- **Agent OS Self-Check** (`agent-os.yml`) runs the unit tests, the
-  governance/audit self-check, and the **operator sweep** (every read-only
-  capability, with a step-summary table and a `operator-sweep` artifact) on a
-  schedule, on PRs touching `agent_os/**`, and on demand.
+Nothing in the high/critical tier executes without an `approvals` row reaching `approved`.
+
+## Endpoints
+
+| Method | Path | Tier |
+|--------|------|------|
+| `POST` | `/store/refresh-products` | medium |
+| `POST` | `/store/generate-copy` | low |
+| `POST` | `/store/update-pricing` | **high → approval** |
+| `POST` | `/checkout/session` | customer revenue (logged) |
+| `POST` | `/webhooks/stripe` | signed ingest → writes paid orders (idempotent on redelivery) |
+| `POST` | `/payments/refund` | **critical → approval** |
+| `GET`  | `/payments/payout-account` | low masked bank metadata |
+| `GET`  | `/payouts` | low settlement records |
+| `POST` | `/orders/reconcile` | low |
+| `POST` | `/inventory/check` | low (reorder = high) |
+| `GET`  | `/metrics/overview` | low |
+| `GET`  | `/events` | low |
+| `POST` | `/approvals/{id}/approve` | human |
+| `POST` | `/approvals/{id}/reject` | human |
+| `GET`  | `/etsy/connection` | low connection state (no network) |
+| `POST` | `/etsy/verify` | low read-only identity/permission/sync check |
+| `POST` | `/etsy/publish-listing` | **high → approval** |
+| `POST` | `/etsy/sync-inventory` | **high → approval** |
+| `POST` | `/etsy/orders/manage` | **high → approval** |
+
+## Connecting the Etsy shop
+
+Etsy only mints a token after the shop owner approves the scopes in a browser, so
+connecting is a human step — run it once with `python -m app.etsy_connect` (OAuth2 PKCE,
+stdlib only, no secret ever written to disk) and store the printed tokens as runtime env
+vars. Full walkthrough in **[ETSY_CONNECT.md](ETSY_CONNECT.md)**.
+
+Connecting grants no autonomy: every Etsy write stays in `ALWAYS_ESCALATE` and can only
+be queued for approval, and before connection the write routes fail closed with
+`blocked_not_connected`.
+
+## Revenue settlement / bank wiring
+
+Earned revenue is collected through Stripe Checkout and settled by Stripe automatic payouts to the external bank account configured in Stripe. The repository stores only masked payout metadata (`PAYOUT_EXTERNAL_ACCOUNT_ID`, `PAYOUT_BANK_NAME`, `PAYOUT_BANK_LAST4`, `PAYOUT_BANK_ROUTING_HINT`) so operators can verify the destination without exposing account/routing/transit numbers.
+
+The control plane exposes `GET /payments/payout-account` for masked destination status and `GET /payouts` for webhook-recorded settlement events. It does **not** accept bank credentials or initiate arbitrary wires; actual money movement stays inside Stripe's payout controls and requires dashboard/API-secret configuration outside git.
+
+## Operating rules (enforced by code + prompt)
+
+1. Prefer verified data over assumptions.
+2. Never fabricate inventory, reviews, sales, or urgency.
+3. Never change live pricing/tax/payment/refund/fulfillment without approval.
+4. Never send outbound messages that could violate platform/privacy/consent rules.
+5. Log every action: timestamp, actor, target, payload, result, risk score.
+6. Read-only analysis → draft → approval → execution.
+7. One store, one niche, one offer stack until metrics prove expansion is safe.
+8. Stop and escalate on missing data or low confidence.
+
+© ClearGlass Inc. — Clarity Is Power.

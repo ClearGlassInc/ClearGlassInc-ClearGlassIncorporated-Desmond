@@ -1,0 +1,51 @@
+services:
+  # Local-development compose file only. Production deployments must inject
+  # non-demo credentials via the deployment platform and keep databases private.
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: commerce
+      POSTGRES_PASSWORD: commerce
+      POSTGRES_DB: commerce
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - commerce_db:/var/lib/postgresql/data
+      - ./control-plane/migrations:/migrations:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U commerce -d commerce"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  control-plane:
+    build: ./control-plane
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://commerce:commerce@db:5432/commerce
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  storefront:
+    build: ./storefront
+    environment:
+      NEXT_PUBLIC_API_BASE: http://control-plane:8000
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      - control-plane
+
+  admin:
+    build: ./admin
+    environment:
+      NEXT_PUBLIC_API_BASE: http://control-plane:8000
+    ports:
+      - "127.0.0.1:3001:3000"
+    depends_on:
+      - control-plane
+
+volumes:
+  commerce_db:

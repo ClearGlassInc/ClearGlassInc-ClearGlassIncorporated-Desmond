@@ -1,21 +1,97 @@
+# Render blueprint for the ClearGlass commerce stack.
+# Deploy: push to GitHub, then in Render → "New +" → "Blueprint" → pick this repo.
+# Set the sync:false secrets (Stripe keys) in the Render dashboard after first deploy.
 services:
   - type: web
-    name: clearglass-agent-service
+    name: clearglass-commerce-api
     runtime: docker
     plan: starter
     region: oregon
-    dockerfilePath: ./services/clearglass_agent_service/Dockerfile
-    dockerContext: .
+    dockerfilePath: ./clearglass-commerce/control-plane/Dockerfile
+    dockerContext: ./clearglass-commerce/control-plane
     healthCheckPath: /health
     autoDeploy: true
     envVars:
-      - key: PORT
-        value: "8080"
-      - key: CLEARGLASS_AGENT_VERSION
-        value: "0.1.0"
-      - key: CLEARGLASS_ALLOWED_ORGS
-        value: "ClearGlassInc"
-      - key: CLEARGLASS_ALLOWED_ORIGINS
-        value: "https://www.clearglassinc.com"
-      - key: CLEARGLASS_AGENT_API_KEYS
+      - key: APP_ENV
+        value: production
+      - key: REQUIRE_APPROVAL_FOR_HIGH_RISK
+        value: "true"
+      # Admin bearer token for approvals / pricing / refunds / catalog writes.
+      # Required in production: the API fails closed at startup if this is unset.
+      # Render generates a strong value on first deploy; give the admin app the same value.
+      - key: ADMIN_API_KEY
+        generateValue: true
+      - key: AUTO_CREATE_TABLES
+        value: "true"   # first boot creates tables; switch to migrations for prod hardening
+      # Per-IP throttling behind Render's router.
+      #
+      # Render terminates TLS at a proxy in front of the container, so request.client
+      # is the router and the per-IP throttles collapse: every customer shares one
+      # bucket and one abuser can 429 the storefront. Reading the caller from
+      # X-Forwarded-For fixes that, but ONLY when the TCP peer is a verified router
+      # address — otherwise anything that can reach the container on another ingress
+      # forges its identity and rotates throttle buckets at will.
+      #
+      # An RFC1918-wide allowlist is NOT sufficient: it trusts every address on the
+      # private network, which is exactly the ingress the bypass runs on. So header
+      # trust ships disabled. The throttles key on the TCP peer, which over-throttles
+      # rather than allowing a bypass — the safe direction to fail.
+      #
+      # To enable it, identify the real boundary and set both keys. GET /health
+      # reports `client_peer` (the address Render's router connects from) and
+      # `forwarded_for` (whether the header is currently trusted), so one curl against
+      # the deployed service gives you the value:
+      #     TRUSTED_PROXY_IPS=<that address or its /32>   TRUSTED_PROXY_HOPS=1
+      - key: TRUSTED_PROXY_HOPS
+        value: "0"
+      - key: TRUSTED_PROXY_IPS
+        value: ""
+      - key: DATABASE_URL
+        fromDatabase:
+          name: clearglass-commerce-db
+          property: connectionString
+      - key: STRIPE_SECRET_KEY
         sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      # Stripe Tax. Keep false until Settings → Tax has an origin address, a
+      # registration and a default tax code; Stripe rejects session creation
+      # otherwise. See clearglass-commerce/STRIPE_SETUP.md.
+      - key: STRIPE_AUTOMATIC_TAX
+        value: "false"
+      - key: CHECKOUT_SUCCESS_URL
+        value: https://clearglass-commerce-storefront.onrender.com/success
+      - key: CHECKOUT_CANCEL_URL
+        value: https://clearglass-commerce-storefront.onrender.com/cancel
+
+  - type: web
+    name: clearglass-commerce-storefront
+    runtime: docker
+    plan: starter
+    region: oregon
+    dockerfilePath: ./clearglass-commerce/storefront/Dockerfile
+    dockerContext: ./clearglass-commerce/storefront
+    autoDeploy: true
+    envVars:
+      - key: NEXT_PUBLIC_API_BASE
+        value: https://clearglass-commerce-api.onrender.com
+
+  - type: web
+    name: clearglass-commerce-admin
+    runtime: docker
+    plan: starter
+    region: oregon
+    dockerfilePath: ./clearglass-commerce/admin/Dockerfile
+    dockerContext: ./clearglass-commerce/admin
+    autoDeploy: true
+    envVars:
+      - key: NEXT_PUBLIC_API_BASE
+        value: https://clearglass-commerce-api.onrender.com
+
+databases:
+  - name: clearglass-commerce-db
+    plan: basic-256mb
+    region: oregon
+    postgresMajorVersion: "16"
