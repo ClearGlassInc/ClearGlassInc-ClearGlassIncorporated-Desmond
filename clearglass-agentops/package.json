@@ -1,0 +1,21 @@
+{
+  "name": "clearglass-agentops",
+  "private": true,
+  "version": "0.1.0",
+  "description": "ClearGlass AgentOps bot for policy checks, repo debugging, audit logging, and deployment packaging.",
+  "type": "module",
+  "scripts": {
+    "debug": "node tools/agentops-bot.js debug",
+    "deploy": "node tools/agentops-bot.js deploy",
+    "doctor": "node tools/agentops-bot.js doctor",
+    "start:bot-api": "node apps/bot-api/src/index.mjs",
+    "start:copilot-extension": "node apps/copilot-extension/src/extension.js"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=20"
+  }
+}
