@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ClearGlassInc · Initializing · Intelligent Systems</title>
+<meta name="description" content="ClearGlassInc cinematic command interface loader — initializing the tactical intelligence core. ClearGlass Inc. builds intelligent automation, AI operations."/>
+<meta name="robots" content="noindex,follow"/>
+<meta property="og:title" content="ClearGlassInc · Command Interface"/>
+<meta property="og:description" content="Cinematic loader for the ClearGlassInc tactical intelligence core."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://www.clearglassinc.com/cg-loader.html"/>
+<link rel="canonical" href="https://www.clearglassinc.com/cg-loader.html"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<style>
+/* ════════════════════════════════════════════════════
+   CLEARGLASSINC · COMMAND INTERFACE LOADER
+   Cinematic · Operational-grade · Crimson neon
+════════════════════════════════════════════════════ */
+:root{
+  --void:#040206;
+  --black:#08050A;
+  --depth:#0E0810;
+  --crimson:#FF1B3D;
+  --crimson-2:#FF4060;
+  --crimson-deep:#B30E2A;
+  --crimson-glow:rgba(255,27,61,0.45);
+  --crimson-soft:rgba(255,27,61,0.12);
+  --crimson-line:rgba(255,27,61,0.22);
+  --bone:#F5E8DD;
+  --ash:rgba(245,232,221,0.55);
+  --ash-d:rgba(245,232,221,0.32);
+  --dim:rgba(180,160,170,0.18);
+  --D:'Syne',sans-serif;
+  --M:'IBM Plex Mono',monospace;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+html,body{
+  width:100%;height:100%;
+  background:var(--void);
+  color:var(--bone);
+  font-family:var(--D);
+  overflow:hidden;
+  cursor:default;
+}
+
+/* ── ATMOSPHERIC LAYERS ── */
+
+/* Grain noise */
+body::before{
+  content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  opacity:0.7;mix-blend-mode:overlay;
+}
+
+/* Vignette */
+body::after{
+  content:'';position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 30%,rgba(4,2,6,0.7) 100%);
+}
+
+/* CRT scanlines */
+.scanlines{position:fixed;inset:0;z-index:3;pointer-events:none;overflow:hidden;}
+.scanlines::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,
+    transparent,transparent 2px,
+    rgba(255,27,61,0.022) 2px,rgba(255,27,61,0.022) 3px);
+  animation:scanDrift 14s linear infinite;
+}
+.scanlines::after{
+  content:'';position:absolute;top:-50%;left:0;right:0;height:60%;
+  background:linear-gradient(180deg,transparent 0%,rgba(255,27,61,0.025) 50%,transparent 100%);
+  animation:scanSweep 7s ease-in-out infinite;
+}
+@keyframes scanDrift{to{background-position:0 80px}}
+@keyframes scanSweep{0%,100%{top:-60%}50%{top:120%}}
+
+/* Conic ambient red glow behind logo */
+.ambient{
+  position:fixed;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:900px;height:900px;border-radius:50%;
+  z-index:0;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,27,61,0.10) 0%,rgba(179,14,42,0.04) 30%,transparent 60%);
+  filter:blur(40px);
+  animation:ambientPulse 6s ease-in-out infinite;
+}
+@keyframes ambientPulse{
+  0%,100%{opacity:0.85;transform:translate(-50%,-50%) scale(1);}
+  50%{opacity:1;transform:translate(-50%,-50%) scale(1.06);}
+}
+
+/* Subtle grid floor */
+.grid-floor{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    linear-gradient(rgba(255,27,61,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,27,61,0.025) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 50%,black 30%,transparent 75%);
+}
+
+/* ── LAYOUT ── */
+.stage{
+  position:relative;z-index:5;
+  width:100%;height:100vh;
+  display:flex;flex-direction:column;
+  padding:36px 48px;
+}
+
+/* ── TOP BAR ── */
+.top-bar{
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--M);font-size:10px;letter-spacing:0.32em;
+  color:var(--ash-d);text-transform:uppercase;
+  opacity:0;animation:fadeIn 1s var(--ease) 0.2s forwards;
+}
+@keyframes fadeIn{to{opacity:1;}}
+
+.top-left{display:flex;align-items:center;gap:14px;}
+.top-tag{
+  padding:4px 10px;border:1px solid var(--crimson-line);
+  background:var(--crimson-soft);color:var(--crimson-2);
+  letter-spacing:0.28em;font-size:9px;
+}
+.classified{
+  display:flex;align-items:center;gap:8px;
+  color:var(--crimson-2);
+}
+.classified::before{
+  content:'';width:6px;height:6px;background:var(--crimson);
+  box-shadow:0 0 8px var(--crimson-glow);
+  animation:opPulse 1.4s ease-in-out infinite;
+}
+@keyframes opPulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
+
+.top-right{display:flex;gap:24px;align-items:center;}
+.top-meta{display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
+.top-meta .v{color:var(--bone);letter-spacing:0.24em;font-size:9px;}
+.top-meta .l{color:var(--ash-d);letter-spacing:0.32em;font-size:8px;}
+
+/* ── CENTRE: LOGO + PROGRESS ── */
+.center{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:48px;
+  position:relative;
+}
+
+/* Hexagon wrapper */
+.hex-wrap{
+  position:relative;width:240px;height:240px;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* Outer rotating ring of marks */
+.hex-marks{
+  position:absolute;inset:-40px;
+  animation:hexRotate 60s linear infinite;
+  opacity:0;animation:hexRotate 60s linear infinite,fadeIn 1.2s var(--ease) 0.4s forwards;
+}
+@keyframes hexRotate{to{transform:rotate(360deg);}}
+
+.hex-marks::before,.hex-marks::after{
+  content:'';position:absolute;
+  border:1px solid var(--crimson-line);border-radius:50%;
+}
+.hex-marks::before{inset:0;}
+.hex-marks::after{inset:14px;border-color:rgba(255,27,61,0.08);}
+
+/* Tick marks around outer ring */
+.hex-ticks{
+  position:absolute;inset:-40px;
+}
+
+/* Hex SVG */
+.hex-svg{
+  width:240px;height:240px;
+  filter:drop-shadow(0 0 24px rgba(255,27,61,0.32))
+         drop-shadow(0 0 60px rgba(255,27,61,0.12));
+  opacity:0;
+  animation:logoEnter 1.4s var(--ease) 0.5s forwards;
+}
+@keyframes logoEnter{
+  0%{opacity:0;transform:scale(0.85);filter:drop-shadow(0 0 0 rgba(255,27,61,0));}
+  100%{opacity:1;transform:scale(1);}
+}
+
+/* Soft flicker on the whole logo */
+.hex-svg{
+  animation:logoEnter 1.4s var(--ease) 0.5s forwards,
+            flicker 5s ease-in-out 2s infinite;
+}
+@keyframes flicker{
+  0%,90%,100%{opacity:1;}
+  92%{opacity:0.78;}
+  94%{opacity:1;}
+  95%{opacity:0.86;}
+  96%{opacity:1;}
+}
+
+/* CG monogram */
+.cg-mono{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--D);font-size:54px;font-weight:800;
+  letter-spacing:-0.04em;color:var(--bone);
+  text-shadow:0 0 12px rgba(255,27,61,0.45),
+              0 0 32px rgba(255,27,61,0.18);
+  opacity:0;
+  animation:fadeIn 1s var(--ease) 1.2s forwards,
+            flicker 5s ease-in-out 2s infinite;
+}
+
+/* Corner brackets around hex */
+.bracket{
+  position:absolute;width:28px;height:28px;
+  border:1px solid var(--crimson);
+  opacity:0;animation:fadeIn 0.6s var(--ease) 1.4s forwards;
+}
+.bracket.tl{top:-8px;left:-8px;border-right:none;border-bottom:none;}
+.bracket.tr{top:-8px;right:-8px;border-left:none;border-bottom:none;}
+.bracket.bl{bottom:-8px;left:-8px;border-right:none;border-top:none;}
+.bracket.br{bottom:-8px;right:-8px;border-left:none;border-top:none;}
+
+/* Pulse rings */
+.pulse-ring{
+  position:absolute;border:1px solid var(--crimson);border-radius:50%;
+  pointer-events:none;
+  animation:ringExpand 3.5s var(--ease) infinite;
+}
+.pulse-ring.r1{width:200px;height:200px;animation-delay:0s;}
+.pulse-ring.r2{width:200px;height:200px;animation-delay:1.2s;}
+.pulse-ring.r3{width:200px;height:200px;animation-delay:2.4s;}
+@keyframes ringExpand{
+  0%{opacity:0.6;transform:scale(0.95);}
+  100%{opacity:0;transform:scale(1.7);}
+}
+
+/* ── BRAND BLOCK ── */
+.brand-block{
+  text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+}
+
+.brand-name{
+  font-family:var(--D);font-size:38px;font-weight:800;
+  letter-spacing:-0.04em;color:var(--bone);
+  opacity:0;transform:translateY(8px);
+  animation:fadeUp 0.8s var(--ease) 1.4s forwards;
+}
+.brand-name span{color:var(--crimson-2);}
+
+@keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+
+.brand-tag{
+  font-family:var(--M);font-size:10px;letter-spacing:0.42em;
+  color:var(--crimson-2);text-transform:uppercase;
+  display:flex;align-items:center;gap:14px;
+  opacity:0;animation:fadeUp 0.8s var(--ease) 1.6s forwards;
+}
+.brand-tag::before,.brand-tag::after{
+  content:'';width:32px;height:1px;background:var(--crimson-line);
+}
+
+/* ── PROGRESS ── */
+.progress-block{
+  display:flex;flex-direction:column;align-items:center;gap:18px;
+  width:min(420px,80vw);
+  opacity:0;animation:fadeUp 0.8s var(--ease) 1.8s forwards;
+}
+
+.progress-rail{
+  position:relative;width:100%;height:1px;
+  background:rgba(255,27,61,0.10);
+}
+.progress-fill{
+  position:absolute;top:0;left:0;height:100%;width:0%;
+  background:linear-gradient(90deg,var(--crimson-deep),var(--crimson),var(--crimson-2));
+  box-shadow:0 0 12px var(--crimson-glow),0 0 24px rgba(255,27,61,0.2);
+}
+.progress-fill::after{
+  content:'';position:absolute;right:-3px;top:-3px;
+  width:7px;height:7px;border-radius:50%;
+  background:var(--crimson-2);
+  box-shadow:0 0 12px var(--crimson),0 0 24px var(--crimson-glow);
+}
+
+.progress-meta{
+  display:flex;justify-content:space-between;align-items:center;
+  width:100%;font-family:var(--M);font-size:10px;
+  letter-spacing:0.28em;text-transform:uppercase;
+}
+.progress-label{color:var(--ash-d);display:flex;align-items:center;gap:9px;}
+.progress-label::before{
+  content:'';width:5px;height:5px;background:var(--crimson);
+  box-shadow:0 0 6px var(--crimson-glow);
+  animation:opPulse 1.4s ease-in-out infinite;
+}
+.progress-pct{color:var(--bone);font-weight:500;letter-spacing:0.15em;}
+
+/* Live status text */
+.status-text{
+  font-family:var(--M);font-size:9px;letter-spacing:0.24em;
+  color:var(--ash-d);text-transform:uppercase;
+  min-height:14px;text-align:center;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.status-text .dot{
+  width:4px;height:4px;background:var(--crimson);border-radius:50%;
+  box-shadow:0 0 6px var(--crimson-glow);
+}
+
+/* ── BOTTOM BAR ── */
+.bot-bar{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px;
+  font-family:var(--M);font-size:9px;letter-spacing:0.28em;
+  color:var(--ash-d);text-transform:uppercase;
+  opacity:0;animation:fadeIn 1s var(--ease) 2s forwards;
+}
+
+.bot-col{
+  display:flex;flex-direction:column;gap:6px;
+  padding:14px 0;
+  border-top:1px solid rgba(255,27,61,0.10);
+}
+.bot-col:nth-child(2){text-align:center;align-items:center;}
+.bot-col:nth-child(3){text-align:right;align-items:flex-end;}
+
+.bc-label{color:var(--ash-d);letter-spacing:0.34em;font-size:8px;}
+.bc-value{color:var(--bone);letter-spacing:0.16em;font-size:10px;font-weight:500;}
+.bc-value.ok{color:var(--crimson-2);}
+
+/* Animated thin line above bot-bar */
+.energy-line{
+  position:absolute;bottom:120px;left:48px;right:48px;
+  height:1px;background:rgba(255,27,61,0.08);
+  overflow:hidden;
+}
+.energy-line::before{
+  content:'';position:absolute;top:0;left:0;
+  width:25%;height:100%;
+  background:linear-gradient(90deg,transparent,var(--crimson),transparent);
+  animation:energySweep 3s ease-in-out infinite;
+}
+@keyframes energySweep{
+  0%{left:-25%;}
+  100%{left:100%;}
+}
+
+/* ── FLOATING SIDE TICKERS ── */
+.side-ticker{
+  position:fixed;z-index:4;
+  font-family:var(--M);font-size:8px;letter-spacing:0.32em;
+  color:var(--ash-d);text-transform:uppercase;
+  opacity:0;animation:fadeIn 1.2s var(--ease) 2.2s forwards;
+}
+.side-left{left:18px;top:50%;transform:translateY(-50%) rotate(-90deg);transform-origin:left center;}
+.side-right{right:18px;top:50%;transform:translateY(-50%) rotate(90deg);transform-origin:right center;}
+
+.side-ticker .acc{color:var(--crimson-2);}
+
+/* ── EXIT ANIMATION ── */
+body.exiting .stage{
+  opacity:0;transition:opacity 0.8s var(--ease);
+}
+body.exiting .ambient{
+  opacity:0;transition:opacity 0.8s var(--ease);
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .stage{padding:24px 20px;}
+  .hex-wrap{width:180px;height:180px;}
+  .hex-svg{width:180px;height:180px;}
+  .cg-mono{font-size:42px;}
+  .brand-name{font-size:30px;}
+  .brand-tag{font-size:9px;letter-spacing:0.32em;}
+  .brand-tag::before,.brand-tag::after{width:20px;}
+  .pulse-ring.r1,.pulse-ring.r2,.pulse-ring.r3{width:160px;height:160px;}
+  .top-bar{font-size:9px;letter-spacing:0.22em;}
+  .top-tag{font-size:8px;}
+  .bot-bar{grid-template-columns:1fr;gap:8px;font-size:8px;}
+  .bot-col:nth-child(2),.bot-col:nth-child(3){text-align:left;align-items:flex-start;}
+  .energy-line{bottom:auto;top:auto;display:none;}
+  .side-ticker{display:none;}
+  .center{gap:32px;}
+}
+
+@media(max-width:480px){
+  .top-right .top-meta:first-child{display:none;}
+  .ambient{width:500px;height:500px;}
+}
+
+/* ── REDUCED MOTION ── */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:0.001s !important;
+    transition-duration:0.001s !important;
+  }
+}
+
+/* ── SKIP LINK ── */
+.skip-link{
+  position:fixed;z-index:10;
+  top:18px;right:64px;
+  font-family:var(--M);font-size:9px;letter-spacing:0.32em;
+  color:var(--ash-d);text-transform:uppercase;
+  background:transparent;border:1px solid var(--crimson-line);
+  padding:6px 12px;border-radius:2px;
+  cursor:pointer;text-decoration:none;
+  transition:color .25s var(--ease),border-color .25s var(--ease),background .25s var(--ease);
+  opacity:0;animation:fadeIn 1s var(--ease) 2.6s forwards;
+}
+.skip-link:hover,.skip-link:focus{
+  color:var(--bone);border-color:var(--crimson);
+  background:var(--crimson-soft);outline:none;
+}
+@media(max-width:768px){
+  .skip-link{top:auto;bottom:14px;right:14px;font-size:8px;padding:5px 10px;}
+}
+</style>
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+  <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">ClearGlassInc · Initializing</h1>
+
+<div class="grid-floor"></div>
+<div class="ambient"></div>
+<div class="scanlines"></div>
+
+<!-- Skip loader -->
+<a id="skipLoader" class="skip-link" href="#" aria-label="Skip the cinematic loader and proceed">SKIP ▸</a>
+
+<!-- Side tickers -->
+<div class="side-ticker side-left">
+  CLEARGLASSINC. &nbsp;//&nbsp; <span class="acc">SECURE CHANNEL</span> &nbsp;//&nbsp; ENC-AES-256-GCM
+</div>
+<div class="side-ticker side-right">
+  ONTARIO COMMAND &nbsp;//&nbsp; <span class="acc">TIER-1</span> &nbsp;//&nbsp; OPS NORMAL
+</div>
+
+<div class="stage">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="top-left">
+      <span class="top-tag">CG//SI//NF</span>
+      <span class="unclassified">UNCLASSIFIED · COMMAND INTERFACE</span>
+    </div>
+    <div class="top-right">
+      <div class="top-meta">
+        <span class="l">Session</span>
+        <span class="v" id="sessionId">CG-04A2-7E11</span>
+      </div>
+      <div class="top-meta">
+        <span class="l">UTC</span>
+        <span class="v" id="utcTime">00:00:00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTRE -->
+  <div class="center">
+
+    <div class="hex-wrap">
+      <div class="bracket tl"></div>
+      <div class="bracket tr"></div>
+      <div class="bracket bl"></div>
+      <div class="bracket br"></div>
+
+      <!-- Outer rotating tick ring -->
+      <svg class="hex-marks" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="rgba(255,27,61,0.4)" stroke-width="1" fill="none">
+          <!-- 24 evenly-spaced tick marks -->
+          <g id="ticks"></g>
+        </g>
+      </svg>
+
+      <!-- Pulse rings -->
+      <div class="pulse-ring r1"></div>
+      <div class="pulse-ring r2"></div>
+      <div class="pulse-ring r3"></div>
+
+      <!-- Hexagon SVG -->
+      <svg class="hex-svg" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hexGrad" x1="0" y1="0" x2="240" y2="240" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#FF4060"/>
+            <stop offset="50%" stop-color="#FF1B3D"/>
+            <stop offset="100%" stop-color="#B30E2A"/>
+          </linearGradient>
+          <linearGradient id="hexFill" x1="0" y1="0" x2="0" y2="240" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="rgba(255,27,61,0.08)"/>
+            <stop offset="100%" stop-color="rgba(255,27,61,0.02)"/>
+          </linearGradient>
+          <filter id="hexGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <!-- Outer hexagon -->
+        <polygon points="120,8 215,64 215,176 120,232 25,176 25,64"
+          fill="url(#hexFill)" stroke="url(#hexGrad)" stroke-width="2" filter="url(#hexGlow)"
+          stroke-dasharray="650" stroke-dashoffset="650">
+          <animate attributeName="stroke-dashoffset" from="650" to="0" dur="1.4s" begin="0.5s" fill="freeze"/>
+        </polygon>
+
+        <!-- Inner hexagon (decorative) -->
+        <polygon points="120,28 198,72 198,168 120,212 42,168 42,72"
+          fill="none" stroke="rgba(255,27,61,0.3)" stroke-width="1"
+          stroke-dasharray="520" stroke-dashoffset="520">
+          <animate attributeName="stroke-dashoffset" from="520" to="0" dur="1.2s" begin="0.8s" fill="freeze"/>
+        </polygon>
+
+        <!-- Crosshair lines -->
+        <g stroke="rgba(255,27,61,0.2)" stroke-width="1" stroke-dasharray="2 4">
+          <line x1="120" y1="40" x2="120" y2="80" opacity="0">
+            <animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="1.4s" fill="freeze"/>
+          </line>
+          <line x1="120" y1="160" x2="120" y2="200" opacity="0">
+            <animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="1.4s" fill="freeze"/>
+          </line>
+          <line x1="40" y1="120" x2="80" y2="120" opacity="0">
+            <animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="1.4s" fill="freeze"/>
+          </line>
+          <line x1="160" y1="120" x2="200" y2="120" opacity="0">
+            <animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="1.4s" fill="freeze"/>
+          </line>
+        </g>
+
+        <!-- Centre dot -->
+        <circle cx="120" cy="120" r="2" fill="#FF1B3D" opacity="0">
+          <animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="1.6s" fill="freeze"/>
+        </circle>
+      </svg>
+
+      <!-- CG monogram -->
+      <div class="cg-mono">CG</div>
+    </div>
+
+    <!-- Brand block -->
+    <div class="brand-block">
+      <div class="brand-name">Clear<span>Glass</span></div>
+      <div class="brand-tag">Intelligence Command Interface</div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-block">
+      <div class="progress-rail">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-meta">
+        <span class="progress-label" id="progressLabel">Initializing</span>
+        <span class="progress-pct" id="progressPct">000%</span>
+      </div>
+      <div class="status-text" id="statusText">
+        <span class="dot"></span>
+        <span id="statusMsg">Establishing secure channel</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ENERGY LINE -->
+  <div class="energy-line"></div>
+
+  <!-- BOTTOM BAR -->
+  <div class="bot-bar">
+    <div class="bot-col">
+      <span class="bc-label">Node</span>
+      <span class="bc-value">CG-ONT-BURL-01</span>
+    </div>
+    <div class="bot-col">
+      <span class="bc-label">Encryption</span>
+      <span class="bc-value ok">AES-256-GCM · KYBER</span>
+    </div>
+    <div class="bot-col">
+      <span class="bc-label">Build</span>
+      <span class="bc-value">v5.0.2026.04</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ════════════════════════════════════════════
+   COMMAND INTERFACE — RUNTIME
+════════════════════════════════════════════ */
+
+// ── Destination resolution ──
+// Honour ?next=<safe-path>. Default to index.html.
+// Only allow same-origin relative paths to prevent open-redirects.
+const ALLOWED_NEXT = new Set([
+  'index.html','artemis-iv.html','artemis.html','intelligence.html',
+  'guardian.html','bluedesk.html','government.html','clearpulse.html','smb.html',
+  'command-console.html','revenue-engine.html','clearglass-nexus.html',
+  'stegoforge.html'
+]);
+function resolveNext(){
+  try {
+    const p = new URLSearchParams(window.location.search).get('next');
+    if (!p) return 'index.html';
+    // strip leading slashes and query/hash
+    const clean = p.replace(/^\/+/, '').split(/[?#]/)[0];
+    if (ALLOWED_NEXT.has(clean)) return clean;
+    if (/^[a-z0-9_-]+\.html$/i.test(clean) && ALLOWED_NEXT.has(clean.toLowerCase())) return clean.toLowerCase();
+    return 'index.html';
+  } catch(e){ return 'index.html'; }
+}
+const NEXT_URL = resolveNext();
+// Soft-preload the destination as soon as we know it
+(function preloadNext(){
+  try {
+    const l = document.createElement('link');
+    l.rel = 'prefetch'; l.href = NEXT_URL;
+    document.head.appendChild(l);
+  } catch(e){}
+})();
+
+// ── Generate tick marks around the hex ──
+(function generateTicks(){
+  const g = document.getElementById('ticks');
+  if (!g) return;
+  const count = 32;
+  const cx = 160, cy = 160;
+  const rOuter = 156, rInner = 148, rLong = 140;
+  const ns = 'http://www.w3.org/2000/svg';
+  for (let i = 0; i < count; i++) {
+    const angle = (i / count) * Math.PI * 2;
+    const isMajor = i % 4 === 0;
+    const r2 = isMajor ? rLong : rInner;
+    const x1 = cx + Math.cos(angle) * rOuter;
+    const y1 = cy + Math.sin(angle) * rOuter;
+    const x2 = cx + Math.cos(angle) * r2;
+    const y2 = cy + Math.sin(angle) * r2;
+    const line = document.createElementNS(ns, 'line');
+    line.setAttribute('x1', x1);
+    line.setAttribute('y1', y1);
+    line.setAttribute('x2', x2);
+    line.setAttribute('y2', y2);
+    line.setAttribute('stroke-width', isMajor ? '1.5' : '1');
+    line.setAttribute('opacity', isMajor ? '0.7' : '0.3');
+    g.appendChild(line);
+  }
+})();
+
+// ── Generate session ID ──
+(function generateSession(){
+  const hex = '0123456789ABCDEF';
+  const part = (n) => Array.from({length:n},()=>hex[Math.floor(Math.random()*16)]).join('');
+  document.getElementById('sessionId').textContent = `CG-${part(4)}-${part(4)}`;
+})();
+
+// ── UTC clock ──
+function updateClock(){
+  const d = new Date();
+  const utc = `${String(d.getUTCHours()).padStart(2,'0')}:${String(d.getUTCMinutes()).padStart(2,'0')}:${String(d.getUTCSeconds()).padStart(2,'0')}`;
+  const el = document.getElementById('utcTime');
+  if (el) el.textContent = utc;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// ── Progress + status sequence ──
+const stages = [
+  { pct: 8,   msg: 'Establishing secure channel',           label: 'Initializing' },
+  { pct: 18,  msg: 'Verifying cryptographic handshake',     label: 'Authenticating' },
+  { pct: 30,  msg: 'Loading neural threat models · v47',    label: 'Loading' },
+  { pct: 44,  msg: 'Synchronising intelligence feeds',      label: 'Syncing' },
+  { pct: 58,  msg: 'Calibrating quantum-resistant keys',    label: 'Calibrating' },
+  { pct: 72,  msg: 'Mounting Ontario sector telemetry',     label: 'Mounting' },
+  { pct: 84,  msg: 'Engaging zero-trust policy engine',     label: 'Engaging' },
+  { pct: 94,  msg: 'Final integrity verification',          label: 'Verifying' },
+  { pct: 100, msg: 'All systems operational · ready',       label: 'Ready' },
+];
+
+const fillEl   = document.getElementById('progressFill');
+const pctEl    = document.getElementById('progressPct');
+const labelEl  = document.getElementById('progressLabel');
+const msgEl    = document.getElementById('statusMsg');
+
+let currentPct = 0;
+let stageIdx = 0;
+const startDelay = 1800;
+
+setTimeout(() => {
+  function nextStage() {
+    if (stageIdx >= stages.length) {
+      // Hold final state, then fade out and navigate
+      setTimeout(() => {
+        document.body.classList.add('exiting');
+        window.dispatchEvent(new CustomEvent('clearglass:ready', { detail: { next: NEXT_URL } }));
+        // Mark this session as having seen the loader so subsequent
+        // navigations through the site can skip it.
+        try { sessionStorage.setItem('clearglass.loader.seen', '1'); } catch(e){}
+        setTimeout(() => { window.location.replace(NEXT_URL); }, 900);
+      }, 1400);
+      return;
+    }
+
+    const stage = stages[stageIdx];
+    const target = stage.pct;
+    labelEl.textContent = stage.label;
+    msgEl.textContent = stage.msg;
+
+    // Animate to target percent with eased step
+    const start = currentPct;
+    const delta = target - start;
+    const duration = 600 + Math.random() * 400;
+    const t0 = performance.now();
+
+    function step(now) {
+      const t = Math.min((now - t0) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      currentPct = start + delta * eased;
+      fillEl.style.width = currentPct + '%';
+      pctEl.textContent = String(Math.floor(currentPct)).padStart(3, '0') + '%';
+
+      if (t < 1) requestAnimationFrame(step);
+      else {
+        currentPct = target;
+        stageIdx++;
+        setTimeout(nextStage, 180 + Math.random() * 220);
+      }
+    }
+    requestAnimationFrame(step);
+  }
+  nextStage();
+}, startDelay);
+
+// ── Subtle digit flicker on percent ──
+let flickerInt = setInterval(() => {
+  if (currentPct >= 100) { clearInterval(flickerInt); return; }
+  if (Math.random() > 0.85) {
+    pctEl.style.opacity = '0.5';
+    setTimeout(() => { pctEl.style.opacity = '1'; }, 60);
+  }
+}, 400);
+
+// ── Skip handler + keyboard shortcuts ──
+function skipLoader(){
+  try { sessionStorage.setItem('clearglass.loader.seen', '1'); } catch(e){}
+  document.body.classList.add('exiting');
+  setTimeout(() => { window.location.replace(NEXT_URL); }, 350);
+}
+document.getElementById('skipLoader')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  skipLoader();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    skipLoader();
+  }
+});
+
+// Respect reduced motion / fast users: if reduced motion is requested,
+// skip to the destination immediately.
+if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  setTimeout(skipLoader, 600);
+}
+</script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

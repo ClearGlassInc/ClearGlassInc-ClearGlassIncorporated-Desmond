@@ -1,0 +1,350 @@
+/* ClearGlass · button system "MACHINED GLASS"
+   ────────────────────────────────────────────────────────────────────────────
+   An opt-in, production-grade button component in the company blue-violet.
+   Aesthetic goal: precision-machined interface hardware — programmable glass and
+   soft metal with real depth, bevel, and press physics — NOT neon sci-fi.
+
+   Engineering principles (all real, all supported):
+     • adaptive light/dark via tokens     • AA+ contrast on fills
+     • visible :focus-visible ring        • ≥44px touch target (sizes)
+     • distinct hover / active / disabled / toggle(aria-pressed) / loading
+     • forced-colors + prefers-contrast + prefers-reduced-motion support
+
+   Usage:
+     <button class="cg-btn cg-btn--primary">Deploy</button>
+     <button class="cg-btn cg-btn--secondary">Review</button>
+     <button class="cg-btn cg-btn--ghost">Cancel</button>
+     <button class="cg-btn cg-btn--danger">Revoke</button>
+     <button class="cg-btn cg-btn--toggle" aria-pressed="false">Watch</button>
+     <button class="cg-btn cg-btn--icon" aria-label="Settings">⚙</button>
+     <a class="cg-btn cg-btn--primary cg-btn--lg" role="button" href="…">Open</a>
+   Modifiers: --primary --secondary --ghost --danger --toggle --icon
+              --sm --lg --block  | states: [disabled] [aria-disabled] .is-loading
+   ──────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* company palette */
+  --cg-blue:   #60a5fa;
+  --cg-violet: #a78bfa;
+  --cg-indigo: #7c9cff;
+  --cg-pink:   #f472b6;
+  --cg-ink:    #0b1020;
+  /* component tokens (overridable per page/theme) */
+  --cg-btn-radius: 11px;
+  --cg-btn-h: 40px;
+  --cg-btn-pad: 16px;
+  --cg-btn-font: 13px;
+  --cg-btn-ease: cubic-bezier(.2,.7,.2,1);
+  --cg-btn-glass: rgba(20,26,46,.55);
+  --cg-btn-line: rgba(124,150,255,.34);
+  --cg-btn-txt: #eaf0ff;
+}
+
+/* ── base: a machined glass slab ──────────────────────────────────────────── */
+.cg-btn {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--cg-btn-h);
+  padding: 0 var(--cg-btn-pad);
+  margin: 0;
+  font: 600 var(--cg-btn-font)/1 'Inter', system-ui, -apple-system, sans-serif;
+  letter-spacing: .02em;
+  color: var(--cg-btn-txt);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  border: 1px solid var(--cg-btn-line);
+  border-radius: var(--cg-btn-radius);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,0) 42%),
+    var(--cg-btn-glass);
+  backdrop-filter: blur(10px) saturate(1.1);
+  -webkit-backdrop-filter: blur(10px) saturate(1.1);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.10) inset,           /* top bevel highlight */
+    0 -10px 18px -12px rgba(0,0,0,.6) inset,        /* bottom inner shade  */
+    0 2px 4px -2px rgba(0,0,0,.5),                  /* contact shadow      */
+    0 10px 24px -14px rgba(8,12,28,.9);             /* ambient lift        */
+  transition:
+    transform .16s var(--cg-btn-ease),
+    box-shadow .22s var(--cg-btn-ease),
+    border-color .2s ease, background-color .2s ease, filter .2s ease;
+  will-change: transform;
+}
+
+/* machined hairline: a crisp gradient edge drawn with a masked ::before */
+.cg-btn::before {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(140deg, rgba(255,255,255,.5), rgba(124,150,255,.15) 30%, rgba(0,0,0,0) 60%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: .8;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* sheen sweep: a thin light bar that crosses on hover/focus (machined glint) */
+.cg-btn::after {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.22) 48%, transparent 60%);
+  transform: translateX(-130%);
+  transition: transform .6s var(--cg-btn-ease);
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: screen;
+}
+.cg-btn > * { position: relative; z-index: 3; }
+
+/* ── interaction physics ──────────────────────────────────────────────────── */
+@media (hover: hover) {
+  .cg-btn:hover {
+    transform: translateY(-1px);
+    border-color: rgba(124,150,255,.55);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.14) inset,
+      0 -10px 18px -12px rgba(0,0,0,.55) inset,
+      0 4px 10px -4px rgba(0,0,0,.5),
+      0 16px 34px -16px rgba(96,165,250,.55);
+  }
+  .cg-btn:hover::after { transform: translateX(130%); }
+}
+.cg-btn:active {
+  transform: translateY(0) scale(.985);
+  box-shadow:
+    0 2px 6px rgba(0,0,0,.5) inset,                 /* pressed-in well */
+    0 1px 0 rgba(255,255,255,.06) inset,
+    0 1px 2px -1px rgba(0,0,0,.6);
+  filter: brightness(.97);
+}
+
+/* visible keyboard focus — high-contrast dual ring */
+.cg-btn:focus-visible {
+  outline: 2px solid var(--cg-blue);
+  outline-offset: 2px;
+  box-shadow:
+    0 0 0 4px rgba(124,150,255,.30),
+    0 16px 34px -16px rgba(96,165,250,.55);
+}
+
+/* ── variant: PRIMARY — filled blue→violet, programmable-glass border ─────── */
+.cg-btn--primary {
+  color: #07112b;
+  border-color: transparent;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,0) 46%),
+    linear-gradient(120deg, var(--cg-blue), var(--cg-violet));
+  text-shadow: 0 1px 0 rgba(255,255,255,.25);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.45) inset,
+    0 -8px 16px -10px rgba(8,12,40,.7) inset,
+    0 4px 10px -4px rgba(80,80,180,.5),
+    0 14px 30px -14px rgba(96,165,250,.75);
+}
+.cg-btn--primary::before {
+  background: linear-gradient(140deg, rgba(255,255,255,.9), rgba(167,139,250,.4) 40%, rgba(0,0,0,0) 70%);
+  opacity: 1;
+}
+@media (hover: hover) {
+  .cg-btn--primary:hover {
+    filter: saturate(1.08) brightness(1.04);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.55) inset,
+      0 -8px 16px -10px rgba(8,12,40,.65) inset,
+      0 6px 14px -5px rgba(80,80,180,.55),
+      0 22px 44px -16px rgba(96,165,250,.9);
+  }
+}
+
+/* ── variant: SECONDARY — dark soft-metal glass (default action) ──────────── */
+.cg-btn--secondary { /* inherits base look; nudge for clarity */
+  color: var(--cg-btn-txt);
+}
+
+/* ── variant: GHOST — outline only, fills with a whisper on hover ─────────── */
+.cg-btn--ghost {
+  background: rgba(124,150,255,.04);
+  backdrop-filter: blur(4px);
+  box-shadow: none;
+}
+.cg-btn--ghost::after { display: none; }
+@media (hover: hover) {
+  .cg-btn--ghost:hover {
+    background: rgba(124,150,255,.12);
+    box-shadow: 0 10px 24px -16px rgba(96,165,250,.6);
+  }
+}
+
+/* ── variant: DANGER — destructive, on-palette pink/magenta ───────────────── */
+.cg-btn--danger {
+  color: #2a0716;
+  border-color: transparent;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.26), rgba(255,255,255,0) 46%),
+    linear-gradient(120deg, #f472b6, #c2479a);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.4) inset,
+    0 -8px 16px -10px rgba(40,8,24,.7) inset,
+    0 4px 10px -4px rgba(150,40,110,.5),
+    0 14px 30px -14px rgba(244,114,182,.7);
+}
+.cg-btn--danger:focus-visible { outline-color: var(--cg-pink); box-shadow: 0 0 0 4px rgba(244,114,182,.32); }
+
+/* ── TOGGLE — uses aria-pressed for real semantics ───────────────────────── */
+.cg-btn--toggle::after { display: none; }
+.cg-btn--toggle[aria-pressed="true"] {
+  color: #07112b;
+  border-color: transparent;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.24), rgba(255,255,255,0) 46%),
+    linear-gradient(120deg, var(--cg-blue), var(--cg-violet));
+  box-shadow:
+    0 2px 6px rgba(8,12,40,.5) inset,
+    0 0 0 1px rgba(124,150,255,.5),
+    0 0 18px -4px rgba(96,165,250,.7);
+}
+.cg-btn--toggle[aria-pressed="true"]::before { opacity: 1; }
+/* engaged status pip */
+.cg-btn--toggle[aria-pressed="true"] .cg-pip,
+.cg-btn--toggle[aria-pressed="true"]::marker { color: #07112b; }
+.cg-pip {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: currentColor; opacity: .85;
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* ── sizes (keep ≥44px hit area on touch via padding) ─────────────────────── */
+.cg-btn--sm { --cg-btn-h: 32px; --cg-btn-pad: 12px; --cg-btn-font: 12px; --cg-btn-radius: 9px; }
+.cg-btn--lg { --cg-btn-h: 50px; --cg-btn-pad: 22px; --cg-btn-font: 15px; --cg-btn-radius: 13px; }
+.cg-btn--icon { width: var(--cg-btn-h); padding: 0; }
+.cg-btn--block { display: flex; width: 100%; }
+
+/* ── disabled ─────────────────────────────────────────────────────────────── */
+.cg-btn:disabled,
+.cg-btn[aria-disabled="true"],
+.cg-btn[disabled] {
+  cursor: not-allowed;
+  filter: grayscale(.5) brightness(.8);
+  opacity: .5;
+  transform: none !important;
+  box-shadow: 0 1px 2px -1px rgba(0,0,0,.5) !important;
+  pointer-events: none;
+}
+.cg-btn:disabled::after, .cg-btn[disabled]::after { display: none; }
+
+/* ── loading (.is-loading) — swap label for a precision spinner ───────────── */
+.cg-btn.is-loading { color: transparent !important; pointer-events: none; }
+.cg-btn.is-loading::after {
+  content: ""; display: block;
+  position: absolute; top: 50%; left: 50%;
+  width: 16px; height: 16px; margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.35);
+  border-top-color: #fff;
+  transform: none;
+  animation: cg-btn-spin .7s linear infinite;
+  mix-blend-mode: normal;
+  z-index: 4;
+}
+@keyframes cg-btn-spin { to { transform: rotate(360deg); } }
+
+/* ── light-surface adaptation (pages/sections marked light) ───────────────── */
+.cg-btn--secondary.on-light, .on-light .cg-btn--secondary, .cg-btn--ghost.on-light, .on-light .cg-btn--ghost {
+  --cg-btn-glass: rgba(255,255,255,.7);
+  --cg-btn-txt: #14213d;
+  --cg-btn-line: rgba(96,120,200,.4);
+}
+
+/* ── accessibility hardening ──────────────────────────────────────────────── */
+@media (prefers-contrast: more) {
+  .cg-btn { border-width: 2px; border-color: var(--cg-blue); }
+  .cg-btn::after { display: none; }
+}
+@media (forced-colors: active) {
+  .cg-btn { border: 1px solid ButtonText; background: ButtonFace; color: ButtonText; }
+  .cg-btn::before, .cg-btn::after { display: none; }
+  .cg-btn:focus-visible { outline: 2px solid Highlight; }
+  .cg-btn--toggle[aria-pressed="true"] { background: Highlight; color: HighlightText; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cg-btn { transition: none; }
+  .cg-btn::after { display: none; }
+  .cg-btn:hover { transform: none; }
+  .cg-btn.is-loading::after { animation-duration: 1.4s; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   ADVANCED MOTION LAYER  (additive — every rule below either targets the masked
+   ::before edge or an opt-in variant, so existing button physics are untouched)
+     • primary + engaged-toggle gain a slow "living aurora" machined edge
+     • .cg-btn--aurora  — flowing prism fill with an ambient glow
+     • .cg-btn--holo    — continuous holographic shimmer sweep
+   All new motion is frozen under prefers-reduced-motion at the end.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* living aurora edge: animates ONLY the 1px masked ::before border (inherits the
+   base mask), so it never competes with the hover transform / box-shadow / filter */
+.cg-btn--primary::before,
+.cg-btn--toggle[aria-pressed="true"]::before {
+  background: linear-gradient(115deg, #38bdf8, #a78bfa 28%, #f472b6 50%, #a78bfa 72%, #38bdf8);
+  background-size: 300% 100%;
+  opacity: 1;
+  animation: cgBtnAurora 6s linear infinite;
+}
+@keyframes cgBtnAurora { to { background-position: 300% 0; } }
+
+/* primary hover: deepen the aurora edge + lift the glow a touch further */
+@media (hover: hover) {
+  .cg-btn--primary:hover::before { animation-duration: 2.4s; }
+}
+
+/* ── opt-in variant: --aurora — a slowly flowing prism fill ─────────────────── */
+.cg-btn--aurora {
+  color: #07112b;
+  border-color: transparent;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.30), rgba(255,255,255,0) 46%),
+    linear-gradient(115deg, #38bdf8, #a78bfa 30%, #f472b6 52%, #34d399 78%, #38bdf8);
+  background-size: 100% 100%, 280% 100%;
+  text-shadow: 0 1px 0 rgba(255,255,255,.28);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.5) inset,
+    0 14px 30px -14px rgba(96,165,250,.8),
+    0 0 22px -6px rgba(167,139,250,.7);
+  animation: cgBtnAuroraFill 7s linear infinite;
+}
+.cg-btn--aurora::after { display: none; }
+@keyframes cgBtnAuroraFill { to { background-position: 0 0, 280% 0; } }
+
+/* ── opt-in variant: --holo — a continuous holographic shimmer sweep ────────── */
+.cg-btn--holo::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  z-index: 1; pointer-events: none;
+  background: linear-gradient(115deg, transparent 20%, rgba(56,189,248,.45) 38%,
+              rgba(167,139,250,.5) 50%, rgba(244,114,182,.4) 62%, transparent 80%);
+  background-size: 220% 100%;
+  mix-blend-mode: screen;
+  opacity: .55;
+  transform: none;
+  animation: cgBtnHolo 3.2s linear infinite;
+}
+@keyframes cgBtnHolo { to { background-position: 220% 0; } }
+
+/* freeze all new motion when the user prefers reduced motion (look stays, loop stops) */
+@media (prefers-reduced-motion: reduce) {
+  .cg-btn--primary::before,
+  .cg-btn--toggle[aria-pressed="true"]::before,
+  .cg-btn--aurora,
+  .cg-btn--holo::after { animation: none !important; }
+}

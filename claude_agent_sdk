@@ -1,0 +1,17 @@
+import asyncio
+from claude_agent_sdk import query, ClaudeAgentOptions
+
+
+async def main():
+    try:
+        async for message in query(
+            prompt="What files are in this directory?",
+            options=ClaudeAgentOptions(allowed_tools=["Bash", "Glob"]),
+        ):
+            if hasattr(message, "result"):
+                print(message.result)
+    except Exception as e:
+        print(f"Query failed: {e}")
+
+
+asyncio.run(main())

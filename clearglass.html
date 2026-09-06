@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="utf-8" />
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>ClearGlass · Network Flow Intelligence</title>
+<link rel="canonical" href="https://www.clearglassinc.com/clearglass.html" />
+<meta name="description" content="ClearGlass — a network flow intelligence platform for visualizing and analyzing domains, IP flows and entity relationships for security analysts and network." />
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Urbanist:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  /* ── ClearGlass · Network Flow Intelligence — self-contained prototype.
+     Crystal-glass identity inherited from tokens.css (sky→violet→pink prism,
+     IBM Plex Mono / Urbanist). Vanilla JS, mock data, no build step. ── */
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;font-family:var(--cg-sans);color:var(--cg-on-surface);
+    background:
+      radial-gradient(1200px 700px at 12% -10%, rgba(96,165,250,.16), transparent 60%),
+      radial-gradient(1000px 600px at 105% 8%, rgba(167,139,250,.16), transparent 55%),
+      radial-gradient(900px 700px at 50% 120%, rgba(244,114,182,.10), transparent 60%),
+      #070912;
+    -webkit-font-smoothing:antialiased;overflow:hidden;
+  }
+  a{color:inherit}
+  button{font-family:inherit;color:inherit}
+  .mono{font-family:var(--cg-mono)}
+  .trunc{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  /* ── shell layout ─────────────────────────────────────────────── */
+  .app{display:grid;grid-template-rows:auto 1fr;height:100vh;height:100dvh}
+  .topbar{
+    display:flex;align-items:center;gap:var(--cg-sp-4);
+    padding:10px 18px;border-bottom:1px solid var(--cg-hairline-soft);
+    background:linear-gradient(180deg,rgba(13,16,34,.86),rgba(9,11,24,.7));
+    backdrop-filter:blur(10px);z-index:5;
+  }
+  .brand{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+  .brand .mk{
+    width:30px;height:30px;border-radius:9px;flex:0 0 auto;
+    background:radial-gradient(circle at 38% 34%,#bcd4ff,#6d5cf0 58%,#161038);
+    box-shadow:0 0 14px rgba(124,150,255,.6);
+  }
+  .brand .nm{font-weight:800;letter-spacing:.14em;font-size:15px}
+  .brand .nm b{background:var(--cg-crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .brand .sub{font-size:8.5px;letter-spacing:.26em;color:var(--cg-on-surface-dim);text-transform:uppercase}
+
+  .search{position:relative;flex:1 1 auto;max-width:560px;margin:0 auto}
+  .search input{
+    width:100%;padding:9px 14px 9px 38px;border-radius:var(--cg-r-pill);
+    background:rgba(10,13,28,.7);border:1px solid var(--cg-hairline);
+    color:var(--cg-on-surface);font-size:13px;outline:none;transition:.18s var(--cg-ease);
+  }
+  .search input:focus{border-color:var(--cg-prism-1);box-shadow:0 0 0 3px rgba(96,165,250,.18)}
+  .search input::placeholder{color:#6b73a0}
+  .search .ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#7c84b8;font-size:14px}
+  .search kbd{
+    position:absolute;right:10px;top:50%;transform:translateY(-50%);
+    font-family:var(--cg-mono);font-size:10px;color:#8089bd;
+    border:1px solid var(--cg-hairline-soft);border-radius:6px;padding:2px 6px;
+  }
+  .topstats{display:flex;gap:14px;flex:0 0 auto}
+  .topstat{text-align:right;line-height:1.15}
+  .topstat b{font-family:var(--cg-mono);font-size:15px}
+  .topstat span{display:block;font-size:8.5px;letter-spacing:.18em;color:var(--cg-on-surface-dim);text-transform:uppercase}
+
+  /* ── workspace 3-col ──────────────────────────────────────────── */
+  .work{display:grid;grid-template-columns:300px 1fr 340px;min-height:0;overflow:hidden}
+  .panel{min-height:0;display:flex;flex-direction:column;overflow:hidden}
+  .panel.left{border-right:1px solid var(--cg-hairline-soft);background:rgba(9,11,24,.4)}
+  .panel.right{border-left:1px solid var(--cg-hairline-soft);background:rgba(9,11,24,.4)}
+
+  .phead{
+    display:flex;align-items:center;gap:8px;padding:12px 14px 8px;
+    font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--cg-on-surface-dim);
+  }
+  .phead .dot{width:6px;height:6px;border-radius:50%;background:var(--cg-prism-1);box-shadow:0 0 8px var(--cg-prism-1)}
+
+  /* ── entity tree ──────────────────────────────────────────────── */
+  .tree{overflow-y:auto;padding:2px 8px 16px;flex:1 1 auto}
+  .grp{margin:6px 0}
+  .grp>.grph{
+    display:flex;align-items:center;gap:8px;width:100%;text-align:left;cursor:pointer;
+    background:rgba(124,150,255,.05);border:1px solid var(--cg-hairline-soft);
+    border-radius:var(--cg-r-sm);padding:9px 11px;transition:.14s var(--cg-ease);
+  }
+  .grp>.grph:hover{background:rgba(124,150,255,.12);border-color:var(--cg-hairline)}
+  .grp>.grph .caret{transition:transform .18s var(--cg-ease);color:#8089bd;font-size:11px}
+  .grp.collapsed>.grph .caret{transform:rotate(-90deg)}
+  .grp>.grph .lbl{font-size:12px;font-weight:600;letter-spacing:.04em;flex:1 1 auto}
+  .grp>.grph .ct{
+    font-family:var(--cg-mono);font-size:10px;color:#aab2e6;
+    background:rgba(124,150,255,.14);border-radius:999px;padding:2px 8px;
+  }
+  .grp .items{margin:4px 0 2px;display:flex;flex-direction:column;gap:2px;overflow:hidden}
+  .grp.collapsed .items{display:none}
+  .ent{
+    display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;cursor:pointer;
+    border:1px solid transparent;transition:.12s var(--cg-ease);font-size:12.5px;
+  }
+  .ent:hover{background:rgba(124,150,255,.1)}
+  .ent.sel{background:linear-gradient(100deg,rgba(96,165,250,.22),rgba(167,139,250,.07));border-color:var(--cg-hairline);color:#fff}
+  .ent .tag{width:7px;height:7px;border-radius:2px;flex:0 0 auto}
+  .ent .txt{flex:1 1 auto;min-width:0}
+  .ent .mono{font-size:11.5px;color:#cdd6f5}
+  .ent.sel .mono{color:#fff}
+  .ent .chk{font-size:11px;color:var(--cg-prism-4);flex:0 0 auto;opacity:0;transition:.12s}
+  .ent.checked .chk{opacity:1}
+
+  /* ── center: tabs + graph ─────────────────────────────────────── */
+  .center{display:flex;flex-direction:column;min-height:0}
+  .tabs{display:flex;gap:4px;padding:10px 14px 0;border-bottom:1px solid var(--cg-hairline-soft)}
+  .tab{
+    padding:9px 16px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--cg-on-surface-dim);cursor:pointer;background:none;border:0;border-bottom:2px solid transparent;
+    transition:.14s var(--cg-ease);
+  }
+  .tab:hover{color:var(--cg-on-surface)}
+  .tab.active{color:#fff;border-bottom-color:var(--cg-prism-2)}
+  .tab .badge{font-family:var(--cg-mono);font-size:9px;margin-left:7px;color:#aab2e6;background:rgba(124,150,255,.14);border-radius:999px;padding:1px 6px}
+
+  .tabbody{position:relative;flex:1 1 auto;min-height:0;overflow:hidden}
+  .view{position:absolute;inset:0;display:none;overflow:auto}
+  .view.show{display:block}
+  .view.graphwrap{overflow:hidden}
+
+  /* graph */
+  #graph{display:block;width:100%;height:100%;cursor:grab}
+  #graph:active{cursor:grabbing}
+  .graphlegend{
+    position:absolute;left:14px;bottom:12px;display:flex;gap:14px;flex-wrap:wrap;
+    background:rgba(9,11,24,.7);border:1px solid var(--cg-hairline-soft);border-radius:var(--cg-r-sm);
+    padding:8px 12px;font-size:10px;letter-spacing:.08em;color:var(--cg-on-surface-dim);backdrop-filter:blur(6px);
+  }
+  .graphlegend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px;vertical-align:middle}
+  .graphhint{
+    position:absolute;right:14px;top:12px;font-size:10px;color:#6b73a0;
+    background:rgba(9,11,24,.6);border:1px solid var(--cg-hairline-soft);border-radius:8px;padding:6px 10px;
+  }
+
+  /* completed list */
+  .session{
+    display:flex;align-items:center;gap:14px;margin:10px 14px;padding:13px 15px;
+    background:rgba(124,150,255,.05);border:1px solid var(--cg-hairline-soft);border-radius:var(--cg-r-md);
+    transition:.14s var(--cg-ease);cursor:pointer;
+  }
+  .session:hover{border-color:var(--cg-hairline);background:rgba(124,150,255,.1)}
+  .session .stat{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+  .session .meta{flex:1 1 auto;min-width:0}
+  .session .meta b{font-size:13px;font-weight:600}
+  .session .meta div{font-size:11px;color:var(--cg-on-surface-dim);margin-top:2px}
+  .session .nums{text-align:right;font-family:var(--cg-mono);font-size:11px;color:#aab2e6;flex:0 0 auto}
+
+  /* info (raw) view */
+  .raw{margin:14px;border:1px solid var(--cg-hairline-soft);border-radius:var(--cg-r-md);overflow:hidden}
+  .raw .rh{padding:10px 14px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--cg-on-surface-dim);border-bottom:1px solid var(--cg-hairline-soft);background:rgba(124,150,255,.05)}
+  .raw pre{margin:0;padding:14px;font-family:var(--cg-mono);font-size:12px;line-height:1.6;color:#c7d0f5;white-space:pre-wrap;word-break:break-word}
+  .raw pre .k{color:#7fb2ff}
+  .raw pre .s{color:#86e0bd}
+  .raw pre .n{color:#f0b6e0}
+
+  /* ── right: node info panel ───────────────────────────────────── */
+  .nodecard{margin:6px 14px 0;padding:14px;border:1px solid var(--cg-hairline);border-radius:var(--cg-r-md);background:rgba(124,150,255,.05)}
+  .nodecard .nid{display:flex;align-items:center;gap:10px}
+  .nodecard .nid .ring{
+    width:36px;height:36px;border-radius:10px;flex:0 0 auto;display:grid;place-items:center;
+    background:rgba(96,165,250,.16);border:1px solid var(--cg-hairline);font-size:15px;
+  }
+  .nodecard .nid .t b{display:block;font-family:var(--cg-mono);font-size:15px;letter-spacing:.02em}
+  .nodecard .nid .t span{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--cg-on-surface-dim)}
+  .kv{display:grid;grid-template-columns:96px 1fr;gap:7px 10px;margin-top:14px}
+  .kv dt{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--cg-on-surface-dim);align-self:center}
+  .kv dd{margin:0;font-family:var(--cg-mono);font-size:12.5px;color:#dfe6ff;word-break:break-all}
+  .kv dd.na{color:#6b73a0;font-style:italic;font-family:var(--cg-sans)}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+    padding:9px 13px;border-radius:var(--cg-r-pill);font-size:12px;font-weight:600;
+    background:rgba(124,150,255,.1);border:1px solid var(--cg-hairline);transition:.14s var(--cg-ease);
+  }
+  .btn:hover{background:rgba(124,150,255,.2);border-color:var(--cg-prism-1)}
+  .btn.full{width:100%;justify-content:center;margin-top:12px}
+  .notes{margin:10px 14px 0}
+  .notes[hidden]{display:none}
+  .notes textarea{
+    width:100%;min-height:96px;resize:vertical;border-radius:var(--cg-r-sm);
+    background:rgba(10,13,28,.7);border:1px solid var(--cg-hairline-soft);color:var(--cg-on-surface);
+    font-family:var(--cg-mono);font-size:12px;padding:10px;outline:none;
+  }
+  .notes textarea:focus{border-color:var(--cg-prism-2)}
+  .notes .saved{font-size:10px;color:var(--cg-prism-4);margin-top:6px;height:12px;letter-spacing:.1em}
+
+  /* node details list */
+  .ndhead{display:flex;align-items:center;justify-content:space-between;padding:16px 14px 8px}
+  .ndhead .t{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--cg-on-surface-dim)}
+  .ndhead .ct{font-family:var(--cg-mono);font-size:10px;color:#aab2e6;background:rgba(124,150,255,.14);border-radius:999px;padding:2px 8px}
+  .ndlist{flex:1 1 auto;overflow-y:auto;padding:0 10px 16px}
+  .nd{
+    display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:8px;cursor:pointer;
+    font-family:var(--cg-mono);font-size:12px;border:1px solid transparent;transition:.1s var(--cg-ease);
+  }
+  .nd:hover{background:rgba(124,150,255,.09)}
+  .nd.sel{background:linear-gradient(100deg,rgba(96,165,250,.22),rgba(167,139,250,.07));border-color:var(--cg-hairline);color:#fff}
+  .nd .tag{width:6px;height:6px;border-radius:2px;flex:0 0 auto}
+  .nd .geo{margin-left:auto;font-size:9.5px;color:#7c84b8;font-family:var(--cg-sans);letter-spacing:.05em}
+  .nd.sel .geo{color:#bcd4ff}
+
+  .empty{padding:30px 16px;text-align:center;color:#6b73a0;font-size:12px}
+
+  /* scrollbars */
+  ::-webkit-scrollbar{width:9px;height:9px}
+  ::-webkit-scrollbar-thumb{background:rgba(124,150,255,.22);border-radius:8px}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(124,150,255,.4)}
+
+  /* responsive */
+  .mobtabbar{display:none}
+  @media(max-width:1100px){
+    .work{grid-template-columns:1fr;grid-template-rows:1fr;position:relative}
+    .panel.left,.panel.right{position:absolute;inset:0;z-index:20;width:86vw;max-width:340px;
+      background:linear-gradient(180deg,rgba(11,13,28,.99),rgba(8,10,22,.99));
+      transform:translateX(-105%);transition:transform .26s var(--cg-spring)}
+    .panel.right{left:auto;right:0;transform:translateX(105%)}
+    .panel.left.open{transform:translateX(0)}
+    .panel.right.open{transform:translateX(0)}
+    .topstats{display:none}
+    .mobtabbar{display:flex;gap:8px;position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:40;
+      background:rgba(11,13,28,.92);border:1px solid var(--cg-hairline);border-radius:999px;padding:6px;backdrop-filter:blur(8px)}
+    .mobtabbar button{padding:8px 14px;border-radius:999px;border:0;background:none;font-size:11px;letter-spacing:.12em;color:var(--cg-on-surface-dim)}
+    .mobtabbar button.on{background:rgba(124,150,255,.18);color:#fff}
+  }
+  @media(max-width:560px){
+    .brand .sub{display:none}.search kbd{display:none}
+  }
+</style>
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.clearglassinc.com/clearglass.html">
+  <meta property="og:title" content="ClearGlass · Network Flow Intelligence">
+  <meta property="og:description" content="ClearGlass — a network flow intelligence platform for visualizing and analyzing domains, IP flows and entity relationships for security analysts and network.">
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+  <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">ClearGlass · Network Flow Intelligence</h1>
+<div class="app">
+  <!-- ── top bar ── -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="mk"></div>
+      <div>
+        <div class="nm">Clear<b>Glass</b></div>
+        <div class="sub">Network Flow Intelligence</div>
+      </div>
+    </div>
+    <div class="search">
+      <span class="ic">⌕</span>
+      <input id="search" type="search" placeholder="Search entities, IPs or node IDs…" autocomplete="off" aria-label="Global search" />
+      <kbd>/</kbd>
+    </div>
+    <div class="topstats">
+      <div class="topstat"><b id="stat-nodes">0</b><span>Nodes</span></div>
+      <div class="topstat"><b id="stat-edges">0</b><span>Flows</span></div>
+      <div class="topstat"><b id="stat-sel">0</b><span>Selected</span></div>
+    </div>
+  </header>
+
+  <div class="work">
+    <!-- ── left: entity dashboard ── -->
+    <aside class="panel left" id="left">
+      <div class="phead"><span class="dot"></span> Entity Dashboard</div>
+      <div class="tree" id="tree"><!-- groups injected --></div>
+    </aside>
+
+    <!-- ── center: tabs + graph ── -->
+    <main class="panel center">
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="graph" role="tab">Graph</button>
+        <button class="tab" data-tab="completed" role="tab">Completed <span class="badge" id="badge-completed">0</span></button>
+        <button class="tab" data-tab="info" role="tab">Info</button>
+      </div>
+      <div class="tabbody">
+        <section class="view graphwrap show" id="view-graph">
+          <canvas id="graph"></canvas>
+          <div class="graphhint">Drag to pan · scroll to zoom · click a node to inspect</div>
+          <div class="graphlegend">
+            <span><i style="background:var(--cg-prism-2)"></i>Domain</span>
+            <span><i style="background:var(--cg-prism-1)"></i>IP address</span>
+            <span><i style="background:var(--cg-prism-4)"></i>Subdomain</span>
+            <span><i style="background:var(--cg-prism-3)"></i>Selected</span>
+          </div>
+        </section>
+        <section class="view" id="view-completed"><!-- sessions injected --></section>
+        <section class="view" id="view-info"><!-- raw node data injected --></section>
+      </div>
+    </main>
+
+    <!-- ── right: node info + node details list ── -->
+    <aside class="panel right" id="right">
+      <div class="phead"><span class="dot"></span> Node Information</div>
+      <div class="nodecard" id="nodecard">
+        <div class="nid">
+          <div class="ring" id="node-ring">◎</div>
+          <div class="t"><b id="node-id">—</b><span id="node-kind">no node selected</span></div>
+        </div>
+        <dl class="kv">
+          <dt>Country</dt><dd id="f-country" class="na">N/A</dd>
+          <dt>City</dt><dd id="f-city" class="na">N/A</dd>
+          <dt>Address</dt><dd id="f-address" class="na">N/A</dd>
+          <dt>IP</dt><dd id="f-ip" class="na">N/A</dd>
+          <dt>Latitude</dt><dd id="f-lat" class="na">N/A</dd>
+          <dt>Longitude</dt><dd id="f-lon" class="na">N/A</dd>
+        </dl>
+        <button class="btn full" id="toggle-notes">✎ Toggle notes</button>
+      </div>
+      <div class="notes" id="notes" hidden>
+        <textarea id="note-text" placeholder="Add analyst notes for this node…"></textarea>
+        <div class="saved" id="note-saved"></div>
+      </div>
+
+      <div class="ndhead">
+        <span class="t">Node Details</span>
+        <span class="ct" id="nd-count">0</span>
+      </div>
+      <div class="ndlist" id="ndlist"><!-- node rows injected --></div>
+    </aside>
+  </div>
+</div>
+
+<div class="mobtabbar">
+  <button data-pane="left" class="on">Entities</button>
+  <button data-pane="center">Graph</button>
+  <button data-pane="right">Node</button>
+</div>
+
+<script defer src="nav.js"></script>
+<script>
+/* ─────────────────────────────────────────────────────────────────────────
+   ClearGlass · Network Flow Intelligence — prototype logic.
+   Mock data is generated deterministically so the demo is reproducible.
+   Replace buildMockData() with a live API/JSON fetch to wire real flows.
+   ───────────────────────────────────────────────────────────────────────── */
+(function () {
+  "use strict";
+
+  var DOMAIN = "mydummydomain.com";
+  var SUBS = ["ai-api", "cdn", "auth", "mail", "vpn", "gateway", "edge", "metrics",
+              "stream", "static", "ws", "ingest", "relay", "node", "proxy"];
+  var COUNTRIES = [
+    ["United States", "Ashburn"], ["Germany", "Frankfurt"], ["Ireland", "Dublin"],
+    ["Singapore", "Singapore"], ["Brazil", "São Paulo"], ["Japan", "Tokyo"],
+    ["Netherlands", "Amsterdam"], ["Canada", "Toronto"], [null, null] /* N/A fallback */
+  ];
+
+  // Tiny seeded PRNG (mulberry32) — reproducible demo data.
+  function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  var rand = rng(0x6c67); // "lg"
+
+  function pick(a){return a[Math.floor(rand()*a.length)];}
+  function ipv4(){return [Math.floor(rand()*223)+1, Math.floor(rand()*255), Math.floor(rand()*255), Math.floor(rand()*255)].join(".");}
+
+  /* ── data model ──────────────────────────────────────────────── */
+  var nodes = [];   // {id,label,kind,ip,country,city,address,lat,lon,checked,x,y,vx,vy,note}
+  var edges = [];   // {a,b}
+  var byId = {};
+
+  function addNode(n){ n.checked=false; n.note=""; nodes.push(n); byId[n.id]=n; return n; }
+
+  function buildMockData(){
+    // Root domain node
+    addNode({id:DOMAIN, label:DOMAIN, kind:"domain"});
+
+    // Subdomains
+    SUBS.forEach(function(s){
+      var fqdn = s + "." + DOMAIN;
+      addNode({id:fqdn, label:fqdn, kind:"subdomain"});
+      edges.push({a:DOMAIN, b:fqdn});
+    });
+
+    // IP nodes — example range 12.34.56.78 .. 12.34.56.349 (290+ addresses).
+    // The 4th octet intentionally exceeds 255 (as in the reference image),
+    // so we keep IDs as free-form strings and never assume valid IPv4.
+    var base = "12.34.56.";
+    for (var oct = 78; oct <= 349; oct++){
+      var id = base + oct;
+      var geo = pick(COUNTRIES);
+      addNode({
+        id:id, label:id, kind:"ip",
+        ip: id,                                   // example shows IP-like values
+        country: geo[0], city: geo[1],
+        address: ipv4(),                          // separate placeholder address
+        lat: (rand()<0.3 ? ipv4() : (rand()*180-90).toFixed(4)),  // may appear as an IP (placeholder)
+        lon: (rand()<0.3 ? ipv4() : (rand()*360-180).toFixed(4))
+      });
+      // attach each IP to a subdomain or the root, plus occasional cross-links
+      var parent = rand()<0.78 ? (SUBS[Math.floor(rand()*SUBS.length)] + "." + DOMAIN) : DOMAIN;
+      edges.push({a:parent, b:id});
+      if (rand()<0.08){ edges.push({a:id, b:base + (78 + Math.floor(rand()*272))}); }
+    }
+
+    // Pre-select a few entities to show the "Selected" group.
+    [SUBS[0]+"."+DOMAIN, base+"78", base+"120", base+"349"].forEach(function(id){
+      if (byId[id]) byId[id].checked = true;
+    });
+  }
+
+  buildMockData();
+
+  /* ── helpers ─────────────────────────────────────────────────── */
+  function truncate(s, n){ n=n||22; return s.length>n ? s.slice(0,n-1)+"…" : s; }
+  function kindColor(k){
+    return k==="domain" ? "var(--cg-prism-2)"
+         : k==="subdomain" ? "var(--cg-prism-4)"
+         : "var(--cg-prism-1)";
+  }
+  function kindGlyph(k){ return k==="domain"?"🌐":k==="subdomain"?"⌗":"▤"; }
+  function geoShort(n){ return n.country ? (n.city?n.city+", ":"")+n.country : "N/A"; }
+
+  var state = { selected:null, query:"", collapsed:{} };
+
+  /* ── left: entity dashboard ──────────────────────────────────── */
+  var treeEl = document.getElementById("tree");
+  function matches(n){
+    if(!state.query) return true;
+    var q = state.query.toLowerCase();
+    return n.id.toLowerCase().indexOf(q)>=0 ||
+           (n.ip && n.ip.toLowerCase().indexOf(q)>=0) ||
+           (n.label && n.label.toLowerCase().indexOf(q)>=0);
+  }
+
+  function group(kindFilter){ return nodes.filter(function(n){ return kindFilter(n) && matches(n); }); }
+
+  function renderTree(){
+    var selected = nodes.filter(function(n){return n.checked && matches(n);});
+    var domains  = group(function(n){return n.kind==="domain";});
+    var subs     = group(function(n){return n.kind==="subdomain";});
+    var ips      = group(function(n){return n.kind==="ip";});
+
+    var groups = [
+      ["selected", "Selected items", selected, "var(--cg-prism-3)"],
+      ["domains",  "Domains",        domains,  "var(--cg-prism-2)"],
+      ["subs",     "Subdomains",     subs,     "var(--cg-prism-4)"],
+      ["ips",      "IP addresses",   ips,      "var(--cg-prism-1)"]
+    ];
+
+    treeEl.innerHTML = "";
+    groups.forEach(function(g){
+      var key=g[0], lbl=g[1], items=g[2];
+      var wrap=document.createElement("div");
+      wrap.className="grp"+(state.collapsed[key]?" collapsed":"");
+
+      var head=document.createElement("button");
+      head.className="grph"; head.type="button";
+      head.innerHTML='<span class="caret">▾</span><span class="lbl">'+lbl+
+        '</span><span class="ct">'+items.length+'</span>';
+      head.onclick=function(){ state.collapsed[key]=!state.collapsed[key]; renderTree(); };
+      wrap.appendChild(head);
+
+      var box=document.createElement("div"); box.className="items";
+      if(!items.length){
+        var e=document.createElement("div"); e.className="empty"; e.style.padding="8px 10px";
+        e.textContent = state.query ? "No matches" : "None";
+        box.appendChild(e);
+      }
+      items.slice(0,400).forEach(function(n){
+        var row=document.createElement("div");
+        row.className="ent"+(state.selected===n.id?" sel":"")+(n.checked?" checked":"");
+        row.title=n.id;
+        row.innerHTML='<span class="tag" style="background:'+kindColor(n.kind)+'"></span>'+
+          '<span class="txt"><span class="mono trunc">'+truncate(n.label,24)+'</span></span>'+
+          '<span class="chk">✓</span>';
+        row.onclick=function(ev){
+          if(ev.shiftKey){ n.checked=!n.checked; renderTree(); updateStats(); drawGraph(); return; }
+          selectNode(n.id);
+        };
+        box.appendChild(row);
+      });
+      wrap.appendChild(box);
+      treeEl.appendChild(wrap);
+    });
+  }
+
+  /* ── right: node info panel ──────────────────────────────────── */
+  function setField(id, val){
+    var el=document.getElementById(id);
+    if(val===null||val===undefined||val===""){ el.textContent="N/A"; el.classList.add("na"); }
+    else { el.textContent=val; el.classList.remove("na"); }
+  }
+  function renderInfoPanel(){
+    var n = state.selected ? byId[state.selected] : null;
+    document.getElementById("node-id").textContent = n ? truncate(n.id,22) : "—";
+    document.getElementById("node-kind").textContent = n ? n.kind : "no node selected";
+    document.getElementById("node-ring").textContent = n ? kindGlyph(n.kind) : "◎";
+    setField("f-country", n?n.country:null);
+    setField("f-city",    n?n.city:null);
+    setField("f-address", n?n.address:null);
+    setField("f-ip",      n?(n.ip||null):null);
+    setField("f-lat",     n?n.lat:null);
+    setField("f-lon",     n?n.lon:null);
+    // notes
+    var ta=document.getElementById("note-text");
+    ta.value = n ? n.note : "";
+    ta.disabled = !n;
+    document.getElementById("note-saved").textContent="";
+  }
+
+  // Toggle notes
+  var notesOpen=false;
+  document.getElementById("toggle-notes").onclick=function(){
+    notesOpen=!notesOpen;
+    document.getElementById("notes").hidden=!notesOpen;
+    if(notesOpen) document.getElementById("note-text").focus();
+  };
+  var saveT;
+  document.getElementById("note-text").addEventListener("input",function(){
+    if(!state.selected) return;
+    byId[state.selected].note=this.value;
+    var s=document.getElementById("note-saved");
+    s.textContent="● saved";
+    clearTimeout(saveT); saveT=setTimeout(function(){s.textContent="";},1200);
+  });
+
+  /* ── right: node details list (scrollable, 200+ rows) ────────── */
+  var ndEl=document.getElementById("ndlist");
+  function renderNodeList(){
+    var list = nodes.filter(function(n){return n.kind==="ip" && matches(n);});
+    document.getElementById("nd-count").textContent=list.length;
+    ndEl.innerHTML="";
+    if(!list.length){ ndEl.innerHTML='<div class="empty">No nodes match “'+state.query+'”.</div>'; return; }
+    // Lightweight virtualization for large sets: render in a fragment.
+    var frag=document.createDocumentFragment();
+    list.forEach(function(n){
+      var row=document.createElement("div");
+      row.className="nd"+(state.selected===n.id?" sel":"");
+      row.innerHTML='<span class="tag" style="background:'+kindColor(n.kind)+'"></span>'+
+        n.id+'<span class="geo">'+geoShort(n)+'</span>';
+      row.onclick=function(){ selectNode(n.id); };
+      frag.appendChild(row);
+    });
+    ndEl.appendChild(frag);
+  }
+
+  /* ── completed sessions (mock historical analyses) ───────────── */
+  function renderCompleted(){
+    var sessions=[
+      ["NOMINAL","var(--cg-status-ok)","Flow sweep · "+DOMAIN,"Resolved 290 IPs across 15 subdomains","290 nodes · 312 flows","2026-06-12 21:04"],
+      ["NOMINAL","var(--cg-status-ok)","ASN correlation · AS16509","Clustered edge ranges by autonomous system","41 nodes · 58 flows","2026-06-11 14:22"],
+      ["DEGRADED","var(--cg-status-warn)","Passive DNS replay","3 subdomains returned NXDOMAIN","12 nodes · 9 flows","2026-06-10 08:50"],
+      ["NOMINAL","var(--cg-status-ok)","GeoIP enrichment","Tagged country/city for resolved hosts","268 nodes · —","2026-06-09 19:31"],
+      ["FAILURE","var(--cg-status-fail)","TLS fan-out probe","Upstream timeout on 11 endpoints","27 nodes · 0 flows","2026-06-08 11:07"]
+    ];
+    var v=document.getElementById("view-completed");
+    document.getElementById("badge-completed").textContent=sessions.length;
+    v.innerHTML="";
+    sessions.forEach(function(s){
+      var el=document.createElement("div"); el.className="session";
+      el.innerHTML='<span class="stat" style="background:'+s[1]+'"></span>'+
+        '<div class="meta"><b>'+s[2]+'</b><div>'+s[3]+' · <span class="mono">'+s[5]+'</span></div></div>'+
+        '<div class="nums">'+s[4]+'</div>';
+      v.appendChild(el);
+    });
+  }
+
+  /* ── info (raw node data) view ───────────────────────────────── */
+  function renderInfoView(){
+    var v=document.getElementById("view-info");
+    var n = state.selected ? byId[state.selected] : nodes[0];
+    var neighbors = edges.filter(function(e){return e.a===n.id||e.b===n.id;})
+                         .map(function(e){return e.a===n.id?e.b:e.a;}).slice(0,12);
+    var obj={
+      id:n.id, kind:n.kind, ip:n.ip||null,
+      country:n.country, city:n.city, address:n.address||null,
+      latitude:n.lat!==undefined?n.lat:null, longitude:n.lon!==undefined?n.lon:null,
+      degree: edges.filter(function(e){return e.a===n.id||e.b===n.id;}).length,
+      neighbors: neighbors,
+      notes: n.note || null
+    };
+    var json=JSON.stringify(obj,null,2)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+      .replace(/"([^"]+)":/g,'<span class="k">"$1"</span>:')
+      .replace(/: "([^"]*)"/g,': <span class="s">"$1"</span>')
+      .replace(/: (-?\d[\d.]*)/g,': <span class="n">$1</span>');
+    v.innerHTML='<div class="raw"><div class="rh">Raw node record · '+truncate(n.id,40)+
+      '</div><pre>'+json+'</pre></div>';
+  }
+
+  /* ── selection orchestration ─────────────────────────────────── */
+  function selectNode(id){
+    state.selected=id;
+    renderTree(); renderInfoPanel(); renderNodeList();
+    if(activeTab==="info") renderInfoView();
+    updateStats(); drawGraph();
+    // focus selected row in the node list
+    var sel=ndEl.querySelector(".nd.sel"); if(sel) sel.scrollIntoView({block:"nearest"});
+  }
+
+  function updateStats(){
+    document.getElementById("stat-nodes").textContent=nodes.length;
+    document.getElementById("stat-edges").textContent=edges.length;
+    document.getElementById("stat-sel").textContent=nodes.filter(function(n){return n.checked;}).length;
+  }
+
+  /* ── search ──────────────────────────────────────────────────── */
+  var searchEl=document.getElementById("search");
+  searchEl.addEventListener("input",function(){
+    state.query=this.value.trim();
+    renderTree(); renderNodeList();
+  });
+  document.addEventListener("keydown",function(e){
+    if(e.key==="/" && document.activeElement!==searchEl){ e.preventDefault(); searchEl.focus(); }
+  });
+
+  /* ── tabs ────────────────────────────────────────────────────── */
+  var activeTab="graph";
+  document.querySelectorAll(".tab").forEach(function(t){
+    t.onclick=function(){
+      activeTab=t.dataset.tab;
+      document.querySelectorAll(".tab").forEach(function(x){x.classList.toggle("active",x===t);});
+      ["graph","completed","info"].forEach(function(k){
+        document.getElementById("view-"+k).classList.toggle("show",k===activeTab);
+      });
+      if(activeTab==="info") renderInfoView();
+      if(activeTab==="graph") { resizeGraph(); drawGraph(); }
+    };
+  });
+
+  /* ── graph (force-ish layout on canvas) ──────────────────────── */
+  var canvas=document.getElementById("graph"), ctx=canvas.getContext("2d");
+  var view={x:0,y:0,k:1}, drag=null, dpr=Math.min(window.devicePixelRatio||1,2);
+
+  // seed positions on concentric rings by kind
+  (function seed(){
+    var W=900,H=600,cx=W/2,cy=H/2;
+    nodes.forEach(function(n,i){
+      var ring = n.kind==="domain"?0 : n.kind==="subdomain"?180 : 320+ (i%4)*36;
+      var ang = (i*2.399963); // golden angle
+      n.x = cx + Math.cos(ang)*ring + (rand()*40-20);
+      n.y = cy + Math.sin(ang)*ring + (rand()*40-20);
+    });
+  })();
+
+  function resizeGraph(){
+    var r=canvas.parentElement.getBoundingClientRect();
+    canvas.width=r.width*dpr; canvas.height=r.height*dpr;
+    canvas.style.width=r.width+"px"; canvas.style.height=r.height+"px";
+  }
+
+  function nodeRadius(n){ return n.kind==="domain"?9 : n.kind==="subdomain"?6 : 3.4; }
+
+  function drawGraph(){
+    if(activeTab!=="graph") return;
+    var w=canvas.width, h=canvas.height;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,w,h);
+    ctx.save();
+    ctx.scale(view.k,view.k); ctx.translate(view.x,view.y);
+
+    // edges
+    ctx.lineWidth=0.6/view.k;
+    edges.forEach(function(e){
+      var a=byId[e.a], b=byId[e.b]; if(!a||!b) return;
+      var hot = state.selected && (e.a===state.selected||e.b===state.selected);
+      ctx.strokeStyle = hot ? "rgba(244,114,182,.55)" : "rgba(124,150,255,.12)";
+      ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+    });
+
+    // nodes
+    nodes.forEach(function(n){
+      var r=nodeRadius(n);
+      var col = n.id===state.selected ? "#f472b6"
+              : n.checked ? "#fbbf24"
+              : n.kind==="domain" ? "#a78bfa"
+              : n.kind==="subdomain" ? "#34d399" : "#38bdf8";
+      if(n.id===state.selected){
+        ctx.beginPath(); ctx.arc(n.x,n.y,r+5,0,7); ctx.fillStyle="rgba(244,114,182,.18)"; ctx.fill();
+      }
+      ctx.beginPath(); ctx.arc(n.x,n.y,r,0,7); ctx.fillStyle=col; ctx.fill();
+      if(n.kind!=="ip" && view.k>0.55){
+        ctx.fillStyle="rgba(231,236,255,.85)"; ctx.font=(11/1)+"px 'IBM Plex Mono',monospace";
+        ctx.fillText(truncate(n.label,18), n.x+r+4, n.y+3);
+      }
+    });
+    ctx.restore();
+  }
+
+  // pan + zoom + click
+  canvas.addEventListener("mousedown",function(e){ drag={x:e.clientX,y:e.clientY,moved:false}; });
+  window.addEventListener("mousemove",function(e){
+    if(!drag) return;
+    var dx=e.clientX-drag.x, dy=e.clientY-drag.y;
+    if(Math.abs(dx)+Math.abs(dy)>3) drag.moved=true;
+    view.x+=dx/view.k; view.y+=dy/view.k; drag.x=e.clientX; drag.y=e.clientY; drawGraph();
+  });
+  window.addEventListener("mouseup",function(e){
+    if(drag && !drag.moved){ hitTest(e); }
+    drag=null;
+  });
+  canvas.addEventListener("wheel",function(e){
+    e.preventDefault();
+    var f=e.deltaY<0?1.12:0.89;
+    view.k=Math.max(0.25,Math.min(3.5,view.k*f)); drawGraph();
+  },{passive:false});
+
+  function hitTest(e){
+    var r=canvas.getBoundingClientRect();
+    var mx=(e.clientX-r.left)/view.k - view.x;
+    var my=(e.clientY-r.top)/view.k - view.y;
+    var best=null,bd=1e9;
+    nodes.forEach(function(n){
+      var d=(n.x-mx)*(n.x-mx)+(n.y-my)*(n.y-my);
+      var rr=Math.pow(nodeRadius(n)+6,2);
+      if(d<rr && d<bd){bd=d;best=n;}
+    });
+    if(best) selectNode(best.id);
+  }
+
+  window.addEventListener("resize",function(){ resizeGraph(); drawGraph(); });
+
+  /* ── mobile pane switcher ────────────────────────────────────── */
+  document.querySelectorAll(".mobtabbar button").forEach(function(b){
+    b.onclick=function(){
+      document.querySelectorAll(".mobtabbar button").forEach(function(x){x.classList.toggle("on",x===b);});
+      var pane=b.dataset.pane;
+      document.getElementById("left").classList.toggle("open",pane==="left");
+      document.getElementById("right").classList.toggle("open",pane==="right");
+      if(pane==="center"){ resizeGraph(); drawGraph(); }
+    };
+  });
+
+  /* ── boot ────────────────────────────────────────────────────── */
+  renderTree(); renderCompleted(); renderInfoPanel(); renderNodeList(); updateStats();
+  resizeGraph(); drawGraph();
+  // sensible default selection
+  selectNode("12.34.56.78");
+})();
+</script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related" class="cgr-dock">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}#cg-related.cgr-dock{position:fixed;left:14px;bottom:14px;margin:0;padding:0;max-width:none;z-index:2147483000}#cg-related.cgr-dock .cgr-tab{display:inline-block;cursor:pointer;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#dbe4ff;padding:8px 12px;border-radius:9px;border:1px solid rgba(124,150,255,.42);background:linear-gradient(180deg,rgba(18,20,42,.92),rgba(11,12,28,.92));box-shadow:0 6px 22px rgba(0,0,0,.4);backdrop-filter:blur(6px);user-select:none}#cg-related.cgr-dock .cgr-tab:hover{color:#fff;border-color:rgba(124,150,255,.85)}#cg-related.cgr-dock .cgr-box{display:none;position:absolute;bottom:calc(100% + 8px);left:0;width:min(400px,92vw);max-height:62vh;overflow-y:auto}#cg-related.cgr-dock:hover .cgr-box,#cg-related.cgr-dock:focus-within .cgr-box{display:block}#cg-related.cgr-dock ul{grid-template-columns:1fr}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="intelligence.html">Intelligence &amp; OSINT</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="Ontario-osint.html"><span><b>Previous</b>Ontario OSINT Deck</span></a>
+      <a href="intelligence.html"><span><b>Topic hub</b>Intelligence</span></a>
+      <a href="intelligence-command-surface.html"><span><b>Next in journey</b>Intelligence Command Surface</span></a>
+    </div>
+    <ul>
+      <li><a href="intelligence-command-surface.html"><b>Intelligence Command Surface</b> — one unified operational picture</a></li>
+      <li><a href="intelligence-interface.html"><b>Intelligence Interface 2027</b> — next-generation analyst workspace</a></li>
+      <li><a href="intelligence-platform.html"><b>Intelligence Platform Architecture</b> — brand and platform blueprint</a></li>
+      <li><a href="ClearGlass-NEXUS-v12-FINAL.html"><b>NEXUS v12</b> — the flagship intelligence platform build</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+  <div class="cgr-tab" tabindex="0" role="button" aria-label="Show related ClearGlass pages">⌁ Explore ClearGlass</div>
+</aside>
+<!-- cg-related:end -->
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>
