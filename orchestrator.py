@@ -1,462 +1,223 @@
-"""Deterministic orchestration for the ClearGlass engineering and marketing agent army.
+# Copyright (c) 2024-2026 ClearGlass Inc. All Rights Reserved.
+# Proprietary and confidential. See LICENSE for terms.
+"""Executive orchestration layer — the deterministic mission runner.
 
-This module performs local planning only. It does not call external services, publish
-content, contact prospects, spend money, deploy production systems, or store secrets.
-Those actions remain behind explicit human approval gates defined in config.json.
+Takes an objective plus optional strategies, evidence claims, and proposed
+actions, and produces the platform's mandated Output Requirements as a
+reproducible :class:`MissionReport`. It composes the advanced sub-agents:
+
+* Executive  — ranks strategies by expected value (highest-EV choice).
+* Intelligence — cross-references multi-source claims, flags contradictions,
+  and contributes a confidence that never inflates the mission's certainty.
+* Governance  — routes every proposed action; high/critical, unverifiable, or
+  evidence-free actions are held behind the human approval gate.
+* Audit       — every decision is written to a tamper-evident hash chain.
+
+No side effects: this layer *decides and reports*; it never executes external
+actions itself.
 """
-
 from __future__ import annotations
 
-import argparse
-import hashlib
-import json
-import os
-import sys
-from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Any, Iterable, Mapping, Sequence
+from dataclasses import asdict, dataclass, field
+
+from .audit import AuditLedger
+from .executive import Strategy, rank_strategies
+from .governance import RiskAssessment, score_action
+from .intelligence import Claim, aggregate_confidence, cross_reference
+from .planning import Task, critical_path_minutes, plan_waves
+
+DECISION_FRAMEWORK: tuple[str, ...] = (
+    "understand objective", "identify constraints", "gather evidence",
+    "generate multiple strategies", "estimate probability of success",
+    "estimate cost", "estimate risk", "choose highest expected value",
+    "verify", "execute", "audit", "learn",
+)
+
+EXECUTION_LOOP: tuple[str, ...] = (
+    "observe", "analyze", "prioritize", "plan", "execute", "validate",
+    "audit", "optimize", "learn",
+)
+
+OUTPUT_FIELDS: tuple[str, ...] = (
+    "mission_summary", "objective", "assumptions", "dependencies",
+    "execution_plan", "risk_assessment", "evidence", "confidence_score",
+    "artifacts_produced", "validation_results", "rollback_plan",
+    "optimization_opportunities", "next_recommended_actions",
+)
 
 
-class ConfigurationError(ValueError):
-    """Raised when the agent-army configuration is incomplete or inconsistent."""
+@dataclass
+class ProposedAction:
+    """An action a sub-agent wants to take, with the signals governance needs."""
+
+    action: str
+    summary: str = ""
+    payload: dict[str, object] = field(default_factory=dict)
+    confidence: float | None = None
+    evidence: tuple[str, ...] = ()
 
 
-@dataclass(frozen=True)
-class AgentRole:
-    id: str
-    division: str
-    name: str
-    mission: str
-    triggers: tuple[str, ...]
-    deliverables: tuple[str, ...]
+@dataclass
+class MissionReport:
+    """The mandated Output Requirements for a completed workflow."""
 
-
-@dataclass(frozen=True)
-class ExecutionStep:
-    sequence: int
-    stage: str
-    owner_id: str
-    owner_name: str
+    mission_summary: str
     objective: str
-    deliverables: tuple[str, ...]
-    approval_required: bool
-    approval_reasons: tuple[str, ...]
+    assumptions: list[str]
+    dependencies: list[list[str]]
+    execution_plan: list[dict[str, object]]
+    risk_assessment: list[dict[str, object]]
+    evidence: list[str]
+    confidence_score: float | None
+    artifacts_produced: list[str]
+    validation_results: dict[str, object]
+    rollback_plan: str
+    optimization_opportunities: list[str]
+    next_recommended_actions: list[str]
 
-
-@dataclass(frozen=True)
-class ExecutionPlan:
-    plan_id: str
-    generated_at: str
-    system: str
-    request: str
-    assessment: str
-    selected_agents: tuple[str, ...]
-    approvals_required: tuple[str, ...]
-    steps: tuple[ExecutionStep, ...]
-    risks: tuple[str, ...]
-    validation: tuple[str, ...]
-    next_action: str
-
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> dict[str, object]:
         return asdict(self)
 
-    def to_json(self) -> str:
-        return json.dumps(self.to_dict(), indent=2, ensure_ascii=False) + "\n"
 
-    def to_markdown(self) -> str:
-        approvals = ", ".join(self.approvals_required) or "None for planning"
-        agents = ", ".join(self.selected_agents)
-        lines = [
-            f"# Execution Plan {self.plan_id}",
-            "",
-            f"**Generated:** {self.generated_at}",
-            f"**System:** {self.system}",
-            f"**Request:** {self.request}",
-            f"**Assessment:** {self.assessment}",
-            f"**Selected agents:** {agents}",
-            f"**Approval gates:** {approvals}",
-            "",
-            "## Steps",
-            "",
+class AgentOS:
+    """The executive orchestration layer.
+
+    Deterministic given the same inputs; produces a full mission report and never
+    lets a gated action auto-execute.
+    """
+
+    decision_framework = DECISION_FRAMEWORK
+    execution_loop = EXECUTION_LOOP
+
+    def run_mission(
+        self,
+        objective: str,
+        *,
+        tasks: list[Task] | None = None,
+        proposed_actions: list[ProposedAction] | None = None,
+        assumptions: list[str] | None = None,
+        strategies: list[Strategy] | None = None,
+        claims: list[Claim] | None = None,
+        ledger: AuditLedger | None = None,
+    ) -> MissionReport:
+        tasks = tasks or []
+        proposed_actions = proposed_actions or []
+        assumptions = assumptions or []
+        strategies = strategies or []
+        claims = claims or []
+        ledger = ledger if ledger is not None else AuditLedger()
+
+        ledger.append("mission_start", {"objective": objective})
+
+        waves = plan_waves(tasks) if tasks else []
+        est_minutes = critical_path_minutes(tasks) if tasks else 0
+
+        # Executive: rank candidate strategies by expected value.
+        ranked = rank_strategies(strategies)
+        chosen = ranked[0] if ranked else None
+
+        # Intelligence: cross-reference evidence, detect contradictions.
+        findings = cross_reference(claims)
+        intel_conf = aggregate_confidence(findings)
+        contradictions = [f.to_dict() for f in findings if f.contradicted]
+
+        assessments: list[RiskAssessment] = []
+        evidence: list[str] = [c.value for c in claims]
+        confidences: list[float] = []
+        auto: list[str] = []
+        gated: list[str] = []
+
+        for pa in proposed_actions:
+            assessment = score_action(
+                pa.action,
+                pa.payload,
+                confidence=pa.confidence,
+                has_evidence=bool(pa.evidence),
+            )
+            assessments.append(assessment)
+            evidence.extend(pa.evidence)
+            if pa.confidence is not None:
+                confidences.append(pa.confidence)
+            (gated if assessment.requires_approval else auto).append(pa.action)
+            ledger.append(
+                "action_assessed",
+                {"action": pa.action, "requires_approval": assessment.requires_approval,
+                 "tier": assessment.tier.value},
+            )
+
+        # Mission confidence is the *minimum* observed signal — never inflate.
+        signals = list(confidences)
+        if intel_conf is not None:
+            signals.append(intel_conf)
+        confidence_score = round(min(signals), 4) if signals else None
+
+        execution_plan: list[dict[str, object]] = [
+            {"wave": i + 1, "tasks": w} for i, w in enumerate(waves)
         ]
-        for step in self.steps:
-            approval = "yes" if step.approval_required else "no"
-            reasons = ", ".join(step.approval_reasons) or "none"
-            lines.extend(
-                [
-                    f"### {step.sequence}. {step.stage}",
-                    f"- Owner: **{step.owner_name}** (`{step.owner_id}`)",
-                    f"- Objective: {step.objective}",
-                    f"- Deliverables: {', '.join(step.deliverables)}",
-                    f"- Human approval required: {approval} ({reasons})",
-                    "",
-                ]
-            )
-        lines.extend(["## Risks", ""])
-        lines.extend(f"- {risk}" for risk in self.risks)
-        lines.extend(["", "## Validation", ""])
-        lines.extend(f"- {item}" for item in self.validation)
-        lines.extend(["", "## Next action", "", self.next_action, ""])
-        return "\n".join(lines)
-
-
-def _require_mapping(value: Any, name: str) -> Mapping[str, Any]:
-    if not isinstance(value, Mapping):
-        raise ConfigurationError(f"{name} must be an object")
-    return value
-
-
-def _require_string(value: Any, name: str) -> str:
-    if not isinstance(value, str) or not value.strip():
-        raise ConfigurationError(f"{name} must be a non-empty string")
-    return value.strip()
-
-
-def _require_string_list(value: Any, name: str) -> tuple[str, ...]:
-    if not isinstance(value, list) or not value:
-        raise ConfigurationError(f"{name} must be a non-empty array")
-    result: list[str] = []
-    for index, item in enumerate(value):
-        result.append(_require_string(item, f"{name}[{index}]").lower())
-    return tuple(result)
-
-
-def load_config(path: str | Path) -> dict[str, Any]:
-    """Load and validate an agent-army configuration file."""
-
-    config_path = Path(path)
-    try:
-        raw = json.loads(config_path.read_text(encoding="utf-8"))
-    except FileNotFoundError as exc:
-        raise ConfigurationError(f"configuration file not found: {config_path}") from exc
-    except json.JSONDecodeError as exc:
-        raise ConfigurationError(
-            f"invalid JSON in {config_path}: line {exc.lineno}, column {exc.colno}"
-        ) from exc
-
-    config = dict(_require_mapping(raw, "config"))
-    for key in ("version", "system", "mission"):
-        _require_string(config.get(key), key)
-
-    roles_raw = config.get("roles")
-    if not isinstance(roles_raw, list) or not roles_raw:
-        raise ConfigurationError("roles must be a non-empty array")
-
-    role_ids: set[str] = set()
-    divisions: set[str] = set()
-    normalized_roles: list[dict[str, Any]] = []
-    for index, role_value in enumerate(roles_raw):
-        role = _require_mapping(role_value, f"roles[{index}]")
-        role_id = _require_string(role.get("id"), f"roles[{index}].id")
-        if role_id in role_ids:
-            raise ConfigurationError(f"duplicate role id: {role_id}")
-        role_ids.add(role_id)
-        division = _require_string(role.get("division"), f"roles[{index}].division").lower()
-        divisions.add(division)
-        normalized_roles.append(
-            {
-                "id": role_id,
-                "division": division,
-                "name": _require_string(role.get("name"), f"roles[{index}].name"),
-                "mission": _require_string(role.get("mission"), f"roles[{index}].mission"),
-                "triggers": _require_string_list(role.get("triggers"), f"roles[{index}].triggers"),
-                "deliverables": _require_string_list(
-                    role.get("deliverables"), f"roles[{index}].deliverables"
-                ),
-            }
-        )
-
-    missing_divisions = {"command", "engineering", "marketing"} - divisions
-    if missing_divisions:
-        raise ConfigurationError(
-            "roles must cover command, engineering, and marketing divisions; missing: "
-            + ", ".join(sorted(missing_divisions))
-        )
-
-    workflow_raw = config.get("workflow")
-    if not isinstance(workflow_raw, list) or not workflow_raw:
-        raise ConfigurationError("workflow must be a non-empty array")
-    workflow: list[dict[str, str]] = []
-    stages: set[str] = set()
-    for index, stage_value in enumerate(workflow_raw):
-        stage = _require_mapping(stage_value, f"workflow[{index}]")
-        stage_id = _require_string(stage.get("stage"), f"workflow[{index}].stage")
-        if stage_id in stages:
-            raise ConfigurationError(f"duplicate workflow stage: {stage_id}")
-        stages.add(stage_id)
-        owner = _require_string(stage.get("owner"), f"workflow[{index}].owner")
-        if owner not in role_ids:
-            raise ConfigurationError(f"workflow stage {stage_id} references unknown owner {owner}")
-        workflow.append(
-            {
-                "stage": stage_id,
-                "owner": owner,
-                "output": _require_string(stage.get("output"), f"workflow[{index}].output"),
-            }
-        )
-
-    guardrails = dict(_require_mapping(config.get("guardrails"), "guardrails"))
-    guardrails["forbidden"] = _require_string_list(guardrails.get("forbidden"), "guardrails.forbidden")
-    guardrails["approval_required"] = _require_string_list(
-        guardrails.get("approval_required"), "guardrails.approval_required"
-    )
-
-    config["roles"] = normalized_roles
-    config["workflow"] = workflow
-    config["guardrails"] = guardrails
-    return config
-
-
-class AgentArmy:
-    """Routes a request and produces a governed, deterministic execution plan."""
-
-    _ENGINEERING_SIGNALS = {
-        "api",
-        "architecture",
-        "build",
-        "code",
-        "deploy",
-        "engineering",
-        "fix",
-        "implement",
-        "legacy",
-        "migration",
-        "modernize",
-        "performance",
-        "refactor",
-        "release",
-        "security",
-        "software",
-        "test",
-    }
-    _MARKETING_SIGNALS = {
-        "audience",
-        "campaign",
-        "compaign",
-        "content",
-        "conversion",
-        "customer",
-        "email",
-        "launch",
-        "lead",
-        "linkedin",
-        "market",
-        "marketing",
-        "multi",
-        "offer",
-        "outreach",
-        "pipeline",
-        "positioning",
-        "publish",
-        "revenue",
-        "sales",
-        "seo",
-        "social",
-        "swarm",
-    }
-    _APPROVAL_SIGNALS = {
-        "external_publish": {"publish", "post", "social", "launch", "newsletter"},
-        "external_outreach": {"outreach", "email", "dm", "contact", "prospect"},
-        "paid_spend": {"ads", "advertising", "budget", "spend", "sponsor"},
-        "production_deploy": {"deploy", "production", "release", "merge"},
-        "legal_or_regulatory_claim": {"legal", "regulatory", "compliance", "certified"},
-        "customer_data_use": {"customer data", "personal data", "crm", "pii"},
-    }
-
-    def __init__(self, config: Mapping[str, Any]):
-        self.config = dict(config)
-        self.roles = {
-            role["id"]: AgentRole(
-                id=role["id"],
-                division=role["division"],
-                name=role["name"],
-                mission=role["mission"],
-                triggers=tuple(role["triggers"]),
-                deliverables=tuple(role["deliverables"]),
-            )
-            for role in self.config["roles"]
-        }
-
-    @classmethod
-    def from_file(cls, path: str | Path) -> "AgentArmy":
-        return cls(load_config(path))
-
-    @staticmethod
-    def _tokens(text: str) -> set[str]:
-        normalized = "".join(character.lower() if character.isalnum() else " " for character in text)
-        return {token for token in normalized.split() if token}
-
-    def _role_scores(self, request: str) -> dict[str, int]:
-        text = request.lower()
-        tokens = self._tokens(request)
-        scores: dict[str, int] = {}
-        for role in self.roles.values():
-            score = 0
-            for trigger in role.triggers:
-                if " " in trigger:
-                    score += 3 if trigger in text else 0
-                elif trigger in tokens:
-                    score += 2
-            scores[role.id] = score
-        return scores
-
-    def select_roles(self, request: str) -> tuple[str, ...]:
-        tokens = self._tokens(request)
-        engineering = bool(tokens & self._ENGINEERING_SIGNALS)
-        marketing = bool(tokens & self._MARKETING_SIGNALS)
-        scores = self._role_scores(request)
-
-        selected = {"chief_of_staff", "analytics_controller"}
-        if engineering:
-            selected.update({"staff_engineer", "quality_security"})
-        if marketing:
-            selected.update(
-                {
-                    "market_intelligence",
-                    "content_strategist",
-                    "distribution_planner",
-                    "revenue_operator",
-                }
-            )
-        selected.update(role_id for role_id, score in scores.items() if score > 0)
-
-        if not engineering and not marketing and all(score == 0 for score in scores.values()):
-            selected.update(self.roles)
-
-        workflow_order = [stage["owner"] for stage in self.config["workflow"]]
-        ordered = [role_id for role_id in workflow_order if role_id in selected]
-        ordered.extend(sorted(selected - set(ordered)))
-        return tuple(dict.fromkeys(ordered))
-
-    def required_approvals(self, request: str) -> tuple[str, ...]:
-        text = request.lower()
-        tokens = self._tokens(request)
-        configured = set(self.config["guardrails"]["approval_required"])
-        approvals: list[str] = []
-        for approval, signals in self._APPROVAL_SIGNALS.items():
-            if approval not in configured:
-                continue
-            matched = any((signal in text if " " in signal else signal in tokens) for signal in signals)
-            if matched:
-                approvals.append(approval)
-        return tuple(approvals)
-
-    @staticmethod
-    def _approval_for_stage(stage: str, approvals: Sequence[str]) -> tuple[str, ...]:
-        stage_rules = {
-            "quality_gate": {"production_deploy", "legal_or_regulatory_claim", "customer_data_use"},
-            "legacy_assurance": {"production_deploy", "customer_data_use"},
-            "distribution": {"external_publish", "external_outreach", "paid_spend"},
-            "campaign_bot_operations": {"external_publish", "external_outreach", "paid_spend"},
-            "revenue": {"external_outreach", "paid_spend", "customer_data_use"},
-        }
-        applicable = stage_rules.get(stage, set())
-        return tuple(item for item in approvals if item in applicable)
-
-    def plan(self, request: str) -> ExecutionPlan:
-        normalized_request = _require_string(request, "request")
-        selected = self.select_roles(normalized_request)
-        approvals = self.required_approvals(normalized_request)
-
-        steps: list[ExecutionStep] = []
-        for stage in self.config["workflow"]:
-            owner_id = stage["owner"]
-            if owner_id not in selected:
-                continue
-            role = self.roles[owner_id]
-            reasons = self._approval_for_stage(stage["stage"], approvals)
-            steps.append(
-                ExecutionStep(
-                    sequence=len(steps) + 1,
-                    stage=stage["stage"],
-                    owner_id=owner_id,
-                    owner_name=role.name,
-                    objective=f"{role.mission} Required output: {stage['output']}.",
-                    deliverables=role.deliverables,
-                    approval_required=bool(reasons),
-                    approval_reasons=reasons,
-                )
+        if est_minutes:
+            execution_plan.append({"critical_path_minutes": est_minutes})
+        if chosen is not None:
+            execution_plan.append(
+                {"chosen_strategy": chosen.name, "expected_value": chosen.expected_value}
             )
 
-        digest_source = f"{self.config['version']}\n{normalized_request.strip()}"
-        plan_id = hashlib.sha256(digest_source.encode("utf-8")).hexdigest()[:12]
-        divisions = {self.roles[role_id].division for role_id in selected}
-        assessment = (
-            "Cross-functional engineering and go-to-market execution is required."
-            if {"engineering", "marketing"}.issubset(divisions)
-            else "Focused execution is required with command and measurement controls."
+        next_actions: list[str] = []
+        if gated:
+            next_actions.append(
+                f"Request human approval for {len(gated)} gated action(s): "
+                + ", ".join(sorted(set(gated)))
+            )
+        if auto:
+            next_actions.append("Auto-executable (logged): " + ", ".join(sorted(set(auto))))
+        if contradictions:
+            next_actions.append(
+                f"Resolve {len(contradictions)} evidence contradiction(s) before acting"
+            )
+        if not proposed_actions and not contradictions:
+            next_actions.append("No actions proposed — read-only analysis only.")
+
+        optimization: list[str] = [
+            f"Consider fallback strategy '{r.name}' (EV {r.expected_value})"
+            for r in ranked[1:3]
+        ]
+
+        ledger.append(
+            "mission_complete",
+            {"auto": sorted(set(auto)), "gated": sorted(set(gated)),
+             "confidence": confidence_score},
+        )
+        chain_ok, bad_index = ledger.verify()
+
+        summary = (
+            f"Read-only orchestration complete for objective: {objective!r}. "
+            f"{len(auto)} action(s) auto-executable, {len(gated)} gated behind "
+            f"human approval, {len(contradictions)} contradiction(s) flagged. "
+            f"No irreversible action taken."
         )
 
-        risks = (
-            "Unverified marketing claims can create legal, reputational, and trust exposure.",
-            "Automating external actions without approval can produce spam, platform violations, or production incidents.",
-            "Weak acceptance criteria can make activity look productive while producing no business outcome.",
-            "Dependencies and secrets must remain outside generated plans and committed artifacts.",
+        return MissionReport(
+            mission_summary=summary,
+            objective=objective,
+            assumptions=assumptions,
+            dependencies=waves,
+            execution_plan=execution_plan,
+            risk_assessment=[a.to_dict() for a in assessments],
+            evidence=evidence,
+            confidence_score=confidence_score,
+            artifacts_produced=[f"audit_chain_head:{ledger.head}"],
+            validation_results={
+                "governance_gate": "enforced",
+                "gated_actions": sorted(set(gated)),
+                "auto_actions": sorted(set(auto)),
+                "audit_chain_verified": chain_ok,
+                "audit_chain_bad_index": bad_index,
+                "contradictions": contradictions,
+                "intelligence_confidence": intel_conf,
+            },
+            rollback_plan=(
+                "Revert the mission's committed artifacts; no external side effects "
+                "were performed by the orchestrator itself."
+            ),
+            optimization_opportunities=optimization,
+            next_recommended_actions=next_actions,
         )
-        validation = (
-            "Confirm every factual claim against repository evidence or an authoritative source.",
-            "Run repository tests, security checks, and rollback validation before deployment.",
-            "Require a named human approver for every flagged external side effect.",
-            "Measure qualified demand, conversion, revenue, reliability, and risk reduction—not vanity activity.",
-        )
-        next_action = (
-            "Execute step 1, record constraints and acceptance criteria, then advance only when its output is complete."
-        )
-        return ExecutionPlan(
-            plan_id=plan_id,
-            generated_at=datetime.now(timezone.utc).isoformat(),
-            system=self.config["system"],
-            request=normalized_request,
-            assessment=assessment,
-            selected_agents=selected,
-            approvals_required=approvals,
-            steps=tuple(steps),
-            risks=risks,
-            validation=validation,
-            next_action=next_action,
-        )
-
-
-def _atomic_write(path: Path, content: str) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(content, encoding="utf-8")
-    os.replace(temporary, path)
-
-
-def _build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--request", required=True, help="Objective to route through the agent army")
-    parser.add_argument(
-        "--config",
-        default=str(Path(__file__).with_name("config.json")),
-        help="Path to agent-army JSON configuration",
-    )
-    parser.add_argument("--format", choices=("json", "markdown"), default="markdown")
-    parser.add_argument(
-        "--output",
-        help="Optional output file. When omitted, the plan is printed to standard output.",
-    )
-    return parser
-
-
-def main(argv: Iterable[str] | None = None) -> int:
-    parser = _build_parser()
-    args = parser.parse_args(list(argv) if argv is not None else None)
-    try:
-        army = AgentArmy.from_file(args.config)
-        plan = army.plan(args.request)
-        rendered = plan.to_json() if args.format == "json" else plan.to_markdown()
-        if args.output:
-            _atomic_write(Path(args.output), rendered)
-        else:
-            sys.stdout.write(rendered)
-        return 0
-    except (ConfigurationError, OSError) as exc:
-        print(f"agent-army error: {exc}", file=sys.stderr)
-        return 2
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())

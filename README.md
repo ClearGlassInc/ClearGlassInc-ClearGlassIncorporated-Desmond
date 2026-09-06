@@ -1,133 +1,98 @@
-# ClearGlass Engineering and Marketing Agent Army
+# ClearGlass Autonomous Agent OS v8.0 — Runtime
 
-A deterministic, dependency-free planning control plane that routes software, operations, marketing, and revenue objectives across specialized agents while keeping external side effects behind explicit human approval.
+Runnable, stdlib-only, fail-closed implementation of the agent definition in
+[`agents/clearglass_agent_os/`](../agents/clearglass_agent_os/). The definition
+is the *contract*; this package is the *executable governance runtime* behind it.
 
-This package does **not** publish posts, send messages, spend money, deploy production systems, scrape platforms, or store credentials. It generates auditable execution plans for authorized operators and downstream tools.
+## Modules
 
-## Architecture
+| Module | Responsibility |
+|--------|----------------|
+| `governance.py` | Risk scoring (0–100) + approval gating. The single auto-execute vs. escalate decision point. Fails closed. |
+| `roster.py` | The thirteen specialist sub-agents as data (responsibilities + produced artifacts). |
+| `planning.py` | Objective → executable DAG: parallel waves (Kahn) + critical-path estimate. Cycles fail closed. |
+| `executive.py` | Expected-value strategy ranking + priority queue (`p·value − cost − risk·value`). |
+| `intelligence.py` | Multi-source cross-reference; single-source cap, contradiction detection, min-confidence aggregation. |
+| `memory.py` | Ranked persistent recall (`accuracy × recency × authority`); missing memory reported as missing. |
+| `recovery.py` | Root-cause classification + bounded exponential-backoff retry + escalation. |
+| `state_machine.py` | ARTEMIS // FAWL incident lifecycle transitions with attribution, evidence, policy decisions, correlation IDs, and tamper-evident audit entries. |
+| `learning.py` | Outcome capture, deterministic metrics, lessons, optimization opportunities. |
+| `audit.py` | Append-only, tamper-evident SHA-256 hash-chain ledger with `verify()`. |
+| `orchestrator.py` | The executive loop. Composes the above into the mandated 13-field `MissionReport`. No side effects. |
+| `self_check.py` | Governance + structural + audit self-check and a demo executive report. CI entrypoint. |
+| `__main__.py` | `python -m agent_os` — end-to-end governed demo mission as JSON. |
 
-| Division | Agent | Responsibility |
-| --- | --- | --- |
-| Command | Chief of Staff | Objective normalization, sequencing, dependencies, decisions |
-| Engineering | Staff Engineer | Architecture, implementation, maintainability, performance |
-| Engineering | Quality and Security | Testing, threat/failure analysis, release and rollback gates |
-| Engineering | Legacy Modernization | Legacy-system inventory, compatibility contracts, migration slices, parity and rollback evidence |
-| Marketing | Market Intelligence | Audience, pain, positioning, buying signals, evidence gaps |
-| Marketing | Content Strategy | Evidence-backed content systems and claim control |
-| Marketing | Campaign Bot Commander | Governed bot swarm coordination for campaign workbacks, channel assets, and launch packets |
-| Marketing | Distribution Planning | Channel execution queues and approval packets |
-| Marketing | Revenue Operations | Offers, qualification, pipeline, conversion hypotheses |
-| Command | Analytics Controller | KPI definitions, experiments, decision-ready reporting |
-
-The ordered workflow is defined in `config.json`. The canonical behavior and safety policy is in `AGENT_POLICY.md`.
-
-## Run locally
-
-Python 3.11+ is sufficient; there are no third-party runtime dependencies.
-
-```bash
-python -m agent_army.orchestrator \
-  --request "Build and test a secure service, then prepare a compliant revenue campaign"
-```
-
-Generate JSON for another system:
+## Run it
 
 ```bash
-python -m agent_army.orchestrator \
-  --request "Design a launch campaign for a verified ClearGlass capability" \
-  --format json \
-  --output artifacts/agent-army-plan.json
+python -m agent_os                     # end-to-end governed demo mission
+python -m agent_os.self_check          # human-readable self-check + report
+python -m agent_os.self_check --json   # machine-readable
+pytest tests/test_agent_os.py tests/test_agent_os_advanced.py tests/test_agent_os_state_machine.py -q
 ```
 
-The output write is atomic. Existing output files are replaced only after the complete plan has been written successfully.
+## Safety invariant (enforced in code)
 
-## Encrypted artifact mode
+`read-only analysis → draft → human approval → execution`
 
-Sensitive plans can be piped directly into the Rust secure runtime so plaintext is never written to disk:
+The self-check **fails the build** if any of these can auto-execute: an
+always-escalate action (money, production deploy, access-control change, data
+deletion, secret rotation, mass outbound); an unknown action; an action whose
+confidence is unavailable; a conclusion with no supporting evidence. It also
+fails if the audit chain does not detect tampering. Incident recovery workflows
+are constrained by `state_machine.py`: an action cannot jump from detection to
+execution, terminal states cannot be reopened by automation, and every accepted
+transition requires actor, evidence, policy decision, correlation ID, timestamp,
+and reason before being appended to the audit hash chain.
+
+Mission confidence is reported as the **minimum** observed signal — the OS never
+inflates certainty. The orchestrator performs no external side effects; it
+decides and reports, leaving gated actions behind the human approval gate.
+
+## The Operator (front door)
+
+`orchestrator.py` can plan, score, and report — but it has to be *handed* tasks
+and proposed actions. `operator.py` is the piece that turns a plain-language
+objective into them, so you can ask the OS for something instead of hand-building
+a mission:
 
 ```bash
-python -m agent_army.orchestrator \
-  --request "Build and market the secure workflow product" \
-  --format json |
-  ./agent_army/secure_runtime/target/release/clearglass-secure encrypt \
-    --recipient ./agent-army.recipient \
-    --input - \
-    --output ./artifacts/agent-army-plan.json.age
+python -m agent_os.operator --list                  # what it can actually do
+python -m agent_os.operator "audit the site"        # plan only (default)
+python -m agent_os.operator "audit the site" --execute
+python -m agent_os.operator "regenerate links" --execute --allow-writes
+python -m agent_os.operator --sweep                 # every read-only capability
 ```
 
-The Rust sidecar uses interoperable `age` encryption with X25519 recipients, authenticated tamper detection, strict input limits, no-overwrite output semantics, and restricted Unix permissions for private identities and decrypted files. See [`secure_runtime/README.md`](secure_runtime/README.md) for key generation, build, recovery, rotation, and decryption procedures.
+Four properties make it safe to leave running:
 
-Private identities must never be committed. There is no recovery back door: loss of the identity means loss of access, and exposure requires immediate rotation.
+1. **The registry is real.** Every `Capability` maps to a command that exists and
+   runs in this repo; `test_agent_os_operator.py` fails if one points at a
+   missing file. An objective that matches nothing returns `unmatched` and a list
+   of what *is* registered — the operator never improvises an action.
+2. **Governance decides.** Each capability becomes a `ProposedAction` scored by
+   `score_action`. Only actions the mission report lists as auto-executable run;
+   unknown action names score 85 (HIGH) and are gated, so new capabilities fail
+   closed until deliberately classified.
+3. **Two locks on writes.** A capability that touches the working tree sets
+   `writes=True` and is additionally refused unless the caller passes
+   `--allow-writes`.
+4. **Opt-in execution.** `handle()` plans; it only shells out with `execute=True`.
 
-## Routing behavior
+### Adding a capability
 
-The orchestrator uses explicit role triggers and request signals:
+Append a `Capability` to `CAPABILITIES` in `operator.py` with the phrases that
+should route to it, the governance action name that classifies its risk, and the
+argv to run. Read-only work uses `run_audit`; anything that modifies the repo
+sets `writes=True`. That is the whole extension point — the sweep, the audit
+chain, and the approval gate pick it up automatically.
 
-- Engineering requests select engineering and quality roles.
-- Marketing/revenue requests select market, content, distribution, and revenue roles.
-- Legacy modernization requests add compatibility, parity, migration-slice, and rollback planning so existing contracts are preserved.
-- Bot-army or campaign-automation requests add the Campaign Bot Commander to coordinate channel specialists without granting publish, send, spend, or platform-control authority.
-- Combined requests select the complete cross-functional chain.
-- Ambiguous requests default to full-spectrum planning rather than silently omitting a required discipline.
-- Chief of Staff and Analytics Controller remain present to enforce sequencing and measurable outcomes.
+## CI
 
-## Approval behavior
-
-The plan flags approval gates when the request implies:
-
-- external publishing;
-- external outreach;
-- paid spend;
-- production deployment or release;
-- legal, regulatory, certification, or compliance claims;
-- customer or personal-data use.
-
-Approval flags are attached to the workflow stages where the side effect could occur. Planning can continue; the flagged action cannot be treated as authorized.
-
-## Validation
-
-Run the focused Python test suite:
-
-```bash
-python -m unittest tests.test_agent_army -v
-```
-
-Validate the Rust cryptographic runtime:
-
-```bash
-cd agent_army/secure_runtime
-cargo fmt --all -- --check
-cargo clippy --all-targets --all-features -- -D warnings
-cargo test --all-targets --all-features --locked
-```
-
-The dedicated GitHub Actions workflows validate:
-
-1. configuration integrity;
-2. routing across engineering and marketing;
-3. approval-gate detection;
-4. deterministic plan identifiers;
-5. atomic JSON output;
-6. a complete sample plan;
-7. Rust formatting and Clippy diagnostics;
-8. cryptographic round trips, wrong-key rejection, and tamper rejection;
-9. release compilation and CLI pipeline behavior;
-10. Unix private-key permissions.
-
-The repository-wide CI also discovers `tests/test_agent_army.py` through the existing test job.
-
-## Configuration changes
-
-When adding a role:
-
-1. Assign a unique `id`.
-2. Use one of the governed divisions: `command`, `engineering`, or `marketing`.
-3. Define precise triggers and concrete deliverables.
-4. Add the role to the ordered workflow.
-5. Add or update tests proving routing and approval behavior.
-
-Configuration validation fails closed on duplicate roles, duplicate stages, missing divisions, unknown workflow owners, empty triggers, empty deliverables, and malformed JSON.
-
-## Operating rule
-
-The agent army is a decision and execution-control system, not a license for uncontrolled automation. Evidence, authorization, security, encrypted handling, and measurable business outcomes govern every stage.
+- **Python Tests** (`ci.yml`) runs `pytest tests/`, which includes
+  `tests/test_agent_os.py`, `tests/test_agent_os_advanced.py`, and
+  `tests/test_agent_os_operator.py`.
+- **Agent OS Self-Check** (`agent-os.yml`) runs the unit tests, the
+  governance/audit self-check, and the **operator sweep** (every read-only
+  capability, with a step-summary table and a `operator-sweep` artifact) on a
+  schedule, on PRs touching `agent_os/**`, and on demand.
