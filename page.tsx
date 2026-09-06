@@ -1,0 +1,4 @@
+import { LivePageShell } from "@/components/live-page-shell";
+import { fabricConfig } from "@/lib/config";
+import { getSnapshot } from "@/lib/snapshot";
+export default async function Page() { const snapshot = await getSnapshot("public"); return <LivePageShell initialSnapshot={snapshot} stream="public" serverEnabled={fabricConfig.enabled}><section className="hero"><span className="eyebrow">Secure · observable · source-verified</span><h2>Live intelligence without invented certainty.</h2><p>Each module starts with a server-rendered snapshot, validates incremental events, and retains a usable static fallback. Until an approved source and production owner are configured, the interface says exactly that: unavailable.</p><div className="principles"><span>Server-rendered first</span><span>SSE for one-way updates</span><span>Server-side classification</span><span>Bounded recovery</span></div></section></LivePageShell>; }
