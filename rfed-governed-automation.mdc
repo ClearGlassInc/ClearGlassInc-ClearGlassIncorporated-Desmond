@@ -1,0 +1,71 @@
+---
+description: Governance rules for the ClearGlass RFED audit-trail module and any agentic workflow that writes to the ledger.
+globs:
+  - "bots/rfed_audit_bot.py"
+  - "deployment/rfed/**"
+  - "agents/rfed_audit/**"
+  - "tests/test_rfed_*.py"
+alwaysApply: false
+---
+
+# RFED™ — rules for editing the governed audit trail
+
+RFED = Recorded Factual Evidence of Decision. `bots/rfed_audit_bot.py` is the
+authority for risk scoring and hash sealing. Everything else mirrors it.
+
+## The invariant
+
+    read-only analysis → draft → human approval → execution
+
+Do not add a code path that lets a high or critical action execute without an
+approved ledger record. `tests/test_rfed_audit_bot.py` fails if you do, by design.
+
+## When changing the risk model
+
+`ACTION_RISK`, `ALWAYS_ESCALATE`, and `NEVER_AUTOMATE` exist in **two** places:
+the Python core and the `build-rfed` Code node in
+`deployment/rfed/workflow_rfed_audit_trail.json`. Change one, change both, then:
+
+```bash
+python -m unittest tests.test_rfed_hash_parity -v
+```
+
+That test pins the two implementations together — risk tables, policy version,
+and byte-identical canonical JSON.
+
+Bump `POLICY_VERSION` whenever the risk table or gating logic changes. It is
+recorded on every row so an auditor can replay a decision against the policy that
+was live at the time.
+
+## When touching canonicalisation or hashing
+
+Python renders floats via `repr()` (`0.0`); `JSON.stringify(0.0)` gives `0`. The
+Code node wraps float-typed fields in `PyFloat` to compensate. Remove that and
+every hash the workflow writes becomes unverifiable — silently, with no error.
+Run the parity test before and after.
+
+Never "repair" a hash on read. `_record_from_dict` deliberately preserves the
+stored `chain_hash` so `verify()` can catch tampering instead of hiding it.
+
+## Ledger rules
+
+- Append-only. Approvals are **new rows** (`approve()`), never updates.
+- The `rfed_writer` role has no `UPDATE`/`DELETE` grant. The triggers are the
+  backstop, not the control.
+- Keep `N8N_CONCURRENCY_PRODUCTION_LIMIT=1`. The chain guard rejects racing
+  inserts by design; raising concurrency turns a correctness guarantee into noise.
+
+## Fail closed, always
+
+- Unknown action → 85 (HIGH), gated.
+- Unparseable model output → zero confidence, no citations → gated.
+- Unroutable decision → the Switch fallback goes to the **blocked** branch.
+- Missing `RFED_WEBHOOK_SECRET` → the workflow refuses every proposal.
+
+If you find yourself adding an `else` that lets something through, you have found
+the bug, not the fix.
+
+## Stdlib only
+
+`bots/rfed_audit_bot.py` must stay dependency-free so CI, n8n, and a client's
+minimal container can all run it. No requests, no pydantic, no third-party crypto.
