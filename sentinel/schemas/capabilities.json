@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Percival_Capability_Schema",
+  "description": "Machine-readable contract the Policy Governor validates every inbound request against before routing. Deny-by-default: a request that does not satisfy this schema is rejected.",
+  "type": "object",
+  "properties": {
+    "request_context": {
+      "type": "object",
+      "properties": {
+        "mission_id": { "type": "string" },
+        "auth_token": { "type": "string" },
+        "urgency_level": { "type": "integer", "minimum": 1, "maximum": 5 }
+      },
+      "required": ["mission_id", "auth_token"]
+    },
+    "action_scope": {
+      "type": "string",
+      "enum": ["read_only", "draft_proposal", "execute_internal", "execute_external", "modify_system"]
+    },
+    "target_lane": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["strategy", "architecture", "implementation", "security", "operations"]
+      }
+    },
+    "confidence_threshold": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "default": 0.95
+    }
+  },
+  "required": ["request_context", "action_scope", "target_lane"]
+}
