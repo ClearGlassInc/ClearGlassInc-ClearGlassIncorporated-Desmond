@@ -1,0 +1,162 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://clearglassinc.github.io/schemas/enterprise-patch-deploy/config.schema.json",
+  "title": "ClearGlass Enterprise Patch & Deploy — per-repo configuration",
+  "description": "Drop this file at .github/patch-deploy.yml in any ClearGlassInc repository. It parameterizes the org reusable workflow (enterprise-patch-deploy.yml) for that repo without changing the shared control plane. All fields are optional; omitted fields fall back to the safe defaults documented here.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "description": "Schema version this config targets.",
+      "enum": [1],
+      "default": 1
+    },
+    "repo": {
+      "type": "string",
+      "description": "owner/name of the repo this config governs (informational; the workflow uses github.repository at runtime).",
+      "pattern": "^[^/]+/[^/]+$"
+    },
+    "stack": {
+      "type": "string",
+      "description": "Primary runtime — selects the validation/build/deploy adapter.",
+      "enum": ["python", "node", "static-site", "powershell", "azure-functions", "gke", "mixed"],
+      "default": "static-site"
+    },
+    "deploy_strategy": {
+      "type": "string",
+      "description": "Promotion pattern. progressive-canary is the recommended default (doc §5).",
+      "enum": ["progressive-canary", "blue-green", "rolling", "gitops-reconcile", "static-pages"],
+      "default": "progressive-canary"
+    },
+    "risk_tolerance": {
+      "type": "string",
+      "enum": ["low", "medium"],
+      "default": "low",
+      "description": "Org posture is low. Raising this only widens the autonomous band; it never bypasses ALWAYS_APPROVAL change types."
+    },
+    "confidence_thresholds": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Overrides for the confidence gate. Defaults mirror risk_score.py.",
+      "properties": {
+        "autonomous_min": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.92 },
+        "approval_floor": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.75 }
+      }
+    },
+    "blast_radius_limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Guardrails on how much of the fleet a single wave may touch (doc §4).",
+      "properties": {
+        "max_fleet_fraction": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.2 },
+        "max_repos_per_wave": { "type": "integer", "minimum": 1, "default": 3 }
+      }
+    },
+    "maintenance_window": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Production changes outside this window are blocked unless risk_class is critical (doc §4 time windows).",
+      "properties": {
+        "timezone": { "type": "string", "default": "UTC" },
+        "cron_allow": {
+          "type": "string",
+          "description": "Human-readable allowed window, e.g. 'Mon-Thu 13:00-21:00 UTC'.",
+          "default": "Mon-Thu 13:00-21:00 UTC"
+        },
+        "enforce": { "type": "boolean", "default": true }
+      }
+    },
+    "approvals": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Reviewer counts per gate. Enforced by GitHub Environment protection rules; listed here for auditability and drift-checking.",
+      "properties": {
+        "staging_to_canary": { "type": "integer", "minimum": 0, "default": 1 },
+        "canary_to_production": { "type": "integer", "minimum": 0, "default": 1 },
+        "canary_to_production_high_critical": { "type": "integer", "minimum": 0, "default": 2 }
+      }
+    },
+    "environments": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "GitHub Environment names to target at each phase.",
+      "properties": {
+        "validation": { "type": "string", "default": "validation" },
+        "staging": { "type": "string", "default": "staging" },
+        "canary": { "type": "string", "default": "production-canary" },
+        "production": { "type": "string", "default": "production" }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "unit": { "type": "boolean", "default": true },
+        "integration": { "type": "boolean", "default": true },
+        "lint": { "type": "boolean", "default": true },
+        "type_check": { "type": "boolean", "default": true },
+        "codeql": { "type": "boolean", "default": true },
+        "supply_chain": { "type": "boolean", "default": true },
+        "flaky_reruns": { "type": "integer", "minimum": 0, "maximum": 5, "default": 2 },
+        "commands": {
+          "type": "array",
+          "description": "Repo-specific validation commands, run in order in an isolated runner. Non-zero exit fails the gate.",
+          "items": { "type": "string" },
+          "default": []
+        }
+      }
+    },
+    "deploy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "canary_percent": { "type": "integer", "minimum": 1, "maximum": 50, "default": 10 },
+        "soak_minutes": { "type": "integer", "minimum": 0, "default": 15 },
+        "health_url": { "type": "string", "format": "uri" },
+        "ready_url": { "type": "string", "format": "uri" },
+        "commands": { "type": "array", "items": { "type": "string" }, "default": [] }
+      }
+    },
+    "rollback": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "enum": ["previous-artifact", "previous-commit", "gitops-reconcile", "traffic-shift"],
+          "default": "previous-commit"
+        },
+        "timeout_minutes": { "type": "integer", "minimum": 1, "default": 10 },
+        "verify_after_rollback": { "type": "boolean", "default": true },
+        "commands": { "type": "array", "items": { "type": "string" }, "default": [] }
+      }
+    },
+    "stop_loss": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Automatic rollback triggers during verification (doc §5).",
+      "properties": {
+        "error_rate_sigma": { "type": "number", "minimum": 0, "default": 2 },
+        "latency_p99_ms": { "type": "integer", "minimum": 1 },
+        "on_probe_failure": { "type": "boolean", "default": true }
+      }
+    },
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "retention_days": { "type": "integer", "minimum": 365, "default": 400 },
+        "artifact_name": { "type": "string", "default": "patch-deploy-audit" }
+      }
+    },
+    "notify": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "On-call routing for stop-loss / failed-rollback escalation. Names of secrets, never the values.",
+      "properties": {
+        "oncall_secret": { "type": "string", "description": "Secret name holding the on-call webhook URL." }
+      }
+    }
+  }
+}

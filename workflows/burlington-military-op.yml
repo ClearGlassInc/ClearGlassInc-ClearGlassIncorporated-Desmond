@@ -1,0 +1,87 @@
+name: ClearGlassInc Military-Op Release Pipeline
+
+# ClearGlassInc Military-Op Release Pipeline — executor for PROMPT-MILITARY-OP.md.
+#
+# Doctrine: dry-run by default, fail closed on ambiguity, least privilege, no
+# autonomous publishing. This pipeline VALIDATES the ClearGlassInc estate (OSINT
+# deck + workflow fleet) and produces an auditable report + release notes; it
+# does NOT deploy or publish. Production is a human-authorized, environment-
+# protected action; the site ships via GitHub Pages on merge to `main`.
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        type: choice
+        options: [staging, production]
+        default: staging
+      release:
+        description: "RELEASE=true runs the fail-closed release gate. Leave unchecked for a dry-run."
+        type: boolean
+        default: false
+      confirm:
+        description: "Type RELEASE to authorize a release-gate run (required when 'release' is checked)"
+        type: string
+        default: ""
+  schedule:
+    - cron: "23 7 * * 1" # weekly ClearGlassInc health check, Monday 07:23 UTC
+
+# Least privilege: read-only token. This pipeline never writes to the repo,
+# never deploys, and never touches secrets.
+permissions:
+  contents: read
+
+jobs:
+  military-op:
+    name: ClearGlassInc Military-Op Release Pipeline
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Production runs go through a protected environment so they require the
+    # reviewers configured on it (human approval). Dry-runs / scheduled checks
+    # use staging.
+    environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'staging' }}
+    steps:
+      # SHA-pinned (supply-chain hardening) — the standard the Policy Gate enforces.
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Guard — confirm release authorization
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.release == true }}
+        run: |
+          set -euo pipefail
+          if [ "${{ inputs.confirm }}" != "RELEASE" ]; then
+            echo "::error::Release run requested without confirmation. Type RELEASE in the 'confirm' input."
+            exit 1
+          fi
+          echo "ClearGlassInc release authorization confirmed for '${{ inputs.environment }}'."
+
+      - name: ClearGlassInc Security Validation Pipeline — workflow fleet doctor
+        run: |
+          set -euo pipefail
+          python -m pip install --quiet pyyaml
+          python scripts/workflow_doctor.py
+
+      - name: Validate OSINT deck (dry-run unless a release is authorized)
+        run: |
+          set -euo pipefail
+          ARGS="--out release/clearglassinc-military-op-report.md"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.release }}" = "true" ]; then
+            # Authorized release: fail closed on any failing gate.
+            ARGS="$ARGS --release --strict"
+          fi
+          echo "Running: python scripts/osint_deck_release.py $ARGS"
+          python scripts/osint_deck_release.py $ARGS
+
+      - name: Publish report to job summary
+        if: always()
+        run: cat release/clearglassinc-military-op-report.md >> "$GITHUB_STEP_SUMMARY" || true
+
+      - name: Upload ClearGlassInc audit report (artifact)
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: clearglassinc-military-op-report
+          path: release/clearglassinc-military-op-report.md
+          if-no-files-found: warn

@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://clearglassinc.github.io/schemas/enterprise-patch-deploy/repo-inventory.schema.json",
+  "title": "ClearGlass Enterprise Patch & Deploy — repo criticality matrix",
+  "description": "Blast-radius / exposure inputs for triage. Consumed by scripts/patch_deploy/risk_score.py (--inventory). A repo with no row here is scored worst-case (escalate).",
+  "type": "object",
+  "required": ["repos"],
+  "additionalProperties": true,
+  "properties": {
+    "generated_utc": { "type": "string", "format": "date-time" },
+    "owner": { "type": "string" },
+    "notes": { "type": "string" },
+    "repos": {
+      "type": "object",
+      "description": "Map of repo short-name -> criticality row.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "criticality": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 5,
+            "description": "Business criticality, 1 (low) .. 5 (mission-critical)."
+          },
+          "internet_facing": {
+            "type": "boolean",
+            "description": "Exposure factor — public attack surface amplifies risk."
+          },
+          "handles_customer_data": {
+            "type": "boolean",
+            "description": "Data-sensitivity factor."
+          },
+          "fleet_fraction": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Share of the fleet this repo represents (blast radius)."
+          },
+          "owners": { "type": "array", "items": { "type": "string" } },
+          "components": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

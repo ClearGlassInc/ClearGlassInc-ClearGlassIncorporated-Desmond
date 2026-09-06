@@ -1,0 +1,249 @@
+name: Security
+
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+    inputs:
+      strict_manifest:
+        description: "Fail when provenance/release-manifest.json is stale."
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  pages-artifact-safety:
+    name: Pages Artifact Safety and Provenance
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Verify provenance and production artifact boundary
+        env:
+          STRICT_MANIFEST: ${{ github.event_name == 'workflow_dispatch' && inputs.strict_manifest == true }}
+        run: |
+          set -euo pipefail
+
+          if python3 tools/security_release_manifest.py --check; then
+            echo "Provenance manifest is current."
+          else
+            if [ "${STRICT_MANIFEST}" = "true" ]; then
+              echo "::error::provenance/release-manifest.json is stale."
+              exit 1
+            fi
+            echo "::warning::provenance/release-manifest.json is stale; run tools/security_release_manifest.py before a strict release."
+            {
+              echo "### Provenance manifest warning"
+              echo ""
+              echo "The release manifest is stale. This push is allowed so routine CI does not block non-release work."
+              echo "Run \`python3 tools/security_release_manifest.py\` and commit the manifest before strict release validation."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          python3 tools/build_pages.py dist
+
+          if find dist -type f \( \
+              -name '*.py' -o -name '*.pyc' -o -name '*.map' -o -name '*.env*' -o \
+              -name '*.sql' -o -name '*.tf' -o -name '*.yml' -o -name '*.yaml' -o \
+              -name 'package*.json' -o -name 'pyproject.toml' -o -name 'requirements*.txt' \
+            \) -print -quit | grep -q .; then
+            echo '::error::Production artifact contains a forbidden development or sensitive file'
+            exit 1
+          fi
+
+          test ! -e dist/.git
+          test ! -e dist/.github
+          test ! -e dist/operations/private-data
+          test ! -e dist/customer-profiles
+
+  dependency-review:
+    name: Dependency Review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Probe Dependency Graph availability
+        id: depgraph
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          code="$(curl -s -o /dev/null -w '%{http_code}' \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/dependency-graph/compare/${BASE_SHA}...${HEAD_SHA}")"
+          if [ "$code" = "200" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::warning title=Dependency Review skipped::Dependency graph comparison returned HTTP ${code}; enable Dependency graph under Settings -> Code security and analysis."
+          fi
+
+      - if: steps.depgraph.outputs.available == 'true'
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+
+  secret-scan:
+    name: Secret Pattern Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Detect hardcoded secrets
+        run: |
+          python3 - <<'PYEOF'
+          import re, sys
+          from pathlib import Path
+
+          PATTERNS = {
+            "AWS access key":        r"AKIA[0-9A-Z]{16}",
+            "GitHub PAT (ghp_)":     r"ghp_[A-Za-z0-9]{36}",
+            "GitHub PAT (ghs_)":     r"ghs_[A-Za-z0-9]{36}",
+            "GitLab PAT":            r"glpat-[A-Za-z0-9_-]{20}",
+            "Generic API key":       r"(?i)api[_-]?key\s*[:=]\s*['\"][A-Za-z0-9/+]{20,}['\"]",
+            "Private key header":    r"-----BEGIN (RSA|EC|DSA|OPENSSH) PRIVATE KEY-----",
+          }
+
+          EXTENSIONS = {
+            ".py", ".js", ".mjs", ".cjs", ".ts", ".tsx",
+            ".env", ".json", ".yaml", ".yml", ".sh",
+          }
+          SKIP_PARTS = {".git", "node_modules", "dist", "build"}
+
+          findings = []
+          for path in Path(".").rglob("*"):
+            if not path.is_file() or path.suffix not in EXTENSIONS:
+              continue
+            if SKIP_PARTS & set(path.parts):
+              continue
+            try:
+              text = path.read_text(encoding="utf-8", errors="ignore")
+            except OSError:
+              continue
+            for label, pattern in PATTERNS.items():
+              if re.search(pattern, text):
+                findings.append(f"{path}: {label}")
+
+          if findings:
+            for f in findings:
+              print(f"::error::{f}")
+            sys.exit(1)
+          print("No hardcoded secrets detected.")
+          PYEOF
+
+  workflow-lint:
+    name: Workflow YAML Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - run: pip install pyyaml
+
+      - name: Validate workflow YAML and critical invariants
+        run: |
+          python3 - <<'PYEOF'
+          import re
+          import sys
+          from pathlib import Path
+          import yaml
+
+          action_ref = re.compile(r"^[^@\s]+@[0-9a-f]{40}$")
+          action_use = re.compile(r"^\s*-?\s*uses:\s*([^\s#]+)", re.MULTILINE)
+          secret_expression = re.compile(re.escape("$" + "{{") + r"\s*secrets\.")
+          failures = []
+          warnings = []
+
+          def walk(value):
+            if isinstance(value, dict):
+              for child in value.values():
+                yield from walk(child)
+            elif isinstance(value, list):
+              for child in value:
+                yield from walk(child)
+            elif isinstance(value, str):
+              yield value
+
+          for workflow in sorted(Path(".github/workflows").glob("*.y*ml")):
+            text = workflow.read_text(encoding="utf-8")
+            try:
+              data = yaml.safe_load(text)
+            except yaml.YAMLError as exc:
+              failures.append(f"{workflow}: YAML parse failed: {exc}")
+              continue
+
+            if not isinstance(data, dict):
+              failures.append(f"{workflow}: root is not a mapping")
+              continue
+
+            trigger = data.get(True, data.get("on"))
+            permissions = data.get("permissions")
+
+            if not isinstance(permissions, dict):
+              warnings.append(f"{workflow}: explicit top-level permissions mapping is recommended")
+            if isinstance(trigger, dict) and "pull_request_target" in trigger:
+              failures.append(f"{workflow}: pull_request_target is prohibited")
+
+            for ref in action_use.findall(text):
+              if ref.startswith("./") or ref.startswith("docker://"):
+                continue
+              if not action_ref.fullmatch(ref):
+                warnings.append(f"{workflow}: external action is not SHA-pinned: {ref}")
+
+            for job_name, job in (data.get("jobs") or {}).items():
+              if not isinstance(job, dict):
+                failures.append(f"{workflow}: job {job_name} is not a mapping")
+                continue
+              if "uses" not in job and "timeout-minutes" not in job:
+                warnings.append(f"{workflow}: job {job_name} should declare timeout-minutes")
+              for step in job.get("steps", []):
+                if not isinstance(step, dict):
+                  continue
+                run = step.get("run")
+                if isinstance(run, str) and secret_expression.search(run):
+                  failures.append(
+                    f"{workflow}: job {job_name} interpolates a secret directly into run; pass it through env"
+                  )
+
+            for scalar in walk(data):
+              if ("$" + "{{ secrets.") in scalar:
+                continue
+              if re.search(r"-----BEGIN (?:RSA|EC|DSA|OPENSSH) PRIVATE KEY-----", scalar):
+                failures.append(f"{workflow}: embedded private key material detected")
+
+          for warning in warnings:
+            print(f"::warning::{warning}")
+          if failures:
+            for failure in failures:
+              print(f"::error::{failure}")
+            sys.exit(1)
+          print("Workflow YAML parsed and critical invariants satisfied.")
+          PYEOF

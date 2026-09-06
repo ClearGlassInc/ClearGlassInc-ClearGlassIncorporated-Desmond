@@ -1,0 +1,56 @@
+{
+  "$schema": "./repo-inventory.schema.json",
+  "generated_utc": "2026-07-29T00:00:00Z",
+  "owner": "ClearGlassInc",
+  "notes": "Repo criticality matrix consumed by scripts/patch_deploy/risk_score.py during triage. Keys are repo short-names (matched against the change's --repo). Missing rows are treated as WORST CASE (escalate) — keep this complete. Changing this file is itself an 'inventory_change' (never auto-executed).",
+  "repos": {
+    "ClearGlassInc.github.io": {
+      "criticality": 4.0,
+      "internet_facing": true,
+      "handles_customer_data": true,
+      "fleet_fraction": 0.25,
+      "owners": ["desmond"],
+      "components": ["static-site", "clearglass-commerce", "sentinel"]
+    },
+    "clearglass-commerce": {
+      "criticality": 5.0,
+      "internet_facing": true,
+      "handles_customer_data": true,
+      "fleet_fraction": 0.3,
+      "owners": ["desmond"],
+      "components": ["control-plane", "storefront", "admin"],
+      "notes": "Governed money-movement paths — pricing/refund/payout/fulfillment always high/critical."
+    },
+    "Opal-Koboi": {
+      "criticality": 3.0,
+      "internet_facing": false,
+      "handles_customer_data": false,
+      "fleet_fraction": 0.1
+    },
+    "ClearCast": {
+      "criticality": 3.0,
+      "internet_facing": true,
+      "handles_customer_data": false,
+      "fleet_fraction": 0.1
+    },
+    "nexus-hub": {
+      "criticality": 3.0,
+      "internet_facing": true,
+      "handles_customer_data": true,
+      "fleet_fraction": 0.1
+    },
+    "Gaurdian": {
+      "criticality": 4.0,
+      "internet_facing": true,
+      "handles_customer_data": true,
+      "fleet_fraction": 0.1,
+      "notes": "Security tooling — treat config/policy changes as always-approval."
+    },
+    "network-overdrive": {
+      "criticality": 2.0,
+      "internet_facing": false,
+      "handles_customer_data": false,
+      "fleet_fraction": 0.05
+    }
+  }
+}

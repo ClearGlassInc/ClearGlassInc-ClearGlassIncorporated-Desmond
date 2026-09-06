@@ -1,0 +1,92 @@
+name: Site Reliability Audit
+
+on:
+  pull_request:
+    paths:
+      - "**/*.html"
+      - "sitemap*.xml"
+      - "robots.txt"
+      - "scripts/site_reliability_audit.py"
+      - "scripts/live_sitemap_crawl.py"
+      - "scripts/audit_github_actions.py"
+      - ".github/workflows/**"
+  push:
+    branches: [main]
+    paths:
+      - "**/*.html"
+      - "sitemap*.xml"
+      - "robots.txt"
+      - "scripts/site_reliability_audit.py"
+      - "scripts/live_sitemap_crawl.py"
+      - "scripts/audit_github_actions.py"
+      - ".github/workflows/**"
+  schedule:
+    - cron: "17 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-reliability-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  offline-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.13"
+      - name: Install audit dependencies
+        run: python -m pip install "PyYAML==6.0.3" "pytest==9.0.3"
+      - name: Verify routing, fragments, sitemap, robots, and Pages source
+        run: python scripts/site_reliability_audit.py | tee site-reliability.txt
+      - name: Verify generated internal links
+        run: python tools/internal_links.py --check | tee internal-links.txt
+      - name: Audit every workflow fail closed
+        run: python scripts/audit_github_actions.py --markdown | tee workflow-audit.md
+      - name: Run focused regression tests
+        run: python -m pytest -q tests/test_site_reliability_audit.py tests/test_live_sitemap_crawl.py tests/test_audit_github_actions.py
+      - name: Upload offline evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: site-reliability-offline-${{ github.run_id }}
+          path: |
+            site-reliability.txt
+            internal-links.txt
+            workflow-audit.md
+          if-no-files-found: error
+          retention-days: 30
+
+  live-crawl:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: offline-integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.13"
+      - name: Crawl every sitemap route
+        run: python scripts/live_sitemap_crawl.py --output live-sitemap-crawl.json
+      - name: Upload live evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: site-reliability-live-${{ github.run_id }}
+          path: live-sitemap-crawl.json
+          if-no-files-found: error
+          retention-days: 30

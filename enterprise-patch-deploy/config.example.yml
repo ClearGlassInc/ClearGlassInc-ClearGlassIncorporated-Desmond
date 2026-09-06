@@ -1,0 +1,79 @@
+# ClearGlass Enterprise Patch & Deploy — per-repo config (example)
+#
+# Copy this file to `.github/patch-deploy.yml` in any ClearGlassInc repo and
+# trim it to what differs from the safe defaults. Every field is optional;
+# anything omitted falls back to the default documented in
+# `.github/enterprise-patch-deploy/config.schema.json`. This file only
+# parameterizes the shared org reusable workflow — it never edits the control
+# plane itself.
+#
+# Validate with:
+#   python -c "import json,sys,yaml; \
+#     yaml.safe_load(open('.github/patch-deploy.yml'))"   # syntax
+# (JSON-Schema validation runs in the reusable workflow's triage job.)
+
+version: 1
+repo: ClearGlassInc/ClearGlassInc.github.io
+
+# static site on GitHub Pages -> Pages deploy, not canary traffic-shifting.
+stack: static-site
+deploy_strategy: static-pages
+risk_tolerance: low
+
+confidence_thresholds:
+  autonomous_min: 0.92 # >= this + low risk => auto-execute
+  approval_floor: 0.75 # < this => hard stop
+
+blast_radius_limits:
+  max_fleet_fraction: 0.2
+  max_repos_per_wave: 3
+
+maintenance_window:
+  timezone: UTC
+  cron_allow: "Mon-Thu 13:00-21:00 UTC"
+  enforce: true
+
+approvals:
+  staging_to_canary: 1
+  canary_to_production: 1
+  canary_to_production_high_critical: 2
+
+environments:
+  validation: validation
+  staging: staging
+  canary: production-canary
+  production: github-pages
+
+validation:
+  lint: true
+  type_check: true
+  unit: true
+  integration: false # static site has no integration suite
+  codeql: true
+  supply_chain: true
+  flaky_reruns: 2
+  commands:
+    - "python3 tools/internal_links.py --check" # generated-link freshness gate
+    - "python3 scripts/seo-validator.py"
+
+deploy:
+  soak_minutes: 10
+  health_url: "https://www.clearglassinc.com/"
+  commands: []
+
+rollback:
+  strategy: previous-commit
+  timeout_minutes: 10
+  verify_after_rollback: true
+
+stop_loss:
+  error_rate_sigma: 2
+  on_probe_failure: true
+
+audit:
+  retention_days: 400
+  artifact_name: patch-deploy-audit
+
+notify:
+  # Name of the repo/org secret holding the on-call webhook URL — never the URL.
+  oncall_secret: ONCALL_WEBHOOK_URL

@@ -1,0 +1,68 @@
+name: Organic Growth — Weekly Review
+
+on:
+  schedule:
+    - cron: "0 15 * * 1"  # Monday 11:00 EDT
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    name: Weekly organic performance brief
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Generate weekly brief skeleton
+        run: |
+          mkdir -p marketing/output/organic/reviews
+          WEEK=$(date +%Y-W%V)
+          cat > marketing/output/organic/reviews/$WEEK.md << EOF
+          # Organic Growth Weekly Review — $WEEK
+
+          ## What shipped
+          - [ ] List posts published
+
+          ## Performance signals
+          - Reach / profile visits:
+          - Saves & shares:
+          - Quality replies:
+          - Clicks to owned assets:
+          - Leads / conversations started:
+
+          ## Pillar balance
+          - Technical Clarity:
+          - Proof & Authority:
+          - Contrast & Insight:
+          - Conversion:
+
+          ## Top performing asset
+          - Link + why it worked
+
+          ## Next week priorities
+          1. 
+          2. 
+          3. 
+
+          ## Risks / weak spots
+          - 
+          EOF
+          echo "Brief written for $WEEK"
+
+      - name: Open review issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          WEEK=$(date +%Y-W%V)
+          gh issue create \
+            --title "Organic Weekly Review — $WEEK" \
+            --body-file marketing/output/organic/reviews/$WEEK.md \
+            --label "growth,review,organic"

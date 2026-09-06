@@ -1,0 +1,96 @@
+name: Commerce Deploy
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "clearglass-commerce/**"
+      - ".github/workflows/commerce-deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: Test & lint gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+      - name: Install tooling + control-plane deps
+        run: |
+          # Pin ruff below 0.16 so its expanded default rules can't fail the lint gate.
+          pip install "ruff==0.15.8" pytest
+          # Install the full web stack (fastapi, sqlalchemy, httpx via TestClient) so the
+          # webhook -> DB -> /payouts integration tests actually RUN. Without these the
+          # tests silently skip and the governed money-movement paths go unexercised.
+          pip install -r clearglass-commerce/control-plane/requirements.txt
+      - name: Lint commerce package
+        run: ruff check clearglass-commerce
+      - name: Governance + payments tests
+        working-directory: clearglass-commerce/control-plane
+        run: python -m pytest tests/ -q
+
+  frontend-build:
+    name: Frontend build gate (${{ matrix.app }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [storefront, admin]
+    defaults:
+      run:
+        working-directory: clearglass-commerce/${{ matrix.app }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: clearglass-commerce/${{ matrix.app }}/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Typecheck (tsc --noEmit)
+        run: npx tsc --noEmit
+      - name: Production build (next build)
+        run: npm run build
+
+  deploy:
+    name: Deploy control plane (Render)
+    needs: [gate, frontend-build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    steps:
+      # The Render hook is optional by design (see CLAUDE.md): the gates above are
+      # what protect main. Hard-failing here when no hook is configured painted the
+      # whole workflow red on every run, so a real ruff/pytest/build regression was
+      # indistinguishable from an unset secret. Skip cleanly instead — and still
+      # fail hard when a hook IS configured and the call does not go through.
+      - name: Trigger Render deploy
+        env:
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          set -euo pipefail
+          if [ -z "$HOOK" ]; then
+            echo "::notice::No RENDER_DEPLOY_HOOK_URL configured — gates passed, deploy skipped."
+            {
+              echo "### Commerce deploy skipped"
+              echo
+              echo "Test, lint, and frontend build gates all passed."
+              echo "No \`RENDER_DEPLOY_HOOK_URL\` repo secret is set, so no Render deploy was triggered."
+              echo "Add that secret to turn this run into a real production deploy."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          curl -fsS -X POST "$HOOK" >/dev/null
+          echo "Render deploy triggered."
+          echo "### Commerce deploy triggered on Render" >> "$GITHUB_STEP_SUMMARY"

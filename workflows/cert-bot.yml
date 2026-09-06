@@ -1,0 +1,42 @@
+name: Cert Bot
+
+on:
+  schedule:
+    # 06:17 UTC daily — surface expiring certs well ahead of the threshold
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+    inputs:
+      hosts:
+        description: "Comma-separated hosts to check (overrides default)"
+        required: false
+        default: ""
+      min_days:
+        description: "Minimum acceptable days until expiry"
+        required: false
+        default: "21"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cert-bot
+  cancel-in-progress: false
+
+jobs:
+  track:
+    name: Cert Bot / track
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+      - name: Check TLS certificate expiry
+        env:
+          CERT_BOT_HOSTS: ${{ inputs.hosts || vars.CERT_BOT_HOSTS || 'www.clearglassinc.com' }}
+          CERT_BOT_MIN_DAYS: ${{ inputs.min_days || '21' }}
+          CERT_BOT_STRICT: "1"
+        run: python scripts/cert_bot.py
