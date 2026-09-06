@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>CONDUIT · Workflow Automation — Self-Hosted, Open Source — ClearGlass Inc.</title>
+<meta name="description" content="CONDUIT — a self-hosted, open-source workflow automation platform. Visual drag-and-drop builder, 400+ app integrations (Gmail, Slack, Notion, Google Sheets, WhatsApp), and AI-agent workflows on your own data and models."/>
+<link rel="canonical" href="https://www.clearglassinc.com/conduit.html"/>
+<meta property="og:title" content="CONDUIT · Workflow Automation — Self-Hosted, Open Source"/>
+<meta property="og:description" content="Automate Gmail, Slack, Notion, Sheets & WhatsApp. AI agent workflows on your own data and models. 400+ integrations, visual drag-and-drop, self-hosted. 100% free and open source."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://www.clearglassinc.com/conduit.html"/>
+<meta property="og:site_name" content="ClearGlass Inc."/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="CONDUIT · Workflow Automation — Self-Hosted, Open Source"/>
+<meta name="twitter:description" content="Automate Gmail, Slack, Notion, Sheets &amp; WhatsApp. AI agent workflows on your own data and models. 400+ integrations, visual drag-and-drop, self-hosted. 100% free and open source."/>
+<meta name="twitter:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#60a5fa;--amber:#60a5fa;--cyan:#36b6ff;--teal:#2fd4c0;--violet:#9b7bff;--ok:#34d399;--warn:#fbbf24;--pink:#f472b6;
+  --line:rgba(124,150,255,.16);--line-2:rgba(124,150,255,.3);--txt:#eef2ff;--dim:#9aa6c8;--dim-2:#5f6a8a;
+  --mono:'IBM Plex Mono',monospace;--display:'Orbitron','Inter',sans-serif;--sans:'Inter',system-ui,sans-serif}
+html,body{height:100%}
+body{font-family:var(--sans);color:var(--txt);min-height:100vh;
+  background:radial-gradient(130% 100% at 50% -10%,#0c1330 0%,#070a1c 48%,#04050d 100%);-webkit-font-smoothing:antialiased;isolation:isolate}
+
+/* top bar */
+.top{display:flex;align-items:center;gap:13px;padding:13px 22px;border-bottom:1px solid var(--line);background:rgba(7,10,28,.72);backdrop-filter:blur(8px);position:sticky;top:0;z-index:40}
+.mk{width:30px;height:30px;border-radius:8px;position:relative;background:radial-gradient(circle at 40% 35%,#bcd4ff,#1a2350 60%,#10183f);box-shadow:0 0 14px rgba(124,150,255,.6)}
+.mk::after{content:"⟿";position:absolute;inset:0;display:grid;place-items:center;font-size:16px;color:#fff}
+.b-name{font-family:var(--display);font-weight:900;letter-spacing:.18em;font-size:15px}.b-name b{background:linear-gradient(90deg,#60a5fa,#a78bfa);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.b-sub{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--dim-2);text-transform:uppercase}
+.spacer{flex:1}
+.back{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#9fc4ff;text-decoration:none;border:1px solid rgba(96,165,250,.35);background:rgba(96,165,250,.07);padding:7px 12px;border-radius:18px}
+.back:hover{border-color:var(--line-2);box-shadow:0 0 14px rgba(124,150,255,.25)}
+
+/* hero */
+.hero{max-width:1180px;margin:0 auto;padding:54px 22px 26px;text-align:center}
+.tagchip{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#bcd4ff;border:1px solid var(--line-2);background:rgba(124,150,255,.07);padding:6px 14px;border-radius:999px;margin-bottom:22px}
+.tagchip .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok)}
+h1{font-family:var(--display);font-weight:900;font-size:clamp(34px,6vw,62px);line-height:1.02;letter-spacing:-.01em}
+h1 .grad{background:var(--cg-crystal,linear-gradient(135deg,#38bdf8,#a78bfa 45%,#f472b6 75%,#34d399));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.lede{max-width:680px;margin:18px auto 0;font-size:clamp(15px,2vw,18px);line-height:1.6;color:var(--dim)}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.btn{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:13px 22px;border-radius:11px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:9px;transition:.16s;border:1px solid var(--line-2)}
+.btn-primary{background:linear-gradient(180deg,rgba(124,150,255,.3),rgba(124,150,255,.08));color:#fff}
+.btn-primary:hover{box-shadow:0 0 22px rgba(124,150,255,.4);transform:translateY(-1px)}
+.btn-ghost{background:rgba(255,255,255,.02);color:#cdd6f5}
+.btn-ghost:hover{border-color:var(--line-2);color:#fff}
+
+/* stat strip */
+.stats{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;max-width:1000px;margin:40px auto 0;padding:0 22px}
+.stat{flex:1 1 200px;background:rgba(12,16,38,.6);border:1px solid var(--line);border-radius:14px;padding:18px 16px;text-align:center}
+.stat .n{font-family:var(--display);font-weight:900;font-size:30px;background:linear-gradient(90deg,#60a5fa,#a78bfa);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat .l{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-top:6px}
+
+/* section */
+section{max-width:1280px;margin:0 auto;padding:46px 22px}
+.sec-head{text-align:center;margin-bottom:26px}
+.sec-kicker{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--violet)}
+.sec-title{font-family:var(--display);font-weight:800;font-size:clamp(22px,3.4vw,34px);margin-top:8px}
+.sec-sub{color:var(--dim);max-width:620px;margin:12px auto 0;font-size:15px;line-height:1.6}
+
+/* ── BUILDER ───────────────────────────────────────── */
+.builder{background:rgba(8,11,28,.72);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.builder-bar{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line);background:rgba(11,14,34,.6);flex-wrap:wrap}
+.builder-bar .title{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#cdd6f5}
+.builder-bar .meta{font-family:var(--mono);font-size:10px;color:var(--dim-2);letter-spacing:.06em}
+.bb-spacer{flex:1}
+.mini{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:8px 13px;border-radius:9px;cursor:pointer;border:1px solid var(--line);background:rgba(124,150,255,.06);color:#cdd6f5;transition:.14s}
+.mini:hover{border-color:var(--line-2);color:#fff}
+.mini.run{background:linear-gradient(180deg,rgba(52,211,153,.28),rgba(52,211,153,.08));border-color:rgba(52,211,153,.5);color:#d5ffe9}
+.mini.run:hover{box-shadow:0 0 16px rgba(52,211,153,.35)}
+.mini.danger:hover{border-color:rgba(244,114,182,.5);color:#ffd6ec}
+
+.builder-grid{display:grid;grid-template-columns:212px 1fr 280px;min-height:520px}
+@media(max-width:980px){.builder-grid{grid-template-columns:1fr;min-height:auto}}
+
+/* palette */
+.palette{border-right:1px solid var(--line);padding:12px;overflow-y:auto;max-height:560px}
+.pal-grp{font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim-2);padding:12px 6px 6px}
+.pal-grp:first-child{padding-top:2px}
+.node-chip{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:10px;border:1px solid var(--line);background:rgba(124,150,255,.04);margin-bottom:6px;cursor:grab;font-size:12.5px;transition:.13s;user-select:none}
+.node-chip:hover{border-color:var(--line-2);background:rgba(124,150,255,.1);transform:translateX(2px)}
+.node-chip:active{cursor:grabbing}
+.node-chip .ic{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;font-size:14px;flex:0 0 auto;background:rgba(124,150,255,.1)}
+.pal-hint{font-family:var(--mono);font-size:9px;color:var(--dim-2);line-height:1.5;padding:10px 6px 2px;border-top:1px solid var(--line);margin-top:10px}
+
+/* canvas */
+.canvas-wrap{position:relative;overflow:hidden;background:
+  radial-gradient(circle at 1px 1px,rgba(124,150,255,.13) 1px,transparent 0) 0 0/26px 26px,
+  linear-gradient(180deg,rgba(8,11,26,.4),rgba(6,8,20,.4))}
+#canvas{position:absolute;inset:0}
+#wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.canvas-empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--dim-2);font-family:var(--mono);font-size:12px;letter-spacing:.06em;padding:20px;pointer-events:none}
+.canvas-empty span{display:block;font-size:32px;margin-bottom:10px;opacity:.6}
+
+/* node */
+.node{position:absolute;width:172px;background:linear-gradient(180deg,rgba(18,22,46,.97),rgba(12,15,34,.97));border:1px solid var(--line-2);border-radius:12px;z-index:2;box-shadow:0 12px 30px -12px rgba(0,0,0,.7);transition:box-shadow .15s,border-color .15s}
+.node:hover{border-color:rgba(124,150,255,.55)}
+.node.sel{border-color:#a78bfa;box-shadow:0 0 0 1px rgba(167,139,250,.5),0 12px 34px -10px rgba(124,150,255,.5)}
+.node.exec{border-color:var(--warn);box-shadow:0 0 0 1px var(--warn),0 0 22px rgba(251,191,36,.4)}
+.node.done{border-color:var(--ok)}
+.node-h{display:flex;align-items:center;gap:8px;padding:9px 10px;cursor:grab;border-bottom:1px solid var(--line)}
+.node-h:active{cursor:grabbing}
+.node-h .ic{width:24px;height:24px;border-radius:6px;display:grid;place-items:center;font-size:13px;flex:0 0 auto}
+.node-h .nm{font-size:12.5px;font-weight:600;line-height:1.1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.node-h .nm small{display:block;font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--dim-2);text-transform:uppercase;font-weight:400}
+.node-del{margin-left:auto;cursor:pointer;color:var(--dim-2);font-size:14px;line-height:1;background:none;border:0;flex:0 0 auto;padding:2px}
+.node-del:hover{color:var(--pink)}
+.node-b{padding:8px 10px;font-family:var(--mono);font-size:9.5px;color:var(--dim);line-height:1.45;min-height:20px}
+.node-status{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--dim-2);margin-right:5px;vertical-align:middle}
+.node.exec .node-status{background:var(--warn);box-shadow:0 0 7px var(--warn);animation:pulse .7s infinite}
+.node.done .node-status{background:var(--ok);box-shadow:0 0 7px var(--ok)}
+@keyframes pulse{50%{opacity:.4}}
+.port{position:absolute;width:14px;height:14px;border-radius:50%;background:#10183f;border:2px solid #60a5fa;top:50%;cursor:crosshair;z-index:3;transition:.12s}
+.port:hover{background:#a78bfa;border-color:#a78bfa;transform:translateY(-50%) scale(1.25)}
+.port.in{left:-8px;transform:translateY(-50%)}
+.port.out{right:-8px;transform:translateY(-50%)}
+.port.in:hover,.port.out:hover{transform:translateY(-50%) scale(1.25)}
+.port.armed{background:#a78bfa;border-color:#fff;box-shadow:0 0 10px #a78bfa}
+
+/* log panel */
+.logpane{border-left:1px solid var(--line);display:flex;flex-direction:column;max-height:560px}
+.logpane h3{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#cdd6f5;padding:12px 14px 10px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+.logpane h3 .lc{margin-left:auto;color:var(--dim-2);font-size:9px}
+.log{flex:1;overflow-y:auto;padding:10px 12px;font-family:var(--mono);font-size:10.5px;line-height:1.55}
+.log .le{display:flex;gap:8px;padding:4px 0;border-bottom:1px solid rgba(124,150,255,.06);animation:slidein .25s ease}
+@keyframes slidein{from{opacity:0;transform:translateX(6px)}}
+.log .le .t{color:var(--dim-2);flex:0 0 auto}
+.log .le.ok .m{color:#bdf7da}.log .le.run .m{color:#ffe7a8}.log .le.info .m{color:var(--dim)}.log .le.err .m{color:#ffb8d8}
+.log .empty{color:var(--dim-2);padding:6px 2px}
+
+/* feature cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.fcard{background:rgba(12,16,38,.6);border:1px solid var(--line);border-radius:15px;padding:20px;transition:.16s}
+.fcard:hover{border-color:var(--line-2);transform:translateY(-3px);box-shadow:0 18px 40px -22px rgba(124,150,255,.5)}
+.fcard .fi{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:20px;background:rgba(124,150,255,.1);border:1px solid var(--line);margin-bottom:13px}
+.fcard h4{font-size:16px;margin-bottom:7px}
+.fcard p{color:var(--dim);font-size:13.5px;line-height:1.55}
+
+/* integrations */
+.intg-bar{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.intg-search{font-family:var(--sans);font-size:13px;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--txt);outline:none;width:min(340px,80vw)}
+.intg-search:focus{border-color:var(--line-2);box-shadow:0 0 0 3px rgba(124,150,255,.08)}
+.intg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:9px}
+.intg{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:11px;border:1px solid var(--line);background:rgba(124,150,255,.04);font-size:12.5px;transition:.13s}
+.intg:hover{border-color:var(--line-2);background:rgba(124,150,255,.1)}
+.intg .glyph{width:24px;height:24px;border-radius:6px;display:grid;place-items:center;font-size:12px;font-weight:700;flex:0 0 auto;color:#06080f}
+.intg .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.intg-more{text-align:center;color:var(--dim-2);font-family:var(--mono);font-size:11px;margin-top:18px;letter-spacing:.06em}
+
+/* terminal / self-host */
+.deploy{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:center}
+@media(max-width:860px){.deploy{grid-template-columns:1fr}}
+.term{background:#06080f;border:1px solid var(--line);border-radius:14px;overflow:hidden;font-family:var(--mono);box-shadow:var(--cg-sh-3,0 24px 60px -24px rgba(6,8,18,.8))}
+.term-h{display:flex;align-items:center;gap:7px;padding:10px 13px;border-bottom:1px solid var(--line);background:rgba(124,150,255,.04)}
+.term-h .d{width:11px;height:11px;border-radius:50%}
+.term-h .t{margin-left:8px;font-size:10px;color:var(--dim-2);letter-spacing:.1em}
+.term-b{padding:16px;font-size:12.5px;line-height:1.75;overflow-x:auto}
+.term-b .c{color:#cdd6f5}.term-b .p{color:var(--violet)}.term-b .o{color:var(--dim)}.term-b .g{color:var(--ok)}
+.deploy ul{list-style:none;display:grid;gap:12px}
+.deploy li{display:flex;gap:11px;align-items:flex-start;font-size:14px;color:var(--dim);line-height:1.5}
+.deploy li b{color:var(--txt);font-weight:600}
+.deploy li .ck{color:var(--ok);flex:0 0 auto;margin-top:2px}
+
+
+/* authority lattice */
+.authority-lattice{position:relative;overflow:hidden;border:1px solid rgba(96,165,250,.34);border-radius:22px;background:linear-gradient(160deg,rgba(10,15,35,.88),rgba(5,8,20,.74));padding:28px;box-shadow:0 28px 90px -54px rgba(54,182,255,.78)}
+.authority-lattice::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 0 9%,rgba(96,165,250,.12) 10%,transparent 11% 49%,rgba(52,211,153,.11) 50%,transparent 51% 89%,rgba(167,139,250,.12) 90%,transparent 91%),linear-gradient(0deg,transparent 0 18%,rgba(96,165,250,.08) 19%,transparent 20% 68%,rgba(244,114,182,.08) 69%,transparent 70%);opacity:.75;mask-image:radial-gradient(circle at 50% 18%,#000,transparent 82%);pointer-events:none}
+.authority-lattice>*{position:relative;z-index:1}.lattice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:20px}.lattice-card{border:1px solid rgba(96,165,250,.24);border-radius:15px;background:rgba(96,165,250,.045);padding:16px}.lattice-card h4{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#9fc4ff;margin-bottom:9px}.lattice-card p,.lattice-card li{color:var(--dim);font-size:13px;line-height:1.58}.lattice-card ul{margin:0;padding-left:17px;display:grid;gap:6px}.signal-link{color:#bfdbfe;text-decoration:none;border-bottom:1px solid rgba(96,165,250,.45);box-shadow:0 1px 0 rgba(96,165,250,.08)}.signal-link:hover{color:#fff;border-bottom-color:#34d399;text-shadow:0 0 12px rgba(96,165,250,.65)}
+.matrix{width:100%;border-collapse:collapse;margin-top:18px;font-size:12.5px;color:var(--dim);overflow:hidden;border-radius:14px}.matrix th,.matrix td{border:1px solid rgba(96,165,250,.18);padding:10px;vertical-align:top}.matrix th{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#dbeafe;background:rgba(96,165,250,.1);text-align:left}.matrix td a{display:inline-block;margin:2px 4px 2px 0}.priority-rail{counter-reset:step;display:grid;gap:9px;margin-top:16px}.priority-rail li{list-style:none;counter-increment:step;border:1px solid rgba(124,150,255,.2);background:rgba(124,150,255,.045);border-radius:12px;padding:11px 13px;color:var(--dim);font-size:13px;line-height:1.5}.priority-rail li::before{content:counter(step,decimal-leading-zero);font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:#34d399;margin-right:9px}
+
+/* final cta */
+.final{text-align:center;background:linear-gradient(180deg,rgba(124,150,255,.08),rgba(124,150,255,.02));border:1px solid var(--line);border-radius:20px;padding:46px 24px;margin:10px auto 0;max-width:900px}
+.final h2{font-family:var(--display);font-weight:900;font-size:clamp(24px,4vw,38px)}
+.final p{color:var(--dim);max-width:520px;margin:14px auto 0;font-size:15px;line-height:1.6}
+
+footer{text-align:center;padding:34px 22px 56px;color:var(--dim-2);font-family:var(--mono);font-size:10px;letter-spacing:.1em;border-top:1px solid var(--line);margin-top:30px}
+footer b{color:var(--dim)}
+
+/* advanced mission-grade content */
+.hero-ops{max-width:960px;margin:24px auto 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;text-align:left}
+.ops-pill{border:1px solid var(--line);background:rgba(12,16,38,.54);border-radius:13px;padding:13px 14px;color:var(--dim);font-size:12.5px;line-height:1.45}
+.ops-pill b{display:block;color:var(--txt);font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px}
+.deep-copy{max-width:900px;margin:22px auto 0;color:var(--dim);font-size:14px;line-height:1.7;text-align:center}
+.arch-grid,.gov-grid,.deploy-grid,.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:22px}
+.arch-card,.gov-card,.deploy-card,.why-card{background:linear-gradient(180deg,rgba(12,16,38,.76),rgba(8,11,28,.58));border:1px solid var(--line);border-radius:16px;padding:20px}
+.arch-card h4,.gov-card h4,.deploy-card h4,.why-card h4{font-size:15px;margin-bottom:10px;color:#eef2ff}
+.arch-card p,.gov-card p,.deploy-card p,.why-card p{color:var(--dim);font-size:13px;line-height:1.58}
+.callouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:18px}
+.callout{font-family:var(--mono);font-size:10px;letter-spacing:.06em;line-height:1.55;color:#cdd6f5;border:1px solid rgba(96,165,250,.22);background:rgba(96,165,250,.055);border-radius:12px;padding:12px}
+.spec-list{list-style:none;display:grid;gap:9px;margin-top:14px}.spec-list li{color:var(--dim);font-size:13px;line-height:1.5;display:flex;gap:9px}.spec-list li::before{content:'✓';color:var(--ok);font-weight:700}
+.cta-stack{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:22px}.cta-stack .btn{padding:11px 16px;font-size:10px}
+.system-rail{margin-top:20px;border:1px solid var(--line);border-radius:18px;background:rgba(6,8,15,.58);overflow:hidden}.rail-row{display:grid;grid-template-columns:180px 1fr;border-bottom:1px solid var(--line)}.rail-row:last-child{border-bottom:0}.rail-k{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#9fc4ff;padding:14px;border-right:1px solid var(--line);background:rgba(124,150,255,.05)}.rail-v{padding:14px;color:var(--dim);font-size:13px;line-height:1.55}@media(max-width:680px){.rail-row{grid-template-columns:1fr}.rail-k{border-right:0;border-bottom:1px solid var(--line)}}
+
+
+
+/* DARPA-2040 command-interface motion layer */
+body::before,body::after{content:"";position:fixed;inset:-20%;pointer-events:none;z-index:0;opacity:.75;will-change:transform;background:
+  radial-gradient(circle at 18% 22%,rgba(54,182,255,.18),transparent 26%),
+  radial-gradient(circle at 82% 12%,rgba(167,139,250,.13),transparent 24%),
+  linear-gradient(115deg,transparent 0 42%,rgba(47,212,192,.055) 48%,transparent 54%)}
+body::before{animation:orbitalDrift 24s cubic-bezier(.45,0,.25,1) infinite alternate}
+body::after{opacity:.18;background:repeating-linear-gradient(90deg,transparent 0 34px,rgba(159,196,255,.16) 35px,transparent 36px),repeating-linear-gradient(0deg,transparent 0 34px,rgba(159,196,255,.12) 35px,transparent 36px);mask-image:radial-gradient(circle at 50% 20%,#000,transparent 68%);animation:gridDrift 18s linear infinite}
+@keyframes orbitalDrift{to{transform:translate3d(2.5%,-1.5%,0) rotate(.8deg) scale(1.04)}}
+@keyframes gridDrift{to{transform:translate3d(-36px,36px,0)}}
+.top,section,footer{position:relative;z-index:1}
+.top{box-shadow:0 1px 0 rgba(255,255,255,.04),0 18px 44px -34px rgba(54,182,255,.9)}
+.hero{position:relative;min-height:76vh;display:grid;align-content:center;isolation:isolate}
+.hero::before{content:"";position:absolute;left:50%;top:50%;width:min(860px,92vw);aspect-ratio:1.9;transform:translate(-50%,-50%);z-index:-1;border:1px solid rgba(96,165,250,.16);border-radius:999px;background:radial-gradient(ellipse at center,rgba(96,165,250,.12),transparent 64%);filter:blur(.2px);animation:commandHalo 9s ease-in-out infinite alternate}
+.hero::after{content:"SECURE AUTOMATION DOSSIER // CONDUIT";position:absolute;left:50%;bottom:18px;transform:translateX(-50%);font-family:var(--mono);font-size:9px;letter-spacing:.32em;color:rgba(188,212,255,.3);white-space:nowrap}
+@keyframes commandHalo{to{transform:translate(-50%,-51.5%) scale(1.035);border-color:rgba(52,211,153,.22)}}
+.tagchip,.hero h1,.lede,.deep-copy,.hero-ops,.cta-row,.stats,.builder,.fcard,.why-card,.arch-card,.gov-card,.deploy-card,.ptier,.final,.system-rail,.term,.deploy li,.intg{will-change:transform,opacity}
+[data-motion]{opacity:0;transform:translate3d(0,26px,0);filter:blur(8px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1),filter .9s cubic-bezier(.16,1,.3,1);transition-delay:var(--d,0ms)}
+[data-motion].is-visible{opacity:1;transform:none;filter:blur(0)}
+[data-motion="left"]{transform:translate3d(-28px,0,0)}
+[data-motion="right"]{transform:translate3d(28px,0,0)}
+.hero h1 .word{display:inline-block;overflow:hidden;vertical-align:bottom}.hero h1 .word>span{display:inline-block;transform:translateY(110%) rotateX(-35deg);transform-origin:50% 100%;animation:wordDeploy .9s cubic-bezier(.16,1,.3,1) forwards;animation-delay:var(--wd,0ms)}
+@keyframes wordDeploy{to{transform:translateY(0) rotateX(0)}}
+.btn,.pbtn,.mini{position:relative;overflow:hidden;transform:translate3d(0,0,0)}
+.btn::after,.pbtn::after,.mini::after{content:"";position:absolute;inset:-40%;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.22),transparent 65%);transform:translateX(-80%);transition:transform .55s cubic-bezier(.16,1,.3,1);pointer-events:none}.btn:hover::after,.pbtn:hover::after,.mini:hover::after{transform:translateX(80%)}
+.fcard,.why-card,.arch-card,.gov-card,.deploy-card,.ptier,.stat,.ops-pill{position:relative;overflow:hidden}.fcard::before,.why-card::before,.arch-card::before,.gov-card::before,.deploy-card::before,.ptier::before,.stat::before,.ops-pill::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,rgba(96,165,250,.22),transparent 34%,rgba(52,211,153,.1));opacity:0;transition:opacity .25s;pointer-events:none}.fcard:hover::before,.why-card:hover::before,.arch-card:hover::before,.gov-card:hover::before,.deploy-card:hover::before,.ptier:hover::before,.stat:hover::before,.ops-pill:hover::before{opacity:1}
+.motion-brief{border:1px solid var(--line);border-radius:22px;padding:26px;background:linear-gradient(180deg,rgba(12,16,38,.76),rgba(6,8,15,.68));box-shadow:0 30px 90px -55px rgba(54,182,255,.65)}
+.motion-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:18px}.motion-cell{border:1px solid rgba(96,165,250,.18);background:rgba(96,165,250,.045);border-radius:14px;padding:15px}.motion-cell b{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#9fc4ff;margin-bottom:7px}.motion-cell p{color:var(--dim);font-size:13px;line-height:1.55}
+
+.flow-steps,.usecase-grid,.dev-grid,.reliability-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:22px}
+.flow-step,.usecase-card,.dev-card,.reliability-card{background:linear-gradient(180deg,rgba(12,16,38,.74),rgba(8,11,28,.56));border:1px solid var(--line);border-radius:16px;padding:19px;position:relative;overflow:hidden}
+.flow-step .num{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#34d399;margin-bottom:10px}.flow-step h4,.usecase-card h4,.dev-card h4,.reliability-card h4{font-size:15px;margin-bottom:8px;color:#eef2ff}.flow-step p,.usecase-card p,.dev-card p,.reliability-card p{color:var(--dim);font-size:13px;line-height:1.58}.architecture-overview{border:1px solid rgba(52,211,153,.24);border-radius:18px;background:linear-gradient(135deg,rgba(52,211,153,.08),rgba(96,165,250,.05));padding:22px;margin-top:22px}.architecture-overview h3{font-size:18px;margin-bottom:10px}.architecture-overview p{color:var(--dim);font-size:14px;line-height:1.65}.comparison-table{width:100%;border-collapse:collapse;margin-top:18px;font-size:12.5px;color:var(--dim);border-radius:15px;overflow:hidden}.comparison-table th,.comparison-table td{border:1px solid var(--line);padding:12px;text-align:left;vertical-align:top}.comparison-table th{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#dbeafe;background:rgba(96,165,250,.1)}.comparison-table td:nth-child(2){color:#cfe9ff}.mission-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:16px}.mission-strip span{border:1px solid rgba(167,139,250,.24);background:rgba(167,139,250,.055);border-radius:999px;padding:10px 12px;text-align:center;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:#d9d2ff}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}.hero h1 .word>span,[data-motion]{opacity:1!important;transform:none!important;filter:none!important}body::before,body::after{display:none!important}}
+
+</style>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+
+<div class="top">
+  <div class="mk"></div>
+  <div><div class="b-name">CON<b>DUIT</b></div><div class="b-sub">Workflow Automation · Self-Hosted</div></div>
+  <div class="spacer"></div>
+  <a class="back" href="index.html">← ClearGlass</a>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="tagchip"><span class="dot"></span> 175,000+ ★ · 100% Open Source</div>
+  <h1>Automate everything.<br><span class="grad">On your own server.</span></h1>
+  <p class="lede">CONDUIT is a self-hosted workflow automation platform. Connect Gmail, Slack, Notion, Google Sheets &amp; WhatsApp, build AI agent workflows on your own data and models, and wire up 400+ apps with visual drag-and-drop — no Zapier subscription, zero data leaks.</p>
+  <p class="deep-copy">Built as a private automation control plane, CONDUIT coordinates deterministic workflows, AI-assisted decisions, human approvals, audit trails, and protected handoffs across the systems your organization already trusts.</p>
+  <div class="hero-ops">
+    <div class="ops-pill"><b>Execution discipline</b>Stateful runs, explicit inputs, controlled retries, and observable outcomes for production workflows.</div>
+    <div class="ops-pill"><b>Private intelligence</b>Documents, credentials, prompts, vectors, and operational context remain inside your deployment boundary.</div>
+    <div class="ops-pill"><b>Governed autonomy</b>Agents can summarize, classify, enrich, and recommend; humans retain approval over material actions.</div>
+  </div>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="#builder">⟿ Open the builder</a>
+    <a class="btn btn-ghost" href="#plans">◆ See plans</a>
+    <a class="btn btn-ghost" href="#deploy">$ Self-host in 60s</a>
+    <a class="btn btn-ghost" href="#architecture">▣ Review architecture</a>
+    <a class="btn btn-ghost" href="#governance">◈ Security model</a>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><div class="n" data-count="175000" data-suffix="+">0</div><div class="l">GitHub stars</div></div>
+  <div class="stat"><div class="n" data-count="400" data-suffix="+">0</div><div class="l">App integrations</div></div>
+  <div class="stat"><div class="n">$0</div><div class="l">Subscription cost</div></div>
+  <div class="stat"><div class="n">100%</div><div class="l">Self-hosted &amp; private</div></div>
+</div>
+
+<!-- BUILDER -->
+<section id="builder">
+  <div class="sec-head">
+    <div class="sec-kicker">Visual workflow builder</div>
+    <h2 class="sec-title">Drag. Connect. Run.</h2>
+    <p class="sec-sub">Drag a node onto the canvas, click an output port then an input port to wire them, and hit <b>Run</b> to watch data flow through your workflow — live, right here in the browser.</p>
+  </div>
+
+  <div class="builder">
+    <div class="builder-bar">
+      <span class="title">⟿ Untitled workflow</span>
+      <span class="meta" id="bbMeta">0 nodes · 0 connections</span>
+      <div class="bb-spacer"></div>
+      <button class="mini" id="btnSample">↺ Load sample</button>
+      <button class="mini danger" id="btnClear">✕ Clear</button>
+      <button class="mini run" id="btnRun">▶ Run workflow</button>
+    </div>
+    <div class="builder-grid">
+      <!-- palette -->
+      <div class="palette" id="palette"></div>
+      <!-- canvas -->
+      <div class="canvas-wrap" id="canvasWrap">
+        <svg id="wires"></svg>
+        <div id="canvas"></div>
+        <div class="canvas-empty" id="canvasEmpty"><span>⟿</span>Drag nodes here to build a workflow<br>or click “Load sample”.</div>
+      </div>
+      <!-- log -->
+      <div class="logpane">
+        <h3>Execution log <span class="lc" id="logCount"></span></h3>
+        <div class="log" id="log"><div class="empty">— idle. Build a flow and press Run.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section>
+  <div class="sec-head">
+    <div class="sec-kicker">Why CONDUIT</div>
+    <h2 class="sec-title">A whole automation stack you own</h2>
+  </div>
+  <p class="deep-copy">CONDUIT turns automation into an operating layer: source systems stay authoritative, workflows become inspectable, and every automated step can be traced from trigger to decision to final handoff.</p>
+  <div class="cards">
+    <div class="fcard"><div class="fi">🧩</div><h4>400+ integrations</h4><p>Gmail, Slack, Notion, Google Sheets, WhatsApp, Stripe, GitHub, Postgres and hundreds more — plus a generic HTTP node for any API on earth.</p></div>
+    <div class="fcard"><div class="fi">🤖</div><h4>AI agent workflows</h4><p>Drop in LLM, agent and vector-store nodes. Bring your own data and models — OpenAI, Anthropic, or local Ollama — and let agents make decisions inside your flows.</p></div>
+    <div class="fcard"><div class="fi">🖱️</div><h4>Visual drag-and-drop</h4><p>Build branching, looping, multi-step automations on a canvas. No glue code required — but drop into a Code node whenever you want raw JavaScript.</p></div>
+    <div class="fcard"><div class="fi">🔒</div><h4>Self-hosted, zero leaks</h4><p>Runs entirely on your own server or laptop. Your credentials and data never leave your infrastructure. Air-gap it if you like.</p></div>
+    <div class="fcard"><div class="fi">⏱️</div><h4>Triggers for everything</h4><p>Schedules, webhooks, email arrivals, form submissions, file changes — kick off workflows the instant something happens.</p></div>
+    <div class="fcard"><div class="fi">⭐</div><h4>Free &amp; open source</h4><p>Backed by 175,000+ GitHub stars. No seats, no per-task billing, no Zapier subscription. Fork it, extend it, ship it.</p></div>
+    <div class="fcard"><div class="fi">🧭</div><h4>Deterministic runbooks</h4><p>Codify repeatable operating procedures with explicit branching, typed payloads, validation checkpoints, and controlled exception paths.</p></div>
+    <div class="fcard"><div class="fi">🛡️</div><h4>Policy-aware execution</h4><p>Require approvals, restrict sensitive nodes, and gate privileged actions before records move, tickets open, or external systems are updated.</p></div>
+    <div class="fcard"><div class="fi">📜</div><h4>Traceable audit history</h4><p>Maintain run logs, input/output snapshots, actor context, credential usage, retries, and terminal state for forensic review.</p></div>
+    <div class="fcard"><div class="fi">🛰️</div><h4>OSINT and document pipelines</h4><p>Ingest webhooks, feeds, PDFs, email, forms, and repositories; enrich them with extraction, classification, correlation, and review steps.</p></div>
+    <div class="fcard"><div class="fi">🧠</div><h4>Multi-agent orchestration</h4><p>Chain specialist agents for triage, retrieval, summarization, validation, recommendation, and final human-in-the-loop disposition.</p></div>
+    <div class="fcard"><div class="fi">📡</div><h4>Operational observability</h4><p>Monitor executions, latency, failure rates, queue depth, node health, and workflow drift before automation becomes operational risk.</p></div>
+  </div>
+</section>
+
+
+<!-- WHY DEEPER -->
+<section id="why-conduit">
+  <div class="sec-head"><div class="sec-kicker">Why CONDUIT</div><h2 class="sec-title">A self-hosted workflow control plane</h2><p class="sec-sub">CONDUIT is designed for teams that need automation to be inspectable, portable, and governed—not hidden inside a rented black box.</p></div>
+  <div class="why-grid">
+    <div class="why-card"><h4>Source-of-truth integrity</h4><p>Workflows read from and write back to designated systems of record, preserving ownership boundaries instead of creating shadow operational data.</p></div>
+    <div class="why-card"><h4>Human-commanded automation</h4><p>AI nodes can propose actions, draft outputs, and prioritize queues while approval nodes preserve accountability for operationally significant steps.</p></div>
+    <div class="why-card"><h4>Modular extension surface</h4><p>Every integration, transformation, credential, and model call is represented as a node that can be inspected, versioned, replaced, or forked.</p></div>
+  </div>
+  <div class="callouts"><div class="callout">Validate before write.</div><div class="callout">Approve before escalation.</div><div class="callout">Log before and after every handoff.</div><div class="callout">Keep private data under private control.</div></div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="sec-head"><div class="sec-kicker">System architecture</div><h2 class="sec-title">Composable automation with controlled execution</h2><p class="sec-sub">A CONDUIT deployment separates orchestration, credentials, data stores, queues, workers, AI services, and observability so production teams can scale the layer without surrendering control.</p></div>
+  <div class="system-rail">
+    <div class="rail-row"><div class="rail-k">Control plane</div><div class="rail-v">Workflow definitions, credentials, policy configuration, schedules, webhooks, approvals, and version history.</div></div>
+    <div class="rail-row"><div class="rail-k">Execution plane</div><div class="rail-v">Workers process node graphs, enforce retries, isolate failures, emit events, and persist run state for replay and review.</div></div>
+    <div class="rail-row"><div class="rail-k">AI plane</div><div class="rail-v">LLM, vector, retrieval, classifier, extraction, and agent nodes route to approved cloud models or local models under your governance model.</div></div>
+    <div class="rail-row"><div class="rail-k">Evidence plane</div><div class="rail-v">Documents, API responses, OSINT artifacts, generated summaries, and approval decisions remain linked to workflow lineage.</div></div>
+  </div>
+  <div class="arch-grid">
+    <div class="arch-card"><h4>Durable workflows</h4><p>Queue-backed runs, resumable execution, idempotent node patterns, and explicit failure states keep automation predictable under load.</p></div>
+    <div class="arch-card"><h4>Protected handoffs</h4><p>Move work between agents, humans, and systems with structured payloads, mandatory context, and policy checks at transition points.</p></div>
+    <div class="arch-card"><h4>API orchestration</h4><p>Normalize SaaS APIs, internal services, databases, and HTTP endpoints behind repeatable node contracts.</p></div>
+    <div class="arch-card"><h4>Validation layers</h4><p>Insert schema checks, confidence thresholds, duplicate detection, source ranking, and manual review before irreversible actions.</p></div>
+  </div>
+</section>
+
+
+<!-- PLATFORM MODULES -->
+<section id="platform-modules">
+  <div class="sec-head"><div class="sec-kicker">Feature architecture</div><h2 class="sec-title">Core modules for mission-grade automation</h2><p class="sec-sub">CONDUIT expands from a visual builder into an automation command center: triggers, queues, approvals, agents, connectors, logs, and deployment controls operate as one self-hosted system.</p></div>
+  <div class="arch-grid">
+    <div class="arch-card"><h4>Event intake layer</h4><p>API calls, webhooks, schedules, inbox events, forms, repository changes, and file drops enter through normalized trigger contracts with explicit payload shape and source metadata.</p></div>
+    <div class="arch-card"><h4>Workflow definition layer</h4><p>Version-controlled node graphs define branching logic, retry policy, secrets scope, approval checkpoints, AI model routes, and terminal states before execution begins.</p></div>
+    <div class="arch-card"><h4>Queue and worker layer</h4><p>Jobs move through queue-backed workers that support concurrency limits, delayed retries, resumable steps, dead-letter handling, and clean isolation between long-running automations.</p></div>
+    <div class="arch-card"><h4>Governance layer</h4><p>Human approval gates, role permissions, policy-aware nodes, prompt governance, and audit events keep automation accountable even when agentic steps are embedded inside flows.</p></div>
+    <div class="arch-card"><h4>Connector layer</h4><p>Modular integrations standardize SaaS APIs, databases, AI services, internal tools, and generic HTTP calls so teams can extend workflows without rebuilding orchestration primitives.</p></div>
+    <div class="arch-card"><h4>Observability layer</h4><p>Execution history, node timings, payload lineage, error traces, queue depth, retry outcomes, and exported logs give operators a reliable view of what happened and why.</p></div>
+  </div>
+</section>
+
+<!-- EXECUTION FLOW -->
+<section id="execution-flow">
+  <div class="sec-head"><div class="sec-kicker">How it works</div><h2 class="sec-title">From signal to governed action</h2><p class="sec-sub">Every run follows an inspectable path: receive the event, evaluate context, execute deterministic steps, request approval when needed, and preserve the record.</p></div>
+  <div class="system-rail">
+    <div class="rail-row"><div class="rail-k">01 · Trigger</div><div class="rail-v">A webhook, API call, cron schedule, email, file event, form submission, or manual launch creates a typed workflow run with source, actor, and correlation metadata.</div></div>
+    <div class="rail-row"><div class="rail-k">02 · Validate</div><div class="rail-v">Schema checks, authorization rules, deduplication, confidence thresholds, and required fields determine whether the run can proceed safely.</div></div>
+    <div class="rail-row"><div class="rail-k">03 · Orchestrate</div><div class="rail-v">Nodes execute through conditional branches, transformations, connector calls, AI-assisted steps, and retry policies while the system persists intermediate state.</div></div>
+    <div class="rail-row"><div class="rail-k">04 · Approve</div><div class="rail-v">Material changes can pause for one or multiple approvers, preserving the proposed action, evidence, operator decision, comments, and final disposition.</div></div>
+    <div class="rail-row"><div class="rail-k">05 · Recover</div><div class="rail-v">Failures route to retries, dead-letter queues, compensating workflows, alerts, or manual intervention without hiding partial outcomes.</div></div>
+    <div class="rail-row"><div class="rail-k">06 · Audit</div><div class="rail-v">The final run record links trigger, workflow version, credentials used, model route, outputs, approvals, errors, and exportable execution history.</div></div>
+  </div>
+</section>
+
+<!-- GOVERNANCE -->
+<section id="governance">
+  <div class="sec-head"><div class="sec-kicker">Security and governance</div><h2 class="sec-title">Private automation for high-trust environments</h2><p class="sec-sub">CONDUIT keeps sensitive automation close to the systems it serves, with controls that support auditability, separation of duties, and disciplined AI use.</p></div>
+  <div class="gov-grid">
+    <div class="gov-card"><h4>Credential custody</h4><p>Store secrets inside your environment, scope them to workflows, and avoid third-party brokered execution for sensitive integrations.</p></div>
+    <div class="gov-card"><h4>Role-aware operation</h4><p>Separate builders, operators, approvers, administrators, and auditors so production changes are not indistinguishable from routine use.</p></div>
+    <div class="gov-card"><h4>Immutable audit posture</h4><p>Forward run events, approval records, prompt versions, and integration outcomes into your logging and SIEM stack.</p></div>
+    <div class="gov-card"><h4>AI governance</h4><p>Pin model routes, approve prompt changes, record generated outputs, and require confidence thresholds before agent recommendations advance.</p></div>
+  </div>
+  <ul class="spec-list">
+    <li>Preserve provenance for documents, extracted fields, summaries, and outbound actions.</li>
+    <li>Use approval gates for payments, customer communications, records changes, and privileged infrastructure actions.</li>
+    <li>Support air-gapped or private-network deployment patterns where external AI calls are not permitted.</li>
+    <li>Export logs and workflow definitions for compliance review, disaster recovery, and vendor independence.</li>
+  </ul>
+</section>
+
+<!-- EXECUTION FLOW -->
+<section id="execution-flow">
+  <div class="sec-head"><div class="sec-kicker">Execution flow</div><h2 class="sec-title">From event to governed outcome</h2><p class="sec-sub">CONDUIT treats every automation as a traceable run: triggered by a real event, resolved through explicit logic, and completed with evidence attached.</p></div>
+  <div class="flow-steps">
+    <div class="flow-step"><div class="num">01 · Trigger</div><h4>API, webhook, cron, file, email, or app event</h4><p>Incoming events are normalized into structured payloads with actor context, source metadata, timestamps, and correlation identifiers.</p></div>
+    <div class="flow-step"><div class="num">02 · Decide</div><h4>Branch, enrich, retrieve, and validate</h4><p>Conditional logic, connectors, databases, AI-assisted steps, and confidence thresholds transform raw signals into operational decisions.</p></div>
+    <div class="flow-step"><div class="num">03 · Govern</div><h4>Approval gates before material action</h4><p>Human-in-the-loop checkpoints can require one or many approvers before customer, finance, security, or infrastructure changes proceed.</p></div>
+    <div class="flow-step"><div class="num">04 · Execute</div><h4>Queue-backed workers with bounded retries</h4><p>Jobs run through isolated workers, idempotency keys, retry policies, timeout controls, and terminal success or failure states.</p></div>
+    <div class="flow-step"><div class="num">05 · Observe</div><h4>Logs, traces, exports, and recovery context</h4><p>Every node emits run evidence so teams can replay decisions, export history, diagnose failures, and improve future workflows.</p></div>
+  </div>
+</section>
+
+<!-- RELIABILITY -->
+<section id="reliability">
+  <div class="sec-head"><div class="sec-kicker">Reliability and recovery</div><h2 class="sec-title">Automation that fails visibly and recovers cleanly</h2><p class="sec-sub">Production workflows need more than happy-path execution. CONDUIT is positioned around durable state, explicit failure handling, and operational recovery.</p></div>
+  <div class="reliability-grid">
+    <div class="reliability-card"><h4>Durable run state</h4><p>Persist node inputs, outputs, status transitions, and terminal results so interrupted workflows can be inspected, resumed, or replayed.</p></div>
+    <div class="reliability-card"><h4>Retry discipline</h4><p>Apply bounded retries, backoff, timeout limits, and dead-letter handling instead of infinite loops or silent background failure.</p></div>
+    <div class="reliability-card"><h4>Queue visibility</h4><p>Track queue depth, worker health, execution latency, stuck jobs, and connector error rates before backlog becomes business risk.</p></div>
+    <div class="reliability-card"><h4>Recoverable changes</h4><p>Version workflow definitions, credentials, prompts, and approval policies so teams can roll back known-bad automation quickly.</p></div>
+    <div class="reliability-card"><h4>Exportable evidence</h4><p>Move execution history into analytics, SIEM, data warehouses, or compliance archives without relying on a vendor-controlled console.</p></div>
+  </div>
+</section>
+
+<!-- DEVELOPER EXTENSIBILITY -->
+<section id="extensibility">
+  <div class="sec-head"><div class="sec-kicker">Developer extensibility</div><h2 class="sec-title">Open-source automation you can inspect, fork, and extend</h2><p class="sec-sub">CONDUIT keeps the visual builder approachable while preserving an engineering-grade escape hatch for teams that need custom connectors, reusable nodes, and version-controlled operations.</p></div>
+  <div class="dev-grid">
+    <div class="dev-card"><h4>Custom connector surface</h4><p>Wrap internal APIs, databases, queues, ticketing systems, model endpoints, and proprietary tools as reusable nodes with clear contracts.</p></div>
+    <div class="dev-card"><h4>Workflow-as-code posture</h4><p>Export definitions for review, promotion, backup, and source control so automation changes can follow the same discipline as application code.</p></div>
+    <div class="dev-card"><h4>Typed payload conventions</h4><p>Use schema validation, field mapping, and deterministic transforms to keep multi-step workflows stable as upstream systems evolve.</p></div>
+    <div class="dev-card"><h4>AI step governance</h4><p>Attach model routes, prompt versions, retrieval sources, eval criteria, and approval requirements to agentic steps instead of burying them in ad hoc scripts.</p></div>
+    <div class="dev-card"><h4>Composable internal tooling</h4><p>Turn recurring operational procedures into reusable automations that engineering, security, support, finance, and leadership can safely operate.</p></div>
+  </div>
+</section>
+
+<!-- USE CASE MATRIX -->
+<section id="use-cases">
+  <div class="sec-head"><div class="sec-kicker">Operational use cases</div><h2 class="sec-title">One automation layer across the company</h2><p class="sec-sub">CONDUIT is strongest where events, decisions, integrations, and accountability need to meet in one governed execution surface.</p></div>
+  <div class="usecase-grid">
+    <div class="usecase-card"><h4>Operations command</h4><p>Route intake, update systems of record, reconcile spreadsheets, notify owners, generate status briefs, and escalate exceptions with approvals.</p></div>
+    <div class="usecase-card"><h4>Engineering platform</h4><p>Trigger deploy checklists, triage incidents, enrich alerts, open tickets, rotate runbooks, and coordinate human review before risky actions.</p></div>
+    <div class="usecase-card"><h4>Security workflow</h4><p>Ingest findings, correlate identity and asset context, classify severity, prepare response packages, and preserve immutable evidence trails.</p></div>
+    <div class="usecase-card"><h4>Revenue and customer teams</h4><p>Qualify inbound leads, draft follow-ups, sync CRM records, alert sales, and require approval before sensitive customer communications.</p></div>
+    <div class="usecase-card"><h4>Internal AI tooling</h4><p>Build private assistants that retrieve enterprise context, summarize documents, propose next actions, and hand off decisions to accountable humans.</p></div>
+  </div>
+</section>
+
+<!-- SELF-HOSTING WINS AND COMPARISON -->
+<section id="self-hosted-wins">
+  <div class="sec-head"><div class="sec-kicker">Why self-hosted wins</div><h2 class="sec-title">Own the execution boundary</h2><p class="sec-sub">Generic SaaS automation is convenient until credentials, regulated data, model prompts, or operational authority must leave your control plane.</p></div>
+  <div class="architecture-overview"><h3>Architecture overview</h3><p>CONDUIT places workflow design, credential custody, run execution, approval evidence, AI routing, queues, and observability inside your deployment boundary. That architecture keeps automation close to source systems, shortens feedback loops for operators, and gives technical buyers the right control points for scale, governance, and incident response.</p></div>
+  <table class="comparison-table" aria-label="CONDUIT compared with generic SaaS automation tools">
+    <thead><tr><th>Decision angle</th><th>CONDUIT</th><th>Generic SaaS automation</th></tr></thead>
+    <tbody>
+      <tr><td>Data and credentials</td><td>Private execution, environment-held secrets, local databases, exportable history, and optional air-gapped patterns.</td><td>Third-party execution boundary, external credential brokerage, vendor logs, and limited infrastructure control.</td></tr>
+      <tr><td>Governance and approvals</td><td>Multi-step approval flows, role-aware operation, audit trails, deterministic branching, and policy-aware privileged actions.</td><td>Workflow convenience first, with governance often added through separate tools or enterprise plans.</td></tr>
+      <tr><td>Extensibility and portability</td><td>Open-source modules, custom connectors, workflow definitions that can be reviewed, forked, backed up, and migrated.</td><td>Closed runtime, platform-specific limits, per-task billing pressure, and limited deep customization.</td></tr>
+    </tbody>
+  </table>
+  <div class="mission-strip"><span>Private by default</span><span>Governed by design</span><span>Observable in production</span><span>Extensible without permission</span></div>
+</section>
+
+<!-- INTEGRATIONS -->
+<section>
+  <div class="sec-head">
+    <div class="sec-kicker">Connect anything</div>
+    <h2 class="sec-title">400+ apps, one canvas</h2>
+    <p class="sec-sub">Search the integration library. Every app speaks the same node language, so you can chain them however you want.</p>
+  </div>
+  <div class="intg-bar">
+    <input class="intg-search" id="intgSearch" placeholder="🔍  Search integrations — try “mail”, “crm”, “ai”…"/>
+  </div>
+  <div class="intg-grid" id="intgGrid"></div>
+  <div class="intg-more" id="intgMore"></div>
+</section>
+
+<!-- DEPLOY -->
+<section id="deploy">
+  <div class="sec-head">
+    <div class="sec-kicker">Self-hosted in seconds</div>
+    <h2 class="sec-title">One command. Your server. Your data.</h2>
+  </div>
+  <div class="deploy">
+    <div class="term">
+      <div class="term-h"><span class="d" style="background:#ff5f57"></span><span class="d" style="background:#febc2e"></span><span class="d" style="background:#28c840"></span><span class="t">bash — conduit@yourserver</span></div>
+      <div class="term-b">
+<span class="p">$</span> <span class="c">docker run -it --rm \</span><br>
+&nbsp;&nbsp;<span class="c">-p 5678:5678 \</span><br>
+&nbsp;&nbsp;<span class="c">-v conduit_data:/home/node/.conduit \</span><br>
+&nbsp;&nbsp;<span class="c">clearglass/conduit</span><br>
+<span class="o">→ pulling clearglass/conduit … done</span><br>
+<span class="o">→ migrations applied · 412 nodes loaded</span><br>
+<span class="g">✓ CONDUIT ready on http://localhost:5678</span><br>
+<span class="g">✓ editor live · 0 credentials left your machine</span><br>
+<span class="p">$</span> <span class="c">_</span>
+      </div>
+    </div>
+    <ul>
+      <li><span class="ck">✓</span><div><b>No vendor lock-in.</b> Data lives in your own Postgres or SQLite — export it, back it up, move it anytime.</div></li>
+      <li><span class="ck">✓</span><div><b>Zero data leaks.</b> Credentials are encrypted at rest on your box; nothing is brokered through a third-party cloud.</div></li>
+      <li><span class="ck">✓</span><div><b>Scales with you.</b> Run a single container for a side project or a queue-mode cluster for millions of executions.</div></li>
+      <li><span class="ck">✓</span><div><b>Deploy anywhere.</b> Docker, Kubernetes, a Raspberry Pi, or the ClearGlass fleet — your call.</div></li>
+    </ul>
+  </div>
+  <div class="deploy-grid">
+    <div class="deploy-card"><h4>Single-node private start</h4><p>Run CONDUIT as a container with local persistence for small teams, labs, and controlled proof-of-value deployments.</p></div>
+    <div class="deploy-card"><h4>Queue-mode production</h4><p>Separate web, workers, database, and queue services to handle higher execution volume and isolate failure domains.</p></div>
+    <div class="deploy-card"><h4>Kubernetes and edge</h4><p>Deploy into Kubernetes, private cloud, on-prem infrastructure, or edge systems where data gravity and connectivity demand local execution.</p></div>
+    <div class="deploy-card"><h4>Managed by ClearGlass</h4><p>Use the ClearGlass fleet when you want managed hosting, hardening, updates, backups, workflow buildout, and operational handoff.</p></div>
+  </div>
+</section>
+
+
+<!-- RELIABILITY -->
+<section id="reliability">
+  <div class="sec-head"><div class="sec-kicker">Reliability and recovery</div><h2 class="sec-title">Automation that fails visibly and recovers deliberately</h2><p class="sec-sub">CONDUIT is built around operational truth: integrations fail, payloads drift, APIs rate-limit, and human decisions matter. The platform makes those realities manageable.</p></div>
+  <div class="cards">
+    <div class="fcard"><div class="fi">↻</div><h4>Bounded retries</h4><p>Retry transient failures with defined limits, backoff windows, and escalation paths instead of silent infinite loops.</p></div>
+    <div class="fcard"><div class="fi">⚑</div><h4>Dead-letter handling</h4><p>Route exhausted jobs into review queues with payload, node, error, timestamp, and workflow version preserved.</p></div>
+    <div class="fcard"><div class="fi">◷</div><h4>Latency visibility</h4><p>Track node timings, connector response, queue wait, model latency, and total execution time for bottleneck analysis.</p></div>
+    <div class="fcard"><div class="fi">⇄</div><h4>Replayable context</h4><p>Re-run failed branches with known inputs, patched credentials, or updated definitions while keeping prior history intact.</p></div>
+    <div class="fcard"><div class="fi">☑</div><h4>Compensating workflows</h4><p>Launch cleanup, notification, rollback, or reconciliation flows when downstream systems reject or partially complete a step.</p></div>
+  </div>
+</section>
+
+<!-- DEVELOPER EXTENSIBILITY -->
+<section id="extensibility">
+  <div class="sec-head"><div class="sec-kicker">Developer extensibility</div><h2 class="sec-title">Open source where it counts: at the edge of your operations</h2><p class="sec-sub">Technical teams can keep the visual builder for speed while extending the engine with custom nodes, internal APIs, model providers, and versioned automation packages.</p></div>
+  <div class="arch-grid">
+    <div class="arch-card"><h4>Custom nodes</h4><p>Wrap internal services, proprietary data sources, validation routines, and domain-specific actions as reusable workflow blocks.</p></div>
+    <div class="arch-card"><h4>Code-level escape hatch</h4><p>Use code nodes for transformations, signatures, payload normalization, scoring, and specialized logic that does not belong in a generic connector.</p></div>
+    <div class="arch-card"><h4>API-first control</h4><p>Trigger, inspect, export, and manage workflows through APIs so CONDUIT can sit behind portals, command centers, or internal developer platforms.</p></div>
+    <div class="arch-card"><h4>Model provider choice</h4><p>Route AI steps to approved commercial models, private endpoints, or local inference while preserving prompt versions and output lineage.</p></div>
+    <div class="arch-card"><h4>Git-friendly operations</h4><p>Promote definitions through review, staging, production, and rollback workflows so automation changes behave like software changes.</p></div>
+  </div>
+</section>
+
+<!-- USE CASE MATRIX -->
+<section id="use-cases">
+  <div class="sec-head"><div class="sec-kicker">Operational use cases</div><h2 class="sec-title">Built for teams that run critical internal systems</h2><p class="sec-sub">CONDUIT is broad enough for everyday automation and disciplined enough for work that needs approval, evidence, and recoverability.</p></div>
+  <div class="lattice-grid">
+    <div class="lattice-card"><h4>Operations</h4><p>Route form submissions, reconcile spreadsheets, enrich customer records, generate handoff packets, notify owners, and require approval before external communications.</p></div>
+    <div class="lattice-card"><h4>Engineering</h4><p>Trigger incident workflows, open issues, query logs, summarize deploy changes, request rollback approval, and fan out status updates from one controlled run.</p></div>
+    <div class="lattice-card"><h4>Security</h4><p>Ingest alerts, enrich indicators, classify severity, collect evidence, open cases, and keep containment actions behind explicit human authorization.</p></div>
+    <div class="lattice-card"><h4>Internal tooling</h4><p>Connect databases, Slack, CRM, ticketing, docs, and AI copilots into approval-aware tools without waiting for a full custom app build.</p></div>
+    <div class="lattice-card"><h4>Executive workflows</h4><p>Summarize operational signals, prepare decision briefs, track follow-ups, and preserve the evidence chain behind recommendations.</p></div>
+  </div>
+</section>
+
+<!-- SAAS COMPARISON -->
+<section id="comparison">
+  <div class="sec-head"><div class="sec-kicker">CONDUIT versus generic SaaS automation</div><h2 class="sec-title">Control beats convenience when workflows become infrastructure</h2><p class="sec-sub">SaaS automation is useful for lightweight glue. CONDUIT is for teams that need ownership, auditability, and operational depth.</p></div>
+  <div class="system-rail">
+    <div class="rail-row"><div class="rail-k">Custody</div><div class="rail-v">Generic SaaS brokers credentials and data through a vendor runtime. CONDUIT runs beside your systems, in your account, with secrets and execution history under your control.</div></div>
+    <div class="rail-row"><div class="rail-k">Governance</div><div class="rail-v">Generic task chains often hide approvals inside ad hoc process. CONDUIT makes approval gates, roles, run history, prompt versions, and policy boundaries first-class operating objects.</div></div>
+    <div class="rail-row"><div class="rail-k">Extensibility</div><div class="rail-v">Generic platforms stop at their connector catalog. CONDUIT remains open source, API-ready, and extensible for private services, local models, custom nodes, and self-managed deployment topologies.</div></div>
+  </div>
+</section>
+
+<!-- WHY SELF-HOSTED WINS -->
+<section id="self-hosted-wins">
+  <div class="sec-head"><div class="sec-kicker">Why self-hosted wins</div><h2 class="sec-title">Private automation compounds institutional advantage</h2><p class="sec-sub">The more important the workflow, the less acceptable it becomes to lose control of credentials, latency, deployment timing, data retention, or audit evidence.</p></div>
+  <div class="why-grid">
+    <div class="why-card"><h4>Data stays close to authority</h4><p>Run automation near databases, files, internal APIs, and private models without exporting operational context into a shared external runtime.</p></div>
+    <div class="why-card"><h4>Execution matches policy</h4><p>Network boundaries, identity systems, logging standards, retention requirements, and approval workflows can mirror how your organization already operates.</p></div>
+    <div class="why-card"><h4>Economics scale cleanly</h4><p>High-volume automation should not become a tax on every task. Self-hosting lets capacity planning replace unpredictable per-run economics.</p></div>
+  </div>
+</section>
+
+
+<!-- OPERATOR CONTROL SURFACES -->
+<section id="operator-control-surfaces">
+  <div class="sec-head"><div class="sec-kicker">Operator control surfaces</div><h2 class="sec-title">Every capability has a control, a trace, and a recovery path</h2><p class="sec-sub">CONDUIT is not only a canvas for connecting apps. It is an operational surface for understanding who triggered a run, what changed, which policy applied, where execution paused, and how to recover without losing the historical record.</p></div>
+  <div class="arch-grid">
+    <div class="arch-card"><h4>Workflow observability</h4><p>Inspect run timelines by trigger, node, connector, model route, queue wait, retry attempt, approval decision, and terminal state. Operators can separate integration failure, data drift, model latency, and policy denial instead of debugging from a single generic error.</p></div>
+    <div class="arch-card"><h4>Permissions and governance</h4><p>Scope users, teams, credentials, environments, and connector actions so a workflow can read broadly, write narrowly, and require approval before privileged side effects. UI access accelerates work; server-side policy remains the authority.</p></div>
+    <div class="arch-card"><h4>Replay and recovery</h4><p>Replay a failed branch with the same input snapshot, patched credentials, adjusted retry policy, or a newer workflow definition while preserving the original run as immutable evidence.</p></div>
+    <div class="arch-card"><h4>Version-controlled definitions</h4><p>Promote workflows through draft, review, staging, production, and rollback states. Each release records graph structure, node configuration, prompt versions, connector scopes, and approval policy.</p></div>
+    <div class="arch-card"><h4>Blast-radius control</h4><p>Constrain execution by environment, connector scope, rate limit, batch size, approval threshold, and maximum affected records so a malformed event cannot become an organization-wide incident.</p></div>
+    <div class="arch-card"><h4>Audit-ready change control</h4><p>Material edits capture author, reviewer, diff summary, risk classification, approval evidence, release target, and rollback pointer before production automation changes behavior.</p></div>
+    <div class="arch-card"><h4>Deploy and recover</h4><p>Run locally, in private cloud, in Kubernetes, or through ClearGlass-managed infrastructure with backup, restore, health-check, and rollback procedures aligned to your operational tolerance.</p></div>
+    <div class="arch-card"><h4>Policy and approval flows</h4><p>Use single approver, multi-step, role-based, or environment-specific gates for finance, customer communication, security response, infrastructure change, and AI-generated action packages.</p></div>
+  </div>
+</section>
+
+
+<!-- TRUST BOUNDARIES -->
+<section id="trust-boundaries">
+  <div class="sec-head"><div class="sec-kicker">Trust boundaries and containment</div><h2 class="sec-title">Governed automation with bounded authority</h2><p class="sec-sub">CONDUIT treats every connector, credential, workflow, environment, and outbound route as a separate trust decision. The result is automation that can move quickly without inheriting unlimited permission.</p></div>
+  <div class="arch-grid">
+    <div class="arch-card"><h4>Connector trust boundaries</h4><p>Each connector operates as a scoped interface with explicit read, write, export, and side-effect permissions. Sensitive plugins can be isolated by workflow, environment, team, or approval class so one integration cannot silently expand authority across the platform.</p></div>
+    <div class="arch-card"><h4>Credential isolation</h4><p>Secrets are attached to the narrowest viable workflow context, rotated outside the workflow definition, and withheld from logs, prompts, exported runs, and browser-visible state. Ephemeral credentials can be issued for high-risk actions and revoked without changing the workflow graph.</p></div>
+    <div class="arch-card"><h4>Network segmentation</h4><p>Deploy workers into segmented networks that match data sensitivity, connector risk, and latency needs. Deny-by-default egress, allowlisted destinations, private service routes, and per-worker network policy reduce exposure when a payload or third-party API behaves unexpectedly.</p></div>
+    <div class="arch-card"><h4>Policy enforcement</h4><p>Evaluate policy at trigger time, before privileged nodes, during approval transitions, and before final side effects. Run-level decisions can consider actor, environment, connector scope, data class, record count, destination, risk score, and workflow version.</p></div>
+    <div class="arch-card"><h4>Recovery boundaries</h4><p>Separate retryable steps, terminal failures, manual interventions, and compensating actions. Operators can recover a failed segment without rewriting the full run, duplicating side effects, or erasing the evidence needed for incident review.</p></div>
+    <div class="arch-card"><h4>Long-running workflow custody</h4><p>Pause durable workflows at approvals, rate limits, dependency outages, scheduled windows, or operator review points. State remains recoverable, timers remain explicit, and stale runs can be expired by policy instead of drifting indefinitely.</p></div>
+  </div>
+</section>
+
+<!-- CONTENT DELIVERABLES -->
+<section id="decision-brief">
+  <div class="sec-head"><div class="sec-kicker">Deployment decision brief</div><h2 class="sec-title">The language of production automation</h2><p class="sec-sub">Use CONDUIT when automation must be private, reviewable, observable, and recoverable enough to become operating infrastructure.</p></div>
+  <div class="system-rail">
+    <div class="rail-row"><div class="rail-k">Hero support lines</div><div class="rail-v">Self-hosted workflow execution for teams that need private data, governed actions, and durable run evidence. · Event-driven automation with approvals, traces, retries, and recovery built into the operating path. · Open-source orchestration polished for enterprise operators who need control without surrendering infrastructure custody.</div></div>
+    <div class="rail-row"><div class="rail-k">Advanced features</div><div class="rail-v">Event triggers, queue-backed workers, conditional branching, bounded retries, human gates, AI-assisted steps, scoped connector credentials, immutable run history, exportable execution evidence, and drift-aware operations.</div></div>
+    <div class="rail-row"><div class="rail-k">Trust posture</div><div class="rail-v">Private execution boundary, least-privilege credentials, role-based workflow access, approval evidence, prompt and model version records, and audit-forward logs for compliance review.</div></div>
+    <div class="rail-row"><div class="rail-k">Self-hosting posture</div><div class="rail-v">Single-container start, queue-mode production, private database persistence, Kubernetes deployment, on-prem or edge placement, and ClearGlass-managed operation when teams want hosted hardening.</div></div>
+    <div class="rail-row"><div class="rail-k">Reliability posture</div><div class="rail-v">Durable state, idempotent step design, timeout boundaries, dead-letter review, partial-failure recovery, replayable branches, and compensating workflows.</div></div>
+    <div class="rail-row"><div class="rail-k">Developer posture</div><div class="rail-v">Custom nodes, code transforms, API-first control, workflow-as-code promotion, model provider choice, reusable internal automations, and inspectable connector contracts.</div></div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<style>
+.ptier-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:920px){.ptier-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.ptier-grid{grid-template-columns:1fr}}
+.ptier{position:relative;display:flex;flex-direction:column;background:rgba(12,16,38,.6);border:1px solid var(--line);border-radius:16px;padding:24px 20px;transition:.18s}
+.ptier:hover{transform:translateY(-4px);border-color:var(--line-2);box-shadow:0 22px 48px -24px rgba(124,150,255,.55)}
+.ptier.feat{background:linear-gradient(165deg,rgba(96,165,250,.12),rgba(167,139,250,.06),rgba(12,16,38,.7));border-color:var(--line-2)}
+.ptier .tag{position:absolute;top:-1px;right:16px;transform:translateY(-50%);font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:#0a0c14;background:linear-gradient(90deg,#60a5fa,#a78bfa);border-radius:999px;padding:4px 11px;font-weight:700}
+.ptier h4{font-size:17px;margin-bottom:3px}
+.ptier .pblurb{color:var(--dim);font-size:12px;line-height:1.45;min-height:34px;margin-bottom:14px}
+.ptier .price{font-family:var(--display);font-weight:900;font-size:30px;line-height:1;background:linear-gradient(90deg,#60a5fa,#a78bfa);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.ptier .price .u{font-family:var(--mono);font-size:10px;color:var(--dim-2);letter-spacing:.04em;margin-left:7px;-webkit-text-fill-color:var(--dim-2)}
+.ptier ul.pf{list-style:none;display:grid;gap:9px;margin:18px 0 20px}
+.ptier ul.pf li{display:grid;grid-template-columns:auto 1fr;gap:9px;color:var(--dim);font-size:12.5px;line-height:1.4}
+.ptier ul.pf .ck{width:17px;height:17px;border-radius:5px;display:grid;place-items:center;font-size:9px;font-weight:700;background:rgba(52,211,153,.13);color:var(--ok);border:1px solid rgba(52,211,153,.32)}
+.ptier .cta{margin-top:auto}
+.pbtn{display:flex;align-items:center;justify-content:center;width:100%;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:12px;border-radius:10px;cursor:pointer;text-decoration:none;border:1px solid var(--line-2);transition:.16s}
+.pbtn.solid{background:linear-gradient(180deg,rgba(124,150,255,.3),rgba(124,150,255,.08));color:#fff}
+.pbtn.solid:hover{box-shadow:0 0 20px rgba(124,150,255,.4);transform:translateY(-1px)}
+.pbtn.outline{background:rgba(255,255,255,.02);color:#cdd6f5}
+.pbtn.outline:hover{border-color:var(--line-2);color:#fff}
+.paynote{font-family:var(--mono);font-size:9px;letter-spacing:.03em;color:var(--dim-2);text-align:center;margin-top:9px}
+.pay-explain{display:flex;gap:12px;align-items:flex-start;background:rgba(52,211,153,.05);border:1px solid rgba(52,211,153,.2);border-radius:14px;padding:16px 20px;margin-top:22px;color:var(--dim);font-size:13px;line-height:1.55;max-width:920px;margin-left:auto;margin-right:auto}
+.pay-explain b{color:var(--ok)}
+.pay-explain a{color:var(--ok);text-decoration:none}
+.ent-strip{display:flex;flex-wrap:wrap;align-items:center;gap:16px;justify-content:center;text-align:center;background:rgba(12,16,38,.6);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-top:14px;max-width:920px;margin-left:auto;margin-right:auto}
+.ent-strip .et{flex:1 1 300px;text-align:left}
+.ent-strip .et h4{font-size:16px;margin-bottom:5px}
+.ent-strip .et p{color:var(--dim);font-size:13px;line-height:1.5}
+</style>
+<section id="plans">
+  <div class="sec-head">
+    <div class="sec-kicker">Free to self-host · pay only for managed</div>
+    <h2 class="sec-title">Plans that pay for themselves</h2>
+    <p class="sec-sub">CONDUIT is 100% free and open source on your own server, forever. When you'd rather not run it yourself, we host it, secure it, and build your first workflows for you.</p>
+    <p class="deep-copy">Choose the operating model that matches your risk posture: community self-hosting for full custody, managed cloud for speed, business support for production teams, or air-gapped enterprise deployment for constrained environments.</p>
+  </div>
+
+  <div class="ptier-grid">
+    <!-- Community -->
+    <article class="ptier" data-sku="community">
+      <h4>Community</h4>
+      <div class="pblurb">Self-hosted on your own box. The full engine, unlimited workflows.</div>
+      <div class="price">$0<span class="u">forever</span></div>
+      <ul class="pf">
+        <li><span class="ck">✓</span> All 400+ integrations</li>
+        <li><span class="ck">✓</span> Unlimited workflows &amp; executions</li>
+        <li><span class="ck">✓</span> AI agent nodes, your own models</li>
+        <li><span class="ck">✓</span> Community support</li>
+      </ul>
+      <div class="cta"><a class="pbtn outline" href="#deploy">Self-host free →</a>
+        <div class="paynote">Docker · one command · your server</div></div>
+    </article>
+
+    <!-- Cloud (featured) -->
+    <article class="ptier feat" data-sku="cloud">
+      <span class="tag">Most popular</span>
+      <h4>Cloud</h4>
+      <div class="pblurb">We host &amp; manage CONDUIT for you. Updates, backups &amp; uptime handled.</div>
+      <div class="price">CAD&nbsp;$24<span class="u">/ month</span></div>
+      <ul class="pf">
+        <li><span class="ck">✓</span> Managed hosting &amp; SSL</li>
+        <li><span class="ck">✓</span> Automatic updates &amp; backups</li>
+        <li><span class="ck">✓</span> 10,000 executions / month</li>
+        <li><span class="ck">✓</span> Email support · 99.9% uptime</li>
+      </ul>
+      <div class="cta"><a class="pbtn solid" data-buy>Start Cloud →</a>
+        <div class="paynote" data-pay></div></div>
+    </article>
+
+    <!-- Business -->
+    <article class="ptier" data-sku="business">
+      <span class="tag">Teams</span>
+      <h4>Business</h4>
+      <div class="pblurb">For teams running automations in production at scale.</div>
+      <div class="price">CAD&nbsp;$99<span class="u">/ month</span></div>
+      <ul class="pf">
+        <li><span class="ck">✓</span> Everything in Cloud</li>
+        <li><span class="ck">✓</span> 200,000 executions / month</li>
+        <li><span class="ck">✓</span> SSO, roles &amp; audit log</li>
+        <li><span class="ck">✓</span> Priority support &amp; SLA</li>
+      </ul>
+      <div class="cta"><a class="pbtn outline" data-buy>Upgrade to Business →</a>
+        <div class="paynote" data-pay></div></div>
+    </article>
+
+    <!-- Done-for-you setup -->
+    <article class="ptier" data-sku="setup">
+      <span class="tag">Done-for-you</span>
+      <h4>Launch Setup</h4>
+      <div class="pblurb">We install CONDUIT on your infra and build your first 3 workflows.</div>
+      <div class="price">CAD&nbsp;$750<span class="u">one-time</span></div>
+      <ul class="pf">
+        <li><span class="ck">✓</span> Self-host install &amp; hardening</li>
+        <li><span class="ck">✓</span> 3 production workflows built</li>
+        <li><span class="ck">✓</span> Team handoff &amp; training call</li>
+        <li><span class="ck">✓</span> 30 days of support</li>
+      </ul>
+      <div class="cta"><a class="pbtn outline" data-buy>Book a setup →</a>
+        <div class="paynote" data-pay></div></div>
+    </article>
+  </div>
+
+  <div class="pay-explain">
+    <span>🔒</span>
+    <div><b>How payment works.</b> Reserve a plan and we confirm scope on a short call. Pay whichever way suits you:
+      <b>secure card checkout</b> (Stripe) as each plan is enabled, <b>Interac e‑Transfer</b> (Canada) to
+      <a href="mailto:desmondotieno@icloud.com">desmondotieno@icloud.com</a>, or a standard <b>invoice</b>.
+      Every button routes to a confirmed booking, so nothing blocks you from starting today.</div>
+  </div>
+
+  <div class="ent-strip">
+    <div class="et">
+      <h4>Enterprise &amp; air-gapped</h4>
+      <p>Self-hosted at scale, dedicated support, custom integrations, on-prem / air-gapped deployment and procurement-friendly invoicing.</p>
+    </div>
+    <a class="pbtn solid" data-buy data-sku="enterprise" style="flex:0 0 auto;width:auto;padding:12px 22px">Talk to sales →</a>
+  </div>
+</section>
+
+<script>
+(function(){
+  "use strict";
+  var EMAIL="desmondotieno@icloud.com";
+  /* PAYMENT CONFIG — paste a Stripe Payment Link (https://buy.stripe.com/…) for a
+     SKU to turn its button into live card checkout. Empty = confirmed-booking flow. */
+  var CHECKOUT={cloud:"",business:"",setup:"",enterprise:""};
+  var LABEL={
+    cloud:"CONDUIT Cloud (CAD $24/mo)",
+    business:"CONDUIT Business (CAD $99/mo)",
+    setup:"CONDUIT Launch Setup (CAD $750 one-time)",
+    enterprise:"CONDUIT Enterprise / air-gapped"
+  };
+  function booking(sku){
+    var subj=encodeURIComponent("CONDUIT plan: "+(LABEL[sku]||sku));
+    var body=encodeURIComponent("Hi ClearGlass,\n\nI'd like to start the following CONDUIT plan:\n  • "+(LABEL[sku]||sku)+
+      "\n\nOrganization:\nName:\nBest time for a quick call:\n\nThanks.");
+    return "mailto:"+EMAIL+"?subject="+subj+"&body="+body;
+  }
+  document.querySelectorAll("[data-buy]").forEach(function(a){
+    var sku=a.getAttribute("data-sku")||(a.closest("[data-sku]")&&a.closest("[data-sku]").getAttribute("data-sku"));
+    var note=a.parentElement.querySelector("[data-pay]");
+    var link=CHECKOUT[sku];
+    if(link&&/^https:\/\/(buy|book|checkout)\.stripe\.com\//.test(link)){
+      a.setAttribute("href",link); a.setAttribute("rel","noopener");
+      a.textContent="Secure checkout →";
+      if(note)note.textContent="🔒 Stripe · encrypted card payment";
+    }else{
+      a.setAttribute("href",booking(sku));
+      if(note)note.textContent="Confirmed booking · invoice on call";
+    }
+  });
+})();
+</script>
+
+
+<!-- MOTION DOCTRINE -->
+<section id="motion-doctrine">
+  <div class="motion-brief" data-motion>
+    <div class="sec-head" style="margin-bottom:0">
+      <div class="sec-kicker">DARPA-2040 motion doctrine</div>
+      <h2 class="sec-title">Classified-command motion with enterprise restraint</h2>
+      <p class="sec-sub">The interface uses purposeful cinematic reveal, kinetic typography, scroll-based dossier progression, glass-layer depth, magnetic hardware-like controls, and reduced-motion fallbacks so the product feels advanced without sacrificing trust or readability.</p>
+    </div>
+    <div class="motion-grid">
+      <div class="motion-cell"><b>Hero reveal</b><p>Ambient grid initializes first, headline deploys word-by-word, copy and operator pills follow in a calibrated sequence, then CTAs become available as command decisions.</p></div>
+      <div class="motion-cell"><b>Section pacing</b><p>Workflow, architecture, governance, integrations, deployment, pricing, and final CTA reveal as secure dossier modules using transform and opacity only.</p></div>
+      <div class="motion-cell"><b>Micro feedback</b><p>Buttons, cards, nodes, plan tiers, and integration chips respond with subtle lift, luminous edge scans, and pointer-aware magnetic translation.</p></div>
+      <div class="motion-cell"><b>Background system</b><p>Slow orbital light fields and grid drift create infrastructure depth while remaining fixed, low-frequency, and independent of layout.</p></div>
+      <div class="motion-cell"><b>Performance rules</b><p>No layout-thrashing animation: motion stays on transform, opacity, and lightweight filters; observers activate content only near viewport.</p></div>
+      <div class="motion-cell"><b>Accessibility</b><p>prefers-reduced-motion disables ambient drift, shimmer, split text transforms, smooth transitions, and magnetic pointer effects.</p></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- AUTHORITY LATTICE -->
+<section id="authority-lattice">
+  <div class="authority-lattice" data-motion>
+    <div class="sec-head" style="margin-bottom:0">
+      <div class="sec-kicker">Internal authority lattice</div>
+      <h2 class="sec-title">One ClearGlass knowledge graph, wired for crawlability and conversion</h2>
+      <p class="sec-sub">CONDUIT sits inside a deliberate neon command grid: the home hub routes to pillar systems, pillar systems route to focused clusters, proof pages reinforce trust, and every conversion path returns to a clear next action.</p>
+    </div>
+
+    <div class="lattice-grid">
+      <div class="lattice-card"><h4>1 · Full site linking strategy</h4><p><a class="signal-link" href="index.html">ClearGlass Inc.</a> operates as the authority hub. Major pillars—<a class="signal-link" href="cyber-defense-console.html">cyber defense</a>, <a class="signal-link" href="intelligence.html">intelligence and OSINT</a>, <a class="signal-link" href="artemis-os.html">Artemis platform systems</a>, <a class="signal-link" href="percival-os.html">command operations</a>, <a class="signal-link" href="offers/index.html">services</a>, and <a class="signal-link" href="blog/index.html">ClearGlass Intelligence</a>—carry the strongest semantic signal. Cluster pages connect back to their pillar, across to one sibling, and forward to a conversion or proof path.</p></div>
+      <div class="lattice-card"><h4>2 · Page hierarchy map</h4><ul><li>Home hub: <a class="signal-link" href="index.html">ClearGlass Inc.</a></li><li>Pillars: cyber defense, intelligence, Artemis, command, legal, healthcare, government, services, UI engineering, Opal-Koboi, and insights.</li><li>Clusters: service pages, product surfaces, proof pages, operational runbooks, and blog essays.</li><li>Conversion: <a class="signal-link" href="offers/index.html">services and engagements</a>, <a class="signal-link" href="pricing.html">pricing</a>, and <a class="signal-link" href="store.html">security engagement booking</a>.</li></ul></div>
+      <div class="lattice-card"><h4>3 · Anchor doctrine</h4><p>Use controlled-signal anchors: “self-hosted workflow automation,” “governed autonomous operations,” “OSINT investigation graph,” “security architecture for agentic software,” “procurement-ready public-sector systems,” and “book a security engagement.” Avoid generic anchors and avoid linking low-intent incidental words.</p></div>
+      <div class="lattice-card"><h4>4 · CTA structure</h4><p>Discovery pages point to pillar explainers. Pillar pages point to proof and service pages. Service pages point to <a class="signal-link" href="pricing.html">pricing and engagement models</a>, <a class="signal-link" href="store.html">booking</a>, and focused offers like the <a class="signal-link" href="offers/security-quick-audit.html">Security Quick-Audit</a>. Final CTAs stay sparse, bright, and operationally exact.</p></div>
+    </div>
+
+    <table class="matrix" aria-label="Pillar to cluster internal-linking matrix">
+      <thead><tr><th>Pillar</th><th>Supporting clusters</th><th>Strategic anchors</th></tr></thead>
+      <tbody>
+        <tr><td><a class="signal-link" href="cyber-defense-console.html">Cyber Defense Console</a></td><td><a class="signal-link" href="bluedesk.html">BLUEDESK</a>, <a class="signal-link" href="guardian.html">GUARDIAN</a>, <a class="signal-link" href="sentinel.html">SENTINEL</a>, <a class="signal-link" href="artemis-blue-team.html">Artemis Blue Team</a></td><td>defensive command center · blue-team console · geospatial security operations</td></tr>
+        <tr><td><a class="signal-link" href="intelligence.html">Intelligence &amp; OSINT</a></td><td><a class="signal-link" href="flowsint.html">Flowsint</a>, <a class="signal-link" href="clearglass-nexus.html">ClearGlass NEXUS</a>, <a class="signal-link" href="intelligence-command-surface.html">Intelligence Command Surface</a></td><td>OSINT investigation graph · intelligence platform · unified operational picture</td></tr>
+        <tr><td><a class="signal-link" href="artemis-os.html">Artemis OS</a></td><td><a class="signal-link" href="artemis-self-evolving-platform.html">Self-Evolving Platform</a>, <a class="signal-link" href="artemis-ai-cyber-intelligence-platform.html">AI Cyber Intelligence Platform</a>, <a class="signal-link" href="artemis-2040.html">Artemis 2040</a></td><td>self-evolving intelligence loop · cyber intelligence platform · long-horizon AI systems</td></tr>
+        <tr><td><a class="signal-link" href="percival-os.html">Command &amp; Autonomous Operations</a></td><td><a class="signal-link" href="conduit.html">CONDUIT</a>, <a class="signal-link" href="agentmesh.html">Agent Mesh</a>, <a class="signal-link" href="ai-operator.html">AI Operator Workspace</a>, <a class="signal-link" href="postloop.html">PostLoop</a></td><td>self-hosted workflow automation · multi-agent orchestration · human-in-the-loop operations</td></tr>
+        <tr><td><a class="signal-link" href="blog/index.html">ClearGlass Intelligence</a></td><td><a class="signal-link" href="blog/ai-agent-governance-governed-autonomy.html">AI Agent Governance</a>, <a class="signal-link" href="blog/cybersecurity-architecture-for-agentic-software.html">Agentic Security Architecture</a>, <a class="signal-link" href="blog/osint-workflow-that-survives-contact-with-reality.html">OSINT Workflow</a></td><td>governed autonomy · agentic software security · field-tested investigation practice</td></tr>
+      </tbody>
+    </table>
+
+    <div class="lattice-grid">
+      <div class="lattice-card"><h4>5 · Home-page links</h4><p>Feature one row of pillar routes: <a class="signal-link" href="cyber-defense-console.html">cyber defense operations</a>, <a class="signal-link" href="intelligence.html">intelligence systems</a>, <a class="signal-link" href="artemis-os.html">Artemis OS</a>, <a class="signal-link" href="percival-os.html">PERCIVAL OS</a>, <a class="signal-link" href="offers/index.html">services</a>, and <a class="signal-link" href="blog/index.html">insights</a>.</p></div>
+      <div class="lattice-card"><h4>6 · Service-page links</h4><p>Each service should connect back to its pillar, laterally to one proof or runbook page, and forward to contact or booking. Example: <a class="signal-link" href="offers/hardening-sprint.html">Hardening Sprint</a> → cyber-defense pillar → SMB Trust Kit → booking.</p></div>
+      <div class="lattice-card"><h4>7 · Blog pillar links</h4><p>Blog articles should link upward to <a class="signal-link" href="blog/index.html">ClearGlass Intelligence</a>, sideways to one sibling essay, and forward to the product or service that operationalizes the idea.</p></div>
+      <div class="lattice-card"><h4>8 · Footer links</h4><p>Keep the footer structural: home, core pillars, services, pricing, store, privacy, terms, and investor materials. Footer links should stabilize crawl paths, not duplicate every page.</p></div>
+    </div>
+
+    <ol class="priority-rail">
+      <li>Maintain the generated “Continue exploring” graph with <code>tools/internal_links.py</code> so every indexable page keeps a pillar, siblings, cross-cluster bridges, and CTA path.</li>
+      <li>Strengthen home, services, blog index, and CONDUIT with high-intent contextual anchors before adding new links elsewhere.</li>
+      <li>Audit service pages for proof-to-service and service-to-contact paths; keep one primary conversion route per section.</li>
+      <li>Add or update blog-cluster links only when the target deepens the same topic or advances the reader toward trust and conversion.</li>
+      <li>Review the lattice quarterly: retire weak links, add new pillar members to the generator, and preserve the bright, sparse, command-grid visual language.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section>
+  <div class="final">
+    <h2>Stop paying per task.</h2>
+    <p>Spin up CONDUIT, connect your stack, and let it run — 100% free, 100% open source, 100% yours.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#builder">⟿ Build a workflow now</a>
+      <a class="btn btn-ghost" href="#deploy">★ Self-host it</a>
+      <a class="btn btn-ghost" href="#architecture">▣ Inspect architecture</a>
+      <a class="btn btn-ghost" href="#governance">◈ Review governance</a>
+      <a class="btn btn-ghost" href="mailto:desmondotieno@icloud.com?subject=CONDUIT%20architecture%20review">☑ Request architecture review</a>
+      <a class="btn btn-ghost" href="mailto:desmondotieno@icloud.com?subject=CONDUIT%20pilot%20workflow">⟿ Design pilot workflow</a>
+    </div>
+  </div>
+</section>
+
+<footer>CONDUIT · ClearGlass Inc. — <b>Clarity Is Power.</b> · Self-hosted workflow automation · Open source</footer>
+
+
+<script>
+(function(){
+  "use strict";
+  var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.documentElement.classList.add("conduit-command-motion");
+  var h1=document.querySelector(".hero h1");
+  if(h1&&!h1.dataset.split){
+    h1.dataset.split="true";
+    var wi=0;
+    h1.innerHTML=h1.innerHTML.replace(/([^<\s][^<]*?)(?=<|$)/g,function(txt){
+      return txt.replace(/\S+/g,function(w){var d=(wi++*70);return '<span class="word" style="--wd:'+d+'ms"><span>'+w+'</span></span>';});
+    });
+  }
+  var staged=[".tagchip",".hero h1",".lede",".deep-copy",".hero-ops",".cta-row",".stats",".builder",".fcard",".why-card",".arch-card",".gov-card",".deploy-card",".ptier",".final",".system-rail",".term",".deploy li",".intg",".flow-step",".reliability-card",".dev-card",".usecase-card",".architecture-overview",".comparison-table",".mission-strip span","#operator-control-surfaces .arch-card","#decision-brief .rail-row"];
+  document.querySelectorAll(staged.join(',')).forEach(function(el,i){if(!el.hasAttribute('data-motion'))el.setAttribute('data-motion','up');el.style.setProperty('--d',Math.min(i%12*55,420)+'ms');});
+  if(!reduce&&'IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('is-visible');io.unobserve(e.target);}});},{threshold:.14,rootMargin:'0px 0px -8% 0px'});
+    document.querySelectorAll('[data-motion]').forEach(function(el){io.observe(el);});
+  }else{document.querySelectorAll('[data-motion]').forEach(function(el){el.classList.add('is-visible');});}
+  if(!reduce){
+    document.addEventListener('pointermove',function(e){
+      document.querySelectorAll('.btn:hover,.pbtn:hover,.mini:hover').forEach(function(el){
+        var r=el.getBoundingClientRect(),x=(e.clientX-r.left-r.width/2)/r.width,y=(e.clientY-r.top-r.height/2)/r.height;
+        el.style.transform='translate3d('+(x*7).toFixed(2)+'px,'+(y*4-1).toFixed(2)+'px,0)';
+      });
+    },{passive:true});
+    document.addEventListener('pointerout',function(e){if(e.target.closest){var el=e.target.closest('.btn,.pbtn,.mini');if(el)el.style.transform='';}},true);
+  }
+})();
+</script>
+
+<script>
+"use strict";
+/* ───────────────────────────────────────────────────────────────────────────
+   CONDUIT · in-browser workflow builder
+   Drag nodes from the palette → canvas, wire output→input ports, run a
+   simulated execution that streams data through the graph into the log.
+   ─────────────────────────────────────────────────────────────────────────── */
+const $=s=>document.querySelector(s);
+
+/* ── node catalog ──────────────────────────────────────────────────────────*/
+const TYPES={
+  schedule : {cat:"Triggers", name:"Schedule",     sub:"trigger", ic:"⏱", c:"#fbbf24", trigger:true,  out:{at:"2026-06-14T09:00Z",cron:"0 9 * * *"}},
+  webhook  : {cat:"Triggers", name:"Webhook",      sub:"trigger", ic:"🪝", c:"#fbbf24", trigger:true,  out:{method:"POST",path:"/hook/abc",body:{id:42}}},
+  emailrx  : {cat:"Triggers", name:"Email Trigger",sub:"gmail",   ic:"📥", c:"#ef6f6f", trigger:true,  out:{from:"lead@acme.com",subject:"Demo request"}},
+  gmail    : {cat:"Apps",     name:"Gmail",        sub:"send",    ic:"✉️", c:"#ef6f6f", out:{sent:true,to:"lead@acme.com",thread:"t_91"}},
+  slack    : {cat:"Apps",     name:"Slack",        sub:"message", ic:"💬", c:"#7c5cff", out:{posted:true,channel:"#sales",ts:"171…"}},
+  notion   : {cat:"Apps",     name:"Notion",       sub:"db row",  ic:"📓", c:"#cdd6f5", out:{page:"pg_77",created:true}},
+  sheets   : {cat:"Apps",     name:"Google Sheets",sub:"append",  ic:"📊", c:"#34d399", out:{row:1284,range:"Leads!A:E"}},
+  whatsapp : {cat:"Apps",     name:"WhatsApp",     sub:"message", ic:"📱", c:"#25d366", out:{delivered:true,to:"+1•••4821"}},
+  http     : {cat:"Apps",     name:"HTTP Request", sub:"any api", ic:"🌐", c:"#60a5fa", out:{status:200,json:{ok:true}}},
+  agent    : {cat:"AI",       name:"AI Agent",     sub:"reason",  ic:"🤖", c:"#a78bfa", out:{decision:"qualified",confidence:0.92}},
+  llm      : {cat:"AI",       name:"LLM",          sub:"generate",ic:"✨", c:"#a78bfa", out:{text:"Drafted reply (128 tok)"}},
+  vector   : {cat:"AI",       name:"Vector Store", sub:"your data",ic:"🧠",c:"#a78bfa", out:{matches:5,top:"FAQ #12"}},
+  filter   : {cat:"Logic",   name:"Filter",       sub:"branch",  ic:"⑂", c:"#36b6ff", out:{passed:true}},
+  code     : {cat:"Logic",   name:"Code",         sub:"javascript",ic:"⌨",c:"#36b6ff",out:{returned:{items:3}}},
+  merge    : {cat:"Logic",   name:"Merge",        sub:"combine", ic:"⨝", c:"#36b6ff", out:{combined:2}},
+  wait     : {cat:"Logic",   name:"Wait",         sub:"delay",   ic:"⏸", c:"#36b6ff", out:{waited:"5m"}}
+};
+
+let nodes={}, edges=[], uid=0, selId=null, armed=null;
+const canvas=$("#canvas"), wires=$("#wires"), wrap=$("#canvasWrap");
+
+/* ── palette ───────────────────────────────────────────────────────────────*/
+(function buildPalette(){
+  const grps={};
+  for(const k in TYPES){(grps[TYPES[k].cat]=grps[TYPES[k].cat]||[]).push(k);}
+  let html="";
+  ["Triggers","Apps","AI","Logic"].forEach(g=>{
+    html+=`<div class="pal-grp">${g}</div>`;
+    grps[g].forEach(k=>{const t=TYPES[k];
+      html+=`<div class="node-chip" draggable="true" data-type="${k}">
+        <span class="ic" style="color:${t.c}">${t.ic}</span>${t.name}</div>`;});
+  });
+  html+=`<div class="pal-hint">Tip: drag onto the canvas. Click an <b style="color:#9fc4ff">●</b> output then an input to connect. ${' '}Double-click a node to delete.</div>`;
+  $("#palette").innerHTML=html;
+  $("#palette").querySelectorAll(".node-chip").forEach(ch=>{
+    ch.addEventListener("dragstart",e=>e.dataTransfer.setData("type",ch.dataset.type));
+  });
+})();
+
+/* ── drop onto canvas ────────────────────────────────────────────────────── */
+wrap.addEventListener("dragover",e=>e.preventDefault());
+wrap.addEventListener("drop",e=>{
+  e.preventDefault();
+  const type=e.dataTransfer.getData("type"); if(!type)return;
+  const r=wrap.getBoundingClientRect();
+  addNode(type, e.clientX-r.left-86, e.clientY-r.top-26);
+});
+
+function addNode(type,x,y){
+  const id="n"+(++uid), t=TYPES[type];
+  x=Math.max(6,Math.min(x, wrap.clientWidth-180));
+  y=Math.max(6,Math.min(y, wrap.clientHeight-90));
+  nodes[id]={id,type,x,y};
+  const el=document.createElement("div");
+  el.className="node"; el.id=id; el.style.left=x+"px"; el.style.top=y+"px";
+  el.innerHTML=`
+    ${t.trigger?"":'<div class="port in" data-id="'+id+'" data-kind="in"></div>'}
+    <div class="port out" data-id="${id}" data-kind="out"></div>
+    <div class="node-h">
+      <span class="ic" style="background:${hexA(t.c,.16)};color:${t.c}">${t.ic}</span>
+      <span class="nm">${t.name}<small>${t.sub}</small></span>
+      <button class="node-del" title="Delete">✕</button>
+    </div>
+    <div class="node-b"><span class="node-status"></span><span class="st">ready</span></div>`;
+  canvas.appendChild(el);
+  wireNode(el,id);
+  selectNode(id);
+  refresh();
+}
+
+function wireNode(el,id){
+  const h=el.querySelector(".node-h");
+  h.addEventListener("pointerdown",e=>{
+    if(e.target.closest(".node-del"))return;
+    selectNode(id);
+    const r=wrap.getBoundingClientRect(), n=nodes[id];
+    const ox=e.clientX-r.left-n.x, oy=e.clientY-r.top-n.y;
+    const move=ev=>{
+      n.x=Math.max(2,Math.min(ev.clientX-r.left-ox, wrap.clientWidth-176));
+      n.y=Math.max(2,Math.min(ev.clientY-r.top-oy, wrap.clientHeight-80));
+      el.style.left=n.x+"px"; el.style.top=n.y+"px"; drawWires();
+    };
+    const up=()=>{document.removeEventListener("pointermove",move);document.removeEventListener("pointerup",up);};
+    document.addEventListener("pointermove",move);document.addEventListener("pointerup",up);
+  });
+  el.querySelector(".node-del").addEventListener("click",()=>delNode(id));
+  el.addEventListener("dblclick",()=>delNode(id));
+  el.querySelectorAll(".port").forEach(p=>p.addEventListener("click",ev=>{ev.stopPropagation();onPort(p);}));
+}
+
+/* ── connect ports ───────────────────────────────────────────────────────── */
+function onPort(p){
+  const id=p.dataset.id, kind=p.dataset.kind;
+  if(!armed){
+    if(kind!=="out"){flashLog("info","Start a wire from an output ● (right side).");return;}
+    armed={id,el:p}; p.classList.add("armed");
+  }else{
+    if(kind!=="in"){clearArmed();return;}
+    if(armed.id===id){clearArmed();return;}
+    if(!edges.some(e=>e.from===armed.id&&e.to===id)){
+      edges.push({from:armed.id,to:id}); flashLog("info",`Connected ${TYPES[nodes[armed.id].type].name} → ${TYPES[nodes[id].type].name}`);
+    }
+    clearArmed(); refresh();
+  }
+}
+function clearArmed(){if(armed){armed.el.classList.remove("armed");armed=null;}}
+canvas.addEventListener("click",e=>{if(e.target===canvas)clearArmed();});
+
+function delNode(id){
+  const el=document.getElementById(id); if(el)el.remove();
+  delete nodes[id];
+  edges=edges.filter(e=>e.from!==id&&e.to!==id);
+  if(selId===id)selId=null;
+  refresh();
+}
+
+function selectNode(id){
+  selId=id;
+  document.querySelectorAll(".node").forEach(n=>n.classList.toggle("sel",n.id===id));
+}
+
+/* ── wires (svg beziers) ─────────────────────────────────────────────────── */
+function center(id,side){
+  const n=nodes[id]; const w=176;
+  return {x:n.x+(side==="out"?w-2:2), y:n.y+38};
+}
+function drawWires(){
+  let s="";
+  edges.forEach(e=>{
+    if(!nodes[e.from]||!nodes[e.to])return;
+    const a=center(e.from,"out"), b=center(e.to,"in");
+    const dx=Math.max(40,Math.abs(b.x-a.x)*0.5);
+    s+=`<path d="M${a.x},${a.y} C${a.x+dx},${a.y} ${b.x-dx},${b.y} ${b.x},${b.y}"
+        fill="none" stroke="url(#wg)" stroke-width="2.2" opacity=".85"/>`;
+    s+=`<circle cx="${b.x}" cy="${b.y}" r="3" fill="#a78bfa"/>`;
+  });
+  wires.innerHTML=`<defs><linearGradient id="wg" x1="0" x2="1">
+    <stop offset="0" stop-color="#60a5fa"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs>`+s;
+}
+
+/* ── housekeeping ────────────────────────────────────────────────────────── */
+function refresh(){
+  drawWires();
+  const nc=Object.keys(nodes).length;
+  $("#bbMeta").textContent=`${nc} node${nc!==1?"s":""} · ${edges.length} connection${edges.length!==1?"s":""}`;
+  $("#canvasEmpty").style.display=nc?"none":"grid";
+}
+function hexA(hex,a){const n=parseInt(hex.slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`;}
+
+/* ── log ─────────────────────────────────────────────────────────────────── */
+let logN=0;
+function flashLog(cls,msg){
+  const log=$("#log");
+  if(log.querySelector(".empty"))log.innerHTML="";
+  const t=new Date().toLocaleTimeString([], {hour12:false});
+  const d=document.createElement("div");
+  d.className="le "+cls;
+  d.innerHTML=`<span class="t">${t}</span><span class="m">${msg}</span>`;
+  log.appendChild(d); log.scrollTop=log.scrollHeight;
+  $("#logCount").textContent=(++logN)+" lines";
+}
+
+/* ── run (simulated execution) ───────────────────────────────────────────── */
+let running=false;
+function execOrder(){
+  // start from trigger nodes (or any node with no incoming edge), BFS along edges
+  const incoming={}; Object.keys(nodes).forEach(id=>incoming[id]=0);
+  edges.forEach(e=>{if(incoming[e.to]!=null)incoming[e.to]++;});
+  const starts=Object.keys(nodes).filter(id=>incoming[id]===0);
+  const order=[], seen=new Set(), q=[...starts];
+  while(q.length){
+    const id=q.shift(); if(seen.has(id)||!nodes[id])continue; seen.add(id); order.push(id);
+    edges.filter(e=>e.from===id).forEach(e=>q.push(e.to));
+  }
+  // include any orphans
+  Object.keys(nodes).forEach(id=>{if(!seen.has(id))order.push(id);});
+  return order;
+}
+async function run(){
+  if(running)return;
+  const order=execOrder();
+  if(!order.length){flashLog("err","Nothing to run — add a node first.");return;}
+  running=true; $("#btnRun").textContent="● Running…";
+  document.querySelectorAll(".node").forEach(n=>n.classList.remove("done","exec"));
+  flashLog("info","── Execution started ──────────");
+  let items=1;
+  for(const id of order){
+    const el=document.getElementById(id), t=TYPES[nodes[id].type];
+    el.classList.add("exec"); el.querySelector(".st").textContent="executing…";
+    flashLog("run",`▶ ${t.name} · ${t.sub}`);
+    await sleep(430+Math.random()*260);
+    el.classList.remove("exec"); el.classList.add("done");
+    el.querySelector(".st").textContent="done";
+    if(t.trigger)items=1; else if(t.type==="filter"){}
+    flashLog("ok",`✓ ${t.name} → ${JSON.stringify(t.out)}`);
+  }
+  flashLog("ok",`── Done · ${order.length} nodes · ${items} item(s) processed ──`);
+  running=false; $("#btnRun").textContent="▶ Run workflow";
+}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* ── controls ────────────────────────────────────────────────────────────── */
+$("#btnRun").addEventListener("click",run);
+$("#btnClear").addEventListener("click",()=>{
+  canvas.innerHTML=""; nodes={}; edges=[]; selId=null; clearArmed();
+  $("#log").innerHTML='<div class="empty">— idle. Build a flow and press Run.</div>'; logN=0; $("#logCount").textContent="";
+  refresh();
+});
+$("#btnSample").addEventListener("click",loadSample);
+
+function loadSample(){
+  $("#btnClear").click();
+  // a lead-qualification flow: email trigger → AI agent → filter → Slack + Sheets + Gmail
+  const layout=[
+    ["emailrx", 20, 200],
+    ["agent",   230,200],
+    ["filter",  440,200],
+    ["slack",   650, 90],
+    ["sheets",  650,200],
+    ["gmail",   650,310]
+  ];
+  const ids=layout.map(([t,x,y])=>{addNode(t,x,y);return "n"+uid;});
+  edges.push({from:ids[0],to:ids[1]});
+  edges.push({from:ids[1],to:ids[2]});
+  edges.push({from:ids[2],to:ids[3]});
+  edges.push({from:ids[2],to:ids[4]});
+  edges.push({from:ids[2],to:ids[5]});
+  selId=null; document.querySelectorAll(".node").forEach(n=>n.classList.remove("sel"));
+  refresh();
+  flashLog("info","Loaded sample: AI lead-qualification workflow. Press Run ▶");
+}
+
+/* ── integrations gallery ────────────────────────────────────────────────── */
+const INTG=[
+  ["Gmail","✉","#ef6f6f","mail email google"],["Slack","#","#7c5cff","chat message"],["Notion","N","#cdd6f5","docs notes db"],
+  ["Google Sheets","▦","#34d399","spreadsheet data"],["WhatsApp","W","#25d366","message chat"],["Telegram","T","#36b6ff","message bot"],
+  ["Discord","D","#7c5cff","chat community"],["Microsoft Teams","T","#60a5fa","chat message"],["Outlook","O","#60a5fa","mail email"],
+  ["Stripe","S","#a78bfa","payments billing"],["PayPal","P","#36b6ff","payments"],["QuickBooks","Q","#34d399","accounting finance"],
+  ["Shopify","S","#34d399","ecommerce store"],["WooCommerce","W","#a78bfa","ecommerce"],["Salesforce","☁","#36b6ff","crm sales"],
+  ["HubSpot","H","#ef6f6f","crm marketing"],["Pipedrive","P","#34d399","crm sales"],["Airtable","A","#fbbf24","database"],
+  ["Postgres","🐘","#60a5fa","database sql"],["MySQL","M","#36b6ff","database sql"],["MongoDB","🍃","#34d399","database nosql"],
+  ["Redis","R","#ef6f6f","cache database"],["Supabase","S","#34d399","database backend"],["Firebase","🔥","#fbbf24","database"],
+  ["GitHub","⌥","#cdd6f5","code git dev"],["GitLab","🦊","#fbbf24","code git dev"],["Jira","J","#36b6ff","issues project"],
+  ["Linear","L","#a78bfa","issues project"],["Trello","▤","#36b6ff","board tasks"],["Asana","A","#ef6f6f","tasks project"],
+  ["ClickUp","C","#a78bfa","tasks project"],["Monday","M","#ef6f6f","project work"],["Calendly","C","#36b6ff","calendar booking"],
+  ["Google Calendar","📅","#34d399","calendar"],["Zoom","Z","#36b6ff","video meeting"],["Twilio","T","#ef6f6f","sms voice"],
+  ["SendGrid","✉","#36b6ff","mail email"],["Mailchimp","M","#fbbf24","email marketing"],["Twitter / X","𝕏","#cdd6f5","social"],
+  ["LinkedIn","in","#36b6ff","social"],["Facebook","f","#60a5fa","social ads"],["Instagram","◉","#ef6f6f","social"],
+  ["YouTube","▶","#ef6f6f","video media"],["Dropbox","▱","#36b6ff","files storage"],["Google Drive","△","#34d399","files storage"],
+  ["AWS S3","☁","#fbbf24","storage cloud"],["OpenAI","✦","#34d399","ai llm gpt"],["Anthropic","✦","#a78bfa","ai llm claude"],
+  ["Ollama","🦙","#cdd6f5","ai llm local"],["Pinecone","🌲","#34d399","ai vector"],["Hugging Face","🤗","#fbbf24","ai models"],
+  ["Zendesk","Z","#34d399","support helpdesk"],["Intercom","I","#36b6ff","support chat"],["Typeform","T","#cdd6f5","forms survey"],
+  ["Google Forms","▤","#a78bfa","forms"],["Webflow","W","#36b6ff","website cms"],["WordPress","W","#60a5fa","cms blog"],
+  ["Webhook","🪝","#fbbf24","trigger http"],["HTTP Request","🌐","#60a5fa","api any"],["GraphQL","◈","#ef6f6f","api"]
+];
+function renderIntg(q){
+  q=(q||"").toLowerCase().trim();
+  const grid=$("#intgGrid");
+  const list=INTG.filter(i=>!q||i[0].toLowerCase().includes(q)||i[3].includes(q));
+  grid.innerHTML=list.map(i=>`<div class="intg"><span class="glyph" style="background:${i[2]}">${i[1]}</span><span class="nm">${i[0]}</span></div>`).join("")
+    || `<div style="grid-column:1/-1;text-align:center;color:var(--dim-2);font-family:var(--mono);font-size:12px;padding:14px">No match for “${q}”. The full build ships with 400+.</div>`;
+  $("#intgMore").textContent=q? `${list.length} shown` : `…and 340+ more in the self-hosted build.`;
+}
+$("#intgSearch").addEventListener("input",e=>renderIntg(e.target.value));
+renderIntg("");
+
+/* ── count-up stats ──────────────────────────────────────────────────────── */
+function countUp(el){
+  const target=+el.dataset.count, suf=el.dataset.suffix||"", dur=1100, t0=performance.now();
+  function step(t){
+    const p=Math.min(1,(t-t0)/dur), v=Math.floor((1-Math.pow(1-p,3))*target);
+    el.textContent=v.toLocaleString()+(p>=1?suf:""); if(p<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){countUp(e.target);io.unobserve(e.target);}}),{threshold:.5});
+document.querySelectorAll(".stat .n[data-count]").forEach(el=>io.observe(el));
+
+/* boot with sample so the canvas is alive on arrival */
+window.addEventListener("load",()=>{ loadSample(); });
+window.addEventListener("resize",drawWires);
+</script>
+
+<script defer src="nav.js"></script>
+<script defer src="control-surface.js"></script>
+<script defer src="ui.js"></script>
+<script defer src="platform.js"></script>
+<script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="percival-os.html">Command &amp; Autonomous Operations</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="automap.html"><span><b>Previous</b>AutoMap Orchestration</span></a>
+      <a href="percival-os.html"><span><b>Topic hub</b>PERCIVAL OS</span></a>
+      <a href="postloop.html"><span><b>Next in journey</b>PostLoop</span></a>
+    </div>
+    <ul>
+      <li><a href="blog/clearglass-agentops-microsoft-foundry-future-stack.html"><b>ClearGlass AgentOps</b> — the Microsoft Foundry future stack</a></li>
+      <li><a href="postloop.html"><b>PostLoop</b> — autonomous multi-account content engine</a></li>
+      <li><a href="command-console.html"><b>Command Console</b> — cyber intelligence operations hub</a></li>
+      <li><a href="control-surface.html"><b>Systems Control Surface v3.1</b> — the live command dashboard</a></li>
+      <li><a href="systems.html"><b>Systems Console</b> — PERCIVAL operations console</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="offers/index.html">Browse services &amp; engagements</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

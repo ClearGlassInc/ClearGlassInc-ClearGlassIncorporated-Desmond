@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8" />
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>ClearPulse Architecture Whitepaper — Forensic AI for</title>
+<meta name="description" content="ClearPulse Architecture Whitepaper: the reference architecture for Provable Healthcare Intelligence Infrastructure. Entity resolution, graph intelligence." />
+<meta name="keywords" content="explainable healthcare AI audit trails, traceable PHI access monitoring architecture, healthcare forensic data lineage, tamper-proof HIPAA logs, forensic AI healthcare, provable healthcare intelligence" />
+<link rel="canonical" href="https://www.clearglassinc.com/clearpulse-architecture.html" />
+<meta property="og:title" content="ClearPulse Architecture Whitepaper — Forensic AI for Healthcare" />
+<meta property="og:description" content="Reference architecture for Provable Healthcare Intelligence Infrastructure: traceability, entity resolution, graph intelligence, cryptographic audit chain, incident abstraction." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.clearglassinc.com/clearpulse-architecture.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "ClearPulse Architecture Whitepaper — Forensic AI for Healthcare",
+  "description": "Reference architecture for Provable Healthcare Intelligence Infrastructure (PHII): entity resolution, graph intelligence, cryptographic audit chain, incident abstraction.",
+  "author": {
+    "@type": "Organization",
+    "name": "ClearGlass Inc",
+    "url": "https://www.clearglassinc.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "ClearGlass Inc",
+    "url": "https://www.clearglassinc.com"
+  },
+  "datePublished": "2026-06-02",
+  "url": "https://www.clearglassinc.com/clearpulse-architecture.html"
+}
+</script>
+<style>
+:root{
+  --bg-0:#04060d;
+  --bg-1:#070b16;
+  --bg-2:#0b1120;
+  --bg-3:#0f1730;
+  --glass:rgba(16,24,46,0.55);
+  --glass-2:rgba(20,30,58,0.42);
+  --line:rgba(120,170,255,0.18);
+  --line-2:rgba(120,170,255,0.10);
+  --txt:#d8e3ff;
+  --txt-dim:#8aa0c8;
+  --txt-mute:#5d6f93;
+  --accent:#60a5fa;
+  --accent-2:#7c5bff;
+  --good:#3fd9a0;
+  --warn:#60a5fa;
+  --crit:#f472b6;
+  --shadow:0 20px 60px -20px rgba(0,8,30,0.7);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg-0);color:var(--txt);font-family:'Space Grotesk',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+body{
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(96,165,250,0.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, rgba(124,91,255,0.10), transparent 60%),
+    var(--bg-0);
+}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+.wrap{max-width:1280px;margin:0 auto;padding:32px 28px 80px}
+
+/* header */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-bottom:24px;border-bottom:1px solid var(--line-2);flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));position:relative;box-shadow:0 0 32px rgba(96,165,250,0.35)}
+.brand-mark::after{content:"";position:absolute;inset:5px;border-radius:7px;background:var(--bg-0)}
+.brand-mark::before{content:"";position:absolute;inset:12px;border-radius:3px;background:linear-gradient(135deg,var(--accent),var(--accent-2));z-index:1}
+.brand-name{font-weight:700;letter-spacing:0.04em}
+.brand-sub{font-size:11px;letter-spacing:0.3em;color:var(--txt-mute);text-transform:uppercase}
+.stat-row{display:flex;gap:18px;align-items:center;font-size:12px;color:var(--txt-dim);flex-wrap:wrap}
+.stat-dot{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 12px var(--good);display:inline-block;margin-right:6px;animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
+
+/* hero */
+.hero{padding:48px 0 28px}
+.kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.4em;color:var(--accent);text-transform:uppercase;margin-bottom:14px}
+h1{font-size:clamp(30px,4.4vw,52px);line-height:1.08;font-weight:700;letter-spacing:-0.01em;max-width:980px}
+h1 .grad{background:linear-gradient(90deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{margin-top:18px;color:var(--txt-dim);max-width:820px;font-size:17px;line-height:1.6}
+.cta-row{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:rgba(8,14,28,0.6);color:var(--txt);text-decoration:none;font-size:13px;letter-spacing:0.04em}
+.btn.primary{background:linear-gradient(135deg,rgba(96,165,250,0.18),rgba(124,91,255,0.18));border-color:rgba(96,165,250,0.45);color:#eaf6ff}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* sections */
+section.block{margin-top:34px}
+h2{font-size:22px;font-weight:600;letter-spacing:-0.005em;margin-bottom:14px}
+h2 .num{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:13px;margin-right:10px;letter-spacing:0.12em}
+.sub{color:var(--txt-dim);font-size:14px;line-height:1.6;max-width:880px}
+
+/* grid */
+.grid{display:grid;gap:18px;margin-top:18px}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+@media (max-width:980px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+
+/* card */
+.card{
+  background:linear-gradient(180deg,var(--glass),var(--glass-2));
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:22px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(10px);
+  position:relative;
+  overflow:hidden;
+}
+.card::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(96,165,250,0.06),transparent 30%);
+  pointer-events:none;
+}
+.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title{font-size:13px;letter-spacing:0.16em;text-transform:uppercase;color:var(--txt-dim)}
+.card-tag{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);padding:3px 8px;border:1px solid var(--line);border-radius:999px}
+.card-tag.warn{color:var(--warn);border-color:rgba(96,165,250,0.35)}
+.card-tag.crit{color:var(--crit);border-color:rgba(244,114,182,0.35)}
+
+.card p{color:var(--txt-dim);font-size:14px;line-height:1.6}
+.card p + p{margin-top:10px}
+.card ul{margin-top:10px;padding-left:18px;color:var(--txt-dim);font-size:13.5px;line-height:1.6}
+.card ul li{margin-bottom:6px}
+
+/* pillars */
+.pillar-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.18em}
+.pillar-name{font-size:15px;font-weight:600;margin-top:6px;color:var(--txt)}
+.pillar-desc{margin-top:8px;color:var(--txt-dim);font-size:13px;line-height:1.55}
+
+/* code blocks */
+pre.code{
+  font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.55;
+  color:var(--txt);background:rgba(4,8,18,0.7);
+  border:1px solid var(--line-2);border-radius:10px;padding:14px;
+  overflow:auto;max-height:520px;
+  margin-top:6px;
+}
+pre.code .k{color:var(--accent)}
+pre.code .s{color:#b9e3a0}
+pre.code .n{color:var(--warn)}
+pre.code .c{color:var(--txt-mute)}
+pre.code .kw{color:#f472b6}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+.pipe-step{position:relative;padding:14px;border:1px solid var(--line);border-radius:10px;background:rgba(8,14,28,0.6);min-height:108px}
+.pipe-step .n{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent)}
+.pipe-step .t{font-size:13.5px;margin-top:6px;font-weight:600}
+.pipe-step .d{font-size:11.5px;color:var(--txt-mute);margin-top:6px;line-height:1.45}
+.pipe-step.priority{border-color:rgba(124,91,255,0.55);box-shadow:0 0 24px rgba(124,91,255,0.18)}
+.pipe-step.priority .t{color:var(--accent)}
+@media (max-width:980px){.pipe{grid-template-columns:repeat(2,1fr)}}
+
+/* table */
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+table th,table td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line-2);vertical-align:top}
+table th{font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--txt-mute);font-weight:600}
+table td{color:var(--txt-dim)}
+table td.mono{font-family:'JetBrains Mono',monospace;color:var(--txt);font-size:12px}
+table tbody tr:hover{background:rgba(96,165,250,0.04)}
+
+/* KPI bars */
+.bars{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.bar-row{display:grid;grid-template-columns:200px 1fr 60px;gap:12px;align-items:center;font-size:12.5px}
+.bar-row .lbl{color:var(--txt-dim)}
+.bar-track{height:8px;background:rgba(120,170,255,0.08);border-radius:999px;overflow:hidden;position:relative}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:999px}
+.bar-row .v{font-family:'JetBrains Mono',monospace;color:var(--txt);text-align:right}
+@media (max-width:640px){.bar-row{grid-template-columns:130px 1fr 50px}}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{font-family:'JetBrains Mono',monospace;font-size:11px;padding:5px 10px;border:1px solid var(--line);border-radius:999px;color:var(--txt-dim)}
+.chip strong{color:var(--txt)}
+
+/* roadmap */
+.phase{display:grid;grid-template-columns:160px 1fr;gap:18px;padding:16px 0;border-bottom:1px solid var(--line-2)}
+.phase:last-child{border-bottom:none}
+.phase .when{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);letter-spacing:0.12em}
+.phase .what{color:var(--txt-dim);font-size:14px;line-height:1.6}
+.phase .what strong{color:var(--txt)}
+@media (max-width:640px){.phase{grid-template-columns:1fr}}
+
+/* pull quotes */
+.pull{
+  border-left:3px solid var(--accent);
+  padding:14px 18px;
+  background:rgba(96,165,250,0.04);
+  border-radius:8px;
+  margin-top:14px;
+  font-size:15px;
+  line-height:1.55;
+  color:var(--txt);
+}
+.pull span.byline{display:block;margin-top:6px;font-size:11px;color:var(--txt-mute);letter-spacing:0.2em;text-transform:uppercase}
+
+/* footer */
+.foot{margin-top:56px;padding-top:22px;border-top:1px solid var(--line-2);color:var(--txt-mute);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.foot a{color:var(--txt-dim);text-decoration:none}
+.foot a:hover{color:var(--accent)}
+
+/* anchor offsets for in-page nav */
+section[id]{scroll-margin-top:24px}
+</style>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+<div class="wrap">
+
+  <!-- header -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div>
+        <div class="brand-name">ClearPulse</div>
+        <div class="brand-sub">Architecture Whitepaper · v2026.06</div>
+      </div>
+    </div>
+    <div class="stat-row">
+      <span><span class="stat-dot"></span>REFERENCE ARCHITECTURE</span>
+      <span class="mono">PHII · forensic-grade</span>
+      <span class="mono">2026-06-02</span>
+    </div>
+  </div>
+
+  <!-- hero -->
+  <section class="hero">
+    <div class="kicker">Forensic AI for Healthcare · Reference Architecture</div>
+    <h1>The platform doesn't detect anomalies. It <span class="grad">proves them.</span></h1>
+    <p class="lede">
+      ClearPulse is the reference implementation of <strong>Provable Healthcare Intelligence Infrastructure (PHII)</strong> — a category defined by traceable identity, relationship-aware investigation, and cryptographically anchored audit lineage. This whitepaper specifies the architecture: pipeline, data model, the four upgrade priorities, and the six-month execution roadmap.
+    </p>
+    <div class="cta-row">
+      <a class="btn primary" href="./docs/clearpulse_architecture_whitepaper.md">Read the full whitepaper (Markdown)</a>
+      <a class="btn" href="./clearpulse.html">← ClearPulse live surface</a>
+      <a class="btn" href="./index.html">ClearGlass home</a>
+    </div>
+  </section>
+
+  <!-- 1. Pillars -->
+  <section class="block" id="pillars">
+    <h2><span class="num">§1</span>Design Pillars</h2>
+    <p class="sub">Every architectural decision in ClearPulse is validated against these pillars. They are non-negotiable and they compose the platform's defensibility.</p>
+    <div class="grid grid-4">
+      <div class="card">
+        <div class="pillar-num">P1</div>
+        <div class="pillar-name">Traceability-first</div>
+        <div class="pillar-desc">UUID7 <code class="mono">trace_id</code> minted at ingestion, propagated through every stage. Every dashboard cell replays back to the originating byte.</div>
+      </div>
+      <div class="card">
+        <div class="pillar-num">P2</div>
+        <div class="pillar-name">Explainable scoring</div>
+        <div class="pillar-desc">Every Risk Envelope carries weighted factors, contributing facts, and rule version. No black-box scores reach an analyst surface.</div>
+      </div>
+      <div class="card">
+        <div class="pillar-num">P3</div>
+        <div class="pillar-name">Unified signal plane</div>
+        <div class="pillar-desc">Billing, behavior, and at-rest PHI exposure converge into one stream, one schema, one investigation graph.</div>
+      </div>
+      <div class="card">
+        <div class="pillar-num">P4</div>
+        <div class="pillar-name">Forensic-grade lineage</div>
+        <div class="pillar-desc">Hash-chained, append-only, Merkle-anchored. The audit trail itself is the product.</div>
+      </div>
+      <div class="card">
+        <div class="pillar-num">P5</div>
+        <div class="pillar-name">Deterministic-first, ML-augmented</div>
+        <div class="pillar-desc">Rules carry compliance weight. ML widens recall on novel patterns without surrendering defensibility.</div>
+      </div>
+      <div class="card">
+        <div class="pillar-num">P6</div>
+        <div class="pillar-name">Identity-aware</div>
+        <div class="pillar-desc">Every event resolves to a stable EID — patient, provider, device, payer. Not transient source identifiers.</div>
+      </div>
+      <div class="card">
+        <div class="pillar-num">P7</div>
+        <div class="pillar-name">Relationship-aware</div>
+        <div class="pillar-desc">The graph is a first-class store. Fraud rings and insider collusion live in edges, not rows.</div>
+      </div>
+      <div class="card">
+        <div class="pillar-num">P8</div>
+        <div class="pillar-name">Tenant-isolated</div>
+        <div class="pillar-desc">Per-tenant streams, ledgers, KMS CMKs. Hard separation, by construction.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Pipeline -->
+  <section class="block" id="pipeline">
+    <h2><span class="num">§2</span>Reference Pipeline</h2>
+    <p class="sub">Eight stages, one envelope schema, end-to-end <code class="mono">trace_id</code> propagation. Stages 5–8 are the four upgrade priorities specified in this whitepaper.</p>
+    <div class="card" style="margin-top:14px">
+      <div class="card-h"><div class="card-title">Pipeline · trace_id flow</div><div class="card-tag">FHIR → AUDIT-ANCHORED INCIDENT</div></div>
+      <div class="pipe">
+        <div class="pipe-step"><div class="n">01 · INGEST</div><div class="t">Parser</div><div class="d">FHIR / HL7v2 / 837 validate, mint UUID7 trace_id, write Parquet ledger.</div></div>
+        <div class="pipe-step"><div class="n">02 · STREAM</div><div class="t">Redis</div><div class="d">stream:tx:new · stream:access · stream:phi:scan — at-least-once, replayable.</div></div>
+        <div class="pipe-step"><div class="n">03 · SCORE</div><div class="t">Risk Engine</div><div class="d">Rules + ML overlay. Sliding 15-min windows, weighted factors, Risk Envelope emit.</div></div>
+        <div class="pipe-step"><div class="n">04 · BEHAVIOR</div><div class="t">Access Engine</div><div class="d">Bloom + HLL sketches. Per-EID Z-score volume anomaly on access patterns.</div></div>
+        <div class="pipe-step priority"><div class="n">05 · RESOLVE</div><div class="t">Entity Resolver · P1</div><div class="d">Deterministic + Fellegi-Sunter probabilistic MPI. Stable EIDs for patient, provider, device.</div></div>
+        <div class="pipe-step priority"><div class="n">06 · GRAPH</div><div class="t">Graph Intelligence · P2</div><div class="d">Neo4j / Memgraph. Rings, collusion, geographic impossibility. Graph as feature store.</div></div>
+        <div class="pipe-step priority"><div class="n">07 · INCIDENT</div><div class="t">Incident Aggregator · P4</div><div class="d">1 incident ⇆ N events. Entity / graph / pattern affinity. Risk decay.</div></div>
+        <div class="pipe-step priority"><div class="n">08 · ANCHOR</div><div class="t">Cryptographic Audit · P3</div><div class="d">SHA-256 hash chain, 5-min Merkle roots, RFC 3161 timestamps, WORM mirror.</div></div>
+      </div>
+      <div class="chips">
+        <span class="chip"><strong>Trace ID:</strong> UUID7</span>
+        <span class="chip"><strong>Envelope schema:</strong> v2026.06</span>
+        <span class="chip"><strong>Anchor cadence:</strong> 5 min</span>
+        <span class="chip"><strong>Replay p95:</strong> ≤ 3 s</span>
+        <span class="chip"><strong>Throughput:</strong> ≥ 5k eps</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Envelope -->
+  <section class="block" id="envelope">
+    <h2><span class="num">§3</span>The Risk Envelope</h2>
+    <p class="sub">Every signal is normalized into one envelope before it enters scoring. This contract is what makes ClearPulse explainable end to end — every UI field is sourced from here, every audit query is keyed on it.</p>
+    <div class="grid grid-2" style="margin-top:14px">
+      <div class="card">
+        <div class="card-h"><div class="card-title">Canonical Envelope</div><div class="card-tag">v2026.06.01</div></div>
+<pre class="code">{
+  <span class="k">"trace_id"</span>: <span class="s">"018f9b2e-7c41-7a40-ae21-f9c2d2c43e1a"</span>,
+  <span class="k">"envelope_version"</span>: <span class="s">"2026.06.01"</span>,
+  <span class="k">"source"</span>: {
+    <span class="k">"system"</span>: <span class="s">"epic.audit"</span>,
+    <span class="k">"ledger_offset"</span>: <span class="n">884213</span>,
+    <span class="k">"ledger_hash"</span>: <span class="s">"sha256:9af3…e21c"</span>
+  },
+  <span class="k">"subject"</span>: {
+    <span class="k">"patient_eid"</span>:  <span class="s">"eid:pat:7c1a…09"</span>,
+    <span class="k">"provider_eid"</span>: <span class="s">"eid:prv:0044…b2"</span>,
+    <span class="k">"device_eid"</span>:   <span class="s">"eid:dev:ws-42"</span>,
+    <span class="k">"resolution_confidence"</span>: <span class="n">0.97</span>
+  },
+  <span class="k">"score"</span>: <span class="n">78</span>,
+  <span class="k">"severity"</span>: <span class="s">"CRITICAL"</span>,
+  <span class="k">"factors"</span>: {
+    <span class="k">"temporal_overlap"</span>: { <span class="k">"weight"</span>: <span class="n">40</span>, <span class="k">"ratio"</span>: <span class="n">0.71</span> },
+    <span class="k">"access_spike"</span>:     { <span class="k">"weight"</span>: <span class="n">28</span>, <span class="k">"z"</span>: <span class="n">4.3</span> },
+    <span class="k">"off_hours"</span>:        { <span class="k">"weight"</span>: <span class="n">10</span> }
+  },
+  <span class="k">"ml_overlay"</span>: { <span class="k">"model"</span>: <span class="s">"iforest-v3"</span>, <span class="k">"p_anomaly"</span>: <span class="n">0.94</span> },
+  <span class="k">"incident_id"</span>: <span class="s">"inc:2026-06-02:0007"</span>,
+  <span class="k">"audit"</span>: {
+    <span class="k">"prev_hash"</span>: <span class="s">"sha256:71d2…c0aa"</span>,
+    <span class="k">"self_hash"</span>: <span class="s">"sha256:bb40…91ef"</span>,
+    <span class="k">"merkle_root_ref"</span>: <span class="s">"anchor:2026-06-02T14:10:00Z"</span>
+  }
+}</pre>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-title">Why one envelope</div><div class="card-tag">CONTRACT</div></div>
+        <ul>
+          <li><strong>Single contract</strong> across rules, ML, graph, UI, and audit chain.</li>
+          <li><strong>No phantom data:</strong> if it appears on screen, it has a trace_id and a hash.</li>
+          <li><strong>Versioned:</strong> every envelope carries the rule_version and envelope_version it was scored under.</li>
+          <li><strong>Forensic replay:</strong> reconstruct any historical decision from envelope + ledger byte + rule_version.</li>
+          <li><strong>Identity-keyed:</strong> downstream baselines, graph features, incident grouping all key on EIDs.</li>
+          <li><strong>Audit-self-contained:</strong> prev_hash + self_hash + merkle_root_ref let an independent verifier check integrity offline.</li>
+        </ul>
+        <div class="pull">
+          The Risk Envelope is the molecule of ClearPulse. Every macro behavior of the platform — explainability, defensibility, ML governance, multi-tenant safety — reduces to invariants we enforce on this object.
+          <span class="byline">— ClearPulse Architecture Office</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Priority 1 -->
+  <section class="block" id="p1">
+    <h2><span class="num">§4</span>Priority 1 · Entity Resolution</h2>
+    <p class="sub">Without identity, every other layer is fragmented. This is the single highest-leverage upgrade in the platform.</p>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-h"><div class="card-title">Hybrid MPI</div><div class="card-tag">DETERMINISTIC + PROBABILISTIC</div></div>
+        <ul>
+          <li><strong>Deterministic pass.</strong> Exact match on NPI, government-issued patient identifier, verified SSN hash.</li>
+          <li><strong>Probabilistic pass.</strong> Fellegi-Sunter scoring on name n-grams, DOB, address tokens, phone hash, device fingerprint.</li>
+          <li><strong>Active-learning loop.</strong> Borderline pairs (0.65 ≤ p &lt; 0.92) surface to compliance reviewers; decisions retrain weights weekly.</li>
+          <li><strong>Provider / device parallel pipeline.</strong> Workstation MAC, browser fingerprint, badge swipe, shift schedule.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-title">KPI Targets · 90 days</div><div class="card-tag">PHASE 1</div></div>
+        <table>
+          <thead><tr><th>Metric</th><th>Target</th></tr></thead>
+          <tbody>
+            <tr><td>Patient match precision</td><td class="mono">≥ 0.995</td></tr>
+            <tr><td>Patient match recall</td><td class="mono">≥ 0.92</td></tr>
+            <tr><td>Provider duplicate collapse</td><td class="mono">≥ 85%</td></tr>
+            <tr><td>Manual reviewer queue / 1M events</td><td class="mono">≤ 50</td></tr>
+            <tr><td>Mean EID resolution latency</td><td class="mono">≤ 120 ms</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Priority 2 -->
+  <section class="block" id="p2">
+    <h2><span class="num">§5</span>Priority 2 · Graph Intelligence</h2>
+    <p class="sub">Event correlation is linear thinking. Relationship intelligence is the multiplier — fraud rings, insider collusion, credential sharing, kickback schemes are graph-shaped problems.</p>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-h"><div class="card-title">Fraud ring · shared-patient collusion</div><div class="card-tag">CYPHER</div></div>
+<pre class="code"><span class="kw">MATCH</span> (p1:Provider)-[:BILLED]-&gt;(c1:Claim)
+        -[:DERIVED_FROM]-&gt;(e:Encounter)
+        &lt;-[:DERIVED_FROM]-(c2:Claim)
+        &lt;-[:BILLED]-(p2:Provider)
+<span class="kw">WHERE</span> p1.eid &lt; p2.eid
+  <span class="kw">AND</span> duration.between(c1.ts, c2.ts).seconds &lt; <span class="n">900</span>
+<span class="kw">WITH</span> p1, p2, count(<span class="kw">DISTINCT</span> e) <span class="kw">AS</span> overlap
+<span class="kw">WHERE</span> overlap &gt;= <span class="n">12</span>
+<span class="kw">RETURN</span> p1.eid, p2.eid, overlap
+<span class="kw">ORDER BY</span> overlap <span class="kw">DESC</span></pre>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-title">Insider collusion · shared workstation</div><div class="card-tag">CYPHER</div></div>
+<pre class="code"><span class="kw">MATCH</span> (w:Workstation)-[l1:LOGGED_IN]-&gt;(p1:Provider),
+      (w)-[l2:LOGGED_IN]-&gt;(p2:Provider)
+<span class="kw">WHERE</span> p1.eid &lt;&gt; p2.eid
+  <span class="kw">AND</span> abs(duration.between(l1.ts, l2.ts).seconds) &lt; <span class="n">300</span>
+<span class="kw">RETURN</span> w.id, p1.eid, p2.eid, l1.ts, l2.ts</pre>
+      </div>
+    </div>
+    <div class="grid grid-2" style="margin-top:18px">
+      <div class="card">
+        <div class="card-h"><div class="card-title">Graph as Feature Store</div><div class="card-tag">REAL LEVERAGE</div></div>
+        <p>The graph is not a side database — it is the feature store for ML. For every <code class="mono">(provider, 15-min window)</code> we materialize:</p>
+        <ul>
+          <li><code class="mono">degree_patients_15m</code> / <code class="mono">_24h</code> / <code class="mono">_7d</code></li>
+          <li><code class="mono">pagerank_in_billing_subgraph</code></li>
+          <li><code class="mono">co_billing_jaccard_max</code></li>
+          <li><code class="mono">shared_device_count_24h</code></li>
+          <li><code class="mono">ring_membership_score</code> — Louvain community detection on co-billing edges</li>
+        </ul>
+        <p>Every prediction carries a graph-context vector an investigator can interrogate.</p>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-title">KPI Targets</div><div class="card-tag">PHASE 2</div></div>
+        <table>
+          <thead><tr><th>Metric</th><th>Target</th></tr></thead>
+          <tbody>
+            <tr><td>Multi-entity ring detection</td><td class="mono">≥ 1 / quarter</td></tr>
+            <tr><td>Investigative depth (avg hops)</td><td class="mono">3 → 7</td></tr>
+            <tr><td>Anomaly recall lift vs. rules-only</td><td class="mono">+25–40%</td></tr>
+            <tr><td>False-positive delta</td><td class="mono">≤ +10%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Priority 3 -->
+  <section class="block" id="p3">
+    <h2><span class="num">§6</span>Priority 3 · Cryptographic Audit Chain</h2>
+    <p class="sub">This is the legal moat. SIEM vendors compete on dashboards; ClearPulse competes on admissible evidence.</p>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-h"><div class="card-title">Hash-linked, Merkle-anchored</div><div class="card-tag">FORENSIC</div></div>
+<pre class="code">record_n = {
+  <span class="k">payload</span>:   &lt;Risk Envelope, canonical JSON (RFC 8785)&gt;
+  <span class="k">prev_hash</span>: <span class="s">SHA-256(record_{n-1}.self_hash)</span>
+  <span class="k">self_hash</span>: <span class="s">SHA-256(payload || prev_hash)</span>
+  <span class="k">ts</span>:        monotonic ingest timestamp
+}
+
+<span class="c">// every 5 minutes</span>
+merkle_root = Merkle(self_hash[ window_t ])
+write_postgres(merkle_root, window_t)
+mirror_s3_object_lock(merkle_root)     <span class="c">// WORM, 7-year</span>
+anchor_rfc3161(merkle_root)            <span class="c">// public TSA</span></pre>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-title">Compliance mapping</div><div class="card-tag">CONTROLS</div></div>
+        <table>
+          <thead><tr><th>Control</th><th>Coverage</th></tr></thead>
+          <tbody>
+            <tr><td>HIPAA §164.312(b) Audit</td><td>Hash-linked ledger of every PHI access</td></tr>
+            <tr><td>HIPAA §164.312(c)(1) Integrity</td><td>SHA-256 + Merkle anchoring</td></tr>
+            <tr><td>HIPAA §164.312(c)(2) Authenticity</td><td>RFC 3161 timestamps</td></tr>
+            <tr><td>SOC 2 CC7.2</td><td>Continuous immutable evidence stream</td></tr>
+            <tr><td>21st Century Cures §4004</td><td>Verifiable access trail per request</td></tr>
+            <tr><td>FRE 901 / 902(13)–(14)</td><td>Self-authenticating records</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="pull" style="margin-top:18px">
+      An auditor independently recomputes <code class="mono">self_hash</code>, walks the chain back to the most recent anchored Merkle root, verifies that root against the public timestamp authority, and confirms the WORM ledger copy matches. If any byte changed, verification fails — without trusting the runtime.
+      <span class="byline">— Verification workflow</span>
+    </div>
+  </section>
+
+  <!-- 7. Priority 4 -->
+  <section class="block" id="p4">
+    <h2><span class="num">§7</span>Priority 4 · Incident Abstraction</h2>
+    <p class="sub">Analysts do not investigate alerts. They investigate incidents. ClearPulse collapses 30–200 contributing events into a single incident with deterministic narrative, root-cause event, graph context, and audit anchor.</p>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-h"><div class="card-title">Incident model</div><div class="card-tag">1 ⇆ N</div></div>
+<pre class="code">Incident
+  ├── incident_id          inc:2026-06-02:0007
+  ├── status               OPEN | TRIAGED | INVESTIGATING
+  │                        | CLOSED | ESCALATED
+  ├── severity             max-decay over events
+  ├── primary_entities[]   provider_eid · patient_eid
+  │                        · device_eid
+  ├── root_cause_event_id  earliest trace_id
+  ├── contributing_events  [trace_ids w/ weights]
+  ├── graph_context        subgraph snapshot
+  ├── narrative            deterministic + LLM draft
+  └── audit_chain_ref      Merkle root covering all
+                           contributing events</pre>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-title">Aggregation rules</div><div class="card-tag">CLUSTERING</div></div>
+        <ul>
+          <li><strong>Entity affinity.</strong> Events sharing ≥ 1 EID within a 30-min sliding window.</li>
+          <li><strong>Graph affinity.</strong> Events on a connected subgraph within 2 hops.</li>
+          <li><strong>Pattern affinity.</strong> Same rule-version + factor signature within 6 hours.</li>
+          <li><strong>Risk decay.</strong> <code class="mono">severity = max(event.score) · e^(-λ · age)</code></li>
+          <li><strong>Reopen window.</strong> Closed incidents reopen on matching events within 7 days.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid" style="margin-top:18px">
+      <div class="card">
+        <div class="card-h"><div class="card-title">KPI Targets</div><div class="card-tag">PHASE 1–2</div></div>
+        <div class="bars">
+          <div class="bar-row"><span class="lbl">Alert→Incident compression</span><div class="bar-track"><div class="bar-fill" style="width:90%"></div></div><span class="v">15:1</span></div>
+          <div class="bar-row"><span class="lbl">Analyst fatigue reduction</span><div class="bar-track"><div class="bar-fill" style="width:70%"></div></div><span class="v">-70%</span></div>
+          <div class="bar-row"><span class="lbl">MTTR reduction</span><div class="bar-track"><div class="bar-fill" style="width:60%"></div></div><span class="v">-60%</span></div>
+          <div class="bar-row"><span class="lbl">Auto-suggest closure accuracy</span><div class="bar-track"><div class="bar-fill" style="width:80%"></div></div><span class="v">≥80%</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Dual-layer intelligence -->
+  <section class="block" id="ai-layer">
+    <h2><span class="num">§8</span>Dual-Layer Intelligence · Rules + ML</h2>
+    <p class="sub">ClearPulse is deterministic-first. ML augments — it does not replace.</p>
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="card-h"><div class="card-title">Layer 1 · Rules</div><div class="card-tag">DSL</div></div>
+        <ul>
+          <li>Authored in versioned YAML DSL</li>
+          <li>Weighted factors compose envelope score</li>
+          <li>Every rule version signed, ledger-anchored</li>
+          <li>Regulator can read the rule and reproduce the result</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-title">Layer 2 · ML Overlay</div><div class="card-tag">GOVERNED</div></div>
+        <ul>
+          <li>Isolation Forest (unsupervised baseline)</li>
+          <li>XGBoost on labeled incidents</li>
+          <li>GNN node-classification on co-billing graph</li>
+          <li>Features from graph store, never raw events</li>
+          <li>Model card + offline eval gate every deploy</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-title">Composite score</div><div class="card-tag">AUDITED</div></div>
+<pre class="code">final = clamp_0_100(
+  rule_score
+  + α · ml_lift(p_anomaly, rule_score)
+  + β · graph_context_score
+)
+
+α = <span class="n">0.30</span>, β = <span class="n">0.20</span>
+<span class="c">// per-tenant, ledger-anchored</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. Security -->
+  <section class="block" id="security">
+    <h2><span class="num">§9</span>Security &amp; Compliance Posture</h2>
+    <div class="card">
+      <table>
+        <thead><tr><th>Domain</th><th>Implementation</th></tr></thead>
+        <tbody>
+          <tr><td>Encryption in transit</td><td>TLS 1.3, mTLS between internal services</td></tr>
+          <tr><td>Encryption at rest</td><td>AES-256-GCM, per-tenant DEK wrapped by KMS CMK</td></tr>
+          <tr><td>Key management</td><td>AWS KMS / Azure Key Vault with HSM, SoD on CMK rotation</td></tr>
+          <tr><td>Tenancy</td><td>Per-tenant Redis namespaces, ledgers, CMKs</td></tr>
+          <tr><td>AuthN</td><td>OIDC + SCIM; FIDO2 enforced for admin</td></tr>
+          <tr><td>AuthZ</td><td>ABAC; minimum-necessary enforced at envelope field level</td></tr>
+          <tr><td>PHI minimization</td><td>Field-level redaction; break-glass is itself a ledger event</td></tr>
+          <tr><td>Self-audit</td><td>Every read of an envelope by a ClearPulse user produces an envelope</td></tr>
+          <tr><td>Region</td><td>US · Canada (PIPEDA / Ontario PHIPA) · EU</td></tr>
+          <tr><td>Certifications target</td><td>SOC 2 Type II (Y1) · HITRUST CSF (Y2) · FedRAMP Moderate (Y2–3)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 10. Roadmap -->
+  <section class="block" id="roadmap">
+    <h2><span class="num">§10</span>Six-Month Execution Roadmap</h2>
+    <div class="card">
+      <div class="phase">
+        <div class="when">DAYS 0–60<br/>PHASE 1</div>
+        <div class="what">
+          <strong>Entity Resolution v1</strong> — deterministic + Fellegi-Sunter probabilistic MPI.<br/>
+          <strong>Incident Aggregator v1</strong> — entity + pattern affinity; risk decay.<br/>
+          <strong>SEO pillar pages live</strong> — explainable healthcare AI audit trails, traceable PHI access architecture, forensic data lineage.
+        </div>
+      </div>
+      <div class="phase">
+        <div class="when">DAYS 60–120<br/>PHASE 2</div>
+        <div class="what">
+          <strong>Graph Intelligence v1</strong> — Neo4j cluster, top-5 Cypher detectors in production.<br/>
+          <strong>ML Overlay v1</strong> — Isolation Forest baseline, XGBoost on labeled incidents.<br/>
+          <strong>First pilot conversion</strong> to paid contract.
+        </div>
+      </div>
+      <div class="phase">
+        <div class="when">DAYS 120–180<br/>PHASE 3</div>
+        <div class="what">
+          <strong>Cryptographic Audit Chain GA</strong> — 5-min Merkle anchoring, RFC 3161, WORM mirror.<br/>
+          <strong>Standards engagement</strong> — HL7 / FHIR audit-extension working group submission.<br/>
+          <strong>Independent third-party verification report</strong> published.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. Category -->
+  <section class="block" id="category">
+    <h2><span class="num">§11</span>Category Position</h2>
+    <p class="sub">ClearPulse does not compete with SIEM. It absorbs it.</p>
+    <div class="card">
+      <table>
+        <thead><tr><th>Layer</th><th>Vendor today</th><th>Under ClearPulse</th></tr></thead>
+        <tbody>
+          <tr><td>Endpoint / network telemetry</td><td>CrowdStrike, Splunk</td><td><strong>Data source</strong></td></tr>
+          <tr><td>Payer fraud heuristics</td><td>Optum, Codoxo</td><td><strong>Signal input</strong></td></tr>
+          <tr><td>Compliance reporting</td><td>Internal GRC, vendor toolchains</td><td><strong>Downstream consumer</strong></td></tr>
+          <tr><td>Investigative truth</td><td>—</td><td><strong>ClearPulse</strong></td></tr>
+        </tbody>
+      </table>
+      <div class="chips">
+        <span class="chip"><strong>Tagline:</strong> We don't detect anomalies — we prove them.</span>
+        <span class="chip"><strong>Audience:</strong> auditors, not just analysts</span>
+        <span class="chip"><strong>Output:</strong> evidence, not alerts</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <div>© ClearGlass Inc · ClearPulse Architecture Whitepaper · 2026</div>
+    <div>
+      <a href="./docs/clearpulse_architecture_whitepaper.md">whitepaper (md)</a> ·
+      <a href="./clearpulse.html">live surface</a> ·
+      <a href="./index.html">home</a>
+    </div>
+  </div>
+</div>
+<script defer src="control-surface.js"></script>
+  <script defer src="ui.js"></script>
+  <script defer src="platform.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="clearpulse.html">Healthcare Intelligence</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="clearpulse.html"><span><b>Previous</b>ClearPulse</span></a>
+      <a href="clearpulse.html"><span><b>Topic hub</b>ClearPulse</span></a>
+      <a href="offers/phipa-readiness.html"><span><b>Next in journey</b>PHIPA Readiness</span></a>
+    </div>
+    <ul>
+      <li><a href="offers/phipa-readiness.html"><b>PHIPA Readiness</b> — free checklist and assessment for Ontario health data</a></li>
+      <li><a href="offers/phipa-readiness-checklist.html"><b>PHIPA Readiness Checklist</b> — the printable compliance checklist</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="offers/phipa-readiness.html">Get the free PHIPA readiness checklist</a> · <a href="store.html">Book a security engagement</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

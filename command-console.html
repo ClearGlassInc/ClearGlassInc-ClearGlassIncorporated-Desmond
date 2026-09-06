@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8" />
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>ClearGlass — Command Console | Cyber Intelligence</title>
+<meta name="description" content="ClearGlass Command Console: a cyber intelligence operations interface and control layer for elite AI systems — liquid-glass HUD, real-time status telemetry." />
+<link rel="canonical" href="https://www.clearglassinc.com/command-console.html" />
+<meta property="og:title" content="ClearGlass — Command Console" />
+<meta property="og:description" content="A cyber-intelligence operations interface and control layer for elite AI systems." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.clearglassinc.com/command-console.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   ClearGlass Command Console — design tokens
+   Dark-mode only. Stealth glass via [data-skin="stealth"].
+   ============================================================ */
+:root{
+  /* base surfaces */
+  --bg-0:#04060d;          /* midnight void  */
+  --bg-1:#070b16;          /* base panel bed */
+  --bg-2:#0b1120;          /* raised panel   */
+  --bg-3:#0f1730;          /* active panel   */
+
+  /* glass */
+  --glass:rgba(16,24,46,0.55);
+  --glass-2:rgba(20,30,58,0.42);
+  --glass-brd:rgba(120,170,255,0.14);
+  --glass-brd-strong:rgba(140,190,255,0.30);
+  --blur:18px;
+
+  /* accents */
+  --cyan:#3ff0ff;
+  --blue:#3b82f6;
+  --azure:#5aa6ff;
+  --violet:#9a7bff;
+  --green:#34f5a0;
+  --amber:#8f5bf8;
+  --danger:#f854e3;
+
+  /* text */
+  --txt-0:#eaf2ff;         /* primary       */
+  --txt-1:#aebbd6;         /* secondary     */
+  --txt-2:#6f7da0;         /* muted / labels*/
+  --txt-3:#475068;         /* faint / lines */
+
+  /* structural */
+  --line:rgba(120,160,230,0.10);
+  --grid:rgba(95,140,220,0.045);
+  --radius:14px;
+  --radius-sm:9px;
+  --gap:clamp(14px,2.2vw,26px);
+
+  /* glows */
+  --glow-cyan:0 0 0 1px rgba(63,240,255,0.35),0 0 24px rgba(63,240,255,0.18);
+  --glow-soft:0 18px 50px -18px rgba(0,0,0,0.85);
+
+  /* type */
+  --sans:'Space Grotesk',system-ui,-apple-system,Segoe UI,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+}
+
+/* Stealth glass — lower chroma, deeper black, near-monochrome HUD */
+[data-skin="stealth"]{
+  --bg-0:#020304;--bg-1:#05080b;--bg-2:#080d12;--bg-3:#0c131a;
+  --glass:rgba(10,16,20,0.62);--glass-2:rgba(14,20,26,0.45);
+  --glass-brd:rgba(150,170,180,0.10);--glass-brd-strong:rgba(170,190,200,0.22);
+  --cyan:#9fe9ef;--blue:#7f96ad;--azure:#8aa0b5;--violet:#a9a3c4;--green:#8fe0bf;
+  --txt-0:#dfe7ea;--txt-1:#9aa7af;--txt-2:#5d6b73;
+  --glow-cyan:0 0 0 1px rgba(159,233,239,0.22),0 0 18px rgba(159,233,239,0.10);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  color:var(--txt-0);
+  background:var(--bg-0);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  min-height:100vh;
+  position:relative;
+}
+
+/* ---- ambient field: grid + radial bloom + scanline ---- */
+.field{position:fixed;inset:0;z-index:0;pointer-events:none}
+.field::before{ /* precision grid */
+  content:"";position:absolute;inset:-2px;
+  background-image:
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:46px 46px;
+  mask-image:radial-gradient(ellipse 120% 90% at 50% 0%,#000 35%,transparent 80%);
+}
+.field::after{ /* corner blooms */
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(60% 50% at 12% 0%,rgba(59,130,246,0.14),transparent 60%),
+    radial-gradient(50% 45% at 92% 8%,rgba(154,123,255,0.12),transparent 60%),
+    radial-gradient(70% 60% at 50% 110%,rgba(63,240,255,0.07),transparent 60%);
+}
+.scan{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.5;
+  background:repeating-linear-gradient(0deg,rgba(120,180,255,0.025) 0 1px,transparent 1px 3px)}
+
+/* ---- layout shell ---- */
+.shell{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:0 clamp(16px,3vw,34px)}
+
+/* =====================  TOP COMMAND BAR  ===================== */
+.topbar{
+  position:sticky;top:0;z-index:40;
+  display:flex;align-items:center;gap:18px;
+  height:64px;margin-bottom:var(--gap);
+  padding:0 clamp(14px,2.4vw,22px);
+  background:linear-gradient(180deg,rgba(7,11,22,0.92),rgba(7,11,22,0.62));
+  backdrop-filter:blur(14px) saturate(1.3);
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--txt-0)}
+.brand-mark{
+  width:30px;height:30px;border-radius:8px;flex-shrink:0;position:relative;
+  background:conic-gradient(from 140deg,var(--cyan),var(--violet),var(--blue),var(--cyan));
+  box-shadow:var(--glow-cyan);
+}
+.brand-mark::after{content:"";position:absolute;inset:5px;border-radius:4px;background:var(--bg-0)}
+.brand-mark::before{content:"";position:absolute;inset:0;border-radius:8px;border:1px solid rgba(255,255,255,.25);
+  -webkit-mask:linear-gradient(#000,#000);}
+.brand b{font-weight:700;letter-spacing:.04em;font-size:15px}
+.brand span{font-family:var(--mono);font-size:10px;color:var(--txt-2);letter-spacing:.28em;text-transform:uppercase}
+.topbar nav{margin-left:auto;display:flex;gap:6px}
+.topbar nav a{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--txt-2);text-decoration:none;padding:8px 12px;border-radius:8px;
+  transition:color .25s var(--ease),background .25s var(--ease)
+}
+.topbar nav a:hover,.topbar nav a:focus-visible{color:var(--txt-0);background:rgba(120,170,255,0.08);outline:none}
+.topbar .clock{font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:.1em;
+  padding-left:16px;margin-left:6px;border-left:1px solid var(--line);min-width:104px;text-align:right}
+@media (max-width:760px){.topbar nav{display:none}}
+
+/* =====================  HERO  ===================== */
+.hero{position:relative;padding:clamp(34px,6vw,72px) 0 clamp(26px,4vw,46px)}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--txt-2);
+  padding:7px 14px;border:1px solid var(--glass-brd);border-radius:999px;background:var(--glass-2);
+  backdrop-filter:blur(var(--blur));
+}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);
+  animation:pulse 2.4s var(--ease) infinite}
+.hero h1{
+  font-size:clamp(2.4rem,6.5vw,5rem);font-weight:700;line-height:1.02;letter-spacing:-.025em;
+  margin:22px 0 18px;max-width:16ch;
+}
+.hero h1 .grad{
+  background:linear-gradient(100deg,var(--cyan),var(--azure) 45%,var(--violet));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero p.lead{max-width:60ch;color:var(--txt-1);font-size:clamp(1rem,1.6vw,1.2rem);margin-bottom:30px}
+.hero .actions{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+
+/* readout strip under hero */
+.readout{
+  margin-top:38px;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  border:1px solid var(--glass-brd);border-radius:var(--radius);overflow:hidden;
+  background:var(--glass-brd);
+}
+.readout div{background:var(--bg-1);padding:16px 18px}
+.readout .k{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--txt-2)}
+.readout .v{font-family:var(--mono);font-size:clamp(1.1rem,2.4vw,1.6rem);font-weight:600;color:var(--txt-0);margin-top:6px}
+.readout .v small{color:var(--cyan);font-size:.62em;font-weight:500}
+@media (max-width:680px){.readout{grid-template-columns:repeat(2,1fr)}}
+
+/* =====================  SECTION HEADERS  ===================== */
+.sec{padding:clamp(30px,5vw,58px) 0}
+.sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:26px}
+.sec-head h2{font-size:clamp(1.3rem,2.6vw,1.9rem);font-weight:600;letter-spacing:-.01em}
+.sec-head .idx{font-family:var(--mono);font-size:12px;color:var(--cyan);letter-spacing:.18em}
+.sec-head .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+
+/* =====================  BUTTON SYSTEM  ===================== */
+.btn{
+  --bc:var(--glass-brd-strong);
+  --bg:var(--glass);
+  --fg:var(--txt-0);
+  --accent:var(--cyan);
+  position:relative;display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--fg);text-decoration:none;cursor:pointer;
+  padding:13px 22px;border-radius:var(--radius-sm);
+  border:1px solid var(--bc);background:var(--bg);
+  backdrop-filter:blur(var(--blur));
+  overflow:hidden;isolation:isolate;
+  transition:transform .35s var(--ease-out),border-color .35s var(--ease),box-shadow .35s var(--ease),color .25s var(--ease);
+  will-change:transform;
+}
+.btn .ic{width:16px;height:16px;display:inline-grid;place-items:center;transition:transform .4s var(--ease-out)}
+.btn .ic svg{width:100%;height:100%;display:block}
+/* layered hover: lift + accent border + glow */
+.btn:hover,.btn:focus-visible{transform:translateY(-2px);border-color:var(--accent);
+  box-shadow:0 14px 30px -14px rgba(0,0,0,.8),0 0 0 1px color-mix(in srgb,var(--accent) 40%,transparent),0 0 26px -6px color-mix(in srgb,var(--accent) 55%,transparent);
+  outline:none}
+.btn:hover .ic,.btn:focus-visible .ic{transform:translateX(3px)}
+.btn:active{transform:translateY(0) scale(.985)}
+/* energy sweep */
+.btn::before{content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(115deg,transparent 20%,color-mix(in srgb,var(--accent) 22%,transparent) 50%,transparent 80%);
+  transform:translateX(-120%);transition:transform .7s var(--ease-out)}
+.btn:hover::before,.btn:focus-visible::before{transform:translateX(120%)}
+/* tint wash */
+.btn::after{content:"";position:absolute;inset:0;z-index:-2;opacity:0;transition:opacity .35s var(--ease);
+  background:radial-gradient(120% 140% at 50% 120%,color-mix(in srgb,var(--accent) 28%,transparent),transparent 70%)}
+.btn:hover::after,.btn:focus-visible::after{opacity:1}
+.btn:focus-visible{box-shadow:0 0 0 2px var(--bg-0),0 0 0 4px var(--accent)}
+
+/* variants */
+.btn--primary{--bg:linear-gradient(180deg,rgba(63,240,255,0.16),rgba(59,130,246,0.1));--bc:color-mix(in srgb,var(--cyan) 45%,transparent);--accent:var(--cyan);color:#dffaff}
+.btn--secondary{--bg:var(--glass);--bc:var(--glass-brd-strong);--accent:var(--azure)}
+.btn--ghost{--bg:transparent;--bc:var(--line);--accent:var(--azure);backdrop-filter:none}
+.btn--command{--bg:linear-gradient(180deg,rgba(154,123,255,0.18),rgba(91,166,255,0.1));--bc:color-mix(in srgb,var(--violet) 50%,transparent);--accent:var(--violet);color:#efeaff}
+.btn--danger{--bg:linear-gradient(180deg,rgba(248,84,227,0.16),rgba(248,84,227,0.06));--bc:color-mix(in srgb,var(--danger) 50%,transparent);--accent:var(--danger);color:#fee3f9}
+.btn--sm{padding:9px 15px;font-size:11px}
+.btn--block{display:flex;width:100%;justify-content:center}
+.btn[disabled],.btn[aria-disabled="true"]{opacity:.4;pointer-events:none;filter:saturate(.4)}
+/* live command button: animated pulsing border */
+.btn--command.is-live{animation:cmdpulse 2.6s var(--ease) infinite}
+@keyframes cmdpulse{
+  0%,100%{box-shadow:0 0 0 1px color-mix(in srgb,var(--violet) 35%,transparent),0 0 18px -6px color-mix(in srgb,var(--violet) 60%,transparent)}
+  50%{box-shadow:0 0 0 1px color-mix(in srgb,var(--violet) 70%,transparent),0 0 30px -2px color-mix(in srgb,var(--violet) 80%,transparent)}
+}
+
+.btn-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.btn-legend{font-family:var(--mono);font-size:10.5px;color:var(--txt-2);letter-spacing:.16em;text-transform:uppercase;
+  width:100%;margin-bottom:6px}
+
+/* =====================  CARDS  ===================== */
+.grid{display:grid;gap:var(--gap)}
+.grid--cards{grid-template-columns:repeat(auto-fit,minmax(265px,1fr))}
+.card{
+  position:relative;border:1px solid var(--glass-brd);border-radius:var(--radius);
+  background:var(--glass);backdrop-filter:blur(var(--blur));
+  padding:22px;overflow:hidden;
+  transition:transform .5s var(--ease-out),border-color .4s var(--ease),box-shadow .5s var(--ease);
+  transform-style:preserve-3d;
+}
+.card::before{ /* corner schematic ticks */
+  content:"";position:absolute;inset:0;border-radius:var(--radius);pointer-events:none;
+  background:
+    linear-gradient(var(--cyan),var(--cyan)) 0 0/14px 1px no-repeat,
+    linear-gradient(var(--cyan),var(--cyan)) 0 0/1px 14px no-repeat,
+    linear-gradient(var(--violet),var(--violet)) 100% 100%/14px 1px no-repeat,
+    linear-gradient(var(--violet),var(--violet)) 100% 100%/1px 14px no-repeat;
+  opacity:.5;transition:opacity .4s var(--ease)
+}
+.card:hover{transform:translateY(-4px);border-color:var(--glass-brd-strong);
+  box-shadow:var(--glow-soft),0 0 0 1px var(--glass-brd-strong)}
+.card:hover::before{opacity:1}
+.card .c-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card .c-ico{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;
+  border:1px solid var(--glass-brd);background:var(--bg-3);color:var(--cyan)}
+.card .c-ico svg{width:18px;height:18px}
+.card h3{font-size:1.08rem;font-weight:600;margin-bottom:8px;letter-spacing:-.01em}
+.card p{color:var(--txt-1);font-size:.92rem;margin-bottom:16px}
+.card .c-metric{font-family:var(--mono);display:flex;align-items:baseline;gap:8px}
+.card .c-metric b{font-size:1.7rem;font-weight:700;color:var(--txt-0)}
+.card .c-metric .delta{font-size:11px;color:var(--green)}
+.card .c-metric .delta.dn{color:var(--danger)}
+/* mini sparkline bar */
+.spark{display:flex;align-items:flex-end;gap:3px;height:34px;margin-top:14px}
+.spark i{flex:1;background:linear-gradient(180deg,var(--cyan),rgba(63,240,255,0.12));border-radius:2px 2px 0 0;
+  opacity:.85;transition:height .6s var(--ease-out)}
+
+/* =====================  STATUS CHIPS  ===================== */
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  padding:7px 13px;border-radius:999px;border:1px solid var(--glass-brd);
+  background:var(--glass-2);color:var(--txt-1);backdrop-filter:blur(var(--blur))
+}
+.chip .led{width:7px;height:7px;border-radius:50%;position:relative}
+.chip .led::after{content:"";position:absolute;inset:-4px;border-radius:50%;opacity:.5;
+  background:inherit;filter:blur(3px)}
+.chip--ok{color:#bff7df}.chip--ok .led{background:var(--green);box-shadow:0 0 8px var(--green)}
+.chip--ok .led{animation:pulse 2s var(--ease) infinite}
+.chip--warn{color:#d3c0fc}.chip--warn .led{background:var(--amber);box-shadow:0 0 8px var(--amber)}
+.chip--crit{color:#fdd2f7}.chip--crit .led{background:var(--danger);box-shadow:0 0 8px var(--danger);animation:pulse 1s var(--ease) infinite}
+.chip--idle{color:var(--txt-2)}.chip--idle .led{background:var(--txt-3)}
+
+/* =====================  ACTION BAR  ===================== */
+.actionbar{
+  display:flex;flex-wrap:wrap;align-items:center;gap:14px;
+  border:1px solid var(--glass-brd);border-radius:var(--radius);
+  background:linear-gradient(180deg,var(--glass),var(--glass-2));
+  backdrop-filter:blur(var(--blur));padding:16px 20px;position:relative;overflow:hidden
+}
+.actionbar::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--cyan),var(--violet))}
+.actionbar .ab-title{font-weight:600;letter-spacing:-.01em}
+.actionbar .ab-sub{font-family:var(--mono);font-size:11px;color:var(--txt-2);letter-spacing:.08em}
+.actionbar .ab-actions{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+
+/* =====================  CONSOLE PANEL (loading/system state)  ===================== */
+.console{
+  border:1px solid var(--glass-brd);border-radius:var(--radius);overflow:hidden;
+  background:var(--bg-1);
+}
+.console .c-bar{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--line);
+  background:var(--bg-2);font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-2)}
+.console .c-bar .lights{display:flex;gap:6px}
+.console .c-bar .lights i{width:9px;height:9px;border-radius:50%;background:var(--txt-3)}
+.console .c-bar .lights i:nth-child(1){background:var(--danger)}
+.console .c-bar .lights i:nth-child(2){background:var(--amber)}
+.console .c-bar .lights i:nth-child(3){background:var(--green)}
+.console .c-body{padding:18px 18px 22px;font-family:var(--mono);font-size:12.5px;line-height:1.9;color:var(--txt-1)}
+.console .c-body .ln{display:block;white-space:pre-wrap}
+.console .c-body .t{color:var(--txt-3)}
+.console .c-body .ok{color:var(--green)}
+.console .c-body .acc{color:var(--cyan)}
+.console .c-body .vl{color:var(--violet)}
+/* progress / loader */
+.loader{margin-top:16px}
+.loader .lbar{height:6px;border-radius:999px;background:var(--bg-3);overflow:hidden;border:1px solid var(--line)}
+.loader .lbar i{display:block;height:100%;width:42%;border-radius:999px;
+  background:linear-gradient(90deg,var(--cyan),var(--violet));
+  box-shadow:0 0 14px -2px var(--cyan);
+  animation:load 2.6s var(--ease) infinite}
+.loader .lmeta{display:flex;justify-content:space-between;margin-top:8px;font-family:var(--mono);font-size:10.5px;color:var(--txt-2);letter-spacing:.12em}
+.caret{display:inline-block;width:8px;height:15px;background:var(--cyan);margin-left:2px;vertical-align:-2px;
+  animation:blink 1.1s steps(1) infinite}
+
+/* =====================  FOOTER  ===================== */
+.foot{margin-top:clamp(40px,6vw,80px);padding:30px 0 50px;border-top:1px solid var(--line);
+  display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+.foot small{font-family:var(--mono);font-size:11px;color:var(--txt-2);letter-spacing:.1em}
+.skinbtn{font-family:var(--mono)}
+
+/* =====================  KEYFRAMES  ===================== */
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.82)}}
+@keyframes blink{0%,50%{opacity:1}51%,100%{opacity:0}}
+@keyframes load{0%{transform:translateX(-110%)}55%{transform:translateX(60%)}100%{transform:translateX(260%)}}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* scroll reveal */
+.reveal{opacity:0;transform:translateY(22px)}
+.reveal.in{animation:rise .8s var(--ease-out) forwards}
+
+/* =====================  REDUCED MOTION  ===================== */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+  .btn::before{display:none}
+}
+</style>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body data-skin="signal">
+
+<div class="field" aria-hidden="true"></div>
+<div class="scan" aria-hidden="true"></div>
+
+<!-- ============ TOP COMMAND BAR ============ -->
+<header class="topbar">
+  <a class="brand" href="/index.html" aria-label="ClearGlass home">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span>
+      <b>CLEARGLASS</b><br />
+      <span>Command Console</span>
+    </span>
+  </a>
+  <nav aria-label="Console sections">
+    <a href="#overview">Overview</a>
+    <a href="#systems">Systems</a>
+    <a href="#components">Components</a>
+    <a href="#defense-matrix">Defense Matrix</a>
+    <a href="#console">Telemetry</a>
+  </nav>
+  <span class="clock" id="clock" aria-live="off">--:--:-- UTC</span>
+</header>
+
+<div class="shell">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="overview">
+    <span class="eyebrow"><span class="dot" aria-hidden="true"></span> Operational · Tier-0 Clearance</span>
+    <h1>The control layer for <span class="grad">elite AI systems.</span></h1>
+    <p class="lead">ClearGlass Command Console is a cyber intelligence operations interface — a single pane of authority over autonomous agents, threat surfaces, and live mission telemetry. Engineered for precision, built for pressure.</p>
+    <div class="actions">
+      <a class="btn btn--primary" href="#systems">
+        <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        Launch Console
+      </a>
+      <a class="btn btn--command is-live" href="#console">
+        <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
+        Live Operations
+      </a>
+      <a class="btn btn--ghost" href="#components">
+        <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>
+        Component Spec
+      </a>
+    </div>
+
+    <div class="readout reveal" role="group" aria-label="System readout">
+      <div><div class="k">Active Agents</div><div class="v" data-count="248">000</div></div>
+      <div><div class="k">Threat Index</div><div class="v">LOW <small>▾ 12%</small></div></div>
+      <div><div class="k">Uptime</div><div class="v" data-count="99.98" data-dec="2">00.00<small>%</small></div></div>
+      <div><div class="k">Latency</div><div class="v" data-count="38">00<small>ms</small></div></div>
+    </div>
+  </section>
+
+  <!-- ============ SYSTEMS / STATUS CHIPS ============ -->
+  <section class="sec" id="systems">
+    <div class="sec-head">
+      <span class="idx">01 /</span><h2>System Status</h2><span class="rule" aria-hidden="true"></span>
+    </div>
+    <div class="chips reveal" role="list" aria-label="Subsystem status">
+      <span class="chip chip--ok" role="listitem"><span class="led" aria-hidden="true"></span>Artemis Core · Online</span>
+      <span class="chip chip--ok" role="listitem"><span class="led" aria-hidden="true"></span>Guardian Mesh · Nominal</span>
+      <span class="chip chip--warn" role="listitem"><span class="led" aria-hidden="true"></span>Ingest Queue · Elevated</span>
+      <span class="chip chip--ok" role="listitem"><span class="led" aria-hidden="true"></span>Crypto Vault · Sealed</span>
+      <span class="chip chip--crit" role="listitem"><span class="led" aria-hidden="true"></span>Edge Node 7 · Degraded</span>
+      <span class="chip chip--idle" role="listitem"><span class="led" aria-hidden="true"></span>StegoForge · Standby</span>
+    </div>
+
+    <!-- metric cards -->
+    <div class="grid grid--cards" style="margin-top:var(--gap)">
+      <article class="card reveal">
+        <div class="c-top">
+          <div class="c-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l4-4 4 4 6-6 4 4"/><path d="M3 18h18"/></svg></div>
+          <span class="chip chip--ok"><span class="led" aria-hidden="true"></span>Live</span>
+        </div>
+        <h3>Throughput</h3>
+        <p>Aggregate inference across the active agent fleet.</p>
+        <div class="c-metric"><b data-count="14.2" data-dec="1">0.0</b><span>K ops/s</span><span class="delta">▲ 8.4%</span></div>
+        <div class="spark" data-spark="42,55,38,61,72,49,80,66,91,74,88,96" aria-hidden="true"></div>
+      </article>
+
+      <article class="card reveal">
+        <div class="c-top">
+          <div class="c-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7z"/></svg></div>
+          <span class="chip chip--ok"><span class="led" aria-hidden="true"></span>Secure</span>
+        </div>
+        <h3>Threat Surface</h3>
+        <p>Blocked intrusion attempts in the current window.</p>
+        <div class="c-metric"><b data-count="1207">0</b><span>events</span><span class="delta dn">▼ 3.1%</span></div>
+        <div class="spark" data-spark="60,48,52,40,44,33,38,29,31,24,20,18" aria-hidden="true"></div>
+      </article>
+
+      <article class="card reveal">
+        <div class="c-top">
+          <div class="c-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div>
+          <span class="chip chip--warn"><span class="led" aria-hidden="true"></span>Scaling</span>
+        </div>
+        <h3>Compute Pool</h3>
+        <p>Allocated GPU capacity across regional clusters.</p>
+        <div class="c-metric"><b data-count="72" data-dec="0">0</b><span>% util</span><span class="delta">▲ 5.0%</span></div>
+        <div class="spark" data-spark="30,35,40,38,46,52,58,55,63,68,70,72" aria-hidden="true"></div>
+      </article>
+
+      <article class="card reveal">
+        <div class="c-top">
+          <div class="c-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H4z"/><path d="M2 20h20M9 8l3 3 3-3"/></svg></div>
+          <span class="chip chip--ok"><span class="led" aria-hidden="true"></span>Synced</span>
+        </div>
+        <h3>Mission Cohesion</h3>
+        <p>Agent consensus on active objective state.</p>
+        <div class="c-metric"><b data-count="98.6" data-dec="1">0.0</b><span>%</span><span class="delta">▲ 0.4%</span></div>
+        <div class="spark" data-spark="80,82,85,84,88,90,89,93,95,96,97,98" aria-hidden="true"></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ ACTION BAR ============ -->
+  <section class="sec" style="padding-top:0">
+    <div class="actionbar reveal">
+      <div>
+        <div class="ab-title">Autonomous Response Protocol</div>
+        <div class="ab-sub">ARTEMIS-IV · armed · awaiting authorization</div>
+      </div>
+      <div class="ab-actions">
+        <button class="btn btn--secondary btn--sm" type="button">
+          <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg></span>Hold
+        </button>
+        <button class="btn btn--command btn--sm" type="button" data-toast="Protocol authorized · executing">
+          <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9z"/></svg></span>Authorize
+        </button>
+        <button class="btn btn--danger btn--sm" type="button" data-toast="ABORT signal broadcast to all nodes">
+          <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></span>Abort
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COMPONENT / BUTTON SYSTEM ============ -->
+  <section class="sec" id="components">
+    <div class="sec-head">
+      <span class="idx">02 /</span><h2>Component System</h2><span class="rule" aria-hidden="true"></span>
+    </div>
+    <div class="grid" style="grid-template-columns:minmax(0,1fr);gap:var(--gap)">
+      <div class="card reveal" style="padding:26px">
+        <div class="btn-row">
+          <span class="btn-legend">Button Variants — click for ripple + feedback</span>
+          <button class="btn btn--primary" type="button">Primary</button>
+          <button class="btn btn--secondary" type="button">Secondary</button>
+          <button class="btn btn--ghost" type="button">Ghost</button>
+          <button class="btn btn--command" type="button">Command</button>
+          <button class="btn btn--danger" type="button">Danger</button>
+          <button class="btn btn--secondary" type="button" disabled>Disabled</button>
+        </div>
+        <div class="btn-row" style="margin-top:22px">
+          <span class="btn-legend">Compact / Iconic</span>
+          <button class="btn btn--primary btn--sm" type="button"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>Deploy</button>
+          <button class="btn btn--command btn--sm is-live" type="button"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/></svg></span>Engage</button>
+          <button class="btn btn--ghost btn--sm" type="button"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-6.2-8.5"/><path d="M21 3v6h-6"/></svg></span>Sync</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============ DEFENSE MATRIX TOOL ============ -->
+  <section class="sec" id="defense-matrix">
+    <div class="sec-head">
+      <span class="idx">03 /</span><h2>Attack Lifecycle Defense Matrix</h2><span class="rule" aria-hidden="true"></span>
+    </div>
+    <div class="grid" style="grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr);gap:var(--gap)">
+      <article class="card reveal" style="padding:26px">
+        <div class="c-top">
+          <div class="c-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7z"/><path d="M9 12l2 2 4-5"/></svg></div>
+          <span class="chip chip--ok"><span class="led" aria-hidden="true"></span>Defensive</span>
+        </div>
+        <h3>Cyber Attack Lifecycle Tool</h3>
+        <p>This educational console maps common ATT&amp;CK-aligned phases to defensive posture: exploitation, credential theft, LSASS dumping, AMSI bypass, Defender disabling, evasion, stealth persistence, lateral movement, and unauthorized access.</p>
+        <div class="btn-row" style="margin-top:22px" aria-label="Defense matrix technique selector">
+          <button class="btn btn--secondary btn--sm is-active" type="button" data-technique="exploitation">Exploitation</button>
+          <button class="btn btn--secondary btn--sm" type="button" data-technique="credential-theft">Credential Theft</button>
+          <button class="btn btn--secondary btn--sm" type="button" data-technique="lsass-dumping">LSASS Dumping</button>
+          <button class="btn btn--secondary btn--sm" type="button" data-technique="amsi-bypass">AMSI Bypass</button>
+          <button class="btn btn--secondary btn--sm" type="button" data-technique="defender-disabling">Defender Disabling</button>
+          <button class="btn btn--secondary btn--sm" type="button" data-technique="evasion">Evasion</button>
+          <button class="btn btn--secondary btn--sm" type="button" data-technique="stealth-persistence">Stealth Persistence</button>
+          <button class="btn btn--secondary btn--sm" type="button" data-technique="lateral-movement">Lateral Movement</button>
+          <button class="btn btn--secondary btn--sm" type="button" data-technique="unauthorized-access">Unauthorized Access</button>
+        </div>
+      </article>
+      <article class="card reveal" style="padding:26px" aria-live="polite">
+        <div class="c-top">
+          <div class="c-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></div>
+          <span class="chip chip--warn"><span class="led" aria-hidden="true"></span>Matrix</span>
+        </div>
+        <h3 id="tech-title">Exploitation</h3>
+        <p id="tech-meaning">Taking advantage of a vulnerability, software bug, unpatched system, or misconfiguration to make a system behave in an unintended way.</p>
+        <div class="console" style="margin-top:18px">
+          <div class="c-bar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span> defensive-control — recommendation</div>
+          <div class="c-body" id="tech-defense" aria-label="Selected defensive countermeasure"><span class="ln"><span class="ok">Countermeasure</span> strict patch management, vulnerability scanning, and robust input validation.</span></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+
+  <!-- ============ CONSOLE / TELEMETRY ============ -->
+  <section class="sec" id="console">
+    <div class="sec-head">
+      <span class="idx">04 /</span><h2>Live Telemetry</h2><span class="rule" aria-hidden="true"></span>
+    </div>
+    <div class="console reveal">
+      <div class="c-bar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span> artemis@command — secure shell</div>
+      <div class="c-body" id="term" aria-label="System telemetry log">
+        <span class="ln"><span class="t">[00:00:01]</span> <span class="acc">boot</span> initializing command fabric…</span>
+        <span class="ln"><span class="t">[00:00:01]</span> handshake <span class="ok">OK</span> · mTLS verified · 4096-bit</span>
+        <span class="ln"><span class="t">[00:00:02]</span> spinning up <span class="vl">248</span> autonomous agents</span>
+        <span class="ln"><span class="t">[00:00:02]</span> threat model <span class="acc">ARTEMIS-IV</span> loaded</span>
+        <span class="ln"><span class="t">[00:00:03]</span> telemetry stream <span class="ok">LIVE</span><span class="caret" aria-hidden="true"></span></span>
+        <div class="loader" aria-hidden="true">
+          <div class="lbar"><i></i></div>
+          <div class="lmeta"><span>SYNCING MISSION STATE</span><span>42%</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="foot">
+    <small>CLEARGLASS INC · COMMAND CONSOLE v1.0 · BUILD 2027.Δ</small>
+    <button class="btn btn--ghost btn--sm skinbtn" type="button" id="skin" aria-pressed="false">
+      <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 109 9 7 7 0 01-9-9z"/></svg></span>
+      Stealth Glass
+    </button>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- UTC clock ---- */
+  var clock = document.getElementById("clock");
+  function tick(){
+    if(!clock) return;
+    var d = new Date();
+    var p = function(n){return String(n).padStart(2,"0")};
+    clock.textContent = p(d.getUTCHours())+":"+p(d.getUTCMinutes())+":"+p(d.getUTCSeconds())+" UTC";
+  }
+  tick(); setInterval(tick,1000);
+
+  /* ---- scroll reveal ---- */
+  var reveals = document.querySelectorAll(".reveal");
+  if("IntersectionObserver" in window && !reduce){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target);} });
+    },{threshold:.16});
+    reveals.forEach(function(el){io.observe(el)});
+  } else {
+    reveals.forEach(function(el){el.classList.add("in")});
+  }
+
+  /* ---- count-up metrics ---- */
+  function countUp(el){
+    var target = parseFloat(el.getAttribute("data-count"));
+    var dec = parseInt(el.getAttribute("data-dec")||"0",10);
+    var suffix = el.querySelector("small");
+    var sufHTML = suffix ? suffix.outerHTML : "";
+    if(reduce){ el.firstChild && (el.childNodes[0].nodeValue = target.toFixed(dec)); return; }
+    var start = performance.now(), dur = 1400;
+    function frame(now){
+      var t = Math.min((now-start)/dur,1);
+      var eased = 1-Math.pow(1-t,3);
+      var val = (target*eased).toFixed(dec);
+      el.innerHTML = val + sufHTML;
+      if(t<1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+  var counters = document.querySelectorAll("[data-count]");
+  if("IntersectionObserver" in window){
+    var io2 = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ countUp(e.target); io2.unobserve(e.target);} });
+    },{threshold:.6});
+    counters.forEach(function(el){io2.observe(el)});
+  } else { counters.forEach(countUp); }
+
+  /* ---- sparklines ---- */
+  document.querySelectorAll("[data-spark]").forEach(function(s){
+    var vals = s.getAttribute("data-spark").split(",").map(Number);
+    var max = Math.max.apply(null,vals);
+    vals.forEach(function(v,i){
+      var b = document.createElement("i");
+      b.style.height = "0%";
+      s.appendChild(b);
+      var h = (v/max*100).toFixed(0)+"%";
+      if(reduce){ b.style.height=h; }
+      else { setTimeout(function(){ b.style.height=h; }, 120+i*55); }
+    });
+  });
+
+  /* ---- click ripple (depth impact) ---- */
+  function ripple(e){
+    var btn = e.currentTarget;
+    if(reduce) return;
+    var r = document.createElement("span");
+    var rect = btn.getBoundingClientRect();
+    var size = Math.max(rect.width,rect.height);
+    r.style.cssText = "position:absolute;border-radius:50%;pointer-events:none;z-index:-1;"+
+      "width:"+size+"px;height:"+size+"px;left:"+(e.clientX-rect.left-size/2)+"px;top:"+(e.clientY-rect.top-size/2)+"px;"+
+      "background:radial-gradient(circle,rgba(255,255,255,.35),transparent 60%);"+
+      "transform:scale(0);opacity:.9;transition:transform .6s cubic-bezier(.16,1,.3,1),opacity .7s ease;";
+    btn.appendChild(r);
+    requestAnimationFrame(function(){ r.style.transform="scale(2.6)"; r.style.opacity="0"; });
+    setTimeout(function(){ r.remove(); }, 750);
+  }
+  document.querySelectorAll(".btn").forEach(function(b){ b.addEventListener("click",ripple); });
+
+  /* ---- lightweight toast feedback ---- */
+  var toastWrap;
+  function toast(msg){
+    if(!toastWrap){
+      toastWrap = document.createElement("div");
+      toastWrap.style.cssText="position:fixed;right:18px;bottom:18px;z-index:90;display:flex;flex-direction:column;gap:10px;";
+      document.body.appendChild(toastWrap);
+    }
+    var t = document.createElement("div");
+    t.setAttribute("role","status");
+    t.style.cssText="font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--txt-0);"+
+      "padding:12px 16px;border:1px solid var(--glass-brd-strong);border-radius:10px;"+
+      "background:var(--glass);backdrop-filter:blur(14px);box-shadow:var(--glow-soft);"+
+      "transform:translateY(12px);opacity:0;transition:all .4s cubic-bezier(.16,1,.3,1);max-width:300px;";
+    t.textContent = msg;
+    toastWrap.appendChild(t);
+    requestAnimationFrame(function(){ t.style.transform="none"; t.style.opacity="1"; });
+    setTimeout(function(){ t.style.opacity="0"; t.style.transform="translateY(12px)";
+      setTimeout(function(){t.remove();},400); }, 2600);
+  }
+  document.querySelectorAll("[data-toast]").forEach(function(b){
+    b.addEventListener("click",function(){ toast(b.getAttribute("data-toast")); });
+  });
+
+  /* ---- pointer parallax on cards (perspective shift) ---- */
+  if(!reduce && window.matchMedia("(pointer:fine)").matches){
+    document.querySelectorAll(".card").forEach(function(card){
+      card.addEventListener("pointermove",function(e){
+        var r = card.getBoundingClientRect();
+        var px = (e.clientX-r.left)/r.width-0.5;
+        var py = (e.clientY-r.top)/r.height-0.5;
+        card.style.transform = "translateY(-4px) perspective(900px) rotateX("+(-py*4).toFixed(2)+"deg) rotateY("+(px*5).toFixed(2)+"deg)";
+      });
+      card.addEventListener("pointerleave",function(){ card.style.transform=""; });
+    });
+  }
+
+
+  /* ---- defensive technique matrix tool ---- */
+  var matrix = {
+    "exploitation": ["Exploitation", "Taking advantage of a vulnerability, software bug, unpatched system, or misconfiguration to make a system behave in an unintended way.", "Strict patch management, vulnerability scanning, and robust input validation."],
+    "credential-theft": ["Credential Theft", "Unauthorized acquisition of usernames, cleartext passwords, cryptographic hashes, or active session tokens that can let an actor masquerade as a legitimate user.", "Enforce MFA, least privilege access, credential protection utilities, and anomaly detection for impossible travel or abnormal token use."],
+    "lsass-dumping": ["LSASS Dumping", "Copying memory from the Windows Local Security Authority Subsystem Service process, which can expose active credentials or password hashes.", "Enable Windows Defender Credential Guard, LSA Protection, protected process light controls, and alert on suspicious handle access to lsass.exe."],
+    "amsi-bypass": ["AMSI Bypass", "A code technique intended to blind or disable the Antimalware Scan Interface before suspicious script content is inspected.", "Turn on Script Block Logging, transcription tracking, behavioral monitoring, and alert on AMSI tampering indicators."],
+    "defender-disabling": ["Defender Disabling", "Attempts to alter system configurations, registry keys, or policies to pause or disable Microsoft Defender Antivirus protections.", "Enable Tamper Protection, enforce managed security baselines, monitor policy drift, and block unauthorized security-setting changes."],
+    "evasion": ["Defense Evasion", "A broad set of behaviors used to avoid detection, such as process injection, obfuscation, encrypted payloads, or timestamp manipulation.", "Use EDR analytics focused on behavior and heuristics, correlate telemetry, and require provenance for executable changes."],
+    "stealth-persistence": ["Stealth Persistence", "Maintaining access after restart or credential changes while minimizing footprint through scheduled tasks, registry run keys, or WMI consumers.", "Continuously audit autorun locations, baseline scheduled tasks, monitor configuration changes, and review persistence deltas."],
+    "lateral-movement": ["Lateral Movement", "Extending access from an initially affected endpoint to additional systems by abusing legitimate remote administration paths.", "Apply network segmentation, restrict privileged credential use, harden RDP/SSH/PsExec paths, and monitor east-west authentication patterns."],
+    "unauthorized-access": ["Unauthorized Access", "A user, process, or device reaches data, resources, or network segments without explicit authorization.", "Implement Zero Trust Architecture with continuous verification, purpose-of-use checks, session risk scoring, and entity-level permissions."]
+  };
+  var title = document.getElementById("tech-title");
+  var meaning = document.getElementById("tech-meaning");
+  var defense = document.getElementById("tech-defense");
+  document.querySelectorAll("[data-technique]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var data = matrix[btn.getAttribute("data-technique")];
+      if(!data || !title || !meaning || !defense) return;
+      document.querySelectorAll("[data-technique]").forEach(function(b){ b.classList.remove("is-active"); });
+      btn.classList.add("is-active");
+      title.textContent = data[0];
+      meaning.textContent = data[1];
+      defense.innerHTML = '<span class="ln"><span class="ok">Countermeasure</span> '+data[2]+'</span>';
+    });
+  });
+
+  /* ---- stealth glass skin toggle ---- */
+  var skin = document.getElementById("skin");
+  if(skin){
+    skin.addEventListener("click",function(){
+      var stealth = document.body.getAttribute("data-skin")==="stealth";
+      document.body.setAttribute("data-skin", stealth ? "signal" : "stealth");
+      skin.setAttribute("aria-pressed", String(!stealth));
+    });
+  }
+})();
+</script>
+<script defer src="control-surface.js"></script>
+  <script defer src="ui.js"></script>
+  <script defer src="platform.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="percival-os.html">Command &amp; Autonomous Operations</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="postloop.html"><span><b>Previous</b>PostLoop</span></a>
+      <a href="percival-os.html"><span><b>Topic hub</b>PERCIVAL OS</span></a>
+      <a href="control-surface.html"><span><b>Next in journey</b>Systems Control Surface v3.1</span></a>
+    </div>
+    <ul>
+      <li><a href="control-surface.html"><b>Systems Control Surface v3.1</b> — the live command dashboard</a></li>
+      <li><a href="systems.html"><b>Systems Console</b> — PERCIVAL operations console</a></li>
+      <li><a href="saas-platform.html"><b>Event Control Surface</b> — event-driven platform operations</a></li>
+      <li><a href="CG-os.html"><b>CG OS</b> — the ClearGlass command HUD</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="offers/index.html">Browse services &amp; engagements</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

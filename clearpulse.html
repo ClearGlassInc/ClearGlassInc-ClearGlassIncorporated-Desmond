@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8" />
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>ClearPulse — Healthcare Intelligence Pipeline | ClearGlass</title>
+<meta name="description" content="ClearPulse: real-time healthcare fraud, insider-threat, and PHI-exposure detection with end-to-end traceability and explainable risk scoring." />
+<link rel="canonical" href="https://www.clearglassinc.com/clearpulse.html" />
+<meta property="og:title" content="ClearPulse — Healthcare Intelligence Pipeline" />
+<meta property="og:description" content="A traceability-first healthcare intelligence pipeline: FHIR → risk envelope → analyst dashboard, with cryptographic audit lineage." />
+<meta property="og:type" content="website" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg-0:#04060d;
+  --bg-1:#070b16;
+  --bg-2:#0b1120;
+  --bg-3:#0f1730;
+  --glass:rgba(16,24,46,0.55);
+  --glass-2:rgba(20,30,58,0.42);
+  --line:rgba(120,170,255,0.18);
+  --line-2:rgba(120,170,255,0.10);
+  --txt:#d8e3ff;
+  --txt-dim:#8aa0c8;
+  --txt-mute:#5d6f93;
+  --accent:#60a5fa;
+  --accent-2:#7c5bff;
+  --good:#3fd9a0;
+  --warn:#60a5fa;
+  --crit:#f472b6;
+  --shadow:0 20px 60px -20px rgba(0,8,30,0.7);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg-0);color:var(--txt);font-family:'Space Grotesk',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+body{
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(96,165,250,0.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, rgba(124,91,255,0.10), transparent 60%),
+    var(--bg-0);
+}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+.wrap{max-width:1400px;margin:0 auto;padding:32px 28px 80px}
+
+/* header */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-bottom:24px;border-bottom:1px solid var(--line-2)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));position:relative;box-shadow:0 0 32px rgba(96,165,250,0.35)}
+.brand-mark::after{content:"";position:absolute;inset:5px;border-radius:7px;background:var(--bg-0)}
+.brand-mark::before{content:"";position:absolute;inset:12px;border-radius:3px;background:linear-gradient(135deg,var(--accent),var(--accent-2));z-index:1}
+.brand-name{font-weight:700;letter-spacing:0.04em}
+.brand-sub{font-size:11px;letter-spacing:0.3em;color:var(--txt-mute);text-transform:uppercase}
+.stat-row{display:flex;gap:18px;align-items:center;font-size:12px;color:var(--txt-dim)}
+.stat-dot{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 12px var(--good);display:inline-block;margin-right:6px;animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
+
+/* hero */
+.hero{padding:40px 0 24px}
+.kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.4em;color:var(--accent);text-transform:uppercase;margin-bottom:14px}
+h1{font-size:clamp(28px,4vw,46px);line-height:1.1;font-weight:700;letter-spacing:-0.01em;max-width:900px}
+h1 .grad{background:linear-gradient(90deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{margin-top:14px;color:var(--txt-dim);max-width:760px;font-size:16px;line-height:1.55}
+
+/* grid */
+.grid{display:grid;gap:18px;margin-top:30px}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.grid-2{grid-template-columns:1.4fr 1fr}
+@media (max-width:980px){.grid-3,.grid-4,.grid-2{grid-template-columns:1fr}}
+
+/* card */
+.card{
+  background:linear-gradient(180deg,var(--glass),var(--glass-2));
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:20px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(10px);
+  position:relative;
+  overflow:hidden;
+}
+.card::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(96,165,250,0.06),transparent 30%);
+  pointer-events:none;
+}
+.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title{font-size:13px;letter-spacing:0.16em;text-transform:uppercase;color:var(--txt-dim)}
+.card-tag{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);padding:3px 8px;border:1px solid var(--line);border-radius:999px}
+
+/* telemetry */
+.tele{display:flex;flex-direction:column;gap:6px}
+.tele-val{font-size:32px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--txt)}
+.tele-val .small{font-size:14px;color:var(--txt-dim);margin-left:6px}
+.tele-lbl{font-size:11px;letter-spacing:0.22em;color:var(--txt-mute);text-transform:uppercase}
+.spark{margin-top:8px;height:38px;width:100%}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:6px}
+.pipe-step{position:relative;padding:14px;border:1px solid var(--line);border-radius:10px;background:rgba(8,14,28,0.6);min-height:90px}
+.pipe-step .n{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent)}
+.pipe-step .t{font-size:13px;margin-top:6px;font-weight:600}
+.pipe-step .d{font-size:11px;color:var(--txt-mute);margin-top:4px;line-height:1.4}
+.pipe-step.active{border-color:var(--accent);box-shadow:0 0 24px rgba(96,165,250,0.25)}
+.pipe-step.active .t{color:var(--accent)}
+@media (max-width:980px){.pipe{grid-template-columns:repeat(2,1fr)}}
+
+/* triage feed */
+.feed{display:flex;flex-direction:column;gap:8px;max-height:380px;overflow:hidden}
+.row{
+  display:grid;grid-template-columns:80px 1fr 110px 70px;gap:12px;align-items:center;
+  padding:10px 12px;border:1px solid var(--line-2);border-radius:8px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  background:rgba(7,12,24,0.5);
+}
+.row .ts{color:var(--txt-mute)}
+.row .desc{color:var(--txt)}
+.row .trace{color:var(--accent);font-size:10px;letter-spacing:0.08em}
+.row .sev{text-align:right;font-weight:700;font-size:13px}
+.row.lvl-low{border-left:3px solid var(--good)}
+.row.lvl-mid{border-left:3px solid var(--warn)}
+.row.lvl-high{border-left:3px solid var(--crit);background:rgba(244,114,182,0.08)}
+.row.lvl-low .sev{color:var(--good)}
+.row.lvl-mid .sev{color:var(--warn)}
+.row.lvl-high .sev{color:var(--crit)}
+@media (max-width:640px){
+  .feed{overflow:visible}
+  .row{grid-template-columns:1fr auto;grid-template-areas:"ts sev" "desc desc" "lvl sev";row-gap:6px}
+  .row .ts{grid-area:ts}
+  .row .desc{grid-area:desc;white-space:normal;word-break:break-word}
+  .row .mono{grid-area:lvl;font-size:11px;text-align:left}
+  .row .sev{grid-area:sev;text-align:right}
+}
+
+/* envelope viewer */
+pre.env{
+  font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.55;
+  color:var(--txt);background:rgba(4,8,18,0.7);
+  border:1px solid var(--line-2);border-radius:10px;padding:14px;
+  overflow:auto;max-height:380px;
+}
+pre.env .k{color:var(--accent)}
+pre.env .s{color:#b9e3a0}
+pre.env .n{color:var(--warn)}
+pre.env .c{color:var(--txt-mute)}
+
+/* maturity bars */
+.bars{display:flex;flex-direction:column;gap:10px}
+.bar-row{display:grid;grid-template-columns:160px 1fr 40px;gap:12px;align-items:center;font-size:12px}
+.bar-row .lbl{color:var(--txt-dim)}
+.bar-track{height:8px;background:rgba(120,170,255,0.08);border-radius:999px;overflow:hidden;position:relative}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:999px}
+.bar-row .v{font-family:'JetBrains Mono',monospace;color:var(--txt);text-align:right}
+
+/* legend / chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{font-family:'JetBrains Mono',monospace;font-size:11px;padding:5px 10px;border:1px solid var(--line);border-radius:999px;color:var(--txt-dim)}
+.chip strong{color:var(--txt)}
+
+/* interactive triage feed (progressive enhancement) */
+.cp-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px}
+.cp-controls-sp{flex:1 1 auto}
+.cp-btn{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.04em;color:var(--txt-dim);background:rgba(8,14,28,0.6);border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;transition:border-color .18s,color .18s,background .18s;-webkit-tap-highlight-color:transparent}
+.cp-btn:hover{color:var(--txt);border-color:var(--accent)}
+.cp-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cp-btn.is-on{color:var(--bg-0);background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent}
+.cp-btn-live{display:inline-flex;align-items:center;gap:7px}
+.cp-live-dot{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 10px var(--good);animation:pulse 1.8s infinite}
+.cp-btn-live.is-paused .cp-live-dot{background:var(--txt-mute);box-shadow:none;animation:none}
+.cp-row{cursor:pointer;opacity:1;transform:none;transition:border-color .18s,transform .35s,box-shadow .18s,opacity .35s}
+.cp-row:hover{border-color:var(--accent)}
+.cp-row:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cp-row.cp-sel{border-color:var(--accent);box-shadow:0 0 20px rgba(96,165,250,0.22)}
+.cp-row.cp-new{opacity:0;transform:translateY(-6px)}
+@media (prefers-reduced-motion:reduce){
+  .cp-row,.cp-btn,.bar-fill{transition:none!important}
+  .cp-live-dot,.stat-dot{animation:none!important}
+}
+
+/* footer */
+.foot{margin-top:48px;padding-top:22px;border-top:1px solid var(--line-2);color:var(--txt-mute);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.foot a{color:var(--txt-dim);text-decoration:none}
+.foot a:hover{color:var(--accent)}
+</style>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+<div class="wrap">
+
+  <!-- header -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div>
+        <div class="brand-name">ClearPulse</div>
+        <div class="brand-sub">Healthcare Intelligence Pipeline</div>
+      </div>
+    </div>
+    <div class="stat-row">
+      <span><span class="stat-dot"></span>PIPELINE ONLINE</span>
+      <span class="mono">trace_id propagation: 100%</span>
+      <span class="mono">v2026.06.01</span>
+    </div>
+  </div>
+
+  <!-- hero -->
+  <section class="hero">
+    <div class="kicker">Project ClearPulse · NEXUS-Med Command Surface</div>
+    <h1>From a single FHIR bundle to an <span class="grad">explainable, audit-grade alert</span> — with the trace preserved end to end.</h1>
+    <p class="lede">ClearPulse converges billing anomalies, user-behavior signals, and at-rest PHI exposures into one streaming intelligence pipeline. Every risk score can be unpacked back to the original byte that triggered it.</p>
+  </section>
+
+  <!-- telemetry strip -->
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-h"><div class="card-title">Events / sec</div><div class="card-tag">LIVE</div></div>
+      <div class="tele"><div class="tele-val" id="eps">1,284</div><div class="tele-lbl">Stream throughput</div></div>
+      <svg class="spark" viewBox="0 0 100 30" preserveAspectRatio="none"><polyline id="sparkEps" fill="none" stroke="#60a5fa" stroke-width="1.5" points="0,20 10,18 20,22 30,14 40,17 50,10 60,15 70,8 80,12 90,6 100,11"/></svg>
+    </div>
+    <div class="card">
+      <div class="card-h"><div class="card-title">Risk Index</div><div class="card-tag">15-MIN AVG</div></div>
+      <div class="tele"><div class="tele-val"><span id="riskVal">42</span><span class="small">/ 100</span></div><div class="tele-lbl">Population mean</div></div>
+      <svg class="spark" viewBox="0 0 100 30" preserveAspectRatio="none"><polyline id="sparkRisk" fill="none" stroke="#60a5fa" stroke-width="1.5" points="0,18 10,16 20,20 30,15 40,12 50,17 60,14 70,9 80,13 90,8 100,11"/></svg>
+    </div>
+    <div class="card">
+      <div class="card-h"><div class="card-title">Active Alerts</div><div class="card-tag">OPEN</div></div>
+      <div class="tele"><div class="tele-val"><span id="alertsVal">7</span><span class="small">incidents</span></div><div class="tele-lbl"><span id="contribVal">127</span> contributing events</div></div>
+      <svg class="spark" viewBox="0 0 100 30" preserveAspectRatio="none"><polyline id="sparkAlerts" fill="none" stroke="#f472b6" stroke-width="1.5" points="0,22 10,24 20,18 30,20 40,14 50,16 60,10 70,12 80,7 90,9 100,5"/></svg>
+    </div>
+    <div class="card">
+      <div class="card-h"><div class="card-title">PHI Exposure (24h)</div><div class="card-tag">SCAN</div></div>
+      <div class="tele"><div class="tele-val"><span id="phiVal">3</span><span class="small">files</span></div><div class="tele-lbl">Compliance auto-scan</div></div>
+      <svg class="spark" viewBox="0 0 100 30" preserveAspectRatio="none"><polyline id="sparkPhi" fill="none" stroke="#7c5bff" stroke-width="1.5" points="0,24 10,22 20,25 30,20 40,21 50,18 60,19 70,15 80,17 90,12 100,14"/></svg>
+    </div>
+  </div>
+
+  <!-- pipeline -->
+  <div class="grid" style="margin-top:18px">
+    <div class="card">
+      <div class="card-h"><div class="card-title">Pipeline · trace_id flow</div><div class="card-tag">FHIR → DASHBOARD</div></div>
+      <div class="pipe">
+        <div class="pipe-step"><div class="n">01 · INGEST</div><div class="t">Parser</div><div class="d">FHIR / HL7 / 837 validate, assign UUID7 trace_id, write Parquet ledger.</div></div>
+        <div class="pipe-step"><div class="n">02 · STREAM</div><div class="t">Redis</div><div class="d">stream:tx:new and stream:access — at-least-once, replayable.</div></div>
+        <div class="pipe-step active"><div class="n">03 · SCORE</div><div class="t">Risk Engine</div><div class="d">Sliding 15-min window overlap, weighted rules, Risk Envelope emit.</div></div>
+        <div class="pipe-step"><div class="n">04 · BEHAVIOR</div><div class="t">Access Engine</div><div class="d">Bloom + HLL sketches, per-user Z-score volume anomaly.</div></div>
+        <div class="pipe-step"><div class="n">05 · CORRELATE</div><div class="t">Alert Router</div><div class="d">Dedupe, link access spikes to billing collisions, persist.</div></div>
+        <div class="pipe-step"><div class="n">06 · ANALYST</div><div class="t">NEXUS-Med</div><div class="d">Live triage, alert map, full forensic replay to source bytes.</div></div>
+      </div>
+      <div class="chips">
+        <span class="chip"><strong>Trace ID:</strong> UUID7</span>
+        <span class="chip"><strong>Window:</strong> 15 min</span>
+        <span class="chip"><strong>Audit chain:</strong> SHA-256</span>
+        <span class="chip"><strong>Throughput:</strong> 1.2k eps</span>
+        <span class="chip"><strong>Compliance scan:</strong> 10-min cycle</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- triage feed + envelope -->
+  <div class="grid grid-2" style="margin-top:18px">
+    <div class="card">
+      <div class="card-h"><div class="card-title">Live Triage Feed</div><div class="card-tag">stream:tx:scored</div></div>
+      <div class="feed" id="cpFeed">
+        <div class="row lvl-high">
+          <span class="ts">09:10:24</span>
+          <span class="desc">Billing collision · MRI ⨯ Consultation · P-9912 <span class="trace">trace=def456</span></span>
+          <span class="mono" style="color:var(--txt-dim)">CRITICAL</span>
+          <span class="sev">78</span>
+        </div>
+        <div class="row lvl-high">
+          <span class="ts">09:10:23</span>
+          <span class="desc">Retro-score upgrade · MRI claim P-9912 <span class="trace">trace=abc123</span></span>
+          <span class="mono" style="color:var(--txt-dim)">CRITICAL</span>
+          <span class="sev">78</span>
+        </div>
+        <div class="row lvl-mid">
+          <span class="ts">09:08:11</span>
+          <span class="desc">Access spike · Derm nurse · 41 unique MRNs / 1h <span class="trace">trace=7e91c2</span></span>
+          <span class="mono" style="color:var(--txt-dim)">HIGH</span>
+          <span class="sev">64</span>
+        </div>
+        <div class="row lvl-mid">
+          <span class="ts">09:04:47</span>
+          <span class="desc">Off-hours claim submission · Cardiology · DR-118 <span class="trace">trace=22ab9d</span></span>
+          <span class="mono" style="color:var(--txt-dim)">MEDIUM</span>
+          <span class="sev">38</span>
+        </div>
+        <div class="row lvl-low">
+          <span class="ts">09:02:30</span>
+          <span class="desc">Routine encounter · ED triage P-7720 <span class="trace">trace=01f4ee</span></span>
+          <span class="mono" style="color:var(--txt-dim)">LOW</span>
+          <span class="sev">12</span>
+        </div>
+        <div class="row lvl-low">
+          <span class="ts">09:01:09</span>
+          <span class="desc">Lab order · Hematology panel · P-3392 <span class="trace">trace=ccd771</span></span>
+          <span class="mono" style="color:var(--txt-dim)">LOW</span>
+          <span class="sev">6</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="card-title" id="cpEnvTitle">Risk Envelope · def456</div><div class="card-tag">EXPLAINABLE</div></div>
+<pre class="env" id="cpEnv">{
+  <span class="k">"trace_id"</span>: <span class="s">"018f9b2e-7c41-7a40-ae21-f9c2d2c43e1a"</span>,
+  <span class="k">"score"</span>: <span class="n">78</span>,
+  <span class="k">"severity"</span>: <span class="s">"CRITICAL"</span>,
+  <span class="k">"factors"</span>: {
+    <span class="k">"temporal_overlap"</span>: <span class="n">40</span>,  <span class="c">// ratio 0.71</span>
+    <span class="k">"access_spike"</span>:     <span class="n">28</span>,  <span class="c">// z = 4.3</span>
+    <span class="k">"off_hours"</span>:        <span class="n">10</span>
+  },
+  <span class="k">"triggers"</span>: [
+    { <span class="k">"type"</span>: <span class="s">"claim"</span>, <span class="k">"id"</span>: <span class="s">"abc123"</span>, <span class="k">"cpt"</span>: <span class="s">"73721"</span> },
+    { <span class="k">"type"</span>: <span class="s">"claim"</span>, <span class="k">"id"</span>: <span class="s">"def456"</span>, <span class="k">"cpt"</span>: <span class="s">"99213"</span> }
+  ],
+  <span class="k">"rule_version"</span>: <span class="s">"2026.06.01"</span>,
+  <span class="k">"ledger_hash"</span>:  <span class="s">"sha256:9af3…e21c"</span>
+}</pre>
+    </div>
+  </div>
+
+  <!-- maturity + roadmap -->
+  <div class="grid grid-2" style="margin-top:18px">
+    <div class="card">
+      <div class="card-h"><div class="card-title">Enterprise Maturity</div><div class="card-tag">CURRENT → TARGET</div></div>
+      <div class="bars" id="cpBars">
+        <div class="bar-row"><span class="lbl">Ingestion</span><div class="bar-track"><div class="bar-fill" style="width:90%"></div></div><span class="v">9.0</span></div>
+        <div class="bar-row"><span class="lbl">Streaming</span><div class="bar-track"><div class="bar-fill" style="width:90%"></div></div><span class="v">9.0</span></div>
+        <div class="bar-row"><span class="lbl">Explainability</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="v">10</span></div>
+        <div class="bar-row"><span class="lbl">Compliance</span><div class="bar-track"><div class="bar-fill" style="width:90%"></div></div><span class="v">9.0</span></div>
+        <div class="bar-row"><span class="lbl">Fraud Detection</span><div class="bar-track"><div class="bar-fill" style="width:80%"></div></div><span class="v">8.0</span></div>
+        <div class="bar-row"><span class="lbl">Insider Threat</span><div class="bar-track"><div class="bar-fill" style="width:80%"></div></div><span class="v">8.0</span></div>
+        <div class="bar-row"><span class="lbl">Forensic Readiness</span><div class="bar-track"><div class="bar-fill" style="width:80%"></div></div><span class="v">8.0</span></div>
+        <div class="bar-row"><span class="lbl">ML Capability</span><div class="bar-track"><div class="bar-fill" style="width:50%"></div></div><span class="v">5.0</span></div>
+        <div class="bar-row"><span class="lbl">Graph Intelligence</span><div class="bar-track"><div class="bar-fill" style="width:40%"></div></div><span class="v">4.0</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="card-title">Strengthening Roadmap</div><div class="card-tag">→ 9.5+ TIER</div></div>
+      <div style="display:flex;flex-direction:column;gap:12px;font-size:13px;line-height:1.5">
+        <div><strong style="color:var(--accent)">Entity Resolution</strong><br/><span style="color:var(--txt-dim)">MPI + provider identity reconciliation across MRN, GUID, and source-system IDs.</span></div>
+        <div><strong style="color:var(--accent)">Graph Correlation</strong><br/><span style="color:var(--txt-dim)">Neo4j / Memgraph for fraud-ring discovery and shared-workstation collusion.</span></div>
+        <div><strong style="color:var(--accent)">Hybrid ML Scoring</strong><br/><span style="color:var(--txt-dim)">0.7 · rules + 0.3 · Isolation Forest / XGBoost — novel patterns, kept explainable.</span></div>
+        <div><strong style="color:var(--accent)">Incident Aggregation</strong><br/><span style="color:var(--txt-dim)">1 incident · N events. Risk decay tames the alert firehose.</span></div>
+        <div><strong style="color:var(--accent)">Cryptographic Audit Chain</strong><br/><span style="color:var(--txt-dim)">SHA-256 hash-linked ledger — tamper-evident, litigation-grade.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- horizon 2030 -->
+  <div class="grid" style="margin-top:30px">
+    <div class="card">
+      <div class="card-h">
+        <div class="card-title">Horizon 2030 · Advanced Capability Layer</div>
+        <div class="card-tag">PQC · FL · TEE · ZK · AGENTIC</div>
+      </div>
+      <p class="lede" style="margin-top:0">A forward-deployment stack that takes ClearPulse from "9.5+ enterprise tier" to sovereign-grade healthcare intelligence — quantum-safe, privacy-preserving, autonomously investigated, and field-verifiable.</p>
+    </div>
+  </div>
+
+  <div class="grid grid-3" style="margin-top:18px">
+    <div class="card">
+      <div class="card-h"><div class="card-title">Quantum-Safe Audit Chain</div><div class="card-tag">PQC</div></div>
+      <div style="font-size:13px;line-height:1.55;color:var(--txt-dim)">
+        SHA-256 ledger upgraded to <strong style="color:var(--accent)">SHA3-512 + ML-DSA (Dilithium)</strong> signatures, NIST FIPS-204. Every ledger block carries a post-quantum signature; HSMs rotate keys under a CRYSTALS-Kyber KEM. Future "harvest-now, decrypt-later" attacks against 30-year retention archives are neutralized.
+      </div>
+      <div class="chips" style="margin-top:14px">
+        <span class="chip"><strong>Sig:</strong> ML-DSA-65</span>
+        <span class="chip"><strong>KEM:</strong> ML-KEM-768</span>
+        <span class="chip"><strong>Hash:</strong> SHA3-512</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="card-title">Federated Learning Mesh</div><div class="card-tag">FL · DP</div></div>
+      <div style="font-size:13px;line-height:1.55;color:var(--txt-dim)">
+        Hospitals train fraud and snooping models <strong style="color:var(--accent)">without sharing PHI</strong>. Gradients are clipped, perturbed with <em>(ε=2.5, δ=1e-6) differential privacy</em>, and aggregated via secure-aggregation (Paillier + masking). The global model improves across 200+ facilities; the data never leaves the edge.
+      </div>
+      <div class="chips" style="margin-top:14px">
+        <span class="chip"><strong>Privacy:</strong> ε 2.5</span>
+        <span class="chip"><strong>Aggregator:</strong> SecAgg+</span>
+        <span class="chip"><strong>Rounds/day:</strong> 24</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="card-title">Confidential Compute Enclave</div><div class="card-tag">TEE</div></div>
+      <div style="font-size:13px;line-height:1.55;color:var(--txt-dim)">
+        Risk Engine pinned inside <strong style="color:var(--accent)">Intel TDX / AMD SEV-SNP</strong> trusted execution environments. PHI is decrypted only inside the enclave; remote attestation proves to the hospital that the running binary matches a signed transparency-log entry before any record is forwarded.
+      </div>
+      <div class="chips" style="margin-top:14px">
+        <span class="chip"><strong>Attestation:</strong> RA-TLS</span>
+        <span class="chip"><strong>Transparency:</strong> Sigstore</span>
+        <span class="chip"><strong>Memory:</strong> Sealed</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="card-title">Agentic Investigator Copilot</div><div class="card-tag">LLM AGENT</div></div>
+      <div style="font-size:13px;line-height:1.55;color:var(--txt-dim)">
+        Each CRITICAL alert spawns a <strong style="color:var(--accent)">SOC agent</strong> that auto-drafts a forensic timeline, pulls related access events, queries the graph DB for collusion patterns, generates analyst questions, and proposes containment actions — all with citations back to ledger trace_ids. Analysts review, never start from blank.
+      </div>
+      <div class="chips" style="margin-top:14px">
+        <span class="chip"><strong>Tools:</strong> 14</span>
+        <span class="chip"><strong>Citations:</strong> mandatory</span>
+        <span class="chip"><strong>Human-in-loop:</strong> always</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="card-title">Zero-Knowledge Audit Proofs</div><div class="card-tag">ZK-SNARK</div></div>
+      <div style="font-size:13px;line-height:1.55;color:var(--txt-dim)">
+        Auditors verify "this risk score was produced by approved rule v2030.06 against a ledger-anchored event" <strong style="color:var(--accent)">without seeing the underlying PHI</strong>. Proofs are Halo2-compiled circuits over the rules engine; regulators run a 200ms verifier and get cryptographic certainty.
+      </div>
+      <div class="chips" style="margin-top:14px">
+        <span class="chip"><strong>Scheme:</strong> Halo2 / Plonk</span>
+        <span class="chip"><strong>Verify:</strong> &lt; 250 ms</span>
+        <span class="chip"><strong>Proof size:</strong> 8 KB</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="card-title">Graph Neural Risk Brain</div><div class="card-tag">GNN</div></div>
+      <div style="font-size:13px;line-height:1.55;color:var(--txt-dim)">
+        Temporal Graph Network over Provider · Patient · Claim · Workstation · Device nodes. Detects <strong style="color:var(--accent)">fraud rings invisible to row-based scoring</strong> — repeating subgraphs across weeks, shared-device collusion, money-mule provider chains. Streamed inference at &lt; 80 ms / event.
+      </div>
+      <div class="chips" style="margin-top:14px">
+        <span class="chip"><strong>Model:</strong> TGN</span>
+        <span class="chip"><strong>Nodes:</strong> 12M</span>
+        <span class="chip"><strong>Inference:</strong> 80 ms</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="card-title">Synthetic Data Twin</div><div class="card-tag">RED-TEAM</div></div>
+      <div style="font-size:13px;line-height:1.55;color:var(--txt-dim)">
+        A continuously-running shadow pipeline replays a <strong style="color:var(--accent)">GAN-generated patient population</strong> with planted fraud scenarios. Detection coverage is measured per rule, per model, per shift — providing live MTTD/MTTR metrics and red-team regressions without touching real patients.
+      </div>
+      <div class="chips" style="margin-top:14px">
+        <span class="chip"><strong>Generator:</strong> Synthea-X</span>
+        <span class="chip"><strong>Scenarios:</strong> 340</span>
+        <span class="chip"><strong>MTTD:</strong> 11 s</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="card-title">Edge Inference at PoC</div><div class="card-tag">EDGE · NPU</div></div>
+      <div style="font-size:13px;line-height:1.55;color:var(--txt-dim)">
+        ONNX-Runtime risk model runs on the workstation NPU at the <strong style="color:var(--accent)">point of care</strong>. Provider-side checks (off-roster billing, unusual code pair) trigger inline soft-blocks before submission — preventing fraud at the source instead of detecting it downstream.
+      </div>
+      <div class="chips" style="margin-top:14px">
+        <span class="chip"><strong>Runtime:</strong> ORT-NPU</span>
+        <span class="chip"><strong>Latency:</strong> 4 ms</span>
+        <span class="chip"><strong>Offline:</strong> yes</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="card-title">Sovereign Data Plane</div><div class="card-tag">REGION</div></div>
+      <div style="font-size:13px;line-height:1.55;color:var(--txt-dim)">
+        Region-pinned control plane with <strong style="color:var(--accent)">cross-border policy guards</strong>. HIPAA, EU GDPR Art.9, UK DSPT, Canada PIPEDA, AU My Health Records — each route through the pipeline is policy-checked at the bridge. Replication never crosses a jurisdiction without an explicit signed policy attestation.
+      </div>
+      <div class="chips" style="margin-top:14px">
+        <span class="chip"><strong>Policies:</strong> OPA / Rego</span>
+        <span class="chip"><strong>Regions:</strong> 9</span>
+        <span class="chip"><strong>Audit:</strong> per-route</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div>© ClearGlass Inc · ClearPulse Pipeline · 2026</div>
+    <div>
+      <a href="./clearpulse-architecture.html">architecture whitepaper →</a> ·
+      <a href="./index.html">← back to ClearGlass</a>
+    </div>
+  </div>
+</div>
+<script defer src="control-surface.js"></script>
+  <script defer src="clearpulse.js"></script>
+  <script defer src="ui.js"></script>
+  <script defer src="platform.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › Healthcare Intelligence</p>
+    <h2>Inside Healthcare Intelligence</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="offers/phipa-readiness-checklist.html"><span><b>Previous</b>PHIPA Readiness Checklist</span></a>
+      <a href="clearpulse.html"><span><b>Topic hub</b>ClearPulse</span></a>
+      <a href="clearpulse-architecture.html"><span><b>Next in journey</b>ClearPulse Architecture</span></a>
+    </div>
+    <ul>
+      <li><a href="environmental-cyber-risk.html"><b>Environmental Cyber-Risk</b> — OT and environmental threat monitoring</a></li>
+      <li><a href="clearpulse-architecture.html"><b>ClearPulse Architecture</b> — the forensic-AI whitepaper</a></li>
+      <li><a href="offers/phipa-readiness.html"><b>PHIPA Readiness</b> — free checklist and assessment for Ontario health data</a></li>
+      <li><a href="offers/phipa-readiness-checklist.html"><b>PHIPA Readiness Checklist</b> — the printable compliance checklist</a></li>
+      <li><a href="government.html"><b>Government Solutions</b> — federal and public-sector systems</a></li>
+      <li><a href="offers/index.html"><b>Services &amp; Engagements</b> — every ClearGlass offer in one place</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="offers/phipa-readiness.html">Get the free PHIPA readiness checklist</a> · <a href="store.html">Book a security engagement</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

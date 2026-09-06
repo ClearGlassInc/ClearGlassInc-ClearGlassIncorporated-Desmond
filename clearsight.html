@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#050b16">
+<meta name="msapplication-TileColor" content="#050b16">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8">
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CLEARSIGHT — Edge-AI Camera Vision System | ClearGlass Inc</title>
+<meta name="description" content="CLEARSIGHT is ClearGlass Inc's edge-optimized computer-vision system: real-time object detection, license-plate OCR, watchlist threat alerts, and a multi-camera wall that run directly in-browser on any camera feed — no cloud round-trip.">
+<link rel="canonical" href="https://www.clearglassinc.com/clearsight.html"/>
+<meta property="og:title" content="CLEARSIGHT — Edge-AI Camera Vision | ClearGlass Inc"/>
+<meta property="og:description" content="On-device real-time object detection, plate OCR, watchlist alerts and a multi-camera wall — live operational awareness at the edge."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://www.clearglassinc.com/clearsight.html"/>
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#050b16; --bg-2:#070f1f; --panel:rgba(7,16,32,.72);
+    --ink:#e8f1ff; --ink-2:#9db4d8; --ink-3:#5f759a;
+    --cyan:#22d3ee; --blue:#60a5fa; --violet:#a855f7; --green:#34d399;
+    --alert:#ff3b57; --amber:#fbbf24;
+    --hair:rgba(90,140,210,.22);
+    --detect:#ff2d4d;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);
+    font-family:'Urbanist',system-ui,-apple-system,sans-serif;color:var(--ink);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  .mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+
+  /* ---------- Stage ---------- */
+  #stage{position:fixed;inset:0;display:grid;place-items:center;
+    background:
+      radial-gradient(1200px 700px at 50% -10%,rgba(34,211,238,.10),transparent 60%),
+      radial-gradient(900px 600px at 100% 110%,rgba(168,85,247,.10),transparent 60%),
+      var(--bg)}
+
+  /* ---------- Camera wall (1 tile, or 2x2 grid) ---------- */
+  #wall{position:absolute;inset:0;display:grid;gap:0;
+    grid-template-columns:1fr;grid-template-rows:1fr}
+  #wall.grid{gap:3px;padding:3px;
+    grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;background:#02060d}
+  .cam{position:relative;overflow:hidden;background:#02060d}
+  .cam video,.cam canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .cam canvas{pointer-events:none;z-index:3}
+  .cam video{z-index:1}
+  /* scanline + vignette per tile */
+  .cam:after{content:"";position:absolute;inset:0;pointer-events:none;z-index:4;
+    background:
+      repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0 2px,rgba(0,0,0,.05) 2px 3px),
+      radial-gradient(120% 120% at 50% 50%,transparent 62%,rgba(0,0,0,.5) 100%)}
+  /* per-tile label + mini tally (grid mode) */
+  .cam .lbl{position:absolute;z-index:6;left:8px;top:8px;font-size:10.5px;letter-spacing:.16em;
+    background:rgba(3,8,18,.8);border:1px solid var(--hair);border-left:2px solid var(--cyan);
+    padding:3px 8px;border-radius:3px;pointer-events:none;display:none}
+  .cam .mini{position:absolute;z-index:6;right:8px;top:8px;font-size:10px;letter-spacing:.08em;
+    background:rgba(3,8,18,.8);border:1px solid var(--hair);padding:3px 8px;border-radius:3px;
+    pointer-events:none;display:none;color:var(--ink-2)}
+  .cam.flash{animation:camFlash 1.1s ease infinite}
+  @keyframes camFlash{0%,100%{box-shadow:inset 0 0 0 0 rgba(255,59,87,0)}
+    50%{box-shadow:inset 0 0 0 3px rgba(255,59,87,.9)}}
+  #wall.grid .cam .lbl,#wall.grid .cam .mini{display:block}
+
+  /* ---------- Global HUD chrome ---------- */
+  .hud{position:absolute;z-index:9;pointer-events:none}
+  .corner{width:26px;height:26px;border:2px solid rgba(34,211,238,.55);
+    filter:drop-shadow(0 0 8px rgba(34,211,238,.4))}
+  .c-tl{top:16px;left:16px;border-right:0;border-bottom:0}
+  .c-tr{top:16px;right:16px;border-left:0;border-bottom:0}
+  .c-bl{bottom:16px;left:16px;border-right:0;border-top:0}
+  .c-br{bottom:16px;right:16px;border-left:0;border-top:0}
+
+  #tally{top:14px;left:52px;pointer-events:none}
+  #tally .bar{display:inline-flex;gap:14px;align-items:center;background:rgba(3,8,18,.82);
+    border:1px solid var(--hair);border-left:3px solid var(--cyan);
+    padding:6px 12px;border-radius:4px;font-size:13px;letter-spacing:.06em;
+    box-shadow:0 6px 24px rgba(0,0,0,.5)}
+  #tally .bar b{color:var(--cyan)}
+  #tally .bar .v{color:var(--amber)}
+  #plates{margin-top:8px;display:flex;flex-direction:column;gap:3px;max-width:280px}
+  #plates .pl{background:rgba(3,8,18,.72);border:1px solid var(--hair);
+    padding:2px 8px;border-radius:3px;font-size:11.5px;width:max-content;
+    letter-spacing:.05em;animation:plIn .25s ease}
+  #plates .pl.hit{border-color:var(--alert);border-left:2px solid var(--alert);background:rgba(40,6,14,.8)}
+  #plates .pl .id{color:var(--violet)}
+  #plates .pl .no{color:#cfe6ff}
+  #plates .pl .ocr{color:var(--green);font-size:9px;margin-left:4px}
+  @keyframes plIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+
+  #status{top:14px;right:52px;text-align:right;pointer-events:none}
+  #status .rec{display:inline-flex;align-items:center;gap:7px;background:rgba(3,8,18,.82);
+    border:1px solid var(--hair);padding:6px 12px;border-radius:4px;font-size:12.5px;letter-spacing:.12em}
+  #status .dot{width:9px;height:9px;border-radius:50%;background:var(--alert);
+    box-shadow:0 0 10px var(--alert);animation:blink 1.1s steps(2) infinite}
+  @keyframes blink{50%{opacity:.25}}
+  #status .clock{margin-top:6px;font-size:26px;font-weight:600;letter-spacing:.08em;
+    color:#eaf4ff;text-shadow:0 0 14px rgba(34,211,238,.35)}
+  #status .fps{margin-top:2px;font-size:11px;color:var(--ink-3);letter-spacing:.14em}
+
+  #brand{bottom:16px;left:52px;display:flex;align-items:center;gap:10px;pointer-events:none}
+  #brand .badge{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--cyan),var(--violet));color:#031018;font-weight:800;
+    box-shadow:0 0 22px rgba(34,211,238,.4)}
+  #brand .txt{line-height:1.05}
+  #brand .n{font-weight:800;letter-spacing:.28em;font-size:13px}
+  #brand .s{font-size:9.5px;letter-spacing:.28em;color:var(--ink-3)}
+
+  /* Alert banner */
+  #alert{position:absolute;z-index:14;top:74px;left:50%;transform:translateX(-50%);
+    max-width:min(760px,92vw);display:none;align-items:center;gap:12px;
+    background:linear-gradient(90deg,rgba(60,8,18,.96),rgba(30,4,10,.96));
+    border:1px solid rgba(255,59,87,.6);border-radius:10px;padding:10px 16px;
+    box-shadow:0 0 34px rgba(255,59,87,.35);pointer-events:none;
+    animation:alertPulse 1.2s ease infinite}
+  #alert.show{display:flex}
+  #alert .ic{font-size:18px;color:var(--alert)}
+  #alert .msg{font-size:13px;letter-spacing:.04em;line-height:1.35}
+  #alert .msg b{color:#ffb3c0}
+  @keyframes alertPulse{0%,100%{box-shadow:0 0 30px rgba(255,59,87,.28)}
+    50%{box-shadow:0 0 48px rgba(255,59,87,.55)}}
+
+  /* ---------- Control dock ---------- */
+  #dock{position:absolute;z-index:20;left:50%;bottom:22px;transform:translateX(-50%);
+    display:flex;gap:9px;align-items:center;padding:10px 12px;border-radius:14px;flex-wrap:wrap;
+    justify-content:center;max-width:96vw;
+    background:rgba(6,14,28,.82);backdrop-filter:blur(14px);border:1px solid var(--hair);
+    box-shadow:0 18px 60px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.03)}
+  .btn{appearance:none;border:1px solid rgba(34,211,238,.32);background:rgba(9,20,38,.9);
+    color:var(--ink);font:600 13px/1 'Urbanist',sans-serif;letter-spacing:.04em;
+    padding:11px 15px;border-radius:10px;cursor:pointer;display:inline-flex;gap:8px;align-items:center;
+    transition:transform .12s,border-color .12s,background .12s,box-shadow .12s;white-space:nowrap}
+  .btn:hover{transform:translateY(-1px);border-color:var(--cyan);background:rgba(15,32,58,.95);
+    box-shadow:0 0 22px rgba(34,211,238,.22)}
+  .btn.primary{background:linear-gradient(135deg,rgba(34,211,238,.95),rgba(96,165,250,.95));
+    color:#04121e;border-color:transparent;font-weight:800}
+  .btn.primary:hover{box-shadow:0 0 26px rgba(34,211,238,.5)}
+  .btn.on{border-color:var(--green);color:var(--green);background:rgba(6,26,20,.9)}
+  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+  .sep{width:1px;height:26px;background:var(--hair)}
+  .ctl{display:flex;flex-direction:column;gap:3px;font-size:10px;letter-spacing:.12em;color:var(--ink-3)}
+  .ctl input[type=range]{width:110px;accent-color:var(--cyan)}
+  .ctl .val{color:var(--cyan)}
+  #watch{background:rgba(9,20,38,.9);color:var(--ink);border:1px solid var(--hair);
+    border-radius:8px;padding:9px 11px;font:600 12px 'IBM Plex Mono',monospace;width:210px}
+  #watch:focus{outline:none;border-color:var(--alert);box-shadow:0 0 0 2px rgba(255,59,87,.2)}
+  select.mini2{background:rgba(9,20,38,.9);color:var(--ink);border:1px solid var(--hair);
+    border-radius:8px;padding:9px 10px;font:600 12px 'Urbanist';cursor:pointer}
+
+  /* ---------- Boot overlay ---------- */
+  #boot{position:absolute;inset:0;z-index:30;display:grid;place-items:center;text-align:center;
+    background:radial-gradient(900px 600px at 50% 40%,rgba(6,16,34,.9),rgba(3,7,15,.97));transition:opacity .5s}
+  #boot.hide{opacity:0;pointer-events:none}
+  #boot .card{max-width:600px;padding:0 26px}
+  #boot h1{margin:0;font-size:clamp(30px,6vw,54px);font-weight:800;letter-spacing:.18em;
+    background:linear-gradient(120deg,#eaf4ff,#22d3ee 40%,#a855f7);-webkit-background-clip:text;
+    background-clip:text;color:transparent}
+  #boot .tag{margin:8px 0 0;letter-spacing:.34em;font-size:12px;color:var(--ink-2)}
+  #boot .desc{margin:18px auto 0;max-width:500px;color:var(--ink-2);font-size:14px;line-height:1.6}
+  #boot .caps{margin:16px auto 0;max-width:520px;display:flex;flex-wrap:wrap;gap:7px;justify-content:center}
+  #boot .caps span{font-size:11px;letter-spacing:.1em;color:var(--cyan);border:1px solid var(--hair);
+    border-radius:20px;padding:4px 11px;background:rgba(6,20,34,.6)}
+  #boot .row{margin-top:22px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  #boot .note{margin-top:16px;font-size:11.5px;color:var(--ink-3);letter-spacing:.06em}
+  #boot .load{margin-top:18px;font-size:12px;letter-spacing:.18em;color:var(--cyan);min-height:16px}
+  .spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(34,211,238,.25);
+    border-top-color:var(--cyan);border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:8px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+
+  #toast{position:absolute;z-index:40;top:18px;left:50%;transform:translateX(-50%);
+    background:rgba(8,18,34,.95);border:1px solid var(--hair);border-left:3px solid var(--amber);
+    padding:10px 16px;border-radius:8px;font-size:13px;max-width:80vw;opacity:0;transition:opacity .3s;
+    box-shadow:0 12px 40px rgba(0,0,0,.5)}
+  #toast.show{opacity:1}
+
+  a.home{position:absolute;z-index:20;top:14px;left:50%;transform:translateX(-50%);
+    font-size:11px;letter-spacing:.22em;color:var(--ink-3);text-decoration:none;pointer-events:auto}
+  a.home:hover{color:var(--cyan)}
+
+  @media (max-width:640px){
+    #tally{left:44px} #status{right:44px} #brand{left:44px}
+    #status .clock{font-size:20px}
+    #dock{bottom:12px}
+    #watch{width:150px}
+    .ctl input[type=range]{width:82px}
+  }
+</style>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+<div id="stage">
+  <!-- camera wall: tiles injected by JS -->
+  <div id="wall"></div>
+
+  <!-- HUD chrome -->
+  <div class="hud corner c-tl"></div>
+  <div class="hud corner c-tr"></div>
+  <div class="hud corner c-bl"></div>
+  <div class="hud corner c-br"></div>
+
+  <div class="hud" id="tally">
+    <div class="bar mono"><span><b>PERSON</b> = <span id="tPerson">0</span></span>
+      <span><b>VEHICLE</b> = <span id="tVehicle">0</span></span>
+      <span><b>OBJ</b> = <span class="v" id="tObj">0</span></span></div>
+    <div id="plates" class="mono"></div>
+  </div>
+
+  <div class="hud" id="status">
+    <div class="rec mono"><span class="dot"></span> REC · CLEARSIGHT</div>
+    <div class="clock mono" id="clock">00:00</div>
+    <div class="fps mono" id="fps">— FPS · EDGE</div>
+  </div>
+
+  <div class="hud" id="brand">
+    <div class="badge">CG</div>
+    <div class="txt"><div class="n">CLEARSIGHT</div><div class="s">EDGE VISION · CLEARGLASS INC</div></div>
+  </div>
+
+  <div id="alert"><span class="ic">⚠</span><div class="msg" id="alertMsg"></div></div>
+
+  <a class="home" href="/control-surface.html">◂ CONTROL SURFACE</a>
+  <div id="toast"></div>
+
+  <!-- Control dock -->
+  <div id="dock">
+    <button class="btn primary" id="btnCam">▶ Camera</button>
+    <button class="btn" id="btnScreen">◲ Screen</button>
+    <button class="btn" id="btnDemo">◱ Demo</button>
+    <button class="btn" id="btnGrid">▦ Camera Wall</button>
+    <button class="btn" id="btnStop" disabled>■ Stop</button>
+    <div class="sep"></div>
+    <button class="btn" id="btnOCR" title="Real license-plate OCR on-device">🔎 Plate OCR</button>
+    <input id="watch" class="mono" placeholder="watchlist: person, ABC1234" spellcheck="false"/>
+    <div class="sep"></div>
+    <label class="ctl">SENSITIVITY <span class="val" id="confV">40%</span>
+      <input id="conf" type="range" min="15" max="80" value="40"></label>
+  </div>
+
+  <!-- Boot -->
+  <div id="boot">
+    <div class="card">
+      <h1>CLEARSIGHT</h1>
+      <div class="tag">EDGE-AI CAMERA VISION SYSTEM</div>
+      <p class="desc">Defense-grade computer vision that runs <b>directly on the device</b> — no cloud
+        round-trip. CLEARSIGHT fuses live camera feeds with on-board neural detection to identify and
+        track people, vehicles and objects in real time.</p>
+      <div class="caps">
+        <span>◎ Object detection + tracking</span>
+        <span>🔎 License-plate OCR</span>
+        <span>⚠ Watchlist alerts</span>
+        <span>▦ Multi-camera wall</span>
+      </div>
+      <div class="row">
+        <button class="btn primary" id="bootCam">▶ Enable Camera</button>
+        <button class="btn" id="bootGrid">▦ Launch Camera Wall</button>
+        <button class="btn" id="bootDemo">◱ Run Demo</button>
+      </div>
+      <div class="load mono" id="loadMsg"></div>
+      <div class="note">Processing happens locally in your browser. No video is uploaded or stored.</div>
+    </div>
+  </div>
+</div>
+
+<script defer src="nav.js"></script>
+<script>
+/* ============================================================================
+   CLEARSIGHT — ClearGlass Inc edge-vision engine
+   • Neural object detection: TensorFlow.js + COCO-SSD (on-device, lazy-loaded)
+   • License-plate OCR:        Tesseract.js on cropped vehicle regions
+   • Watchlist alerts:         class/plate match -> banner + tile flash + tag
+   • Multi-camera wall:        2x2 grid of independent scenes (1 live + 3 sim)
+   Simulated fallback keeps every surface alive without camera/model/network.
+   ========================================================================== */
+(function(){
+  "use strict";
+  var wall    = document.getElementById('wall');
+  var boot    = document.getElementById('boot');
+  var loadMsg = document.getElementById('loadMsg');
+  var toastEl = document.getElementById('toast');
+  var alertEl = document.getElementById('alert');
+  var alertMsg= document.getElementById('alertMsg');
+
+  var VEHICLES = {car:1,truck:1,bus:1,motorcycle:1,bicycle:1,train:1,boat:1};
+  var confThresh = 0.40;
+  var running = false;
+  var gridMode = false;
+  var ocrOn = false;
+  var watchTerms = [];
+  var model = null, modelLoading = null;
+  var rafId = null;
+  var startTime = 0, lastFpsT = 0, frames = 0;
+
+  /* ---------- helpers ---------- */
+  function toast(m){ toastEl.textContent=m; toastEl.classList.add('show');
+    clearTimeout(toast._t); toast._t=setTimeout(function(){toastEl.classList.remove('show');},3400); }
+  function pad(n){ return (n<10?'0':'')+n; }
+  function loadScript(src){ return new Promise(function(res,rej){
+    var s=document.createElement('script'); s.src=src; s.async=true;
+    s.onload=res; s.onerror=function(){rej(new Error('load '+src));}; document.head.appendChild(s); }); }
+
+  /* ---------- Scene: one camera tile with its own tracker ---------------- */
+  var globalId = Math.floor(Math.random()*30)+7;
+  function Scene(opts){
+    this.name = opts.name;
+    this.kind = opts.kind;                 // 'live' | 'sim'
+    this.theme = opts.theme || 'street';
+    this.tracks = [];
+    this.sim = null;
+    this.detectBusy = false;
+    // DOM
+    var cam = document.createElement('div'); cam.className='cam';
+    var vid = document.createElement('video'); vid.playsInline=true; vid.muted=true; vid.autoplay=true;
+    var cv  = document.createElement('canvas');
+    var lbl = document.createElement('div'); lbl.className='lbl mono'; lbl.textContent=this.name;
+    var mini= document.createElement('div'); mini.className='mini mono'; mini.textContent='P0 V0';
+    cam.appendChild(vid); cam.appendChild(cv); cam.appendChild(lbl); cam.appendChild(mini);
+    this.el=cam; this.video=vid; this.canvas=cv; this.ctx=cv.getContext('2d'); this.mini=mini;
+    if(this.kind==='sim') this._paintBg();
+  }
+  Scene.prototype._paintBg=function(){
+    var bg={
+      street:'radial-gradient(120% 80% at 50% 0%,#12233f,#060d1a 70%)',
+      lobby:'radial-gradient(120% 90% at 50% 10%,#26203a,#0a0812 72%)',
+      parking:'radial-gradient(120% 90% at 50% 0%,#0e2230,#050d12 72%)',
+      perimeter:'radial-gradient(120% 90% at 50% 100%,#0c1e14,#04100a 72%)'
+    }[this.theme];
+    this.canvas.style.background=bg+',repeating-linear-gradient(90deg,rgba(34,211,238,.05) 0 2px,transparent 2px 64px)';
+    this.video.style.display='none';
+  };
+  Scene.prototype.size=function(w,h){ if(this.canvas.width!==w||this.canvas.height!==h){this.canvas.width=w;this.canvas.height=h;} };
+
+  function iou(a,b){
+    var x1=Math.max(a.x,b.x),y1=Math.max(a.y,b.y),
+        x2=Math.min(a.x+a.w,b.x+b.w),y2=Math.min(a.y+a.h,b.y+b.h),
+        w=Math.max(0,x2-x1),h=Math.max(0,y2-y1),inter=w*h,uni=a.w*a.h+b.w*b.h-inter;
+    return uni<=0?0:inter/uni;
+  }
+  function synthPlate(){ var L="ABCDEFGHJKLMNPRTVWXYZ",D="0123456789",s="";
+    for(var i=0;i<3;i++)s+=L[(Math.random()*L.length)|0];
+    for(var j=0;j<4;j++)s+=D[(Math.random()*D.length)|0]; return s; }
+
+  Scene.prototype.update=function(dets){
+    var used={}, self=this;
+    this.tracks.forEach(function(t){
+      var best=-1,bi=-1;
+      dets.forEach(function(d,i){ if(used[i]||d.cls!==t.cls)return; var v=iou(t,d); if(v>best){best=v;bi=i;} });
+      if(best>0.30){ var d=dets[bi]; used[bi]=1;
+        t.x+=(d.x-t.x)*0.5; t.y+=(d.y-t.y)*0.5; t.w+=(d.w-t.w)*0.5; t.h+=(d.h-t.h)*0.5;
+        t.score=d.score; t.miss=0;
+      } else t.miss++;
+    });
+    dets.forEach(function(d,i){ if(used[i])return;
+      self.tracks.push({id:globalId++,cls:d.cls,x:d.x,y:d.y,w:d.w,h:d.h,
+        plate:VEHICLES[d.cls]?synthPlate():null,plateReal:false,score:d.score,miss:0,
+        scene:self.name,ocrAt:0}); });
+    this.tracks=this.tracks.filter(function(t){return t.miss<8;});
+  };
+
+  var COL={person:'#ff3b57',vehicle:'#ff2d4d',object:'#ffb020',hit:'#ffcc33'};
+  function classColor(c){ return c==='person'?COL.person:(VEHICLES[c]?COL.vehicle:COL.object); }
+  function isHit(t){
+    if(!watchTerms.length) return false;
+    for(var i=0;i<watchTerms.length;i++){ var w=watchTerms[i];
+      if(t.cls.toLowerCase()===w) return true;
+      if(t.plate && t.plate.toLowerCase().indexOf(w)>=0 && w.length>=3) return true;
+    } return false;
+  }
+
+  Scene.prototype.render=function(agg){
+    var W=this.canvas.width,H=this.canvas.height,ctx=this.ctx;
+    ctx.clearRect(0,0,W,H);
+    var nP=0,nV=0,nO=0,hits=0,scale=W/640;
+    for(var k=0;k<this.tracks.length;k++){
+      var t=this.tracks[k]; if(t.miss>1) continue;
+      var hit=isHit(t); if(hit) hits++;
+      var col=hit?COL.hit:classColor(t.cls);
+      var x=t.x,y=t.y,w=t.w,h=t.h;
+      ctx.lineWidth=Math.max(2,scale*2); ctx.strokeStyle=col; ctx.shadowColor=col; ctx.shadowBlur=hit?16:10;
+      ctx.strokeRect(x,y,w,h); ctx.shadowBlur=0;
+      var g=ctx.createLinearGradient(0,y,0,y+h);
+      g.addColorStop(0,'rgba(255,45,77,0)'); g.addColorStop(1,hit?'rgba(255,204,51,.2)':'rgba(255,45,77,.16)');
+      ctx.fillStyle=g; ctx.fillRect(x,y,w,h);
+      var label=(hit?'⚠ ':'')+t.cls.replace(' ','_')+' '+t.id;
+      ctx.font='600 '+Math.max(12,scale*13)+"px 'IBM Plex Mono',monospace";
+      var tw=ctx.measureText(label).width, th=Math.max(16,scale*18);
+      ctx.fillStyle=col; ctx.fillRect(x-1,y-th,tw+12,th);
+      ctx.fillStyle='#0a0208'; ctx.textBaseline='middle'; ctx.textAlign='left';
+      ctx.fillText(label,x+6,y-th/2+1);
+      if(t.plate){
+        var pw=Math.max(w*0.5,scale*54),ph=Math.max(12,scale*14);
+        ctx.fillStyle=t.plateReal?'rgba(52,211,153,.92)':'rgba(255,45,77,.9)';
+        ctx.fillRect(x+w/2-pw/2,y+h-ph-3,pw,ph);
+        ctx.fillStyle=t.plateReal?'#04100a':'#fff';
+        ctx.font='600 '+Math.max(10,scale*11)+"px 'IBM Plex Mono',monospace"; ctx.textAlign='center';
+        ctx.fillText(t.plate,x+w/2,y+h-ph/2-3); ctx.textAlign='left';
+      }
+      if(t.cls==='person')nP++; else if(VEHICLES[t.cls]){nV++; if(t.plate)agg.plates.push(t);} else nO++;
+      if(hit) agg.hits.push(t);
+    }
+    agg.person+=nP; agg.vehicle+=nV; agg.obj+=nO;
+    this.mini.textContent='P'+nP+' V'+nV+(hits?' ⚠'+hits:'');
+    this.el.classList.toggle('flash',hits>0);
+  };
+
+  /* ---------- simulated feed generator ---------------------------------- */
+  var THEME_MIX={
+    street:[['person',.06,.16],['car',.14,.11],['car',.15,.11],['truck',.2,.15],['bus',.22,.16],['bicycle',.1,.12],['person',.05,.15]],
+    lobby:[['person',.07,.2],['person',.06,.18],['person',.06,.19],['backpack',.05,.06],['person',.07,.2]],
+    parking:[['car',.16,.12],['car',.15,.11],['truck',.2,.14],['car',.14,.1],['person',.06,.16]],
+    perimeter:[['person',.06,.17],['car',.15,.11],['truck',.2,.14],['motorcycle',.1,.09]]
+  };
+  Scene.prototype.seedSim=function(){
+    var W=this.canvas.width||960,H=this.canvas.height||540;
+    var mix=THEME_MIX[this.theme]||THEME_MIX.street;
+    this.sim={objs:mix.map(function(k){ return {cls:k[0],
+      x:Math.random()*(W-W*k[1]),y:H*(0.4+Math.random()*0.42),w:W*k[1],h:W*k[2],
+      vx:(Math.random()-.5)*1.5,vy:(Math.random()-.5)*.55,score:.6+Math.random()*.35}; })};
+  };
+  Scene.prototype.stepSim=function(){
+    if(!this.sim) this.seedSim();
+    var W=this.canvas.width,H=this.canvas.height;
+    var dets=this.sim.objs.map(function(o){ o.x+=o.vx; o.y+=o.vy;
+      if(o.x<0||o.x+o.w>W)o.vx*=-1; if(o.y<H*0.36||o.y+o.h>H*0.95)o.vy*=-1;
+      return {cls:o.cls,score:o.score,x:o.x+Math.sin(Date.now()/600+o.w)*2,y:o.y,w:o.w,h:o.h}; })
+      .filter(function(d){return d.score>=confThresh;});
+    this.update(dets);
+  };
+
+  /* ---------- neural + OCR ---------------------------------------------- */
+  function loadModel(){
+    if(model) return Promise.resolve(model);
+    if(modelLoading) return modelLoading;
+    loadMsg.innerHTML='<span class="spin"></span>Loading on-board neural model…';
+    modelLoading=loadScript('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js')
+      .then(function(){return loadScript('https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js');})
+      .then(function(){return cocoSsd.load({base:'lite_mobilenet_v2'});})
+      .then(function(m){model=m;loadMsg.textContent='';return m;});
+    return modelLoading;
+  }
+  Scene.prototype.detectNeural=function(){
+    if(this.kind!=='live'||this.detectBusy||!model) return;
+    var vw=this.video.videoWidth,vh=this.video.videoHeight; if(!vw||!vh) return;
+    this.size(vw,vh); this.detectBusy=true; var self=this;
+    model.detect(this.video,20).then(function(preds){
+      var dets=[]; preds.forEach(function(p){ if(p.score<confThresh)return;
+        dets.push({cls:p.class,score:p.score,x:p.bbox[0],y:p.bbox[1],w:p.bbox[2],h:p.bbox[3]}); });
+      self.update(dets);
+    }).catch(function(){}).then(function(){self.detectBusy=false;});
+  };
+
+  // ---- OCR (Tesseract.js) ----
+  var ocrWorker=null, ocrLoading=null, ocrBusy=false, lastOcr=0;
+  var ocrCanvas=document.createElement('canvas'), ocrCtx=ocrCanvas.getContext('2d');
+  function loadOCR(){
+    if(ocrWorker) return Promise.resolve(ocrWorker);
+    if(ocrLoading) return ocrLoading;
+    loadMsg.innerHTML='<span class="spin"></span>Loading on-device OCR engine…';
+    ocrLoading=loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.0/dist/tesseract.min.js')
+      .then(function(){return Tesseract.createWorker('eng');})
+      .then(function(w){
+        return w.setParameters({tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+          tessedit_pageseg_mode:'7'}).then(function(){ocrWorker=w;loadMsg.textContent='';return w;});
+      });
+    return ocrLoading;
+  }
+  function parsePlate(txt){
+    if(!txt) return null;
+    var m=(txt.toUpperCase().replace(/[^A-Z0-9]/g,'')).match(/[A-Z0-9]{5,8}/);
+    return m?m[0]:null;
+  }
+  function tickOCR(scenes){
+    if(!ocrOn||!ocrWorker||ocrBusy) return;
+    var now=performance.now(); if(now-lastOcr<1300) return;
+    // pick the largest live vehicle due for a read
+    var best=null,bestArea=0,bestScene=null;
+    scenes.forEach(function(s){ if(s.kind!=='live')return;
+      s.tracks.forEach(function(t){ if(t.miss>1||!VEHICLES[t.cls])return;
+        if(now-t.ocrAt<4000 && t.plateReal) return;
+        var a=t.w*t.h; if(a>bestArea){bestArea=a;best=t;bestScene=s;} }); });
+    if(!best||best.w<40||best.h<24) return;
+    var v=bestScene.video,vw=v.videoWidth,vh=v.videoHeight; if(!vw) return;
+    var sx=Math.max(0,best.x),sy=Math.max(0,best.y),sw=Math.min(vw-sx,best.w),sh=Math.min(vh-sy,best.h);
+    // focus on lower half of the vehicle where a plate sits
+    sy=Math.min(vh-1,sy+sh*0.55); sh=Math.max(8,sh*0.45);
+    var scale=Math.min(4,240/sw);
+    ocrCanvas.width=Math.max(16,sw*scale); ocrCanvas.height=Math.max(8,sh*scale);
+    ocrCtx.filter='grayscale(1) contrast(1.6)';
+    ocrCtx.drawImage(v,sx,sy,sw,sh,0,0,ocrCanvas.width,ocrCanvas.height);
+    ocrBusy=true; lastOcr=now; best.ocrAt=now;
+    ocrWorker.recognize(ocrCanvas).then(function(r){
+      var p=parsePlate(r&&r.data&&r.data.text);
+      if(p){ best.plate=p; best.plateReal=true; }
+    }).catch(function(){}).then(function(){ ocrBusy=false; });
+  }
+
+  /* ---------- master loop ----------------------------------------------- */
+  var scenes=[];
+  function frame(){
+    if(!running) return;
+    var agg={person:0,vehicle:0,obj:0,plates:[],hits:[]};
+    scenes.forEach(function(s){
+      if(s.kind==='live'){ var vw=s.video.videoWidth; if(vw){ s.size(vw,s.video.videoHeight); s.detectNeural(); } }
+      else { s.stepSim(); }
+      s.render(agg);
+    });
+    tickOCR(scenes);
+    paintReadouts(agg);
+    countFps();
+    rafId=requestAnimationFrame(frame);
+  }
+  function paintReadouts(agg){
+    document.getElementById('tPerson').textContent=agg.person;
+    document.getElementById('tVehicle').textContent=agg.vehicle;
+    document.getElementById('tObj').textContent=agg.obj;
+    var seen={}, uniq=agg.plates.filter(function(t){if(seen[t.id])return false;seen[t.id]=1;return true;})
+      .sort(function(a,b){return a.id-b.id;}).slice(0,5);
+    document.getElementById('plates').innerHTML=uniq.map(function(t){
+      return '<div class="pl'+(isHit(t)?' hit':'')+'"><span class="id">#'+t.id+'</span> '+
+        '<span class="no">'+t.plate+'</span>'+(t.plateReal?'<span class="ocr">OCR</span>':'')+'</div>';
+    }).join('');
+    // alert banner
+    if(agg.hits.length){
+      var parts=agg.hits.slice(0,4).map(function(t){
+        return t.cls+' #'+t.id+(t.plate?' ('+t.plate+')':'')+' · '+t.scene; });
+      alertMsg.innerHTML='<b>WATCHLIST HIT</b> — '+parts.join(' &nbsp;·&nbsp; ');
+      alertEl.classList.add('show');
+    } else alertEl.classList.remove('show');
+  }
+  function countFps(){ frames++; var now=performance.now();
+    if(now-lastFpsT>=1000){ document.getElementById('fps').textContent=frames+' FPS · EDGE'; frames=0; lastFpsT=now; } }
+  setInterval(function(){ if(!running)return;
+    var s=Math.floor((Date.now()-startTime)/1000);
+    document.getElementById('clock').textContent=pad((s/60)|0)+':'+pad(s%60); },500);
+
+  /* ---------- wall assembly --------------------------------------------- */
+  var camStream=null;
+  function clearWall(){ scenes=[]; wall.innerHTML=''; }
+  function mountSingle(scene){ clearWall(); wall.classList.remove('grid');
+    scenes=[scene]; wall.appendChild(scene.el); }
+  function mountGrid(liveScene){
+    clearWall(); wall.classList.add('grid');
+    var s0 = liveScene || new Scene({name:'CAM 01 · STREET',kind:'sim',theme:'street'});
+    if(!liveScene) s0.name='CAM 01 · STREET';
+    var s1=new Scene({name:'CAM 02 · LOBBY',kind:'sim',theme:'lobby'});
+    var s2=new Scene({name:'CAM 03 · PARKING',kind:'sim',theme:'parking'});
+    var s3=new Scene({name:'CAM 04 · PERIMETER',kind:'sim',theme:'perimeter'});
+    scenes=[s0,s1,s2,s3];
+    scenes.forEach(function(s){ wall.appendChild(s.el);
+      var r=s.el.getBoundingClientRect(); s.size(Math.max(320,r.width|0),Math.max(180,r.height|0)); });
+  }
+
+  function beginRun(){ running=true; startTime=Date.now(); lastFpsT=performance.now(); frames=0;
+    document.getElementById('btnStop').disabled=false; boot.classList.add('hide'); frame(); }
+
+  function getCam(kind){
+    return kind==='screen'
+      ? navigator.mediaDevices.getDisplayMedia({video:{frameRate:30}})
+      : navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}},audio:false});
+  }
+
+  function startCamera(kind){
+    stopAll();
+    loadMsg.innerHTML='<span class="spin"></span>Requesting '+(kind==='screen'?'screen':'camera')+' feed…';
+    getCam(kind).then(function(s){
+      camStream=s;
+      var live=new Scene({name:'CAM 01 · LIVE',kind:'live'});
+      live.video.srcObject=s;
+      return live.video.play().then(function(){ return {live:live}; });
+    }).then(function(ctx){
+      if(gridMode) mountGrid(ctx.live); else mountSingle(ctx.live);
+      return loadModel().then(function(){ beginRun(); }).catch(function(){
+        toast('Neural model unavailable — simulating detections on the live feed.');
+        ctx.live.kind='sim'; ctx.live._paintBg? null:0; beginRun();
+      });
+    }).catch(function(err){ loadMsg.textContent='';
+      toast('Could not open '+(kind==='screen'?'screen':'camera')+': '+((err&&err.name)||'blocked')+'. Try Demo.'); });
+  }
+
+  function startDemo(){ stopAll();
+    if(gridMode){ mountGrid(null); } else { mountSingle(new Scene({name:'CAM 01 · STREET',kind:'sim',theme:'street'})); }
+    beginRun();
+    toast(gridMode?'Camera wall — 4 simulated feeds. Enable the camera to make CAM 01 live.'
+      :'Demo feed — simulated scene. Enable the camera for live on-device detection.');
+  }
+
+  function stopAll(){ running=false; if(rafId)cancelAnimationFrame(rafId);
+    if(camStream){ camStream.getTracks().forEach(function(t){t.stop();}); camStream=null; }
+    clearWall(); alertEl.classList.remove('show');
+    document.getElementById('btnStop').disabled=true; }
+
+  /* ---------- controls -------------------------------------------------- */
+  function setConf(v){ confThresh=v/100; document.getElementById('confV').textContent=v+'%'; }
+  document.getElementById('conf').addEventListener('input',function(e){ setConf(e.target.value); });
+  document.getElementById('watch').addEventListener('input',function(e){
+    watchTerms=e.target.value.toLowerCase().split(',').map(function(s){return s.trim();}).filter(Boolean); });
+
+  document.getElementById('btnGrid').onclick=function(){
+    gridMode=!gridMode; this.classList.toggle('on',gridMode);
+    this.textContent=gridMode?'▧ Single View':'▦ Camera Wall';
+    if(running){ var hadLive=scenes.some(function(s){return s.kind==='live';});
+      if(hadLive){ // rebuild preserving live camera
+        var live=new Scene({name:'CAM 01 · LIVE',kind:'live'}); live.video.srcObject=camStream;
+        live.video.play(); gridMode?mountGrid(live):mountSingle(live);
+      } else { gridMode?mountGrid(null):mountSingle(new Scene({name:'CAM 01 · STREET',kind:'sim',theme:'street'})); }
+    }
+  };
+  document.getElementById('btnOCR').onclick=function(){
+    var self=this;
+    if(ocrOn){ ocrOn=false; self.classList.remove('on'); toast('Plate OCR off.'); return; }
+    loadOCR().then(function(){ ocrOn=true; self.classList.add('on');
+      toast('Plate OCR active — reading vehicle plates on-device.'); })
+      .catch(function(){ toast('OCR engine could not load (needs network for first-run model).'); });
+  };
+  document.getElementById('btnCam').onclick   =function(){ startCamera('camera'); };
+  document.getElementById('btnScreen').onclick=function(){ startCamera('screen'); };
+  document.getElementById('btnDemo').onclick  =function(){ gridMode=false;
+    document.getElementById('btnGrid').classList.remove('on');
+    document.getElementById('btnGrid').textContent='▦ Camera Wall'; startDemo(); };
+  document.getElementById('btnGrid').classList.remove('on');
+  document.getElementById('btnStop').onclick  =function(){ stopAll(); toast('Feeds stopped.'); };
+  document.getElementById('bootCam').onclick  =function(){ startCamera('camera'); };
+  document.getElementById('bootGrid').onclick =function(){ gridMode=true;
+    document.getElementById('btnGrid').classList.add('on');
+    document.getElementById('btnGrid').textContent='▧ Single View'; startDemo(); };
+  document.getElementById('bootDemo').onclick =function(){ startDemo(); };
+
+  if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)){
+    document.getElementById('btnCam').disabled=true; document.getElementById('bootCam').disabled=true;
+    loadMsg.textContent='Camera API unavailable here — Demo & Camera Wall still run.';
+  }
+})();
+</script>
+<!-- cg-related:start -->
+<aside id="cg-related" class="cgr-dock">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}#cg-related.cgr-dock{position:fixed;left:14px;bottom:14px;margin:0;padding:0;max-width:none;z-index:2147483000}#cg-related.cgr-dock .cgr-tab{display:inline-block;cursor:pointer;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#dbe4ff;padding:8px 12px;border-radius:9px;border:1px solid rgba(124,150,255,.42);background:linear-gradient(180deg,rgba(18,20,42,.92),rgba(11,12,28,.92));box-shadow:0 6px 22px rgba(0,0,0,.4);backdrop-filter:blur(6px);user-select:none}#cg-related.cgr-dock .cgr-tab:hover{color:#fff;border-color:rgba(124,150,255,.85)}#cg-related.cgr-dock .cgr-box{display:none;position:absolute;bottom:calc(100% + 8px);left:0;width:min(400px,92vw);max-height:62vh;overflow-y:auto}#cg-related.cgr-dock:hover .cgr-box,#cg-related.cgr-dock:focus-within .cgr-box{display:block}#cg-related.cgr-dock ul{grid-template-columns:1fr}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="percival-os.html">Command &amp; Autonomous Operations</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="percival-build.html"><span><b>Previous</b>PERCIVAL BUILD</span></a>
+      <a href="percival-os.html"><span><b>Topic hub</b>PERCIVAL OS</span></a>
+      <a href="command-center.html"><span><b>Next in journey</b>Command Center</span></a>
+    </div>
+    <ul>
+      <li><a href="command-center.html"><b>Command Center</b> — executive security operations deck</a></li>
+      <li><a href="artemis-percival.html"><b>AVALON</b> — the ARTEMIS ⊕ PERCIVAL unified fusion core</a></li>
+      <li><a href="agentmesh.html"><b>Agent Mesh</b> — multi-agent OSINT orchestration</a></li>
+      <li><a href="ai-operator.html"><b>AI Operator Workspace</b> — human-in-the-loop agent operations</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="offers/index.html">Browse services &amp; engagements</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+  <div class="cgr-tab" tabindex="0" role="button" aria-label="Show related ClearGlass pages">⌁ Explore ClearGlass</div>
+</aside>
+<!-- cg-related:end -->
+<script src="/assets/js/cg-design-system.js" defer></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

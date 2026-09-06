@@ -1,0 +1,148 @@
+/* ClearGlass · Command-Center atmosphere layer
+   A reusable, GPU-friendly "mission control" ambience: layered glass depth,
+   a digital grid, volumetric glow, a cursor-reactive light, and scanning beams.
+   Purely decorative — sits behind content (pointer-events:none, negative z) so
+   it never affects layout, focus, or Core Web Vitals (no CLS).
+   All motion is disabled under prefers-reduced-motion. No fabricated data lives
+   here; this file only provides atmosphere and opt-in animation hooks. */
+
+:root {
+  --cc-mx: 50%;            /* cursor position, updated by command-center.js */
+  --cc-my: 30%;
+  --cc-accent: 56, 217, 255;    /* cyan, matches the token system */
+  --cc-accent2: 157, 124, 255;  /* violet */
+  --cc-energy: 244, 63, 94;     /* restrained red energy diffusion */
+}
+
+/* ---- background stack -------------------------------------------------- */
+#cc-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  contain: strict;               /* isolate paint/layout for performance */
+}
+
+#cc-bg .cc-layer { position: absolute; inset: -10%; will-change: transform, opacity; }
+
+/* digital grid — perspective floor of a command room */
+#cc-bg .cc-grid {
+  background-image:
+    linear-gradient(rgba(var(--cc-accent), .10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--cc-accent), .10) 1px, transparent 1px);
+  background-size: 46px 46px, 46px 46px;
+  mask-image: radial-gradient(120% 90% at 50% 0%, #000 30%, transparent 78%);
+  animation: cc-grid-drift 26s linear infinite;
+}
+
+/* volumetric glow + restrained red energy diffusion beneath panels */
+#cc-bg .cc-volume {
+  background:
+    radial-gradient(60% 45% at 20% 12%, rgba(var(--cc-accent), .16), transparent 60%),
+    radial-gradient(55% 45% at 82% 8%, rgba(var(--cc-accent2), .16), transparent 58%),
+    radial-gradient(70% 60% at 50% 108%, rgba(var(--cc-energy), .10), transparent 60%);
+  animation: cc-breathe 12s ease-in-out infinite;
+}
+
+/* adaptive glow that follows the cursor */
+#cc-bg .cc-cursor {
+  background: radial-gradient(
+    360px 360px at var(--cc-mx) var(--cc-my),
+    rgba(var(--cc-accent), .14), transparent 70%);
+  transition: background-position .2s ease-out;
+}
+
+/* the neural / particle field is drawn to this canvas */
+#cc-bg .cc-field { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* slow scanning beam sweeping the surface */
+#cc-bg .cc-beam {
+  inset: auto -20% 12% -20%;
+  height: 210px;
+  background: linear-gradient(90deg, transparent,
+    rgba(var(--cc-accent), .12), rgba(var(--cc-accent2), .10), transparent);
+  transform: rotate(-7deg);
+  filter: blur(22px);
+  animation: cc-sweep 15s ease-in-out infinite;
+}
+
+/* ---- opt-in component polish (applied via classes/attrs on the page) --- */
+
+/* .cc-glass — premium multi-blur glass panel */
+.cc-glass {
+  background: linear-gradient(180deg, rgba(18, 30, 62, .46), rgba(9, 18, 38, .56));
+  border: 1px solid rgba(var(--cc-accent), .22);
+  border-radius: 18px;
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .10);
+}
+
+/* subtle levitation for opted-in cards */
+.cc-float { animation: cc-float 7s ease-in-out infinite; will-change: transform; }
+.cc-float:nth-child(3n) { animation-duration: 8.5s; }
+.cc-float:nth-child(3n+1) { animation-duration: 6.2s; }
+
+/* neon edge trace on hover */
+.cc-trace { position: relative; }
+.cc-trace::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  padding: 1px; pointer-events: none; opacity: 0; transition: opacity .3s ease;
+  background: linear-gradient(120deg,
+    rgba(var(--cc-accent), .8), rgba(var(--cc-accent2), .5), transparent 60%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+}
+.cc-trace:hover::after { opacity: 1; }
+
+/* pulsing status dot */
+.cc-status { display: inline-block; width: .58em; height: .58em; border-radius: 50%;
+  background: rgba(var(--cc-accent), 1); box-shadow: 0 0 10px rgba(var(--cc-accent), .9);
+  animation: cc-pulse 2.4s ease-in-out infinite; }
+.cc-status.cc-warn { background: rgb(var(--cc-energy)); box-shadow: 0 0 10px rgba(var(--cc-energy), .9); }
+
+/* gradient-animated emphasis text */
+.cc-gradient-text {
+  background: linear-gradient(100deg,
+    rgb(var(--cc-accent)), rgb(var(--cc-accent2)), rgb(var(--cc-accent)));
+  background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: cc-shift 8s linear infinite;
+}
+
+/* ambient "thinking" toast stack */
+#cc-toasts {
+  position: fixed; right: 18px; bottom: 18px; z-index: 60;
+  display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+  max-width: min(360px, 82vw);
+}
+.cc-toast {
+  font: 500 13px/1.4 Inter, system-ui, sans-serif;
+  color: #dff2ff; padding: 11px 14px; border-radius: 12px;
+  background: linear-gradient(180deg, rgba(18, 30, 62, .8), rgba(9, 18, 38, .86));
+  border: 1px solid rgba(var(--cc-accent), .3);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, .4);
+  opacity: 0; transform: translateY(8px);
+  transition: opacity .4s ease, transform .4s ease;
+}
+.cc-toast.cc-in { opacity: 1; transform: translateY(0); }
+.cc-toast .cc-status { margin-right: 8px; vertical-align: middle; }
+
+/* ---- keyframes --------------------------------------------------------- */
+@keyframes cc-grid-drift { to { transform: translate3d(0, 46px, 0); } }
+@keyframes cc-breathe { 0%, 100% { opacity: .85; } 50% { opacity: 1; } }
+@keyframes cc-sweep { 0%, 100% { transform: rotate(-7deg) translateX(-8%); opacity: .5; }
+  50% { transform: rotate(-7deg) translateX(8%); opacity: .9; } }
+@keyframes cc-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@keyframes cc-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .55; transform: scale(.85); } }
+@keyframes cc-shift { to { background-position: 220% 0; } }
+
+/* ---- accessibility: motion off ---------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  #cc-bg .cc-grid, #cc-bg .cc-volume, #cc-bg .cc-beam,
+  .cc-float, .cc-status, .cc-gradient-text { animation: none !important; }
+  #cc-bg .cc-field { display: none; }         /* no canvas animation */
+  .cc-toast { transition: opacity .2s linear; }
+}
