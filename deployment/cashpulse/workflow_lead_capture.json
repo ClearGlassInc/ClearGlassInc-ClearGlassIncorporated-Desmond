@@ -1,0 +1,160 @@
+{
+  "name": "CashPulse — Lead Capture & Speed-to-Lead (Workflow A)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cashpulse/lead",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "webhook-lead",
+      "name": "Inbound Lead Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300],
+      "webhookId": "cashpulse-lead"
+    },
+    {
+      "parameters": {
+        "url": "https://person.clearbit.com/v2/combined/find?email={{$json.email}}",
+        "options": {}
+      },
+      "id": "enrich",
+      "name": "Enrich (Clearbit)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Lead scoring — mirrors bots/cashpulse_revenue_bot.py::score_lead\nconst ROLE_WEIGHTS = { owner:25, ceo:25, founder:25, vp:20, director:18, head:18, manager:12, lead:10, analyst:5, intern:0, student:0 };\nconst SIGNAL_WEIGHTS = { explicit_budget:30, rfp_mentioned:20, competitor_named:15, timeline_under_30d:20, timeline_under_90d:10 };\nconst FREE = ['gmail.com','yahoo.com','hotmail.com','outlook.com'];\nconst out = [];\nfor (const item of items) {\n  const j = item.json;\n  let score = 0; const reasons = [];\n  const role = (j.role || '').toLowerCase();\n  let rolePts = 0; for (const k of Object.keys(ROLE_WEIGHTS)) if (role.includes(k)) rolePts = Math.max(rolePts, ROLE_WEIGHTS[k]);\n  score += rolePts; if (rolePts) reasons.push(`role:${role}:+${rolePts}`);\n  const size = j.company_size || 0;\n  if (size >= 200) { score += 20; reasons.push('size:200+:+20'); }\n  else if (size >= 50) { score += 12; reasons.push('size:50-199:+12'); }\n  else if (size >= 10) { score += 6; reasons.push('size:10-49:+6'); }\n  const domain = (j.email || '').split('@')[1] || '';\n  if (domain && !FREE.includes(domain)) { score += 10; reasons.push('business_email:+10'); }\n  else if (FREE.includes(domain)) { score -= 10; reasons.push('freemail:-10'); }\n  for (const sig of (j.signals || [])) { const w = SIGNAL_WEIGHTS[sig] || 0; if (w) { score += w; reasons.push(`signal:${sig}:+${w}`); } }\n  const deal = Number(j.deal_size_estimate || 0);\n  if (deal >= 10000) { score += 15; reasons.push('deal>=10k:+15'); }\n  else if (deal >= 2500) { score += 8; reasons.push('deal>=2.5k:+8'); }\n  score = Math.max(0, Math.min(100, score));\n  const tier = score >= 75 ? 'A' : score >= 50 ? 'B' : 'C';\n  const requires_owner_alert = tier === 'A' && deal >= 10000;\n  out.push({ json: { ...j, score, tier, reasons, requires_owner_alert } });\n}\nreturn out;"
+      },
+      "id": "score",
+      "name": "Score Lead",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://api.anthropic.com/v1/messages",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParametersJson": "={\"model\":\"{{$env.CLAUDE_DRAFTING_MODEL}}\",\"max_tokens\":400,\"system\":\"Draft a 90-word reply to a new inbound lead. Warm, specific, no fluff. Include the booking link {{$env.BOOKING_LINK}} and one qualifying question.\",\"messages\":[{\"role\":\"user\",\"content\":\"Lead: {{$json.full_name}} at {{$json.company}} ({{$json.role}}). Tier: {{$json.tier}}. Message: {{$json.message}}\"}]}"
+      },
+      "id": "draft-reply",
+      "name": "Draft Reply (Claude)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [860, 300]
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "subject": "Quick reply — {{$json.company}}",
+        "message": "={{$json.draft_body}}",
+        "toEmail": "={{$json.email}}"
+      },
+      "id": "send-email",
+      "name": "Send Reply (Gmail)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [1080, 240],
+      "credentials": { "gmailOAuth2": { "id": "GMAIL_CRED_ID", "name": "Gmail" } }
+    },
+    {
+      "parameters": {
+        "from": "={{$env.TWILIO_FROM_NUMBER}}",
+        "to": "={{$json.phone}}",
+        "message": "Hey {{$json.full_name}} — got your note. Replied via email with a 15-min slot: {{$env.BOOKING_LINK}}"
+      },
+      "id": "send-sms",
+      "name": "SMS Nudge (Twilio)",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [1080, 360],
+      "credentials": { "twilioApi": { "id": "TWILIO_CRED_ID", "name": "Twilio" } }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            { "value1": "={{$json.requires_owner_alert}}", "value2": true }
+          ]
+        }
+      },
+      "id": "if-alert-owner",
+      "name": "Owner Alert?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1300, 300]
+    },
+    {
+      "parameters": {
+        "channel": "={{$env.SLACK_APPROVALS_CHANNEL}}",
+        "text": "🔥 A-tier lead: *{{$json.full_name}}* at *{{$json.company}}* ({{$json.role}}) — est ${{$json.deal_size_estimate}}. Score {{$json.score}}. Reply already sent."
+      },
+      "id": "slack-alert",
+      "name": "Slack Owner Alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
+      "position": [1520, 240],
+      "credentials": { "slackApi": { "id": "SLACK_CRED_ID", "name": "Slack" } }
+    },
+    {
+      "parameters": {
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/bot_actions",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParametersJson": "={\"workflow\":\"lead_capture\",\"action\":\"reply_sent\",\"target\":\"{{$json.email}}\",\"payload_hash\":\"{{$json.payload_hash}}\",\"actor\":\"cashpulse-bot\",\"requires_approval\":false}"
+      },
+      "id": "audit-log",
+      "name": "Write Audit Log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1740, 300]
+    }
+  ],
+  "connections": {
+    "Inbound Lead Webhook": { "main": [[{ "node": "Enrich (Clearbit)", "type": "main", "index": 0 }]] },
+    "Enrich (Clearbit)": { "main": [[{ "node": "Score Lead", "type": "main", "index": 0 }]] },
+    "Score Lead": { "main": [[{ "node": "Draft Reply (Claude)", "type": "main", "index": 0 }]] },
+    "Draft Reply (Claude)": {
+      "main": [[
+        { "node": "Send Reply (Gmail)", "type": "main", "index": 0 },
+        { "node": "SMS Nudge (Twilio)", "type": "main", "index": 0 }
+      ]]
+    },
+    "Send Reply (Gmail)": { "main": [[{ "node": "Owner Alert?", "type": "main", "index": 0 }]] },
+    "Owner Alert?": {
+      "main": [
+        [{ "node": "Slack Owner Alert", "type": "main", "index": 0 }],
+        [{ "node": "Write Audit Log", "type": "main", "index": 0 }]
+      ]
+    },
+    "Slack Owner Alert": { "main": [[{ "node": "Write Audit Log", "type": "main", "index": 0 }]] }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "tags": ["cashpulse", "revenue", "lead-capture"]
+}

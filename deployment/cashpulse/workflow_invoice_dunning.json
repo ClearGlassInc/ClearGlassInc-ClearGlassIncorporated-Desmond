@@ -1,0 +1,173 @@
+{
+  "name": "CashPulse — Invoice Dunning (Workflow B)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "hours", "hoursInterval": 6 }
+          ]
+        }
+      },
+      "id": "trigger-cron",
+      "name": "Every 6h",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "additionalFields": {
+          "status": "open"
+        }
+      },
+      "id": "list-invoices",
+      "name": "List Open Invoices (Stripe)",
+      "type": "n8n-nodes-base.stripe",
+      "typeVersion": 1,
+      "position": [420, 300],
+      "credentials": { "stripeApi": { "id": "STRIPE_CRED_ID", "name": "Stripe" } }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Compute next dunning step per invoice. Mirrors bots/cashpulse_revenue_bot.py::DUNNING_SCHEDULE\nconst SCHEDULE = [\n  { offset: -3, stage: 'pre_due_friendly', tone: 'friendly_heads_up', requires_approval: false },\n  { offset:  0, stage: 'due_today',         tone: 'polite_reminder',     requires_approval: false },\n  { offset:  3, stage: 'soft_followup',     tone: 'polite_reminder',     requires_approval: false },\n  { offset:  7, stage: 'firm_followup',     tone: 'firm_but_friendly',   requires_approval: false },\n  { offset: 14, stage: 'escalation_owner_cc', tone: 'firm_with_owner_cc', requires_approval: true },\n  { offset: 30, stage: 'payment_plan_offer',  tone: 'payment_plan_offer', requires_approval: true },\n  { offset: 45, stage: 'collections_handoff', tone: 'final_notice',       requires_approval: true }\n];\nconst today = new Date(); today.setHours(0,0,0,0);\nconst out = [];\nfor (const item of items) {\n  const inv = item.json;\n  if (inv.paid || inv.unsubscribed) continue;\n  const due = new Date(inv.due_on || inv.due_date);\n  for (const step of SCHEDULE) {\n    const sendOn = new Date(due); sendOn.setDate(sendOn.getDate() + step.offset);\n    if (sendOn.toDateString() === today.toDateString()) {\n      out.push({ json: { ...inv, ...step, send_on: sendOn.toISOString() } });\n      break;\n    }\n  }\n}\nreturn out;"
+      },
+      "id": "compute-step",
+      "name": "Compute Next Dunning Step",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/bot_suppression?contact=eq.{{$json.customer_email}}",
+        "options": {}
+      },
+      "id": "check-suppression",
+      "name": "Check Suppression List",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [860, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            { "value1": "={{$json.suppressed === true}}", "value2": false }
+          ]
+        }
+      },
+      "id": "if-not-suppressed",
+      "name": "If Not Suppressed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1080, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            { "value1": "={{$json.requires_approval}}", "value2": true }
+          ]
+        }
+      },
+      "id": "if-needs-approval",
+      "name": "Approval Required?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1300, 300]
+    },
+    {
+      "parameters": {
+        "channel": "={{$env.SLACK_APPROVALS_CHANNEL}}",
+        "text": "Approve dunning step *{{$json.stage}}* for invoice {{$json.invoice_id}} ({{$json.amount}} due {{$json.due_on}})?",
+        "otherOptions": {}
+      },
+      "id": "slack-approval",
+      "name": "Slack Approval Request",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
+      "position": [1520, 200],
+      "credentials": { "slackApi": { "id": "SLACK_CRED_ID", "name": "Slack" } }
+    },
+    {
+      "parameters": {
+        "url": "https://api.anthropic.com/v1/messages",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParametersJson": "={\"model\":\"{{$env.CLAUDE_DRAFTING_MODEL}}\",\"max_tokens\":600,\"system\":\"You are CashPulse drafting a {{$json.tone}} email to a customer about invoice {{$json.invoice_id}} ({{$json.amount}}). Keep it under 120 words. Include the payment link. Tone matches the stage. Never threaten.\",\"messages\":[{\"role\":\"user\",\"content\":\"Draft the email body only. Customer: {{$json.customer_email}}. Days past due: {{$json.days_past_due}}.\"}]}"
+      },
+      "id": "draft-email",
+      "name": "Draft Email (Claude)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1520, 400]
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "subject": "Invoice {{$json.invoice_id}} — quick note",
+        "message": "={{$json.draft_body}}",
+        "toEmail": "={{$json.customer_email}}"
+      },
+      "id": "send-email",
+      "name": "Send Email (Gmail)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [1740, 400],
+      "credentials": { "gmailOAuth2": { "id": "GMAIL_CRED_ID", "name": "Gmail" } }
+    },
+    {
+      "parameters": {
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/bot_actions",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParametersJson": "={\"workflow\":\"invoice_dunning\",\"action\":\"send_email\",\"target\":\"{{$json.invoice_id}}\",\"payload_hash\":\"{{$json.payload_hash}}\",\"actor\":\"cashpulse-bot\",\"requires_approval\":{{$json.requires_approval}}}"
+      },
+      "id": "audit-log",
+      "name": "Write Audit Log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1960, 400]
+    }
+  ],
+  "connections": {
+    "Every 6h": { "main": [[{ "node": "List Open Invoices (Stripe)", "type": "main", "index": 0 }]] },
+    "List Open Invoices (Stripe)": { "main": [[{ "node": "Compute Next Dunning Step", "type": "main", "index": 0 }]] },
+    "Compute Next Dunning Step": { "main": [[{ "node": "Check Suppression List", "type": "main", "index": 0 }]] },
+    "Check Suppression List": { "main": [[{ "node": "If Not Suppressed", "type": "main", "index": 0 }]] },
+    "If Not Suppressed": { "main": [[{ "node": "Approval Required?", "type": "main", "index": 0 }], []] },
+    "Approval Required?": {
+      "main": [
+        [{ "node": "Slack Approval Request", "type": "main", "index": 0 }],
+        [{ "node": "Draft Email (Claude)", "type": "main", "index": 0 }]
+      ]
+    },
+    "Slack Approval Request": { "main": [[{ "node": "Draft Email (Claude)", "type": "main", "index": 0 }]] },
+    "Draft Email (Claude)": { "main": [[{ "node": "Send Email (Gmail)", "type": "main", "index": 0 }]] },
+    "Send Email (Gmail)": { "main": [[{ "node": "Write Audit Log", "type": "main", "index": 0 }]] }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "tags": ["cashpulse", "revenue", "dunning"]
+}

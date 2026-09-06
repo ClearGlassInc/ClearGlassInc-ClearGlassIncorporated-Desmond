@@ -1,0 +1,239 @@
+{
+  "name": "ClearGlass RFED — Governed Agent Action & Audit Trail",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "rfed/propose",
+        "responseMode": "lastNode",
+        "options": { "rawBody": true }
+      },
+      "id": "webhook-propose",
+      "name": "Proposed Action Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 400],
+      "webhookId": "rfed-propose"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Zero-trust ingress: the caller is authenticated before anything is read.\n// HMAC-SHA256 over the raw body, constant-time compared, with a replay window.\n// A proposal that fails here never reaches the model.\nconst crypto = require('crypto');\n\nconst SECRET = $env.RFED_WEBHOOK_SECRET;\nconst MAX_SKEW_SECONDS = 300;\n\nif (!SECRET) {\n  throw new Error('RFED_WEBHOOK_SECRET is unset — refusing to accept unsigned proposals (fail closed)');\n}\n\nconst out = [];\nfor (const item of $input.all()) {\n  const headers = item.json.headers || {};\n  const rawBody = item.json.body === undefined ? '' : (typeof item.json.body === 'string' ? item.json.body : JSON.stringify(item.json.body));\n  const signature = headers['x-clearglass-signature'] || '';\n  const timestamp = headers['x-clearglass-timestamp'] || '';\n\n  if (!signature || !timestamp) {\n    throw new Error('missing x-clearglass-signature / x-clearglass-timestamp');\n  }\n\n  const skew = Math.abs(Math.floor(Date.now() / 1000) - Number(timestamp));\n  if (!Number.isFinite(skew) || skew > MAX_SKEW_SECONDS) {\n    throw new Error(`timestamp outside ${MAX_SKEW_SECONDS}s replay window`);\n  }\n\n  const expected = crypto.createHmac('sha256', SECRET).update(`${timestamp}.${rawBody}`).digest('hex');\n  const a = Buffer.from(expected, 'utf8');\n  const b = Buffer.from(String(signature), 'utf8');\n  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {\n    throw new Error('signature mismatch — proposal rejected');\n  }\n\n  const payload = typeof item.json.body === 'string' ? JSON.parse(item.json.body) : item.json.body;\n  out.push({ json: { ...payload, _raw_body: rawBody, _verified: true } });\n}\nreturn out;"
+      },
+      "id": "verify-signature",
+      "name": "Verify Caller (HMAC)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [420, 400]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select chain_hash from rfed_records order by occurred_at desc, ctid desc limit 1;"
+      },
+      "id": "fetch-head",
+      "name": "Fetch Chain Head",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [640, 400],
+      "credentials": { "postgres": { "id": "RFED_PG_CRED_ID", "name": "RFED Ledger" } }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select source, reference, content_digest, retrieved_at, trusted from rfed_fact_sources where target = $1 and active = true;",
+        "options": { "queryReplacement": "={{ $('Verify Caller (HMAC)').item.json.target }}" }
+      },
+      "id": "fetch-facts",
+      "name": "Retrieve Grounding Facts",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [860, 400],
+      "credentials": { "postgres": { "id": "RFED_PG_CRED_ID", "name": "RFED Ledger" } }
+    },
+    {
+      "parameters": {
+        "url": "https://api.anthropic.com/v1/messages",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: $env.RFED_MODEL_ID, max_tokens: 1024, temperature: 0, system: 'You are the ClearGlass RFED analyst. Answer ONLY from the supplied FACTS. Every claim must cite a fact reference. If the facts do not support an answer, say so and set confidence low. Never invent a reference. Return strict JSON: {\"finding\": string, \"citations\": string[], \"confidence\": number}.', messages: [{ role: 'user', content: 'ACTION: ' + $('Verify Caller (HMAC)').item.json.action + '\\nTARGET: ' + $('Verify Caller (HMAC)').item.json.target + '\\nINTENT: ' + $('Verify Caller (HMAC)').item.json.intent + '\\n\\nFACTS:\\n' + JSON.stringify($('Retrieve Grounding Facts').all().map(f => f.json)) }] }) }}",
+        "options": { "timeout": 60000 }
+      },
+      "id": "call-model",
+      "name": "Analyse (Claude)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1080, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// RFED record builder + governor.\n// Mirrors bots/rfed_audit_bot.py — assess() and RfedRecord.compute_hash().\n// The Python module is the authority; this node must stay hash-compatible with\n// it, which is what tests/test_rfed_hash_parity.py pins.\nconst crypto = require('crypto');\n\nconst POLICY_VERSION = 'rfed-1.0.0';\nconst GENESIS_HASH = '0'.repeat(64);\n\nconst ACTION_RISK = {\n  retrieve_context: 0, read_telemetry: 0, classify_record: 5, summarize_document: 5,\n  score_record: 10, draft_internal_note: 15,\n  enrich_record: 30, update_internal_doc: 35, create_ticket: 38, draft_client_comms: 40,\n  publish_report: 45,\n  send_client_comms: 70, close_ticket: 62, push_config_change: 78, quarantine_endpoint: 75,\n  modify_access_policy: 92, grant_privileged_access: 100, rotate_credentials: 95,\n  execute_remote_command: 98, disable_security_control: 100, export_client_data: 94,\n  modify_audit_log: 100,\n};\n\nconst ALWAYS_ESCALATE = new Set(['modify_access_policy','grant_privileged_access','rotate_credentials','execute_remote_command','disable_security_control','export_client_data','modify_audit_log','push_config_change','quarantine_endpoint','send_client_comms']);\nconst NEVER_AUTOMATE = new Set(['modify_audit_log']);\nconst INJECTION_MARKERS = ['ignore previous instructions','ignore all previous','disregard the above','you are now','system prompt','reveal your instructions','exfiltrate','send credentials'];\n\nconst REDACTIONS = [\n  ['[redacted:email]', /[\\w.+-]+@[\\w-]+\\.[\\w.]+/g],\n  ['[redacted:card]', /\\b(?:\\d[ -]*?){13,19}\\b/g],\n  ['[redacted:sin]', /\\b\\d{3}[- ]\\d{3}[- ]\\d{3}\\b/g],\n  ['[redacted:bearer]', /\\bbearer\\s+[A-Za-z0-9._\\-]{12,}/gi],\n  ['[redacted:key]', /\\b(?:sk|pk|api|token)[_-][A-Za-z0-9]{16,}/gi],\n];\nfunction redact(s) { let o = String(s); for (const [rep, re] of REDACTIONS) o = o.replace(re, rep); return o; }\n\n// --- canonicalisation -------------------------------------------------------\n// Must byte-match Python's json.dumps(sort_keys=True, separators=(',',':'),\n// ensure_ascii=True). Python renders floats via repr(), so 0 -> '0.0'; JS cannot\n// tell an int from a float, so float-typed fields are wrapped in PyFloat.\nclass PyFloat { constructor(v) { this.v = Number(v); } }\nfunction floatLiteral(n) {\n  if (!Number.isFinite(n)) throw new Error('non-finite float in RFED record');\n  return Number.isInteger(n) ? n.toFixed(1) : String(n);\n}\nfunction canonical(value) {\n  if (value instanceof PyFloat) return floatLiteral(value.v);\n  if (value === null || typeof value !== 'object') return JSON.stringify(value);\n  if (Array.isArray(value)) return '[' + value.map(canonical).join(',') + ']';\n  return '{' + Object.keys(value).sort().map(k => JSON.stringify(k) + ':' + canonical(value[k])).join(',') + '}';\n}\nfunction asciiEscape(s) {\n  return s.replace(/[\\u007f-\\uffff]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'));\n}\nfunction sha256(s) { return crypto.createHash('sha256').update(s, 'utf8').digest('hex'); }\nfunction digest(obj) { return sha256(asciiEscape(canonical(obj))); }\n\n// --- governor ---------------------------------------------------------------\nfunction tierFor(score) {\n  if (score >= 90) return 'critical';\n  if (score >= 60) return 'high';\n  if (score >= 30) return 'medium';\n  return 'low';\n}\n\nfunction assess(action, facts, evidence, payload) {\n  payload = payload || {};\n  const reasons = [];\n  let base = ACTION_RISK[action];\n  if (base === undefined) { reasons.push(`unknown action '${action}' — defaulting to high risk (fail closed)`); base = 85; }\n  let score = base;\n\n  if (payload.scope === 'all' || payload.bulk === true) { score = Math.min(100, score + 8); reasons.push('affects all managed assets / bulk operation'); }\n  if (payload.outside_change_window === true) { score = Math.min(100, score + 6); reasons.push('executes outside the agreed change window'); }\n\n  const ungrounded = !evidence.citations || evidence.citations.length === 0;\n  if (ungrounded) { score = Math.min(100, score + 15); reasons.push('model cited no facts — output is ungrounded and cannot be audited'); }\n\n  const lowConfidence = evidence.confidence < 0.75;\n  if (lowConfidence) { score = Math.min(100, score + 12); reasons.push(`model confidence ${evidence.confidence.toFixed(2)} below threshold 0.75`); }\n\n  const tainted = [];\n  for (const f of facts) {\n    if (f.trusted) continue;\n    const hay = `${f.source} ${f.reference}`.toLowerCase();\n    const hit = INJECTION_MARKERS.find(m => hay.includes(m));\n    if (hit) tainted.push(`${f.source}:${hit}`);\n  }\n  if (tainted.length) { score = Math.min(100, score + 20); reasons.push(`possible prompt injection in untrusted facts: ${tainted.join(', ')}`); }\n\n  const known = new Set(facts.map(f => f.reference));\n  const dangling = (evidence.citations || []).filter(c => !known.has(c));\n  if (dangling.length) { score = Math.min(100, score + 25); reasons.push(`citations not present in supplied facts: ${dangling.slice().sort().join(', ')}`); }\n\n  const tier = tierFor(score);\n  let requiresApproval = ['high','critical'].includes(tier) || ALWAYS_ESCALATE.has(action) || ungrounded || lowConfidence || tainted.length > 0 || dangling.length > 0;\n  if (ALWAYS_ESCALATE.has(action)) reasons.push('action is in the always-escalate set (access / credentials / outbound)');\n\n  let route;\n  if (NEVER_AUTOMATE.has(action)) { route = 'blocked'; reasons.push('action is never automatable — ledger integrity is non-negotiable'); }\n  else if (requiresApproval) { route = 'queued_for_approval'; reasons.push('hard gate enabled — cannot auto-execute'); }\n  else { route = 'auto_executed'; reasons.push('auto-executable: reversible, grounded, low risk'); }\n\n  return { score, tier, route, requires_approval: requiresApproval || route === 'blocked', reasons, approved_by: null, approved_at: null };\n}\n\n// --- build ------------------------------------------------------------------\nconst proposal = $('Verify Caller (HMAC)').first().json;\nconst headRow = $('Fetch Chain Head').all()[0];\nconst prevHash = (headRow && headRow.json && headRow.json.chain_hash) ? headRow.json.chain_hash : GENESIS_HASH;\nconst facts = $('Retrieve Grounding Facts').all().map(f => ({\n  source: f.json.source,\n  reference: f.json.reference,\n  content_digest: f.json.content_digest,\n  retrieved_at: f.json.retrieved_at,\n  trusted: f.json.trusted !== false,\n}));\n\nconst raw = $input.first().json;\nlet analysis = { finding: '', citations: [], confidence: 0 };\ntry {\n  const text = (raw.content && raw.content[0] && raw.content[0].text) || '{}';\n  analysis = { ...analysis, ...JSON.parse(text) };\n} catch (e) {\n  // Unparseable model output is a zero-confidence, uncited result. It will be\n  // gated by the ungrounded + low-confidence signals rather than crashing.\n  analysis = { finding: 'unparseable model output', citations: [], confidence: 0 };\n}\n\nconst usage = raw.usage || {};\nconst evidence = {\n  model_id: raw.model || $env.RFED_MODEL_ID,\n  provider: 'anthropic',\n  temperature: new PyFloat(0),\n  max_tokens: 1024,\n  prompt_digest: digest({ action: proposal.action, target: proposal.target, facts }),\n  output_digest: digest(analysis),\n  output_excerpt: redact(String(analysis.finding)).slice(0, 500),\n  confidence: new PyFloat(analysis.confidence),\n  citations: analysis.citations || [],\n  input_tokens: usage.input_tokens || 0,\n  output_tokens: usage.output_tokens || 0,\n};\n\nconst decision = assess(proposal.action, facts, { citations: evidence.citations, confidence: Number(analysis.confidence) }, proposal.payload || {});\n\nconst body = {\n  record_id: crypto.randomUUID(),\n  occurred_at: new Date().toISOString().replace(/\\.\\d{3}Z$/, 'Z'),\n  policy_version: POLICY_VERSION,\n  prev_hash: prevHash,\n  request: {\n    actor: 'n8n:rfed-audit-trail',\n    workflow: proposal.workflow || 'client_zero_trust',\n    action: proposal.action,\n    target: proposal.target,\n    intent: proposal.intent || '',\n    correlation_id: proposal.correlation_id || '',\n    input_digest: sha256(proposal._raw_body || ''),\n  },\n  facts,\n  evidence,\n  decision,\n};\n\nconst chainHash = sha256(prevHash + asciiEscape(canonical(body)));\n\nreturn [{ json: { ...body, evidence: { ...evidence, temperature: evidence.temperature.v, confidence: evidence.confidence.v }, chain_hash: chainHash } }];"
+      },
+      "id": "build-rfed",
+      "name": "Build RFED Record",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 400]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "insert into rfed_records (record_id, occurred_at, policy_version, actor, workflow, action, target, intent, correlation_id, input_digest, facts, model_id, provider, temperature, max_tokens, prompt_digest, output_digest, output_excerpt, confidence, citations, input_tokens, output_tokens, score, tier, route, requires_approval, reasons, prev_hash, chain_hash) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11::jsonb,$12,$13,$14,$15,$16,$17,$18,$19,$20::jsonb,$21,$22,$23,$24,$25,$26,$27::jsonb,$28,$29) returning record_id, chain_hash, route;",
+        "options": {
+          "queryReplacement": "={{ [$json.record_id, $json.occurred_at, $json.policy_version, $json.request.actor, $json.request.workflow, $json.request.action, $json.request.target, $json.request.intent, $json.request.correlation_id, $json.request.input_digest, JSON.stringify($json.facts), $json.evidence.model_id, $json.evidence.provider, $json.evidence.temperature, $json.evidence.max_tokens, $json.evidence.prompt_digest, $json.evidence.output_digest, $json.evidence.output_excerpt, $json.evidence.confidence, JSON.stringify($json.evidence.citations), $json.evidence.input_tokens, $json.evidence.output_tokens, $json.decision.score, $json.decision.tier, $json.decision.route, $json.decision.requires_approval, JSON.stringify($json.decision.reasons), $json.prev_hash, $json.chain_hash] }}"
+        }
+      },
+      "id": "write-ledger",
+      "name": "Append to RFED Ledger",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [1520, 400],
+      "credentials": { "postgres": { "id": "RFED_PG_CRED_ID", "name": "RFED Ledger" } },
+      "notes": "Append-only. The chain-guard trigger rejects any insert whose prev_hash does not match the current head, so a concurrent run fails loudly instead of forking the chain."
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            { "conditions": { "options": { "caseSensitive": true }, "conditions": [ { "leftValue": "={{ $('Build RFED Record').item.json.decision.route }}", "rightValue": "auto_executed", "operator": { "type": "string", "operation": "equals" } } ] }, "outputKey": "auto" },
+            { "conditions": { "options": { "caseSensitive": true }, "conditions": [ { "leftValue": "={{ $('Build RFED Record').item.json.decision.route }}", "rightValue": "queued_for_approval", "operator": { "type": "string", "operation": "equals" } } ] }, "outputKey": "queued" },
+            { "conditions": { "options": { "caseSensitive": true }, "conditions": [ { "leftValue": "={{ $('Build RFED Record').item.json.decision.route }}", "rightValue": "blocked", "operator": { "type": "string", "operation": "equals" } } ] }, "outputKey": "blocked" }
+          ]
+        },
+        "options": { "fallbackOutput": "extra" }
+      },
+      "id": "route-decision",
+      "name": "Route by Decision",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1740, 400],
+      "notes": "Fallback output is wired to the blocked branch: an unroutable decision is treated as blocked, never as executable."
+    },
+    {
+      "parameters": {
+        "url": "={{$env.RFED_EXECUTOR_URL}}",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "authorization", "value": "=Bearer {{$env.RFED_EXECUTOR_TOKEN}}" },
+            { "name": "x-rfed-record", "value": "={{ $('Build RFED Record').item.json.record_id }}" },
+            { "name": "x-rfed-chain", "value": "={{ $('Build RFED Record').item.json.chain_hash }}" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ action: $('Build RFED Record').item.json.request.action, target: $('Build RFED Record').item.json.request.target, dry_run: $env.RFED_DRY_RUN !== 'false' }) }}",
+        "options": { "timeout": 30000 }
+      },
+      "id": "execute-action",
+      "name": "Execute (Low Risk Only)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1980, 260],
+      "notes": "Executor requires the record id + chain hash and re-verifies them against the ledger before acting. Honours RFED_DRY_RUN, which defaults to true."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "insert into rfed_approvals (record_id, rationale) values ($1, $2) returning id;",
+        "options": {
+          "queryReplacement": "={{ [$('Build RFED Record').item.json.record_id, $('Build RFED Record').item.json.decision.reasons.join('; ')] }}"
+        }
+      },
+      "id": "queue-approval",
+      "name": "Queue for Human Approval",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [1980, 400],
+      "credentials": { "postgres": { "id": "RFED_PG_CRED_ID", "name": "RFED Ledger" } }
+    },
+    {
+      "parameters": {
+        "url": "={{$env.SLACK_APPROVAL_WEBHOOK}}",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ text: `RFED approval needed — ${$('Build RFED Record').item.json.request.action} on ${$('Build RFED Record').item.json.request.target}`, blocks: [ { type: 'section', text: { type: 'mrkdwn', text: `*RFED approval required*\\n*Action:* \\`${$('Build RFED Record').item.json.request.action}\\`\\n*Target:* ${$('Build RFED Record').item.json.request.target}\\n*Risk:* ${$('Build RFED Record').item.json.decision.tier} (${$('Build RFED Record').item.json.decision.score}/100)\\n*Model:* \\`${$('Build RFED Record').item.json.evidence.model_id}\\` @ confidence ${$('Build RFED Record').item.json.evidence.confidence}\\n*Finding:* ${$('Build RFED Record').item.json.evidence.output_excerpt}\\n*Why gated:* ${$('Build RFED Record').item.json.decision.reasons.join(' · ')}\\n*Record:* \\`${$('Build RFED Record').item.json.record_id}\\`` } }, { type: 'actions', elements: [ { type: 'button', style: 'primary', text: { type: 'plain_text', text: 'Approve' }, value: $('Build RFED Record').item.json.record_id, action_id: 'rfed_approve' }, { type: 'button', style: 'danger', text: { type: 'plain_text', text: 'Reject' }, value: $('Build RFED Record').item.json.record_id, action_id: 'rfed_reject' } ] } ] }) }}",
+        "options": {}
+      },
+      "id": "notify-approver",
+      "name": "Notify Approver (Slack)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2200, 400],
+      "notes": "Approval is captured by the companion workflow, which verifies the Slack signing secret and appends a NEW ledger row. It never updates the original."
+    },
+    {
+      "parameters": {
+        "url": "={{$env.SLACK_SECURITY_WEBHOOK}}",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ text: `RFED BLOCKED — ${$('Build RFED Record').item.json.request.action} on ${$('Build RFED Record').item.json.request.target}. Reasons: ${$('Build RFED Record').item.json.decision.reasons.join(' · ')}. Record ${$('Build RFED Record').item.json.record_id}.` }) }}",
+        "options": {}
+      },
+      "id": "alert-blocked",
+      "name": "Alert Security (Blocked)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1980, 560],
+      "notes": "A blocked decision is a security event, not a workflow error. It is alerted and left in the ledger for review."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Single response shape for every branch. The caller always learns the record\n// id and the chain hash, so it can verify the decision independently.\nconst r = $('Build RFED Record').first().json;\nreturn [{ json: {\n  record_id: r.record_id,\n  chain_hash: r.chain_hash,\n  route: r.decision.route,\n  tier: r.decision.tier,\n  score: r.decision.score,\n  requires_approval: r.decision.requires_approval,\n  reasons: r.decision.reasons,\n  executed: r.decision.route === 'auto_executed',\n} }];"
+      },
+      "id": "respond",
+      "name": "Respond with Receipt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2420, 400]
+    }
+  ],
+  "connections": {
+    "Proposed Action Webhook": { "main": [[{ "node": "Verify Caller (HMAC)", "type": "main", "index": 0 }]] },
+    "Verify Caller (HMAC)": { "main": [[{ "node": "Fetch Chain Head", "type": "main", "index": 0 }]] },
+    "Fetch Chain Head": { "main": [[{ "node": "Retrieve Grounding Facts", "type": "main", "index": 0 }]] },
+    "Retrieve Grounding Facts": { "main": [[{ "node": "Analyse (Claude)", "type": "main", "index": 0 }]] },
+    "Analyse (Claude)": { "main": [[{ "node": "Build RFED Record", "type": "main", "index": 0 }]] },
+    "Build RFED Record": { "main": [[{ "node": "Append to RFED Ledger", "type": "main", "index": 0 }]] },
+    "Append to RFED Ledger": { "main": [[{ "node": "Route by Decision", "type": "main", "index": 0 }]] },
+    "Route by Decision": {
+      "main": [
+        [{ "node": "Execute (Low Risk Only)", "type": "main", "index": 0 }],
+        [{ "node": "Queue for Human Approval", "type": "main", "index": 0 }],
+        [{ "node": "Alert Security (Blocked)", "type": "main", "index": 0 }],
+        [{ "node": "Alert Security (Blocked)", "type": "main", "index": 0 }]
+      ]
+    },
+    "Execute (Low Risk Only)": { "main": [[{ "node": "Respond with Receipt", "type": "main", "index": 0 }]] },
+    "Queue for Human Approval": { "main": [[{ "node": "Notify Approver (Slack)", "type": "main", "index": 0 }]] },
+    "Notify Approver (Slack)": { "main": [[{ "node": "Respond with Receipt", "type": "main", "index": 0 }]] },
+    "Alert Security (Blocked)": { "main": [[{ "node": "Respond with Receipt", "type": "main", "index": 0 }]] }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "errorWorkflow": "RFED_ERROR_WORKFLOW_ID"
+  },
+  "tags": [{ "name": "clearglass" }, { "name": "rfed" }, { "name": "governed" }],
+  "meta": {
+    "clearglass": {
+      "policy_version": "rfed-1.0.0",
+      "logic_core": "bots/rfed_audit_bot.py",
+      "spec": "docs/rfed_audit_trail_spec.md",
+      "invariant": "read-only analysis -> draft -> human approval -> execution"
+    }
+  }
+}
