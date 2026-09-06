@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+  <meta charset="utf-8" />
+  <script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>CLEARGLASS Guardian Command Nexus Specification</title>
+  <meta name="description" content="Specification for the ClearGlass Guardian Command Nexus — architecture, components, and operational design of the Guardian command platform.">
+  <link rel="stylesheet" href="guardian_command_nexus_spec.css" />
+  <style>
+    code { white-space: pre-wrap; }
+    span.smallcaps { font-variant: small-caps; }
+    div.columns { display: flex; gap: min(4vw, 1.5em); }
+    div.column { flex: auto; overflow-x: auto; }
+    div.hanging-indent { margin-left: 1.5em; text-indent: -1.5em; }
+    ul.task-list[class] { list-style: none; }
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math { display: block; text-align: center; margin: 0.5rem auto; }
+  </style>
+<link rel="stylesheet" href="/assets/css/glass.css">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="../brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">CLEARGLASS Guardian Command Nexus Specification</h1>
+</header>
+<h1 id="spec1-clearglass-guardian-command-nexus">SPEC‑1: CLEARGLASS Guardian Command Nexus</h1>
+<h2 id="purpose-and-scope">1. Purpose and Scope</h2>
+<p>The <strong>Guardian Command Nexus</strong> is the central command‑and‑control dashboard for CLEARGLASSINC’s GUARDIAN suite. It is a single‑page web application that provides operators with real‑time oversight of security workflows, simulated environments and system health. Its cyberpunk aesthetic hides a sophisticated architecture that orchestrates reactive state management, simulations, audit logging and AI‑driven command routing.</p>
+<p>The purpose of this specification is to clearly define the initial production version, inform refactoring of the existing prototype, and provide a base for future extension. In scope are the modules already present in the current HTML artifact—shell kernel, reactive state fabric, simulation grid, audit ledger, operator routing and AI command orchestration—as well as their integration points. Out of scope are detailed implementation of third‑party integrations (e.g. PowerShell modules) or platform‑specific deployment scripts; these may be defined in later specs.</p>
+<h2 id="system-overview">2. System Overview</h2>
+<p>The Command Nexus is architected as a client‑side SPA built with modern JavaScript (ES6+) and an application framework (assumed to be React or Vue given the prototype’s reactive state fabric). The application bootstraps a <strong>shell kernel</strong> that coordinates all subsystems and exposes a command bus to the UI. A <strong>state fabric</strong> holds canonical application state and broadcasts changes via events. A <strong>simulation grid</strong> synthesises sensor and environmental data at a configurable cadence to drive dashboards and AI reasoning. An <strong>audit ledger</strong> records all operator actions and system events with severity levels and metadata. <strong>AI command orchestration</strong> parses natural‑language intents from operators or connected systems and translates them into structured actions. <strong>Operator routing</strong> provides navigation between views (Dashboard, Pipeline, Surveillance, Tasks, AI Console, System) and orchestrates hotkeys and quick actions. The <strong>visual layer</strong> comprises responsive panels, charts and terminal components consistent with the cyberpunk console aesthetic.</p>
+<p>The HTML front end communicates with back‑end services via internal APIs. For the initial version these may be mocked or stubbed; the specification assumes eventual REST or GraphQL endpoints for persistence (audit log export, state snapshots), AI inference and external data feeds. External systems (e.g. network scanners, SOC tools) will integrate through defined interfaces but are not implemented in this revision.</p>
+<h2 id="core-requirements">3. Core Requirements</h2>
+<h3 id="functional-requirements">3.1 Functional Requirements</h3>
+<ul>
+<li><strong>Dashboard view:</strong> Display high‑level metrics from the simulation grid and real operations. Operators can interact with widgets to drill down into pipeline tasks, surveillance feeds and incident timelines.</li>
+<li><strong>Pipeline view:</strong> Visualise and manage workflows such as network scans, security automation or predictive analysis. Tasks move through stages with status indicators.</li>
+<li><strong>Surveillance view:</strong> Present live or simulated sensor feeds (e.g. CCTV, network traffic). Operators can control playback and adjust filters.</li>
+<li><strong>Tasks view:</strong> List assigned tasks, alerts and incidents with sorting and filtering. Operators can acknowledge, snooze or transfer tasks.</li>
+<li><strong>AI console:</strong> Accept natural‑language commands, display parsed intents and proposed actions, and allow operators to confirm execution. Provide a transcript of AI conversations.</li>
+<li><strong>System view:</strong> Show system health (CPU, memory, network) and log messages. Allow administrators to start/stop subsystems.</li>
+<li><strong>Audit logging:</strong> Record all operator actions (navigation, confirmations, command executions), AI actions, and system events with timestamp, severity and context.</li>
+<li><strong>State persistence:</strong> Persist state fabric snapshots and audit ledger entries to local storage or back‑end services. Support schema versioning to handle migrations.</li>
+<li><strong>Simulation controls:</strong> Provide settings to adjust simulation cadence, toggle stochastic/deterministic mode and seed values.</li>
+</ul>
+<h3 id="nonfunctional-requirements">3.2 Non‑Functional Requirements</h3>
+<ul>
+<li><strong>Performance:</strong> The dashboard should render initial content within 2 seconds on modern browsers and maintain 60 fps during interaction. Simulation updates should not block UI rendering.</li>
+<li><strong>Reliability:</strong> The shell kernel must recover gracefully from subsystem failures. Unhandled exceptions should be captured by the audit ledger and displayed in the System view.</li>
+<li><strong>Usability:</strong> The interface shall support keyboard navigation and screen‑reader labels. Hotkeys must not conflict with browser shortcuts.</li>
+<li><strong>Maintainability:</strong> Code should be modularised by subsystem with typed interfaces. Event names and payload shapes should be centralised. Tests should cover reducers, command parsing and critical UI flows.</li>
+<li><strong>Extensibility:</strong> New views and AI intents should be pluggable without changing core modules. The spec defines clear extension points for PowerShell integration and SOC workflows.</li>
+</ul>
+<h2 id="implementation-priority">Implementation Priority</h2>
+<ol type="1">
+<li><strong>Core Framework and State Fabric:</strong> Establish the shell kernel, event bus, reducers, selectors and routing. Implement domain models and ensure persistence with schema versioning.</li>
+<li><strong>Simulation Grid and Dashboard:</strong> Build the simulation scheduler and sensor models, and render dashboard widgets. Provide controls for cadence and mode.</li>
+<li><strong>AI Command Orchestration:</strong> Implement the rule‑based parser, console UI and command execution flow with confirmation dialogues.</li>
+</ol>
+<p><em>Note:</em> This document is intentionally scoped from the provided specification content and preserved as a standalone, styled artifact for ClearGlassInc Artemis documentation.</p>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › <a href="../intelligence.html">Intelligence &amp; OSINT</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="../xenolith.html"><span><b>Previous</b>XENOLITH</span></a>
+      <a href="../intelligence.html"><span><b>Topic hub</b>Intelligence</span></a>
+      <a href="../intelligence.html"><span><b>Next in journey</b>Intelligence</span></a>
+    </div>
+    <ul>
+      <li><a href="../flowsint.html"><b>Flowsint</b> — OSINT investigation graph for domains, IPs and transforms</a></li>
+      <li><a href="../clearglass-nexus.html"><b>ClearGlass NEXUS</b> — full-spectrum intelligence platform</a></li>
+      <li><a href="../Ontario-osint.html"><b>Ontario OSINT Deck</b> — regional open-source intelligence control deck</a></li>
+      <li><a href="../clearglass.html"><b>Network Flow Intelligence</b> — see network traffic as living structure</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="../nav.js"></script>
+<p style="margin:26px 0 0;padding:16px 18px;border:1px solid #30363d;border-radius:8px;background:#161b22"><strong>Want the full blueprint?</strong> This page is the summary. The complete SPEC-1 document — field-level domain model, event payload shapes, parsing tables and acceptance criteria — is available as a digital deliverable: <a href="/offers/guardian-command-nexus-blueprint.html">Guardian Command Nexus Blueprint, CAD $199 →</a></p>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>
