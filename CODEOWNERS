@@ -1,0 +1,49 @@
+# CODEOWNERS — ClearGlass Inc.
+#
+# Each line maps a file pattern to one or more GitHub user/team owners.
+# The LAST matching rule wins. Owners are required reviewers for any PR
+# touching their paths. This file is itself IP-sensitive: changes require
+# the organisation owner's approval.
+
+# ── Default: everything requires the org owner ──────────────────────────────
+*                               @ClearGlassInc
+
+# ── Legal & IP documents ────────────────────────────────────────────────────
+/legal/                         @ClearGlassInc
+/LICENSE                        @ClearGlassInc
+/NOTICE                         @ClearGlassInc
+/SECURITY.md                    @ClearGlassInc
+/CONTRIBUTING.md                @ClearGlassInc
+/TRADEMARKS.md                  @ClearGlassInc
+/docs/IP-POLICY.md              @ClearGlassInc
+/docs/PROVENANCE.md             @ClearGlassInc
+
+# ── System prompts & AI agent configuration (trade secrets) ─────────────────
+/prompts/                       @ClearGlassInc
+/agents/                        @ClearGlassInc
+
+# ── ARTEMIS system: agents, bots, workflow, generated provenance ────────────
+/agents/artemis_command_system/ @ClearGlassInc
+/agents/artemis_ip_guardian/    @ClearGlassInc
+/operations/artemis/            @ClearGlassInc
+
+# ── Artemis blueprint design documents ──────────────────────────────────────
+/docs/                          @ClearGlassInc
+/*.md                           @ClearGlassInc
+
+# ── GitHub Actions workflows (supply-chain attack surface) ───────────────────
+/.github/workflows/             @ClearGlassInc
+/.github/CODEOWNERS             @ClearGlassInc
+
+# ── Python source: bots and automation scripts ───────────────────────────────
+/bots/                          @ClearGlassInc
+/scripts/                       @ClearGlassInc
+
+# ── Infrastructure as Code ───────────────────────────────────────────────────
+/infra/                         @ClearGlassInc
+
+# ── Investor materials ───────────────────────────────────────────────────────
+/investors/                     @ClearGlassInc
+
+# ── Downloadable tools ───────────────────────────────────────────────────────
+/downloads/                     @ClearGlassInc

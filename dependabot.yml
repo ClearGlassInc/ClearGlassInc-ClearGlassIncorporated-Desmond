@@ -1,0 +1,65 @@
+version: 2
+updates:
+  # GitHub Actions — keep the supply chain current (and SHA pins fresh).
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    labels: ["dependencies", "ci", "automated"]
+    groups:
+      actions:
+        patterns: ["*"]
+
+  # Python — every package with a requirements file, not just the repo root.
+  # Previously only "/" was watched, so the control planes, automation, bots,
+  # and service packages received zero security-update PRs. One grouped PR per
+  # directory per week keeps the noise down.
+  - package-ecosystem: pip
+    directories:
+      - "/"
+      - "/apps/autostore/control_plane"
+      - "/automation/v0.2"
+      - "/clearglass-commerce/control-plane"
+      - "/deployment/artemis/app"
+      - "/products/opal-koboi"
+      - "/sentinel"
+      - "/services/clearglass_agent_service"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    labels: ["dependencies", "python", "automated"]
+    groups:
+      pip:
+        patterns: ["*"]
+
+  # Terraform providers/modules under infra/.
+  - package-ecosystem: terraform
+    directory: "/infra"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    labels: ["dependencies", "infra", "automated"]
+
+  # npm — the commerce frontends and the agentops package. Security alerts
+  # fired here but no auto-update PRs, which let Next.js CVEs accumulate. Watch
+  # every Node app directory and group updates into one PR per app per week.
+  - package-ecosystem: npm
+    directories:
+      - "/apps/air-control"
+      - "/apps/autostore/cockpit"
+      - "/apps/autostore/storefront"
+      - "/clearglass-agentops"
+      - "/clearglass-air-control"
+      - "/clearglass-commerce/admin"
+      - "/clearglass-commerce/storefront"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    labels: ["dependencies", "javascript", "automated"]
+    groups:
+      npm:
+        patterns: ["*"]
