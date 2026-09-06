@@ -1,44 +1,22 @@
 name: Auto Heal
 
 on:
-  workflow_run:
-    workflows:
-      - ClearGlass GitHub Pages Check
-      - Cert Bot
-      - Site Reliability Audit
-      - Health Monitor
-      - pages build and deployment
-    types: [completed]
   schedule:
     - cron: "17 4 * * *"
   workflow_dispatch:
 
 permissions:
-  actions: write
+  actions: read
   contents: read
-  issues: write
-  pull-requests: write
 
 jobs:
   heal:
-    if: >-
-      github.event_name != 'workflow_run' ||
-      (github.event.workflow_run.conclusion == 'failure' &&
-       github.event.workflow_run.name != 'Auto Heal')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Local non-destructive heal probe
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-          FAILED_RUN: ${{ github.event.workflow_run.id }}
-          FAILED_WORKFLOW: ${{ github.event.workflow_run.name }}
-          FAILED_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
         run: |
           set -euo pipefail
           echo "ClearGlass auto-heal local probe"
           echo "Homepage and production site files will not be mutated."
-          echo "event=${EVENT_NAME}"
-          echo "failed_run=${FAILED_RUN:-n/a}"
-          echo "failed_workflow=${FAILED_WORKFLOW:-n/a}"
-          echo "failed_conclusion=${FAILED_CONCLUSION:-n/a}"
+          echo "event=${GITHUB_EVENT_NAME}"
