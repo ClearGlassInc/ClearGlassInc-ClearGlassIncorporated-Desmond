@@ -1,0 +1,111 @@
+{
+  "product": {
+    "name": "ClearGlass Global Growth Engine",
+    "version": "1.0.0",
+    "category": "governed-growth-operations",
+    "purpose": "Create measurable international customer-acquisition and retention programs without deceptive marketing or uncontrolled automation."
+  },
+  "required_inputs": [
+    "store_name",
+    "store_url",
+    "store_type",
+    "primary_products",
+    "best_selling_products",
+    "average_order_value",
+    "gross_margin",
+    "monthly_traffic",
+    "conversion_rate",
+    "monthly_marketing_budget",
+    "maximum_acceptable_cac",
+    "primary_business_goal",
+    "current_customer_locations",
+    "shipping_regions",
+    "available_languages",
+    "unique_advantages",
+    "customer_proof",
+    "competitors",
+    "brand_personality",
+    "brand_restrictions"
+  ],
+  "market_scoring": {
+    "scale": "1-10",
+    "dimensions": [
+      "product_market_fit",
+      "search_social_demand",
+      "purchasing_power",
+      "competition",
+      "shipping_complexity",
+      "regulatory_risk",
+      "localization_effort",
+      "expected_cac",
+      "repeat_purchase_potential"
+    ],
+    "max_priority_markets": 5,
+    "rule": "Do not launch globally at once; validate one priority market before material expansion."
+  },
+  "funnel": {
+    "awareness": ["short_form_video", "youtube", "creators", "organic_social", "pr_partnerships"],
+    "consideration": ["seo_clusters", "comparison_pages", "buying_guides", "product_education", "retargeting", "ugc_reviews"],
+    "conversion": ["landing_pages", "product_pages", "trust_signals", "guarantees", "bundles", "checkout_cro", "abandoned_cart"],
+    "retention": ["welcome", "post_purchase", "reviews", "cross_sell", "reorder", "referral", "loyalty"]
+  },
+  "channels": [
+    "google_search",
+    "google_shopping",
+    "youtube",
+    "meta",
+    "tiktok",
+    "pinterest",
+    "linkedin",
+    "reddit_community",
+    "influencer_affiliate",
+    "email_sms",
+    "organic_seo"
+  ],
+  "experiment_contract": {
+    "one_primary_variable": true,
+    "requires_hypothesis": true,
+    "requires_control": true,
+    "requires_challenger": true,
+    "requires_minimum_evaluation_period": true,
+    "requires_success_threshold": true,
+    "requires_failure_threshold": true,
+    "allowed_decisions": ["scale", "iterate", "pause", "discard"]
+  },
+  "thirty_day_plan": [
+    {"days": "1-7", "phase": "foundation", "work": ["tracking", "audience_research", "creative_production", "technical_fixes", "feed_integrity"]},
+    {"days": "8-14", "phase": "controlled_tests", "work": ["creative_hooks", "audiences", "offers", "landing_pages", "ctas", "localization"]},
+    {"days": "15-21", "phase": "optimization", "work": ["pause_weak_ads", "cro", "trust", "pricing_shipping_clarity"]},
+    {"days": "22-30", "phase": "validated_scale", "work": ["scale_winners", "new_angles", "next_segment_or_market"]}
+  ],
+  "analytics": {
+    "utm_pattern": "cg_{channel}_{market}_{campaign}_{audience}_{creative}_{variant}",
+    "kpis": [
+      "impressions",
+      "ctr",
+      "cpc",
+      "conversion_rate",
+      "customer_acquisition_cost",
+      "roas",
+      "contribution_margin",
+      "average_order_value",
+      "lifetime_value",
+      "repeat_purchase_rate",
+      "refund_rate",
+      "email_revenue",
+      "organic_revenue"
+    ]
+  },
+  "decision_tree": {
+    "low_impressions": ["reach", "targeting", "eligibility", "bids", "budgets", "feed_approval", "keyword_volume"],
+    "low_ctr": ["hook", "creative", "differentiation", "message_market_fit"],
+    "high_clicks_low_conversion": ["offer", "trust", "page_speed", "pricing", "shipping", "localization", "checkout"],
+    "strong_conversion_low_profit": ["margin", "discounts", "shipping_cost", "cac", "refunds"],
+    "weak_repeat_purchase": ["onboarding", "product_experience", "retention", "loyalty", "reorder_logic"]
+  },
+  "governance": {
+    "human_review_required_for": ["budget_changes", "ad_publication", "customer_messages", "campaign_mutations", "pricing_changes"],
+    "automation_allowed_for": ["analysis", "drafting", "scoring", "reporting", "recommendations", "tracking_names", "rollback_plans"],
+    "prohibited": ["fake_scarcity", "fake_reviews", "spam", "hidden_fees", "dark_patterns", "misleading_claims", "guaranteed_roas"]
+  }
+}

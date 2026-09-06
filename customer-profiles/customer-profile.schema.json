@@ -1,0 +1,210 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://www.clearglassinc.com/schemas/customer-profile.schema.json",
+  "title": "Privacy-First Customer Profile",
+  "description": "Minimal customer-profile schema for consent-based service intake. Do not store live customer records in GitHub.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profile_id",
+    "profile_version",
+    "service_requested",
+    "contact",
+    "consent",
+    "retention",
+    "confirmation"
+  ],
+  "properties": {
+    "profile_id": {
+      "type": "string",
+      "description": "Opaque internal identifier. Do not use government ID, email address, phone number, or other direct identifier as the profile ID.",
+      "pattern": "^cp_[a-zA-Z0-9_-]{8,64}$"
+    },
+    "profile_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "customer": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name_or_business_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "role_or_title_optional": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "website_optional": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 300
+        }
+      }
+    },
+    "service_requested": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 240
+    },
+    "project_notes_optional": {
+      "type": "string",
+      "maxLength": 2500,
+      "description": "Customer-supplied notes only. Do not infer sensitive attributes. Do not request passwords, keys, financial credentials, or unnecessary identity data."
+    },
+    "contact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "preferred_method",
+        "contact_detail"
+      ],
+      "properties": {
+        "preferred_method": {
+          "type": "string",
+          "enum": [
+            "email",
+            "phone",
+            "sms",
+            "web_form",
+            "other"
+          ]
+        },
+        "contact_detail": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "best_time_optional": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    },
+    "consent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "notice_version",
+        "notice_presented",
+        "consent_given",
+        "consent_timestamp",
+        "consent_method"
+      ],
+      "properties": {
+        "notice_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "notice_presented": {
+          "type": "boolean",
+          "const": true
+        },
+        "consent_given": {
+          "type": "boolean",
+          "const": true
+        },
+        "consent_timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "consent_method": {
+          "type": "string",
+          "enum": [
+            "web_form_checkbox",
+            "written_email_confirmation",
+            "signed_document",
+            "recorded_chat_confirmation",
+            "other"
+          ]
+        },
+        "withdrawal_requested_at_optional": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "retention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "retention_basis",
+        "delete_or_anonymize_after"
+      ],
+      "properties": {
+        "retention_basis": {
+          "type": "string",
+          "enum": [
+            "service_delivery",
+            "customer_requested_shorter_retention",
+            "legal_or_business_record",
+            "consent_log_only"
+          ]
+        },
+        "delete_or_anonymize_after": {
+          "type": "string",
+          "format": "date"
+        },
+        "legal_hold": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "sharing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "shared_with_third_parties": {
+          "type": "boolean",
+          "default": false
+        },
+        "third_party_names_optional": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "maxItems": 20
+        },
+        "sharing_reason_optional": {
+          "type": "string",
+          "maxLength": 500
+        }
+      }
+    },
+    "confirmation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "summary_shown_to_customer",
+        "customer_confirmed_accuracy"
+      ],
+      "properties": {
+        "summary_shown_to_customer": {
+          "type": "boolean",
+          "const": true
+        },
+        "customer_confirmed_accuracy": {
+          "type": "boolean",
+          "const": true
+        },
+        "confirmed_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

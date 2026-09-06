@@ -1,0 +1,138 @@
+{
+  "platform": "ClearGlass Intelligence Platform",
+  "version": "1.0.0",
+  "status": "brand-architecture",
+  "status_note": "Canonical naming and brand architecture registry. Entries describe the target platform taxonomy; a registry entry does not mean the system is provisioned. Provisioned systems are documented in their own subtrees (sentinel/, clearglass-commerce/, apps/).",
+  "naming_standard": {
+    "description": "Every named thing in the ClearGlass ecosystem resolves to exactly one tier. Tier prefixes are reserved; instance identifiers follow the tier pattern.",
+    "tiers": [
+      {
+        "tier": "platform",
+        "prefix": "ClearGlass",
+        "pattern": "^ClearGlass [A-Z][A-Za-z]+$",
+        "example": "ClearGlass Nexus"
+      },
+      {
+        "tier": "ai_engine",
+        "prefix": "Cortex",
+        "pattern": "^Cortex-[0-9]+$",
+        "example": "Cortex-1"
+      },
+      {
+        "tier": "agent",
+        "prefix": "CGA",
+        "pattern": "^CGA-[A-Z][A-Za-z]+-[0-9]{2}$",
+        "example": "CGA-Sentinel-01"
+      },
+      {
+        "tier": "workflow",
+        "prefix": "Flow",
+        "pattern": "^Flow-[A-Z][A-Za-z]+-[0-9]{3}$",
+        "example": "Flow-Incident-001"
+      },
+      {
+        "tier": "knowledge",
+        "prefix": "Chronicle",
+        "pattern": "^Chronicle-[A-Z][A-Za-z]+$",
+        "example": "Chronicle-Alpha"
+      },
+      {
+        "tier": "security",
+        "prefix": "Sentinel",
+        "pattern": "^Sentinel-[A-Z][A-Za-z]+$",
+        "example": "Sentinel-Edge"
+      },
+      {
+        "tier": "analytics",
+        "prefix": "Vector",
+        "pattern": "^Vector-[A-Z][A-Za-z0-9]*$",
+        "example": "Vector-X"
+      },
+      {
+        "tier": "automation",
+        "prefix": "Forge",
+        "pattern": "^Forge-[A-Z][A-Za-z]+$",
+        "example": "Forge-Auto"
+      },
+      {
+        "tier": "infrastructure",
+        "prefix": "Bastion",
+        "pattern": "^Bastion-[A-Z][A-Za-z]+$",
+        "example": "Bastion-Cloud"
+      },
+      {
+        "tier": "executive",
+        "prefix": "Oracle",
+        "pattern": "^Oracle-[A-Z][A-Za-z]+$",
+        "example": "Oracle-Prime"
+      }
+    ]
+  },
+  "executive_layer": [
+    {
+      "name": "ClearGlass Nexus",
+      "role": "Central intelligence and orchestration platform"
+    },
+    {
+      "name": "ClearGlass Command",
+      "role": "Executive operations center"
+    },
+    {
+      "name": "ClearGlass Cortex",
+      "role": "AI reasoning engine"
+    },
+    {
+      "name": "ClearGlass Core",
+      "role": "Platform runtime"
+    },
+    {
+      "name": "ClearGlass Fabric",
+      "role": "Distributed services layer"
+    }
+  ],
+  "agent_framework": {
+    "executive_ai": ["Executive", "Director", "Governor", "Steward", "Prime"],
+    "intelligence": ["Oracle", "Spectra", "Prism", "Vector", "Meridian", "Horizon", "Atlas", "Helix", "Pulse", "Axiom"],
+    "cybersecurity": ["Bastion", "Citadel", "Fortress", "Rampart", "ShieldCore", "LockPoint", "GuardianX", "IronGate", "SentinelOne", "BlackMirror"],
+    "threat_intelligence": ["Recon", "Hunter", "Watchtower", "DeepTrace", "Signal", "Echo", "ShadowNet", "RedScope", "BlueWatch", "ThreatGrid"],
+    "osint": ["Pathfinder", "Observer", "Discovery", "Cartographer", "Surveyor", "Scout", "AtlasOS", "IntelMap", "OpenIntel", "TraceNet"],
+    "digital_forensics": ["Evidence", "Ledger", "Chronicle", "Timeline", "Recover", "Integrity", "Veritas", "Provenance", "Archive", "Chain"],
+    "ai_automation": ["Catalyst", "Forge", "Reactor", "VectorFlow", "Assembly", "Pipeline", "Conductor", "Maestro", "Architect", "Builder"],
+    "business_intelligence": ["Polaris", "Compass", "Lighthouse", "Navigator", "Beacon", "MarketPulse", "RevenueIQ", "GrowthCore", "Opportunity", "Forecast"],
+    "development": ["Foundry", "Workshop", "ForgeWorks", "DevCore", "CodePilot", "StackEngine", "Compiler", "Runtime", "BuilderAI", "LaunchPad"]
+  },
+  "hierarchy": {
+    "root": "ClearGlass Nexus",
+    "nodes": [
+      {"name": "Cortex", "role": "Reasoning", "agent_id": "CGA-Cortex-01"},
+      {"name": "Sentinel", "role": "Cyber Defense", "agent_id": "CGA-Sentinel-01"},
+      {"name": "Recon", "role": "OSINT", "agent_id": "CGA-Recon-01"},
+      {"name": "Forge", "role": "Automation", "agent_id": "CGA-Forge-01"},
+      {"name": "Oracle", "role": "Strategic AI", "agent_id": "CGA-Oracle-01"},
+      {"name": "Ledger", "role": "Compliance", "agent_id": "CGA-Ledger-01"},
+      {"name": "Beacon", "role": "Monitoring", "agent_id": "CGA-Beacon-01"},
+      {"name": "Navigator", "role": "Business", "agent_id": "CGA-Navigator-01"},
+      {"name": "Foundry", "role": "Development", "agent_id": "CGA-Foundry-01"},
+      {"name": "Pulse", "role": "Telemetry", "agent_id": "CGA-Pulse-01"},
+      {"name": "Chronicle", "role": "Knowledge", "agent_id": "CGA-Chronicle-01"},
+      {"name": "Catalyst", "role": "Workflow", "agent_id": "CGA-Catalyst-01"},
+      {"name": "Vector", "role": "Analytics", "agent_id": "CGA-Vector-01"},
+      {"name": "Bastion", "role": "Infrastructure", "agent_id": "CGA-Bastion-01"},
+      {"name": "Horizon", "role": "Forecasting", "agent_id": "CGA-Horizon-01"}
+    ]
+  },
+  "products": [
+    {"name": "ClearGlass Sentinel", "domain": "Cybersecurity", "anchor": "Sentinel"},
+    {"name": "ClearGlass Oracle", "domain": "AI Decision Intelligence", "anchor": "Oracle"},
+    {"name": "ClearGlass Forge", "domain": "Automation Platform", "anchor": "Forge"},
+    {"name": "ClearGlass Vector", "domain": "Data Analytics", "anchor": "Vector"},
+    {"name": "ClearGlass Chronicle", "domain": "Knowledge Management", "anchor": "Chronicle"},
+    {"name": "ClearGlass Recon", "domain": "OSINT Suite", "anchor": "Recon"},
+    {"name": "ClearGlass Ledger", "domain": "Compliance & Audit", "anchor": "Ledger"},
+    {"name": "ClearGlass Beacon", "domain": "Monitoring & Alerting", "anchor": "Beacon"},
+    {"name": "ClearGlass Pulse", "domain": "Infrastructure Observability", "anchor": "Pulse"},
+    {"name": "ClearGlass Navigator", "domain": "Executive Dashboard", "anchor": "Navigator"},
+    {"name": "ClearGlass Foundry", "domain": "Developer Platform", "anchor": "Foundry"},
+    {"name": "ClearGlass Horizon", "domain": "Predictive Intelligence", "anchor": "Horizon"}
+  ]
+}

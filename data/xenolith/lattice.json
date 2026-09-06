@@ -1,0 +1,600 @@
+{
+  "agents": [
+    {
+      "codename": "BASTION",
+      "domain": "cybersecurity",
+      "health": 0.93,
+      "key_fingerprint": "c9beb990f29c504488837fcd301ebfdd",
+      "last_heartbeat": 1785491808.0313294,
+      "memory_partition": "cybersecurity/BASTION",
+      "mission_scope": "Detect, contain and preserve evidence",
+      "parent": null,
+      "permissions": [
+        "cyber.forensics",
+        "cyber.respond",
+        "intel.read"
+      ],
+      "registered_at": 1785491808.0312998,
+      "role": "Containment and response",
+      "spawned": [],
+      "status": "active"
+    },
+    {
+      "codename": "CATALYST",
+      "domain": "autonomy",
+      "health": 0.93,
+      "key_fingerprint": "6a264f0dc45d29ef60b1b00e5070a0bf",
+      "last_heartbeat": 1785491808.0315647,
+      "memory_partition": "autonomy/CATALYST",
+      "mission_scope": "Run governed workflows and collapse sub-agent results",
+      "parent": null,
+      "permissions": [
+        "agent.delegate",
+        "intel.ingest",
+        "intel.read"
+      ],
+      "registered_at": 1785491808.0315423,
+      "role": "Workflow execution",
+      "spawned": [],
+      "status": "active"
+    },
+    {
+      "codename": "DEEPTRACE",
+      "domain": "threat-intel",
+      "health": 0.93,
+      "key_fingerprint": "1a0e830f16b38bc9272d5477c23a9581",
+      "last_heartbeat": 1785491808.0314486,
+      "memory_partition": "threat-intel/DEEPTRACE",
+      "mission_scope": "Correlate external threat data with internal telemetry",
+      "parent": null,
+      "permissions": [
+        "intel.read",
+        "telemetry.read",
+        "threat.analyze"
+      ],
+      "registered_at": 1785491808.0314105,
+      "role": "Signal correlation",
+      "spawned": [],
+      "status": "active"
+    },
+    {
+      "codename": "IRONGATE",
+      "domain": "cybersecurity",
+      "health": 0.93,
+      "key_fingerprint": "fc86173fc25157f8dff87be3b0a0f7c2",
+      "last_heartbeat": 1785491808.031362,
+      "memory_partition": "cybersecurity/IRONGATE",
+      "mission_scope": "Enforce segmentation and access policy",
+      "parent": null,
+      "permissions": [
+        "cyber.respond",
+        "telemetry.read"
+      ],
+      "registered_at": 1785491808.0313387,
+      "role": "Zero-trust enforcement",
+      "spawned": [],
+      "status": "active"
+    },
+    {
+      "codename": "MERIDIAN",
+      "domain": "intelligence",
+      "health": 0.93,
+      "key_fingerprint": "ba719a2677af76dbb72b6613853648ca",
+      "last_heartbeat": 1785491808.0312371,
+      "memory_partition": "intelligence/MERIDIAN",
+      "mission_scope": "Turn observations into intelligence packets",
+      "parent": null,
+      "permissions": [
+        "graph.write",
+        "intel.analyze",
+        "intel.ingest",
+        "intel.publish",
+        "intel.read"
+      ],
+      "registered_at": 1785491808.031203,
+      "role": "Fusion and correlation",
+      "spawned": [],
+      "status": "active"
+    },
+    {
+      "codename": "ORACLE",
+      "domain": "executive",
+      "health": 0.97,
+      "key_fingerprint": "e3ed866b8a1c5d070d31d818ea9a7676",
+      "last_heartbeat": 1785491808.031188,
+      "memory_partition": "executive/ORACLE",
+      "mission_scope": "Translate objectives into policy-constrained missions",
+      "parent": null,
+      "permissions": [
+        "agent.delegate",
+        "executive.command",
+        "intel.read",
+        "telemetry.read"
+      ],
+      "registered_at": 1785491808.0311334,
+      "role": "Executive reasoning nucleus",
+      "spawned": [],
+      "status": "active"
+    },
+    {
+      "codename": "PRISM",
+      "domain": "intelligence",
+      "health": 0.93,
+      "key_fingerprint": "bd9e1a4e3dfd802a8eded060e4f0c39a",
+      "last_heartbeat": 1785491808.03129,
+      "memory_partition": "intelligence/PRISM",
+      "mission_scope": "Maintain the knowledge graph and contradiction record",
+      "parent": null,
+      "permissions": [
+        "graph.write",
+        "intel.read"
+      ],
+      "registered_at": 1785491808.0312593,
+      "role": "Entity resolution and provenance",
+      "spawned": [],
+      "status": "active"
+    },
+    {
+      "codename": "PULSE",
+      "domain": "operations",
+      "health": 0.93,
+      "key_fingerprint": "2283836efb57d1f9f8f113ce095e6ddf",
+      "last_heartbeat": 1785491808.031528,
+      "memory_partition": "operations/PULSE",
+      "mission_scope": "Metrics, traces and anomaly surfacing",
+      "parent": null,
+      "permissions": [
+        "intel.read",
+        "telemetry.read"
+      ],
+      "registered_at": 1785491808.0314908,
+      "role": "Telemetry and observability",
+      "spawned": [],
+      "status": "active"
+    },
+    {
+      "codename": "WATCHTOWER",
+      "domain": "threat-intel",
+      "health": 0.93,
+      "key_fingerprint": "6375651307c84801526dfcaa4161023d",
+      "last_heartbeat": 1785491808.0314023,
+      "memory_partition": "threat-intel/WATCHTOWER",
+      "mission_scope": "Track actors, exposures and emerging attack surface",
+      "parent": null,
+      "permissions": [
+        "intel.read",
+        "threat.analyze",
+        "threat.curate"
+      ],
+      "registered_at": 1785491808.031373,
+      "role": "Adversary surveillance",
+      "spawned": [],
+      "status": "active"
+    }
+  ],
+  "bus": {
+    "by_type": {
+      "action.allow": 1,
+      "action.block_pending_approval": 1,
+      "action.queue_approval": 1,
+      "agent.enlisted": 9,
+      "telemetry.anomaly": 1
+    },
+    "dead_letters": 0,
+    "published": 13,
+    "retained": 13,
+    "subscriptions": 0
+  },
+  "executive": {
+    "missions": 1,
+    "missions_by_state": {
+      "aborted": 0,
+      "blocked": 0,
+      "committed": 0,
+      "complete": 0,
+      "draft": 1,
+      "executing": 0
+    },
+    "next_actions": [
+      {
+        "action": "intel.correlate",
+        "domain": "intelligence",
+        "priority": 0.8198,
+        "summary": "Correlate gateway telemetry against the broker profile",
+        "task_id": "msn-0001-t02",
+        "tier": "low"
+      },
+      {
+        "action": "cyber.forensic_capture",
+        "domain": "cybersecurity",
+        "priority": 0.7981,
+        "summary": "Capture volatile evidence from edge-gateway-01",
+        "task_id": "msn-0001-t01",
+        "tier": "medium"
+      },
+      {
+        "action": "threat.watchlist_add",
+        "domain": "threat-intel",
+        "priority": 0.786,
+        "summary": "Watchlist the broker infrastructure reuse pattern",
+        "task_id": "msn-0001-t04",
+        "tier": "medium"
+      },
+      {
+        "action": "outbound.notify",
+        "domain": "operations",
+        "priority": 0.7595,
+        "summary": "Notify the affected business unit once contained",
+        "task_id": "msn-0001-t05",
+        "tier": "high"
+      },
+      {
+        "action": "cyber.contain",
+        "domain": "cybersecurity",
+        "priority": 0.7474,
+        "summary": "Isolate edge-gateway-01 pending eradication",
+        "task_id": "msn-0001-t03",
+        "tier": "high"
+      }
+    ],
+    "notes": [],
+    "objectives": 1,
+    "posture": "awaiting-authority",
+    "tasks": 5,
+    "tasks_blocked": 0,
+    "tasks_requiring_authority": 2
+  },
+  "fusion": {
+    "clusters": 2,
+    "connector_failures": 0,
+    "connectors": 3,
+    "observations": 5,
+    "packets": 2,
+    "sources": [
+      "edge-telemetry",
+      "reported-mail",
+      "threat-exchange"
+    ],
+    "top_confidence": 0.685
+  },
+  "generated_at": 1785491808.0346968,
+  "governance": {
+    "checks": [
+      {
+        "detail": "13 entries, head e3713b5a6800",
+        "name": "audit_chain_intact",
+        "passed": true
+      },
+      {
+        "detail": "decision=block_pending_approval risk=84",
+        "name": "high_risk_blocked_until_approved",
+        "passed": true
+      },
+      {
+        "detail": "requester != approver enforced",
+        "name": "self_approval_refused",
+        "passed": true
+      },
+      {
+        "detail": "approved digest executes exactly once",
+        "name": "approval_unlocks_action",
+        "passed": true
+      },
+      {
+        "detail": "mutating the payload invalidates the approval",
+        "name": "approval_bound_to_payload",
+        "passed": true
+      },
+      {
+        "detail": "deny-by-default holds",
+        "name": "unknown_action_denied",
+        "passed": true
+      },
+      {
+        "detail": "capability check precedes risk scoring",
+        "name": "missing_permission_denied",
+        "passed": true
+      },
+      {
+        "detail": "8 probe entries recorded",
+        "name": "every_submission_audited",
+        "passed": true
+      },
+      {
+        "detail": "hash chain re-walked",
+        "name": "probe_chain_intact",
+        "passed": true
+      }
+    ],
+    "fail_closed": true,
+    "passed": 9,
+    "total": 9
+  },
+  "graph": {
+    "assertions": 8,
+    "by_kind": {
+      "cve": 1,
+      "domain": 1,
+      "email": 1,
+      "ipv4": 1
+    },
+    "contradictions": 0,
+    "entities": 4,
+    "relationships": 3,
+    "retracted": 0
+  },
+  "memory": {
+    "by_partition": {
+      "intelligence/MERIDIAN": 2
+    },
+    "grants": 7,
+    "mean_confidence": 0.547,
+    "partitions": 1,
+    "records": 2
+  },
+  "platform": "XENOLITH",
+  "policy": {
+    "approvals_approved": 0,
+    "approvals_pending": 2,
+    "approvals_rejected": 0,
+    "approvals_total": 2,
+    "queue": [
+      {
+        "action": "threat.watchlist_add",
+        "action_digest": "db7a0ee3f863ed44f6e0f8b8b7c20be18a0580e1daeab3edd28621f446fb06ed",
+        "approval_id": "apr-00001",
+        "decided_at": null,
+        "decided_by": null,
+        "note": "",
+        "requested_at": 1785491808.03329,
+        "requested_by": "WATCHTOWER",
+        "risk_score": 40,
+        "state": "pending",
+        "tier": "medium"
+      },
+      {
+        "action": "cyber.contain",
+        "action_digest": "b94feac6ddd68e6f090acdf8e8d7c52845436cfed1a97375628fee374f7ef868",
+        "approval_id": "apr-00002",
+        "decided_at": null,
+        "decided_by": null,
+        "note": "",
+        "requested_at": 1785491808.0334187,
+        "requested_by": "BASTION",
+        "risk_score": 84,
+        "state": "pending",
+        "tier": "high"
+      }
+    ],
+    "rules": 18
+  },
+  "registry": {
+    "actionable": 9,
+    "by_domain": {
+      "autonomy": 1,
+      "cybersecurity": 2,
+      "executive": 1,
+      "intelligence": 2,
+      "operations": 1,
+      "threat-intel": 2
+    },
+    "by_status": {
+      "active": 9
+    },
+    "mean_health": 0.934,
+    "population": 9
+  },
+  "subtitle": "ClearGlass sovereign intelligence lattice",
+  "telemetry": {
+    "anomalies": {
+      "anomalies": [
+        {
+          "mean": 4.5,
+          "series": "auth.failures",
+          "stdev": 0.866,
+          "ts": 1785491808.0335817,
+          "value": 61,
+          "z_score": 65.241
+        }
+      ],
+      "anomaly_count": 1,
+      "sensitivity": 3.0,
+      "series_tracked": 5
+    },
+    "ledger_entries": 13,
+    "ledger_head": "e3713b5a6800cf11a084cea72b9d571db63c23cbb1566add6714dfa2ad41e323",
+    "ledger_intact": true,
+    "recent": [
+      {
+        "action": "agent.enlist",
+        "actor": "ClearGlass Operations",
+        "detail": {
+          "codename": "ORACLE",
+          "domain": "executive",
+          "sponsor": "ClearGlass Operations"
+        },
+        "entry_hash": "738e9c0f01ba33416e34a527dc0e5b6c5fbc1c839c9b123687b3277c191fed7a",
+        "index": 1,
+        "prev_hash": "377dd6e06c1f2ed12558292999490dec0cf7fc9de7e156f0f666d74cf53f9b09",
+        "risk": "medium",
+        "ts": 1785491808.0311399
+      },
+      {
+        "action": "agent.enlist",
+        "actor": "ClearGlass Operations",
+        "detail": {
+          "codename": "MERIDIAN",
+          "domain": "intelligence",
+          "sponsor": "ClearGlass Operations"
+        },
+        "entry_hash": "14bf7d822cc0c25bc5e7b9bdb37d48b7015f138e47b3dde483fb21cb443ab516",
+        "index": 2,
+        "prev_hash": "738e9c0f01ba33416e34a527dc0e5b6c5fbc1c839c9b123687b3277c191fed7a",
+        "risk": "medium",
+        "ts": 1785491808.031206
+      },
+      {
+        "action": "agent.enlist",
+        "actor": "ClearGlass Operations",
+        "detail": {
+          "codename": "PRISM",
+          "domain": "intelligence",
+          "sponsor": "ClearGlass Operations"
+        },
+        "entry_hash": "04325fb7468e7009033cf5eaad52d5e19f8bf775b45f5c1e1f25b6a7e2ade254",
+        "index": 3,
+        "prev_hash": "14bf7d822cc0c25bc5e7b9bdb37d48b7015f138e47b3dde483fb21cb443ab516",
+        "risk": "medium",
+        "ts": 1785491808.0312622
+      },
+      {
+        "action": "agent.enlist",
+        "actor": "ClearGlass Operations",
+        "detail": {
+          "codename": "BASTION",
+          "domain": "cybersecurity",
+          "sponsor": "ClearGlass Operations"
+        },
+        "entry_hash": "968017e04eb129bfcaf0267c27febfaa0757770764eaab7bcc2bf10a7c395796",
+        "index": 4,
+        "prev_hash": "04325fb7468e7009033cf5eaad52d5e19f8bf775b45f5c1e1f25b6a7e2ade254",
+        "risk": "medium",
+        "ts": 1785491808.031302
+      },
+      {
+        "action": "agent.enlist",
+        "actor": "ClearGlass Operations",
+        "detail": {
+          "codename": "IRONGATE",
+          "domain": "cybersecurity",
+          "sponsor": "ClearGlass Operations"
+        },
+        "entry_hash": "3f54f356f8ee1497efe31bd17f5dd08c9ef42d0a69fb8cde17aa386caa4164aa",
+        "index": 5,
+        "prev_hash": "968017e04eb129bfcaf0267c27febfaa0757770764eaab7bcc2bf10a7c395796",
+        "risk": "medium",
+        "ts": 1785491808.031341
+      },
+      {
+        "action": "agent.enlist",
+        "actor": "ClearGlass Operations",
+        "detail": {
+          "codename": "WATCHTOWER",
+          "domain": "threat-intel",
+          "sponsor": "ClearGlass Operations"
+        },
+        "entry_hash": "03ecf6452f1c16e2773c3603c2e9eb671170990eadf36e17ea5eeb8957c0c3df",
+        "index": 6,
+        "prev_hash": "3f54f356f8ee1497efe31bd17f5dd08c9ef42d0a69fb8cde17aa386caa4164aa",
+        "risk": "medium",
+        "ts": 1785491808.031376
+      },
+      {
+        "action": "agent.enlist",
+        "actor": "ClearGlass Operations",
+        "detail": {
+          "codename": "DEEPTRACE",
+          "domain": "threat-intel",
+          "sponsor": "ClearGlass Operations"
+        },
+        "entry_hash": "12a2ed8f5117dd857a4955e376b2b4c95669539b4579a2fc7ce4cc9ff9482175",
+        "index": 7,
+        "prev_hash": "03ecf6452f1c16e2773c3603c2e9eb671170990eadf36e17ea5eeb8957c0c3df",
+        "risk": "medium",
+        "ts": 1785491808.0314145
+      },
+      {
+        "action": "agent.enlist",
+        "actor": "ClearGlass Operations",
+        "detail": {
+          "codename": "PULSE",
+          "domain": "operations",
+          "sponsor": "ClearGlass Operations"
+        },
+        "entry_hash": "7bb492815363204c125dff5da4eddfba2d5e23592f791d784f6cbb12dd739da8",
+        "index": 8,
+        "prev_hash": "12a2ed8f5117dd857a4955e376b2b4c95669539b4579a2fc7ce4cc9ff9482175",
+        "risk": "medium",
+        "ts": 1785491808.0314953
+      },
+      {
+        "action": "agent.enlist",
+        "actor": "ClearGlass Operations",
+        "detail": {
+          "codename": "CATALYST",
+          "domain": "autonomy",
+          "sponsor": "ClearGlass Operations"
+        },
+        "entry_hash": "653c355ac86814fb3b870b4ec7da6e1d8d5ce06e33676f3d6a5448f50ea32054",
+        "index": 9,
+        "prev_hash": "7bb492815363204c125dff5da4eddfba2d5e23592f791d784f6cbb12dd739da8",
+        "risk": "medium",
+        "ts": 1785491808.031545
+      },
+      {
+        "action": "intel.correlate",
+        "actor": "MERIDIAN",
+        "detail": {
+          "approval_id": null,
+          "decision": "allow",
+          "error": null,
+          "executed": true,
+          "payload": {
+            "clusters": 2
+          },
+          "risk_score": 12,
+          "targets": []
+        },
+        "entry_hash": "826c72591b9fc9ebe26b4deafb04827a6a7a3e42b4ac97733a192b73e0a9908f",
+        "index": 10,
+        "prev_hash": "653c355ac86814fb3b870b4ec7da6e1d8d5ce06e33676f3d6a5448f50ea32054",
+        "risk": "low",
+        "ts": 1785491808.0331829
+      },
+      {
+        "action": "threat.watchlist_add",
+        "actor": "WATCHTOWER",
+        "detail": {
+          "approval_id": "apr-00001",
+          "decision": "queue_approval",
+          "error": null,
+          "executed": false,
+          "payload": {
+            "indicator": "ipv4:[REDACTED:IPV4]",
+            "reason": "access broker infrastructure"
+          },
+          "risk_score": 40,
+          "targets": []
+        },
+        "entry_hash": "244326ca962a537bfec935f091d25076e725aa40a50991f6b6cc28d6fc25016e",
+        "index": 11,
+        "prev_hash": "826c72591b9fc9ebe26b4deafb04827a6a7a3e42b4ac97733a192b73e0a9908f",
+        "risk": "medium",
+        "ts": 1785491808.033316
+      },
+      {
+        "action": "cyber.contain",
+        "actor": "BASTION",
+        "detail": {
+          "approval_id": "apr-00002",
+          "decision": "block_pending_approval",
+          "error": null,
+          "executed": false,
+          "payload": {
+            "asset": "edge-gateway-01",
+            "method": "network isolation"
+          },
+          "risk_score": 84,
+          "targets": [
+            "edge-gateway-01"
+          ]
+        },
+        "entry_hash": "e3713b5a6800cf11a084cea72b9d571db63c23cbb1566add6714dfa2ad41e323",
+        "index": 12,
+        "prev_hash": "244326ca962a537bfec935f091d25076e725aa40a50991f6b6cc28d6fc25016e",
+        "risk": "high",
+        "ts": 1785491808.033436
+      }
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+default_mode: dry_run
+fail_closed_without_approval: true
+human_approval_required_for:
+  - send_email
+  - send_linkedin_message
+  - publish_content
+  - launch_advertisement
+  - change_budget
+  - contact_government_official
+  - submit_procurement_response
+  - collect_personal_data
+  - connect_third_party_account
+  - delete_campaign_record
+rate_limits:
+  outreach_messages_per_recipient: 3
+  new_leads_per_source_per_day: 50
+budget_ceilings_cad:
+  google_search_daily: 75
+  linkedin_daily: 60
