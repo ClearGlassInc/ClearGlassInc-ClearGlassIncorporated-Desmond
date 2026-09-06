@@ -1,0 +1,37 @@
+{
+  "_comment": "Governed input for the Market Intelligence lane (scripts/market_intelligence_lane.py). Committed, human-curated. The lane reads this to build a weekly delta SCAFFOLD; it never fabricates findings — every intelligence field in the output is marked 'unverified — analyst input required' until a human enriches it. Edit this file to change what the lane watches.",
+  "version": "1.0.0",
+  "owner": "ClearGlass Inc.",
+  "cadence": "weekly",
+  "topics": [
+    "governed AI / agentic AI governance",
+    "AI agent security and non-human identity",
+    "enterprise software security trends",
+    "zero trust and adaptive trust models",
+    "AI search / answer-engine visibility",
+    "Microsoft ecosystem AI + security updates",
+    "Ontario / Canada cybersecurity regulation"
+  ],
+  "competitors": [
+    {"name": "", "url": "", "note": "add named competitors to track — leave [] if none yet"}
+  ],
+  "sources": [
+    {"kind": "search_trends", "query": "governed AI agent security", "note": "analyst pulls current signal"},
+    {"kind": "community", "channel": "reddit", "note": "r/cybersecurity, r/AI_Agents — helpful, non-spammy monitoring only"},
+    {"kind": "community", "channel": "hacker_news", "note": "front-page + Show HN in scope topics"},
+    {"kind": "code", "channel": "github", "note": "trending agent-governance / AI-security repos"},
+    {"kind": "ecosystem", "channel": "microsoft", "note": "Foundry / Copilot / Entra security announcements"}
+  ],
+  "emerging_keywords_seed": [
+    "agent insider risk",
+    "action-level trust",
+    "AI audit ledger",
+    "governed autonomy",
+    "non-human identity governance"
+  ],
+  "governance": {
+    "authority": "READ_ONLY",
+    "invariant": "read-only analysis -> draft -> human approval -> execution",
+    "no_fabrication": true
+  }
+}
