@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://www.clearglassinc.com/docs/contracts/control-surface-events.schema.json",
+  "title": "ClearGlass Control Surface — event envelope and read-endpoint contracts (v1)",
+  "$defs": {
+    "status": {
+      "type": "string",
+      "enum": ["ok", "warn", "bad"]
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["info", "warn", "critical"]
+    },
+    "eventType": {
+      "type": "string",
+      "enum": ["metrics.update", "activity.append", "health.ping", "alert.raise"]
+    },
+    "envelope": {
+      "type": "object",
+      "description": "Normalized event accepted by the n8n ingress webhook.",
+      "required": ["type", "title", "status", "value", "timestamp", "source", "severity"],
+      "properties": {
+        "type": { "$ref": "#/$defs/eventType" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "status": { "$ref": "#/$defs/status" },
+        "value": {
+          "type": ["string", "number", "object", "null"],
+          "description": "Payload body; shape depends on type (metric object, detail object, health object, or null)."
+        },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "source": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "severity": { "$ref": "#/$defs/severity" }
+      },
+      "additionalProperties": true
+    },
+    "metric": {
+      "type": "object",
+      "required": ["label", "value"],
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "value": { "type": "string", "minLength": 1 },
+        "delta": { "type": "string" },
+        "pct": { "type": "number", "minimum": 0, "maximum": 100 }
+      },
+      "additionalProperties": true
+    },
+    "feedItem": {
+      "type": "object",
+      "required": ["title", "status", "detail"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "status": { "$ref": "#/$defs/status" },
+        "detail": { "type": "string" },
+        "time": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": true
+    },
+    "counter": {
+      "type": "object",
+      "required": ["label", "value"],
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "value": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": true
+    },
+    "health": {
+      "type": "object",
+      "required": ["status", "uptime", "detail"],
+      "properties": {
+        "status": { "type": "string", "minLength": 1 },
+        "uptime": { "type": "string", "minLength": 1 },
+        "detail": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "alertItem": {
+      "type": "object",
+      "required": ["status", "title", "detail"],
+      "properties": {
+        "status": { "$ref": "#/$defs/status" },
+        "title": { "type": "string", "minLength": 1 },
+        "detail": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "metricsResponse": { "type": "array", "items": { "$ref": "#/$defs/metric" } },
+    "activityResponse": { "type": "array", "items": { "$ref": "#/$defs/feedItem" }, "maxItems": 50 },
+    "pipelineResponse": { "type": "array", "items": { "$ref": "#/$defs/counter" } },
+    "healthResponse": { "$ref": "#/$defs/health" },
+    "alertsResponse": { "type": "array", "items": { "$ref": "#/$defs/alertItem" } },
+    "runsResponse": { "type": "array", "items": { "$ref": "#/$defs/feedItem" }, "maxItems": 20 }
+  },
+  "oneOf": [
+    { "$ref": "#/$defs/envelope" },
+    { "$ref": "#/$defs/metricsResponse" },
+    { "$ref": "#/$defs/healthResponse" }
+  ],
+  "examples": [
+    {
+      "type": "metrics.update",
+      "title": "Active agents",
+      "status": "ok",
+      "value": { "label": "Active agents", "value": "47", "delta": "+3 this hour", "pct": 68 },
+      "timestamp": "2026-06-12T14:30:00Z",
+      "source": "bot-orchestrator/run-12",
+      "severity": "info"
+    },
+    {
+      "type": "alert.raise",
+      "title": "Stale metrics endpoint",
+      "status": "warn",
+      "value": { "detail": "No update in 16 minutes.", "runbook": "docs/CI_RUNBOOK.md" },
+      "timestamp": "2026-06-12T14:46:00Z",
+      "source": "monitor/freshness",
+      "severity": "warn"
+    }
+  ]
+}
