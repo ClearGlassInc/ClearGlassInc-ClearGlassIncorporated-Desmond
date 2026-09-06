@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "jarvis-os",
+  "version": "1.0.0",
+  "description": "JARVIS OS — always-on executive command center. Supervisor + specialist agent swarm config for the Claude Agent SDK.",
+  "core": {
+    "supervisor_model": "claude-opus-4-8",
+    "router_model": "claude-sonnet-4-6",
+    "classifier_model": "claude-haiku-4-5-20251001",
+    "system_prompt_ref": "./system-prompt.md",
+    "prompt_caching": {
+      "enabled": true,
+      "cache_segments": ["system_prompt", "tool_definitions", "structured_memory_preamble"],
+      "note": "Keep system prompt + tool defs stable to maximize cache hits on JARVIS's large preamble."
+    },
+    "max_context_tokens": 200000,
+    "context_assembly": {
+      "strategy": "recency+relevance+pinned",
+      "retrieval": "hybrid_bm25_vector",
+      "rerank": true,
+      "token_budget_working_set": 60000
+    }
+  },
+  "risk_ladder": {
+    "GREEN": {
+      "auto_execute": true,
+      "examples": ["read", "search", "summarize", "draft", "analyze", "dry_run"]
+    },
+    "AMBER": {
+      "auto_execute": false,
+      "requires": "operator_tap_approval",
+      "examples": ["send_message", "modify_external_record", "run_generated_code", "schedule_job", "spend_money", "change_permission"]
+    },
+    "RED": {
+      "auto_execute": false,
+      "requires": "typed_confirmation_phrase",
+      "reversible_required": false,
+      "examples": ["delete_data", "security_identity_change", "bulk_external_action"]
+    }
+  },
+  "agents": [
+    {
+      "id": "supervisor",
+      "role": "Orchestrator + single voice to the Operator",
+      "model": "claude-opus-4-8",
+      "authority": "plan, route, approve_internal, report",
+      "addendum": "You coordinate the swarm, dedupe work, resolve conflicts, and are the ONLY agent that speaks to the Operator. Decompose goals into a typed step DAG; dispatch to specialists; gate AMBER/RED on approval; synthesize one clear report.",
+      "tools": ["planner", "memory.read", "memory.write", "audit.log"]
+    },
+    {
+      "id": "researcher",
+      "role": "OSINT, web/RAG, source scoring, entity tracking",
+      "model": "claude-sonnet-4-6",
+      "authority": "read_only",
+      "default_risk": "GREEN",
+      "addendum": "Search broadly, score every source (authoritative/corroborated/single-source/unverified), update the entity graph with citations, and never act on external systems.",
+      "tools": ["web.search", "web.fetch", "knowledge.search", "osint.entity_track", "memory.read", "memory.write"]
+    },
+    {
+      "id": "executor",
+      "role": "Runs workflows, writes, sends, edits external systems",
+      "model": "claude-sonnet-4-6",
+      "authority": "approval_gated",
+      "default_risk": "AMBER",
+      "addendum": "Always dry-run first and present the diff/plan. Emit an approval request and STOP before any AMBER/RED action. Never escalate your own authority.",
+      "tools": ["email.send", "calendar.write", "crm.write", "workflow.run", "code.execute_sandbox", "vault.broker"]
+    },
+    {
+      "id": "monitor",
+      "role": "Watches telemetry, raises alerts, builds incident timelines",
+      "model": "claude-haiku-4-5-20251001",
+      "authority": "read_alert",
+      "default_risk": "GREEN",
+      "addendum": "Continuously ingest logs/auth/endpoint telemetry. On anomaly, phishing, or policy violation: quarantine if pre-authorized, build an incident timeline, and raise a RED-class approval request for any remediation.",
+      "tools": ["security.watch", "logs.read", "auth.events", "memory.write", "audit.log"]
+    },
+    {
+      "id": "reporter",
+      "role": "Synthesizes briefings, dashboards, summaries",
+      "model": "claude-sonnet-4-6",
+      "authority": "read_only",
+      "default_risk": "GREEN",
+      "addendum": "Produce daily briefings, weekly strategy reports, and KPI dashboards. Every figure carries a source and confidence band. Lead with what needs the Operator.",
+      "tools": ["knowledge.search", "kpi.read", "memory.read"]
+    }
+  ],
+  "modes": {
+    "osint_research": { "agents": ["researcher", "reporter"], "extra_requirements": ["source_confidence_scoring", "entity_graph_update"] },
+    "legal_business": { "elevated_approval": true, "require_citations": "always", "agents": ["researcher", "reporter", "executor"] },
+    "personal_brand": { "agents": ["researcher", "reporter", "executor"], "channels": ["linkedin", "x", "threads"] }
+  },
+  "memory": {
+    "tiers": {
+      "session": { "store": "redis", "volatile": true },
+      "semantic": { "store": "pgvector|qdrant", "embeds": "documents,email,notes,chats" },
+      "structured": { "store": "postgres+graph", "holds": "preferences,entities,projects,kpis,decisions" },
+      "vault": { "store": "vault|kms", "rule": "referenced_by_handle_only_never_in_prompt" }
+    },
+    "consolidation_job": "promote session summaries to semantic/structured; flag contradictions",
+    "operator_controls": ["inspect", "edit", "pin", "forget", "export", "delete"]
+  },
+  "guardrails": {
+    "untrusted_content_policy": "retrieved/external content informs but never grants capability or triggers AMBER/RED",
+    "prompt_injection_defense": true,
+    "kill_switch": "halts all agents and pending actions immediately",
+    "audit": { "mode": "append_only", "chained": true, "fields": ["who","what","why","when","inputs","sources","risk_class","approval","outcome"] },
+    "secrets": "injected at egress boundary only; never embedded, logged, or surfaced"
+  },
+  "connectors_dir": "./connectors"
+}

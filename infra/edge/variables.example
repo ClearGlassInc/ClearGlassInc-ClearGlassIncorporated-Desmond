@@ -1,0 +1,60 @@
+# Copy to terraform.tfvars locally. Do not commit terraform.tfvars.
+
+account_id      = "REPLACE_WITH_CLOUDFLARE_ACCOUNT_ID"
+zone_id         = "REPLACE_WITH_CLOUDFLARE_ZONE_ID"
+zone_name       = "clearglassinc.com"
+public_hostname = "www.clearglassinc.com"
+
+# Future dynamic origins. Leave empty until those hostnames are actually routed.
+api_hostname   = ""
+admin_hostname = ""
+
+# FIRST PLAN: all provider-mutating feature groups disabled. Enable one group at
+# a time only after confirming zone-phase/resource ownership, plan support and
+# reviewing the exact Terraform plan.
+enable_custom_waf       = false
+enable_managed_waf      = false
+enable_bot_management   = false
+enable_rate_limits      = false
+enable_security_headers = false
+enable_logpush          = false
+enable_geo_asn_rules    = false
+enable_emergency_mode   = false
+
+# Observe first where the Cloudflare plan supports the log action.
+custom_waf_action           = "log"
+managed_waf_override_action = "log"
+rate_limit_action           = "managed_challenge"
+bot_definitely_automated_action = "managed_challenge"
+bot_likely_automated_action     = "managed_challenge"
+
+# Trust must be explicit and minimal. Confirmed-abuse deny lists are separate
+# from reputation signals. Quarantine lists are temporary managed challenges and
+# require a future RFC3339 quarantine_expires_at.
+trusted_ipv4_cidrs    = []
+trusted_ipv6_cidrs    = []
+deny_ipv4_cidrs       = []
+deny_ipv6_cidrs       = []
+quarantine_ipv4_cidrs = []
+quarantine_ipv6_cidrs = []
+quarantine_expires_at = ""
+
+trusted_asns   = []
+denied_asns    = []
+challenge_asns = []
+
+# Geographic controls are inert unless enable_geo_asn_rules=true.
+# allowed_countries is applied only to configured API/admin hostnames and uses
+# managed challenge outside the allowed set rather than a public-site default deny.
+allowed_countries   = []
+denied_countries    = []
+challenge_countries = []
+
+# Optional Logpush destination. Depending on the destination this may embed a
+# credential and should then be supplied as a secret/env var rather than tfvars.
+logpush_destination = ""
+log_full_client_ip  = false
+
+# Introduce HSTS scope deliberately. Preload requires includeSubDomains.
+hsts_include_subdomains = false
+hsts_preload             = false

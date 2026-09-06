@@ -1,0 +1,30 @@
+{
+  "version": "1.0.0",
+  "rules": "All tests are dry-run, functional, or low-volume. Never run DDoS, brute-force, destructive, credential-stuffing, or uncontrolled scanning traffic.",
+  "cases": [
+    {"id":"browser-navigation","mode":"automated","runner":"smoke_test.py","expected":"2xx/3xx HTTPS navigation"},
+    {"id":"static-assets","mode":"automated","runner":"smoke_test.py","expected":"representative same-origin assets return 2xx/3xx with correct content types"},
+    {"id":"cache-hits-misses","mode":"automated-observe","runner":"smoke_test.py","expected":"cache status is reported; no hit is assumed before provider cutover"},
+    {"id":"api-read-cors","mode":"conditional","runner":"smoke_test.py --api-url <non-destructive endpoint>","expected":"normal status and reviewed CORS headers"},
+    {"id":"authentication-flow","mode":"conditional-manual","prerequisite":"dynamic authentication origin exists","expected":"valid login works; failed-login controls do not lock out ordinary users"},
+    {"id":"form-submission","mode":"conditional-manual","prerequisite":"approved test form endpoint","expected":"legitimate submission succeeds and abusive repetition is constrained"},
+    {"id":"webhook","mode":"conditional-manual","prerequisite":"test signed webhook sender and staging endpoint","expected":"valid signature succeeds without browser challenge; invalid signature is rejected by application"},
+    {"id":"verified-search-crawler","mode":"provider-staging","expected":"provider-verified crawler bypasses generic bot challenge while managed exploit inspection remains"},
+    {"id":"monitoring-service","mode":"provider-staging","expected":"explicit approved monitoring identity/CIDR remains functional"},
+    {"id":"suspicious-user-agent","mode":"automated-dry-run-or-low-volume","runner":"negative_security_test.py","expected":"observe/challenge/block according to rollout state"},
+    {"id":"sqli","mode":"automated-dry-run-or-low-volume","runner":"negative_security_test.py","expected":"managed WAF event/action recorded"},
+    {"id":"xss","mode":"automated-dry-run-or-low-volume","runner":"negative_security_test.py","expected":"managed WAF event/action recorded"},
+    {"id":"path-traversal","mode":"automated-dry-run-or-low-volume","runner":"negative_security_test.py","expected":"custom/managed WAF event/action recorded"},
+    {"id":"request-rate","mode":"automated-safe","runner":"negative_security_test.py --rate-probe-count <=20","expected":"ordinary repetition does not trigger unsafe traffic generation"},
+    {"id":"oversized-header-url","mode":"automated-safe","runner":"negative_security_test.py","expected":"moderate oversized metadata probe is observed; provider limit testing stays below destructive levels"},
+    {"id":"blocked-country","mode":"provider-staging","prerequisite":"geo enforcement explicitly enabled on staging","expected":"configured country action occurs"},
+    {"id":"blocked-or-challenged-asn","mode":"provider-staging","prerequisite":"ASN policy explicitly enabled","expected":"configured ASN action occurs"},
+    {"id":"trusted-ip-exception","mode":"provider-staging","prerequisite":"controlled trusted source","expected":"narrow exception works without skipping unrelated managed WAF protections"},
+    {"id":"challenge-behavior","mode":"provider-staging","expected":"managed challenge renders/solves correctly and solve/failure metrics are recorded"},
+    {"id":"security-headers","mode":"automated","runner":"smoke_test.py --require-edge","expected":"HSTS/CSP-Report-Only/nosniff/referrer/permissions/frame controls are present"},
+    {"id":"https-redirect","mode":"automated","runner":"smoke_test.py","expected":"final navigation is HTTPS"},
+    {"id":"origin-exposure","mode":"conditional","runner":"negative_security_test.py --origin-url <known-origin>","expected":"GitHub Pages may remain directly reachable; private future origin should not"},
+    {"id":"cache-poisoning","mode":"automated-safe","runner":"negative_security_test.py","expected":"untrusted forwarding header does not poison subsequent clean cached response"},
+    {"id":"false-positive-handling","mode":"manual-runbook","runner":"docs/incident-response-edge.md","expected":"specific rule moves to observe/narrow exception; entire WAF is not disabled"}
+  ]
+}

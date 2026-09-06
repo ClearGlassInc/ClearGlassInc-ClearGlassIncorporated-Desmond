@@ -1,0 +1,35 @@
+{
+  "$schema": "./_manifest.schema.json",
+  "connector": "code.sandbox",
+  "display_name": "Sandboxed Code Execution",
+  "version": "1.0.0",
+  "category": "system",
+  "transport": "stdio",
+  "auth": { "type": "none" },
+  "scopes": ["sandbox.exec", "sandbox.fs.scratch"],
+  "data_classification": "internal",
+  "tools": [
+    {
+      "name": "generate_script",
+      "description": "Author a Python/Node/Bash/SQL script for a task. Returns source only — does not run.",
+      "risk": "GREEN",
+      "reversible": true,
+      "input_schema": { "type": "object", "required": ["language", "goal"], "properties": { "language": { "type": "string", "enum": ["python", "node", "bash", "sql"] }, "goal": { "type": "string" } } }
+    },
+    {
+      "name": "dry_run",
+      "description": "Execute in a disposable microVM with NO ambient credentials and no egress; returns predicted effects + output.",
+      "risk": "GREEN",
+      "reversible": true,
+      "input_schema": { "type": "object", "required": ["language", "source"], "properties": { "language": { "type": "string" }, "source": { "type": "string" } } }
+    },
+    {
+      "name": "execute",
+      "description": "Run a script in a sandbox with a time-boxed, explicit egress allowlist. AMBER — approval required; dry_run must pass first.",
+      "risk": "AMBER",
+      "reversible": false,
+      "dry_run": true,
+      "input_schema": { "type": "object", "required": ["language", "source"], "properties": { "language": { "type": "string" }, "source": { "type": "string" }, "egress_allowlist": { "type": "array", "items": { "type": "string" } }, "timeout_s": { "type": "integer", "default": 60 } } }
+    }
+  ]
+}

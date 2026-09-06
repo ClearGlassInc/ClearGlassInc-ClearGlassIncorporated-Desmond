@@ -1,0 +1,57 @@
+{
+  "$schema": "./_manifest.schema.json",
+  "connector": "gmail",
+  "display_name": "Gmail / Google Workspace Mail",
+  "version": "1.0.0",
+  "category": "communication",
+  "transport": "stdio",
+  "auth": { "type": "oauth2", "secret_handles": ["vault://google/oauth/jarvis"] },
+  "scopes": ["gmail.readonly", "gmail.compose", "gmail.send", "gmail.modify"],
+  "data_classification": "confidential",
+  "tools": [
+    {
+      "name": "list_threads",
+      "description": "List inbox threads with snippet, sender, labels, and unread state for triage.",
+      "risk": "GREEN",
+      "reversible": true,
+      "input_schema": { "type": "object", "properties": { "query": { "type": "string" }, "max": { "type": "integer", "default": 50 } } }
+    },
+    {
+      "name": "get_thread",
+      "description": "Fetch full thread content for summarization and reply drafting.",
+      "risk": "GREEN",
+      "reversible": true,
+      "input_schema": { "type": "object", "required": ["thread_id"], "properties": { "thread_id": { "type": "string" } } }
+    },
+    {
+      "name": "draft_reply",
+      "description": "Create a draft reply. Never sends. Returns draft_id for Operator review.",
+      "risk": "GREEN",
+      "reversible": true,
+      "input_schema": { "type": "object", "required": ["thread_id", "body"], "properties": { "thread_id": { "type": "string" }, "body": { "type": "string" } } }
+    },
+    {
+      "name": "send_message",
+      "description": "Send an email on the Operator's behalf. AMBER — requires approval; dry-run shows full rendered message first.",
+      "risk": "AMBER",
+      "reversible": false,
+      "dry_run": true,
+      "input_schema": { "type": "object", "required": ["to", "subject", "body"], "properties": { "to": { "type": "array", "items": { "type": "string" } }, "subject": { "type": "string" }, "body": { "type": "string" }, "thread_id": { "type": "string" } } }
+    },
+    {
+      "name": "modify_labels",
+      "description": "Apply/remove labels, archive, or mark read. AMBER — bulk operations require approval.",
+      "risk": "AMBER",
+      "reversible": true,
+      "input_schema": { "type": "object", "required": ["thread_id"], "properties": { "thread_id": { "type": "string" }, "add": { "type": "array", "items": { "type": "string" } }, "remove": { "type": "array", "items": { "type": "string" } } } }
+    },
+    {
+      "name": "bulk_delete",
+      "description": "Permanently delete messages. RED — irreversible; requires typed confirmation phrase.",
+      "risk": "RED",
+      "reversible": false,
+      "dry_run": true,
+      "input_schema": { "type": "object", "required": ["query"], "properties": { "query": { "type": "string" } } }
+    }
+  ]
+}

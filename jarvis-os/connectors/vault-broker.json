@@ -1,0 +1,40 @@
+{
+  "$schema": "./_manifest.schema.json",
+  "connector": "vault.broker",
+  "display_name": "Secrets Vault Broker",
+  "version": "1.0.0",
+  "category": "system",
+  "transport": "stdio",
+  "auth": { "type": "service_account", "secret_handles": ["vault://kms/root/jarvis-broker"] },
+  "scopes": ["vault.handle.list", "vault.inject.egress"],
+  "data_classification": "restricted",
+  "tools": [
+    {
+      "name": "list_handles",
+      "description": "List available secret HANDLES (names only — never values) so the model can reference credentials by handle.",
+      "risk": "GREEN",
+      "reversible": true,
+      "input_schema": { "type": "object", "properties": { "prefix": { "type": "string" } } }
+    },
+    {
+      "name": "inject_at_egress",
+      "description": "Resolve a handle to its secret ONLY at the outbound request boundary of another connector. The secret value is never returned to the model, logged, or stored in memory.",
+      "risk": "AMBER",
+      "reversible": true,
+      "input_schema": { "type": "object", "required": ["handle", "target_connector"], "properties": { "handle": { "type": "string" }, "target_connector": { "type": "string" } } }
+    },
+    {
+      "name": "rotate",
+      "description": "Rotate a credential. RED — security change; typed confirmation required.",
+      "risk": "RED",
+      "reversible": false,
+      "dry_run": true,
+      "input_schema": { "type": "object", "required": ["handle"], "properties": { "handle": { "type": "string" } } }
+    }
+  ],
+  "invariants": [
+    "Raw secret values NEVER enter prompts, embeddings, logs, audit records, or model-visible tool results.",
+    "The model operates on handles; resolution happens inside the broker at egress only.",
+    "Every injection is recorded in the audit log by handle + target, never by value."
+  ]
+}

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<link rel="sitemap" type="application/xml" href="/sitemap.xml">
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>AI Legal Council Framework | ClearGlass Inc.</title>
+<meta name="description" content="ClearGlass Inc. internal AI Legal Council Framework — a structured multi-role prompt system for AI-assisted legal analysis across US (NYC) and Canada (Ontario) operations. Not legal advice."/>
+<link rel="canonical" href="https://www.clearglassinc.com/legal/legal-council.html"/>
+<meta name="robots" content="index,follow"/>
+<meta property="og:title" content="AI Legal Council Framework | ClearGlass Inc."/>
+<meta property="og:description" content="Multi-role AI-assisted legal analysis framework for ClearGlass Inc. Structural template only — not legal advice."/>
+<meta property="og:url" content="https://www.clearglassinc.com/legal/legal-council.html"/>
+<meta property="og:type" content="article"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--white:#fafbfc;--off:#f3f5f8;--glass-border:rgba(0,0,0,.06);--dark:#0a0c10;--dark-2:#1a1d25;--text:#0a0c10;--text-2:#3a3f4a;--text-3:#6b7280;--text-4:#9ca3af;--prism-1:#38bdf8;--prism-2:#a78bfa;--prism-3:#f472b6;--prism-4:#34d399;--prism-5:#fbbf24;--danger:#ef4444;--serif:'Cormorant Garamond',Georgia,serif;--sans:'Urbanist',system-ui,sans-serif;--mono:'IBM Plex Mono',monospace}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{font-family:var(--sans);color:var(--text);background:var(--white);-webkit-font-smoothing:antialiased}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.25rem,5vw,4rem);background:rgba(250,251,252,.88);backdrop-filter:blur(30px) saturate(1.5);border-bottom:1px solid var(--glass-border)}
+.nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}.nav-mark{width:40px;height:40px;border-radius:10px;overflow:hidden;background:#fff;display:grid;place-items:center;box-shadow:0 6px 20px rgba(0,0,0,.08);flex-shrink:0}.nav-mark img{width:100%;height:100%;object-fit:cover}
+.nav-name{font-family:var(--serif);font-size:20px;font-weight:600;letter-spacing:-.01em}.nav-name em{font-style:italic;font-weight:300;color:var(--text-3)}
+.nav-links{display:flex;align-items:center;gap:2px}.nav-links a{color:var(--text-3);text-decoration:none;font-size:13px;font-weight:600;padding:7px 14px;border-radius:999px;transition:all .2s}.nav-links a:hover{color:var(--text);background:rgba(0,0,0,.04)}.nav-cta{color:#fff!important;background:var(--dark)!important;margin-left:6px!important}.nav-cta:hover{background:var(--dark-2)!important}
+.page-wrap{max-width:1100px;margin:0 auto;padding:0 clamp(1rem,4vw,2.5rem)}
+.doc-header{padding:clamp(100px,12vw,140px) 0 clamp(20px,3vw,32px)}
+.doc-tag{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.18em;color:var(--text-4);margin-bottom:14px;display:flex;align-items:center;gap:10px}.doc-tag::before{content:'';width:20px;height:1px;background:var(--text-4)}
+.doc-title{font-family:var(--serif);font-size:clamp(2.2rem,5vw,3.8rem);font-weight:300;letter-spacing:-.025em;line-height:1.1;margin-bottom:14px}.doc-title strong{font-weight:600}
+.doc-meta{display:flex;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--text-4);letter-spacing:.05em}
+.notice-strong{margin:clamp(20px,3vw,32px) 0;padding:20px 24px;border-radius:12px;background:rgba(239,68,68,.045);border:1px solid rgba(239,68,68,.28);border-left:4px solid var(--danger);font-size:13.5px;color:var(--text-2);line-height:1.72}
+.notice-strong .nl{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.18em;color:var(--danger);margin-bottom:6px;display:block}
+.notice-strong strong{color:var(--text)}
+.notice-strong a{color:var(--text-2);font-weight:600}
+.doc-layout{display:grid;grid-template-columns:230px 1fr;gap:clamp(32px,5vw,56px);padding-bottom:clamp(80px,10vw,120px)}
+.doc-toc{position:sticky;top:90px;align-self:start}.toc-label{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.18em;color:var(--text-4);margin-bottom:10px}.toc-items{list-style:none;display:flex;flex-direction:column;gap:1px}.toc-items a{font-size:12px;color:var(--text-3);text-decoration:none;padding:6px 10px;border-radius:6px;display:block;border-left:2px solid transparent;transition:all .2s}.toc-items a:hover{color:var(--text);background:var(--off);border-color:var(--glass-border)}
+.doc-body{min-width:0}.doc-body section{margin-bottom:clamp(32px,5vw,48px)}.doc-body h2{font-family:var(--serif);font-size:clamp(1.4rem,2.5vw,2rem);font-weight:500;letter-spacing:-.02em;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--glass-border)}.doc-body h3{font-family:var(--sans);font-size:13px;font-weight:700;margin:18px 0 7px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}
+.doc-body p{color:var(--text-2);font-size:14.5px;line-height:1.82;margin-bottom:13px}.doc-body ul,.doc-body ol{padding-left:18px;margin-bottom:13px}.doc-body li{color:var(--text-2);font-size:14.5px;line-height:1.8;margin-bottom:5px}.doc-body strong{color:var(--text)}.doc-body a{color:var(--text);text-decoration-color:rgba(0,0,0,.2)}
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+.role-card{padding:18px 20px;border-radius:11px;border:1px solid var(--glass-border);background:#fff;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden}
+.role-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--c,var(--prism-1))}
+.role-card.r1{--c:linear-gradient(90deg,var(--prism-1),var(--prism-2))}
+.role-card.r2{--c:linear-gradient(90deg,var(--prism-2),var(--prism-3))}
+.role-card.r3{--c:linear-gradient(90deg,var(--prism-3),var(--prism-5))}
+.role-card.r4{--c:linear-gradient(90deg,var(--prism-5),var(--prism-4))}
+.role-card.r5{--c:linear-gradient(90deg,var(--prism-4),var(--prism-1))}
+.role-card.r6{--c:linear-gradient(90deg,var(--prism-1),var(--prism-3))}
+.rc-num{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.16em;color:var(--text-4)}
+.rc-title{font-family:var(--serif);font-size:1.18rem;font-weight:600;line-height:1.2;color:var(--text);letter-spacing:-.01em}
+.rc-row{font-size:13px;line-height:1.65;color:var(--text-3)}
+.rc-row strong{color:var(--text-2);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:2px;font-family:var(--sans)}
+.callout{padding:15px 19px;border-radius:9px;margin:15px 0;background:var(--off);border-left:3px solid var(--glass-border)}
+.callout.accent{border-color:var(--prism-1);background:rgba(56,189,248,.04)}
+.callout.purple{border-color:var(--prism-2);background:rgba(167,139,250,.04)}
+.callout.warn{border-color:var(--prism-5);background:rgba(251,191,36,.05)}
+.callout.danger{border-color:var(--danger);background:rgba(239,68,68,.04)}
+.callout .cn{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.1em;color:var(--text-4);margin-bottom:6px}
+.juris-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+.juris-table th,.juris-table td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--glass-border);vertical-align:top;line-height:1.65;color:var(--text-2)}
+.juris-table th{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);background:var(--off)}
+.juris-table td:first-child{font-weight:600;color:var(--text);width:24%}
+.flow{counter-reset:step;display:flex;flex-direction:column;gap:10px;margin:14px 0}
+.flow-step{display:grid;grid-template-columns:32px 1fr;gap:14px;align-items:start;padding:12px 16px;border-radius:10px;background:var(--off);border:1px solid var(--glass-border)}
+.flow-step::before{counter-increment:step;content:counter(step);width:28px;height:28px;border-radius:50%;background:var(--dark);color:#fff;font-family:var(--mono);font-size:12px;font-weight:700;display:grid;place-items:center}
+.flow-step h4{font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:3px;color:var(--text)}
+.flow-step p{font-size:13px;color:var(--text-3);margin:0;line-height:1.6}
+.constraint-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.constraint{padding:12px 14px;border-radius:8px;background:#fff;border:1px solid var(--glass-border);font-size:13px;color:var(--text-2);line-height:1.55;display:flex;gap:10px;align-items:flex-start}
+.constraint .x{font-family:var(--mono);font-weight:700;color:var(--danger);flex-shrink:0}
+.constraint .ok{font-family:var(--mono);font-weight:700;color:var(--prism-4);flex-shrink:0}
+.site-footer{border-top:1px solid var(--glass-border);padding:clamp(22px,4vw,32px) 0}.site-footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}.site-footer p{font-size:12px;color:var(--text-4)}.site-footer-links{display:flex;gap:16px}.site-footer-links a{font-size:12px;color:var(--text-3);text-decoration:none;font-weight:500}.site-footer-links a:hover{color:var(--text)}
+@media(max-width:768px){.doc-layout{grid-template-columns:1fr}.doc-toc{display:none}.role-grid,.constraint-list{grid-template-columns:1fr}}
+@media(max-width:600px){.nav-name{display:none}}
+</style>
+<link rel="stylesheet" href="/assets/css/glass.css">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="../brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">
+    <div class="nav-mark"><img src="/logo.png" alt="ClearGlass Inc." /></div>
+    <span class="nav-name">ClearGlass <em>Inc.</em></span>
+  </a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/legal/">Legal Hub</a>
+    <a href="/#contact" class="nav-cta">Contact</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <header class="doc-header">
+    <div class="doc-tag">INTERNAL AI GOVERNANCE &#183; CLEARGLASSINC</div>
+    <h1 class="doc-title"><strong>AI Legal Council</strong> Framework</h1>
+    <div class="doc-meta">
+      <span>Jurisdictions: Ontario, Canada &#183; New York, USA</span>
+      <span>Version: 1.0</span>
+      <span>Effective: 2026</span>
+      <span>Classification: Internal Reference</span>
+    </div>
+  </header>
+
+  <div class="notice-strong">
+    <span class="nl">&#9888; NOT LEGAL ADVICE &#183; INTERNAL FRAMEWORK ONLY</span>
+    This document describes a <strong>structural framework</strong> ClearGlass Inc. uses to organize AI-assisted research across multiple legal subject areas. It is <strong>not legal advice</strong>, does not create an attorney&#8211;client relationship, and does not substitute for counsel admitted in the relevant jurisdiction. The &#8220;roles&#8221; described below are <strong>prompt&#8209;engineering personas executed by an AI system</strong>; they are not licensed attorneys and produce no privileged work product. Any output generated using this framework is <strong>preliminary research only</strong> and must be reviewed and validated by licensed counsel &#8212; in Ontario via the <a href="https://lso.ca/public-resources/finding-a-lawyer-or-paralegal" target="_blank" rel="noopener">Law Society of Ontario</a>, and in New York via the <a href="https://iapps.courts.state.ny.us/attorneyservices/search" target="_blank" rel="noopener">NY Unified Court System attorney directory</a> &#8212; before being relied on for any corporate, regulatory, contractual, or litigation decision. Direct legal inquiries to <a href="mailto:desmondotieno@icloud.com">desmondotieno@icloud.com</a>.
+  </div>
+
+  <div class="doc-layout">
+    <aside class="doc-toc">
+      <div class="toc-label">CONTENTS</div>
+      <ul class="toc-items">
+        <li><a href="#s1">1. Purpose &amp; Scope</a></li>
+        <li><a href="#s2">2. Council Roles</a></li>
+        <li><a href="#s3">3. Jurisdictional Scope</a></li>
+        <li><a href="#s4">4. Operating Directives</a></li>
+        <li><a href="#s5">5. Response Structure</a></li>
+        <li><a href="#s6">6. Collaboration Mode</a></li>
+        <li><a href="#s7">7. Constraints &amp; Guardrails</a></li>
+        <li><a href="#s8">8. Validation &amp; Escalation</a></li>
+        <li><a href="#s9">9. Limitations</a></li>
+        <li><a href="#s10">10. Contact</a></li>
+      </ul>
+    </aside>
+
+    <div class="doc-body">
+
+      <section id="s1">
+        <h2>1. Purpose and Scope</h2>
+        <p>The <strong>AI Legal Council Framework</strong> is an internal prompt&#8209;engineering structure used by ClearGlass Inc. to organize AI&#8209;assisted preliminary research across the legal domains most relevant to a cross&#8209;border cybersecurity and AI automation business. It is designed to:</p>
+        <ul>
+          <li>Standardize how research questions are decomposed by subject area before being routed to licensed counsel.</li>
+          <li>Surface jurisdictional conflicts between United States (New York) and Canadian (Ontario) law early in internal review.</li>
+          <li>Make AI&#8209;generated analysis <strong>auditable</strong> &#8212; each role&#8217;s output is structured the same way and can be cross&#8209;checked.</li>
+          <li>Reduce the risk that a single&#8209;perspective AI answer obscures issues outside its assumed domain (e.g., a corporate answer that misses a privacy implication).</li>
+        </ul>
+        <p>This framework does <strong>not</strong> authorize the AI system, any operator, or any ClearGlass employee to render legal opinions, file regulatory submissions, execute corporate actions, or communicate with regulators or counterparties on the basis of AI output alone.</p>
+      </section>
+
+      <section id="s2">
+        <h2>2. Council Roles</h2>
+        <p>The framework defines six specialized roles. Each role is a constrained AI persona with a fixed expertise scope and required citation discipline. A role <strong>must</strong> stay within its assigned domain and explicitly hand off issues that fall outside it.</p>
+
+        <div class="role-grid">
+          <div class="role-card r1">
+            <div class="rc-num">ROLE 01</div>
+            <div class="rc-title">Corporate Governance</div>
+            <div class="rc-row"><strong>Expertise</strong>OBCA (Ontario) and Delaware corporate law, board structure, fiduciary duties, shareholder rights.</div>
+            <div class="rc-row"><strong>Focus</strong>Corporate structure, by&#8209;laws, equity issuance, governance compliance, minute book hygiene.</div>
+          </div>
+          <div class="role-card r2">
+            <div class="rc-num">ROLE 02</div>
+            <div class="rc-title">Securities &amp; Fundraising</div>
+            <div class="rc-row"><strong>Expertise</strong>SEC regulations, NI 45&#8209;106 (Canada) prospectus exemptions, Reg D / Reg CF, SAFE and convertible note structures.</div>
+            <div class="rc-row"><strong>Focus</strong>Capital raising, investor compliance, disclosure obligations, accredited&#8209;investor verification.</div>
+          </div>
+          <div class="role-card r3">
+            <div class="rc-num">ROLE 03</div>
+            <div class="rc-title">Technology &amp; Intellectual Property</div>
+            <div class="rc-row"><strong>Expertise</strong>Software licensing, copyright (US Title 17 / Canadian Copyright Act), patents, trade secrets, AI&#8209;output ownership.</div>
+            <div class="rc-row"><strong>Focus</strong>Protecting bots, codebases, models, training data provenance, automation systems and inbound/outbound license terms.</div>
+          </div>
+          <div class="role-card r4">
+            <div class="rc-num">ROLE 04</div>
+            <div class="rc-title">Cybersecurity &amp; Data Privacy</div>
+            <div class="rc-row"><strong>Expertise</strong>PIPEDA, Quebec Law 25, Ontario sector privacy statutes, GDPR, CCPA/CPRA, US state breach&#8209;notification laws.</div>
+            <div class="rc-row"><strong>Focus</strong>Data handling, lawful basis, retention, cross&#8209;border transfer, breach response, AI training&#8209;data lawfulness.</div>
+          </div>
+          <div class="role-card r5">
+            <div class="rc-num">ROLE 05</div>
+            <div class="rc-title">Employment &amp; Contractor</div>
+            <div class="rc-row"><strong>Expertise</strong>Worker classification (Ontario ESA, NY Labor Law, IRS / CRA tests), NDAs, IP assignment, restrictive covenants.</div>
+            <div class="rc-row"><strong>Focus</strong>Hiring, contractor agreements, internal IP capture, post&#8209;departure obligations and enforceability of non&#8209;competes.</div>
+          </div>
+          <div class="role-card r6">
+            <div class="rc-num">ROLE 06</div>
+            <div class="rc-title">Litigation &amp; Risk</div>
+            <div class="rc-row"><strong>Expertise</strong>Dispute resolution, regulatory enforcement risk, liability exposure modelling, evidence preservation.</div>
+            <div class="rc-row"><strong>Focus</strong>Threat modelling, defensive strategy, settlement posture, litigation hold and incident&#8209;response coordination.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="s3">
+        <h2>3. Jurisdictional Scope</h2>
+        <p>ClearGlass Inc. operates across two primary jurisdictions. Every Council output must explicitly identify which jurisdiction&#8217;s law applies to each conclusion and must <strong>not</strong> assume that US authority controls Canadian operations or vice versa.</p>
+        <table class="juris-table">
+          <thead>
+            <tr><th>Domain</th><th>United States (New York)</th><th>Canada (Ontario)</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Corporate</td>
+              <td>NY BCL; Delaware DGCL where Delaware&#8209;incorporated subsidiaries are used.</td>
+              <td>Ontario Business Corporations Act (OBCA); CBCA where federally incorporated.</td>
+            </tr>
+            <tr>
+              <td>Securities</td>
+              <td>Securities Act of 1933, Reg D / Rule 506(b) &amp; 506(c), Reg CF, NY Martin Act.</td>
+              <td>National Instrument 45&#8209;106 prospectus exemptions; Ontario Securities Act; OSC oversight.</td>
+            </tr>
+            <tr>
+              <td>Privacy</td>
+              <td>NY SHIELD Act, CCPA/CPRA (where California residents implicated), HIPAA where applicable.</td>
+              <td>PIPEDA federally; Quebec Law 25 for Quebec residents; sectoral statutes (PHIPA, etc.).</td>
+            </tr>
+            <tr>
+              <td>IP</td>
+              <td>Title 17 USC (copyright), 35 USC (patents), Defend Trade Secrets Act.</td>
+              <td>Copyright Act (R.S.C. 1985, c. C&#8209;42), Patent Act, common&#8209;law trade secret protection.</td>
+            </tr>
+            <tr>
+              <td>Employment</td>
+              <td>NY Labor Law, FLSA, NY non&#8209;compete restrictions; IRS classification tests.</td>
+              <td>Ontario Employment Standards Act, 2000; common&#8209;law reasonable notice; CRA contractor tests.</td>
+            </tr>
+            <tr>
+              <td>AI / Automation</td>
+              <td>NYC Local Law 144 (AEDT); FTC Section 5; emerging state AI statutes.</td>
+              <td>Voluntary Code of Conduct on Generative AI; proposed AIDA (Bill C&#8209;27); OPC guidance on automated decision&#8209;making.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout warn">
+          <div class="cn">CONFLICT&#8209;OF&#8209;LAWS RULE</div>
+          When Council roles disagree across jurisdictions, the framework requires the more restrictive obligation to be flagged as the operating baseline for cross&#8209;border activity, pending validation by licensed counsel in each jurisdiction.
+        </div>
+      </section>
+
+      <section id="s4">
+        <h2>4. Operating Directives</h2>
+        <p>Every Council role operates under the following standing directives:</p>
+        <ul>
+          <li>Reason as senior counsel with deep subject&#8209;matter knowledge, but never represent oneself as an admitted attorney.</li>
+          <li>Prioritize ClearGlass Inc.&#8217;s legal protection, scalability, and long&#8209;term defensibility over short&#8209;term convenience.</li>
+          <li>Assume cross&#8209;border operations (United States and Canada) and explicitly flag where jurisdictional rules diverge.</li>
+          <li>Challenge weak or unverified assumptions raised by other roles &#8212; cross&#8209;review is mandatory, not optional.</li>
+          <li>Identify legal blind spots created by AI and automation (training&#8209;data provenance, autonomous action, regulator&#8209;facing model behaviour).</li>
+          <li>Cite the controlling statute, regulation, or rule by name and section whenever a legal proposition is asserted.</li>
+        </ul>
+      </section>
+
+      <section id="s5">
+        <h2>5. Response Structure</h2>
+        <p>Every Council role must structure its output in the same five sections so that responses can be diffed, audited, and validated by counsel:</p>
+        <div class="flow">
+          <div class="flow-step">
+            <div>
+              <h4>Role Perspective</h4>
+              <p>State the issue strictly from the assigned legal domain &#8212; do not stray into other roles&#8217; territory.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div>
+              <h4>Legal Analysis</h4>
+              <p>Cite the applicable statutory or regulatory authority by name and section (e.g., <em>OBCA s. 134; 8 Del. C. &#167; 141; PIPEDA Schedule 1, Principle 4.5</em>).</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div>
+              <h4>Risk Flags</h4>
+              <p>Identify hidden, latent, or future risks &#8212; with explicit attention to AI and automation exposure.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div>
+              <h4>Recommended Actions</h4>
+              <p>Provide specific, enforceable next steps: clauses to add, filings to make, structural changes, or counsel hand&#8209;offs.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div>
+              <h4>Cross&#8209;Agent Notes</h4>
+              <p>Challenge or validate the likely positions of the other five roles. Highlight conflicts so they cannot be silently dropped.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="s6">
+        <h2>6. Collaboration Mode</h2>
+        <p>When multiple Council roles respond to the same scenario, the framework requires:</p>
+        <ol>
+          <li>Each role produces its own five&#8209;section output <strong>independently</strong>, without seeing the others&#8217; conclusions first.</li>
+          <li>A <strong>Unified Legal Strategy</strong> section then synthesizes all six perspectives and explicitly resolves &#8212; or escalates &#8212; conflicts.</li>
+          <li>Tensions between domains (e.g., growth velocity vs. regulatory compliance, IP secrecy vs. investor disclosure) are surfaced rather than smoothed over.</li>
+        </ol>
+        <div class="callout accent">
+          <div class="cn">DESIGN PRINCIPLE</div>
+          The Unified Strategy is <em>not</em> an averaging of the six roles. It is a record of where they agree, where they disagree, and which disagreements require licensed counsel to break the tie before action is taken.
+        </div>
+      </section>
+
+      <section id="s7">
+        <h2>7. Constraints &amp; Guardrails</h2>
+        <p>The Council operates under hard guardrails. These are non&#8209;negotiable.</p>
+        <div class="constraint-list">
+          <div class="constraint"><span class="x">&#10007;</span><div>No generic boilerplate &#8212; every output must be tied to ClearGlass&#8217;s actual operations.</div></div>
+          <div class="constraint"><span class="x">&#10007;</span><div>No silent assumption of compliance &#8212; compliance must be verifiable.</div></div>
+          <div class="constraint"><span class="x">&#10007;</span><div>No collapsing of US and Canadian rules into a single answer.</div></div>
+          <div class="constraint"><span class="x">&#10007;</span><div>No representation that the AI output is privileged or attorney work product.</div></div>
+          <div class="constraint"><span class="ok">&#10003;</span><div>Always reason adversarially &#8212; assume regulators, opposing counsel, and competitors will read the output.</div></div>
+          <div class="constraint"><span class="ok">&#10003;</span><div>Always cite authority by name and section.</div></div>
+          <div class="constraint"><span class="ok">&#10003;</span><div>Always flag where licensed counsel review is required before action.</div></div>
+          <div class="constraint"><span class="ok">&#10003;</span><div>Always preserve a written audit trail of inputs, outputs, and validating counsel sign&#8209;off.</div></div>
+        </div>
+      </section>
+
+      <section id="s8">
+        <h2>8. Validation &amp; Escalation</h2>
+        <p>No Council output is operative until it has been reviewed by licensed counsel in the relevant jurisdiction. The internal validation pipeline is:</p>
+        <ol>
+          <li><strong>Generate</strong> &#8212; the assigned roles produce structured outputs and a Unified Strategy.</li>
+          <li><strong>Internal review</strong> &#8212; ClearGlass operations confirms the factual inputs, assumptions, and scope are accurate.</li>
+          <li><strong>Counsel referral</strong> &#8212; high&#8209;impact items (corporate actions, regulatory filings, contracts with third parties, breach response, IP enforcement, employment terminations, securities offerings) are routed to admitted counsel.</li>
+          <li><strong>Sign&#8209;off</strong> &#8212; counsel approval, modification, or rejection is recorded against the output identifier.</li>
+          <li><strong>Execute</strong> &#8212; only after counsel sign&#8209;off; the executing party is the corporation acting through its officers, not the AI system.</li>
+        </ol>
+        <div class="callout danger">
+          <div class="cn">HARD STOP</div>
+          The Council does <strong>not</strong> communicate with regulators, counterparties, opposing counsel, courts, employees in adverse actions, or the public. All such communications are made by ClearGlass officers under counsel direction.
+        </div>
+      </section>
+
+      <section id="s9">
+        <h2>9. Limitations</h2>
+        <p>This framework has known limitations that operators must keep in mind:</p>
+        <ul>
+          <li>AI systems can confidently misstate law, miscite authority, or hallucinate provisions. Every citation must be verified against primary sources.</li>
+          <li>Statutes and regulations change. The framework references jurisdictional rules effective in 2026 and must be re&#8209;validated as law evolves.</li>
+          <li>The framework is a <strong>research scaffold</strong>, not an opinion. It does not eliminate the need for licensed counsel, professional liability coverage, or formal legal opinions for material decisions.</li>
+          <li>Outputs are not protected by attorney&#8211;client privilege. Operators should assume Council outputs may be discoverable.</li>
+          <li>The framework does not cover every legal domain &#8212; tax, immigration, real estate, criminal law, and others fall outside its six roles and must be referred directly to qualified counsel.</li>
+        </ul>
+      </section>
+
+      <section id="s10">
+        <h2>10. Contact</h2>
+        <p>For questions about this framework, validation requests, or counsel referrals:</p>
+        <ul>
+          <li><strong>Legal mailbox:</strong> <a href="mailto:desmondotieno@icloud.com">desmondotieno@icloud.com</a></li>
+          <li><strong>Ontario counsel directory:</strong> <a href="https://lso.ca/public-resources/finding-a-lawyer-or-paralegal" target="_blank" rel="noopener">Law Society of Ontario</a></li>
+          <li><strong>New York counsel directory:</strong> <a href="https://iapps.courts.state.ny.us/attorneyservices/search" target="_blank" rel="noopener">NY Unified Court System</a></li>
+          <li><strong>Related governance documents:</strong> <a href="ai-liability.html">AI Liability Framework</a> &#183; <a href="privacy.html">Privacy Policy</a> &#183; <a href="terms.html">Terms of Service</a> &#183; <a href="IP_PROTECTION_NOTICE.md">IP Protection Notice</a></li>
+        </ul>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="page-wrap">
+    <div class="site-footer-inner">
+      <p>&#169; 2026 ClearGlass Inc. All rights reserved. &#183; Burlington, Ontario, Canada</p>
+      <div class="site-footer-links">
+        <a href="/legal/">Legal Hub</a>
+        <a href="/legal/privacy.html">Privacy</a>
+        <a href="/legal/terms.html">Terms</a>
+        <a href="/">Home</a>
+      </div>
+    </div>
+  </div>
+</footer>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › <a href="index.html">Legal, Tax &amp; Compliance</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="ai-liability.html"><span><b>Previous</b>AI Liability Framework</span></a>
+      <a href="index.html"><span><b>Topic hub</b>Legal Infrastructure</span></a>
+      <a href="privacy.html"><span><b>Next in journey</b>Privacy Policy</span></a>
+    </div>
+    <ul>
+      <li><a href="privacy.html"><b>Privacy Policy</b> — how ClearGlass handles data</a></li>
+      <li><a href="terms.html"><b>Terms of Service</b> — the terms governing ClearGlass services</a></li>
+      <li><a href="articles.html"><b>Articles of Incorporation</b> — ClearGlass founding articles</a></li>
+      <li><a href="bylaws.html"><b>Corporate Bylaws</b> — how the corporation is governed</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../offers/index.html">Browse services &amp; engagements</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="../nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

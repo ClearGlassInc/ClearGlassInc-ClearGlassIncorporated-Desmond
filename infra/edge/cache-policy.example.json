@@ -1,0 +1,48 @@
+{
+  "version": "1.0.0",
+  "provider_mapping": "Map to Cloudflare Cache Rules/Tiered Cache, Fastly cache configuration, CloudFront cache policies, or Azure Front Door caching after provider and plan review.",
+  "rules": [
+    {
+      "id": "cache.static-versioned-assets",
+      "match": "GET/HEAD requests for versioned CSS, JavaScript, fonts, images and other immutable static assets",
+      "behavior": "cache",
+      "edge_ttl_seconds": 86400,
+      "browser_cache": "respect-origin-or-versioned-long-lived",
+      "cache_key": "scheme + host + normalized path + relevant query parameters only",
+      "notes": "Increase TTL only when filenames/content are versioned. Never include untrusted forwarding headers in the cache key."
+    },
+    {
+      "id": "cache.html-documents",
+      "match": "GET/HEAD HTML documents on the public static hostname",
+      "behavior": "cache-conservatively",
+      "edge_ttl_seconds": 300,
+      "browser_cache": "respect-origin",
+      "notes": "Short edge TTL keeps GitHub Pages deployments responsive. Purge changed HTML after rollback when necessary."
+    },
+    {
+      "id": "cache.dynamic-sensitive-bypass",
+      "match": "authentication, account, checkout, admin, webhook, personalized API, Set-Cookie or Authorization-bearing responses",
+      "behavior": "bypass",
+      "edge_ttl_seconds": 0,
+      "notes": "Application Cache-Control remains authoritative for sensitive responses. Do not cache merely because the edge can."
+    },
+    {
+      "id": "cache.api-explicit-only",
+      "match": "future API responses",
+      "behavior": "bypass-unless-explicitly-public",
+      "edge_ttl_seconds": 0,
+      "notes": "Only cache API routes with an explicit route contract, stable cache key, CORS review and no user-specific data."
+    }
+  ],
+  "origin_shielding": {
+    "github_pages": "Use provider CDN caching to reduce ordinary origin requests, but do not describe this as private origin shielding; GitHub Pages cannot authenticate the edge.",
+    "future_private_origin": "Enable tiered/origin shielding only after the origin supports authenticated pulls, provider egress allowlists, mTLS, private connectivity or an equivalent access-control mechanism."
+  },
+  "cache_poisoning_controls": [
+    "Do not key on X-Forwarded-Host or other untrusted forwarding headers.",
+    "Normalize or explicitly select query parameters used by cached content.",
+    "Bypass responses with Set-Cookie, private, no-store or user-specific semantics.",
+    "Validate Host at the edge and application/origin where supported.",
+    "Test two clean requests after every cache-rule change and compare content, status, Age/cache-status and security headers."
+  ]
+}

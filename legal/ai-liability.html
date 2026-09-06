@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<link rel="sitemap" type="application/xml" href="/sitemap.xml">
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>AI Liability Framework | ClearGlass Inc.</title>
+<meta name="description" content="ClearGlass Inc. AI Liability Framework — responsible AI principles, human oversight requirements, and liability limitations for AI-assisted cybersecurity outputs."/>
+<link rel="canonical" href="https://www.clearglassinc.com/legal/ai-liability.html"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--white:#fafbfc;--off:#f3f5f8;--glass-border:rgba(0,0,0,.06);--dark:#0a0c10;--dark-2:#1a1d25;--text:#0a0c10;--text-2:#3a3f4a;--text-3:#6b7280;--text-4:#9ca3af;--prism-1:#38bdf8;--prism-2:#a78bfa;--prism-4:#34d399;--prism-5:#fbbf24;--serif:'Cormorant Garamond',Georgia,serif;--sans:'Urbanist',system-ui,sans-serif;--mono:'IBM Plex Mono',monospace}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{font-family:var(--sans);color:var(--text);background:var(--white);-webkit-font-smoothing:antialiased}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.25rem,5vw,4rem);background:rgba(250,251,252,.88);backdrop-filter:blur(30px) saturate(1.5);border-bottom:1px solid var(--glass-border)}
+.nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}.nav-mark{width:40px;height:40px;border-radius:10px;overflow:hidden;background:#fff;display:grid;place-items:center;box-shadow:0 6px 20px rgba(0,0,0,.08);flex-shrink:0}.nav-mark img{width:100%;height:100%;object-fit:cover}
+.nav-name{font-family:var(--serif);font-size:20px;font-weight:600;letter-spacing:-.01em}.nav-name em{font-style:italic;font-weight:300;color:var(--text-3)}
+.nav-links{display:flex;align-items:center;gap:2px}.nav-links a{color:var(--text-3);text-decoration:none;font-size:13px;font-weight:600;padding:7px 14px;border-radius:999px;transition:all .2s}.nav-links a:hover{color:var(--text);background:rgba(0,0,0,.04)}.nav-cta{color:#fff!important;background:var(--dark)!important;margin-left:6px!important}.nav-cta:hover{background:var(--dark-2)!important}
+.page-wrap{max-width:1100px;margin:0 auto;padding:0 clamp(1rem,4vw,2.5rem)}
+.doc-header{padding:clamp(100px,12vw,140px) 0 clamp(28px,4vw,40px)}
+.doc-tag{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.18em;color:var(--text-4);margin-bottom:14px;display:flex;align-items:center;gap:10px}.doc-tag::before{content:'';width:20px;height:1px;background:var(--text-4)}
+.doc-title{font-family:var(--serif);font-size:clamp(2.2rem,5vw,3.8rem);font-weight:300;letter-spacing:-.025em;line-height:1.1;margin-bottom:14px}.doc-title strong{font-weight:600}
+.doc-meta{display:flex;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--text-4);letter-spacing:.05em}
+.disclaimer{margin:clamp(20px,3vw,32px) 0;padding:13px 17px;border-radius:10px;background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.2);font-size:13px;color:var(--text-3);line-height:1.72}.disclaimer strong{color:var(--text-2)}
+.doc-layout{display:grid;grid-template-columns:210px 1fr;gap:clamp(32px,5vw,56px);padding-bottom:clamp(80px,10vw,120px)}
+.doc-toc{position:sticky;top:90px}.toc-label{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.18em;color:var(--text-4);margin-bottom:10px}.toc-items{list-style:none;display:flex;flex-direction:column;gap:1px}.toc-items a{font-size:12px;color:var(--text-3);text-decoration:none;padding:6px 10px;border-radius:6px;display:block;border-left:2px solid transparent;transition:all .2s}.toc-items a:hover{color:var(--text);background:var(--off);border-color:var(--glass-border)}
+.doc-body{min-width:0}.doc-body section{margin-bottom:clamp(32px,5vw,48px)}.doc-body h2{font-family:var(--serif);font-size:clamp(1.4rem,2.5vw,2rem);font-weight:500;letter-spacing:-.02em;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--glass-border)}.doc-body h3{font-family:var(--sans);font-size:13px;font-weight:700;margin:18px 0 7px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}
+.doc-body p{color:var(--text-2);font-size:14.5px;line-height:1.82;margin-bottom:13px}.doc-body ul,.doc-body ol{padding-left:18px;margin-bottom:13px}.doc-body li{color:var(--text-2);font-size:14.5px;line-height:1.8;margin-bottom:5px}.doc-body strong{color:var(--text)}.doc-body a{color:var(--text);text-decoration-color:rgba(0,0,0,.2)}
+.clause{padding:15px 19px;border-radius:9px;margin:15px 0;background:var(--off);border-left:3px solid var(--glass-border)}.clause.accent{border-color:var(--prism-1);background:rgba(56,189,248,.04)}.clause.purple{border-color:var(--prism-2);background:rgba(167,139,250,.04)}.clause.green{border-color:var(--prism-4);background:rgba(52,211,153,.04)}.clause.warn{border-color:var(--prism-5);background:rgba(251,191,36,.04)}.clause .cn{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.1em;color:var(--text-4);margin-bottom:4px}
+.principle-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.principle-card{padding:16px 18px;border-radius:9px;border:1px solid var(--glass-border);background:#fff}
+.pc-icon{font-size:20px;margin-bottom:8px}
+.pc-title{font-family:var(--sans);font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.pc-desc{font-size:13px;color:var(--text-3);line-height:1.6}
+.site-footer{border-top:1px solid var(--glass-border);padding:clamp(22px,4vw,32px) 0}.site-footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}.site-footer p{font-size:12px;color:var(--text-4)}.site-footer-links{display:flex;gap:16px}.site-footer-links a{font-size:12px;color:var(--text-3);text-decoration:none;font-weight:500}.site-footer-links a:hover{color:var(--text)}
+@media(max-width:768px){.doc-layout{grid-template-columns:1fr}.doc-toc{display:none}.principle-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.nav-name{display:none}}
+</style>
+<link rel="stylesheet" href="/assets/css/glass.css">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="../brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">
+    <div class="nav-mark"><img src="/logo.png" alt="ClearGlass Inc." /></div>
+    <span class="nav-name">ClearGlass <em>Inc.</em></span>
+  </a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/legal/">Legal Hub</a>
+    <a href="/#contact" class="nav-cta">Contact</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <header class="doc-header">
+    <div class="doc-tag">AI GOVERNANCE &#183; CLEARGLASSINC</div>
+    <h1 class="doc-title"><strong>AI Liability</strong> Framework</h1>
+    <div class="doc-meta">
+      <span>Jurisdiction: Ontario, Canada</span>
+      <span>Effective: January 1, 2026</span>
+      <span>Version: 1.0</span>
+    </div>
+  </header>
+
+  <div class="disclaimer">
+    <strong>Governance Document.</strong> This framework governs the responsible development, deployment, and limitation of liability for AI-assisted products and services offered by ClearGlass Inc. It supplements our <a href="terms.html" style="color:var(--text-2)">Terms of Service</a> and <a href="privacy.html" style="color:var(--text-2)">Privacy Policy</a>. ClearGlass is committed to transparent, accountable, and human-centric AI.
+  </div>
+
+  <div class="doc-layout">
+    <aside class="doc-toc">
+      <div class="toc-label">CONTENTS</div>
+      <ul class="toc-items">
+        <li><a href="#s1">1. Scope</a></li>
+        <li><a href="#s2">2. AI Governance Principles</a></li>
+        <li><a href="#s3">3. Human Oversight</a></li>
+        <li><a href="#s4">4. Liability Limitations</a></li>
+        <li><a href="#s5">5. AI Training Data</a></li>
+        <li><a href="#s6">6. Ethical AI Commitments</a></li>
+        <li><a href="#s7">7. Prohibited Uses</a></li>
+        <li><a href="#s8">8. Incident Response</a></li>
+        <li><a href="#s9">9. Continuous Review</a></li>
+        <li><a href="#s10">10. Contact</a></li>
+      </ul>
+    </aside>
+
+    <div class="doc-body">
+
+      <section id="s1">
+        <h2>1. Scope and Application</h2>
+        <p>This AI Liability Framework applies to all AI-assisted products, platforms, and services developed or deployed by ClearGlass Inc., including:</p>
+        <ul>
+          <li><strong>ARTEMIS</strong> — AI-powered risk command and threat intelligence platform</li>
+          <li><strong>GUARDIAN</strong> — AI-enhanced security operations and anomaly detection</li>
+          <li><strong>NEXUS</strong> — Live risk command and AI-driven analytics</li>
+          <li>Custom AI models, classifiers, and decision-support tools developed for clients</li>
+          <li>Large language model (LLM) integrations within security workflows</li>
+        </ul>
+        <p>This framework applies to ClearGlass Inc. as an AI developer and operator. Clients using ClearGlass platforms to deploy AI in their own operations take on responsibility for that downstream deployment, subject to applicable law.</p>
+      </section>
+
+      <section id="s2">
+        <h2>2. AI Governance Principles</h2>
+        <p>ClearGlass Inc. designs and deploys AI systems according to the following foundational principles, aligned with Canada's <em>Voluntary Code of Conduct on the Responsible Development and Management of Advanced Generative AI Systems</em> and emerging global AI governance standards:</p>
+
+        <div class="principle-grid">
+          <div class="principle-card">
+            <div class="pc-title">Transparency</div>
+            <div class="pc-desc">Clients are informed when AI is used in service delivery. AI-generated outputs are identified as such and not misrepresented as human analysis.</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-title">Accountability</div>
+            <div class="pc-desc">ClearGlass takes organizational responsibility for the performance and impacts of our AI systems, with named ownership for each deployed model.</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-title">Fairness</div>
+            <div class="pc-desc">AI systems are evaluated for bias and discriminatory outcomes. We take corrective action when disparate impact is identified in threat detection or risk scoring.</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-title">Safety</div>
+            <div class="pc-desc">AI systems undergo security testing, adversarial robustness evaluation, and controlled rollout before production deployment in client environments.</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-title">Privacy by Design</div>
+            <div class="pc-desc">Privacy considerations are embedded in AI system design from inception, not as an afterthought. Data minimization governs training and inference pipelines.</div>
+          </div>
+          <div class="principle-card">
+            <div class="pc-title">Explainability</div>
+            <div class="pc-desc">Where technically feasible, AI outputs are accompanied by explanations of contributing factors, enabling human review and contestability of AI decisions.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="s3">
+        <h2>3. Human Oversight Requirements</h2>
+        <p>ClearGlass maintains that AI supplements, but does not replace, qualified human judgment in cybersecurity and risk management contexts. The following oversight requirements apply:</p>
+        <div class="clause green">
+          <div class="cn">MANDATORY HUMAN REVIEW</div>
+          <ul style="margin:0;padding-left:16px;font-size:14px">
+            <li style="margin-bottom:6px">All AI-generated threat alerts classified as <strong>HIGH</strong> or <strong>CRITICAL</strong> severity require human analyst confirmation before client notification</li>
+            <li style="margin-bottom:6px">Automated incident response actions (e.g., IP blocking, account suspension) require human authorization except within pre-approved playbooks</li>
+            <li style="margin-bottom:6px">AI-generated legal, compliance, or regulatory recommendations are advisory only and require human expert validation</li>
+            <li style="margin-bottom:0">Risk scores used in client-facing reports are reviewed by a qualified security professional before delivery</li>
+          </ul>
+        </div>
+        <p>ClearGlass maintains logs of all AI-generated outputs and corresponding human review decisions for a minimum of 3 years, accessible to clients upon request for outputs relating to their data.</p>
+      </section>
+
+      <section id="s4">
+        <h2>4. Limitation of AI Liability</h2>
+        <p>AI systems are probabilistic and operate under uncertainty. ClearGlass makes no warranty that AI-assisted threat detection, risk scoring, or compliance recommendations will be free from error, omission, or false results (including false positives and false negatives).</p>
+        <div class="clause warn">
+          <div class="cn">LIABILITY LIMITATION</div>
+          <p style="margin:0;font-size:14px">ClearGlass Inc. shall not be liable for any loss, damage, security incident, regulatory penalty, or harm arising from:</p>
+          <ul style="margin:6px 0 0;padding-left:16px;font-size:14px">
+            <li style="margin-bottom:4px">Reliance on AI-generated outputs without independent human verification</li>
+            <li style="margin-bottom:4px">AI model errors, hallucinations, or adversarial manipulation by threat actors</li>
+            <li style="margin-bottom:4px">AI performance degradation due to data drift or out-of-distribution inputs</li>
+            <li style="margin-bottom:0">Client actions taken solely on the basis of AI recommendations without human review</li>
+          </ul>
+        </div>
+        <p>Aggregate liability for AI-specific failures is subject to the limitation of liability provisions in our <a href="terms.html">Terms of Service</a>, capped at fees paid in the preceding 12 months.</p>
+      </section>
+
+      <section id="s5">
+        <h2>5. AI Training Data Practices</h2>
+        <p>ClearGlass applies strict governance to data used in AI model training:</p>
+        <ul>
+          <li><strong>No client data used for model training without written consent.</strong> Client operational data is never incorporated into shared model training pipelines without an explicit data sharing agreement.</li>
+          <li><strong>Synthetic and open data preferred.</strong> Where possible, ClearGlass trains models on synthetic data, public datasets, or ClearGlass-owned red-team data.</li>
+          <li><strong>Anonymization prior to any training use.</strong> If operational data is used under an authorized data sharing agreement, it is anonymized and aggregated before training use.</li>
+          <li><strong>Provenance logging.</strong> Training dataset provenance is logged for all production models, identifying data sources, collection dates, and applicable licenses.</li>
+          <li><strong>Right to deletion.</strong> Clients may request removal of their contributed data from training datasets where technically feasible (right to be forgotten).</li>
+        </ul>
+      </section>
+
+      <section id="s6">
+        <h2>6. Ethical AI Commitments</h2>
+        <p>ClearGlass Inc. commits to the following ethical standards in AI development and deployment:</p>
+        <ul>
+          <li>We will not develop AI systems designed to cause harm to individuals, organizations, or critical infrastructure</li>
+          <li>We will conduct bias audits on threat detection and risk scoring models before production deployment</li>
+          <li>We will publish AI governance updates annually and maintain this framework as a living document</li>
+          <li>We will engage with emerging Canadian AI regulation, including Bill C-27 (AIDA) as it progresses, and adapt practices accordingly</li>
+          <li>We will maintain an internal AI ethics review process for all novel AI applications before deployment</li>
+        </ul>
+      </section>
+
+      <section id="s7">
+        <h2>7. Prohibited AI Uses</h2>
+        <p>ClearGlass Inc. prohibits the following uses of its AI platforms and services:</p>
+        <ul>
+          <li>Development or enhancement of offensive cyberweapons or destructive malware</li>
+          <li>Mass surveillance of individuals without lawful authority</li>
+          <li>Social scoring, political profiling, or discriminatory targeting of protected groups</li>
+          <li>Generating disinformation, deepfakes, or synthetic media for deceptive purposes</li>
+          <li>Any application that violates Canadian law, international humanitarian law, or human rights standards</li>
+        </ul>
+        <p>Clients who engage ClearGlass for authorized security testing must comply with agreed Rules of Engagement. Use of ClearGlass AI capabilities outside authorized scope is a material breach of the applicable service agreement.</p>
+      </section>
+
+      <section id="s8">
+        <h2>8. Incident Response</h2>
+        <p>If a ClearGlass AI system produces outputs that cause or contribute to a security incident, privacy breach, or significant error affecting a client:</p>
+        <ol>
+          <li><strong>Notification:</strong> ClearGlass will notify the affected client within 72 hours of confirming the AI system contributed to the incident.</li>
+          <li><strong>Containment:</strong> Affected AI model versions will be quarantined or disabled pending investigation.</li>
+          <li><strong>Root Cause Analysis:</strong> A technical RCA will be completed within 14 days and shared with the affected client.</li>
+          <li><strong>Remediation:</strong> Model corrections, retraining, or replacement will be implemented and validated before redeployment.</li>
+          <li><strong>Regulatory Reporting:</strong> Where required by PIPEDA or other applicable law, ClearGlass will report to the appropriate regulatory authority.</li>
+        </ol>
+      </section>
+
+      <section id="s9">
+        <h2>9. Continuous Review</h2>
+        <p>This AI Liability Framework is reviewed and updated at minimum annually, or upon:</p>
+        <ul>
+          <li>Material changes to Canadian AI regulation (including AIDA and Quebec Law 25)</li>
+          <li>Deployment of a new AI platform or major model version</li>
+          <li>A significant AI-related incident or near-miss</li>
+          <li>Changes to industry standards (NIST AI RMF, ISO/IEC 42001)</li>
+        </ul>
+        <p>Version history and change summaries are maintained internally. Material revisions to client-facing commitments are communicated by posting to this page with an updated effective date.</p>
+      </section>
+
+      <section id="s10">
+        <h2>10. Contact</h2>
+        <p>For questions about our AI governance practices or to report an AI-related concern:</p>
+        <div class="clause accent">
+          <div class="cn">AI GOVERNANCE CONTACT</div>
+          <p style="margin:0;font-size:14px;line-height:1.9">
+            <strong>Desmond Otieno Odhiambo — AI Governance Lead</strong><br/>
+            ClearGlass Inc., Burlington, Ontario, Canada<br/>
+            Email: <a href="mailto:desmondotieno@icloud.com">desmondotieno@icloud.com</a>
+          </p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="page-wrap">
+    <div class="site-footer-inner">
+      <p>&#169; 2026 ClearGlass Inc. All rights reserved. &#183; Burlington, Ontario, Canada</p>
+      <div class="site-footer-links">
+        <a href="/legal/">Legal Hub</a>
+        <a href="/legal/privacy.html">Privacy</a>
+        <a href="/legal/terms.html">Terms</a>
+        <a href="/">Home</a>
+      </div>
+    </div>
+  </div>
+</footer>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › <a href="index.html">Legal, Tax &amp; Compliance</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="../procurement-legal-tech.html"><span><b>Previous</b>Procurement &amp; Legal-Tech Surface</span></a>
+      <a href="index.html"><span><b>Topic hub</b>Legal Infrastructure</span></a>
+      <a href="legal-council.html"><span><b>Next in journey</b>AI Legal Council Framework</span></a>
+    </div>
+    <ul>
+      <li><a href="legal-council.html"><b>AI Legal Council Framework</b> — structured multi-advisor legal review</a></li>
+      <li><a href="privacy.html"><b>Privacy Policy</b> — how ClearGlass handles data</a></li>
+      <li><a href="terms.html"><b>Terms of Service</b> — the terms governing ClearGlass services</a></li>
+      <li><a href="articles.html"><b>Articles of Incorporation</b> — ClearGlass founding articles</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../offers/index.html">Browse services &amp; engagements</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="../nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

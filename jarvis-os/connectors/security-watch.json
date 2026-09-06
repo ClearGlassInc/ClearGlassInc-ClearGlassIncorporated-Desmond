@@ -1,0 +1,50 @@
+{
+  "$schema": "./_manifest.schema.json",
+  "connector": "security.watch",
+  "display_name": "Security Monitoring & Incident Response",
+  "version": "1.0.0",
+  "category": "security",
+  "transport": "sse",
+  "auth": { "type": "service_account", "secret_handles": ["vault://siem/svc/jarvis", "vault://idp/okta/jarvis"] },
+  "scopes": ["logs.read", "auth.events.read", "endpoint.telemetry.read", "session.revoke", "account.quarantine"],
+  "data_classification": "restricted",
+  "tools": [
+    {
+      "name": "stream_alerts",
+      "description": "Subscribe to anomaly/phishing/policy-violation alerts across endpoints, accounts, and logs.",
+      "risk": "GREEN",
+      "reversible": true,
+      "input_schema": { "type": "object", "properties": { "severity_min": { "type": "string", "enum": ["info", "low", "medium", "high", "critical"], "default": "low" } } }
+    },
+    {
+      "name": "build_incident_timeline",
+      "description": "Correlate events into a chronological incident timeline with source provenance.",
+      "risk": "GREEN",
+      "reversible": true,
+      "input_schema": { "type": "object", "required": ["entity"], "properties": { "entity": { "type": "string" }, "window_hours": { "type": "integer", "default": 24 } } }
+    },
+    {
+      "name": "threat_summary",
+      "description": "Summarize active threats with confidence scoring and recommended response playbook.",
+      "risk": "GREEN",
+      "reversible": true,
+      "input_schema": { "type": "object", "properties": { "scope": { "type": "string", "enum": ["account", "endpoint", "org"], "default": "account" } } }
+    },
+    {
+      "name": "quarantine_session",
+      "description": "Quarantine a suspicious session/device. AMBER — pre-authorizable in security policy; otherwise approval-gated.",
+      "risk": "AMBER",
+      "reversible": true,
+      "dry_run": true,
+      "input_schema": { "type": "object", "required": ["session_id"], "properties": { "session_id": { "type": "string" } } }
+    },
+    {
+      "name": "force_reauth",
+      "description": "Force re-authentication / revoke tokens for an identity. RED — security/identity change; typed confirmation required.",
+      "risk": "RED",
+      "reversible": false,
+      "dry_run": true,
+      "input_schema": { "type": "object", "required": ["principal"], "properties": { "principal": { "type": "string" }, "revoke_all_sessions": { "type": "boolean", "default": true } } }
+    }
+  ]
+}

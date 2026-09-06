@@ -1,0 +1,90 @@
+{
+  "version": "1.0.0",
+  "retention": {
+    "raw_security_events_days": 30,
+    "normalized_metrics_days": 90,
+    "configuration_audit_days": 365,
+    "full_client_ip_export": false
+  },
+  "privacy": {
+    "exclude": [
+      "Cookie",
+      "Authorization",
+      "request_body",
+      "password_fields",
+      "complete_sensitive_query_values"
+    ],
+    "ip_strategy": "omit-or-pseudonymize unless incident response requires full address"
+  },
+  "dashboards": [
+    "requests_by_action",
+    "requests_by_country_asn_path_user_agent_category",
+    "waf_rule_matches",
+    "challenge_solve_failure_rate",
+    "origin_error_rate_latency",
+    "cache_hit_ratio",
+    "authentication_abuse",
+    "top_repeated_attack_sources",
+    "security_header_drift",
+    "configuration_drift",
+    "dns_certificate_health"
+  ],
+  "alerts": [
+    {
+      "id": "edge.block-rate-spike",
+      "metric": "blocked_or_challenged_ratio",
+      "condition": "greater_than_baseline",
+      "window_minutes": 10,
+      "severity": "warning",
+      "note": "Tune to the measured baseline; do not use a guessed global percentage."
+    },
+    {
+      "id": "edge.origin-5xx-spike",
+      "metric": "origin_5xx_ratio",
+      "condition": "greater_than_baseline",
+      "window_minutes": 5,
+      "severity": "critical",
+      "note": "Correlate with origin latency and provider health before changing WAF policy."
+    },
+    {
+      "id": "edge.traffic-surge",
+      "metric": "requests_per_minute",
+      "condition": "multiple_of_recent_baseline",
+      "window_minutes": 5,
+      "severity": "warning",
+      "note": "Traffic spikes are not automatically attacks; correlate with cache, bot and WAF signals."
+    },
+    {
+      "id": "edge.auth-abuse",
+      "metric": "failed_authentication_or_login_rate_limit_events",
+      "condition": "greater_than_baseline",
+      "window_minutes": 10,
+      "severity": "critical",
+      "note": "Relevant only after a dynamic authentication origin is routed through the edge."
+    },
+    {
+      "id": "edge.challenge-failure",
+      "metric": "challenge_failure_ratio",
+      "condition": "sustained_increase",
+      "window_minutes": 15,
+      "severity": "warning",
+      "note": "A high solve rate can indicate false positives; a low solve rate can indicate automation."
+    },
+    {
+      "id": "edge.config-drift",
+      "metric": "terraform_plan_changes_against_expected_state",
+      "condition": "non_empty_unapproved_drift",
+      "window_minutes": 0,
+      "severity": "critical",
+      "note": "Reconcile emergency dashboard changes into code or revert them before the next apply."
+    },
+    {
+      "id": "edge.tls-dns-failure",
+      "metric": "external_https_dns_health",
+      "condition": "failed_from_multiple_vantage_points",
+      "window_minutes": 5,
+      "severity": "critical",
+      "note": "Do not treat one cached resolver as proof of an outage."
+    }
+  ]
+}

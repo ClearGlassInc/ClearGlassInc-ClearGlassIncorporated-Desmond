@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://clearglassinc.com/schemas/edge-policy.schema.json",
+  "title": "ClearGlass Edge Security Policy",
+  "type": "object",
+  "required": ["version", "environment", "defaults", "rules"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {"type": "string", "minLength": 1},
+    "environment": {"enum": ["staging", "production", "shared"]},
+    "defaults": {
+      "type": "object",
+      "required": ["geo_enforcement_enabled", "csp_mode", "log_sensitive_fields"],
+      "additionalProperties": false,
+      "properties": {
+        "geo_enforcement_enabled": {"type": "boolean"},
+        "csp_mode": {"enum": ["report-only", "enforce"]},
+        "log_sensitive_fields": {"const": false}
+      }
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/rule"}
+    }
+  },
+  "$defs": {
+    "rule": {
+      "type": "object",
+      "required": ["id", "description", "category", "scope", "priority", "action", "rollout_mode", "log_level", "enabled", "exceptions", "owner", "rationale"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,63}$"},
+        "description": {"type": "string", "minLength": 5},
+        "category": {"enum": ["ddos", "managed_waf", "custom_waf", "bot", "ip_reputation", "rate_limit", "geo_asn", "headers", "origin", "logging", "emergency"]},
+        "scope": {"type": "string", "minLength": 1},
+        "priority": {"type": "integer", "minimum": 1, "maximum": 100000},
+        "action": {"enum": ["allow", "log", "managed_challenge", "interactive_challenge", "rate_limit", "block", "set_header", "remove_header", "cache", "route"]},
+        "rollout_mode": {"enum": ["observe", "challenge", "enforce", "disabled"]},
+        "log_level": {"enum": ["none", "metadata", "security_event"]},
+        "enabled": {"type": "boolean"},
+        "match": {"type": "object", "additionalProperties": true},
+        "threshold": {"type": ["object", "null"], "additionalProperties": true},
+        "exceptions": {"type": "array", "items": {"type": "string"}},
+        "expires_at": {"type": ["string", "null"], "format": "date-time"},
+        "owner": {"type": "string", "minLength": 2},
+        "change_ticket": {"type": ["string", "null"]},
+        "rationale": {"type": "string", "minLength": 5}
+      }
+    }
+  }
+}

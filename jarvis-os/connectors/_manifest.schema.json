@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://www.clearglassinc.com/jarvis-os/connectors/_manifest.schema.json",
+  "title": "JARVIS OS MCP Connector Manifest",
+  "description": "Schema every JARVIS OS connector manifest must satisfy. A connector is an MCP server exposing tools to the swarm. Each tool declares a risk class, scopes, and reversibility so the policy layer can gate it.",
+  "type": "object",
+  "required": ["connector", "version", "transport", "auth", "scopes", "tools"],
+  "properties": {
+    "connector": { "type": "string", "description": "Stable connector id, e.g. 'gmail'." },
+    "display_name": { "type": "string" },
+    "version": { "type": "string" },
+    "category": { "type": "string", "enum": ["communication", "productivity", "crm", "knowledge", "security", "osint", "brand", "finance", "system"] },
+    "transport": { "type": "string", "enum": ["stdio", "http", "sse"] },
+    "auth": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "type": "string", "enum": ["oauth2", "api_key", "service_account", "none"] },
+        "secret_handles": { "type": "array", "items": { "type": "string" }, "description": "Vault handles; raw secrets are injected at egress, never seen by the model." }
+      }
+    },
+    "scopes": { "type": "array", "items": { "type": "string" }, "description": "Least-privilege scopes requested." },
+    "data_classification": { "type": "string", "enum": ["public", "internal", "confidential", "restricted"] },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "description", "risk", "reversible"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "risk": { "type": "string", "enum": ["GREEN", "AMBER", "RED"] },
+          "reversible": { "type": "boolean" },
+          "dry_run": { "type": "boolean", "description": "Supports a dry-run/preview before commit." },
+          "input_schema": { "type": "object" }
+        }
+      }
+    }
+  }
+}
