@@ -1,0 +1,25 @@
+[package]
+name = "clearglass-agent-crypto"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+description = "Memory-safe encryption runtime for ClearGlass agent-army artifacts"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[lib]
+name = "clearglass_agent_crypto"
+path = "src/lib.rs"
+
+[[bin]]
+name = "clearglass-secure"
+path = "src/main.rs"
+
+[dependencies]
+age = { version = "=0.12.1", default-features = false }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+panic = "abort"
+strip = "symbols"

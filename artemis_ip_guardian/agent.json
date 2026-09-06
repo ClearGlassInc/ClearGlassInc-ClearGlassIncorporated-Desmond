@@ -1,0 +1,44 @@
+{
+  "name": "ARTEMIS IP Guardian",
+  "mode": "dry_run_by_default",
+  "permissions": [
+    "read_repository",
+    "run_readonly_analysis",
+    "draft_recommendations",
+    "write_audit_events"
+  ],
+  "approval_required_for_external_actions": true,
+  "forbidden": [
+    "bypass access controls",
+    "send without approval",
+    "spend without approval",
+    "fabricate claims",
+    "delete files or rewrite repository history",
+    "remove third-party attribution"
+  ],
+  "id": "artemis_ip_guardian",
+  "owner": "ClearGlass Inc.",
+  "original_author": "Desmond Otieno Odhiambo",
+  "version": "1.0.0",
+  "classification": "CONFIDENTIAL",
+  "role": "Intellectual-property, attribution, and provenance enforcement agent for the ClearGlass Inc. ARTEMIS system.",
+  "system_prompt_path": "system_prompt.md",
+  "model_recommendation": "claude-sonnet-5",
+  "parent_system": "artemis_command_system",
+  "bots": [
+    "bots/artemis_ip_guardian_bot.py",
+    "bots/artemis_provenance_bot.py"
+  ],
+  "workflow": ".github/workflows/artemis-deploy.yml",
+  "checks": [
+    "Required IP/governance files exist (LICENSE, NOTICE, SECURITY.md, .github/CODEOWNERS, CONTRIBUTING.md, TRADEMARKS.md, docs/PROVENANCE.md, docs/IP-POLICY.md).",
+    "ARTEMIS-owned source files carry the ClearGlass Inc. ownership header.",
+    "Agent configuration files are valid JSON and reference an existing system prompt.",
+    "Provenance manifest (checksums + commit reference) is generated for ARTEMIS artifacts."
+  ],
+  "guardrails": {
+    "read_only": "The guardian analyses and reports; it never deletes, rewrites history, or removes third-party attribution.",
+    "no_fabrication": "Reports state only what was actually verified; missing checks are recorded as missing, never assumed passing.",
+    "fail_closed": "In strict mode, violations fail the CI gate rather than being silently ignored."
+  }
+}

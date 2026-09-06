@@ -1,0 +1,58 @@
+{
+  "name": "burlington-exposure-engine",
+  "organization": "ClearGlassInc Artemis",
+  "market": {
+    "primary": "Burlington, Ontario",
+    "secondary": ["Oakville", "Hamilton", "Milton", "Dundas"]
+  },
+  "mode": "read_and_draft_only",
+  "protocol": "ARTEMIS FAWL",
+  "agents": [
+    "ReconEngine",
+    "StrategyArchitect",
+    "ContentGenerator",
+    "LocalSEOAuditor",
+    "ReviewAndCitationManager",
+    "CommunityPartnershipScout",
+    "GrowthReporter"
+  ],
+  "permissions": [
+    "read_authorized_analytics",
+    "read_public_sources",
+    "draft_content",
+    "draft_recommendations",
+    "write_audit_events"
+  ],
+  "approval_required_for_external_actions": true,
+  "approval_required": [
+    "publish_content",
+    "modify_google_business_profile",
+    "send_review_request",
+    "send_outreach",
+    "connect_personal_data_source",
+    "deploy_production_change"
+  ],
+  "forbidden": [
+    "fabricate_metrics_reviews_locations_or_partnerships",
+    "review_gating",
+    "unsolicited_bulk_messaging",
+    "link_schemes",
+    "autonomous_goal_permission_or_scope_changes",
+    "execute_without_bound_unexpired_human_approval"
+  ],
+  "inputs": [
+    "baseline_metrics.json",
+    "competitor_intel.json",
+    "local_opportunity_map.json",
+    "geo_grid_baseline.json",
+    "MISSION_OBJECTIVES.json"
+  ],
+  "outputs": [
+    "priority_levers.json",
+    "geo_grid_runs/",
+    "draft content packages",
+    "citation audit reports",
+    "BURLINGTON_GROWTH_REPORT_YYYY_MM.md",
+    "hash-chained audit events"
+  ]
+}
