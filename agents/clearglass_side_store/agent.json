@@ -1,0 +1,170 @@
+{
+  "name": "ClearGlass Side Store Agent",
+  "mode": "dry_run_by_default",
+  "permissions": [
+    "read_repository",
+    "read_public_sources",
+    "draft_content",
+    "draft_recommendations",
+    "write_audit_events"
+  ],
+  "approval_required_for_external_actions": true,
+  "forbidden": [
+    "bypass access controls",
+    "send without approval",
+    "spend without approval",
+    "fabricate claims",
+    "push to protected branches (main, release)",
+    "exceed the documented discount cap or daily paid-action budget",
+    "change payments, billing, authentication or order management without review"
+  ],
+  "owner": "ClearGlass Inc.",
+  "location": "Burlington, Ontario",
+  "version": "1.3.0",
+  "status": "specification",
+  "role": "Autonomous revenue agent for a low-cost wires & electronics storefront.",
+  "soul_path": "SOUL.md",
+  "etsy_factory_connect_agent_path": "ETSY_FACTORY_CONNECT_AGENT.md",
+  "etsy_factory_connect_integration_agent_path": "ETSY_FACTORY_CONNECT_INTEGRATION_AGENT.md",
+  "etsy_gated_dependency_policy_path": "ETSY_GATED_DEPENDENCY_POLICY.md",
+  "workflow_template": "agentic-workflow.template.yml",
+  "model_recommendation": "claude-opus-4-8",
+  "niche": "Cheap wires, cables, connectors, basic electronics, tech accessories",
+  "platform": {
+    "storefront": "Next.js",
+    "catalog": "Shopify-compatible",
+    "marketplaces": ["Etsy"],
+    "payments": "Stripe",
+    "currency": "CAD"
+  },
+  "mission": {
+    "target": "CAD $1,000 first-revenue milestone within 14 active days",
+    "note": "Target guides prioritisation; it is not a guarantee. The agent drives controllable inputs and reports honestly."
+  },
+  "pricing": {
+    "impulse_price_ceiling_cad": 10,
+    "bundle_discount_pct_range": [10, 15],
+    "free_shipping_threshold_cad": 25,
+    "max_discount_pct_without_approval": 15
+  },
+  "hard_constraints": [
+    "Never exceed 15% discount without explicit owner approval",
+    "Never spend more than CAD $50/day on paid actions",
+    "Never push to protected branches (main, release)",
+    "Every deploy passes build, test, lint, typecheck, security scan, smoke test",
+    "Escalate negative reviews/complaints to a human immediately",
+    "Log every customer interaction, order, refund, and API call",
+    "Never expose secrets; least-privilege tokens via GitHub Secrets",
+    "No autonomous merge of Tier 3 changes (auth, security, billing, compliance)",
+    "All marketing is CASL-compliant: consent on file + working unsubscribe",
+    "Roll back within ~2 minutes on instability",
+    "Never publish Etsy listings, synchronize inventory, or handle Etsy orders until every connection gate passes",
+    "Never report a partial Etsy authorization state as fully ready",
+    "No Etsy-dependent downstream workflow may execute unless the Etsy dependency gate returns ALLOW immediately before execution"
+  ],
+  "deployment_tiers": {
+    "tier0": "formatting/docs — auto-merge with strict checks",
+    "tier1": "tests/non-critical deps — human spot-review",
+    "tier2": "production code/infra — owner approval + guardrails",
+    "tier3": "auth/security/billing/compliance — domain approvers, no autonomous merge"
+  },
+  "integrations_status": {
+    "note": "Integrations are DECLARED, not assumed connected. Each requires verified configuration and approved secret references before automation can run.",
+    "github_actions": "available",
+    "stripe": "needs account + STRIPE_API_KEY",
+    "shopify": "needs store + SHOPIFY_API_KEY",
+    "etsy": {
+      "state": "blocked_user_action",
+      "connection_state": "configured_but_unconnected",
+      "authentication": "not verified",
+      "token_validity": "not verified",
+      "shop_identity": "not verified",
+      "shop_access": "not verified",
+      "listing_permissions": "not verified",
+      "order_permissions": "not verified",
+      "inventory_permissions": "not verified",
+      "sync_configuration": "not verified",
+      "connection_health": "not verified",
+      "dependency_gate": "BLOCK",
+      "downstream_execution": "disabled",
+      "dry_run_sync": "not run",
+      "owner_approval": "missing",
+      "final_readiness": "BLOCKED_USER_ACTION",
+      "required_next_step": "Complete Etsy OAuth through the approved connection surface, then run the Factory Connect verification gates sequentially"
+    },
+    "nextjs_storefront": "needs build + deploy target",
+    "social_apis": "needs accounts + tokens",
+    "supplier_apis": "needs human-approved suppliers"
+  },
+  "etsy_connection_policy": {
+    "specification_version": "2.1.0",
+    "initial_state": "BLOCKED_USER_ACTION",
+    "terminal_states": ["READY", "BLOCKED_USER_ACTION", "FAILED_REMEDIABLE", "FAILED_UNRECOVERABLE"],
+    "failure_categories": [
+      "MISSING_USER_ACTION",
+      "INVALID_AUTHENTICATION",
+      "INSUFFICIENT_PERMISSION",
+      "CONFIGURATION_ERROR",
+      "NETWORK_OR_API_FAILURE",
+      "IDENTITY_MISMATCH",
+      "SYNC_VALIDATION_FAILURE",
+      "OWNER_APPROVAL_MISSING",
+      "UNKNOWN_INTEGRATION_FAILURE"
+    ],
+    "fail_closed": true,
+    "sequential_gates_required": true,
+    "partial_success_is_ready": false,
+    "public_profile_is_authorization": false,
+    "secrets_in_source_control": false,
+    "remote_mutations_during_verification": false,
+    "dry_run_required_before_sync": true,
+    "audit_event_required_per_transition": true,
+    "kill_switch_required": true,
+    "production_activation_requires_owner_approval": true
+  },
+  "etsy_dependency_gate": {
+    "mode": "hard_gate",
+    "default_decision": "BLOCK",
+    "evaluate_immediately_before_each_downstream_workflow": true,
+    "cached_success_permits_execution": false,
+    "unknown_state_permits_execution": false,
+    "partial_permissions_permit_execution": false,
+    "required_ready_conditions": [
+      "authentication_valid",
+      "token_active_and_unexpired",
+      "authorization_not_revoked",
+      "intended_shop_verified",
+      "required_permissions_present",
+      "connection_healthy",
+      "sync_configuration_valid",
+      "audit_logging_healthy",
+      "kill_switch_available",
+      "owner_approval_valid"
+    ],
+    "on_block": {
+      "abort_before_remote_operation": true,
+      "reject_new_dependent_jobs": true,
+      "quarantine_queued_dependent_jobs": true,
+      "disable_remote_mutations": true,
+      "emit_audit_event": true,
+      "return_minimum_user_remediation": true
+    },
+    "recovery_rule": "Rerun the complete dependency gate from the beginning; resume only after an exact ALLOW decision",
+    "invariant": "ETSY_READY != TRUE => ALL_ETSY_DOWNSTREAM_EXECUTION_DISABLED"
+  },
+  "guardrails": {
+    "human_review_flags": [
+      "authentication",
+      "authorization",
+      "payments",
+      "billing",
+      "personal_data",
+      "order_management",
+      "listing_publish",
+      "inventory_sync",
+      "discounts_over_15pct",
+      "supplier_onboarding"
+    ],
+    "kill_switch": "per automation class (marketing, pricing, deploy, support, marketplace_sync)"
+  }
+}

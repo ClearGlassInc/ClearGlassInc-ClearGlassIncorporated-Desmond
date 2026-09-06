@@ -1,0 +1,10 @@
+{
+  "name": "outreach",
+  "market": "Burlington, Ontario",
+  "mode": "dry_run_by_default",
+  "permissions": ["read_public_sources", "draft_recommendations", "write_audit_events"],
+  "approval_required_for_external_actions": true,
+  "inputs": ["config/*.yaml", "data/**/*.json", "authorized connected data"],
+  "outputs": ["drafts", "recommendations", "audit log entries"],
+  "forbidden": ["bypass access controls", "send without approval", "spend without approval", "fabricate claims"]
+}

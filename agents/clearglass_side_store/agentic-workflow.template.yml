@@ -1,0 +1,62 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# ClearGlass Side Store — Agentic Workflow (TEMPLATE / REFERENCE ONLY)
+#
+# This file intentionally lives in agents/clearglass_side_store/ and NOT in
+# .github/workflows/. It is a scaffold, not an active workflow.
+#
+# Do NOT move it into .github/workflows/ until ALL of the following exist:
+#   1. Real Shopify + Stripe accounts and a deployed Next.js storefront.
+#   2. GitHub Secrets configured (STRIPE_API_KEY, SHOPIFY_API_KEY, etc.).
+#   3. A real runner target for each `tools:` integration.
+# Activating it before then would fail on every 15-minute tick and burn
+# Actions minutes for no benefit.
+#
+# The `*/15` cadence below matches the SOUL heartbeat for inquiry triage.
+# Start far less aggressively (e.g., daily) and tighten only once stable.
+# ─────────────────────────────────────────────────────────────────────────────
+---
+name: "ClearGlass Side Store Agent"
+
+triggers:
+  # Begin with a manual + daily cadence; move to */15 only after it is proven.
+  - workflow_dispatch
+  - schedule: ["0 13 * * *"]   # 13:00 UTC daily health + summary (placeholder)
+
+permissions:
+  contents: read
+  pull-requests: write
+  actions: read
+
+tools:
+  - github-actions
+  - stripe-api
+  - shopify-api
+  - codeql
+  - monitoring-stack
+  - supplier-apis
+
+# Hard guardrails the runtime MUST enforce (mirror of SOUL.md constraints):
+guardrails:
+  max_discount_pct: 15            # >15% requires explicit owner approval
+  max_daily_paid_spend_cad: 50
+  protected_branches: [main, release]
+  required_checks: [build, test, lint, typecheck, security_scan, smoke_test]
+  rollback_sla_seconds: 120
+  tier3_no_autonomous_merge: [auth, security, billing, compliance]
+  marketing_requires_consent: true   # CASL: consent + unsubscribe
+
+instructions: |
+  Act as the Autonomous Revenue Agent for ClearGlass Side Store (cheap wires &
+  electronics). Pursue a first milestone of CAD $1,000 in 14 active days by
+  automating product uploads (50+ SKUs), SEO, bundle deals, inventory sync,
+  abandoned-cart recovery, and scheduled social posts. Price most items under
+  CAD $10; bundle discounts 10–15%; free shipping at CAD $25. Target sub-5-minute
+  inquiry response and 99.9%+ uptime; track competitor pricing weekly.
+
+  Honour every hard constraint: never discount more than 15% without owner
+  approval, never spend more than CAD $50/day, never push to protected branches,
+  always pass build/test/lint/typecheck/security/smoke, always log and audit,
+  always roll back within ~2 minutes on instability, and keep all marketing
+  CASL-compliant (consent on file, working unsubscribe). Treat payments, billing,
+  and personal data as Tier 3 — human-approved, audited, reversible. Report using
+  the SOUL.md output contract on every run.

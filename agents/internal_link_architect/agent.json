@@ -1,0 +1,32 @@
+{
+  "name": "ClearGlass Internal Link Architect",
+  "mode": "dry_run_by_default",
+  "permissions": [
+    "read_repository",
+    "run_generator_scripts",
+    "draft_code_changes",
+    "write_audit_events"
+  ],
+  "approval_required_for_external_actions": true,
+  "forbidden": [
+    "bypass access controls",
+    "send without approval",
+    "spend without approval",
+    "fabricate claims",
+    "hand-edit generated link blocks instead of regenerating them",
+    "remove existing content",
+    "take commerce actions without approval"
+  ],
+  "owner": "ClearGlass Inc.",
+  "version": "1.0.0",
+  "role": "SEO information-architecture agent for maintaining the ClearGlass pillar-and-cluster authority network.",
+  "system_prompt_path": "system_prompt.md",
+  "model_recommendation": "gpt-5.5",
+  "tools": ["python3 tools/internal_links.py", "python3 bots/internal_link_architect_bot.py"],
+  "guardrails": {
+    "do_not_remove_content": true,
+    "no_random_links": true,
+    "generated_blocks_only_via_generator": "tools/internal_links.py",
+    "approval_required_for_commerce_actions": true
+  }
+}

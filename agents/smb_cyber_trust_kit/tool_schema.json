@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ClearGlass SMB Cyber Trust Agent Tool Schema",
+  "version": "1.0.0",
+  "description": "Tool contract for the SMB Cyber Trust Agent. Every tool maps 1:1 to a pure function in bots.smb_cyber_trust_kit_bot so the browser console and the backend agent share one deterministic source of truth.",
+  "tools": [
+    {
+      "name": "score_risk",
+      "risk": "low",
+      "engine_fn": "score_risk",
+      "description": "Score one risk on the 5x5 heat-map. Returns score (1-25), band, colour, and recommended action.",
+      "input_schema": {
+        "type": "object",
+        "required": ["likelihood", "impact"],
+        "properties": {
+          "likelihood": {"type": "integer", "minimum": 1, "maximum": 5},
+          "impact": {"type": "integer", "minimum": 1, "maximum": 5}
+        }
+      }
+    },
+    {
+      "name": "build_heat_map",
+      "risk": "low",
+      "engine_fn": "build_heat_map",
+      "description": "Return the 25-cell grid with the starter risk register placed on it.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "register": {"type": "array", "items": {"type": "object"}}
+        }
+      }
+    },
+    {
+      "name": "rank_risks",
+      "risk": "low",
+      "engine_fn": "rank_risks",
+      "description": "Return the risk register scored and sorted worst-first — the owner's to-do order.",
+      "input_schema": {"type": "object", "properties": {}}
+    },
+    {
+      "name": "render_policy",
+      "risk": "low",
+      "engine_fn": "render_policy",
+      "description": "Render one of the eight policy templates as plain Markdown, personalised to the business name.",
+      "input_schema": {
+        "type": "object",
+        "required": ["policy_id"],
+        "properties": {
+          "policy_id": {
+            "enum": ["acceptable-use", "passwords-mfa", "data-protection",
+                     "incident-response", "access-control", "backup-recovery",
+                     "vendor-risk", "device-byod"]
+          },
+          "org": {"type": "string"},
+          "incident_contact": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "incident_script",
+      "risk": "medium",
+      "engine_fn": "incident_script",
+      "description": "Return incident communication scripts for an audience, optionally filtered by phase. Regulator and media scripts require human approval before sending.",
+      "input_schema": {
+        "type": "object",
+        "required": ["audience"],
+        "properties": {
+          "audience": {
+            "enum": ["Internal staff", "Customers", "Affected individuals",
+                     "Privacy regulator", "Partners & vendors", "Media / public"]
+          },
+          "phase": {
+            "enum": ["detect", "contain", "eradicate", "recover", "post-incident"]
+          }
+        }
+      }
+    },
+    {
+      "name": "translate_jargon",
+      "risk": "low",
+      "engine_fn": "JARGON_GLOSSARY",
+      "description": "Translate a technical term into plain language plus an everyday analogy.",
+      "input_schema": {
+        "type": "object",
+        "required": ["term"],
+        "properties": {"term": {"type": "string"}}
+      }
+    },
+    {
+      "name": "build_kit",
+      "risk": "low",
+      "engine_fn": "build_kit",
+      "description": "Assemble the entire kit (all four deliverables) personalised to a business name.",
+      "input_schema": {
+        "type": "object",
+        "properties": {"org": {"type": "string"}}
+      }
+    },
+    {
+      "name": "handoff_to_clearglass",
+      "risk": "high",
+      "engine_fn": null,
+      "description": "Hand off to the ClearGlass team when the business wants implementation help beyond the templates. Produces a structured summary and a recommended offer; never sends anything without confirmation.",
+      "input_schema": {
+        "type": "object",
+        "required": ["summary", "recommended_offer"],
+        "properties": {
+          "summary": {"type": "string"},
+          "recommended_offer": {
+            "enum": ["security-quick-audit", "hardening-sprint",
+                     "phipa-readiness", "automation-aas"]
+          },
+          "contact": {"type": "string"}
+        }
+      }
+    }
+  ]
+}

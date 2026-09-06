@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ClearGlass Guardian v5 Tool Schema",
+  "version": "5.0.0",
+  "description": "Governed tool contract for ClearGlass Guardian v5.0 enterprise command interface.",
+  "tools": [
+    {
+      "name": "classify_intent",
+      "risk": "low",
+      "description": "Classify user intent by domain, urgency, sensitivity, and execution risk.",
+      "input_schema": {
+        "type": "object",
+        "required": ["request", "actor"],
+        "properties": {
+          "request": {"type": "string"},
+          "actor": {"type": "string"},
+          "context": {"type": "object"}
+        }
+      }
+    },
+    {
+      "name": "plan_workflow",
+      "risk": "low",
+      "description": "Generate a bounded workflow plan with dependencies, checkpoints, and approval gates.",
+      "input_schema": {
+        "type": "object",
+        "required": ["intent", "risk_level"],
+        "properties": {
+          "intent": {"type": "string"},
+          "risk_level": {"enum": ["low", "medium", "high", "blocked"]},
+          "step_limit": {"type": "integer", "minimum": 1, "maximum": 10, "default": 5},
+          "constraints": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    {
+      "name": "evaluate_policy",
+      "risk": "medium",
+      "description": "Evaluate identity, authorization, DLP, data movement, and execution eligibility before action.",
+      "input_schema": {
+        "type": "object",
+        "required": ["actor", "action", "data_class"],
+        "properties": {
+          "actor": {"type": "string"},
+          "action": {"type": "string"},
+          "data_class": {"enum": ["public", "internal", "confidential", "regulated", "secret"]},
+          "systems": {"type": "array", "items": {"type": "string"}},
+          "movement": {"enum": ["none", "internal", "external"]}
+        }
+      }
+    },
+    {
+      "name": "run_lookup",
+      "risk": "low",
+      "description": "Perform read-only lookup against approved systems.",
+      "input_schema": {
+        "type": "object",
+        "required": ["query", "source"],
+        "properties": {
+          "query": {"type": "string"},
+          "source": {"type": "string"},
+          "purpose": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "draft_response",
+      "risk": "low",
+      "description": "Create a draft artifact or response without sending or publishing it.",
+      "input_schema": {
+        "type": "object",
+        "required": ["objective", "audience"],
+        "properties": {
+          "objective": {"type": "string"},
+          "audience": {"type": "string"},
+          "tone": {"type": "string"},
+          "constraints": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    {
+      "name": "submit_for_approval",
+      "risk": "high",
+      "description": "Submit high-risk or externally visible action for human approval.",
+      "input_schema": {
+        "type": "object",
+        "required": ["action", "risk_reason", "payload"],
+        "properties": {
+          "action": {"type": "string"},
+          "risk_reason": {"type": "string"},
+          "payload": {"type": "object"},
+          "approver_role": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "execute_approved_action",
+      "risk": "high",
+      "description": "Execute a previously approved action with an approval token or approval record ID.",
+      "input_schema": {
+        "type": "object",
+        "required": ["approval_id", "action", "payload"],
+        "properties": {
+          "approval_id": {"type": "string"},
+          "action": {"type": "string"},
+          "payload": {"type": "object"}
+        }
+      }
+    },
+    {
+      "name": "verify_result",
+      "risk": "low",
+      "description": "Verify completion through status, log, artifact, or repository evidence.",
+      "input_schema": {
+        "type": "object",
+        "required": ["action", "evidence"],
+        "properties": {
+          "action": {"type": "string"},
+          "evidence": {"type": "object"},
+          "expected_state": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "write_audit_event",
+      "risk": "low",
+      "description": "Write structured audit event without raw secrets or prohibited payloads.",
+      "input_schema": {
+        "type": "object",
+        "required": ["correlation_id", "actor", "event_type", "status"],
+        "properties": {
+          "correlation_id": {"type": "string"},
+          "actor": {"type": "string"},
+          "event_type": {"enum": ["intake", "plan", "policy", "execution", "verification", "response"]},
+          "status": {"enum": ["allowed", "redacted", "blocked", "completed", "failed", "pending_approval"]},
+          "metadata": {"type": "object"}
+        }
+      }
+    }
+  ]
+}

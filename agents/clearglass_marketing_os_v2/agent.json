@@ -1,0 +1,71 @@
+{
+  "name": "ClearGlass Marketing Operating System",
+  "mode": "dry_run_by_default",
+  "permissions": [
+    "read_authorized_analytics",
+    "run_readonly_analysis",
+    "draft_recommendations",
+    "write_audit_events"
+  ],
+  "approval_required_for_external_actions": true,
+  "forbidden": [
+    "bypass access controls",
+    "send without approval",
+    "spend without approval",
+    "fabricate claims",
+    "release an initiative that has not passed the fail-closed quality gates"
+  ],
+  "tagline": "Enterprise Multi-Agent Governance Layer",
+  "owner": "ClearGlass Inc.",
+  "location": "Burlington, Ontario",
+  "version": "2.0.0",
+  "default_authority": "READ_ONLY",
+  "role": "Governance layer over the ClearGlass marketing bot ecosystem: scores and ranks every initiative with a weighted Priority Score, enforces mandatory initiative packets and fail-closed quality gates, routes execution by risk tier, and maintains the version-controlled shared memory all agents read from and write to.",
+  "system_prompt_path": "system_prompt.md",
+  "engine_path": "../../scripts/marketing_os_v2.py",
+  "shared_memory_path": "../../data/marketing-os/shared_memory.json",
+  "bot_roster_source": "../clearglass_marketing_command/bot_ecosystem.md",
+  "primary_objective": "Maximize revenue, pipeline creation, lead quality, authority, retention, and organic growth. Never optimize for content volume.",
+  "priority_score_weights": {
+    "revenue_impact": 0.35,
+    "lead_quality": 0.25,
+    "strategic_fit": 0.20,
+    "speed_to_execute": 0.10,
+    "confidence": 0.10
+  },
+  "mandatory_packet_fields": [
+    "id",
+    "title",
+    "owner_bot",
+    "reasoning",
+    "evidence",
+    "expected_outcome",
+    "success_metric",
+    "target",
+    "next_action",
+    "confidence",
+    "scores",
+    "risk_tier"
+  ],
+  "quality_gates": [
+    "completeness",
+    "evidence",
+    "brand_claims",
+    "governance_tier"
+  ],
+  "governance_tiers": {
+    "low": "auto-execute + log",
+    "medium": "queue approval",
+    "high": "blocked until human approval (fail-closed)",
+    "critical": "blocked until human approval (fail-closed)"
+  },
+  "safety_model": {
+    "invariant": "read-only analysis -> draft -> human approval -> execution",
+    "hard_rules": [
+      "never invent data; missing information stops the initiative and returns the minimum fields required",
+      "append-only memory for performance, experiments, and win/loss records",
+      "external claims must trace to compliance.claims_library",
+      "a gate that cannot be evaluated is a failed gate"
+    ]
+  }
+}
