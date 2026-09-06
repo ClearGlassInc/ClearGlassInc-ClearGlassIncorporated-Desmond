@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "description": "Percival v9 capability grants. Deny-by-default: an identity has only what is listed here. Risk high/critical always routes through the Escalation Gate.",
+  "identities": {
+    "orchestrator-worker": {
+      "sponsor": "operator",
+      "capabilities": [
+        { "name": "read_metrics", "risk": "low" },
+        { "name": "generate_copy", "risk": "low" },
+        { "name": "reconcile_inventory", "risk": "low" },
+        { "name": "publish_content", "risk": "medium" },
+        { "name": "update_pricing", "risk": "high" },
+        { "name": "issue_refund", "risk": "critical" }
+      ]
+    },
+    "eval-ops": {
+      "sponsor": "operator",
+      "capabilities": [
+        { "name": "read_metrics", "risk": "low" },
+        { "name": "score_output", "risk": "low" }
+      ]
+    }
+  }
+}

@@ -1,0 +1,50 @@
+# Policy bundle mounted read-only into the OPA governor sidecar.
+# AUTHORED, NOT APPLIED. The embedded documents MUST stay byte-identical in
+# meaning to percival_v9/policies/*  — enforced by tests/test_percival_v9_deploy.py.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: percival-policy-bundle
+  namespace: percival
+data:
+  capabilities.json: |
+    {
+      "version": 1,
+      "description": "Percival v9 capability grants. Deny-by-default: an identity has only what is listed here. Risk high/critical always routes through the Escalation Gate.",
+      "identities": {
+        "orchestrator-worker": {
+          "sponsor": "operator",
+          "capabilities": [
+            { "name": "read_metrics", "risk": "low" },
+            { "name": "generate_copy", "risk": "low" },
+            { "name": "reconcile_inventory", "risk": "low" },
+            { "name": "publish_content", "risk": "medium" },
+            { "name": "update_pricing", "risk": "high" },
+            { "name": "issue_refund", "risk": "critical" }
+          ]
+        },
+        "eval-ops": {
+          "sponsor": "operator",
+          "capabilities": [
+            { "name": "read_metrics", "risk": "low" },
+            { "name": "score_output", "risk": "low" }
+          ]
+        }
+      }
+    }
+  authz.rego: |
+    package percival.authz
+    import rego.v1
+    default allow := false
+    gated_risk := {"high", "critical"}
+    allow if {
+      some grant in data.grants[input.identity]
+      grant.name == input.capability
+      not grant.risk in gated_risk
+    }
+    allow if {
+      some grant in data.grants[input.identity]
+      grant.name == input.capability
+      grant.risk in gated_risk
+      data.approvals[input.identity][input.capability] == true
+    }

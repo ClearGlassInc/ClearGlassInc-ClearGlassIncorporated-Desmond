@@ -1,0 +1,19 @@
+# Percival v9 Policy Governor — local/container image.
+# Stdlib-only: no third-party dependencies, so this builds and runs anywhere.
+FROM python:3.11-slim
+
+WORKDIR /app
+# Only the package is needed; the governor imports nothing outside stdlib.
+COPY percival_v9/ /app/percival_v9/
+
+# Drop root; the governor needs no privileges.
+RUN useradd --create-home --uid 10001 percival
+USER percival
+
+EXPOSE 8181
+# Bind on all interfaces inside the container so the gateway can reach it.
+ENV PYTHONUNBUFFERED=1
+HEALTHCHECK --interval=10s --timeout=3s --retries=3 \
+  CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8181/healthz').status==200 else 1)"
+
+CMD ["python", "-m", "percival_v9.cmd.governor", "--port", "8181"]

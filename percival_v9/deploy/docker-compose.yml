@@ -1,0 +1,37 @@
+# Percival v9 — local end-to-end stack. Runs on a laptop, NO cloud credentials.
+#
+#   cd percival_v9/deploy && docker compose up --build
+#
+# Brings up the real Policy Governor (stdlib service) behind the Envoy gateway
+# so you can exercise the JWT -> rate-limit -> ext_authz(governor) -> route path
+# and the fail-closed behaviour before any cloud provisioning. This is the
+# pre-provisioning validation step; `terraform apply` still requires credentials
+# and approval (see README.md).
+services:
+  governor:
+    build:
+      context: ../..
+      dockerfile: percival_v9/deploy/Dockerfile.governor
+    command: ["python", "-m", "percival_v9.cmd.governor", "--port", "8181"]
+    # Not published to the host: only the gateway (and its ext_authz) may reach it.
+    expose:
+      - "8181"
+    healthcheck:
+      test:
+        ["CMD", "python", "-c",
+         "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8181/healthz').status==200 else 1)"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  gateway:
+    image: envoyproxy/envoy:v1.31-latest
+    depends_on:
+      governor:
+        condition: service_healthy
+    volumes:
+      - ./gateway/envoy.yaml:/etc/envoy/envoy.yaml:ro
+    command: ["envoy", "-c", "/etc/envoy/envoy.yaml", "--service-cluster", "percival-gateway"]
+    ports:
+      - "8443:8443" # ingress
+      - "9901:9901" # envoy admin (local only)

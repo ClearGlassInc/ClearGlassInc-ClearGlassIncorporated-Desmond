@@ -1,0 +1,76 @@
+# Percival v9 orchestrator with the OPA policy-governor sidecar.
+# AUTHORED, NOT APPLIED. Replace <DIGEST> placeholders before any kubectl apply.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: percival-orchestrator
+  namespace: percival
+  labels:
+    app: percival-orchestrator
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: percival-orchestrator
+  template:
+    metadata:
+      labels:
+        app: percival-orchestrator
+      annotations:
+        instrumentation.opentelemetry.io/inject-python: "true"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: orchestrator-worker
+          # TODO: pin to an immutable digest before apply.
+          image: clearglass/percival-orchestrator@sha256:<DIGEST>
+          env:
+            - name: TEMPORAL_HOST_URL
+              value: "temporal-frontend.temporal.svc.cluster.local:7233"
+            - name: POLICY_ENDPOINT
+              value: "http://localhost:8181/v1/data/percival/authz/allow"
+          resources:
+            requests: { cpu: "250m", memory: "256Mi" }
+            limits: { cpu: "1", memory: "512Mi" }
+          livenessProbe:
+            httpGet: { path: /healthz, port: 8080 }
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet: { path: /readyz, port: 8080 }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+        - name: policy-governor-sidecar
+          # TODO: pin to an immutable digest before apply.
+          image: openpolicyagent/opa@sha256:<DIGEST>
+          args:
+            - "run"
+            - "--server"
+            - "--addr=localhost:8181"
+            - "/policies"
+          volumeMounts:
+            - name: opa-policies
+              mountPath: /policies
+              readOnly: true
+          resources:
+            requests: { cpu: "50m", memory: "64Mi" }
+            limits: { cpu: "250m", memory: "128Mi" }
+          livenessProbe:
+            httpGet: { path: /health, port: 8181 }
+            initialDelaySeconds: 5
+            periodSeconds: 15
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+      volumes:
+        - name: opa-policies
+          configMap:
+            name: percival-policy-bundle

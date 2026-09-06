@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8">
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Services & Engagements — ClearGlass Inc.</title>
+<meta name="description" content="Mission-defined cybersecurity, identity hardening, PHIPA readiness, and automation for Ontario organizations. Fixed scope. Fixed price. Evidence you can act on.">
+<link rel="canonical" href="https://www.clearglassinc.com/offers/">
+<meta property="og:title" content="Services & Engagements — ClearGlass Inc.">
+<meta property="og:description" content="Mission-defined cybersecurity, identity hardening, PHIPA readiness, and automation for Ontario organizations. Fixed scope. Fixed price. Evidence you can act on.">
+<meta property="og:url" content="https://www.clearglassinc.com/offers/">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --white:#fafbfc;--off:#f3f5f8;
+  --glass:rgba(255,255,255,.55);--glass-border:rgba(0,0,0,.06);--glass-strong:rgba(255,255,255,.85);
+  --dark:#0a0c10;--dark-2:#1a1d25;--dark-3:#2a2d35;
+  --text:#0a0c10;--text-2:#3a3f4a;--text-3:#6b7280;--text-4:#9ca3af;
+  --prism-1:#38bdf8;--prism-2:#a78bfa;--prism-3:#f472b6;--prism-4:#34d399;--prism-5:#fbbf24;
+  --crystal:linear-gradient(135deg,#38bdf8 0%,#a78bfa 25%,#f472b6 50%,#fbbf24 75%,#34d399 100%);
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Urbanist',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{font-family:var(--sans);color:var(--text);background:var(--white);-webkit-font-smoothing:antialiased;line-height:1.6;overflow-x:hidden}
+a{color:var(--text);text-decoration:none}
+.wrap{width:min(1180px,92vw);margin:0 auto;padding:0 clamp(1rem,3vw,2rem)}
+
+/* nav */
+header.nav{position:fixed;top:12px;left:50%;transform:translateX(-50%);width:min(1240px,calc(100% - 2.5rem));z-index:80;height:66px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1rem,3vw,1.5rem);background:rgba(250,251,252,.78);backdrop-filter:blur(20px) saturate(1.2);border:1px solid rgba(255,255,255,.72);border-radius:18px;box-shadow:0 10px 30px rgba(10,12,16,.08)}
+.brand{display:flex;align-items:center;gap:12px;color:var(--text)}
+.brand-name{font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:-.01em}
+.brand-name em{font-style:italic;font-weight:300;color:var(--text-3);font-size:17px}
+.nav-right{display:flex;align-items:center;gap:14px}
+.nav-link{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.12em;color:var(--text-3);text-transform:uppercase}
+.nav-link:hover{color:var(--text)}
+.nav-cta{display:inline-flex;align-items:center;gap:6px;color:#fff;background:var(--dark);font-family:var(--sans);font-weight:600;font-size:13px;padding:9px 16px;border-radius:999px;letter-spacing:.01em;transition:background .25s,transform .25s}
+.nav-cta:hover{background:var(--dark-2);transform:translateY(-1px)}
+
+/* hero */
+.hero{position:relative;padding:160px 0 clamp(80px,12vw,130px);text-align:center;overflow:hidden}
+.hero-prism{position:absolute;top:50%;left:50%;width:780px;height:780px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(56,189,248,.08) 0%,rgba(167,139,250,.06) 28%,rgba(244,114,182,.04) 50%,transparent 72%);animation:prismPulse 12s ease-in-out infinite;pointer-events:none}
+@keyframes prismPulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.85}50%{transform:translate(-50%,-50%) scale(1.12);opacity:1}}
+.hero-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(10,12,16,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(10,12,16,.04) 1px,transparent 1px);background-size:60px 60px;mask:radial-gradient(ellipse at center,#000 30%,transparent 75%)}
+.eyebrow{position:relative;display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--text-4);margin-bottom:28px}
+.eyebrow::before,.eyebrow::after{content:'';width:24px;height:1px;background:var(--text-4)}
+.hero h1{position:relative;font-family:var(--serif);font-size:clamp(2.6rem,7vw,5.6rem);font-weight:300;line-height:1.02;letter-spacing:-.035em;max-width:980px;margin:0 auto 26px}
+.hero h1 strong{font-weight:600}
+.crystal-text{background:var(--crystal);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:crystalShift 12s ease infinite}
+@keyframes crystalShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.hero-sub{position:relative;font-size:clamp(1.05rem,1.5vw,1.2rem);color:var(--text-3);line-height:1.75;max-width:720px;margin:0 auto 36px}
+.hero-actions{position:relative;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* btn */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:999px;font-family:var(--sans);font-size:14px;font-weight:600;letter-spacing:.01em;border:none;cursor:pointer;transition:all .3s ease}
+.btn-dark{color:#fff;background:var(--dark);box-shadow:0 2px 20px rgba(0,0,0,.1)}
+.btn-dark:hover{background:var(--dark-2);transform:translateY(-2px)}
+.btn-glass{color:var(--text);background:rgba(255,255,255,.7);border:1px solid var(--glass-border);backdrop-filter:blur(10px)}
+.btn-glass:hover{background:rgba(255,255,255,.95);transform:translateY(-2px)}
+.btn-crystal{color:#fff;background:var(--crystal);background-size:200% 200%;animation:crystalShift 6s ease infinite;box-shadow:0 6px 28px rgba(56,189,248,.22)}
+.btn-crystal:hover{transform:translateY(-2px)}
+
+/* trust strip */
+.trust{padding:clamp(36px,5vw,56px) 0;border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);background:linear-gradient(180deg,var(--white),var(--off))}
+.trust-inner{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:24px;align-items:center}
+.trust-item{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.trust-item span{font-family:var(--serif);font-size:15px;font-weight:500;letter-spacing:-.005em;text-transform:none;color:var(--text);letter-spacing:.0}
+
+/* generic sect */
+.sect{padding:clamp(80px,12vw,140px) 0}
+.sect-dark{background:var(--dark);color:var(--white)}
+.sh{margin-bottom:clamp(48px,6vw,72px)}
+.sh-tag{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.15em;color:var(--text-4);margin-bottom:16px;display:flex;align-items:center;gap:10px;text-transform:uppercase}
+.sh-tag::before{content:'';width:22px;height:1px;background:var(--text-4)}
+.sh-center{text-align:center}
+.sh-center .sh-tag{justify-content:center}
+.sh-center p{margin-left:auto;margin-right:auto}
+.sh h2{font-family:var(--serif);font-size:clamp(2rem,4.5vw,3.4rem);font-weight:300;line-height:1.08;letter-spacing:-.025em}
+.sh h2 strong{font-weight:600}
+.sh p{color:var(--text-3);font-size:clamp(1rem,1.3vw,1.1rem);line-height:1.75;max-width:640px;margin-top:18px}
+.sh-dark .sh-tag{color:rgba(255,255,255,.4)}
+.sh-dark .sh-tag::before{background:rgba(255,255,255,.4)}
+.sh-dark h2{color:var(--white)}
+.sh-dark p{color:rgba(255,255,255,.55)}
+
+/* benefits */
+.benefits-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2px;border-radius:24px;overflow:hidden;border:1px solid var(--glass-border)}
+.benefit{padding:clamp(32px,4vw,48px);background:#fff;transition:background .35s;position:relative;overflow:hidden}
+.benefit::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--crystal);opacity:0;transition:opacity .35s}
+.benefit:hover{background:var(--off)}
+.benefit:hover::after{opacity:1}
+.benefit-num{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text-4);letter-spacing:.12em;margin-bottom:22px}
+.benefit h3{font-family:var(--serif);font-size:clamp(1.5rem,2.4vw,2rem);font-weight:400;letter-spacing:-.015em;margin-bottom:12px;line-height:1.15}
+.benefit p{color:var(--text-3);font-size:14.5px;line-height:1.8}
+
+/* offers cards */
+.offers-grid{display:grid;gap:22px;grid-template-columns:1fr}
+@media(min-width:820px){.offers-grid{grid-template-columns:repeat(2,1fr)}}
+.offer{position:relative;padding:clamp(30px,3.5vw,44px);border-radius:22px;border:1px solid var(--glass-border);background:var(--glass-strong);backdrop-filter:blur(20px);display:flex;flex-direction:column;transition:transform .35s,box-shadow .35s;overflow:hidden}
+.offer::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--crystal);opacity:0;transition:opacity .35s}
+.offer:hover{transform:translateY(-4px);box-shadow:0 22px 60px rgba(0,0,0,.07)}
+.offer:hover::after{opacity:1}
+.offer.feature{background:linear-gradient(150deg,rgba(56,189,248,.05),rgba(250,251,252,.95))}
+.offer.feature::after{opacity:1}
+.tag{display:inline-flex;align-self:flex-start;align-items:center;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--prism-1);margin-bottom:18px}
+.tag.healthcare{color:var(--prism-3)}
+.tag.recurring{color:var(--prism-4)}
+.tag.start{color:var(--prism-2)}
+.offer h3{font-family:var(--serif);font-size:clamp(1.5rem,2.4vw,2rem);font-weight:500;letter-spacing:-.015em;line-height:1.15;margin-bottom:14px}
+.offer p.desc{color:var(--text-3);font-size:14.5px;line-height:1.8}
+.offer ul{list-style:none;margin-top:18px;display:grid;gap:8px}
+.offer ul li{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:var(--text-2);line-height:1.65}
+.offer ul li .ck{flex-shrink:0;width:18px;height:18px;border-radius:6px;background:rgba(52,211,153,.12);color:var(--prism-4);display:grid;place-items:center;font-size:10px;font-weight:700;margin-top:2px}
+.price{font-family:var(--serif);font-size:clamp(1.5rem,2.2vw,1.85rem);font-weight:500;margin:22px 0 4px;letter-spacing:-.012em}
+.price .sub{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--text-4);letter-spacing:.08em;margin-left:6px}
+.offer .btn{align-self:flex-start;margin-top:18px}
+
+/* process */
+.process{display:grid;gap:0}
+.process-step{display:grid;grid-template-columns:140px 1fr;gap:clamp(24px,4vw,52px);padding:clamp(28px,4vw,44px) 0;border-top:1px solid var(--glass-border);align-items:start}
+.process-step:last-child{border-bottom:1px solid var(--glass-border)}
+.step-num{font-family:var(--serif);font-size:clamp(1.8rem,3vw,2.4rem);font-weight:300;color:var(--text-4);letter-spacing:-.02em;display:flex;align-items:baseline;gap:6px}
+.step-num::after{content:'';flex:1;height:1px;background:var(--text-4);max-width:40px;align-self:center;opacity:.4;margin-left:8px}
+.step-content h3{font-family:var(--serif);font-size:clamp(1.3rem,2vw,1.7rem);font-weight:500;letter-spacing:-.015em;margin-bottom:10px;line-height:1.2}
+.step-content p{color:var(--text-3);font-size:14.5px;line-height:1.8;max-width:620px}
+.step-meta{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--prism-1);margin-top:14px;display:inline-flex;align-items:center;gap:8px}
+.step-meta::before{content:'';width:14px;height:1px;background:var(--prism-1)}
+@media(max-width:640px){.process-step{grid-template-columns:1fr;gap:8px}.step-num::after{display:none}}
+
+/* faqs */
+.faq{display:grid;gap:14px;max-width:880px;margin:0 auto}
+.faq details{border:1px solid var(--glass-border);border-radius:18px;background:#fff;transition:border-color .25s,box-shadow .25s;overflow:hidden}
+.faq details[open]{border-color:rgba(56,189,248,.35);box-shadow:0 10px 35px rgba(56,189,248,.07)}
+.faq summary{cursor:pointer;list-style:none;padding:22px 26px;display:flex;align-items:center;justify-content:space-between;gap:24px;font-family:var(--serif);font-size:clamp(1.1rem,1.7vw,1.35rem);font-weight:500;letter-spacing:-.01em;color:var(--text)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+';font-family:var(--sans);font-size:24px;font-weight:300;color:var(--text-3);transition:transform .3s ease;flex-shrink:0}
+.faq details[open] summary::after{transform:rotate(45deg);color:var(--prism-1)}
+.faq .answer{padding:0 26px 24px;color:var(--text-3);font-size:14.5px;line-height:1.85}
+.faq .answer p+p{margin-top:10px}
+
+/* dark cta */
+.cta-sect{padding:clamp(90px,14vw,140px) 0;text-align:center;position:relative;background:var(--dark);color:#fff;overflow:hidden}
+.cta-sect::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 50% 60% at 30% 40%,rgba(56,189,248,.18),transparent 70%),radial-gradient(ellipse 45% 50% at 75% 70%,rgba(167,139,250,.14),transparent 70%)}
+.cta-sect .eyebrow{color:rgba(255,255,255,.5)}
+.cta-sect .eyebrow::before,.cta-sect .eyebrow::after{background:rgba(255,255,255,.4)}
+.cta-sect h2{position:relative;font-family:var(--serif);font-size:clamp(2.4rem,5.5vw,4.4rem);font-weight:300;line-height:1.05;letter-spacing:-.03em;max-width:820px;margin:0 auto 22px}
+.cta-sect h2 strong{font-weight:600}
+.cta-sect p{position:relative;color:rgba(255,255,255,.65);max-width:560px;margin:0 auto 36px;line-height:1.75;font-size:1.05rem}
+.cta-actions{position:relative;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn-glass-dark{color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(10px)}
+.btn-glass-dark:hover{background:rgba(255,255,255,.15);transform:translateY(-2px)}
+
+/* footer */
+footer.site{border-top:1px solid var(--glass-border);background:var(--off);padding:40px 0 48px;color:var(--text-3);font-family:var(--mono);font-size:12px;letter-spacing:.04em;line-height:1.9}
+footer.site .wrap{display:grid;gap:14px}
+footer.site a{color:var(--text);border-bottom:1px solid rgba(0,0,0,.15)}
+footer.site a:hover{border-bottom-color:rgba(0,0,0,.45)}
+footer .small{font-size:11px;color:var(--text-4)}
+
+/* mobile */
+@media(max-width:640px){
+  header.nav{height:60px;padding:0 14px}
+  .nav-link.hide-sm{display:none}
+  .hero{padding:130px 0 80px}
+  .hero-prism{width:480px;height:480px}
+  .hero-actions{flex-direction:column;align-items:stretch}
+  .btn{justify-content:center}
+}
+</style>
+<link rel="stylesheet" href="/assets/css/glass.css">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="../brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+
+<header class="nav">
+  <a class="brand" href="../index.html"><span class="brand-name">ClearGlass <em>Inc.</em></span></a>
+  <div class="nav-right">
+    <a class="nav-link hide-sm" href="#offers">Engagements</a>
+    <a class="nav-link hide-sm" href="#process">Process</a>
+    <a class="nav-link hide-sm" href="#faq">FAQ</a>
+    <a class="nav-cta" href="#briefing">Request briefing →</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-prism"></div>
+  <div class="wrap">
+    <div class="eyebrow">Mission-Defined Security · Ontario</div>
+    <h1>Mission-defined security work<br>for <strong class="crystal-text">Ontario organizations.</strong></h1>
+    <p class="hero-sub">ClearGlass delivers fixed-scope cybersecurity, identity hardening, compliance readiness, and automation engagements that translate operational risk into measurable remediation, written findings, and immediate action plans.</p>
+    <div class="hero-actions">
+      <a class="btn btn-crystal" href="#briefing">Request a security briefing →</a>
+      <a class="btn btn-glass" href="#offers">Book a fixed-scope assessment</a>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<section class="trust"><div class="wrap">
+  <div class="trust-inner">
+    <div class="trust-item">Baselines<span>CIS-aligned</span></div>
+    <div class="trust-item">Identity<span>Entra ID / M365</span></div>
+    <div class="trust-item">Endpoint<span>Windows hardening</span></div>
+    <div class="trust-item">Healthcare<span>PHIPA-mapped</span></div>
+    <div class="trust-item">Outreach<span>CASL-compliant</span></div>
+  </div>
+</div></section>
+
+<!-- BENEFITS -->
+<section class="sect">
+  <div class="wrap">
+    <div class="sh sh-center">
+      <div class="sh-tag">Why teams choose ClearGlass</div>
+      <h2>Defined scope. <strong>Defensible outcomes.</strong></h2>
+      <p>We translate a posture question into a written engagement with a fixed price, a written remediation report, and prioritized implementation steps you can hand to a technical team the day we finish.</p>
+    </div>
+    <div class="benefits-grid">
+      <div class="benefit">
+        <div class="benefit-num">01 / Predictable</div>
+        <h3>Fixed scope. Fixed price.</h3>
+        <p>Every engagement is bounded by a written statement of work, a stated deliverable, and a quoted price. No hour creep, no surprise invoices, no open-ended retainers required to start.</p>
+      </div>
+      <div class="benefit">
+        <div class="benefit-num">02 / Evidence-driven</div>
+        <h3>Findings you can act on.</h3>
+        <p>Reports map findings to CIS controls and Microsoft baselines, name the configuration that needs to change, and rank remediation by exposure — not by what is easy to sell next.</p>
+      </div>
+      <div class="benefit">
+        <div class="benefit-num">03 / Ontario-aware</div>
+        <h3>Built for SMB and health.</h3>
+        <p>Engagements are designed for Ontario small and mid-sized organizations, with PHIPA-aware tracks for health-sector clients and CASL-compliant outreach across every interaction.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OFFERS -->
+<section class="sect" id="offers" style="padding-top:0">
+  <div class="wrap">
+    <div class="sh sh-center">
+      <div class="sh-tag">Engagements</div>
+      <h2>Four ways to start. <strong>One clear scope each.</strong></h2>
+      <p>Begin with a low-commitment posture review, move to a hardening sprint when you have decisions to make, and convert recurring work into automation when the scope stabilizes.</p>
+    </div>
+
+    <div class="offers-grid">
+
+      <div class="offer feature">
+        <span class="tag">Most popular</span>
+        <h3>Microsoft 365 + Windows Hardening Sprint</h3>
+        <p class="desc">A 1–2 week engagement to reduce identity and endpoint exposure across Microsoft 365 / Entra ID and Windows, using CIS-aligned configuration baselines, privilege reduction, authentication hardening, and a prioritized remediation plan.</p>
+        <ul>
+          <li><span class="ck">✓</span> CIS Microsoft 365 baseline alignment</li>
+          <li><span class="ck">✓</span> Conditional Access &amp; MFA hardening</li>
+          <li><span class="ck">✓</span> Privileged role review and reduction</li>
+          <li><span class="ck">✓</span> Written remediation plan with priority order</li>
+        </ul>
+        <div class="price">From CAD $2,500<span class="sub">· fixed fee</span></div>
+        <a class="btn btn-crystal" href="hardening-sprint.html">Deploy a hardening sprint →</a>
+      </div>
+
+      <div class="offer">
+        <span class="tag start">Start here</span>
+        <h3>Security Quick-Audit</h3>
+        <p class="desc">A low-commitment, read-only posture review that identifies the highest-risk configuration gaps, common identity weaknesses, and obvious exposure points, then delivers a branded findings report with clear next steps.</p>
+        <ul>
+          <li><span class="ck">✓</span> Read-only, non-disruptive</li>
+          <li><span class="ck">✓</span> Branded findings report</li>
+          <li><span class="ck">✓</span> Ranked remediation next steps</li>
+        </ul>
+        <div class="price">CAD $249<span class="sub">· one-time</span></div>
+        <a class="btn btn-dark" href="security-quick-audit.html">Start with a posture review →</a>
+      </div>
+
+      <div class="offer">
+        <span class="tag">Engineering blueprint</span>
+        <h3>Guardian Command Nexus Blueprint</h3>
+        <p class="desc">The complete SPEC-1 architecture specification for a security operations console — domain model, reactive state fabric, simulation grid, audit ledger and AI command orchestration. Written to hand straight to an engineering team, with a free summary published if you want to read before you buy.</p>
+        <ul>
+          <li><span class="ck">✓</span> Field-level domain model and event payloads</li>
+          <li><span class="ck">✓</span> Rule-based AI command parser you can implement now</li>
+          <li><span class="ck">✓</span> Price credited against a build engagement</li>
+        </ul>
+        <div class="price">CAD $199<span class="sub">· one-time</span></div>
+        <a class="btn btn-dark" href="guardian-command-nexus-blueprint.html">Get the blueprint →</a>
+      </div>
+
+      <div class="offer">
+        <span class="tag healthcare">Healthcare</span>
+        <h3>PHIPA Readiness Assessment</h3>
+        <p class="desc">For Ontario health-sector organizations: a privacy and security readiness review mapped to PHIPA obligations, with practical remediation guidance, policy gaps, and an implementation roadmap. Free checklist available.</p>
+        <ul>
+          <li><span class="ck">✓</span> Mapped to PHIPA obligations</li>
+          <li><span class="ck">✓</span> Administrative, physical, technical controls</li>
+          <li><span class="ck">✓</span> Implementation roadmap</li>
+        </ul>
+        <div class="price">Assessment from CAD $3,000</div>
+        <a class="btn btn-dark" href="phipa-readiness.html">Get the free checklist →</a>
+      </div>
+
+      <div class="offer">
+        <span class="tag recurring">Recurring</span>
+        <h3>Automation-as-a-Service</h3>
+        <p class="desc">Monthly retainer to build and maintain PowerShell and workflow automation for reporting, onboarding and offboarding, alerting, backups, and repetitive security operations.</p>
+        <ul>
+          <li><span class="ck">✓</span> PowerShell &amp; workflow automation</li>
+          <li><span class="ck">✓</span> Onboarding / offboarding pipelines</li>
+          <li><span class="ck">✓</span> Recurring reporting &amp; alerting</li>
+        </ul>
+        <div class="price">From CAD $600<span class="sub">/ month</span></div>
+        <a class="btn btn-dark" href="hardening-sprint.html#contact">Enquire →</a>
+      </div>
+
+      <div class="offer">
+        <span class="tag start">New · free guide</span>
+        <h3>Second Brain System (Claude + Obsidian)</h3>
+        <p class="desc">A free, practical walkthrough for turning scattered notes into a connected, searchable knowledge system — Obsidian for structure, Claude for intelligence, and a repeatable weekly review loop that compounds what you know.</p>
+        <ul>
+          <li><span class="ck">✓</span> PARA vault structure &amp; knowledge graph</li>
+          <li><span class="ck">✓</span> Claude prompts &amp; MCP connection steps</li>
+          <li><span class="ck">✓</span> Best Obsidian plugins &amp; weekly review loop</li>
+        </ul>
+        <div class="price">Free<span class="sub">· guide</span></div>
+        <a class="btn btn-dark" href="../guardian.html#second-brain">Explore the guide →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="sect" id="process" style="background:var(--off);border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border)">
+  <div class="wrap">
+    <div class="sh">
+      <div class="sh-tag">How it works</div>
+      <h2>From briefing to <strong>defensible posture</strong> — in weeks, not quarters.</h2>
+      <p>Every engagement runs on the same disciplined sequence: scoped intake, read-only assessment, written remediation, and optional implementation. You never sign more than the step in front of you.</p>
+    </div>
+
+    <div class="process">
+      <div class="process-step">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <h3>Security briefing</h3>
+          <p>A 30-minute scoped conversation to understand environment size, sector, regulatory exposure, and the decisions you actually need to make. No sales pitch, no upsell.</p>
+          <span class="step-meta">30 minutes · free</span>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <h3>Read-only assessment</h3>
+          <p>A non-disruptive posture review of Microsoft 365 / Entra ID, Windows endpoints, and identity configuration — producing a branded findings report and a ranked remediation list.</p>
+          <span class="step-meta">From CAD $249 · 3–5 business days</span>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <h3>Fixed-scope remediation</h3>
+          <p>If you decide to act, a 1–2 week hardening sprint applies CIS-aligned baselines, tightens Conditional Access and MFA, reduces privileged roles, and delivers a written change record.</p>
+          <span class="step-meta">From CAD $2,500 · 1–2 weeks</span>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <h3>Recurring automation</h3>
+          <p>Once the scope stabilizes, repeating work — reporting, onboarding/offboarding, alerting, backups — moves to PowerShell and workflow automation on a monthly retainer.</p>
+          <span class="step-meta">From CAD $600 / month · optional</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="sect" id="faq">
+  <div class="wrap">
+    <div class="sh sh-center">
+      <div class="sh-tag">Frequently asked</div>
+      <h2>Answers, <strong>before you book.</strong></h2>
+      <p>Common questions from Ontario SMB and health-sector buyers. Anything not covered, raise it in the briefing.</p>
+    </div>
+
+    <div class="faq">
+      <details>
+        <summary>What does "fixed-scope" actually mean for billing?</summary>
+        <div class="answer">
+          <p>Every engagement is quoted against a written statement of work that names the environment, the deliverable, and the price before work begins. We do not bill by the hour, we do not bill for "discovery" overruns, and we do not invoice surprises.</p>
+          <p>If new exposure emerges mid-engagement, we document it in the findings report and quote it as a separate, optional add-on — you decide whether to proceed.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Do you require admin access to begin?</summary>
+        <div class="answer">
+          <p>No. The Security Quick-Audit is read-only and runs against a delegated, least-privilege role we can provision with you in the briefing. Nothing is changed in your tenant during assessment.</p>
+          <p>Write-access is only requested for the Hardening Sprint, and only after a written authorization scope has been signed.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>How is the work aligned to recognized standards?</summary>
+        <div class="answer">
+          <p>Microsoft 365 and Windows work is aligned to the CIS Microsoft 365 Foundations Benchmark and CIS Windows benchmarks, with Microsoft Secure Score and Entra ID best-practice configuration as the operational reference.</p>
+          <p>Healthcare engagements are mapped to PHIPA obligations covering administrative, physical, and technical safeguards.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Do you serve organizations outside Ontario?</summary>
+        <div class="answer">
+          <p>The practice is built for Ontario small and mid-sized organizations and Ontario health-sector clients, and outreach complies with Canada's Anti-Spam Legislation (CASL).</p>
+          <p>Engagements outside Ontario are accepted case-by-case and quoted in CAD.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>What deliverables do I actually receive?</summary>
+        <div class="answer">
+          <p>Every engagement produces a written, branded findings document: scope, methodology, findings ranked by exposure, concrete remediation steps, and a change log when remediation is performed.</p>
+          <p>You own the document. You can hand it to internal IT, a board, an auditor, or a future provider.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>How fast can we start?</summary>
+        <div class="answer">
+          <p>A briefing can usually be scheduled within 2–3 business days. A Security Quick-Audit typically completes within 3–5 business days of scoped intake. A Hardening Sprint typically runs 1–2 weeks depending on tenant size.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ARTEMIS SERVICE AGENT -->
+<section class="sect" id="agent" style="background:linear-gradient(180deg,var(--off),var(--white));border-top:1px solid var(--glass-border)">
+  <div class="wrap">
+    <div class="sh sh-center">
+      <div class="sh-tag">ARTEMIS · Service Agent</div>
+      <h2>Talk to the <strong class="crystal-text">ARTEMIS Service Agent.</strong></h2>
+      <p>A mission-defined qualification agent trained on ClearGlass's fixed-scope methodology. Describe your environment in plain language — the agent scopes the right engagement, drafts a structured handoff, and routes to the ClearGlass team for written authorization.</p>
+    </div>
+
+    <div style="display:grid;gap:18px;grid-template-columns:1fr;max-width:980px;margin:0 auto">
+      <div class="offer feature" style="background:linear-gradient(150deg,rgba(167,139,250,.06),rgba(56,189,248,.04),rgba(250,251,252,.95))">
+        <span class="tag" style="color:var(--prism-2)">Mission-defined · Ontario</span>
+        <h3>ARTEMIS Service Agent</h3>
+        <p class="desc">Premium, technically credible, Ontario-focused. Speaks the exact voice of the service-page copy. Never speculates, never invents pricing, never sells outside the four fixed-scope offerings. Built for SMB owners and compliance leads who want a written deliverable and a clear next step.</p>
+        <ul>
+          <li><span class="ck">✓</span> Structured discovery against CIS / Entra ID / Windows / PHIPA</li>
+          <li><span class="ck">✓</span> Recommends a single best-fit engagement with exact price</li>
+          <li><span class="ck">✓</span> Emits a structured handoff block for the ClearGlass team</li>
+          <li><span class="ck">✓</span> Steers regulated work (healthcare, government, finance) to human review</li>
+        </ul>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:22px">
+          <a class="btn btn-crystal" href="mailto:desmondotieno@icloud.com?subject=ARTEMIS%20Service%20Agent%20briefing">Open a briefing →</a>
+          <a class="btn btn-glass" href="../agents/artemis_service_agent/system_prompt.md">View agent system prompt</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sect" id="briefing">
+  <div class="wrap">
+    <div class="eyebrow">Next step</div>
+    <h2>Request a <strong class="crystal-text">security briefing.</strong></h2>
+    <p>A 30-minute scoped conversation — no pitch, no obligation — to determine which engagement actually fits the decision you need to make.</p>
+    <div class="cta-actions">
+      <a class="btn btn-crystal" href="mailto:desmondotieno@icloud.com?subject=Security%20briefing%20request">Email a briefing request →</a>
+      <a class="btn btn-glass-dark" href="security-quick-audit.html">Start with a posture review</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site"><div class="wrap">
+  <div>ClearGlass Inc. · Ontario, Canada · <a href="../index.html">www.clearglassinc.com</a></div>
+  <div class="small">All engagements are performed only with written authorization. Outreach complies with Canada's Anti-Spam Legislation (CASL).</div>
+</div></footer>
+
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › Services &amp; Engagements</p>
+    <h2>Inside Services &amp; Engagements</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="../apps/command-center/index.html"><span><b>Previous</b>Growth Command Centre</span></a>
+      <a href="index.html"><span><b>Topic hub</b>Services &amp; Engagements</span></a>
+      <a href="../store.html"><span><b>Next in journey</b>ClearGlass Store</span></a>
+    </div>
+    <ul>
+      <li><a href="../store.html"><b>ClearGlass Store</b> — book a security engagement</a></li>
+      <li><a href="../pricing.html"><b>Pricing &amp; Engagements</b> — plans and engagement models</a></li>
+      <li><a href="../plans.html"><b>Guardian Plans &amp; Pricing</b> — per-seat subscription tiers for the Guardian console</a></li>
+      <li><a href="../workspace.html"><b>ClearGlass Workspace</b> — business email, storage and collaboration plans per person</a></li>
+      <li><a href="../checkout/index.html"><b>Secure Checkout</b> — purchase an audit or protection plan</a></li>
+      <li><a href="../seo-authority-hub.html"><b>Cybersecurity &amp; AI Automation in Burlington</b> — the local authority hub for ClearGlass services</a></li>
+      <li><a href="../smb-cyber-trust-kit.html"><b>SMB Cyber Trust Kit</b> — plain-language cyber resilience for small business</a></li>
+      <li><a href="../smb.html"><b>SMB Suite</b> — intelligent systems for small business</a></li>
+      <li><a href="security-quick-audit.html"><b>Security Quick-Audit</b> — a focused $249 security review</a></li>
+      <li><a href="autonomous-threat-modeling.html"><b>Autonomous Threat Modeling</b> — continuous threat-modeling assessment and implementation services</a></li>
+      <li><a href="../web-design.html"><b>Web Design &amp; Development</b> — growth infrastructure built by ClearGlass</a></li>
+      <li><a href="../opal/index.html"><b>Opal-Koboi</b> — advanced automation assets</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="../nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

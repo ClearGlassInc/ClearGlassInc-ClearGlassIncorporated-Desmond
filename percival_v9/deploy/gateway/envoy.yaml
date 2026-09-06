@@ -1,0 +1,104 @@
+# Percival v9 API gateway — Envoy. AUTHORED, NOT APPLIED.
+# Terminates TLS, validates OIDC JWTs, rate-limits, and delegates every request
+# to the Policy Governor via ext_authz before it can reach the orchestrator.
+# No blind trust: if the governor is unreachable, ext_authz fails closed (deny).
+static_resources:
+  listeners:
+    - name: percival_ingress
+      address:
+        socket_address: { address: 0.0.0.0, port_value: 8443 }
+      filter_chains:
+        - filters:
+            - name: envoy.filters.network.http_connection_manager
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                stat_prefix: percival_ingress
+                route_config:
+                  name: percival_routes
+                  virtual_hosts:
+                    - name: percival
+                      domains: ["*"]
+                      routes:
+                        - match: { prefix: "/v1/" }
+                          route:
+                            cluster: percival_orchestrator
+                            timeout: 30s
+                http_filters:
+                  # 1. Validate OIDC/OAuth2 JWTs against the IdP JWKS.
+                  - name: envoy.filters.http.jwt_authn
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication
+                      providers:
+                        idp:
+                          issuer: https://idp.clearglass.example/
+                          audiences: ["percival-v9"]
+                          forward: true
+                          remote_jwks:
+                            http_uri:
+                              uri: https://idp.clearglass.example/.well-known/jwks.json
+                              cluster: idp_jwks
+                              timeout: 5s
+                            cache_duration: { seconds: 300 }
+                      rules:
+                        - match: { prefix: "/v1/" }
+                          requires: { provider_name: idp }
+                  # 2. Per-connection local rate limit (backstop for the global one).
+                  - name: envoy.filters.http.local_ratelimit
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.local_ratelimit.v3.LocalRateLimit
+                      stat_prefix: percival_local_rl
+                      token_bucket:
+                        max_tokens: 100
+                        tokens_per_fill: 100
+                        fill_interval: { seconds: 1 }
+                      filter_enabled:
+                        default_value: { numerator: 100, denominator: HUNDRED }
+                      filter_enforced:
+                        default_value: { numerator: 100, denominator: HUNDRED }
+                  # 3. Delegate authorization to the Policy Governor. Fail closed.
+                  - name: envoy.filters.http.ext_authz
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
+                      failure_mode_allow: false # unreachable governor => deny
+                      transport_api_version: V3
+                      http_service:
+                        server_uri:
+                          uri: http://127.0.0.1:8181
+                          cluster: percival_governor
+                          timeout: 5s
+                        path_prefix: /v1/data/percival/authz/
+                  - name: envoy.filters.http.router
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+  clusters:
+    - name: percival_orchestrator
+      connect_timeout: 5s
+      type: STRICT_DNS
+      load_assignment:
+        cluster_name: percival_orchestrator
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      { address: percival-orchestrator.percival.svc.cluster.local, port_value: 8080 }
+    - name: percival_governor
+      connect_timeout: 2s
+      type: STRICT_DNS
+      load_assignment:
+        cluster_name: percival_governor
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address: { address: 127.0.0.1, port_value: 8181 }
+    - name: idp_jwks
+      connect_timeout: 5s
+      type: STRICT_DNS
+      load_assignment:
+        cluster_name: idp_jwks
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address: { address: idp.clearglass.example, port_value: 443 }

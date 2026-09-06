@@ -1,73 +1,61 @@
-# ClearGlassInc Artemis Documentation Index
+# ClearGlassInc Artemis Growth Engine
 
-Long-form blueprints, platform designs, and corporate documentation supporting the public site.
+This directory is the review layer for repository-led growth. The system converts verified repository facts into channel-specific campaign drafts and tracked links without auto-posting, fabricating outcomes, incentivizing engagement, or scraping GitHub users.
 
-## Corporate and governance
-- `clearglassinc_corporate_profile.md`
-- `clearglassinc_artemis_enterprise_corporate_layer.md`
-- `clearglassinc_official_letterhead_template.md`
-- `desmond_otieno_odhiambo_executive_profile.md`
+## Operating model
 
-## Platform architecture
-- `artemis-intelligence-platform-blueprint.md`
-- `clearglassinc_artemis_palantir_aip_blueprint.md`
-- `clearglassinc_artemis_palantir_gotham_foundry_aip_apollo_production_design.md`
-- `clearglassinc_artemis_palantir_self_evolving_intelligence_platform_blueprint_2026-07-18.md`
-- `clearglassinc_artemis_palantir_self_evolving_ai_platform_advanced_merge_blueprint_2026-07-21.md`
-- `clearglassinc_artemis_palantir_self_improving_fullstack_design.md`
-- `clearglassinc_artemis_palantir_self_evolving_ai_platform_2026.md`
-- `clearglassinc_artemis_legal_tech_multi_agent_blueprint.md`
-- `clearglassinc_artemis_linked_fullstack_blueprint.md`
-- `clearglassinc_artemis_operating_model_and_ai_architecture.md`
-- `clearglassinc_artemis_quantum_neural_smart_glass_unified_roadmap.md`
+```text
+Repository evidence
+  -> Artemis Growth Engine
+  -> validation gates
+  -> UTM-tagged draft assets
+  -> human review
+  -> manual publication
+  -> aggregate measurement
+```
 
-## Self-evolving platform designs
-- `clearglassinc_artemis_self_evolving_ai_intelligence_platform_blueprint.md`
-- `clearglassinc_artemis_global_net_self_evolving_intelligence_platform_2026-06-29.md`
-- `clearglassinc_artemis_self_evolving_platform.md`
-- `clearglassinc_artemis_self_evolving_intelligence_platform_design.md`
-- `clearglassinc_artemis_extreme_self_evolving_platform_design.md`
-- `clearglassinc_artemis_fullstack_self_evolving_platform_spec.md`
-- `clearglassinc_artemis_nextgen_self_improving_platform_spec.md`
-- `clearglassinc_artemis_self_evolving_runtime_blueprint_2026.md`
-- `clearglassinc_artemis_coo_self_improving_platform_blueprint.md`
-- `clearglassinc_artemis_gotham_foundry_aip_apollo_self_evolving_blueprint.md`
-- `clearglassinc_artemis_gotham_foundry_aip_apollo_extreme_blueprint.md`
-- `clearglassinc_artemis_palantir_self_evolving_intelligence_platform_2040.md`
-- `CLEARGLASSINC_ARTEMIS_SELF_EVOLVING_AI_PLATFORM_DESIGN_2026-05-06.md`
+## Generate the campaign pack
 
-## Revenue, intelligence, and automation
-- `GITHUB_GROWTH_LAUNCH_PLAYBOOK.md`
-- `clearglass_monetization_engine_deploy_now.md`
-- `clearglassinc_artemis_ethics_first_revenue_and_intelligence_engine.md`
-- `clearglassinc_artemis_lead_scraping_architecture_python.md`
-- `clearglassinc_artemis_stegoforge_linked_system_design.md`
+```bash
+python -m bots.artemis_growth_bot
+```
 
-## Operational reporting
-- `clearglassinc_artemis_governed_intelligence_platform_core_sitrep_2026-07-31.md`
+The generator writes:
 
-## Guardian
-- `guardian_clear_glass_browser_concept.md`
-- `guardian_command_nexus_spec.html`
-- `guardian_command_nexus_spec.css`
+- `marketing/output/threads_latest.md`
+- `marketing/output/threads_latest.json`
+- `marketing/output/campaign_latest.md`
+- `marketing/output/campaign_latest.json`
+- `marketing/output/threads_archive/<timestamp>.md`
+- `threads.html` as a `noindex,nofollow` internal review surface
 
-## Finance automation
+## Safety and conversion invariants
 
-The operations finance bot (`bots/operations_finance_bot.py`) is the primary production-grade financial model in this repository. It computes inventory cost, customer retention value, and management fee structure on a weekly schedule and on-demand.
+1. Every generated campaign asset includes repository evidence paths.
+2. Every external campaign destination is HTTPS and host-allowlisted.
+3. Campaign links carry `utm_source`, `utm_medium`, `utm_campaign`, and `utm_content`.
+4. Generated assets are always `review_required=true`.
+5. Publication mode is hard-coded to `manual-review-only`.
+6. The generator rejects unresolved placeholder syntax and prohibited promotional patterns.
+7. It does not post to social platforms, message users, create fake engagement, buy stars, mass-follow accounts, or fabricate customer outcomes.
 
-**Key outputs (written to `operations/output/`):**
+## Channels currently generated
 
-| File | Description |
-|---|---|
-| `latest.md` | Human-readable finance report for the most recent run |
-| `latest.json` | Machine-readable payload for downstream dashboards or integrations |
-| `archive/<timestamp>.md` | Immutable historical run record |
+- LinkedIn launch post
+- X launch post
+- Reddit technical-feedback post
+- Dev.to article brief
+- Hacker News Show HN brief
+- Five proof-led technical threads
 
-**Trigger on demand** via GitHub Actions → Operations Finance Bot → Run workflow. All 15 financial parameters are configurable as workflow dispatch inputs, including unit cost, churn rate, labor cost, margin target, and fee preference. Unset inputs fall back to production defaults defined in the bot.
+## Verification
 
-**Extending the model:** See `CONTRIBUTING.md` → "Finance automation" for the full step-by-step process for adding metrics, inputs, and tests.
+```bash
+python -m unittest tests.test_artemis_growth_bot
+```
 
-**Test coverage:** `tests/test_operations_finance_bot.py` validates financial invariants including linear cost scaling, fee floor enforcement, formatter precision, zero-churn boundary conditions, and full JSON output integrity.
+The tests verify allowlisted destinations, UTM tagging, review gating, generation of all campaign artifacts, and rejection of known fabricated/manipulative language.
 
-## Usage
-These documents are written to be copied directly into GitHub Pages, governance repositories, or client-facing documentation portals. When a topic has multiple iterations, the most recent dated file takes precedence; earlier versions are retained for traceability.
+## Source of truth
+
+Campaign claims must remain traceable to `README.md`, `docs/GITHUB_GROWTH_LAUNCH_PLAYBOOK.md`, or another explicit repository path. If a claim cannot be supported by repository evidence or permissioned real-user proof, do not publish it.

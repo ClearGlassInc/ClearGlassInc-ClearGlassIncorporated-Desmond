@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<meta charset="UTF-8">
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Microsoft 365 + Windows Hardening Sprint — ClearGlass Inc.</title>
+<meta name="description" content="A fixed-fee 1–2 week sprint to harden Microsoft 365 / Entra ID and Windows endpoints to CIS-aligned baselines, with a prioritized remediation report. ClearGlass Inc., Ontario.">
+<link rel="canonical" href="https://www.clearglassinc.com/offers/hardening-sprint.html">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:16px/1.65 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#0f1722;background:#f6f8fb;-webkit-font-smoothing:antialiased}
+a{color:#0b8f86;text-decoration:none}
+.wrap{max-width:860px;margin:0 auto;padding:0 22px}
+header.site{background:#05121a}
+header.site .wrap{display:flex;align-items:center;justify-content:space-between;padding:16px 22px}
+.brand{font-weight:700;letter-spacing:.04em;color:#fff;display:flex;gap:10px;align-items:center;font-size:15px}
+.brand em{color:#39d0c3;font-style:normal;font-weight:600;font-size:12px}
+.hero{background:linear-gradient(160deg,#05121a,#0a2230);color:#fff;padding:60px 0 50px}
+.eyebrow{color:#39d0c3;font-size:13px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;margin-bottom:14px}
+h1{font-size:clamp(27px,5vw,40px);line-height:1.12;font-weight:800;margin-bottom:18px}
+.lead{font-size:19px;color:#c7d6e0;max-width:680px}
+.cta-row{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-block;background:#39d0c3;color:#04181c;font-weight:700;padding:14px 26px;border-radius:10px;border:0;cursor:pointer;font-size:16px}
+.btn.alt{background:transparent;color:#fff;border:1px solid #2b4a58}
+.btn:hover{filter:brightness(1.06)}
+.paynow{margin-top:16px;font-size:14px;color:#5b6b7a;line-height:1.6;max-width:680px}
+.paynow a{color:#0b8f86;font-weight:700}
+section{padding:44px 0}
+.card{background:#fff;border:1px solid #e4eaf1;border-radius:14px;padding:28px;box-shadow:0 8px 30px rgba(10,30,50,.05)}
+h2{font-size:25px;margin-bottom:18px;font-weight:800}
+h3{font-size:18px;margin-bottom:8px;font-weight:700}
+ul.check{list-style:none;margin-top:10px}
+ul.check li{padding-left:28px;position:relative;margin-bottom:10px}
+ul.check li:before{content:'✓';position:absolute;left:0;color:#0b8f86;font-weight:800}
+.grid{display:grid;gap:18px}
+@media(min-width:740px){.grid.c3{grid-template-columns:repeat(3,1fr)}}
+.price{font-size:32px;font-weight:800}
+.muted{color:#5b6b7a}
+.note{background:#fff8e6;border:1px solid #f0e0a8;border-radius:10px;padding:14px 16px;font-size:14px;color:#6b5a17;margin-top:16px}
+form label{display:block;font-weight:600;font-size:14px;margin:14px 0 6px}
+form input,form textarea{width:100%;padding:12px 14px;border:1px solid #cdd8e3;border-radius:9px;font:inherit}
+.consent{display:flex;gap:10px;font-size:13px;color:#5b6b7a;margin-top:14px;align-items:flex-start}
+.consent input{width:auto;margin-top:3px}
+footer.site{background:#05121a;color:#8aa0b3;font-size:13px;padding:30px 0}
+footer.site a{color:#39d0c3}
+</style>
+<link rel="stylesheet" href="/assets/css/glass.css">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="../brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+<header class="site"><div class="wrap"><a class="brand" href="../index.html">ClearGlass Inc. <em>CLARITY IS POWER</em></a><a href="index.html" style="color:#9fb3c2;font-size:14px">← All services</a></div></header>
+
+<div class="hero"><div class="wrap">
+  <div class="eyebrow">Fixed-fee engagement · 1–2 weeks</div>
+  <h1>Microsoft 365 + Windows Hardening Sprint</h1>
+  <p class="lead">In two weeks or less, we tighten your Microsoft 365 / Entra ID tenant and Windows endpoints to CIS-aligned baselines — then hand you a prioritized, plain-language remediation report. One fixed price. No open-ended hourly bills.</p>
+  <div class="cta-row">
+    <!-- Booking via email for now; swap to Cal.com/Calendly link when ready -->
+    <a class="btn" href="mailto:desmondotieno@icloud.com?subject=Scoping%20call%20%E2%80%94%20Hardening%20Sprint&body=Hi%20Desmond%2C%0A%0AI%27d%20like%20to%20book%20a%20free%20scoping%20call%20for%20the%20M365%2FWindows%20Hardening%20Sprint.%0A%0AOrganization%3A%20%0AApprox.%20users%2Fendpoints%3A%20%0APreferred%20times%3A%20">Book a free scoping call →</a>
+    <a class="btn alt" href="#pricing">See pricing</a>
+  </div>
+</div></div>
+
+<section><div class="wrap">
+  <h2>What you get</h2>
+  <div class="grid c3">
+    <div class="card">
+      <h3>Identity &amp; M365</h3>
+      <ul class="check">
+        <li>MFA / Conditional Access review</li>
+        <li>Admin role &amp; least-privilege audit</li>
+        <li>Legacy auth &amp; risky defaults</li>
+        <li>Exchange / SharePoint sharing controls</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Endpoints</h3>
+      <ul class="check">
+        <li>CIS-aligned Windows baseline</li>
+        <li>BitLocker &amp; Defender posture</li>
+        <li>Patch &amp; update hygiene check</li>
+        <li>Local admin / LAPS review</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Deliverables</h3>
+      <ul class="check">
+        <li>Prioritized findings report</li>
+        <li>Risk-ranked remediation plan</li>
+        <li>Applied quick wins (with sign-off)</li>
+        <li>30-min readout call</li>
+      </ul>
+    </div>
+  </div>
+</div></section>
+
+<section style="background:#fff;border-top:1px solid #e4eaf1;border-bottom:1px solid #e4eaf1" id="pricing"><div class="wrap">
+  <h2>Pricing</h2>
+  <div class="grid c3">
+    <div class="card">
+      <h3>Essentials</h3>
+      <div class="price">$2,500<span class="muted" style="font-size:15px;font-weight:500"> CAD</span></div>
+      <p class="muted">Up to ~25 endpoints · M365 review · report only</p>
+    </div>
+    <div class="card" style="border:2px solid #39d0c3">
+      <h3>Standard</h3>
+      <div class="price">$4,500<span class="muted" style="font-size:15px;font-weight:500"> CAD</span></div>
+      <p class="muted">Up to ~75 endpoints · report + applied quick wins · readout</p>
+    </div>
+    <div class="card">
+      <h3>Plus</h3>
+      <div class="price">$7,500<span class="muted" style="font-size:15px;font-weight:500"> CAD</span></div>
+      <p class="muted">Up to ~150 endpoints · full remediation + 30-day follow-up</p>
+    </div>
+  </div>
+  <p class="muted" style="margin-top:18px">Prices are starting points; final scope confirmed in writing before any work begins. A deposit secures your start date.</p>
+  <div class="cta-row">
+    <!-- STRIPE: paste deposit Payment Link in href below, then delete this comment. Interim: email inquiry. -->
+    <a class="btn" href="mailto:desmondotieno@icloud.com?subject=Hardening%20Sprint%20deposit%20%E2%80%94%20reserve%20start%20date&body=Hi%20Desmond%2C%0A%0AI%27d%20like%20to%20reserve%20a%20start%20date%20for%20the%20Hardening%20Sprint%20with%20a%20deposit.%20Please%20send%20a%20Stripe%20invoice%2Fcheckout%20link.%0A%0AOrganization%3A%20%0ATier%20%28Essentials%2FStandard%2FPlus%29%3A%20" data-cg-stripe="deposit">Reserve with a deposit →</a>
+  </div>
+  <p class="paynow">⚡ <strong>Reserve now by Interac e-Transfer:</strong> send a <strong>CAD&nbsp;$2,500 deposit</strong> to
+    <a href="mailto:desmondotieno@icloud.com?subject=Hardening%20Sprint%20deposit%20sent&body=Hi%20Desmond%2C%0A%0AI%27ve%20sent%20a%20CAD%20%242%2C500%20deposit%20by%20Interac%20e-Transfer%20to%20reserve%20a%20Hardening%20Sprint%20start%20date.%0A%0AOrganization%3A%20%0ATier%20%28Essentials%2FStandard%2FPlus%29%3A%20">desmondotieno@icloud.com</a>
+    (memo: &ldquo;Hardening Sprint deposit &mdash; your org&rdquo;), then email to confirm. Final scope is agreed in writing before any work begins.</p>
+  <div class="note"><strong>How payment works:</strong> deposits and final invoices are handled through <strong>Interac e-Transfer</strong>, Stripe (hosted checkout), or a Stripe / Wave invoice. No funds are ever auto-sent.</div>
+</div></section>
+
+<section id="contact"><div class="wrap">
+  <div class="card">
+    <h2>Request a scoping call</h2>
+    <p class="muted">Tell us a little about your environment and we'll confirm scope and a fixed price. No obligation.</p>
+    <form action="https://formsubmit.co/dezzy.231@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="Hardening Sprint enquiry">
+      <input type="hidden" name="_cc" value="Desmondotieno@icloud.com">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_next" value="https://www.clearglassinc.com/offers/thank-you.html">
+      <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+      <input type="hidden" name="form_source" value="hardening-sprint">
+      <label>Name<input type="text" name="name" required></label>
+      <label>Work email<input type="email" name="email" required></label>
+      <label>Organization<input type="text" name="organization"></label>
+      <label>Approx. number of users / endpoints<input type="text" name="size"></label>
+      <label>What prompted this? (optional)<textarea name="message" rows="3"></textarea></label>
+      <label class="consent"><input type="checkbox" name="consent" required> I consent to ClearGlass Inc. contacting me about this enquiry. (CASL)</label>
+      <div class="cta-row"><button class="btn" type="submit">Send enquiry →</button></div>
+    </form>
+  </div>
+</div></section>
+
+<footer class="site"><div class="wrap">
+  ClearGlass Inc. · Ontario, Canada · <a href="../index.html">www.clearglassinc.com</a><br>
+  All hardening work is performed only under a signed engagement with written authorization for the systems in scope.
+</div></footer>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › <a href="index.html">Services &amp; Engagements</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="autonomous-threat-modeling.html"><span><b>Previous</b>Autonomous Threat Modeling</span></a>
+      <a href="index.html"><span><b>Topic hub</b>Services &amp; Engagements</span></a>
+      <a href="guardian-command-nexus-blueprint.html"><span><b>Next in journey</b>Guardian Command Nexus Blueprint</span></a>
+    </div>
+    <ul>
+      <li><a href="guardian-command-nexus-blueprint.html"><b>Guardian Command Nexus Blueprint</b> — the full SPEC-1 architecture blueprint, sold as a digital deliverable</a></li>
+      <li><a href="../revenue-engine.html"><b>Revenue Engine</b> — AI-driven business growth system</a></li>
+      <li><a href="../side-store.html"><b>Side Store</b> — electronics, cables and components</a></li>
+      <li><a href="../products.html"><b>ClearGlass Products</b> — the unified ClearGlass product catalog</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="../nav.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+</body>
+</html>

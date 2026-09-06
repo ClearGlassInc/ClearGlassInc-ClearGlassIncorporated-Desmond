@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://clearglassinc.com/schemas/collection-manifest.schema.json",
+  "title": "ClearGlass Private Data Collection Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "purpose", "authority", "dataClassification", "retentionDays", "owner", "sanitizedOutputOnly"],
+  "properties": {
+    "name": {"type": "string", "minLength": 3, "maxLength": 100},
+    "purpose": {"type": "string", "minLength": 10, "maxLength": 500},
+    "authority": {"type": "string", "minLength": 5, "maxLength": 300},
+    "dataClassification": {"enum": ["internal", "confidential", "restricted"]},
+    "retentionDays": {"type": "integer", "minimum": 1, "maximum": 3650},
+    "owner": {"type": "string", "minLength": 3, "maxLength": 100},
+    "source": {"type": "string", "maxLength": 300},
+    "sanitizedOutputOnly": {"const": true},
+    "containsPersonalData": {"type": "boolean", "default": false},
+    "deletionProcedure": {"type": "string", "maxLength": 500}
+  }
+}
