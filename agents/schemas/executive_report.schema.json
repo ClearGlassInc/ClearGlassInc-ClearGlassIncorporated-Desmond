@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.clearglassinc.com/commerce/executive_report.schema.json",
+  "title": "ExecutiveReport",
+  "description": "The daily executive report produced by the operator's daily loop.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "date",
+    "store_health",
+    "drafted_optimization",
+    "drafted_content_improvement",
+    "flagged_operational_risk",
+    "executive_summary"
+  ],
+  "properties": {
+    "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "store_health": { "type": "string" },
+    "top_products": { "type": "array", "items": { "type": "string" } },
+    "underperformers": { "type": "array", "items": { "type": "string" } },
+    "drafted_optimization": { "type": "string" },
+    "drafted_content_improvement": { "type": "string" },
+    "flagged_operational_risk": { "type": "string" },
+    "executive_summary": { "type": "string" }
+  }
+}

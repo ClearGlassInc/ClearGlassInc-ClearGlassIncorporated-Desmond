@@ -1,0 +1,481 @@
+{
+  "schema": "clearglass.commerce.sidestore/v1",
+  "note": "Server-side catalogue for the Side Store. The browser names an id and a quantity; only this file sets the unit price. Generated from the embedded catalog in side-store.html \u2014 regenerate both together.",
+  "currency": "cad",
+  "pricing": {
+    "free_shipping_threshold": 2500,
+    "flat_shipping": 499,
+    "tax_rate": "0.13",
+    "tax_label": "HST (Ontario)",
+    "bundle_tiers": [
+      {
+        "min_qty": 5,
+        "rate": "0.15"
+      },
+      {
+        "min_qty": 3,
+        "rate": "0.10"
+      }
+    ],
+    "tax_basis": "CA-ON",
+    "tax_note": "Single Ontario HST rate. The store ships Canada-wide, so for destinations outside Ontario this is an estimate and Stripe Tax computes the real amount at checkout from the collected address."
+  },
+  "items": [
+    {
+      "id": "sku_001",
+      "sku": "USB-C-C-1M",
+      "name": "USB-C to USB-C Cable 1m",
+      "category": "USB Cables",
+      "description": "60W fast-charge, braided.",
+      "amount": 699
+    },
+    {
+      "id": "sku_002",
+      "sku": "USB-C-C-2M",
+      "name": "USB-C to USB-C Cable 2m",
+      "category": "USB Cables",
+      "description": "60W fast-charge, braided.",
+      "amount": 849
+    },
+    {
+      "id": "sku_003",
+      "sku": "USB-C-A-1M",
+      "name": "USB-C to USB-A Cable 1m",
+      "category": "USB Cables",
+      "description": "3A charge + data sync.",
+      "amount": 499
+    },
+    {
+      "id": "sku_004",
+      "sku": "USB-MICRO-1M",
+      "name": "Micro-USB Cable 1m",
+      "category": "USB Cables",
+      "description": "Legacy device charging.",
+      "amount": 349
+    },
+    {
+      "id": "sku_005",
+      "sku": "USB-A-B-1M",
+      "name": "USB-A to USB-B Printer Cable 1m",
+      "category": "USB Cables",
+      "description": "For printers/scanners.",
+      "amount": 549
+    },
+    {
+      "id": "sku_006",
+      "sku": "USB-C-LIGHT-1M",
+      "name": "USB-C to Lightning Cable 1m",
+      "category": "USB Cables",
+      "description": "MFi-style fast charge.",
+      "amount": 949
+    },
+    {
+      "id": "sku_007",
+      "sku": "USB-EXT-2M",
+      "name": "USB-A Extension Cable 2m",
+      "category": "USB Cables",
+      "description": "Male-to-female extender.",
+      "amount": 429
+    },
+    {
+      "id": "sku_008",
+      "sku": "WALL-20W",
+      "name": "20W USB-C Wall Charger",
+      "category": "Power Adapters",
+      "description": "PD fast wall adapter.",
+      "amount": 999
+    },
+    {
+      "id": "sku_009",
+      "sku": "WALL-2PORT",
+      "name": "Dual-Port USB Wall Charger",
+      "category": "Power Adapters",
+      "description": "USB-A + USB-C.",
+      "amount": 899
+    },
+    {
+      "id": "sku_010",
+      "sku": "CAR-30W",
+      "name": "30W USB-C Car Charger",
+      "category": "Power Adapters",
+      "description": "PD car adapter.",
+      "amount": 799
+    },
+    {
+      "id": "sku_011",
+      "sku": "CAR-2PORT",
+      "name": "Dual-USB Car Charger",
+      "category": "Power Adapters",
+      "description": "12V dual output.",
+      "amount": 599
+    },
+    {
+      "id": "sku_012",
+      "sku": "AUX-3.5-1M",
+      "name": "3.5mm AUX Cable 1m",
+      "category": "Audio / Video",
+      "description": "Stereo male-to-male.",
+      "amount": 299
+    },
+    {
+      "id": "sku_013",
+      "sku": "AUX-3.5-2M",
+      "name": "3.5mm AUX Cable 2m",
+      "category": "Audio / Video",
+      "description": "Stereo male-to-male.",
+      "amount": 399
+    },
+    {
+      "id": "sku_014",
+      "sku": "RCA-2X-1.5M",
+      "name": "RCA Stereo Cable 1.5m",
+      "category": "Audio / Video",
+      "description": "2x RCA male-to-male.",
+      "amount": 449
+    },
+    {
+      "id": "sku_015",
+      "sku": "HDMI-1.5M",
+      "name": "HDMI 2.0 Cable 1.5m",
+      "category": "Audio / Video",
+      "description": "4K@60Hz.",
+      "amount": 749
+    },
+    {
+      "id": "sku_016",
+      "sku": "HDMI-3M",
+      "name": "HDMI 2.0 Cable 3m",
+      "category": "Audio / Video",
+      "description": "4K@60Hz.",
+      "amount": 999
+    },
+    {
+      "id": "sku_017",
+      "sku": "AUX-SPLIT",
+      "name": "3.5mm Headphone Splitter",
+      "category": "Audio / Video",
+      "description": "1-to-2 audio splitter.",
+      "amount": 329
+    },
+    {
+      "id": "sku_018",
+      "sku": "DUPONT-120",
+      "name": "Dupont Jumper Connector Pack (120)",
+      "category": "Connector Packs",
+      "description": "M-M, M-F, F-F.",
+      "amount": 649
+    },
+    {
+      "id": "sku_019",
+      "sku": "JST-PACK-40",
+      "name": "JST-XH Connector Kit (40)",
+      "category": "Connector Packs",
+      "description": "2-6 pin housings + crimps.",
+      "amount": 599
+    },
+    {
+      "id": "sku_020",
+      "sku": "BANANA-10",
+      "name": "Banana Plugs (10-pack)",
+      "category": "Connector Packs",
+      "description": "Screw-type 4mm.",
+      "amount": 499
+    },
+    {
+      "id": "sku_021",
+      "sku": "SPADE-50",
+      "name": "Spade Terminal Pack (50)",
+      "category": "Connector Packs",
+      "description": "Insulated crimp spades.",
+      "amount": 399
+    },
+    {
+      "id": "sku_022",
+      "sku": "RING-50",
+      "name": "Ring Terminal Pack (50)",
+      "category": "Connector Packs",
+      "description": "Assorted gauges.",
+      "amount": 399
+    },
+    {
+      "id": "sku_023",
+      "sku": "BARREL-PACK",
+      "name": "DC Barrel Jack Pack (10)",
+      "category": "Connector Packs",
+      "description": "5.5x2.1mm M/F.",
+      "amount": 429
+    },
+    {
+      "id": "sku_024",
+      "sku": "JUMP-M-M-40",
+      "name": "Jumper Wires M-M (40)",
+      "category": "Wires",
+      "description": "20cm breadboard wires.",
+      "amount": 449
+    },
+    {
+      "id": "sku_025",
+      "sku": "JUMP-M-F-40",
+      "name": "Jumper Wires M-F (40)",
+      "category": "Wires",
+      "description": "20cm breadboard wires.",
+      "amount": 449
+    },
+    {
+      "id": "sku_026",
+      "sku": "JUMP-F-F-40",
+      "name": "Jumper Wires F-F (40)",
+      "category": "Wires",
+      "description": "20cm breadboard wires.",
+      "amount": 449
+    },
+    {
+      "id": "sku_027",
+      "sku": "HOOKUP-22AWG",
+      "name": "22AWG Hookup Wire 6x3m",
+      "category": "Wires",
+      "description": "Solid core, 6 colours.",
+      "amount": 899
+    },
+    {
+      "id": "sku_028",
+      "sku": "STRAND-24AWG",
+      "name": "24AWG Stranded Wire 6x3m",
+      "category": "Wires",
+      "description": "Flexible, 6 colours.",
+      "amount": 849
+    },
+    {
+      "id": "sku_029",
+      "sku": "RIBBON-1M",
+      "name": "40-pin Ribbon Cable 1m",
+      "category": "Wires",
+      "description": "Rainbow IDC ribbon.",
+      "amount": 379
+    },
+    {
+      "id": "sku_030",
+      "sku": "SPEAKER-5M",
+      "name": "Speaker Wire 18AWG 5m",
+      "category": "Wires",
+      "description": "Oxygen-free copper.",
+      "amount": 649
+    },
+    {
+      "id": "sku_031",
+      "sku": "RES-600",
+      "name": "Resistor Assortment (600)",
+      "category": "Components",
+      "description": "30 values, 1/4W.",
+      "amount": 799
+    },
+    {
+      "id": "sku_032",
+      "sku": "CAP-CER-300",
+      "name": "Ceramic Capacitor Kit (300)",
+      "category": "Components",
+      "description": "30 values.",
+      "amount": 699
+    },
+    {
+      "id": "sku_033",
+      "sku": "CAP-ELE-120",
+      "name": "Electrolytic Capacitor Kit (120)",
+      "category": "Components",
+      "description": "24 values.",
+      "amount": 749
+    },
+    {
+      "id": "sku_034",
+      "sku": "LED-200",
+      "name": "LED Assortment (200)",
+      "category": "Components",
+      "description": "5 colours, 3/5mm.",
+      "amount": 549
+    },
+    {
+      "id": "sku_035",
+      "sku": "DIODE-100",
+      "name": "Rectifier Diode Pack (100)",
+      "category": "Components",
+      "description": "1N4007 etc.",
+      "amount": 449
+    },
+    {
+      "id": "sku_036",
+      "sku": "TRANS-50",
+      "name": "NPN/PNP Transistor Kit (50)",
+      "category": "Components",
+      "description": "Common types.",
+      "amount": 599
+    },
+    {
+      "id": "sku_037",
+      "sku": "BREAD-830",
+      "name": "Breadboard 830-point",
+      "category": "Components",
+      "description": "Solderless.",
+      "amount": 499
+    },
+    {
+      "id": "sku_038",
+      "sku": "BREAD-400",
+      "name": "Breadboard 400-point",
+      "category": "Components",
+      "description": "Solderless mini.",
+      "amount": 349
+    },
+    {
+      "id": "sku_039",
+      "sku": "HEADER-40",
+      "name": "Pin Header Strips (40x)",
+      "category": "Components",
+      "description": "2.54mm snap-apart.",
+      "amount": 329
+    },
+    {
+      "id": "sku_040",
+      "sku": "POT-15",
+      "name": "Potentiometer Kit (15)",
+      "category": "Components",
+      "description": "Assorted values.",
+      "amount": 649
+    },
+    {
+      "id": "sku_041",
+      "sku": "SWITCH-30",
+      "name": "Tactile Push Button Kit (30)",
+      "category": "Components",
+      "description": "6x6mm.",
+      "amount": 399
+    },
+    {
+      "id": "sku_042",
+      "sku": "FUSE-60",
+      "name": "Glass Fuse Assortment (60)",
+      "category": "Components",
+      "description": "5x20mm.",
+      "amount": 429
+    },
+    {
+      "id": "sku_043",
+      "sku": "CABLE-TIES-100",
+      "name": "Reusable Cable Ties (100)",
+      "category": "Accessories",
+      "description": "Hook-and-loop straps.",
+      "amount": 399
+    },
+    {
+      "id": "sku_044",
+      "sku": "CABLE-CLIPS-20",
+      "name": "Adhesive Cable Clips (20)",
+      "category": "Accessories",
+      "description": "Desk cable management.",
+      "amount": 299
+    },
+    {
+      "id": "sku_045",
+      "sku": "CABLE-SLEEVE-2M",
+      "name": "Braided Cable Sleeve 2m",
+      "category": "Accessories",
+      "description": "Cut-to-length.",
+      "amount": 449
+    },
+    {
+      "id": "sku_046",
+      "sku": "LABELS-3",
+      "name": "Cable Label Pack (3 sheets)",
+      "category": "Accessories",
+      "description": "Write-on wrap labels.",
+      "amount": 249
+    },
+    {
+      "id": "sku_047",
+      "sku": "PHONE-STAND",
+      "name": "Adjustable Phone Stand",
+      "category": "Accessories",
+      "description": "Aluminium desk stand.",
+      "amount": 699
+    },
+    {
+      "id": "sku_048",
+      "sku": "HEATSHRINK-560",
+      "name": "Heat-Shrink Tube Kit (560)",
+      "category": "Accessories",
+      "description": "Assorted sizes/colours.",
+      "amount": 749
+    },
+    {
+      "id": "sku_049",
+      "sku": "VELCRO-ROLL",
+      "name": "Cable Wrap Roll 3m",
+      "category": "Accessories",
+      "description": "Cut-to-length fastener.",
+      "amount": 349
+    },
+    {
+      "id": "sku_050",
+      "sku": "USB-LIGHT",
+      "name": "USB LED Light",
+      "category": "Accessories",
+      "description": "Flexible keyboard light.",
+      "amount": 299
+    },
+    {
+      "id": "sku_051",
+      "sku": "CARD-READER",
+      "name": "USB-C SD Card Reader",
+      "category": "Accessories",
+      "description": "SD + microSD.",
+      "amount": 849
+    },
+    {
+      "id": "sku_052",
+      "sku": "OTG-ADAPT",
+      "name": "USB-C to USB-A OTG Adapter",
+      "category": "Accessories",
+      "description": "Connect USB drives.",
+      "amount": 399
+    },
+    {
+      "id": "sku_053",
+      "sku": "HDMI-VGA",
+      "name": "HDMI to VGA Adapter",
+      "category": "Accessories",
+      "description": "1080p, with audio.",
+      "amount": 899
+    },
+    {
+      "id": "sku_054",
+      "sku": "USB-HUB-4",
+      "name": "4-Port USB-A Hub",
+      "category": "Accessories",
+      "description": "USB 3.0 splitter.",
+      "amount": 949
+    },
+    {
+      "id": "sku_055",
+      "sku": "BUNDLE-STARTER",
+      "name": "Starter Wire Kit",
+      "category": "Bundles",
+      "description": "10 wires + 5 connectors + 1 adapter.",
+      "amount": 999
+    },
+    {
+      "id": "sku_056",
+      "sku": "BUNDLE-CABLE",
+      "name": "Everyday Cable Pack",
+      "category": "Bundles",
+      "description": "USB-C, AUX, and Micro-USB.",
+      "amount": 949
+    },
+    {
+      "id": "sku_057",
+      "sku": "BUNDLE-MAKER",
+      "name": "Maker Components Pack",
+      "category": "Bundles",
+      "description": "Resistors, LEDs, breadboard.",
+      "amount": 999
+    }
+  ]
+}

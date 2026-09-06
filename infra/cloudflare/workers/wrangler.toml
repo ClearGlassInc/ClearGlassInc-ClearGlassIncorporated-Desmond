@@ -1,0 +1,18 @@
+name = "cg-asset-guard"
+main = "asset-guard.js"
+compatibility_date = "2025-01-01"
+
+# Route the guard in front of premium asset endpoints. Replace the zone/host.
+# routes = [
+#   { pattern = "clearglass.example/api/download/*", zone_name = "clearglass.example" },
+#   { pattern = "clearglass.example/assets/premium/*", zone_name = "clearglass.example" },
+# ]
+
+# Non-secret var. Set the real apex host for hotlink checks.
+[vars]
+ALLOWED_REFERER_HOST = "clearglass.example"
+
+# Secret — set out of band, NOT in this file:
+#   wrangler secret put ASSET_SIGNING_SECRET
+# Must equal the origin's ASSET_SIGNING_SECRET (admin/lib/signing.ts) so tokens
+# verify identically at edge and origin.

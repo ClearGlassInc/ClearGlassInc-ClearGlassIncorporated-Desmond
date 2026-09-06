@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.clearglassinc.com/commerce/optimization_proposal.schema.json",
+  "title": "OptimizationProposal",
+  "description": "A single governed recommendation emitted by any commerce sub-agent.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["action", "summary", "evidence", "expected_effect", "risk_tier", "requires_approval"],
+  "properties": {
+    "action": {
+      "type": "string",
+      "description": "Canonical action name known to governance.ACTION_RISK."
+    },
+    "target": {
+      "type": ["string", "null"],
+      "description": "SKU, product slug, campaign id, or null."
+    },
+    "summary": { "type": "string", "minLength": 8 },
+    "evidence": {
+      "type": "array",
+      "description": "Verified data points the proposal is based on. Empty array = stop and escalate.",
+      "items": { "type": "string" }
+    },
+    "expected_effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "metric": { "type": "string" },
+        "direction": { "type": "string", "enum": ["increase", "decrease", "neutral"] },
+        "estimate": { "type": ["number", "null"] },
+        "confidence": { "type": "string", "enum": ["low", "medium", "high"] }
+      },
+      "required": ["metric", "direction", "confidence"]
+    },
+    "risk_tier": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+    "requires_approval": { "type": "boolean" },
+    "payload": { "type": "object" }
+  }
+}

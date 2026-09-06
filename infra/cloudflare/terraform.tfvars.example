@@ -1,0 +1,27 @@
+# Copy to terraform.tfvars and fill in. Do NOT commit the real file.
+# Auth is via the CLOUDFLARE_API_TOKEN environment variable (not a var here).
+
+account_id    = "your-cloudflare-account-id"
+zone_id       = "your-zone-id"
+zone_hostname = "clearglass.example"
+
+# --- Phase 1 (observe): keep EVERYTHING at "log". This is the safe default. ---
+action_ratelimit_premium    = "log"
+action_ratelimit_assets     = "log"
+action_scraper_heuristics   = "log"
+action_aggressive_crawl     = "log"
+action_hotlink              = "log"
+managed_waf_override_action = "log"
+enable_super_bot_fight_mode = false
+
+# --- Thresholds (generous to start; tighten in Phase 4). ---
+premium_rpm_per_ip         = 60
+asset_rpm_per_ip           = 30
+mitigation_timeout_seconds = 600
+
+# --- Evidence pipeline (strongly recommended before promoting any rule). ---
+# logpush_destination = "r2://my-bucket/cf-logs?account-id=...&access-key-id=...&secret-access-key=..."
+
+# --- Edge signed-asset verification: must equal origin ASSET_SIGNING_SECRET. ---
+# Prefer TF_VAR_asset_signing_secret env var over putting it here.
+# asset_signing_secret = ""

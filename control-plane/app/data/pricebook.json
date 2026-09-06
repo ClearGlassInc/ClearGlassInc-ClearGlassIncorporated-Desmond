@@ -1,0 +1,47 @@
+{
+  "schema": "clearglass.commerce.pricebook/v2",
+  "note": "Server-side price authority. The browser names a SKU; only this file (and, in live mode, the Stripe Price it points at) sets the amount charged. Each offer carries the id of a real Stripe Price — that Price is the single source of truth for live charges, so `amount` here is display/mock only and must be kept in step with Stripe.",
+  "offers": [
+    {
+      "sku": "risk-audit-90",
+      "name": "ClearGlass 90-Minute Cyber Risk Audit",
+      "description": "A focused 90-minute cybersecurity and AI-risk assessment for small businesses and professionals, followed by prioritized findings and practical next actions.",
+      "stripe_price_id": "price_1U0wl3L8uR92FksUMVIa9nUl",
+      "stripe_product_id": "prod_V0yiCBgBCIm6vC",
+      "amount": 29700,
+      "currency": "cad",
+      "kind": "one_time",
+      "max_quantity": 1,
+      "tax_behavior": "exclusive",
+      "active": true
+    },
+    {
+      "sku": "business-protection-monthly",
+      "name": "ClearGlass Business Protection — monthly",
+      "description": "Ongoing cybersecurity guidance, risk monitoring support, and practical defensive recommendations for small businesses. Billed monthly.",
+      "stripe_price_id": "price_1U0wlFL8uR92FksUG6ZT87rG",
+      "stripe_product_id": "prod_V0yi3FfwJbHtvw",
+      "amount": 10000,
+      "currency": "cad",
+      "kind": "recurring",
+      "interval": "month",
+      "max_quantity": 1,
+      "tax_behavior": "exclusive",
+      "active": true
+    },
+    {
+      "sku": "business-protection-annual",
+      "name": "ClearGlass Business Protection — annual",
+      "description": "Ongoing cybersecurity guidance, risk monitoring support, and practical defensive recommendations for small businesses. Billed yearly.",
+      "stripe_price_id": "price_1U0wlOL8uR92FksUJjFEMvGT",
+      "stripe_product_id": "prod_V0yi3FfwJbHtvw",
+      "amount": 100000,
+      "currency": "cad",
+      "kind": "recurring",
+      "interval": "year",
+      "max_quantity": 1,
+      "tax_behavior": "exclusive",
+      "active": true
+    }
+  ]
+}
