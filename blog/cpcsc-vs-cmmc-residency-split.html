@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CPCSC vs CMMC: Control Reuse and the Data-Residency Split</title>
+<meta name="description" content="What Canadian defence suppliers can reuse from CMMC — and why CPCSC still requires Canadian storage and a CLOUD Act residual-risk line.">
+<meta name="author" content="Desmond Otieno Odhiambo">
+<link rel="canonical" href="https://www.clearglassinc.com/blog/cpcsc-vs-cmmc-residency-split.html">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2026-09-07">
+<link rel="stylesheet" href="insights.css">
+<style>body{margin:0;background:#03070d;color:#dce8f3;font:17px/1.7 Inter,system-ui,sans-serif}a{color:#69e8ff}.wrap{width:min(760px,calc(100% - 36px));margin:auto;padding:48px 0 80px}.eyebrow{font:700 11px ui-monospace,monospace;letter-spacing:.18em;color:#63f4b5;text-transform:uppercase}h1{font-size:clamp(32px,5vw,52px);line-height:1.05;color:#fff}h2{color:#fff;margin-top:36px}nav{padding:14px 22px;border-bottom:1px solid #183348}nav a{color:#fff;font-weight:800;text-decoration:none}.notice{padding:16px;border:1px solid #5a4d2a;background:#171307;color:#e6d9af;border-radius:12px;font-size:14px}</style>
+</head>
+<body data-ix-page="article" data-ix-slug="cpcsc-vs-cmmc-residency-split">
+<nav><a href="/">CLEARGLASSINC</a> · <a href="/blog/">Insights</a></nav>
+<main class="wrap">
+<p class="eyebrow">Cluster Brief // NA-CPCSC-2026-09</p>
+<h1>CPCSC vs CMMC: the residency split</h1>
+<p>Desmond Otieno Odhiambo · Verified 7 September 2026</p>
+<p>Canadian defence suppliers keep asking whether CMMC work can be reused for CPCSC. The honest answer is yes on controls and no on location.</p>
+<p>PSPC introduced CPCSC on 12 March 2025. Level 1 became available on 1 April 2026 as an annual self-assessment. Level 2 and Level 3 enter select defence contracts between April 2027 and March 2028.</p>
+<h2>What is reusable</h2>
+<p>Reuse the system security plan structure, control owners, evidence folders, and assessor-ready narratives from NIST SP 800-171 / CMMC work. Do not reuse the assumption that a US region or multi-tenant commercial cloud is an acceptable home for Canadian specified information.</p>
+<h2>Where the programs diverge</h2>
+<ul>
+<li>CMMC certifies the contractor environment. FedRAMP authorizes a cloud offering. CPCSC certifies Canadian defence suppliers handling specified information below classified.</li>
+<li>CMMC Level 2 uses C3PAOs. CPCSC Level 2 uses SCC-accredited bodies. Level 3 is described as a Canadian military assessment for the most sensitive work.</li>
+<li>CMMC does not impose a Canada-only storage rule. CPCSC scoping treats data location and foreign access as in-scope. Safeguarded contract data is expected to stay in Canada.</li>
+<li>A US parent or US-operated cloud can still face US legal process under the CLOUD Act even when the disk is in Canada.</li>
+</ul>
+<h2>Build order</h2>
+<ol>
+<li>Inventory specified information and any US CUI in the same workbook, with separate residency columns.</li>
+<li>Split estates if a shared tenant cannot enforce Canada-only storage and Canada-only privileged access.</li>
+<li>Keep one evidence ledger. Emit CPCSC and CMMC packets from the same records.</li>
+<li>Put agents and automation in scope.</li>
+<li>Write the residual CLOUD Act risk in the contract file.</li>
+</ol>
+<p><a href="/blog/canada-us-cross-border-cybersecurity-evidence-controls.html">Parent brief</a> · <a href="/blog/dual-clock-incident-runbook-ccspa-circia-pipeda.html">Dual-clock runbook</a> · <a href="/offers/canada-us-control-assessment.html">Assessment</a></p>
+<div class="notice">Public program pages only. Not a certification claim.</div>
+</main>
+<script defer src="insights.js"></script>
+</body></html>
