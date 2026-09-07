@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Canada–US Control Problem: Why North American Operations Fail at the Evidence Layer</title>
+<meta name="description" content="How PIPEDA transfers, Bill C-8, CIRCIA, CPCSC, and CMMC collide. A practical operating model for proof, residency, agents, and dual-clock incidents.">
+<meta name="author" content="Desmond Otieno Odhiambo">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.clearglassinc.com/blog/canada-us-cross-border-cybersecurity-evidence-controls.html">
+<link rel="alternate" type="application/rss+xml" href="https://www.clearglassinc.com/blog/feed.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Canada–US Control Problem">
+<meta property="og:description" content="North America is one market and two evidence regimes.">
+<meta property="og:url" content="https://www.clearglassinc.com/blog/canada-us-cross-border-cybersecurity-evidence-controls.html">
+<meta property="article:published_time" content="2026-09-07">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"The Canada–US Control Problem: Why North American Operations Fail at the Evidence Layer","datePublished":"2026-09-07","author":{"@type":"Person","name":"Desmond Otieno Odhiambo"},"publisher":{"@type":"Organization","name":"ClearGlass Inc."},"mainEntityOfPage":"https://www.clearglassinc.com/blog/canada-us-cross-border-cybersecurity-evidence-controls.html"}</script>
+<link rel="stylesheet" href="insights.css">
+<style>body{margin:0;background:#03070d;color:#dce8f3;font:17px/1.7 Inter,system-ui,sans-serif}a{color:#69e8ff}.wrap{width:min(760px,calc(100% - 36px));margin:auto;padding:48px 0 80px}.eyebrow{font:700 11px ui-monospace,monospace;letter-spacing:.18em;color:#63f4b5;text-transform:uppercase}h1{font-size:clamp(34px,6vw,58px);line-height:1;letter-spacing:-.04em;color:#fff}h2{color:#fff;margin-top:42px}.lede{font-size:21px;color:#f0f6fc}.callout,.notice{padding:18px;border-radius:12px;margin:28px 0}.callout{border:1px solid #27536b;background:#08131d}.notice{border:1px solid #5a4d2a;background:#171307;color:#e6d9af;font-size:14px}nav{padding:14px 22px;border-bottom:1px solid #183348}nav a{color:#fff;font-weight:800;text-decoration:none}</style>
+</head>
+<body data-ix-page="article" data-ix-slug="canada-us-cross-border-cybersecurity-evidence-controls">
+<nav><a href="/">CLEARGLASSINC</a> · <a href="/blog/">Insights</a></nav>
+<main class="wrap">
+<p class="eyebrow">System Brief // NA-EVIDENCE-2026-09</p>
+<h1>The Canada–US Control Problem</h1>
+<p>Desmond Otieno Odhiambo · ClearGlass Intelligence · Burlington, Ontario · Verified 7 September 2026</p>
+<p class="lede">North American operators do not have a technology shortage. They have a proof shortage. A workload can run in Toronto and serve Detroit by lunch. The contract, the privacy notice, the cloud region, the agent that touched the ticket, and the regulator who wants the log do not move with it.</p>
+<p>Canada and the United States share infrastructure, talent, capital, and adversaries. They do not share the same rules for where data may live, how fast an incident must be reported, who can compel access, or what comparable protection means when a processor sits on the other side of the border.</p>
+<h2 id="market">The market is integrated. The control plane is not.</h2>
+<p>Ontario’s North American growth plan treats power systems, data centres, AI rules, and cyber collaboration as a continental problem. Canada’s defence industrial strategy is explicit that a large share of Canadian defence output is sold abroad, and most of those exports go to the United States and other Five Eyes partners. The operating reality is already binational. The paperwork is not.</p>
+<h2 id="privacy">PIPEDA still follows the Canadian organization</h2>
+<p>The Canadian organization remains responsible for personal information sent to a US processor. It must use contractual or other means to keep a comparable level of protection, and people should be told the data may leave Canada and that foreign authorities may access it. Quebec adds a harder adequacy test. A single SaaS tenant with users in Ontario, Quebec, and several US states is a transfer map. If an AI agent can see the record, the agent is in that map.</p>
+<h2 id="clocks">Bill C-8 and CIRCIA put two clocks on the same incident</h2>
+<p>Bill C-8 received royal assent on 15 June 2026. It amends the Telecommunications Act immediately and enacts the Critical Cyber Systems Protection Act for designated operators. Implementation is phased. The direction is not optional.</p>
+<p>CIRCIA requires CISA to compel covered critical-infrastructure entities to report substantial incidents within 72 hours and ransomware payments within 24 hours once the final rule takes effect. The final rule has been delayed past the statutory deadline and was targeted for September 2026.</p>
+<h2 id="defence">CPCSC reuses CMMC controls. It does not reuse residency.</h2>
+<p>CPCSC Level 1 became available to suppliers on 1 April 2026. Higher levels phase in through 2027–2028. PSPC designed the program to minimize duplication with US requirements. The split that matters is sovereignty: safeguarded Canadian contract data is expected to stay in Canada. CMMC does not impose that residency rule. CCCS Medium and FedRAMP both sit on NIST SP 800-53. That is reuse, not equivalence.</p>
+<h2 id="access">The real fracture is lawful access, not encryption</h2>
+<p>Storing objects in a Canadian region does not answer who holds the keys, who can compel the provider, or whether a US parent can be ordered to produce the same bytes under the CLOUD Act. Agents are now in the transfer path. An agent that summarizes a case file, calls a US model endpoint, and writes back to a Canadian system of record has executed a disclosure.</p>
+<h2 id="model">Six mechanisms that survive two auditors</h2>
+<ol>
+<li>A living transfer inventory, including model inputs and outputs.</li>
+<li>Region and purpose as runtime policy, not Confluence folklore.</li>
+<li>Agents on the same control plane as humans, with append-only action logs.</li>
+<li>One evidence ledger that can emit PIPEDA, CCSPA, CIRCIA, CPCSC, and CMMC packets.</li>
+<li>Honest authorization gaps: aligned-to is not authorized-for.</li>
+<li>Dual-clock drills twice a year. Score time-to-single-timeline, not time-to-statement.</li>
+</ol>
+<div class="callout"><strong>Cluster:</strong> <a href="/blog/cpcsc-vs-cmmc-residency-split.html">CPCSC vs CMMC</a> · <a href="/blog/dual-clock-incident-runbook-ccspa-circia-pipeda.html">Dual-clock runbook</a> · <a href="/offers/canada-us-control-assessment.html">Control assessment</a></div>
+<p>The scarce capability is evidence-grade operations across two legal systems. Decisions should be explainable, reproducible, challengeable, and defensible with the evidence available at the time they were made.</p>
+<div class="notice"><strong>Claim boundary.</strong> Public statutes and program pages only. Not legal advice. Not a claim of FedRAMP, CMMC, CPCSC, CCCS, or ITAR authorization. Last verified 7 September 2026.</div>
+<p>Sources: <a href="https://www.parl.ca/legisinfo/en/bill/45-1/c-8">Bill C-8 LEGISinfo</a> · <a href="https://www.canada.ca/en/public-services-procurement/services/industrial-security/security-requirements-contracting/cyber-security-certification-defence-suppliers-canada/program-overview.html">CPCSC overview</a> · <a href="https://www.cisa.gov/topics/cyber-threats-and-advisories/information-sharing/cyber-incident-reporting-critical-infrastructure-act-2022-circia">CISA CIRCIA</a></p>
+</main>
+<script defer src="insights.js"></script>
+</body></html>
