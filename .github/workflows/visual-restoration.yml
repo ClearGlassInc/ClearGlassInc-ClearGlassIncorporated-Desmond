@@ -1,0 +1,43 @@
+name: Apply ClearGlass visual restoration layer
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  apply-visual-layer:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+
+      - name: Add restoration stylesheet to homepage
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('index.html')
+          text = p.read_text(encoding='utf-8')
+          marker = '<link rel="stylesheet" href="clearglass-legacy-visual.css">'
+          if marker not in text:
+              anchor = '<link rel="stylesheet" href="sentinel.css"/>'
+              if anchor not in text:
+                  raise SystemExit('sentinel.css link not found; aborting without changes')
+              text = text.replace(anchor, anchor + '\n' + marker, 1)
+              p.write_text(text, encoding='utf-8')
+
+      - name: Commit homepage link
+        shell: bash
+        run: |
+          if git diff --quiet -- index.html; then
+            echo 'Homepage already references the restoration layer.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'style: restore ClearGlass dark glass homepage visual layer'
+          git push origin HEAD:main
