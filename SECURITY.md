@@ -1,4 +1,4 @@
-# ClearGlassInc Artemis Security Policy
+# ClearGlass Inc. Security Policy
 
 ## Scope
 This policy applies to the public ClearGlassInc Artemis GitHub Pages and supporting documentation repository.
