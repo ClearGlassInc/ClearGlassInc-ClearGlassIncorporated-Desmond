@@ -37,4 +37,46 @@ function SentinelVisualRuntime(root,flags){this.root=root;this.flags=flags;this.
 SentinelVisualRuntime.prototype.start=function(){var runtime=this;if(!this.root||this.motion.matches||!this.flags.proceduralNeon)return;this.observer=new IntersectionObserver(function(entries){runtime.visible=entries[0].isIntersecting});this.observer.observe(this.root);this.visibility=function(){runtime.visible=!document.hidden};document.addEventListener("visibilitychange",this.visibility);if(this.flags.pointerEnergy&&window.matchMedia("(pointer:fine)").matches)this.root.addEventListener("pointermove",this.onPointerMove=function(event){if(runtime.pointerFrame)return;runtime.pointerFrame=requestAnimationFrame(function(){var box=runtime.root.getBoundingClientRect();runtime.root.style.setProperty("--cg-energy-x",((event.clientX-box.left)/box.width*100).toFixed(1)+"%");runtime.root.style.setProperty("--cg-energy-y",((event.clientY-box.top)/box.height*100).toFixed(1)+"%");runtime.pointerFrame=0})});function tick(now){runtime.frame=requestAnimationFrame(tick);if(!runtime.visible||now-runtime.last<33)return;runtime.last=now;var t=now/1000,intensity=.82+Math.sin(t*.66)*.10+Math.sin(t*.19+1.4)*.05+Math.cos(t*.043)*.025,hue=188+Math.sin(t*.075)*7+Math.sin(t*.018)*3;runtime.root.style.setProperty("--cg-neon-intensity",intensity.toFixed(3));runtime.root.style.setProperty("--cg-neon-hue",hue.toFixed(2));runtime.root.style.setProperty("--cg-border-angle",((t*9)%360).toFixed(1)+"deg")}this.frame=requestAnimationFrame(tick)};
 var visualRuntime=new SentinelVisualRuntime(hero,visualFlags);try{visualRuntime.start()}catch(error){if(hero)hero.dataset.visualQuality="static"}
 shell.addEventListener("keydown",function(e){if(e.key==="Escape"){closePanel();return}if(e.key!=="Tab")return;var all=Array.from(shell.querySelectorAll("button,a[href],textarea")).filter(function(el){return el.offsetParent!==null});if(!all.length)return;var first=all[0],last=all[all.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}});try{if(sessionStorage.getItem("cg-sentinel-dismissed")==="true")launcher.hidden=true}catch(e){}
+
+/* ClearGlass Station — advanced homepage navigation layer.
+   The existing Sentinel concierge remains intact; the launcher now opens
+   a navigable command-station surface first. No backend, tracking, or
+   external command execution is introduced. */
+(function(){
+  var panel=shell.querySelector(".sentinel-panel");
+  if(!panel||!launcher)return;
+  var originalPanelHTML=panel.innerHTML;
+  var stationHTML='<header class="sentinel-panel-header"><div class="sentinel-brand"><span class="sentinel-mark" aria-hidden="true">CG</span><span><small>ClearGlass Inc.</small><strong>CLEARGLASS STATION</strong></span></div><button type="button" class="sentinel-icon-button" data-station-close aria-label="Close ClearGlass Station">×</button></header>'+
+  '<div class="sentinel-modebar"><div><span class="sentinel-live-dot" aria-hidden="true"></span><strong>Navigation command layer</strong><small>PUBLIC SURFACE · LOCAL ROUTING · NO EXTERNAL ACTIONS</small></div><button type="button" data-station-chat>ASK SENTINEL</button></div>'+
+  '<div class="cg-station-body">'+
+  '<div class="cg-station-kicker">MISSION CONTROL / SITE DIRECTORY</div><h2>Where do you want to go?</h2><p class="cg-station-sub">Move directly between ClearGlass services, intelligence surfaces, products, systems, and contact pathways.</p>'+
+  '<div class="cg-station-grid" role="navigation" aria-label="ClearGlass Station navigation">'+
+  '<a class="cg-station-item cg-station-primary" href="index.html"><span class="cg-station-code">00</span><span><strong>Command Home</strong><small>ClearGlass Inc. homepage and operating overview</small></span><b>→</b></a>'+
+  '<a class="cg-station-item" href="offers/index.html"><span class="cg-station-code">01</span><span><strong>Services &amp; Engagements</strong><small>AI, cybersecurity, automation, architecture and growth</small></span><b>→</b></a>'+
+  '<a class="cg-station-item" href="pricing.html"><span class="cg-station-code">02</span><span><strong>Pricing &amp; Engagements</strong><small>Published commercial pathways and scope</small></span><b>→</b></a>'+
+  '<a class="cg-station-item" href="products.html"><span class="cg-station-code">03</span><span><strong>Product Systems</strong><small>ClearGlass platforms, products and intelligence surfaces</small></span><b>→</b></a>'+
+  '<a class="cg-station-item" href="systems.html"><span class="cg-station-code">04</span><span><strong>Systems Command</strong><small>ARTEMIS, PERCIVAL and advanced ClearGlass systems</small></span><b>→</b></a>'+
+  '<a class="cg-station-item" href="CG-os.html"><span class="cg-station-code">05</span><span><strong>ClearGlass OS</strong><small>Command-center and operating-system surfaces</small></span><b>→</b></a>'+
+  '<a class="cg-station-item" href="agentmesh.html"><span class="cg-station-code">06</span><span><strong>Agent Mesh</strong><small>Orchestration, automation and agent architecture</small></span><b>→</b></a>'+
+  '<a class="cg-station-item" href="conduit.html"><span class="cg-station-code">07</span><span><strong>CONDUIT</strong><small>Workflow automation and integration architecture</small></span><b>→</b></a>'+
+  '<a class="cg-station-item" href="artemis.html"><span class="cg-station-code">08</span><span><strong>ARTEMIS</strong><small>Autonomous intelligence and governed execution</small></span><b>→</b></a>'+
+  '<a class="cg-station-item" href="command-center.html"><span class="cg-station-code">09</span><span><strong>Command Center</strong><small>Executive security operations surface</small></span><b>→</b></a>'+
+  '<a class="cg-station-item" href="blog/"><span class="cg-station-code">10</span><span><strong>Insights</strong><small>Research, intelligence briefs and strategic analysis</small></span><b>→</b></a>'+
+  '<a class="cg-station-item" href="store.html"><span class="cg-station-code">11</span><span><strong>Store</strong><small>Digital products and ClearGlass offerings</small></span><b>→</b></a>'+
+  '<a class="cg-station-item" href="contact.html"><span class="cg-station-code">12</span><span><strong>Contact / Human Handoff</strong><small>Move from automated discovery to a human conversation</small></span><b>→</b></a>'+ 
+  '</div>'+
+  '<div class="cg-station-footer"><span>ROUTING: LOCAL</span><span>STATUS: READY</span><span>SESSION: '+sessionId+'</span></div></div>';
+  function openStation(){
+    panel.innerHTML=stationHTML;
+    panel.classList.add("cg-station-active");
+    var close=panel.querySelector("[data-station-close]");
+    if(close)close.addEventListener("click",closePanel);
+    var chat=panel.querySelector("[data-station-chat]");
+    if(chat)chat.addEventListener("click",function(){panel.innerHTML=originalPanelHTML;panel.classList.remove("cg-station-active");welcome();var c=panel.querySelector("[data-sentinel-close]");if(c)c.addEventListener("click",closePanel);var ac=panel.querySelector("[data-sentinel-access]");if(ac)ac.addEventListener("click",function(){access.hidden=!access.hidden});var br=panel.querySelector("[data-sentinel-brief]");if(br)br.addEventListener("click",startBrief);var cl=panel.querySelector("[data-sentinel-clear]");if(cl)cl.addEventListener("click",function(){history.replaceChildren();replies.replaceChildren();briefStep=-1;briefAnswers=[];welcome()});});
+    var first=panel.querySelector("a,button");if(first)first.focus();
+  }
+  launcher.addEventListener("click",function(){setTimeout(openStation,0)});
+  shell.addEventListener("click",function(e){var link=e.target.closest&&e.target.closest(".cg-station-item");if(link){panel.classList.add("cg-station-routing");}}
+  });
+})();
 }());
