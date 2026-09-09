@@ -1,225 +1,41 @@
-/* ClearGlassInc Artemis command layer: additive visual instrumentation only. */
-:root{--artemis-cyan:#00b8d9;--artemis-violet:#7357ff;--artemis-ink:#07111f;--artemis-line:rgba(0,137,168,.18)}
-.artemis-grid{position:absolute;inset:88px 0 0;pointer-events:none;opacity:.5;background-image:linear-gradient(var(--artemis-line) 1px,transparent 1px),linear-gradient(90deg,var(--artemis-line) 1px,transparent 1px);background-size:72px 72px;mask-image:linear-gradient(to bottom,transparent 0,#000 18%,transparent 78%)}
-.artemis-grid::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 5px,rgba(7,17,31,.018) 6px);animation:artemis-scan 12s linear infinite}
-.artemis-grid span{position:absolute;width:5px;height:5px;border:1px solid var(--artemis-cyan);border-radius:50%;box-shadow:0 0 12px rgba(0,184,217,.75);animation:artemis-node 3.8s ease-in-out infinite}.artemis-grid span:nth-child(1){left:8%;top:28%}.artemis-grid span:nth-child(2){right:9%;top:42%;animation-delay:-1s}.artemis-grid span:nth-child(3){left:18%;top:72%;animation-delay:-2s}.artemis-grid span:nth-child(4){right:17%;top:78%;animation-delay:-3s}
-.artemis-reticle{position:absolute;z-index:2;width:92px;height:92px;border:1px solid rgba(0,184,217,.22);border-radius:50%;pointer-events:none;animation:artemis-orbit 18s linear infinite}.artemis-reticle::before,.artemis-reticle::after{content:"";position:absolute;background:rgba(0,184,217,.38)}.artemis-reticle::before{width:116px;height:1px;left:-13px;top:45px}.artemis-reticle::after{height:116px;width:1px;top:-13px;left:45px}.artemis-reticle i{position:absolute;inset:12px;border:1px dashed rgba(115,87,255,.35);border-radius:50%}.artemis-reticle--west{left:clamp(18px,5vw,88px);top:34%}.artemis-reticle--east{right:clamp(18px,5vw,88px);top:58%;animation-direction:reverse;animation-duration:24s}
-.artemis-controls{position:relative;z-index:3;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:18px;font-family:var(--mono)}
-.artemis-toggle,.artemis-chip,.artemis-meta{min-height:34px;border-radius:999px;border:1px solid rgba(7,17,31,.12);background:rgba(255,255,255,.62);box-shadow:inset 0 1px rgba(255,255,255,.9),0 8px 28px rgba(7,17,31,.06);backdrop-filter:blur(16px) saturate(1.35);color:#263546}
-.artemis-toggle,.artemis-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 13px;font:600 9px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease,background .25s ease}
-.artemis-toggle:hover,.artemis-chip:hover{transform:translateY(-2px);border-color:rgba(0,184,217,.48);background:rgba(255,255,255,.9);box-shadow:0 10px 30px rgba(0,184,217,.14),inset 0 0 16px rgba(0,184,217,.05)}
-.artemis-toggle:focus-visible,.artemis-chip:focus-visible{outline:2px solid var(--artemis-cyan);outline-offset:3px;box-shadow:0 0 0 5px rgba(0,184,217,.13)}
-.artemis-toggle__signal{width:7px;height:7px;border-radius:50%;background:#12b981;box-shadow:0 0 0 4px rgba(18,185,129,.12),0 0 12px rgba(18,185,129,.7);animation:artemis-pulse 2.4s ease-in-out infinite}.artemis-toggle:not(.is-active) .artemis-toggle__signal{background:#8793a3;box-shadow:none;animation:none}
-.artemis-meta{display:grid;grid-template-columns:auto auto;align-items:center;gap:10px;padding:6px 12px;text-align:left}.artemis-meta b{font-size:8px;letter-spacing:.1em}.artemis-meta span{font-size:7px;letter-spacing:.12em;color:#07836f}
-.btn{position:relative;isolation:isolate}.btn::before{content:"";position:absolute;inset:-1px;border-radius:inherit;z-index:-1;opacity:0;background:linear-gradient(105deg,transparent 10%,rgba(0,184,217,.35),rgba(115,87,255,.28),transparent 90%);filter:blur(8px);transition:opacity .3s}.btn:hover::before,.btn:focus-visible::before{opacity:1}.btn:focus-visible{outline:2px solid var(--artemis-cyan);outline-offset:4px}
-.tech-card,.product-card,.command-panel,.ops-card,.value-card{--mx:50%;--my:50%}.tech-card::before,.product-card::before,.command-panel::before,.ops-card::before,.value-card::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;background:radial-gradient(320px circle at var(--mx) var(--my),rgba(56,189,248,.12),transparent 62%);transition:opacity .35s}.tech-card:hover::before,.product-card:hover::before,.command-panel:hover::before,.ops-card:hover::before,.value-card:hover::before{opacity:1}.tech-card,.command-panel,.ops-card{position:relative;overflow:hidden}
-.artemis-instrumented{position:relative}.artemis-instrumented>.artemis-corner{position:absolute;z-index:2;top:12px;right:12px;width:22px;height:22px;border-top:1px solid rgba(0,184,217,.45);border-right:1px solid rgba(0,184,217,.45);pointer-events:none}.artemis-instrumented>.artemis-corner::after{content:"";position:absolute;right:0;top:0;width:4px;height:4px;background:var(--artemis-cyan);box-shadow:0 0 10px var(--artemis-cyan)}
-.artemis-telemetry-off .artemis-grid,.artemis-telemetry-off .artemis-reticle,.artemis-telemetry-off .artemis-corner{opacity:0;transition:opacity .25s ease}
-@keyframes artemis-scan{to{transform:translateY(72px)}}@keyframes artemis-node{50%{transform:scale(2);opacity:.35}}@keyframes artemis-pulse{50%{box-shadow:0 0 0 7px rgba(18,185,129,0),0 0 18px rgba(18,185,129,.8)}}@keyframes artemis-orbit{to{transform:rotate(360deg)}}
-@media(max-width:760px){.artemis-reticle{width:52px;height:52px;opacity:.42}.artemis-reticle::before{width:68px;top:25px;left:-8px}.artemis-reticle::after{height:68px;left:25px;top:-8px}.artemis-reticle i{inset:8px}.artemis-meta{display:none}.artemis-grid{background-size:48px 48px}}
-@media(prefers-reduced-motion:reduce){.artemis-grid::after,.artemis-grid span,.artemis-reticle,.artemis-toggle__signal{animation:none!important}.artemis-reticle{transform:none}.artemis-toggle,.artemis-chip,.btn{transition:none}}
+/* ClearGlassInc Artemis command layer — preserved baseline plus homepage text-centering compatibility patch. */
+@import url("https://raw.githubusercontent.com/ClearGlassInc/ClearGlassInc-ClearGlassIncorporated-Desmond/3d476afee72a0cbfad3d7e8805f326c74cdfcbc2/artemis-command-layer.css");
 
-/* Mobile command-bar brand visibility fix: preserve every element while separating the seal from the wordmark. */
-@media(max-width:620px){
-  html body .nav{
-    padding-left:68px!important;
-    padding-right:10px!important;
-  }
-  html body .nav .nav-brand{
-    display:flex!important;
-    align-items:center!important;
-    justify-content:flex-start!important;
-    flex:1 1 auto!important;
-    min-width:0!important;
-    max-width:calc(100% - 58px)!important;
-    overflow:visible!important;
-    gap:8px!important;
-  }
-  html body .nav .nav-mark{
-    left:11px!important;
-    top:50%!important;
-    width:42px!important;
-    height:42px!important;
-    transform:translate(0,-50%)!important;
-    flex:0 0 42px!important;
-    box-shadow:0 0 0 4px rgba(155,92,255,.20),0 0 18px rgba(185,93,255,.66),inset 0 2px 8px rgba(255,255,255,.58)!important;
-  }
-  html body .nav .nav-mark img{
-    width:100%!important;
-    height:100%!important;
-    object-fit:contain!important;
-    transform:scale(.90)!important;
-  }
-  html body .nav .nav-name{
-    position:relative!important;
-    z-index:4!important;
-    display:block!important;
-    flex:0 1 auto!important;
-    min-width:0!important;
-    max-width:none!important;
-    margin:0!important;
-    overflow:visible!important;
-    text-overflow:clip!important;
-    white-space:nowrap!important;
-    font-size:clamp(16px,4.7vw,19px)!important;
-    letter-spacing:-.025em!important;
-    line-height:1!important;
-  }
-  html body .nav .nav-name em{display:inline!important;white-space:nowrap!important;}
+/* Homepage-only text alignment patch. Layout, components, animation, and content remain unchanged. */
+html body #hero,
+html body #hero h1,
+html body #hero p,
+html body #hero span,
+html body #hero strong,
+html body #hero small,
+html body #hero .hero-year,
+html body #hero .hero-sub,
+html body #hero .hero-domain-line,
+html body #hero .hero-deep-copy,
+html body #hero .hero-option,
+html body #hero .hero-option p,
+html body #hero .hero-option b,
+html body #hero .hero-option small,
+html body #hero .hero-signal,
+html body #hero .hero-signal span,
+html body #hero .hero-signal strong,
+html body #hero .hero-scroll span,
+html body #hero .hero-command-rail,
+html body #hero .hero-options {
+  text-align: center !important;
 }
 
-/* Sentinel isolation layer: defeats the universal white-glass cascade without removing it. */
-html body #hero .sentinel-hero{
-  color:#edf8ff!important;
-  background:radial-gradient(circle at 84% 16%,rgba(86,231,255,.14),transparent 31%),radial-gradient(circle at 8% 86%,rgba(167,139,250,.12),transparent 34%),linear-gradient(145deg,rgba(7,18,34,.97),rgba(5,8,20,.985))!important;
-  border-color:rgba(86,231,255,.38)!important;
-  box-shadow:0 28px 80px rgba(0,0,0,.32),0 0 0 1px rgba(167,139,250,.14),0 0 36px rgba(86,231,255,.13),inset 0 1px 0 rgba(255,255,255,.08)!important;
-  backdrop-filter:blur(22px) saturate(1.22)!important;
-  -webkit-backdrop-filter:blur(22px) saturate(1.22)!important;
-}
-html body #hero .sentinel-command-header,
-html body #hero .sentinel-command-rail,
-html body #hero .sentinel-command-rail[aria-label]{
-  background:transparent!important;
-  color:#dffaff!important;
-  box-shadow:none!important;
-  backdrop-filter:none!important;
-  -webkit-backdrop-filter:none!important;
-}
-html body #hero .sentinel-command-header{border-color:rgba(86,231,255,.16)!important}
-html body #hero .sentinel-status,
-html body #hero .sentinel-status b{color:#dffaff!important}
-html body #hero .sentinel-status small,
-html body #hero .sentinel-session{color:#7fa2b7!important}
-html body #hero .sentinel-session b{color:#bff7ff!important}
-html body #hero .sentinel-hero h2,
-html body #hero .sentinel-hero h2#sentinel-hero-title{
-  color:#f8fdff!important;
-  text-shadow:0 0 22px rgba(86,231,255,.12)!important;
-}
-html body #hero .sentinel-hero>p:not(.sentinel-command-label):not(.sentinel-zone-label):not(.sentinel-assurance){color:#adc2d4!important}
-html body #hero .sentinel-command-label,
-html body #hero .sentinel-zone-label{color:#73a7c0!important}
-html body #hero .sentinel-vector svg,
-html body #hero .sentinel-vector svg path,
-html body #hero .sentinel-vector svg circle{
-  fill:none!important;
-  background:transparent!important;
-  stroke:currentColor!important;
-}
-html body #hero .sentinel-vector .sentinel-vector-node{fill:#56e7ff!important;stroke:none!important;filter:drop-shadow(0 0 7px rgba(86,231,255,.85))}
-html body #hero .sentinel-quick-grid button,
-html body #hero .sentinel-replies button{
-  background:linear-gradient(135deg,rgba(7,20,38,.92),rgba(14,16,42,.92))!important;
-  color:#e8fbff!important;
-  border-color:rgba(86,231,255,.28)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 8px 20px rgba(0,0,0,.14)!important;
-}
-html body #hero .sentinel-quick-grid button:hover,
-html body #hero .sentinel-quick-grid button:focus-visible,
-html body #hero .sentinel-quick-grid button[aria-pressed=true]{
-  background:radial-gradient(circle at 18% 25%,rgba(86,231,255,.19),transparent 45%),linear-gradient(135deg,rgba(8,25,43,.98),rgba(25,15,54,.97))!important;
-  color:#fff!important;
-  border-color:rgba(86,231,255,.72)!important;
-  box-shadow:0 0 0 1px rgba(167,139,250,.14),0 0 24px rgba(86,231,255,.18),inset 0 1px 0 rgba(255,255,255,.07)!important;
-}
-html body #hero .sentinel-recommendation{
-  background:linear-gradient(110deg,rgba(8,37,54,.78),rgba(11,10,31,.88))!important;
-  border-color:rgba(86,231,255,.34)!important;
-  color:#eafbff!important;
-  box-shadow:0 14px 30px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.04)!important;
-}
-html body #hero .sentinel-recommendation strong{color:#f8fdff!important}
-html body #hero .sentinel-recommendation p{color:#93adbd!important}
-html body #hero .sentinel-hero-open{
-  background:linear-gradient(135deg,rgba(14,64,80,.62),rgba(65,36,112,.46))!important;
-  color:#fff!important;
-  border-color:rgba(86,231,255,.56)!important;
-  box-shadow:0 12px 34px rgba(0,0,0,.2),0 0 22px rgba(86,231,255,.12),inset 0 1px 0 rgba(255,255,255,.08)!important;
-}
-html body #hero .sentinel-command-rail button{
-  background:transparent!important;
-  color:#91a8ba!important;
-  box-shadow:none!important;
-  border-color:transparent!important;
-}
-html body #hero .sentinel-command-rail button:hover,
-html body #hero .sentinel-command-rail button:focus-visible,
-html body #hero .sentinel-command-rail button[aria-expanded=true]{background:rgba(86,231,255,.09)!important;color:#e5fbff!important}
-
-/* Sentinel drawer isolation: global *-panel/header rules must never bleach the terminal. */
-html body .sentinel-shell .sentinel-panel{
-  background:radial-gradient(circle at 100% 0,rgba(167,139,250,.15),transparent 28%),linear-gradient(rgba(86,231,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(86,231,255,.025) 1px,transparent 1px),#050811!important;
-  background-size:auto,30px 30px,30px 30px,auto!important;
-  border-color:rgba(86,231,255,.35)!important;
-  color:#edf8ff!important;
-  box-shadow:-24px 0 90px rgba(0,0,0,.55),0 0 35px rgba(86,231,255,.08)!important;
-}
-html body .sentinel-shell .sentinel-panel-header,
-html body .sentinel-shell .sentinel-modebar{
-  background:rgba(5,8,17,.92)!important;
-  border-color:rgba(86,231,255,.13)!important;
-  color:#edf8ff!important;
-  box-shadow:none!important;
-  backdrop-filter:blur(16px)!important;
-  -webkit-backdrop-filter:blur(16px)!important;
-}
-html body .sentinel-shell .sentinel-panel h1,
-html body .sentinel-shell .sentinel-panel h2,
-html body .sentinel-shell .sentinel-panel h3,
-html body .sentinel-shell .sentinel-panel h4{color:#f7fdff!important}
-html body .sentinel-shell .sentinel-brand strong{color:#f5fbff!important}
-html body .sentinel-shell .sentinel-brand small{color:#8da5bd!important}
-html body .sentinel-shell .sentinel-icon-button,
-html body .sentinel-shell .sentinel-modebar button{
-  background:rgba(255,255,255,.045)!important;
-  color:#d9e8f5!important;
-  border-color:rgba(255,255,255,.14)!important;
-  box-shadow:none!important;
-}
-html body .sentinel-shell .sentinel-message-body{background:rgba(12,22,39,.88)!important;color:#edf8ff!important;border-color:rgba(255,255,255,.09)!important;box-shadow:none!important}
-html body .sentinel-shell .sentinel-message--user .sentinel-message-body{background:rgba(87,62,145,.24)!important;border-color:rgba(167,139,250,.28)!important}
-
-@media(max-width:620px){
-  html body #hero .sentinel-hero{
-    width:calc(100% - 20px)!important;
-    margin:28px auto 0!important;
-    padding:20px 16px 22px!important;
-    border-radius:24px!important;
-    overflow:hidden!important;
-  }
-  html body #hero .sentinel-command-header{
-    display:flex!important;
-    flex-direction:column!important;
-    align-items:flex-start!important;
-    gap:12px!important;
-    padding-bottom:14px!important;
-  }
-  html body #hero .sentinel-session{
-    width:100%!important;
-    display:flex!important;
-    flex-wrap:wrap!important;
-    justify-content:flex-start!important;
-    gap:6px 10px!important;
-    padding:0!important;
-    background:transparent!important;
-  }
-  html body #hero .sentinel-vector{right:-48px!important;top:72px!important;width:190px!important;opacity:.55!important}
-  html body #hero .sentinel-hero h2{font-size:clamp(28px,8.2vw,38px)!important;line-height:1.02!important;letter-spacing:-.035em!important}
-  html body #hero .sentinel-quick-grid{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
-  html body #hero .sentinel-quick-grid button{width:100%!important;min-height:52px!important;padding:13px 16px!important;text-align:left!important;border-radius:16px!important;font-size:14px!important;line-height:1.28!important}
-  html body #hero .sentinel-recommendation{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;padding:14px!important;border-radius:16px!important}
-  html body #hero .sentinel-recommendation[hidden]{display:none!important}
-  html body #hero .sentinel-hero-open{width:100%!important;min-height:54px!important;border-radius:16px!important;padding:13px 15px!important}
-  html body #hero .sentinel-command-rail{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;padding-top:13px!important}
-  html body #hero .sentinel-command-rail button{min-height:42px!important;border:1px solid rgba(86,231,255,.12)!important;border-radius:12px!important;background:rgba(255,255,255,.025)!important}
-  html body #hero .sentinel-telemetry{gap:7px!important;line-height:1.5!important}
-  html body #hero .sentinel-telemetry span{padding:0 7px!important}
-  html body .sentinel-shell .sentinel-panel{width:100%!important;border-left:0!important}
+html body #hero .hero-sub,
+html body #hero .hero-domain-line,
+html body #hero .hero-deep-copy,
+html body #hero .hero-options,
+html body #hero .hero-command-rail {
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
-@media(prefers-reduced-motion:reduce){
-  html body #hero .sentinel-hero,
-  html body #hero .sentinel-vector,
-  html body #hero .sentinel-quick-grid button{animation:none!important;transition:none!important}
+@media (max-width: 768px) {
+  html body #hero {
+    text-align: center !important;
+  }
 }
