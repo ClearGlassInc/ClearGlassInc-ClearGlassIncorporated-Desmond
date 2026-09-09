@@ -3,41 +3,44 @@ name: Apply ClearGlass visual restoration layer
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
+# Least privilege: this workflow validates the homepage only.
+# It does not mutate the repository or push back to main.
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   apply-visual-layer:
-    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
-      - name: Add restoration stylesheet to homepage
+      - name: Validate homepage restoration layer
         shell: python
         run: |
           from pathlib import Path
           p = Path('index.html')
+          if not p.is_file():
+              raise SystemExit('index.html not found')
           text = p.read_text(encoding='utf-8')
-          marker = '<link rel="stylesheet" href="clearglass-legacy-visual.css">'
-          if marker not in text:
-              anchor = '<link rel="stylesheet" href="sentinel.css"/>'
-              if anchor not in text:
-                  raise SystemExit('sentinel.css link not found; aborting without changes')
-              text = text.replace(anchor, anchor + '\n' + marker, 1)
-              p.write_text(text, encoding='utf-8')
+          required = [
+              '<link rel="stylesheet" href="sentinel.css"/>',
+              '<link rel="stylesheet" href="clearglass-legacy-visual.css">',
+          ]
+          missing = [marker for marker in required if marker not in text]
+          if missing:
+              raise SystemExit('Required homepage restoration marker(s) missing: ' + ', '.join(missing))
+          print('Homepage restoration layer validated; no repository mutation required.')
 
-      - name: Commit homepage link
+      - name: Validate required restoration asset
         shell: bash
         run: |
-          if git diff --quiet -- index.html; then
-            echo 'Homepage already references the restoration layer.'
-            exit 0
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          git commit -m 'style: restore ClearGlass dark glass homepage visual layer'
-          git push origin HEAD:main
+          set -euo pipefail
+          test -f sentinel.css
+          test -f clearglass-legacy-visual.css
+          echo 'Required restoration assets present.'
