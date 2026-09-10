@@ -1,4 +1,4 @@
-from marketing.content_engine.strategic_viral_engine import (
+from content_engine.strategic_viral_engine import (
     Concept,
     asset_pack,
     dashboard,

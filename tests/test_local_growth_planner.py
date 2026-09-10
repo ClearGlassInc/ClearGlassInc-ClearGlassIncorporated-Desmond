@@ -2,7 +2,7 @@ from decimal import Decimal
 
 import pytest
 
-from marketing.local_growth_planner import (
+from local_growth_planner import (
     Intent,
     KeywordSignal,
     LocalGrowthPlanner,

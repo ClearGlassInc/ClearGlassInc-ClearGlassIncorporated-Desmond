@@ -13,6 +13,7 @@ from tools.build_pages import (
     PUBLIC_MARKDOWN,
     SECURITY_STACK_STYLESHEET,
     build,
+    _harden_html,
     public_relative_paths,
 )
 

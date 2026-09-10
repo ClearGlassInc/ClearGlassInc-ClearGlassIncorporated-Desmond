@@ -20,7 +20,7 @@ import pytest
 
 from app import cart
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 SIDE_STORE_HTML = REPO_ROOT / "side-store.html"
 
 

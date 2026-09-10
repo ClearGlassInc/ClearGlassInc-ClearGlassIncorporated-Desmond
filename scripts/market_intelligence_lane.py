@@ -3,7 +3,7 @@
 
 Governed, READ_ONLY, stdlib-only. Produces a **weekly Market Intelligence delta
 scaffold** into ``marketing/output/market-intelligence/`` from the committed
-watchlist (``marketing/config/market_intelligence_watchlist.json``).
+watchlist (``config/market_intelligence_watchlist.json``).
 
 Non-negotiable design (mirrors the OS guardrails):
 
@@ -32,7 +32,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-CONFIG = ROOT / "marketing" / "config" / "market_intelligence_watchlist.json"
+CONFIG = ROOT / "config" / "market_intelligence_watchlist.json"
 OUT_DIR = ROOT / "marketing" / "output" / "market-intelligence"
 UNVERIFIED = "unverified -- analyst input required"
 
