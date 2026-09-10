@@ -34,12 +34,12 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install control-plane deps
-        run: pip install -r clearglass-commerce/control-plane/requirements.txt
+        run: pip install -r control-plane/requirements.txt
       # The briefing body carries live revenue, per-order amounts and at-risk deals.
       # Actions step summaries and run logs are readable by anyone who can read the
       # repository, so the body goes to email only; the summary gets a status line.
       - name: Build briefing + email
-        working-directory: clearglass-commerce/control-plane
+        working-directory: control-plane
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           GMAIL_USER: ${{ secrets.GMAIL_USER }}

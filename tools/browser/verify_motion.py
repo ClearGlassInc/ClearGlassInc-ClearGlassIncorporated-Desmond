@@ -117,7 +117,8 @@ with sync_playwright() as p:
           pg.evaluate("getComputedStyle(document.querySelector('.cgm-constellation')).opacity"))
     check("node is visible and enabled",
           nodes.nth(0).is_visible() and nodes.nth(0).is_enabled())
-    nodes.nth(0).click(force=True); nodes.nth(1).click(force=True)
+    nodes.nth(0).click(force=True)
+    nodes.nth(1).click(force=True)
     pg.wait_for_timeout(200)
     pathway = pg.locator("[data-cgm-pathway]")
     check("multi-select builds a pathway",
@@ -164,7 +165,8 @@ with sync_playwright() as p:
     pg = ctx.new_page()
     rerrs = []
     pg.on("pageerror", lambda e: rerrs.append(str(e)))
-    pg.goto(URL, wait_until="load"); pg.wait_for_timeout(1200)
+    pg.goto(URL, wait_until="load")
+    pg.wait_for_timeout(1200)
     check("reduced-motion: no page errors", not rerrs, "; ".join(rerrs[:3]))
     check("reduced-motion: flag set",
           pg.evaluate("document.documentElement.getAttribute('data-cgm-motion')") == "reduced")
@@ -185,9 +187,10 @@ with sync_playwright() as p:
     # ── 3. JavaScript disabled ─────────────────────────────────────────
     ctx = b.new_context(viewport={"width": 1440, "height": 900}, java_script_enabled=False)
     pg = ctx.new_page()
-    pg.goto(URL, wait_until="load"); pg.wait_for_timeout(500)
+    pg.goto(URL, wait_until="load")
+    pg.wait_for_timeout(500)
     check("no-JS: cgm-js absent",
-          not pg.evaluate_handle("1") is None and
+          pg.evaluate_handle("1") is not None and
           pg.locator("html.cgm-js").count() == 0)
     check("no-JS: hero copy visible",
           pg.locator("#cgm-hero-interface-h").is_visible())
@@ -204,7 +207,8 @@ with sync_playwright() as p:
     pg = ctx.new_page()
     merrs = []
     pg.on("pageerror", lambda e: merrs.append(str(e)))
-    pg.goto(URL, wait_until="load"); pg.wait_for_timeout(1200)
+    pg.goto(URL, wait_until="load")
+    pg.wait_for_timeout(1200)
     check("mobile: no page errors", not merrs, "; ".join(merrs[:3]))
     check("mobile: no horizontal overflow",
           pg.evaluate("document.documentElement.scrollWidth <= window.innerWidth + 1"),
@@ -218,7 +222,8 @@ with sync_playwright() as p:
     # ── 5. 400px gutter check ──────────────────────────────────────────
     ctx = b.new_context(viewport={"width": 400, "height": 900})
     pg = ctx.new_page()
-    pg.goto(URL, wait_until="load"); pg.wait_for_timeout(800)
+    pg.goto(URL, wait_until="load")
+    pg.wait_for_timeout(800)
     check("400px: no horizontal overflow",
           pg.evaluate("document.documentElement.scrollWidth <= window.innerWidth + 1"),
           pg.evaluate("document.documentElement.scrollWidth + ' vs ' + window.innerWidth"))
@@ -227,7 +232,8 @@ with sync_playwright() as p:
     # ── 6. tab-hidden pause + dispose ──────────────────────────────────
     ctx = b.new_context(viewport={"width": 1280, "height": 800})
     pg = ctx.new_page()
-    pg.goto(URL, wait_until="load"); pg.wait_for_timeout(900)
+    pg.goto(URL, wait_until="load")
+    pg.wait_for_timeout(900)
     check("dispose hook exposed",
           pg.evaluate("typeof document.querySelector('.cgm-constellation__stage').cgDispose === 'function'"))
     disposed = pg.evaluate("""(() => {
@@ -247,5 +253,6 @@ for name, ok, detail in results:
 print(f"\n{sum(1 for _,o,_ in results if o)}/{len(results)} checks passed")
 if failures:
     print("\nFAILURES:")
-    for f in failures: print("  -", f)
+    for f in failures:
+        print("  -", f)
 sys.exit(1 if failures else 0)

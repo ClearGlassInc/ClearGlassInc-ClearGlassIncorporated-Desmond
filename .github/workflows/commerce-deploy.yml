@@ -4,7 +4,9 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "clearglass-commerce/**"
+      - "control-plane/**"
+      - "storefront/**"
+      - "admin/**"
       - ".github/workflows/commerce-deploy.yml"
   workflow_dispatch:
 
@@ -30,11 +32,11 @@ jobs:
           # Install the full web stack (fastapi, sqlalchemy, httpx via TestClient) so the
           # webhook -> DB -> /payouts integration tests actually RUN. Without these the
           # tests silently skip and the governed money-movement paths go unexercised.
-          pip install -r clearglass-commerce/control-plane/requirements.txt
+          pip install -r control-plane/requirements.txt
       - name: Lint commerce package
-        run: ruff check clearglass-commerce
+        run: ruff check control-plane
       - name: Governance + payments tests
-        working-directory: clearglass-commerce/control-plane
+        working-directory: control-plane
         run: python -m pytest tests/ -q
 
   frontend-build:
@@ -47,7 +49,7 @@ jobs:
         app: [storefront, admin]
     defaults:
       run:
-        working-directory: clearglass-commerce/${{ matrix.app }}
+        working-directory: ${{ matrix.app }}
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
@@ -56,7 +58,7 @@ jobs:
         with:
           node-version: "20"
           cache: npm
-          cache-dependency-path: clearglass-commerce/${{ matrix.app }}/package-lock.json
+          cache-dependency-path: ${{ matrix.app }}/package-lock.json
       - run: npm ci --no-audit --no-fund
       - name: Typecheck (tsc --noEmit)
         run: npx tsc --noEmit

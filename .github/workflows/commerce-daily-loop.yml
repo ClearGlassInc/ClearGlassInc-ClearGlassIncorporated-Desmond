@@ -23,10 +23,10 @@ jobs:
       - name: Storefront checkout smoke test (SOUL.md daily smoke guardrail)
         run: python bots/store_smoke_bot.py
       - name: Governance self-check (fails if any financial action is auto-executable)
-        working-directory: clearglass-commerce/control-plane
+        working-directory: control-plane
         run: python -m app.daily_loop --json
       - name: Executive report
-        working-directory: clearglass-commerce/control-plane
+        working-directory: control-plane
         run: |
           python -m app.daily_loop | tee "$GITHUB_STEP_SUMMARY"
       - name: RFED governance self-check (fails if a privileged agent action is auto-executable)

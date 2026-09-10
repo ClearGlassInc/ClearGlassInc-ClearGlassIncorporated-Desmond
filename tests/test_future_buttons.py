@@ -6,7 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CSS_PATH = ROOT / "assets/css/future-buttons.css"
 JS_PATH = ROOT / "assets/js/future-buttons.js"
-EXCLUDED_PARTS = {".git", "node_modules", "vendor"}
+EXCLUDED_PARTS = {".git", ".next", "node_modules", "vendor"}
 
 
 def deployable_html_pages() -> list[Path]:
