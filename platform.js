@@ -26,7 +26,7 @@
   if (!document.querySelector('meta[name="theme-color"]')) {
     var tc = document.createElement("meta");
     tc.name = "theme-color";
-    tc.content = "#0b0f1e";
+    tc.content = "#181112";
     document.head.appendChild(tc);
   }
   function addLink(sel, attrs) {

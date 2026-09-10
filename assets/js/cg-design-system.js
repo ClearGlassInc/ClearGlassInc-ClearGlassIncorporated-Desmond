@@ -33,36 +33,36 @@
       'body.cg-bluedesk-global-shell>.app>aside{padding-top:12px!important}' +
       'body.cg-bluedesk-global-shell .cg-topbar{' +
         'z-index:5000!important;' +
-        'background:linear-gradient(180deg,rgba(3,16,31,.96),rgba(3,12,25,.91))!important;' +
-        'border-bottom:1px solid rgba(56,189,248,.28)!important;' +
-        'box-shadow:0 18px 50px rgba(0,0,0,.28),0 0 44px rgba(56,189,248,.10)!important;' +
+        'background:linear-gradient(180deg,rgba(22, 12, 12,.96),rgba(18, 10, 11,.91))!important;' +
+        'border-bottom:1px solid rgba(234, 70, 72,.28)!important;' +
+        'box-shadow:0 18px 50px rgba(0,0,0,.28),0 0 44px rgba(234, 70, 72,.10)!important;' +
         'backdrop-filter:blur(24px) saturate(1.32)!important;' +
         '-webkit-backdrop-filter:blur(24px) saturate(1.32)!important' +
       '}' +
       'body.cg-bluedesk-global-shell .cg-topbar:after{' +
         'content:"";position:absolute;left:18px;right:18px;bottom:-1px;height:1px;pointer-events:none;' +
-        'background:linear-gradient(90deg,transparent,rgba(56,189,248,.92),rgba(96,165,250,.72),rgba(168,85,247,.58),transparent);' +
-        'box-shadow:0 0 18px rgba(56,189,248,.42)' +
+        'background:linear-gradient(90deg,transparent,rgba(234, 70, 72,.92),rgba(238, 99, 101,.72),rgba(237, 95, 119,.58),transparent);' +
+        'box-shadow:0 0 18px rgba(234, 70, 72,.42)' +
       '}' +
       'body.cg-bluedesk-global-shell .cg-bd-context{' +
         'display:inline-flex;align-items:center;gap:8px;min-width:0;margin-left:2px;padding:7px 11px;border-radius:999px;' +
-        'border:1px solid rgba(56,189,248,.24);background:linear-gradient(135deg,rgba(56,189,248,.10),rgba(59,130,246,.07),rgba(168,85,247,.07));' +
-        'box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 0 22px rgba(56,189,248,.07);color:#eaf8ff;' +
+        'border:1px solid rgba(234, 70, 72,.24);background:linear-gradient(135deg,rgba(234, 70, 72,.10),rgba(234, 71, 81,.07),rgba(237, 95, 119,.07));' +
+        'box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 0 22px rgba(234, 70, 72,.07);color:#f7f2f2;' +
         'font:600 10px/1.1 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap' +
       '}' +
       'body.cg-bluedesk-global-shell .cg-bd-context-dot{' +
         'width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 10px rgba(52,211,153,.9);flex:0 0 auto' +
       '}' +
       'body.cg-bluedesk-global-shell .cg-bd-context strong{font-weight:700;color:#fff}' +
-      'body.cg-bluedesk-global-shell .cg-bd-context span:last-child{color:#8fb8d5;font-weight:500}' +
+      'body.cg-bluedesk-global-shell .cg-bd-context span:last-child{color:#d58f90;font-weight:500}' +
       'body.cg-bluedesk-global-shell>.app>main>.topbar{' +
         'top:var(--cg-bd-global-h)!important;z-index:1100!important;' +
-        'background:linear-gradient(180deg,rgba(4,20,38,.91),rgba(2,10,24,.80))!important' +
+        'background:linear-gradient(180deg,rgba(27, 15, 15,.91),rgba(17, 9, 10,.80))!important' +
       '}' +
       '@media(min-width:781px){' +
         'body.cg-bluedesk-global-shell>.app>aside{' +
           'top:var(--cg-bd-global-h)!important;height:calc(100vh - var(--cg-bd-global-h))!important;' +
-          'border-top:1px solid rgba(56,189,248,.12)' +
+          'border-top:1px solid rgba(234, 70, 72,.12)' +
         '}' +
       '}' +
       '@media(max-width:900px){' +

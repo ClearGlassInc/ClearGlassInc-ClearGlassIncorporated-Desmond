@@ -7,10 +7,10 @@
 <link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
 <link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
 <link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
-<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#c4363a">
 <link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#07111f">
-<meta name="msapplication-TileColor" content="#07111f">
+<meta name="theme-color" content="#07080b">
+<meta name="msapplication-TileColor" content="#07080b">
 <meta name="msapplication-TileImage" content="/icon-192.png">
 <meta name="msapplication-config" content="/browserconfig.xml">
 <script>
@@ -41,9 +41,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy-900:#0a1130; --navy-800:#101a41; --navy-700:#16234f;
-    --silver:#cfd8ff; --violet:#b06dff; --violet-soft:#c978ff;
-    --cyan:#7fd8ff; --ink:#04060e;
+    --navy-900:#231717; --navy-800:#312021; --navy-700:#4f161a;
+    --silver:#ede1e2; --violet:#ee637a; --violet-soft:#ee637a;
+    --cyan:#ee6365; --ink:#dbe0f5;
     --stage-max:1760px;
   }
   *{box-sizing:border-box}
@@ -52,8 +52,8 @@
     font-family:Inter,system-ui,sans-serif;
     color:#eef4ff;
     background:
-      radial-gradient(1200px 620px at 50% -8%, #f2f5ff 0%, #eef1fb 42%, #e7eaf6 100%),
-      #eef1fb;
+      radial-gradient(1200px 620px at 50% -8%, #0d0f14 0%, #150e0e 42%, #181011 100%),
+      #150e0e;
     -webkit-font-smoothing:antialiased;
     display:flex;
     align-items:flex-start;
@@ -67,7 +67,7 @@
     display:flex;
     flex-direction:column;
     gap:clamp(20px,2.2vw,34px);
-    filter:drop-shadow(0 40px 90px rgba(31,26,74,.16));
+    filter:drop-shadow(0 40px 90px rgba(74, 26, 29,.16));
   }
 
   /* ---------------- Command-bar navigation ---------------- */
@@ -83,33 +83,33 @@
     isolation:isolate;
     overflow:visible;
     background:linear-gradient(90deg,
-      rgba(37,50,91,.80),
-      rgba(18,28,56,.92) 46%,
-      rgba(79,56,142,.82));
+      rgba(91, 37, 41,.80),
+      rgba(43, 31, 31,.92) 46%,
+      rgba(142, 56, 70,.82));
     -webkit-backdrop-filter:blur(30px) saturate(1.6);
     backdrop-filter:blur(30px) saturate(1.6);
-    border:1px solid rgba(204,215,255,.72);
+    border:1px solid rgba(236, 223, 224,.72);
     box-shadow:
-      0 26px 74px rgba(55,34,130,.26),
-      0 8px 22px rgba(8,13,35,.26),
+      0 26px 74px rgba(130, 34, 50,.26),
+      0 8px 22px rgba(26, 17, 18,.26),
       inset 0 1px 0 rgba(255,255,255,.62),
-      inset 0 -1px 0 rgba(176,128,255,.55),
-      0 0 0 1px rgba(148,163,255,.28);
+      inset 0 -1px 0 rgba(238, 99, 122,.55),
+      0 0 0 1px rgba(238, 99, 108,.28);
   }
   /* inner glass sheen + circuit tint */
   .navbar::before{
     content:"";position:absolute;inset:5px;border-radius:inherit;pointer-events:none;z-index:-1;
     background:
       linear-gradient(180deg,rgba(255,255,255,.16),transparent 36%),
-      linear-gradient(90deg,rgba(112,178,255,.22),transparent 28%,rgba(190,109,255,.20) 72%,rgba(255,255,255,.10));
-    box-shadow:inset 0 0 40px rgba(126,87,255,.36),inset 0 0 0 1px rgba(255,255,255,.18);
+      linear-gradient(90deg,rgba(238, 99, 101,.22),transparent 28%,rgba(238, 99, 122,.20) 72%,rgba(255,255,255,.10));
+    box-shadow:inset 0 0 40px rgba(238, 99, 122,.36),inset 0 0 0 1px rgba(255,255,255,.18);
   }
   /* violet edge illumination hairline */
   .navbar::after{
     content:"";position:absolute;left:56px;right:56px;top:9px;height:2px;border-radius:999px;pointer-events:none;
-    background:linear-gradient(90deg,transparent,rgba(125,164,255,.82) 21%,rgba(255,255,255,.96) 42%,rgba(202,123,255,.96) 63%,transparent);
+    background:linear-gradient(90deg,transparent,rgba(238, 99, 108,.82) 21%,rgba(14, 14, 14,.96) 42%,rgba(238, 99, 122,.96) 63%,transparent);
     filter:blur(.2px);
-    box-shadow:0 0 14px rgba(190,109,255,.8),0 0 28px rgba(96,165,250,.4);
+    box-shadow:0 0 14px rgba(238, 99, 122,.8),0 0 28px rgba(238, 99, 101,.4);
   }
 
   /* faint circuit-line detailing behind the bar contents */
@@ -126,18 +126,18 @@
     display:grid;place-items:center;
     overflow:hidden;
     background:
-      radial-gradient(circle at 38% 30%, #eef1f6 0%, #dfe3ea 46%, #c9cdd6 78%, #aab0be 100%);
+      radial-gradient(circle at 38% 30%, #160f0f 0%, #1c1313 46%, #d6c9ca 78%, #beaaab 100%);
     border:1px solid rgba(238,242,255,.72);
     box-shadow:
-      0 0 0 6px rgba(151,90,255,.22),
-      0 0 34px rgba(174,91,255,.7),
+      0 0 0 6px rgba(238, 99, 122,.22),
+      0 0 34px rgba(238, 99, 122,.7),
       inset 0 2px 12px rgba(255,255,255,.6),
-      inset 0 -12px 26px rgba(70,60,110,.35);
+      inset 0 -12px 26px rgba(110, 60, 68,.35);
   }
   /* rotating holographic ring */
   .seal-housing::before{
     content:"";position:absolute;inset:-4px;border-radius:50%;padding:1px;pointer-events:none;
-    background:conic-gradient(from 0deg,transparent,rgba(127,216,255,.9),transparent 30%,rgba(190,109,255,.9),transparent 60%,rgba(255,255,255,.85),transparent 85%);
+    background:conic-gradient(from 0deg,transparent,rgba(238, 99, 101,.9),transparent 30%,rgba(238, 99, 122,.9),transparent 60%,rgba(14, 14, 14,.85),transparent 85%);
     -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite:xor;mask-composite:exclude;
     animation:spin 14s linear infinite;
@@ -148,10 +148,10 @@
   .seal-housing::after{
     content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
     background:
-      radial-gradient(120% 90% at 30% 18%, rgba(255,255,255,.55), rgba(255,255,255,0) 42%),
-      radial-gradient(140% 120% at 78% 92%, rgba(124,77,255,.34), rgba(124,77,255,0) 55%),
-      radial-gradient(120% 120% at 88% 22%, rgba(127,216,255,.30), rgba(127,216,255,0) 50%);
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.35), inset 0 0 22px rgba(70,60,120,.28);
+      radial-gradient(120% 90% at 30% 18%, rgba(14, 14, 14,.55), rgba(255,255,255,0) 42%),
+      radial-gradient(140% 120% at 78% 92%, rgba(237, 95, 119,.34), rgba(237, 95, 119,0) 55%),
+      radial-gradient(120% 120% at 88% 22%, rgba(238, 99, 101,.30), rgba(238, 99, 101,0) 50%);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.35), inset 0 0 22px rgba(120, 60, 64,.28);
     mix-blend-mode:screen;
   }
   .seal{
@@ -168,21 +168,21 @@
     font-size:clamp(1.55rem,2.3vw,2.35rem);
     letter-spacing:.005em;
     color:#f7fbff;
-    text-shadow:0 0 22px rgba(160,190,255,.35);
+    text-shadow:0 0 22px rgba(238, 99, 108,.35);
     white-space:nowrap;
   }
   .wordmark .name em{
     font-style:italic;font-weight:600;
-    color:#c9b3ff;
+    color:#ee637a;
     margin-left:.34rem;
-    text-shadow:0 0 18px rgba(185,156,255,.7);
+    text-shadow:0 0 18px rgba(238, 99, 122,.7);
   }
   .wordmark .tag{
     margin-top:.32rem;
     font-family:"IBM Plex Mono",monospace;
     font-size:clamp(.52rem,.66vw,.68rem);
     letter-spacing:.42em;text-transform:uppercase;
-    color:rgba(180,196,240,.72);
+    color:rgba(226, 110, 118,.72);
     white-space:nowrap;
   }
 
@@ -199,8 +199,8 @@
   .links a::after,.dropbtn::after{
     content:"";position:absolute;left:50%;bottom:6px;width:32px;height:3px;border-radius:999px;
     transform:translateX(-50%) scaleX(.7);
-    background:linear-gradient(90deg,transparent,#8aa7ff,#c978ff,transparent);
-    box-shadow:0 0 13px rgba(176,103,255,.9);
+    background:linear-gradient(90deg,transparent,#ee636c,#ee637a,transparent);
+    box-shadow:0 0 13px rgba(238, 99, 122,.9);
     opacity:.62;transition:opacity .2s ease,transform .2s ease;
   }
   .links a:hover,.dropbtn:hover{color:#fff;background:rgba(255,255,255,.07)}
@@ -214,19 +214,19 @@
     padding:14px 20px;border-radius:16px;
     color:#fff;text-decoration:none;font-weight:600;font-size:clamp(.88rem,.94vw,1rem);
     white-space:nowrap;
-    background:linear-gradient(180deg,rgba(11,14,28,.98),rgba(4,6,14,.98));
-    border:1px solid rgba(196,139,255,.78);
+    background:linear-gradient(180deg,rgba(22, 17, 17,.98),rgba(4,6,14,.98));
+    border:1px solid rgba(238, 99, 122,.78);
     box-shadow:
-      0 0 0 1px rgba(123,92,255,.25),
-      0 0 24px rgba(178,88,255,.6),
+      0 0 0 1px rgba(238, 99, 108,.25),
+      0 0 24px rgba(238, 99, 122,.6),
       0 14px 34px rgba(0,0,0,.38),
       inset 0 1px 0 rgba(255,255,255,.14);
   }
   .cta .shield{
     width:26px;height:26px;flex:0 0 auto;
-    filter:drop-shadow(0 0 8px rgba(190,120,255,.85));
+    filter:drop-shadow(0 0 8px rgba(238, 99, 122,.85));
   }
-  .cta:hover{box-shadow:0 0 0 1px rgba(123,92,255,.35),0 0 34px rgba(178,88,255,.85),0 16px 40px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.18)}
+  .cta:hover{box-shadow:0 0 0 1px rgba(238, 99, 108,.35),0 0 34px rgba(238, 99, 122,.85),0 16px 40px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.18)}
 
   /* ---------------- Hero: cinematic night city ---------------- */
   .hero{
@@ -235,12 +235,12 @@
     aspect-ratio:32 / 11;
     border-radius:clamp(26px,2.4vw,40px);
     overflow:hidden;
-    border:1px solid rgba(202,212,255,.5);
+    border:1px solid rgba(235, 222, 223,.5);
     box-shadow:
-      0 40px 100px rgba(18,22,60,.4),
+      0 40px 100px rgba(46, 32, 33,.4),
       inset 0 1px 0 rgba(255,255,255,.14),
-      inset 0 0 0 1px rgba(120,150,255,.14);
-    background:#060a1e;
+      inset 0 0 0 1px rgba(238, 99, 108,.14);
+    background:#160e0e;
   }
   .hero svg{position:absolute;inset:0;width:100%;height:100%;display:block}
   .hero .hero-label{
@@ -249,20 +249,20 @@
   }
   .hero .kicker{
     font-family:"IBM Plex Mono",monospace;font-size:clamp(.56rem,.72vw,.72rem);
-    letter-spacing:.4em;text-transform:uppercase;color:rgba(160,200,255,.8);margin:0 0 .7rem;
+    letter-spacing:.4em;text-transform:uppercase;color:rgba(238, 99, 101,.8);margin:0 0 .7rem;
   }
   .hero h1{
     font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;
     font-size:clamp(1.7rem,3.4vw,3.4rem);line-height:1.02;margin:0;
-    color:#f5f8ff;text-shadow:0 4px 40px rgba(10,14,40,.7);
+    color:#f5f8ff;text-shadow:0 4px 40px rgba(30, 20, 21,.7);
   }
-  .hero h1 em{font-style:italic;color:#c9b3ff}
+  .hero h1 em{font-style:italic;color:#ee637a}
 
   .caption{
     text-align:center;
     font-family:"IBM Plex Mono",monospace;
     font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;
-    color:rgba(70,84,140,.72);
+    color:rgba(185, 116, 121,.72);
     margin-top:.4rem;
   }
 
@@ -273,6 +273,7 @@
   }
 </style>
 <link rel="stylesheet" href="/assets/css/future-buttons.css">
+<link rel="stylesheet" href="/clearglass-crimson.css">
 </head>
 <body>
   <main class="stage" role="img" aria-label="ClearGlassInc. 2040 futuristic website header mockup: holographic glass presidential seal, glassmorphism command navigation bar, and a night-city hero.">
@@ -289,15 +290,15 @@
             <path d="M1480 96 H1300 v-30 H1150"/>
             <path d="M760 8 v18 M820 8 v18 M880 8 v18"/>
           </g>
-          <g fill="#9fd0ff">
+          <g fill="#ee6365">
             <circle cx="520" cy="54" r="2.2"/><circle cx="470" cy="72" r="2.2"/>
             <circle cx="1080" cy="66" r="2.2"/><circle cx="1150" cy="66" r="2.2"/>
           </g>
           <defs>
             <linearGradient id="circ" x1="0" y1="0" x2="1600" y2="0" gradientUnits="userSpaceOnUse">
-              <stop offset="0" stop-color="#7fd8ff" stop-opacity="0"/>
-              <stop offset=".5" stop-color="#b06dff" stop-opacity=".8"/>
-              <stop offset="1" stop-color="#7fd8ff" stop-opacity="0"/>
+              <stop offset="0" stop-color="#ee6365" stop-opacity="0"/>
+              <stop offset=".5" stop-color="#ee637a" stop-opacity=".8"/>
+              <stop offset="1" stop-color="#ee6365" stop-opacity="0"/>
             </linearGradient>
           </defs>
         </svg>
@@ -330,8 +331,8 @@
           <svg class="shield" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <defs>
               <linearGradient id="shieldg" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#e6d0ff"/>
-                <stop offset="1" stop-color="#a76bff"/>
+                <stop offset="0" stop-color="#eee1e3"/>
+                <stop offset="1" stop-color="#ee637a"/>
               </linearGradient>
             </defs>
             <path d="M12 2.5 3.5 6v6c0 5 3.6 8 8.5 9.5C16.9 20 20.5 17 20.5 12V6L12 2.5Z"
@@ -349,28 +350,28 @@
       <svg viewBox="0 0 1600 550" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
           <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#050a24"/>
-            <stop offset="45%" stop-color="#0b1440"/>
-            <stop offset="80%" stop-color="#1a1a52"/>
-            <stop offset="100%" stop-color="#2a1e5e"/>
+            <stop offset="0" stop-color="#1a0f10"/>
+            <stop offset="45%" stop-color="#2f1c1e"/>
+            <stop offset="80%" stop-color="#521a1e"/>
+            <stop offset="100%" stop-color="#5e1e22"/>
           </linearGradient>
           <radialGradient id="glow" cx="66%" cy="78%" r="55%">
-            <stop offset="0" stop-color="#7c4dff" stop-opacity=".55"/>
-            <stop offset="55%" stop-color="#4a2f9e" stop-opacity=".2"/>
-            <stop offset="100%" stop-color="#4a2f9e" stop-opacity="0"/>
+            <stop offset="0" stop-color="#ed5f77" stop-opacity=".55"/>
+            <stop offset="55%" stop-color="#9e2f42" stop-opacity=".2"/>
+            <stop offset="100%" stop-color="#9e2f42" stop-opacity="0"/>
           </radialGradient>
           <linearGradient id="towerLit" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#3a2a7a"/>
-            <stop offset="50%" stop-color="#7e57ff"/>
-            <stop offset="100%" stop-color="#c77dff"/>
+            <stop offset="0" stop-color="#7a2a37"/>
+            <stop offset="50%" stop-color="#ee637a"/>
+            <stop offset="100%" stop-color="#ee637a"/>
           </linearGradient>
           <linearGradient id="towerDark" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#141b45"/>
-            <stop offset="100%" stop-color="#0a0f2c"/>
+            <stop offset="0" stop-color="#451417"/>
+            <stop offset="100%" stop-color="#211516"/>
           </linearGradient>
           <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#2a1e5e" stop-opacity="0"/>
-            <stop offset="100%" stop-color="#3a2a7a" stop-opacity=".7"/>
+            <stop offset="0" stop-color="#5e1e22" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#7a2a37" stop-opacity=".7"/>
           </linearGradient>
         </defs>
 
@@ -379,23 +380,23 @@
         <rect width="1600" height="550" fill="url(#glow)"/>
 
         <!-- stars -->
-        <g fill="#dbe6ff" id="skystars"></g>
+        <g fill="#f2e8e9" id="skystars"></g>
 
         <!-- aerial technology: drones / craft -->
-        <g fill="none" stroke="#9fd0ff" stroke-width="1.4" opacity=".85">
+        <g fill="none" stroke="#ee6365" stroke-width="1.4" opacity=".85">
           <g transform="translate(420,120)">
             <path d="M-14 0 h28 M0 -6 v12" stroke-width="2"/>
-            <circle cx="0" cy="0" r="3" fill="#cfe6ff" stroke="none"/>
+            <circle cx="0" cy="0" r="3" fill="#ede1e1" stroke="none"/>
             <path d="M-22 -4 l8 4 l-8 4 M22 -4 l-8 4 l8 4" stroke-width="1"/>
           </g>
           <g transform="translate(1180,90)">
             <path d="M-12 0 h24 M0 -5 v10" stroke-width="2"/>
-            <circle cx="0" cy="0" r="2.6" fill="#e6d0ff" stroke="none"/>
+            <circle cx="0" cy="0" r="2.6" fill="#eee1e3" stroke="none"/>
           </g>
           <g transform="translate(760,150)">
             <ellipse cx="0" cy="0" rx="26" ry="7"/>
             <path d="M-26 0 h52" stroke-width="1"/>
-            <circle cx="0" cy="0" r="2.4" fill="#c77dff" stroke="none"/>
+            <circle cx="0" cy="0" r="2.4" fill="#ee637a" stroke="none"/>
           </g>
         </g>
         <!-- light trails -->
@@ -429,21 +430,21 @@
           <rect x="782" y="120" width="8" height="430" fill="url(#towerLit)"/>
           <!-- crown -->
           <path d="M640 120 L715 78 L790 120 Z" fill="url(#towerLit)" opacity=".9"/>
-          <rect x="712" y="46" width="6" height="34" fill="#c77dff"/>
-          <circle cx="715" cy="44" r="4" fill="#e6d0ff"/>
+          <rect x="712" y="46" width="6" height="34" fill="#ee637a"/>
+          <circle cx="715" cy="44" r="4" fill="#eee1e3"/>
           <!-- window grid -->
-          <g fill="#c9a8ff" opacity=".85" id="windowsA"></g>
+          <g fill="#ee637a" opacity=".85" id="windowsA"></g>
         </g>
         <!-- secondary lit tower -->
         <g>
           <rect x="830" y="200" width="110" height="350" fill="url(#towerDark)"/>
           <rect x="932" y="200" width="8" height="350" fill="url(#towerLit)" opacity=".8"/>
-          <g fill="#9fd0ff" opacity=".7" id="windowsB"></g>
+          <g fill="#ee6365" opacity=".7" id="windowsB"></g>
         </g>
 
         <!-- atmospheric haze -->
         <rect x="0" y="330" width="1600" height="220" fill="url(#haze)"/>
-        <ellipse cx="760" cy="520" rx="900" ry="120" fill="#7c4dff" opacity=".18"/>
+        <ellipse cx="760" cy="520" rx="900" ry="120" fill="#ed5f77" opacity=".18"/>
       </svg>
 
       <div class="hero-label">

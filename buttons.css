@@ -24,20 +24,20 @@
 
 :root {
   /* company palette */
-  --cg-blue:   #60a5fa;
-  --cg-violet: #a78bfa;
-  --cg-indigo: #7c9cff;
-  --cg-pink:   #f472b6;
-  --cg-ink:    #0b1020;
+  --cg-blue:   #ee6365;
+  --cg-violet: #ee637a;
+  --cg-indigo: #ee636c;
+  --cg-pink:   #ee6375;
+  --cg-ink:    #e3d8d8;
   /* component tokens (overridable per page/theme) */
   --cg-btn-radius: 11px;
   --cg-btn-h: 40px;
   --cg-btn-pad: 16px;
   --cg-btn-font: 13px;
   --cg-btn-ease: cubic-bezier(.2,.7,.2,1);
-  --cg-btn-glass: rgba(20,26,46,.55);
-  --cg-btn-line: rgba(124,150,255,.34);
-  --cg-btn-txt: #eaf0ff;
+  --cg-btn-glass: rgba(37, 29, 29,.55);
+  --cg-btn-line: rgba(238, 99, 108,.34);
+  --cg-btn-txt: #f7f2f2;
 }
 
 /* ── base: a machined glass slab ──────────────────────────────────────────── */
@@ -70,7 +70,7 @@
     0 1px 0 rgba(255,255,255,.10) inset,           /* top bevel highlight */
     0 -10px 18px -12px rgba(0,0,0,.6) inset,        /* bottom inner shade  */
     0 2px 4px -2px rgba(0,0,0,.5),                  /* contact shadow      */
-    0 10px 24px -14px rgba(8,12,28,.9);             /* ambient lift        */
+    0 10px 24px -14px rgba(21, 15, 15,.9);             /* ambient lift        */
   transition:
     transform .16s var(--cg-btn-ease),
     box-shadow .22s var(--cg-btn-ease),
@@ -84,7 +84,7 @@
   position: absolute; inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(140deg, rgba(255,255,255,.5), rgba(124,150,255,.15) 30%, rgba(0,0,0,0) 60%);
+  background: linear-gradient(140deg, rgba(14, 14, 14,.5), rgba(238, 99, 108,.15) 30%, rgba(0,0,0,0) 60%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
           mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude;
@@ -111,12 +111,12 @@
 @media (hover: hover) {
   .cg-btn:hover {
     transform: translateY(-1px);
-    border-color: rgba(124,150,255,.55);
+    border-color: rgba(238, 99, 108,.55);
     box-shadow:
       0 1px 0 rgba(255,255,255,.14) inset,
       0 -10px 18px -12px rgba(0,0,0,.55) inset,
       0 4px 10px -4px rgba(0,0,0,.5),
-      0 16px 34px -16px rgba(96,165,250,.55);
+      0 16px 34px -16px rgba(238, 99, 101,.55);
   }
   .cg-btn:hover::after { transform: translateX(130%); }
 }
@@ -134,13 +134,13 @@
   outline: 2px solid var(--cg-blue);
   outline-offset: 2px;
   box-shadow:
-    0 0 0 4px rgba(124,150,255,.30),
-    0 16px 34px -16px rgba(96,165,250,.55);
+    0 0 0 4px rgba(238, 99, 108,.30),
+    0 16px 34px -16px rgba(238, 99, 101,.55);
 }
 
 /* ── variant: PRIMARY — filled blue→violet, programmable-glass border ─────── */
 .cg-btn--primary {
-  color: #07112b;
+  color: #e3d2d3;
   border-color: transparent;
   background:
     linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,0) 46%),
@@ -148,12 +148,12 @@
   text-shadow: 0 1px 0 rgba(255,255,255,.25);
   box-shadow:
     0 1px 0 rgba(255,255,255,.45) inset,
-    0 -8px 16px -10px rgba(8,12,40,.7) inset,
-    0 4px 10px -4px rgba(80,80,180,.5),
-    0 14px 30px -14px rgba(96,165,250,.75);
+    0 -8px 16px -10px rgba(29, 19, 19,.7) inset,
+    0 4px 10px -4px rgba(180, 80, 87,.5),
+    0 14px 30px -14px rgba(238, 99, 101,.75);
 }
 .cg-btn--primary::before {
-  background: linear-gradient(140deg, rgba(255,255,255,.9), rgba(167,139,250,.4) 40%, rgba(0,0,0,0) 70%);
+  background: linear-gradient(140deg, rgba(14, 14, 14,.9), rgba(238, 99, 122,.4) 40%, rgba(0,0,0,0) 70%);
   opacity: 1;
 }
 @media (hover: hover) {
@@ -161,9 +161,9 @@
     filter: saturate(1.08) brightness(1.04);
     box-shadow:
       0 1px 0 rgba(255,255,255,.55) inset,
-      0 -8px 16px -10px rgba(8,12,40,.65) inset,
-      0 6px 14px -5px rgba(80,80,180,.55),
-      0 22px 44px -16px rgba(96,165,250,.9);
+      0 -8px 16px -10px rgba(29, 19, 19,.65) inset,
+      0 6px 14px -5px rgba(180, 80, 87,.55),
+      0 22px 44px -16px rgba(238, 99, 101,.9);
   }
 }
 
@@ -174,50 +174,50 @@
 
 /* ── variant: GHOST — outline only, fills with a whisper on hover ─────────── */
 .cg-btn--ghost {
-  background: rgba(124,150,255,.04);
+  background: rgba(238, 99, 108,.04);
   backdrop-filter: blur(4px);
   box-shadow: none;
 }
 .cg-btn--ghost::after { display: none; }
 @media (hover: hover) {
   .cg-btn--ghost:hover {
-    background: rgba(124,150,255,.12);
-    box-shadow: 0 10px 24px -16px rgba(96,165,250,.6);
+    background: rgba(238, 99, 108,.12);
+    box-shadow: 0 10px 24px -16px rgba(238, 99, 101,.6);
   }
 }
 
 /* ── variant: DANGER — destructive, on-palette pink/magenta ───────────────── */
 .cg-btn--danger {
-  color: #2a0716;
+  color: #e3d3d4;
   border-color: transparent;
   background:
     linear-gradient(180deg, rgba(255,255,255,.26), rgba(255,255,255,0) 46%),
-    linear-gradient(120deg, #f472b6, #c2479a);
+    linear-gradient(120deg, #ee6375, #c24757);
   box-shadow:
     0 1px 0 rgba(255,255,255,.4) inset,
-    0 -8px 16px -10px rgba(40,8,24,.7) inset,
-    0 4px 10px -4px rgba(150,40,110,.5),
-    0 14px 30px -14px rgba(244,114,182,.7);
+    0 -8px 16px -10px rgba(29, 19, 20,.7) inset,
+    0 4px 10px -4px rgba(150, 40, 55,.5),
+    0 14px 30px -14px rgba(238, 99, 117,.7);
 }
-.cg-btn--danger:focus-visible { outline-color: var(--cg-pink); box-shadow: 0 0 0 4px rgba(244,114,182,.32); }
+.cg-btn--danger:focus-visible { outline-color: var(--cg-pink); box-shadow: 0 0 0 4px rgba(238, 99, 117,.32); }
 
 /* ── TOGGLE — uses aria-pressed for real semantics ───────────────────────── */
 .cg-btn--toggle::after { display: none; }
 .cg-btn--toggle[aria-pressed="true"] {
-  color: #07112b;
+  color: #e3d2d3;
   border-color: transparent;
   background:
     linear-gradient(180deg, rgba(255,255,255,.24), rgba(255,255,255,0) 46%),
     linear-gradient(120deg, var(--cg-blue), var(--cg-violet));
   box-shadow:
-    0 2px 6px rgba(8,12,40,.5) inset,
-    0 0 0 1px rgba(124,150,255,.5),
-    0 0 18px -4px rgba(96,165,250,.7);
+    0 2px 6px rgba(29, 19, 19,.5) inset,
+    0 0 0 1px rgba(238, 99, 108,.5),
+    0 0 18px -4px rgba(238, 99, 101,.7);
 }
 .cg-btn--toggle[aria-pressed="true"]::before { opacity: 1; }
 /* engaged status pip */
 .cg-btn--toggle[aria-pressed="true"] .cg-pip,
-.cg-btn--toggle[aria-pressed="true"]::marker { color: #07112b; }
+.cg-btn--toggle[aria-pressed="true"]::marker { color: #e3d2d3; }
 .cg-pip {
   width: 7px; height: 7px; border-radius: 50%;
   background: currentColor; opacity: .85;
@@ -261,9 +261,9 @@
 
 /* ── light-surface adaptation (pages/sections marked light) ───────────────── */
 .cg-btn--secondary.on-light, .on-light .cg-btn--secondary, .cg-btn--ghost.on-light, .on-light .cg-btn--ghost {
-  --cg-btn-glass: rgba(255,255,255,.7);
-  --cg-btn-txt: #14213d;
-  --cg-btn-line: rgba(96,120,200,.4);
+  --cg-btn-glass: rgba(14, 14, 14,.7);
+  --cg-btn-txt: #d5c5c5;
+  --cg-btn-line: rgba(200, 96, 103,.4);
 }
 
 /* ── accessibility hardening ──────────────────────────────────────────────── */
@@ -297,7 +297,7 @@
    base mask), so it never competes with the hover transform / box-shadow / filter */
 .cg-btn--primary::before,
 .cg-btn--toggle[aria-pressed="true"]::before {
-  background: linear-gradient(115deg, #38bdf8, #a78bfa 28%, #f472b6 50%, #a78bfa 72%, #38bdf8);
+  background: linear-gradient(115deg, #ea4648, #ee637a 28%, #ee6375 50%, #ee637a 72%, #ea4648);
   background-size: 300% 100%;
   opacity: 1;
   animation: cgBtnAurora 6s linear infinite;
@@ -311,17 +311,17 @@
 
 /* ── opt-in variant: --aurora — a slowly flowing prism fill ─────────────────── */
 .cg-btn--aurora {
-  color: #07112b;
+  color: #e3d2d3;
   border-color: transparent;
   background:
-    linear-gradient(180deg, rgba(255,255,255,.30), rgba(255,255,255,0) 46%),
-    linear-gradient(115deg, #38bdf8, #a78bfa 30%, #f472b6 52%, #34d399 78%, #38bdf8);
+    linear-gradient(180deg, rgba(14, 14, 14,.30), rgba(255,255,255,0) 46%),
+    linear-gradient(115deg, #ea4648, #ee637a 30%, #ee6375 52%, #34d399 78%, #ea4648);
   background-size: 100% 100%, 280% 100%;
   text-shadow: 0 1px 0 rgba(255,255,255,.28);
   box-shadow:
     0 1px 0 rgba(255,255,255,.5) inset,
-    0 14px 30px -14px rgba(96,165,250,.8),
-    0 0 22px -6px rgba(167,139,250,.7);
+    0 14px 30px -14px rgba(238, 99, 101,.8),
+    0 0 22px -6px rgba(238, 99, 122,.7);
   animation: cgBtnAuroraFill 7s linear infinite;
 }
 .cg-btn--aurora::after { display: none; }
@@ -331,8 +331,8 @@
 .cg-btn--holo::after {
   content: ""; position: absolute; inset: 0; border-radius: inherit;
   z-index: 1; pointer-events: none;
-  background: linear-gradient(115deg, transparent 20%, rgba(56,189,248,.45) 38%,
-              rgba(167,139,250,.5) 50%, rgba(244,114,182,.4) 62%, transparent 80%);
+  background: linear-gradient(115deg, transparent 20%, rgba(234, 70, 72,.45) 38%,
+              rgba(238, 99, 122,.5) 50%, rgba(238, 99, 117,.4) 62%, transparent 80%);
   background-size: 220% 100%;
   mix-blend-mode: screen;
   opacity: .55;

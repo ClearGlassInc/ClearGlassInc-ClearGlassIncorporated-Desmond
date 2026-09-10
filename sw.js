@@ -10,13 +10,14 @@
    Bump VERSION to invalidate all caches on deploy. */
 "use strict";
 
-var VERSION = "cg-v43";
+var VERSION = "cg-v44";
 var PRECACHE = [
   "/",
   "/index.html",
   "/offline.html",
   "/tokens.css",
   "/theme.css",
+  "/clearglass-crimson.css",
   "/buttons.css",
   "/assets/css/future-buttons.css",
   "/assets/js/future-buttons.js",

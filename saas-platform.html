@@ -6,10 +6,10 @@
 <link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
 <link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
 <link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
-<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#c4363a">
 <link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#07111f">
-<meta name="msapplication-TileColor" content="#07111f">
+<meta name="theme-color" content="#07080b">
+<meta name="msapplication-TileColor" content="#07080b">
 <meta name="msapplication-TileImage" content="/icon-192.png">
 <meta name="msapplication-config" content="/browserconfig.xml">
 
@@ -48,20 +48,20 @@
     /* ClearGlass homepage palette (tokens.css prism) on the event-driven
        control-surface architecture. Read-first; no write actions. */
     :root{
-      --bg:#0a0c10;
-      --bg2:#0e1224;
-      --panel:rgba(18,22,42,.76);
-      --panel2:rgba(21,28,52,.62);
+      --bg:#0e0c0c;
+      --bg2:#1d1516;
+      --panel:rgba(34, 26, 26,.76);
+      --panel2:rgba(42, 31, 32,.62);
       --line:rgba(255,255,255,.10);
-      --line2:rgba(124,150,255,.18);
-      --text:#e7ecff;
-      --muted:#9aa6c8;
-      --accent:#60a5fa;
-      --accent2:#a78bfa;
+      --line2:rgba(238, 99, 108,.18);
+      --text:#f6f0f0;
+      --muted:#c89a9d;
+      --accent:#ee6365;
+      --accent2:#ee637a;
       --good:#34d399;
       --warn:#fbbf24;
-      --bad:#f472b6;
-      --crystal:linear-gradient(135deg,#38bdf8 0%,#a78bfa 25%,#f472b6 50%,#fbbf24 75%,#34d399 100%);
+      --bad:#ee6375;
+      --crystal:linear-gradient(135deg,#ea4648 0%,#ee637a 25%,#ee6375 50%,#fbbf24 75%,#34d399 100%);
       --shadow:0 18px 60px rgba(0,0,0,.34);
       --radius:22px;
       --max:1240px;
@@ -75,8 +75,8 @@
       font-family:var(--sans);
       color:var(--text);
       background:
-        radial-gradient(circle at 20% 0%, rgba(96,165,250,.14), transparent 25%),
-        radial-gradient(circle at 90% 0%, rgba(167,139,250,.12), transparent 24%),
+        radial-gradient(circle at 20% 0%, rgba(238, 99, 101,.14), transparent 25%),
+        radial-gradient(circle at 90% 0%, rgba(238, 99, 122,.12), transparent 24%),
         radial-gradient(circle at 50% 100%, rgba(52,211,153,.06), transparent 30%),
         linear-gradient(180deg,var(--bg),var(--bg2));
       line-height:1.5;
@@ -85,7 +85,7 @@
     .wrap{max-width:var(--max);margin:0 auto;padding:20px}
     header{
       position:sticky;top:0;z-index:20;
-      background:rgba(10,12,16,.72);
+      background:rgba(14, 12, 12,.72);
       backdrop-filter:blur(18px);
       -webkit-backdrop-filter:blur(18px);
       border-bottom:1px solid var(--line);
@@ -97,7 +97,7 @@
     .mark{
       width:12px;height:12px;border-radius:50%;
       background:var(--crystal);
-      box-shadow:0 0 0 6px rgba(124,150,255,.12);
+      box-shadow:0 0 0 6px rgba(238, 99, 108,.12);
       flex:0 0 auto;
     }
     .brand h1{
@@ -128,7 +128,7 @@
     }
     .card::before{
       content:"";position:absolute;top:0;left:18px;right:18px;height:1px;
-      background:linear-gradient(90deg,transparent,rgba(188,212,255,.4),transparent);
+      background:linear-gradient(90deg,transparent,rgba(31, 21, 21,.4),transparent);
     }
     .card .hd{
       padding:18px 18px 0 18px;
@@ -162,7 +162,7 @@
     }
     .metric .label{color:var(--muted);font-size:.86rem}
     .metric .value{font-size:1.8rem;font-weight:700;margin-top:6px;letter-spacing:-.03em}
-    .metric .delta{margin-top:8px;font-size:.9rem;color:#c8d5ea}
+    .metric .delta{margin-top:8px;font-size:.9rem;color:#eac8ca}
     .bar{
       height:8px;border-radius:999px;background:rgba(255,255,255,.06);
       overflow:hidden;margin-top:10px
@@ -189,7 +189,7 @@
     }
     .tag.good{color:#bdf2dc;border-color:rgba(52,211,153,.3)}
     .tag.warn{color:#ffe9b3;border-color:rgba(251,191,36,.3)}
-    .tag.bad{color:#ffc6e0;border-color:rgba(244,114,182,.3)}
+    .tag.bad{color:#eadbdd;border-color:rgba(238, 99, 117,.3)}
     .controls{display:flex;flex-wrap:wrap;gap:10px}
     button{
       appearance:none;border:1px solid var(--line);
@@ -197,19 +197,19 @@
       border-radius:14px;padding:10px 14px;font:inherit;
       cursor:pointer;transition:transform .15s ease, background .15s ease,border-color .15s ease;
     }
-    button:hover{transform:translateY(-1px);border-color:rgba(124,150,255,.4);background:rgba(255,255,255,.06)}
-    button:focus-visible{outline:3px solid rgba(96,165,250,.5);outline-offset:2px}
+    button:hover{transform:translateY(-1px);border-color:rgba(238, 99, 108,.4);background:rgba(255,255,255,.06)}
+    button:focus-visible{outline:3px solid rgba(238, 99, 101,.5);outline-offset:2px}
     .empty, .loading, .error{
       padding:16px;border-radius:16px;border:1px dashed var(--line2);
       color:var(--muted);background:rgba(255,255,255,.02)
     }
-    .error{border-style:solid;border-color:rgba(244,114,182,.3);color:#ffd4e8}
+    .error{border-style:solid;border-color:rgba(238, 99, 117,.3);color:#efe4e5}
     .footer{
       margin:18px 0 10px;
       color:var(--muted);font-size:.9rem;text-align:center
     }
     .footer b{
-      background:linear-gradient(90deg,#60a5fa,#a78bfa);
+      background:linear-gradient(90deg,#ee6365,#ee637a);
       -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent
     }
     .visually-hidden{
@@ -229,6 +229,7 @@
   <script defer src="/asset-protection.js"></script>
   <link rel="stylesheet" href="brand-system.css">
 <link rel="stylesheet" href="/assets/css/future-buttons.css">
+<link rel="stylesheet" href="/clearglass-crimson.css">
 </head>
 <body>
 <header>
@@ -559,7 +560,7 @@
 <script defer src="/stealth-glass.js"></script>
 <!-- cg-related:start -->
 <aside id="cg-related">
-  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(231, 41, 44,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(238, 99, 108,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(231, 41, 44,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(237, 95, 119,.16),transparent 36%),linear-gradient(165deg,rgba(20, 13, 13,.97),rgba(18, 13, 13,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(231, 41, 44,.34);border-radius:16px;padding:24px 26px;color:#f1e6e7;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(231, 41, 44,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(231, 41, 44,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#e7292c,#ed5f77,transparent);box-shadow:0 0 18px rgba(231, 41, 44,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#ee636c;margin:0 0 12px}#cg-related .cgr-crumb a{color:#ee6365;text-decoration:none;text-shadow:0 0 12px rgba(231, 41, 44,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(24, 15, 16,.52);border:1px solid rgba(238, 99, 108,.15);color:#ede1e2;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#e7292c;color:#fff;box-shadow:0 0 18px rgba(231, 41, 44,.14)}#cg-related .cgr-route b{display:block;color:#ee6365;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#ede1e2;text-decoration:none;border:1px solid rgba(238, 99, 108,.08);background:rgba(24, 15, 16,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(231, 41, 44,.1);border-color:rgba(231, 41, 44,.42);color:#fff;box-shadow:0 0 22px rgba(231, 41, 44,.14)}#cg-related li a b{color:#ee6365;font-weight:700;text-shadow:0 0 12px rgba(231, 41, 44,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(231, 41, 44,.18);font-size:13.5px;color:#dfa9ad}#cg-related .cgr-cta a{color:#ee6365;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(231, 41, 44,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
   <nav class="cgr-box" aria-label="Related ClearGlass pages">
     <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="percival-os.html">Command &amp; Autonomous Operations</a></p>
     <h2>Continue exploring</h2>

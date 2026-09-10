@@ -1,26 +1,27 @@
-/* ClearGlass · Design Tokens — single source of truth (v3.3)
+/* ClearGlass · Design Tokens — single source of truth (v4.0 · crimson)
    ────────────────────────────────────────────────────────────────────────────
    Extracted verbatim from the homepage (index.html) so every surface — nav,
    buttons, palette, drawer, status — inherits ONE visual language. Foundation
    tokens are universal brand primitives; semantic surface tokens carry the
-   dark-context defaults the floating control chrome sits on. Namespaced --cg-*
+   dark-context defaults the floating control chrome sits on. The palette is the
+   crimson-on-black capabilities-brief scheme (see clearglass-crimson.css). Namespaced --cg-*
    so they never collide with a page's own variables. */
 :root {
   /* ── foundation · prism palette (homepage --prism-1..6) ─────────────────── */
-  --cg-prism-1: #38bdf8;   /* sky      */
-  --cg-prism-2: #a78bfa;   /* violet   */
-  --cg-prism-3: #f472b6;   /* pink     */
-  --cg-prism-4: #34d399;   /* mint     */
-  --cg-prism-5: #fbbf24;   /* amber    */
-  --cg-prism-6: #60a5fa;   /* blue     */
-  --cg-crystal: linear-gradient(135deg,#38bdf8 0%,#a78bfa 25%,#f472b6 50%,#fbbf24 75%,#34d399 100%);
+  --cg-prism-1: #c4363a;   /* crimson       */
+  --cg-prism-2: #eb4344;   /* crimson bright*/
+  --cg-prism-3: #7a123d;   /* wine          */
+  --cg-prism-4: #d9575a;   /* rose          */
+  --cg-prism-5: #8f2e31;   /* rule          */
+  --cg-prism-6: #a92934;   /* signal        */
+  --cg-crystal: linear-gradient(135deg,#f2e9e8 0%,#d3484d 52%,#8f1d3f 100%);
 
   /* brand convenience aliases (kept for buttons.css / control-surface.js) */
-  --cg-blue:   #60a5fa;
-  --cg-violet: #a78bfa;
-  --cg-pink:   #f472b6;
-  --cg-ink:    #0a0c10;
-  --cg-ink-2:  #1a1d25;
+  --cg-blue:   #c4363a;
+  --cg-violet: #7a123d;
+  --cg-pink:   #eb4344;
+  --cg-ink:    #e3e5ed;
+  --cg-ink-2:  #e1dfdf;
 
   /* ── typography (homepage font logic) ───────────────────────────────────── */
   --cg-serif: 'Cormorant Garamond', Georgia, serif;
@@ -49,17 +50,17 @@
   --cg-sh-3: 0 24px 60px -24px rgba(6,8,18,.8);
 
   /* ── status (mapped to the prism, so chips match homepage badge hues) ───── */
-  --cg-status-ok:   var(--cg-prism-4);   /* NOMINAL  */
+  --cg-status-ok:   #4fb98a;             /* NOMINAL  */
   --cg-status-sync: var(--cg-prism-1);   /* SYNCING  */
-  --cg-status-warn: var(--cg-prism-5);   /* DEGRADED */
-  --cg-status-fail: var(--cg-prism-3);   /* FAILURE  */
+  --cg-status-warn: #d98c3a;             /* DEGRADED */
+  --cg-status-fail: var(--cg-prism-2);   /* FAILURE  */
 
   /* ── semantic surfaces · dark-context defaults (floating chrome) ────────── */
-  --cg-surface:        rgba(18,22,42,.72);
-  --cg-surface-strong: rgba(20,24,44,.96);
-  --cg-hairline:       rgba(124,150,255,.28);
-  --cg-hairline-soft:  rgba(124,150,255,.16);
-  --cg-on-surface:     #e7ecff;
-  --cg-on-surface-dim: #9aa6c8;
-  --cg-glow:           rgba(96,165,250,.55);
+  --cg-surface:        rgba(15, 14, 14,.74);
+  --cg-surface-strong: rgba(11,10,14,.96);
+  --cg-hairline:       rgba(201,52,58,.28);
+  --cg-hairline-soft:  rgba(201,52,58,.16);
+  --cg-on-surface:     #e5dbdb;
+  --cg-on-surface-dim: #bcaeb0;
+  --cg-glow:           rgba(197,52,58,.55);
 }

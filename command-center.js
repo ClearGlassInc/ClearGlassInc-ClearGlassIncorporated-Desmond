@@ -105,7 +105,7 @@
           var d2 = dx * dx + dy * dy;
           if (d2 < 15000) {
             var o = (1 - d2 / 15000) * 0.5;
-            ctx.strokeStyle = "rgba(56,217,255," + o.toFixed(3) + ")";
+            ctx.strokeStyle = "rgba(235, 76, 79," + o.toFixed(3) + ")";
             ctx.beginPath();
             ctx.moveTo(nodes[a].x, nodes[a].y);
             ctx.lineTo(nodes[b].x, nodes[b].y);
@@ -115,7 +115,7 @@
       }
       // nodes (moving data packets)
       for (var k = 0; k < nodes.length; k++) {
-        ctx.fillStyle = "rgba(157,124,255,.85)";
+        ctx.fillStyle = "rgba(238, 99, 122,.85)";
         ctx.beginPath();
         ctx.arc(nodes[k].x, nodes[k].y, 1.6, 0, 6.2832);
         ctx.fill();

@@ -258,16 +258,16 @@
   'use strict';
 
   const COMMANDS = [
-    { key: 'guardian', title: 'GUARDIAN', subtitle: 'FINANCIAL INTELLIGENCE', href: '/guardian.html', badge: 'ENCRYPTED', action: 'OPEN CONSOLE', accent: '#35d7ff', spark: [88, 91, 90, 94, 93, 96, 97] },
-    { key: 'bluedesk', title: 'BLUEDESK', subtitle: 'CISO RISK & BLUE TEAM', href: '/bluedesk.html', badge: 'WATCH', action: 'INSPECT SYSTEM', accent: '#60a5fa', spark: [82, 84, 87, 86, 90, 92, 91] },
-    { key: 'nexus', title: 'CLEARGLASS NEXUS V12', subtitle: 'COMMAND PLATFORM', href: '/ClearGlass-NEXUS-v12-FINAL.html', badge: 'SYNCED', action: 'OPEN CONSOLE', accent: '#a78bfa', spark: [90, 92, 93, 92, 95, 96, 98] },
-    { key: 'clearpulse', title: 'CLEARPULSE', subtitle: 'SIGNAL INTELLIGENCE', href: '/intelligence.html', badge: 'NOMINAL', action: 'VIEW SIGNALS', accent: '#38bdf8', spark: [78, 83, 80, 88, 85, 91, 90] },
+    { key: 'guardian', title: 'GUARDIAN', subtitle: 'FINANCIAL INTELLIGENCE', href: '/guardian.html', badge: 'ENCRYPTED', action: 'OPEN CONSOLE', accent: '#eb494c', spark: [88, 91, 90, 94, 93, 96, 97] },
+    { key: 'bluedesk', title: 'BLUEDESK', subtitle: 'CISO RISK & BLUE TEAM', href: '/bluedesk.html', badge: 'WATCH', action: 'INSPECT SYSTEM', accent: '#ee6365', spark: [82, 84, 87, 86, 90, 92, 91] },
+    { key: 'nexus', title: 'CLEARGLASS NEXUS V12', subtitle: 'COMMAND PLATFORM', href: '/ClearGlass-NEXUS-v12-FINAL.html', badge: 'SYNCED', action: 'OPEN CONSOLE', accent: '#ee637a', spark: [90, 92, 93, 92, 95, 96, 98] },
+    { key: 'clearpulse', title: 'CLEARPULSE', subtitle: 'SIGNAL INTELLIGENCE', href: '/intelligence.html', badge: 'NOMINAL', action: 'VIEW SIGNALS', accent: '#ea4648', spark: [78, 83, 80, 88, 85, 91, 90] },
     { key: 'flowsint', title: 'FLOWSINT', subtitle: 'OSINT INVESTIGATION GRAPH', href: '/flowsint.html', badge: 'SYNCED', action: 'VIEW GRAPH', accent: '#22c55e', spark: [79, 84, 86, 89, 88, 93, 95] },
-    { key: 'command', title: 'COMMAND CENTER', subtitle: 'LIVE OPERATIONS CONSOLE', href: '/systems.html', badge: 'ONLINE', action: 'OPEN CONSOLE', accent: '#69e7ff', spark: [86, 88, 92, 90, 94, 97, 96] },
+    { key: 'command', title: 'COMMAND CENTER', subtitle: 'LIVE OPERATIONS CONSOLE', href: '/systems.html', badge: 'ONLINE', action: 'OPEN CONSOLE', accent: '#ee6365', spark: [86, 88, 92, 90, 94, 97, 96] },
     { key: 'conduit', title: 'CONDUIT', subtitle: 'WORKFLOW AUTOMATION', href: '/conduit.html', badge: 'SYNCED', action: 'INSPECT FLOWS', accent: '#34d399', spark: [80, 86, 84, 89, 92, 90, 94] },
-    { key: 'air', title: 'AIR SYSTEMS CONTROL', subtitle: 'GLASS CONTROL SURFACE', href: '/control-surface.html', badge: 'NOMINAL', action: 'CALIBRATE SURFACE', accent: '#93c5fd', spark: [83, 85, 88, 87, 91, 92, 94] },
-    { key: 'sats', title: 'SATS DIGITAL TWIN', subtitle: 'STORM-ADAPTIVE SIMULATION', href: '/sats-digital-twin.html', badge: 'WATCH', action: 'INSPECT MODEL', accent: '#8b5cf6', spark: [76, 80, 83, 82, 86, 88, 91] },
-    { key: 'counter', title: 'COUNTER', subtitle: 'COMMERCIALIZATION SYSTEM', href: '/revenue-engine.html', badge: 'NOMINAL', action: 'OPEN SYSTEM', accent: '#f0abfc', spark: [81, 83, 87, 90, 89, 94, 95] }
+    { key: 'air', title: 'AIR SYSTEMS CONTROL', subtitle: 'GLASS CONTROL SURFACE', href: '/control-surface.html', badge: 'NOMINAL', action: 'CALIBRATE SURFACE', accent: '#ee6365', spark: [83, 85, 88, 87, 91, 92, 94] },
+    { key: 'sats', title: 'SATS DIGITAL TWIN', subtitle: 'STORM-ADAPTIVE SIMULATION', href: '/sats-digital-twin.html', badge: 'WATCH', action: 'INSPECT MODEL', accent: '#ee637a', spark: [76, 80, 83, 82, 86, 88, 91] },
+    { key: 'counter', title: 'COUNTER', subtitle: 'COMMERCIALIZATION SYSTEM', href: '/revenue-engine.html', badge: 'NOMINAL', action: 'OPEN SYSTEM', accent: '#ee637a', spark: [81, 83, 87, 90, 89, 94, 95] }
   ];
 
   const TICKS = [

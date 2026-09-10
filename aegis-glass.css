@@ -1,9 +1,9 @@
 /* Aegis Glass: additive, client-side protection and attribution UI.
    This layer is deterrence and trace context, not a screenshot-prevention guarantee. */
 :root {
-  --aegis-accent: #69e7ff;
-  --aegis-panel: rgba(5, 16, 28, 0.72);
-  --aegis-border: rgba(105, 231, 255, 0.28);
+  --aegis-accent: #ee6365;
+  --aegis-panel: rgba(20, 13, 13, 0.72);
+  --aegis-border: rgba(238, 99, 101, 0.28);
   --aegis-watermark-opacity: 0.075;
   --aegis-watermark-size: 12px;
   --aegis-shift-x: 0px;
@@ -26,8 +26,8 @@
   pointer-events: none;
   opacity: 0.16;
   background:
-    radial-gradient(circle at 12% 18%, rgba(105, 231, 255, 0.05), transparent 26%),
-    radial-gradient(circle at 88% 82%, rgba(112, 137, 255, 0.04), transparent 28%);
+    radial-gradient(circle at 12% 18%, rgba(238, 99, 101, 0.05), transparent 26%),
+    radial-gradient(circle at 88% 82%, rgba(238, 99, 108, 0.04), transparent 28%);
 }
 
 #aegis-glass-watermarks {
@@ -66,19 +66,19 @@
   gap: 5px;
   width: min(278px, calc(100vw - 28px));
   padding: 6px;
-  border: 1px solid rgba(205, 232, 255, 0.24);
+  border: 1px solid rgba(237, 223, 224, 0.24);
   border-radius: 15px;
   background:
-    linear-gradient(180deg, rgba(21, 33, 55, 0.34), rgba(4, 13, 27, 0.24)),
-    radial-gradient(circle at 88% 8%, rgba(172, 128, 255, 0.18), transparent 42%),
-    radial-gradient(circle at 12% 100%, rgba(64, 220, 255, 0.12), transparent 48%),
+    linear-gradient(180deg, rgba(44, 32, 33, 0.34), rgba(19, 12, 12, 0.24)),
+    radial-gradient(circle at 88% 8%, rgba(238, 99, 122, 0.18), transparent 42%),
+    radial-gradient(circle at 12% 100%, rgba(236, 83, 86, 0.12), transparent 48%),
     linear-gradient(135deg, rgba(255, 255, 255, 0.11), transparent 44%);
   box-shadow:
     0 14px 34px rgba(0, 0, 0, 0.24),
-    0 0 0 1px rgba(130, 206, 255, 0.08),
+    0 0 0 1px rgba(238, 99, 101, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.24),
-    inset 0 -1px 0 rgba(132, 212, 255, 0.07),
-    0 0 30px rgba(92, 201, 255, 0.09);
+    inset 0 -1px 0 rgba(238, 99, 101, 0.07),
+    0 0 30px rgba(238, 99, 101, 0.09);
   backdrop-filter: blur(30px) saturate(188%) contrast(110%);
   -webkit-backdrop-filter: blur(30px) saturate(188%) contrast(110%);
   pointer-events: none;
@@ -95,7 +95,7 @@
   inset: 0;
   border-radius: inherit;
   background:
-    linear-gradient(135deg, rgba(255,255,255,.20), rgba(255,255,255,.025) 38%, rgba(97,218,255,.10) 70%, rgba(176,127,255,.12)),
+    linear-gradient(135deg, rgba(255,255,255,.20), rgba(255,255,255,.025) 38%, rgba(238, 99, 101,.10) 70%, rgba(238, 99, 122,.12)),
     radial-gradient(circle at 50% 0%, rgba(255,255,255,.18), transparent 48%);
   opacity: .72;
   pointer-events: none;
@@ -133,16 +133,16 @@
   min-height: 31px;
   padding: 0 12px;
   gap: 5px;
-  border: 1px solid rgba(172, 203, 255, .18);
+  border: 1px solid rgba(238, 99, 108, .18);
   border-radius: 10px;
-  background: linear-gradient(180deg, rgba(31, 46, 76, .38), rgba(10, 21, 40, .24));
+  background: linear-gradient(180deg, rgba(76, 31, 34, .38), rgba(30, 20, 21, .24));
   backdrop-filter: blur(20px) saturate(168%);
   -webkit-backdrop-filter: blur(20px) saturate(168%);
   font-size: 8.7px;
   letter-spacing: .13em;
   box-shadow:
     0 5px 14px rgba(0,0,0,.18),
-    0 0 0 1px rgba(150, 178, 255, .07),
+    0 0 0 1px rgba(238, 99, 108, .07),
     inset 0 1px 0 rgba(255,255,255,.17),
     inset 0 -1px 0 rgba(255,255,255,.04);
 }
@@ -155,16 +155,16 @@
   text-align: center;
   font-variant-numeric: tabular-nums;
   padding: 6px 8px;
-  border: 1px solid rgba(105, 231, 255, .22);
+  border: 1px solid rgba(238, 99, 101, .22);
   border-radius: 9px;
-  background: linear-gradient(180deg, rgba(8, 30, 42, .30), rgba(4, 19, 31, .20));
+  background: linear-gradient(180deg, rgba(31, 19, 19, .30), rgba(22, 13, 13, .20));
   backdrop-filter: blur(18px) saturate(165%);
   -webkit-backdrop-filter: blur(18px) saturate(165%);
-  color: rgba(225, 252, 255, .94);
+  color: rgba(244, 236, 236, .94);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.10),
     inset 0 -1px 0 rgba(255,255,255,.025),
-    0 0 14px rgba(105,231,255,.05);
+    0 0 14px rgba(238, 99, 101,.05);
   font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 8px;
   font-weight: 700;
@@ -229,9 +229,9 @@
     gap: 3px;
     border-radius: 13px;
     background:
-      linear-gradient(180deg, rgba(20, 31, 51, .30), rgba(4, 13, 26, .22)),
-      radial-gradient(circle at 88% 8%, rgba(164, 126, 255, .16), transparent 43%),
-      radial-gradient(circle at 8% 100%, rgba(79, 220, 255, .09), transparent 48%),
+      linear-gradient(180deg, rgba(41, 30, 31, .30), rgba(19, 11, 12, .22)),
+      radial-gradient(circle at 88% 8%, rgba(238, 99, 122, .16), transparent 43%),
+      radial-gradient(circle at 8% 100%, rgba(237, 97, 99, .09), transparent 48%),
       linear-gradient(135deg, rgba(255,255,255,.12), transparent 46%);
     backdrop-filter: blur(28px) saturate(190%) contrast(110%);
     -webkit-backdrop-filter: blur(28px) saturate(190%) contrast(110%);
@@ -317,8 +317,8 @@ body.cg-command-directory-active::before {
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at var(--cg-command-pointer-x, 50%) var(--cg-command-pointer-y, 42%), rgba(80, 200, 255, .11), transparent 22rem),
-    linear-gradient(180deg, rgba(230, 247, 255, .25), transparent 48%);
+    radial-gradient(circle at var(--cg-command-pointer-x, 50%) var(--cg-command-pointer-y, 42%), rgba(238, 97, 100, .11), transparent 22rem),
+    linear-gradient(180deg, rgba(246, 239, 239, .25), transparent 48%);
   opacity: .58;
 }
 
@@ -329,17 +329,17 @@ body.cg-command-directory-active::before {
   min-width: 0;
   padding-right: clamp(118px, 28vw, 168px) !important;
   overflow: visible !important;
-  border-color: rgba(119, 214, 255, .36) !important;
+  border-color: rgba(238, 99, 101, .36) !important;
   background:
-    radial-gradient(circle at 12% 18%, rgba(255,255,255,.72), transparent 42%),
-    linear-gradient(135deg, rgba(255,255,255,.80), rgba(219,239,255,.54) 46%, rgba(232,219,255,.32)) !important;
+    radial-gradient(circle at 12% 18%, rgba(14, 14, 14,.72), transparent 42%),
+    linear-gradient(135deg, rgba(14, 14, 14,.80), rgba(24, 16, 16,.54) 46%, rgba(24, 16, 18,.32)) !important;
   backdrop-filter: blur(24px) saturate(155%) contrast(106%);
   -webkit-backdrop-filter: blur(24px) saturate(155%) contrast(106%);
   box-shadow:
-    0 16px 42px rgba(15, 23, 42, .10),
+    0 16px 42px rgba(33, 24, 25, .10),
     0 0 0 1px rgba(255,255,255,.58),
     inset 0 1px 0 rgba(255,255,255,.86),
-    inset 0 -1px 0 rgba(61, 189, 255, .10) !important;
+    inset 0 -1px 0 rgba(236, 80, 83, .10) !important;
   transform: translateZ(0);
   transition:
     transform .18s cubic-bezier(.2,.8,.2,1),
@@ -362,7 +362,7 @@ body.cg-command-directory-active::before {
 
 .cg-command-card::before {
   padding: 1px;
-  background: linear-gradient(135deg, rgba(105,231,255,.58), rgba(167,139,250,.24), rgba(52,211,153,.22));
+  background: linear-gradient(135deg, rgba(238, 99, 101,.58), rgba(238, 99, 122,.24), rgba(52,211,153,.22));
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -372,8 +372,8 @@ body.cg-command-directory-active::before {
 .cg-command-card::after {
   inset: -1px;
   background:
-    linear-gradient(90deg, transparent 0 48%, rgba(105,231,255,.16) 50%, transparent 52% 100%),
-    repeating-linear-gradient(0deg, rgba(15,23,42,.035) 0 1px, transparent 1px 7px);
+    linear-gradient(90deg, transparent 0 48%, rgba(238, 99, 101,.16) 50%, transparent 52% 100%),
+    repeating-linear-gradient(0deg, rgba(33, 24, 25,.035) 0 1px, transparent 1px 7px);
   opacity: .24;
   mix-blend-mode: multiply;
 }
@@ -381,18 +381,18 @@ body.cg-command-directory-active::before {
 .cg-command-card:hover,
 .cg-command-card:focus-visible,
 .cg-command-card.is-cg-open {
-  border-color: rgba(105,231,255,.64) !important;
+  border-color: rgba(238, 99, 101,.64) !important;
   box-shadow:
-    0 20px 50px rgba(15, 23, 42, .15),
+    0 20px 50px rgba(33, 24, 25, .15),
     0 0 0 1px rgba(255,255,255,.70),
-    0 0 34px rgba(105,231,255,.14),
+    0 0 34px rgba(238, 99, 101,.14),
     inset 0 1px 0 rgba(255,255,255,.92),
-    inset 0 -1px 0 rgba(105,231,255,.16) !important;
+    inset 0 -1px 0 rgba(238, 99, 101,.16) !important;
 }
 
 .cg-command-card:hover { transform: translate3d(0,-3px,0) scale(1.006); }
 .cg-command-card:active { transform: translate3d(0,0,0) scale(.985); }
-.cg-command-card:focus-visible { outline: 3px solid rgba(58, 220, 255, .78); outline-offset: 4px; }
+.cg-command-card:focus-visible { outline: 3px solid rgba(235, 78, 80, .78); outline-offset: 4px; }
 
 .cg-command-card.cg-perimeter-flash::before { animation: cg-command-flash .44s ease both; }
 @keyframes cg-command-flash { 0% { opacity: .18; } 45% { opacity: .95; } 100% { opacity: .48; } }
@@ -417,10 +417,10 @@ body.cg-command-directory-active::before {
 }
 
 .cg-command-card .cg-existing-icon-well::before {
-  border: 1px solid rgba(105,231,255,.42);
+  border: 1px solid rgba(238, 99, 101,.42);
   background:
-    radial-gradient(circle at 50% 8%, rgba(105,231,255,.24), transparent 44%),
-    conic-gradient(from 0deg, transparent, rgba(105,231,255,.18), transparent 34%);
+    radial-gradient(circle at 50% 8%, rgba(238, 99, 101,.24), transparent 44%),
+    conic-gradient(from 0deg, transparent, rgba(238, 99, 101,.18), transparent 34%);
   opacity: .72;
   animation: cg-command-ring 9s linear infinite;
 }
@@ -429,7 +429,7 @@ body.cg-command-directory-active::before {
   left: 18%;
   right: 18%;
   width: auto;
-  background: linear-gradient(180deg, transparent, rgba(105,231,255,.24), transparent);
+  background: linear-gradient(180deg, transparent, rgba(238, 99, 101,.24), transparent);
   transform: translateY(-100%);
   animation: cg-command-scan 3.8s ease-in-out infinite;
 }
@@ -465,8 +465,8 @@ body.cg-command-directory-active::before {
   height: 8px;
   flex: 0 0 auto;
   border-radius: 999px;
-  background: var(--cg-command-accent, #69e7ff);
-  box-shadow: 0 0 12px var(--cg-command-accent, #69e7ff);
+  background: var(--cg-command-accent, #ee6365);
+  box-shadow: 0 0 12px var(--cg-command-accent, #ee6365);
   animation: cg-command-dot 1.6s ease-in-out infinite;
 }
 
@@ -478,10 +478,10 @@ body.cg-command-directory-active::before {
   text-overflow: ellipsis;
   white-space: nowrap;
   padding: 4px 7px;
-  border: 1px solid rgba(58, 220, 255, .32);
+  border: 1px solid rgba(235, 78, 80, .32);
   border-radius: 999px;
-  background: rgba(255,255,255,.48);
-  color: rgba(15,23,42,.76);
+  background: rgba(14, 14, 14,.48);
+  color: rgba(222, 209, 211,.76);
   font-size: 8px;
   font-weight: 800;
   letter-spacing: .11em;
@@ -494,7 +494,7 @@ body.cg-command-directory-active::before {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: rgba(76, 88, 112, .88);
+  color: rgba(178, 142, 144, .88);
   font-size: clamp(7px, 1.72vw, 9px);
   font-weight: 800;
   letter-spacing: .08em;
@@ -510,7 +510,7 @@ body.cg-command-directory-active::before {
   white-space: nowrap;
   -webkit-mask-image: linear-gradient(90deg, #000 0 84%, transparent);
   mask-image: linear-gradient(90deg, #000 0 84%, transparent);
-  color: rgba(61, 76, 102, .86);
+  color: rgba(192, 149, 152, .86);
   font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: clamp(8px, 1.85vw, 10px);
   font-weight: 800;
@@ -524,7 +524,7 @@ body.cg-command-directory-active::before {
   transition: opacity .22s ease, transform .22s ease;
 }
 
-.cg-command-card.is-cg-open .cg-telemetry-ticker span { color: rgba(16, 98, 131, .92); }
+.cg-command-card.is-cg-open .cg-telemetry-ticker span { color: rgba(238, 116, 118, .92); }
 
 .cg-command-drawer {
   display: grid;
@@ -540,10 +540,10 @@ body.cg-command-directory-active::before {
   min-height: 0;
   overflow: hidden;
   border-radius: 18px;
-  border: 1px solid rgba(105,231,255,.24);
+  border: 1px solid rgba(238, 99, 101,.24);
   background:
-    radial-gradient(circle at 0 0, rgba(105,231,255,.12), transparent 38%),
-    linear-gradient(135deg, rgba(255,255,255,.48), rgba(218,236,255,.34));
+    radial-gradient(circle at 0 0, rgba(238, 99, 101,.12), transparent 38%),
+    linear-gradient(135deg, rgba(14, 14, 14,.48), rgba(25, 16, 16,.34));
 }
 
 .cg-command-card.is-cg-open .cg-command-drawer {
@@ -565,10 +565,10 @@ body.cg-command-directory-active::before {
 
 .cg-metric {
   min-width: 0;
-  border: 1px solid rgba(105,231,255,.18);
+  border: 1px solid rgba(238, 99, 101,.18);
   border-radius: 12px;
   padding: 8px 7px;
-  background: rgba(255,255,255,.42);
+  background: rgba(14, 14, 14,.42);
 }
 
 .cg-metric b,
@@ -581,14 +581,14 @@ body.cg-command-directory-active::before {
 }
 
 .cg-metric b {
-  color: rgba(15,23,42,.90);
+  color: rgba(222, 209, 211,.90);
   font-size: 11px;
   letter-spacing: .04em;
 }
 
 .cg-metric span {
   margin-bottom: 2px;
-  color: rgba(76, 88, 112, .78);
+  color: rgba(178, 142, 144, .78);
   font-size: 7px;
   font-weight: 800;
   letter-spacing: .11em;
@@ -603,11 +603,11 @@ body.cg-command-directory-active::before {
 
 .cg-sparkline path {
   fill: none;
-  stroke: var(--cg-command-accent, #69e7ff);
+  stroke: var(--cg-command-accent, #ee6365);
   stroke-width: 2.2;
   stroke-linecap: round;
   stroke-linejoin: round;
-  filter: drop-shadow(0 0 4px rgba(105,231,255,.26));
+  filter: drop-shadow(0 0 4px rgba(238, 99, 101,.26));
 }
 
 .cg-event-feed {
@@ -624,7 +624,7 @@ body.cg-command-directory-active::before {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: rgba(41, 55, 82, .86);
+  color: rgba(210, 165, 168, .86);
   font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 8px;
   font-weight: 800;
@@ -640,33 +640,33 @@ body.cg-command-directory-active::before {
   min-width: 44px;
   width: 100%;
   padding: 0 14px;
-  border: 1px solid rgba(105,231,255,.34);
+  border: 1px solid rgba(238, 99, 101,.34);
   border-radius: 14px;
-  background: linear-gradient(135deg, rgba(20, 38, 64, .90), rgba(11, 19, 37, .78));
+  background: linear-gradient(135deg, rgba(64, 20, 23, .90), rgba(28, 20, 20, .78));
   color: #eefcff;
   font: 800 10px/1 "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   letter-spacing: .13em;
   text-transform: uppercase;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 10px 24px rgba(15,23,42,.18);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 10px 24px rgba(33, 24, 25,.18);
   cursor: pointer;
 }
 
 .cg-drawer-action:focus-visible {
-  outline: 2px solid rgba(105,231,255,.88);
+  outline: 2px solid rgba(238, 99, 101,.88);
   outline-offset: 3px;
 }
 
 body.cg-command-directory-active #cg-security-stack {
   width: min(252px, calc(100vw - 24px));
-  border-color: rgba(105,231,255,.32);
+  border-color: rgba(238, 99, 101,.32);
 }
 
 @media (prefers-color-scheme: dark) {
   .cg-command-card {
-    border-color: rgba(105,231,255,.28) !important;
+    border-color: rgba(238, 99, 101,.28) !important;
     background:
-      radial-gradient(circle at 12% 16%, rgba(105,231,255,.12), transparent 38%),
-      linear-gradient(135deg, rgba(15,23,42,.70), rgba(2,6,23,.56) 58%, rgba(25,17,55,.42)) !important;
+      radial-gradient(circle at 12% 16%, rgba(238, 99, 101,.12), transparent 38%),
+      linear-gradient(135deg, rgba(33, 24, 25,.70), rgba(2,6,23,.56) 58%, rgba(42, 30, 32,.42)) !important;
     color: rgba(242, 248, 255, .94);
     box-shadow:
       0 18px 46px rgba(0,0,0,.28),
@@ -676,13 +676,13 @@ body.cg-command-directory-active #cg-security-stack {
 
   .cg-command-card::after { mix-blend-mode: screen; opacity: .18; }
   .cg-status-badge,
-  .cg-metric { background: rgba(15,23,42,.46); color: rgba(229,246,255,.88); }
+  .cg-metric { background: rgba(33, 24, 25,.46); color: rgba(245, 239, 239,.88); }
   .cg-metric b { color: rgba(242,248,255,.94); }
   .cg-metric-line,
   .cg-hash-line,
   .cg-telemetry-ticker,
-  .cg-event-feed li { color: rgba(201, 218, 244, .78); }
-  .cg-command-drawer > div { background: linear-gradient(135deg, rgba(15,23,42,.72), rgba(2,6,23,.50)); }
+  .cg-event-feed li { color: rgba(231, 214, 215, .78); }
+  .cg-command-drawer > div { background: linear-gradient(135deg, rgba(33, 24, 25,.72), rgba(2,6,23,.50)); }
 }
 
 @media (max-width: 640px) {
