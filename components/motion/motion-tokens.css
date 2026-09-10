@@ -1,0 +1,42 @@
+/* Centralised motion + surface tokens for the React motion system.
+ * Mirrors clearglass-motion.css (the static site's layer) so the two
+ * implementations stay visually identical during the migration.
+ * No Tailwind: the project has no Tailwind dependency, and adding one for a
+ * token layer is not worth the build surface.
+ */
+:root{
+  --cgm-dur-micro:150ms;
+  --cgm-dur-micro-fast:120ms;
+  --cgm-dur-section:420ms;
+  --cgm-dur-section-slow:600ms;
+  --cgm-stagger:75ms;
+  --cgm-ease:cubic-bezier(.22,.61,.36,1);
+  --cgm-ease-out:cubic-bezier(.16,1,.3,1);
+  --cgm-signal:#ea4648;
+  --cgm-signal-2:#ee637a;
+  --cgm-wine:#7a123d;
+  --cgm-ok:#34d399;
+  --cgm-warn:#fbbf24;
+  --cgm-err:#ef4444;
+  --cgm-canvas:#07080b;
+  --cgm-ink:#f3eeee;
+  --cgm-body:#bcaeb0;
+  --cgm-faint:#8b7d81;
+  --cgm-magnet-max:5px;
+  --cgm-tilt-max:2.5deg;
+  --cgm-mx:50%;
+  --cgm-my:50%;
+  --cgm-mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+html,body{background:var(--cgm-canvas);color:var(--cgm-ink)}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.6}
+*,*::before,*::after{box-sizing:border-box}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:0.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.001ms !important;
+    scroll-behavior:auto !important;
+  }
+}

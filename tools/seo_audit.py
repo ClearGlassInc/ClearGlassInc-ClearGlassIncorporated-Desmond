@@ -41,6 +41,10 @@ OUT = ROOT / "data" / "seo" / "audit.json"
 
 # Directories that are not part of the indexable marketing site.
 SKIP_DIRS = {
+    # Build output. Without these the audit walks generated HTML and reports
+    # errors against it, so the suite could not pass on any machine where the
+    # Next app had been built or dependencies installed.
+    ".next", ".turbo", "out", "dist", "build",
     ".git", "node_modules", "clearglass-commerce", "apps", "tools",
     "bots", ".github", "assets", "docs",
 }
@@ -176,7 +180,7 @@ def discover_pages() -> list[Path]:
         rel = path.relative_to(ROOT)
         if rel.parts[0] in SKIP_DIRS and rel.as_posix() not in PUBLISHED_PAGES:
             continue
-        if any(part == "node_modules" for part in rel.parts):
+        if any(part in {"node_modules", ".next", ".turbo"} for part in rel.parts):
             continue
         pages.append(path)
     return sorted(pages)

@@ -200,6 +200,86 @@ ANTHROPIC_API_KEY        OPENAI_API_KEY         AUDIT_VALID_TOKEN
 This matters for §5: those workflows are currently inert. Registering them
 activates every one of these credential paths at once.
 
+
+### 1.9 Defects found by building and running the code (second pass)
+
+The findings above came from reading the repository. These came from installing,
+building, and driving it in a browser — and none were visible any other way.
+
+**The Next app had never been buildable.** `next build` failed with
+"reality-forensics/page.tsx doesn't have a root layout". The App Router requires
+`app/layout.tsx`; the project had none.
+
+**Its CSP made hydration impossible.** `next.config.ts` served
+`script-src 'self'` with no nonce and no `'unsafe-inline'`. The App Router
+injects inline bootstrap scripts, so Chromium refused every one:
+
+```
+Refused to execute inline script because it violates the following
+Content-Security-Policy directive: "script-src 'self'"
+```
+
+Measured before the fix: **0** shell components mounted, `data-cgm-motion` was
+`null`, and the body's first six children were all refused `SCRIPT` tags. Every
+client component in that app was dead. This is in the committed config and
+predates this audit.
+
+**`npm ci` could not install.** The root `package-lock.json` was a 24-entry stub
+still named `clearglassinc-site-tooling`, missing **every** dependency:
+
+```
+npm error code EUSAGE
+npm error Missing: next@15.5.2 from lock file
+npm error Missing: react@19.1.1 from lock file    … and 20 more
+```
+
+Any workflow running `npm ci` — `ci.yml`, `commerce-frontend-ci.yml`,
+`artemis-engineering.yml` — would have failed at install, before reaching a
+single test.
+
+**1 critical and 2 high dependency advisories.** Auditable only once install
+worked. `next@15.5.2` carried, among 30+ advisories, RCE in the React flight
+protocol (**CVSS 10**) and unauthenticated RCE on Windows-hosted servers
+(**CVSS 9**). Fixed by a non-major bump to `15.5.25`; critical count is now
+**0**. Two highs remain (libvips/libheif via `sharp`) with no non-breaking fix
+published.
+
+**`sentinel.js` did not parse.** A surplus `}` on line 80 produced
+`missing ) after argument list`, so the entire Sentinel client was inert on
+every page that loads it — the homepage included. `pages-check.yml` uploads
+`sentinel.css` as a release artifact, so this shipped as a styled shell with no
+behaviour behind it.
+
+**`artemis-command-layer.css` pulled its own baseline over the network.** Line 2
+was `@import url("https://raw.githubusercontent.com/…/artemis-command-layer.css")`
+— an import of an older commit of the same file, from a host the site's own
+`style-src` does not allow. **76 rules never loaded in production.** The blob is
+recoverable from this repo's history and is now vendored in at the import's
+exact position.
+
+**The root typecheck could never pass.** `tsconfig.json` swept `storefront/**`
+into the root project while mapping `@/*` to the repo root, so `@/lib/catalog`
+resolved to a path that does not exist. 122 errors, essentially all phantom.
+Scoping the root project to root-level code brought it to 22, then to **0**.
+
+**`tools/seo_audit.py` failed on any developer machine.** It did not exclude
+build output, so `test_repository_audit_has_no_errors` failed as soon as
+`npm install` or `next build` had run. That is how it was found: the suite read
+24 failures instead of 23 until `.next/` and `node_modules/` were parked and
+re-run. Fixed at the source rather than worked around.
+
+**One pre-existing layout-thrash issue, reported but not fixed.** The homepage's
+always-running `cg-neon-breathe` and `cgSealPulse` animations reflow content
+continuously — measured **15.1px** of vertical jitter on an element far down the
+*committed* page (13.3px with the new motion layer, marginally less). Deep click
+targets never settle as a result. Fixing it means touching the live hero, which
+did not belong in this work.
+
+**Missing source, second instance.** `scripts/stripe-sync/types.ts` is absent
+from the repo entirely; `planner.ts`, `sources.ts` and `report.ts` all import
+`./types.js`. 20 type errors trace to that one file. Recover it rather than
+rewrite it — it is the type contract for a live Stripe sync.
+
 ---
 
 ## 2. Repository Risks
@@ -216,6 +296,14 @@ activates every one of these credential paths at once.
 | R8 | No `ruff`/`pytest` gate; `CLAUDE.md`'s stated gates are fictional here | **Medium** | §1.5, §1.6 |
 | R9 | 9 pages ship without the canonical logo/tab icon; 1 indexable page missing from `sitemap.xml` | **Low** | §4.2 |
 | R10 | `visual-restoration.yml` pins `actions/checkout@v4` by tag while every other workflow pins by SHA | **Low** | grep of `.github/workflows/` |
+| R11 | `next@15.5.2` shipped a CVSS 10 RCE — **fixed** (bumped to 15.5.25) | **Critical** (resolved) | §1.9 |
+| R12 | Next app CSP blocked all hydration — **fixed** | **High** (resolved) | §1.9 |
+| R13 | `npm ci` failed; lockfile missing every dependency — **fixed** | **High** (resolved) | §1.9 |
+| R14 | `sentinel.js` did not parse; client inert site-wide — **fixed** | **High** (resolved) | §1.9 |
+| R15 | `artemis-command-layer.css` imported 76 rules from a CSP-blocked host — **fixed** | **Medium** (resolved) | §1.9 |
+| R16 | `scripts/stripe-sync/types.ts` absent — Stripe sync type contract lost | **High** | §1.9 |
+| R17 | Homepage animations reflow continuously (15.1px jitter) | **Medium** | §1.9 |
+| R18 | 2 high advisories remain via `sharp` (libvips/libheif); no non-breaking fix | **Medium** | §1.9 |
 
 ---
 
@@ -461,14 +549,19 @@ Two standing rules for this repository:
 
 | Criterion | Status | Basis |
 |---|---|---|
-| Successful build | **Partial** | Python imports resolve and 1578 tests pass. Node/Next builds not exercised — `node_modules` absent, and `npm ci` for 7 manifests was out of scope for this pass. |
-| Passing tests | **No** | 23 failed / 6 errors; suite still aborts under default config on 2 missing modules (§3.3). Improved from a state where it could not run at all. |
-| Passing workflows | **No** | Zero user-authored workflow runs have ever succeeded (§1.1). |
+| Successful build | **Yes, locally** | `next build` compiles all 4 routes (it could not build at all before — no root layout); `tsc --noEmit` 0 errors, down from 122; `npm run test` 8/8; `npm ci` succeeds, having failed outright. Not proven in CI — see §1.1. |
+| Passing tests | **No** | 23 failed / 1578 passed / 6 errors. Under default config the suite aborts on 2 missing modules (§3.3). Improved from a state where it could not run at all. |
+| Passing workflows | **No** | Zero user-authored workflow runs have ever succeeded (§1.1). Unchanged — this is not a code problem. |
 | Successful deployment | **No** | No Pages build since 2026-09-06 13:14 UTC (§1.2). |
 | Production health validation | **Unverified** | Live site unreachable from this environment (proxy 403). |
-| Dependency integrity | **Partial** | No committed secrets; 7 manifests present; Dependabot graph updates succeeded. No `npm audit`/`pip-audit` run — both need network egress unavailable here. |
-| Security review completion | **Partial** | Secrets, headers, CSP and workflow permissions reviewed (§1.8). CodeQL has never completed a run (6 failures, §1.1). No SAST executed. |
+| Dependency integrity | **Yes** | Lockfile regenerated and in sync; `npm ci` succeeds; **critical advisory count 0** (was 1 CVSS-10 RCE). 2 highs remain via `sharp` with no non-breaking fix (R18). |
+| Security review completion | **Substantially** | Secrets, headers, CSP, workflow permissions and dependency advisories all reviewed. Three live security-relevant defects fixed: the CVSS-10 RCE, the CSP that blocked hydration, and a CSP-blocked remote `@import`. CodeQL has still never completed a run (§1.1); no SAST executed. |
 | Deployment verification | **No** | Nothing to verify while §1.1 holds. |
+
+Two criteria moved from *not met* to *met* in this pass (build, dependency
+integrity) and one substantially advanced (security review). The four that
+remain unmet are all downstream of §1.1 — they are gated on Actions
+entitlement, not on code.
 
 **The single highest-value action is Step 1.** It is an owner action in GitHub
 settings, not an engineering change, and it unblocks six of the eight criteria.
