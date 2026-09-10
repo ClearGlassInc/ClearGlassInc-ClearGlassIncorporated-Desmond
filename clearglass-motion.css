@@ -1,0 +1,556 @@
+/* ClearGlass Cinematic Motion System — presentation layer.
+ *
+ * Loads after clearglass-crimson.css so it inherits the crimson canvas rather
+ * than fighting it. The spec for this system asked for cyan/violet signal
+ * accents; the site was deliberately repainted onto the crimson
+ * capabilities-brief palette, so the signal colour here is driven by
+ * --cgm-signal (default: the site's own --prism-1) and the atmospheric fields
+ * keep a wine secondary. Override --cgm-signal to retarget the whole system.
+ *
+ * Every rule is additive. Nothing in this file removes or overrides existing
+ * page geometry, and every animated construct has a static resting state, so a
+ * page renders correctly with this file present and JS disabled.
+ */
+
+:root{
+  /* Motion tokens. Layer 1 micro, Layer 2 section, Layer 3 ambient. */
+  --cgm-dur-micro:150ms;      /* spec: 120-180ms  */
+  --cgm-dur-micro-fast:120ms;
+  --cgm-dur-section:420ms;    /* spec: 240-600ms  */
+  --cgm-dur-section-slow:600ms;
+  --cgm-stagger:75ms;         /* spec: 60-90ms    */
+  --cgm-ease:cubic-bezier(.22,.61,.36,1);
+  --cgm-ease-out:cubic-bezier(.16,1,.3,1);
+
+  /* Signal palette, resolved from the site's crimson tokens. */
+  --cgm-signal:var(--prism-1,#ea4648);
+  --cgm-signal-2:var(--prism-2,#ee637a);
+  --cgm-wine:#7a123d;
+  --cgm-ok:var(--prism-4,#34d399);
+  --cgm-warn:var(--prism-5,#fbbf24);
+  --cgm-canvas:#07080b;
+
+  /* Interaction limits the spec pins explicitly. */
+  --cgm-magnet-max:5px;       /* spec: 4-6px      */
+  --cgm-tilt-max:2.5deg;      /* spec: 2-3deg     */
+
+  /* Pointer position, written by the engine; safe defaults for no-JS. */
+  --cgm-mx:50%;
+  --cgm-my:50%;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   ATMOSPHERIC BACKGROUND
+   Ten stacked layers, all pointer-events:none and pinned beneath content.
+   ───────────────────────────────────────────────────────────────────────── */
+.cgm-atmos{
+  position:fixed;
+  inset:0;
+  z-index:-1;                /* strictly beneath all content */
+  pointer-events:none;
+  overflow:hidden;
+  background:
+    radial-gradient(120% 80% at 50% -10%, #0d1018 0%, var(--cgm-canvas) 55%, #05060a 100%);
+  contain:strict;            /* isolate paint; keeps this off the main flow */
+}
+.cgm-atmos__field,
+.cgm-atmos__grid,
+.cgm-atmos__scan,
+.cgm-atmos__noise{position:absolute;inset:0}
+
+/* Primary + secondary light fields. Large, low-opacity, slow. */
+.cgm-atmos__field--signal{
+  background:radial-gradient(closest-side circle at 22% 18%,
+    color-mix(in srgb, var(--cgm-signal) 16%, transparent) 0%, transparent 100%);
+  filter:blur(18px);
+  animation:cgm-drift-a 42s ease-in-out infinite alternate;
+}
+.cgm-atmos__field--wine{
+  background:radial-gradient(closest-side circle at 78% 30%,
+    color-mix(in srgb, var(--cgm-wine) 20%, transparent) 0%, transparent 100%);
+  filter:blur(22px);
+  animation:cgm-drift-b 55s ease-in-out infinite alternate;
+}
+
+/* Fine technical grid, masked to a soft vignette. */
+.cgm-atmos__grid{
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--cgm-signal) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--cgm-signal-2) 4%, transparent) 1px, transparent 1px);
+  background-size:72px 72px;
+  mask-image:radial-gradient(circle at 50% 40%, #000 0%, rgba(0,0,0,.72) 42%, transparent 82%);
+  animation:cgm-grid-drift 32s linear infinite;
+}
+
+/* Slow diagonal scan. Single low-contrast sweep, never a flash. */
+.cgm-atmos__scan{
+  background:linear-gradient(115deg, transparent 42%,
+    color-mix(in srgb, var(--cgm-signal) 6%, transparent) 50%, transparent 58%);
+  background-size:280% 280%;
+  animation:cgm-scan 28s linear infinite;
+}
+
+/* Film noise, static — an animated grain is the classic battery sink. */
+.cgm-atmos__noise{
+  opacity:.035;
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Cursor-following light. Only bound on pointer-capable devices. */
+.cgm-atmos__cursor{
+  position:absolute;
+  width:520px;height:520px;
+  left:var(--cgm-mx);top:var(--cgm-my);
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:radial-gradient(circle,
+    color-mix(in srgb, var(--cgm-signal) 9%, transparent) 0%, transparent 68%);
+  opacity:0;
+  transition:opacity var(--cgm-dur-section) var(--cgm-ease);
+  will-change:transform;
+}
+.cgm-pointer-fine .cgm-atmos__cursor{opacity:1}
+
+/* Canvas host for the Layer-3 renderer ladder. */
+.cgm-atmos__canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:.55}
+
+@keyframes cgm-drift-a{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(4vw,3vh,0) scale(1.12)}}
+@keyframes cgm-drift-b{from{transform:translate3d(0,0,0) scale(1.05)}to{transform:translate3d(-5vw,-2vh,0) scale(1)}}
+@keyframes cgm-grid-drift{to{background-position:72px 72px}}
+@keyframes cgm-scan{to{background-position:280% 0}}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   LAYER 2 — SECTION REVEAL
+   Resting state is visible: the hidden state is only applied once the engine
+   confirms IntersectionObserver support, so no-JS never hides content.
+   ───────────────────────────────────────────────────────────────────────── */
+[data-cgm-reveal]{opacity:1;transform:none}
+.cgm-js [data-cgm-reveal]{
+  opacity:0;
+  transform:translate3d(0,18px,0);
+  transition:opacity var(--cgm-dur-section) var(--cgm-ease-out),
+             transform var(--cgm-dur-section) var(--cgm-ease-out);
+  transition-delay:var(--cgm-delay,0ms);
+  will-change:opacity,transform;
+}
+.cgm-js [data-cgm-reveal].cgm-in{opacity:1;transform:none}
+/* Drop the compositor hint once the entrance has played. */
+.cgm-js [data-cgm-reveal].cgm-settled{will-change:auto;transition:none}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   GLASS SURFACES
+   ───────────────────────────────────────────────────────────────────────── */
+.cgm-glass{
+  position:relative;
+  border-radius:20px;
+  border:1px solid color-mix(in srgb, #fff 8%, transparent);
+  background:color-mix(in srgb, var(--cgm-canvas) 62%, transparent);
+  backdrop-filter:blur(14px) saturate(120%);
+  overflow:hidden;
+  transition:transform var(--cgm-dur-micro) var(--cgm-ease),
+             border-color var(--cgm-dur-micro) var(--cgm-ease),
+             box-shadow var(--cgm-dur-micro) var(--cgm-ease);
+}
+/* Pointer-aware highlight, confined to the hovered card. */
+.cgm-glass::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity var(--cgm-dur-section) var(--cgm-ease);
+  background:radial-gradient(220px circle at var(--cgm-mx) var(--cgm-my),
+    color-mix(in srgb, var(--cgm-signal) 12%, transparent) 0%, transparent 70%);
+}
+.cgm-glass:hover::before,
+.cgm-glass:focus-within::before{opacity:1}
+/* Edge highlight — a refraction read, done with a gradient border only. */
+.cgm-glass::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  padding:1px;
+  background:linear-gradient(140deg,
+    color-mix(in srgb, var(--cgm-signal) 34%, transparent),
+    transparent 40%, transparent 60%,
+    color-mix(in srgb, var(--cgm-signal-2) 22%, transparent));
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+          mask-composite:exclude;
+  opacity:0;
+  transition:opacity var(--cgm-dur-micro) var(--cgm-ease);
+}
+.cgm-glass:hover::after,
+.cgm-glass:focus-within::after{opacity:1}
+.cgm-glass:hover{transform:translateY(-3px)}
+.cgm-glass > *{position:relative;z-index:1}   /* content stays above the wash */
+
+/* Tilt is opt-in and bounded; the engine only sets it for fine pointers. */
+.cgm-tilt{transform:perspective(900px) rotateX(var(--cgm-rx,0deg)) rotateY(var(--cgm-ry,0deg)) translateY(var(--cgm-ty,0))}
+
+/* Border-trace entrance for service cards. */
+.cgm-trace::after{opacity:1;clip-path:inset(0 100% 0 0)}
+.cgm-js .cgm-trace.cgm-in::after{
+  clip-path:inset(0 0 0 0);
+  transition:clip-path var(--cgm-dur-section-slow) var(--cgm-ease-out), opacity var(--cgm-dur-micro);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   LAYER 1 — BUTTONS
+   ───────────────────────────────────────────────────────────────────────── */
+.cgm-btn{
+  --cgm-btn-shift:0px;
+  position:relative;
+  display:inline-flex;align-items:center;gap:.6em;
+  padding:.85em 1.5em;
+  border-radius:999px;
+  border:1px solid color-mix(in srgb, var(--cgm-signal) 42%, transparent);
+  background:color-mix(in srgb, var(--cgm-signal) 12%, transparent);
+  color:var(--text,#e7e3e3);
+  font:inherit;font-weight:600;
+  text-decoration:none;
+  cursor:pointer;
+  overflow:hidden;
+  transform:translate(var(--cgm-btn-x,0),var(--cgm-btn-y,0));
+  transition:transform var(--cgm-dur-micro) var(--cgm-ease),
+             border-color var(--cgm-dur-micro) var(--cgm-ease),
+             box-shadow var(--cgm-dur-micro) var(--cgm-ease);
+}
+.cgm-btn::before{
+  content:'';position:absolute;inset:0;pointer-events:none;opacity:0;
+  background:linear-gradient(100deg, transparent,
+    color-mix(in srgb, var(--cgm-signal) 26%, transparent), transparent);
+  transition:opacity var(--cgm-dur-micro) var(--cgm-ease);
+}
+.cgm-btn:hover{
+  border-color:color-mix(in srgb, var(--cgm-signal) 72%, transparent);
+  box-shadow:0 0 0 1px color-mix(in srgb, var(--cgm-signal) 26%, transparent),
+             0 12px 34px color-mix(in srgb, var(--cgm-signal) 18%, transparent);
+}
+.cgm-btn:hover::before{opacity:1}
+.cgm-btn:active{transform:translate(var(--cgm-btn-x,0),calc(var(--cgm-btn-y,0) + 1px)) scale(.985)}
+.cgm-btn:focus-visible{outline:2px solid var(--cgm-signal);outline-offset:3px}
+.cgm-btn__arrow{transition:transform var(--cgm-dur-micro) var(--cgm-ease)}
+.cgm-btn:hover .cgm-btn__arrow{transform:translateX(3px)}
+.cgm-btn[aria-disabled="true"],.cgm-btn:disabled{opacity:.5;pointer-events:none}
+.cgm-btn[data-state="loading"] .cgm-btn__arrow{animation:cgm-spin 800ms linear infinite}
+.cgm-btn[data-state="success"]{border-color:var(--cgm-ok);background:color-mix(in srgb, var(--cgm-ok) 14%, transparent)}
+.cgm-btn[data-state="error"]{border-color:#ef4444;background:color-mix(in srgb,#ef4444 14%, transparent)}
+.cgm-btn--secondary{
+  border-color:color-mix(in srgb,#fff 16%, transparent);
+  background:color-mix(in srgb,#fff 4%, transparent);
+}
+@keyframes cgm-spin{to{transform:rotate(360deg)}}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   CAPABILITY CONSTELLATION
+   ───────────────────────────────────────────────────────────────────────── */
+.cgm-constellation{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
+  gap:22px;
+  align-items:stretch;
+}
+.cgm-constellation__stage{
+  position:relative;
+  min-height:420px;
+  border-radius:22px;
+  overflow:hidden;
+  background:color-mix(in srgb, var(--cgm-canvas) 70%, transparent);
+  border:1px solid color-mix(in srgb,#fff 7%, transparent);
+}
+.cgm-constellation__stage canvas,
+.cgm-constellation__stage svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+/* Node buttons are real DOM: keyboard reachable, screen-reader legible, and
+   positioned deterministically from data attributes rather than at random. */
+.cgm-node{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  display:inline-flex;align-items:center;gap:.5em;
+  padding:.5em .85em;
+  border-radius:999px;
+  border:1px solid color-mix(in srgb, var(--cgm-signal) 34%, transparent);
+  background:color-mix(in srgb, var(--cgm-canvas) 84%, transparent);
+  color:var(--text-2,#c0afb0);
+  font-family:var(--mono,monospace);
+  font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:border-color var(--cgm-dur-micro) var(--cgm-ease),
+             color var(--cgm-dur-micro) var(--cgm-ease),
+             box-shadow var(--cgm-dur-micro) var(--cgm-ease);
+}
+.cgm-node__dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--cgm-signal);
+  box-shadow:0 0 10px var(--cgm-signal);
+  flex:none;
+}
+.cgm-node:hover,.cgm-node:focus-visible{
+  border-color:var(--cgm-signal);
+  color:var(--text,#e7e3e3);
+  box-shadow:0 0 0 1px color-mix(in srgb, var(--cgm-signal) 30%, transparent),
+             0 8px 26px color-mix(in srgb, var(--cgm-signal) 20%, transparent);
+}
+.cgm-node:focus-visible{outline:2px solid var(--cgm-signal);outline-offset:3px}
+/* Selected state carries a shape change as well as colour, never colour alone. */
+.cgm-node[aria-pressed="true"]{
+  border-color:var(--cgm-signal);
+  color:#fff;
+  background:color-mix(in srgb, var(--cgm-signal) 26%, transparent);
+}
+.cgm-node[aria-pressed="true"] .cgm-node__dot{
+  border-radius:2px;                /* shape cue, not colour-only */
+  transform:rotate(45deg);
+}
+.cgm-constellation__readout{
+  border-radius:22px;
+  padding:clamp(20px,2.4vw,30px);
+  background:color-mix(in srgb, var(--cgm-canvas) 62%, transparent);
+  border:1px solid color-mix(in srgb,#fff 7%, transparent);
+}
+.cgm-constellation__pathway{
+  margin-top:14px;padding:12px 14px;
+  border-radius:14px;
+  border:1px dashed color-mix(in srgb, var(--cgm-signal) 34%, transparent);
+  font-family:var(--mono,monospace);font-size:11.5px;line-height:1.7;
+  color:var(--text-2,#c0afb0);
+}
+.cgm-illustrative{
+  display:inline-block;margin-top:14px;
+  font-family:var(--mono,monospace);font-size:9.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--text-4,#af9c9d);opacity:.75;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   SCROLL NARRATIVE
+   Plain stacked sections. No scroll hijacking, no pinning, no scrollTo.
+   ───────────────────────────────────────────────────────────────────────── */
+.cgm-scene{position:relative;padding:clamp(44px,5.5vw,76px) 0}
+/* Consecutive scenes would otherwise stack two full pads. */
+.cgm-scene + .cgm-scene{padding-top:0}
+.cgm-scene__frag{
+  display:inline-flex;align-items:center;
+  padding:.55em .9em;margin:.3em;
+  border-radius:12px;
+  border:1px solid color-mix(in srgb,#fff 10%, transparent);
+  background:color-mix(in srgb, var(--cgm-canvas) 74%, transparent);
+  font-family:var(--mono,monospace);font-size:11px;letter-spacing:.1em;
+  color:var(--text-3,#968283);
+  transition:transform var(--cgm-dur-section-slow) var(--cgm-ease-out),
+             border-color var(--cgm-dur-section) var(--cgm-ease);
+}
+/* Scene 1 scatters, later scenes align — expressed as a class the engine
+   toggles, so the resting (aligned) state is what no-JS and reduced motion get. */
+.cgm-js .cgm-scene--scatter .cgm-scene__frag{transform:translate(var(--cgm-fx,0),var(--cgm-fy,0)) rotate(var(--cgm-fr,0deg))}
+.cgm-js .cgm-scene--scatter.cgm-in .cgm-scene__frag{transform:none;border-color:color-mix(in srgb, var(--cgm-signal) 30%, transparent)}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   LIVE SIGNAL BADGE — animates only on a real state change.
+   ───────────────────────────────────────────────────────────────────────── */
+.cgm-signal-badge{
+  display:inline-flex;align-items:center;gap:.5em;
+  font-family:var(--mono,monospace);font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--text-3,#968283);
+}
+.cgm-signal-badge__dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.cgm-signal-badge[data-state="healthy"]{color:var(--cgm-ok)}
+.cgm-signal-badge[data-state="healthy"] .cgm-signal-badge__dot{animation:cgm-breathe 4.5s ease-in-out infinite}
+.cgm-signal-badge[data-state="warning"]{color:var(--cgm-warn)}
+.cgm-signal-badge[data-state="error"]{color:#ef4444}          /* static, plus text */
+.cgm-signal-badge[data-state="stale"]{color:var(--cgm-warn);opacity:.85}
+.cgm-signal-badge[data-state="unavailable"]{color:var(--text-4,#af9c9d)}
+.cgm-signal-badge.cgm-pulse{animation:cgm-edge-pulse 600ms var(--cgm-ease)}
+@keyframes cgm-breathe{0%,100%{opacity:.45}50%{opacity:1}}
+@keyframes cgm-edge-pulse{
+  from{box-shadow:0 0 0 0 color-mix(in srgb, currentColor 55%, transparent)}
+  to{box-shadow:0 0 0 9px transparent}
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   MOTION PREFERENCE CONTROL
+   ───────────────────────────────────────────────────────────────────────── */
+/* Bottom-right is already occupied on this site by the Sentinel launcher
+   (z-index 800) and the Stealth Glass pill (z-index 2147483647), and
+   bottom-left by two 38px scroll controls sitting from 6px to 94px. This sits
+   above those, on the left, so it is neither buried nor overlapping. */
+.cgm-motion-toggle{
+  position:fixed;left:14px;bottom:104px;z-index:95;
+  display:none;                        /* engine reveals it */
+  align-items:center;gap:.5em;
+  padding:.5em .8em;
+  border-radius:999px;
+  border:1px solid color-mix(in srgb,#fff 14%, transparent);
+  background:color-mix(in srgb, var(--cgm-canvas) 88%, transparent);
+  backdrop-filter:blur(10px);
+  color:var(--text-2,#c0afb0);
+  font-family:var(--mono,monospace);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;cursor:pointer;
+}
+.cgm-js .cgm-motion-toggle{display:inline-flex}
+.cgm-motion-toggle:focus-visible{outline:2px solid var(--cgm-signal);outline-offset:3px}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   CUSTOM CURSOR — additive ring; the native cursor is never hidden.
+   ───────────────────────────────────────────────────────────────────────── */
+.cgm-cursor{
+  position:fixed;left:0;top:0;z-index:120;
+  width:22px;height:22px;
+  margin:-11px 0 0 -11px;
+  border-radius:50%;
+  border:1px solid color-mix(in srgb, var(--cgm-signal) 55%, transparent);
+  pointer-events:none;
+  opacity:0;
+  transform:translate3d(var(--cgm-cx,0),var(--cgm-cy,0),0) scale(1);
+  transition:opacity 200ms linear, width var(--cgm-dur-micro-fast) var(--cgm-ease),
+             height var(--cgm-dur-micro-fast) var(--cgm-ease);
+  will-change:transform;
+}
+.cgm-cursor::after{
+  content:'';position:absolute;left:50%;top:50%;
+  width:4px;height:4px;margin:-2px 0 0 -2px;
+  border-radius:50%;background:var(--cgm-signal);
+}
+.cgm-pointer-fine.cgm-cursor-on .cgm-cursor{opacity:.9}
+.cgm-cursor.cgm-cursor--hot{width:34px;height:34px;margin:-17px 0 0 -17px}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   FALLBACKS
+   ───────────────────────────────────────────────────────────────────────── */
+.cgm-fallback-only{display:none}
+.cgm-no-webgpu .cgm-fallback-only{display:block}
+@supports not (backdrop-filter:blur(2px)){
+  .cgm-glass,.cgm-constellation__readout,.cgm-constellation__stage{
+    background:color-mix(in srgb, var(--cgm-canvas) 92%, transparent);
+  }
+}
+
+/* Mobile: drop the expensive compositing, keep the composition. */
+@media(max-width:900px){
+  .cgm-constellation{grid-template-columns:1fr}
+  .cgm-constellation__stage{min-height:320px}
+  .cgm-atmos__scan,.cgm-atmos__noise,.cgm-atmos__cursor{display:none}
+  .cgm-atmos__field--signal,.cgm-atmos__field--wine{filter:none;animation:none}
+  .cgm-glass{backdrop-filter:blur(8px)}
+  .cgm-cursor{display:none}
+}
+
+/* Coarse pointers never get magnet, tilt or cursor. */
+@media(hover:none),(pointer:coarse){
+  .cgm-tilt{transform:none}
+  .cgm-btn{transform:none}
+  .cgm-cursor{display:none}
+  .cgm-glass:hover{transform:none}
+}
+
+/* Honour the OS setting even before the engine boots. */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:0.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.001ms !important;
+    scroll-behavior:auto !important;
+  }
+  .cgm-js [data-cgm-reveal]{opacity:1 !important;transform:none !important}
+  .cgm-js .cgm-scene--scatter .cgm-scene__frag{transform:none !important}
+  .cgm-atmos__field--signal,.cgm-atmos__field--wine,
+  .cgm-atmos__grid,.cgm-atmos__scan,.cgm-atmos__cursor,.cgm-atmos__canvas{animation:none !important}
+  .cgm-atmos__scan,.cgm-atmos__noise,.cgm-atmos__cursor,.cgm-atmos__canvas,.cgm-cursor{display:none !important}
+  .cgm-trace::after{clip-path:none !important}
+}
+
+/* Same treatment when the user opts out via the in-page control. */
+html[data-cgm-motion="reduced"] [data-cgm-reveal]{opacity:1 !important;transform:none !important}
+html[data-cgm-motion="reduced"] .cgm-scene--scatter .cgm-scene__frag{transform:none !important}
+html[data-cgm-motion="reduced"] .cgm-atmos__scan,
+html[data-cgm-motion="reduced"] .cgm-atmos__noise,
+html[data-cgm-motion="reduced"] .cgm-atmos__cursor,
+html[data-cgm-motion="reduced"] .cgm-atmos__canvas,
+html[data-cgm-motion="reduced"] .cgm-cursor{display:none !important}
+html[data-cgm-motion="reduced"] .cgm-atmos__field--signal,
+html[data-cgm-motion="reduced"] .cgm-atmos__field--wine,
+html[data-cgm-motion="reduced"] .cgm-atmos__grid{animation:none !important}
+html[data-cgm-motion="reduced"] .cgm-glass:hover{transform:none}
+
+/* Forced-colours / high contrast: drop decoration, keep structure. */
+@media (forced-colors: active){
+  .cgm-atmos{display:none}
+  .cgm-glass,.cgm-node,.cgm-btn{border:1px solid CanvasText;background:Canvas}
+  .cgm-node__dot,.cgm-signal-badge__dot{background:CanvasText}
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   LAYOUT for the injected interface sections.
+   Deliberately narrow in scope (.cgm-* only) so it cannot reach existing
+   page geometry. Centred with margin-inline:auto, matching the site-wide
+   centring fix rather than re-introducing the flush-left bug.
+   ───────────────────────────────────────────────────────────────────────── */
+.cgm-motion-sections{position:relative;z-index:1}
+.cgm-shell{
+  width:min(1120px,92vw);
+  margin-inline:auto;
+  padding-inline:0;
+}
+.cgm-eyebrow{
+  font-family:var(--mono,monospace);
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--cgm-signal);
+  margin:0 0 14px;
+}
+.cgm-display{
+  font-family:var(--serif,Georgia,serif);
+  font-size:clamp(1.9rem,4.4vw,3.4rem);
+  font-weight:300;line-height:1.08;letter-spacing:-.02em;
+  color:var(--text,#e7e3e3);
+  margin:0;
+  max-width:24ch;
+}
+.cgm-lede{
+  margin:18px 0 0;
+  max-width:62ch;
+  font-size:clamp(.98rem,1.5vw,1.12rem);
+  line-height:1.75;
+  color:var(--text-3,#968283);
+}
+.cgm-actions{display:flex;flex-wrap:wrap;gap:12px;margin:28px 0 0}
+
+.cgm-hero-nodes,.cgm-services,.cgm-scene__frags{
+  list-style:none;
+  margin:34px 0 0;
+  padding:0;
+}
+.cgm-hero-nodes,.cgm-services{
+  display:grid;
+  gap:12px;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));
+}
+.cgm-scene__frags{display:flex;flex-wrap:wrap;gap:2px}
+.cgm-hero-node,.cgm-service{padding:20px}
+.cgm-hero-node h3,.cgm-service h3{
+  font-family:var(--mono,monospace);
+  font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--cgm-signal);
+  margin:0 0 10px;
+}
+.cgm-hero-node p,.cgm-service p{
+  margin:0;
+  font-size:13.5px;line-height:1.65;
+  color:var(--text-3,#968283);
+}
+.cgm-constellation__readout h3{
+  font-family:var(--serif,Georgia,serif);
+  font-size:clamp(1.3rem,2.4vw,1.9rem);
+  font-weight:500;margin:0 0 12px;
+  color:var(--text,#e7e3e3);
+}
+.cgm-constellation__readout p{
+  margin:0;font-size:14px;line-height:1.75;
+  color:var(--text-3,#968283);
+}
+@media(max-width:600px){
+  .cgm-display{max-width:none}
+  .cgm-hero-nodes,.cgm-services{grid-template-columns:1fr}
+}
