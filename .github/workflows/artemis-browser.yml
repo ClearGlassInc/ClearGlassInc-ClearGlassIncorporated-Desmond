@@ -1,0 +1,47 @@
+name: Artemis Browser Assistant
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/artemis-browser/**'
+      - 'artemis/intelligence/browser_assistant.py'
+      - 'artemis/tests/test_browser_assistant.py'
+      - '.github/workflows/artemis-browser.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/artemis-browser/**'
+      - 'artemis/intelligence/browser_assistant.py'
+      - 'artemis/tests/test_browser_assistant.py'
+      - '.github/workflows/artemis-browser.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-assistant:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install pytest
+      - run: python -m pytest artemis/tests/test_browser_assistant.py -q
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v6.0.0
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: apps/artemis-browser/package-lock.json
+      - working-directory: apps/artemis-browser
+        run: npm ci
+      - working-directory: apps/artemis-browser
+        run: npm run typecheck
+      - working-directory: apps/artemis-browser
+        run: npm run build

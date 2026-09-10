@@ -1,0 +1,22 @@
+# Caller side of the workflow_call pair (docs/CROSS_REPO_GITHUB_ACTIONS.md):
+# runs the reusable Percival policy gate whenever governed-engine code changes.
+name: Percival Policy Gate
+
+on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "percival_v9/**"
+      - "tests/test_percival_v9_policy.py"
+      - ".github/workflows/percival-policy-*.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  call-policy-gate:
+    name: Policy gate
+    uses: ./.github/workflows/percival-policy-reusable.yml
+    with:
+      python-version: "3.11"

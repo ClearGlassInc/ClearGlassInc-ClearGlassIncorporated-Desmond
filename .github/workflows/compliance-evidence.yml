@@ -1,0 +1,59 @@
+name: Compliance Evidence
+
+# Continuous compliance: harvest machine-readable control evidence on a schedule
+# so SOC2 / ISO 27001 audit prep is zero. Evidence is uploaded as an immutable
+# artifact (swap for an object-locked S3 bucket in production).
+
+on:
+  schedule:
+    - cron: "0 8 * * 1" # Mondays 08:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  harvest:
+    name: Harvest Control Evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Collect repository control state
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          ts="$(date -u +%FT%TZ)"
+
+          # CC8.1 Change management — branch protection / ruleset state.
+          gh api "repos/${{ github.repository }}/rulesets" > evidence/rulesets.json || echo '[]' > evidence/rulesets.json
+
+          # CC7.1 Vuln management — open Dependabot alerts (best effort).
+          gh api "repos/${{ github.repository }}/dependabot/alerts?state=open" \
+            > evidence/dependabot-alerts.json 2>/dev/null || echo '[]' > evidence/dependabot-alerts.json
+
+          # CC6.1 Access control — collaborators & permission levels.
+          gh api "repos/${{ github.repository }}/collaborators" \
+            > evidence/collaborators.json 2>/dev/null || echo '[]' > evidence/collaborators.json
+
+          # Manifest with provenance of the collection itself.
+          cat > evidence/manifest.json <<EOF
+          {
+            "collected_at": "${ts}",
+            "repository": "${{ github.repository }}",
+            "run_id": "${{ github.run_id }}",
+            "commit": "${{ github.sha }}"
+          }
+          EOF
+
+      - name: Upload evidence bundle
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: compliance-evidence-${{ github.run_id }}
+          path: evidence/
+          retention-days: 400 # exceeds a 12-month audit window

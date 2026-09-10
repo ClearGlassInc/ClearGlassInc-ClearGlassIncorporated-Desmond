@@ -1,0 +1,77 @@
+name: Defender Watch
+
+# ClearGlass Defender — defensive security orchestrator.
+# Sensor (scan) → Policy (classify) → Response (alert + advisory quarantine).
+# This workflow is written to pass the Defender's own rules: least-privilege
+# token, SHA-pinned actions, no pull_request_target, no untrusted interpolation.
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  schedule:
+    - cron: "0 */6 * * *"   # every 6 hours — drift + periodic incident sweep
+  workflow_dispatch:
+
+# Least privilege by default; the job widens only to what it needs.
+permissions:
+  contents: read
+
+concurrency:
+  group: defender-watch-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  defend:
+    name: Scan, classify, contain
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read       # read the tree to scan it
+      issues: write        # open an incident issue for critical findings only
+    steps:
+      - name: Checkout (full history for a complete scan)
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+
+      - name: Run defender (sensor → policy → response, build gate)
+        env:
+          # Token is used only to open an incident issue for CRITICAL findings.
+          # On fork PRs it is read-only and issue creation degrades to a no-op.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.DEFENDER_SLACK_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DEFENDER_DISCORD_WEBHOOK_URL }}
+        run: python -m bots.defender
+
+      - name: Python dependency audit (high/critical gate)
+        if: ${{ hashFiles('requirements.txt') != '' }}
+        run: |
+          python -m pip install --quiet pip-audit
+          pip-audit -r requirements.txt
+
+      - name: Node dependency audit (high/critical gate)
+        if: ${{ hashFiles('**/package-lock.json') != '' }}
+        run: |
+          set -euo pipefail
+          while IFS= read -r lockfile; do
+            app_dir="$(dirname "$lockfile")"
+            echo "::group::npm audit ${app_dir}"
+            npm --prefix "$app_dir" audit --audit-level=high
+            echo "::endgroup::"
+          done < <(find . -path '*/node_modules' -prune -o -name package-lock.json -print | sort)
+
+      - name: Upload defender report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: defender-report
+          path: operations/output/defender/
+          retention-days: 30

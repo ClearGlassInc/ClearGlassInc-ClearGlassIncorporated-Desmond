@@ -1,0 +1,51 @@
+name: Commerce Frontend CI
+
+# Typecheck + production-build the customer-facing storefront and the ops admin
+# app. These Next.js apps deploy independently (Render / Docker) and were NOT
+# covered by any existing gate, so a type error could — and did — reach main
+# while every Python/site check stayed green. This gate fails the build on any
+# type or compile error before it can ship.
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "clearglass-commerce/storefront/**"
+      - "clearglass-commerce/admin/**"
+      - ".github/workflows/commerce-frontend-ci.yml"
+  pull_request:
+    paths:
+      - "clearglass-commerce/storefront/**"
+      - "clearglass-commerce/admin/**"
+      - ".github/workflows/commerce-frontend-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Typecheck & build (${{ matrix.app }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [storefront, admin]
+    defaults:
+      run:
+        working-directory: clearglass-commerce/${{ matrix.app }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: clearglass-commerce/${{ matrix.app }}/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Typecheck (tsc --noEmit)
+        run: npx tsc --noEmit
+      - name: Production build (next build)
+        run: npm run build

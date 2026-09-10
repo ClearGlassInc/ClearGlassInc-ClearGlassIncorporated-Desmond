@@ -1,0 +1,51 @@
+name: Marketing — Market Intelligence Lane
+
+# Runs the ClearGlass Marketing Command OS "Market Intelligence" lane (INTEL-01):
+# a governed, READ_ONLY weekly job that writes a delta *scaffold* to
+# marketing/output/market-intelligence/. It never fabricates findings — every
+# intelligence field is an unverified placeholder for an analyst to enrich.
+# Commits are signed via the shared verified-commit action (GitHub API) so they
+# render as Verified, with a git-push fallback.
+
+on:
+  schedule:
+    - cron: "0 13 * * 1" # Mondays 13:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: marketing-market-intelligence
+  cancel-in-progress: false
+
+jobs:
+  run-lane:
+    name: Market Intelligence delta
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: automation-write
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: true # Required only for this job's audited git push (fallback path).
+          fetch-depth: 0
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+
+      - name: Validate watchlist config
+        run: python3 scripts/market_intelligence_lane.py --check
+
+      - name: Generate weekly delta scaffold
+        run: python3 scripts/market_intelligence_lane.py
+
+      - name: Commit report (Verified)
+        uses: ./.github/actions/verified-commit
+        with:
+          paths: marketing/output/market-intelligence
+          message: "intel: weekly market-intelligence delta scaffold [skip ci]"
+          branch: main

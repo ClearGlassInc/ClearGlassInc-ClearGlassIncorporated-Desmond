@@ -1,0 +1,56 @@
+name: Policy Gate
+
+# Policy-as-code gate. Replaces scattered grep-checks with one tested OPA/Rego
+# bundle (platform/policies). `deny` rules block the merge; `warn` rules are
+# advisory and surfaced in the job summary. The policy bundle is itself unit
+# tested, so a broken policy can never ship.
+
+on:
+  # Runs on every PR (no path filter). This workflow is a required status check
+  # in infra/github/rulesets.tf — path-filtering it would let docs-only PRs skip
+  # the gate, so the required check would never report and merges would deadlock.
+  # Conftest runs in seconds, so unconditional execution is cheap.
+  pull_request:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CONFTEST_VERSION: "0.56.0"
+
+jobs:
+  opa:
+    # The check-run name (this job's `name`) is the status context referenced by
+    # the branch ruleset's required_status_checks. It MUST match the value in
+    # infra/github/variables.tf (`Policy Gate`).
+    name: Policy Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      # Pinned to a full commit SHA — the standard this gate enforces.
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Install Conftest
+        run: |
+          set -euo pipefail
+          curl -sSfL \
+            "https://github.com/open-policy-agent/conftest/releases/download/v${CONFTEST_VERSION}/conftest_${CONFTEST_VERSION}_Linux_x86_64.tar.gz" \
+            | tar -xz conftest
+          sudo install -m 0755 conftest /usr/local/bin/conftest
+          conftest --version
+
+      - name: Verify policy unit tests
+        run: conftest verify --policy platform/policies
+
+      - name: Evaluate workflows & IaC (deny = block, warn = advisory)
+        run: |
+          conftest test \
+            .github/workflows/*.yml \
+            infra/github/*.tf \
+            --policy platform/policies \
+            --output github

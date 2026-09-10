@@ -1,0 +1,213 @@
+name: IP Protection Bot - Risk Assessment
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    name: IP Risk Assessment
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Secret Pattern Scan
+        id: secrets
+        run: |
+          # Scan recent commit patches for common credential patterns.
+          # Findings are recorded for the consolidated report without suppressing
+          # operational failures in the scan itself.
+          if git log --patch --since="7 days ago" | \
+              grep -qiE '(api[_-]?key|secret[_-]?key|password|private[_-]?key)\s*[:=]\s*["'\''][^"'\'']{8,}'; then
+            echo "::warning::Potential credential pattern detected in recent commits — review git history"
+            echo "result=WARN — potential credential pattern in recent commits" >> "$GITHUB_OUTPUT"
+          else
+            echo "Secret pattern scan: no credential patterns detected"
+            echo "result=PASS" >> "$GITHUB_OUTPUT"
+          fi
+
+      # The action hard errors when Dependency Graph is switched off, which
+      # fails the whole assessment without producing a dependency finding.
+      # Probe first so the critical-severity gate below still applies whenever
+      # the graph is actually available.
+      - name: Probe Dependency Graph availability
+        id: depgraph
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          # Probe the comparison endpoint the action itself calls. The SBOM
+          # endpoint is not a valid proxy for availability: it answers 200 on
+          # this repository while the comparison API still rejects the request.
+          code="$(curl -s -o /dev/null -w '%{http_code}' \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/dependency-graph/compare/${BASE_SHA}...${HEAD_SHA}")"
+          if [ "$code" = "200" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::warning title=Dependency Review skipped::Dependency graph comparison returned HTTP ${code}; dependency review cannot run. Enable Dependency graph under Settings → Code security and analysis."
+          fi
+
+      # dependency-review-action only supports pull_request events, so this
+      # step stays gated on the probe having actually run.
+      - name: Dependency Review
+        id: deps
+        if: steps.depgraph.outputs.available == 'true'
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: critical
+
+      - name: License Compliance (REUSE/SPDX)
+        id: reuse
+        uses: fsfe/reuse-action@676e2d560c9a403aa252096d99fcab3e1132b0f5 # v6.0.0
+        with:
+          args: lint
+        # Non-blocking: reuse-action@v6 changed its input interface and the
+        # repo is not yet fully REUSE/SPDX-annotated. Flags for review rather
+        # than hard-failing CI (part of making IP Risk Assessment advisory).
+        continue-on-error: true
+
+      - name: Detect AI-Generated Commits
+        id: ai
+        continue-on-error: true
+        run: |
+          # Advisory only: surface AI-tagged commits for human authorship review.
+          # (Previously exited 1 under continue-on-error, which both suppressed
+          # the failure AND prevented the scheduled issue from ever firing — the
+          # finding is now recorded and surfaced via the report instead.)
+          AI_COMMITS=$(git log --since="30 days ago" --pretty=format:'%s' | grep -iE "(copilot|ai-generated|llm|gpt)" || true)
+          if [ -n "$AI_COMMITS" ]; then
+            echo "AI-assisted commits detected (potential copyright/human authorship risk):"
+            echo "$AI_COMMITS"
+            echo "::warning::AI-tagged commits detected — require human review for originality"
+            echo "result=WARN — AI-tagged commits require human authorship review" >> "$GITHUB_OUTPUT"
+          else
+            echo "No AI commit tags found."
+            echo "result=PASS" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check .gitignore and Proprietary Notices
+        id: gitignore
+        continue-on-error: true
+        run: |
+          # Advisory only (same rationale as the AI-commit step): record the
+          # finding rather than exit 1 under continue-on-error.
+          status="PASS"
+          if ! git check-ignore .env prompts/ secrets/ >/dev/null 2>&1; then
+            echo "::warning::Sensitive paths (.env, prompts/, secrets/) are not covered by .gitignore"
+            status="WARN — sensitive paths not git-ignored"
+          fi
+          if ! grep -q "PROPRIETARY\|CONFIDENTIAL" README.md CONTRIBUTING.md 2>/dev/null; then
+            echo "::warning::Add a proprietary/confidential notice to README/CONTRIBUTING"
+          fi
+          echo "result=$status" >> "$GITHUB_OUTPUT"
+
+      - name: Generate Audit Report
+        id: report
+        shell: bash
+        env:
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+          SECRETS_RESULT: ${{ steps.secrets.outputs.result }}
+          DEPS_OUTCOME: ${{ steps.deps.outcome }}
+          REUSE_OUTCOME: ${{ steps.reuse.outcome }}
+          AI_RESULT: ${{ steps.ai.outputs.result }}
+          GITIGNORE_RESULT: ${{ steps.gitignore.outputs.result }}
+        run: |
+          # Translate each step's real result into a readable status. The report
+          # reflects what the scans actually found instead of a hardcoded PASS.
+          secrets="${SECRETS_RESULT:-UNKNOWN (step did not run)}"
+          ai="${AI_RESULT:-UNKNOWN (step did not run)}"
+          gitignore="${GITIGNORE_RESULT:-UNKNOWN (step did not run)}"
+
+          if [ "$DEPS_OUTCOME" = "success" ]; then
+            deps="PASS — no critical vulnerabilities"
+          else
+            deps="REVIEW — findings reported, or Dependency Graph/Advanced Security unavailable"
+          fi
+          if [ "$REUSE_OUTCOME" = "success" ]; then
+            licenses="PASS — REUSE/SPDX lint clean"
+          else
+            licenses="REVIEW — repo not fully REUSE/SPDX-annotated"
+          fi
+
+          # Any non-PASS status counts as a finding worth flagging.
+          findings=0
+          for s in "$secrets" "$deps" "$licenses" "$ai" "$gitignore"; do
+            case "$s" in PASS*) ;; *) findings=$((findings + 1));; esac
+          done
+          if [ "$findings" -gt 0 ]; then overall="REVIEW NEEDED ($findings finding(s))"; else overall="PASSED"; fi
+
+          {
+            echo "# IP Risk Assessment Report"
+            echo "**Repo:** ${REPO}"
+            echo "**Commit:** ${SHA}"
+            echo "**Status:** ${overall}"
+            echo
+            echo "## Scans"
+            echo "- **Secrets:** ${secrets}"
+            echo "- **Dependencies:** ${deps}"
+            echo "- **Licenses:** ${licenses}"
+            echo "- **AI Authorship:** ${ai}"
+            echo "- **gitignore:** ${gitignore}"
+            echo
+            echo "**Recommendations:** Review any non-PASS items above; consult counsel on AI usage policy."
+          } > ip-risk-report.md
+
+          cat ip-risk-report.md >> "$GITHUB_STEP_SUMMARY"
+          echo "has_findings=$([ "$findings" -gt 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload Report Artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ip-risk-report-${{ github.run_id }}
+          path: ip-risk-report.md
+          retention-days: 30
+
+      - name: Prepare issue body
+        if: always() && github.event_name == 'schedule' && steps.report.outputs.has_findings == 'true'
+        id: issue_body
+        run: |
+          {
+            echo "report<<REPORT_EOF"
+            cat ip-risk-report.md 2>/dev/null || echo "IP risk report unavailable."
+            echo "REPORT_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Open issue on findings (scheduled runs)
+        # Driven by real findings rather than failure(): every scan is advisory
+        # (continue-on-error), so the job rarely reaches a failed state — the old
+        # `failure()` condition meant findings never opened an issue.
+        if: always() && github.event_name == 'schedule' && steps.report.outputs.has_findings == 'true'
+        uses: actions-ecosystem/action-create-issue@b02a3c1d9d929a5839315bd255e40389f0dab627 # v1.0.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          title: "IP Risk Alert: ${{ github.repository }}"
+          # This action takes the issue body inline (it has no body_path input)
+          # and expects labels as a newline-separated list — a comma-separated
+          # string is treated as one invalid label name and 422s.
+          body: ${{ steps.issue_body.outputs.report }}
+          labels: |
+            security
+            legal

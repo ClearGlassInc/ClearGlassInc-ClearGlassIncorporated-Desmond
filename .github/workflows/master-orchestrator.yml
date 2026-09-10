@@ -1,0 +1,35 @@
+name: 4-D Dominance Pipeline
+
+# Master orchestrator for the 4-D Dominance system (see 4D_DOMINANCE_ACTIVATION.md
+# and four_d_dominance/). Fans out to one reusable workflow per domain. Every
+# domain job runs the pipeline in dry-run mode: it drafts and scores work, and
+# routes anything risky to human approval — nothing is published or deployed here.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *" # every 6 hours
+
+permissions:
+  contents: read
+
+concurrency:
+  group: 4d-dominance-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web-seo:
+    name: Web / SEO
+    uses: ./.github/workflows/seo-optimizer.yml
+
+  ai-agents:
+    name: AI / Agents
+    uses: ./.github/workflows/agent-deployer.yml
+
+  corporate-content:
+    name: Corporate / Thought Leadership
+    uses: ./.github/workflows/thought-leadership.yml
+
+  brand-viral:
+    name: Brand / Content
+    uses: ./.github/workflows/viral-content.yml
