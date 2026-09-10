@@ -663,6 +663,12 @@ body:not([data-cg-no-unify]) .page,
 body:not([data-cg-no-unify]) .wrap,
 body:not([data-cg-no-unify]) .container {
   max-width: min(1180px, 92vw);
+  /* Centre the capped wrapper. Without this the max-width alone leaves the
+     block flush left with the whole 8vw remainder stacked on the right, because
+     pages reset `*{margin:0}` and so never inherit an auto side margin. Use the
+     logical shorthand so only the inline axis is touched — vertical margins and
+     the page's own rhythm are left exactly as authored. */
+  margin-inline: auto;
 }
 body:not([data-cg-no-unify]) :is(section,.section,.block,.panel-section) {
   scroll-margin-top: 96px;

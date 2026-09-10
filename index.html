@@ -265,7 +265,12 @@ body{background:#0d0e13;}
 /* Cards and content blocks */
 .value-card,.tech-card,.command-panel,.ops-card,.product-card,
 .connect-card,.tl-content,.founder-card,.credentials-card,
+.cg-card,.legal-panel,.sentinel-hero,.signup-content,
 .feature-lines li,.trust-lines li{text-align:center}
+/* Bulleted lists centre cleanly only with the marker inside the line box;
+   left padding for a hanging marker would otherwise skew the block. */
+.legal-panel ul{padding-left:0;list-style-position:inside}
+.sentinel-hero .sentinel-quick-grid,.sentinel-hero .sentinel-replies{justify-content:center}
 .tc-tags,.pc-feats,.pc-feat,.pc-dots,.credentials-list{justify-content:center}
 .tl-content p,.command-panel p,.product-card .pd{margin-left:auto;margin-right:auto}
 /* Keep the checklist tick marks visually attached while text centers */
