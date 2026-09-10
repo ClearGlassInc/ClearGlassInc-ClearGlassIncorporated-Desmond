@@ -28,7 +28,7 @@ non‑negotiable when changing it.
 | Path | What it is |
 |------|-----------|
 | `*.html`, `*.css`, `*.js` (root) | Static GitHub Pages site (product/landing pages, shared UI) |
-| `control-plane/` | **Active** governed e‑commerce OS: FastAPI control plane (was `control-plane/`) |
+| `control-plane/` | **Active** governed e‑commerce OS: FastAPI control plane (was `clearglass-commerce/control-plane/`) |
 | `storefront/`, `admin/` | The commerce OS's Next.js apps, each deploying independently |
 | `side-store.html`, `side-store/lib/`, `data/side-store/` | The Side Store: 57 impulse SKUs inline in the page, its pricing module, and the catalog projected out of it by `tools/side_store_catalog.py` |
 | `agent_army/` | Governed role routing + approval gating (`AGENT_POLICY.md`, `orchestrator.py`, `secure_runtime/` Rust sidecar) |
@@ -112,14 +112,16 @@ cd storefront   # or admin
 npm ci && npm run build             # Commerce Frontend CI runs tsc --noEmit + next build
 ```
 
-Full stack via Docker: `docker compose up --build  # from the repository root`
+Full stack via Docker: `docker compose up --build`, from the repository root
 (postgres + control‑plane :8000 + storefront :3000 + admin :3001). Deploy paths
 are documented in `DEPLOY.md` (Render blueprint recommended).
 
 ## CI gates that must stay green
 
-- **Commerce Deploy** (`commerce-deploy.yml`): `ruff` + full pytest on
-  `control-plane/**`, `storefront/**`, `admin/**`, then optional Render deploy hook.
+- **Commerce Deploy** (`commerce-deploy.yml`): `ruff check control-plane` +
+  full pytest in `control-plane/`, plus a `npm ci && next build` gate for
+  `storefront` and `admin`, then an optional Render deploy hook. Triggered by
+  changes under `control-plane/**`, `storefront/**` or `admin/**`.
 - **Commerce Frontend CI** (`commerce-frontend-ci.yml`): `tsc --noEmit` +
   `next build` for storefront and admin.
 - **Commerce Daily Loop** (`commerce-daily-loop.yml`): storefront smoke test +
