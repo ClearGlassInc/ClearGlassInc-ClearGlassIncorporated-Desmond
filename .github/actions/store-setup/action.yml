@@ -43,4 +43,11 @@ runs:
       shell: bash
       run: |
         set -euo pipefail
-        pip install -r "${{ inputs.requirements }}"
+        # The caller may name a requirements file belonging to a subsystem that
+        # is not present in this checkout. Announce that rather than failing the
+        # whole pipeline on it, and never skip a file that does exist.
+        if [ -f "${{ inputs.requirements }}" ]; then
+          pip install -r "${{ inputs.requirements }}"
+        else
+          echo "::warning title=Missing requirements::${{ inputs.requirements }} is not in this repository; skipping its install."
+        fi
