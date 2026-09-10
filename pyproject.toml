@@ -46,8 +46,8 @@ artemis-api = "artemis.api.app:main"
 artemis-function-agent = "artemis.function_agent.cli:main"
 
 [tool.pytest.ini_options]
-pythonpath = [".", "sentinel", "clearglass-commerce/control-plane"]
-testpaths = ["artemis/tests", "tests", "sentinel/tests", "clearglass-commerce/control-plane/tests"]
+pythonpath = [".", "sentinel", "control-plane"]
+testpaths = ["artemis/tests", "tests", "sentinel/tests", "control-plane/tests"]
 addopts = "-v --tb=short --import-mode=importlib"
 
 [tool.coverage.run]

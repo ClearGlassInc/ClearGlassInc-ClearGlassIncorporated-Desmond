@@ -15,7 +15,7 @@ Real mode (CI): GitHub Actions API via GITHUB_TOKEN + live HTTPS probes of the
 published site. Offline mode (--offline): deterministic stub inputs through the
 same shaping functions — used by tests and local development.
 
-Outputs self-validate against docs/contracts/control-surface-events.schema.json
+Outputs self-validate against contracts/control-surface-events.schema.json
 when jsonschema is importable; with --strict a validation failure (or missing
 validator) aborts the run so invalid data is never published.
 """
@@ -36,7 +36,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT_DIR = ROOT / "data" / "control-surface"
-SCHEMA_PATH = ROOT / "docs" / "contracts" / "control-surface-events.schema.json"
+SCHEMA_PATH = ROOT / "contracts" / "control-surface-events.schema.json"
 SITEMAP_PATH = ROOT / "sitemap.xml"
 WORKFLOWS_DIR = ROOT / ".github" / "workflows"
 PIPELINE_SOURCE = OUT_DIR / "pipeline-source.json"

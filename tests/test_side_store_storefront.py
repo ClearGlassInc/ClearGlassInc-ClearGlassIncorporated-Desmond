@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 STOREFRONT = ROOT / "apps" / "autostore" / "storefront"
-CATALOG = STOREFRONT / "data" / "catalog.json"
+CATALOG = ROOT / "data" / "store" / "catalog.json"
 NODE_TEST = STOREFRONT / "lib" / "store.test.mjs"
 
 
