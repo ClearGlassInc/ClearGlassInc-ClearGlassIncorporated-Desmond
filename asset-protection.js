@@ -54,9 +54,9 @@
       "[data-cg-watermark]{position:relative;isolation:isolate}" +
       "[data-cg-watermark]::after{" +
         "content:attr(data-cg-watermark);position:absolute;right:1rem;bottom:.75rem;" +
-        "z-index:20;pointer-events:none;color:rgba(220,245,255,.38);" +
+        "z-index:20;pointer-events:none;color:rgba(242, 233, 233,.38);" +
         "font:700 10px/1.2 Inter,system-ui,sans-serif;letter-spacing:.16em;" +
-        "text-transform:uppercase;text-shadow:0 0 12px rgba(34,211,238,.45)" +
+        "text-transform:uppercase;text-shadow:0 0 12px rgba(231, 41, 44,.45)" +
       "}" +
       ".protected-watermark{position:relative;overflow:hidden;isolation:isolate}" +
       ".protected-watermark::after{content:\"ClearGlassInc. • Confidential • © 2026\";" +
@@ -74,7 +74,7 @@
       "[data-cg-sensitive].cg-sensitive-obscured{filter:blur(7px);user-select:none}" +
       "[data-cg-sensitive].cg-sensitive-obscured:focus-within{filter:none;user-select:auto}" +
       "@media (prefers-reduced-motion:reduce){.blur-preview,[data-cg-sensitive]{transition:none}}" +
-      "@media print{[data-cg-watermark]::after{position:fixed;right:1cm;bottom:1cm;color:#777}}";
+      "@media print{[data-cg-watermark]::after{position:fixed;right:1cm;bottom:1cm;color:#8b8b8b}}";
     document.head.appendChild(style);
   }
 

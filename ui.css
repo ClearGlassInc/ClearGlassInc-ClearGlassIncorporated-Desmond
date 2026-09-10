@@ -5,7 +5,7 @@
    touches ::before/::after on buttons (some pages already use those), so it
    layers on top of bespoke styles without breaking them.
 
-   Palette ties to the homepage: blue #60a5fa → violet #a78bfa, indigo glow. */
+   Palette ties to the homepage: blue #ee6365 → violet #ee637a, indigo glow. */
 
 /* ── smooth, hardware-friendly transitions on all controls ───────────────── */
 :where(a, button, [role="button"], .btn, .cta, .button,
@@ -19,9 +19,9 @@
 /* ── universal accessible focus ring (keyboard) ──────────────────────────── */
 :where(a, button, [role="button"], .btn, .cta, .button,
        input, select, textarea, summary):focus-visible {
-  outline: 2px solid var(--accent, #60a5fa) !important;
+  outline: 2px solid var(--accent, #ee6365) !important;
   outline-offset: 2px !important;
-  box-shadow: 0 0 0 4px rgba(124,150,255,.28) !important;
+  box-shadow: 0 0 0 4px rgba(238, 99, 108,.28) !important;
   border-radius: inherit;
 }
 
@@ -32,9 +32,9 @@
   a.btn:hover, a.cta:hover, a.button:hover {
     transform: translateY(-2px);
     filter: saturate(1.12) brightness(1.06);
-    box-shadow: 0 8px 24px -8px rgba(96,165,250,.55),
-                0 2px 8px -2px rgba(167,139,250,.45),
-                0 0 0 1px rgba(124,150,255,.28),
+    box-shadow: 0 8px 24px -8px rgba(238, 99, 101,.55),
+                0 2px 8px -2px rgba(238, 99, 122,.45),
+                0 0 0 1px rgba(238, 99, 108,.28),
                 inset 0 1px 0 rgba(255,255,255,.10);
     will-change: transform;
   }
@@ -53,7 +53,7 @@ button:disabled, [role="button"][aria-disabled="true"], .btn:disabled,
 /* ── plain content links: animated blue→violet underline that grows ──────── */
 a:not([class]):not([href^="#cg"]) {
   text-decoration: none;
-  background-image: linear-gradient(90deg, var(--accent, #60a5fa), var(--accent-2, #a78bfa));
+  background-image: linear-gradient(90deg, var(--accent, #ee6365), var(--accent-2, #ee637a));
   background-size: 0% 2px;
   background-position: 0 100%;
   background-repeat: no-repeat;
@@ -63,8 +63,8 @@ a:not([class]):not([href^="#cg"]) {
 @media (hover: hover) {
   a:not([class]):not([href^="#cg"]):hover {
     background-size: 100% 2px;
-    color: var(--accent, #60a5fa);
-    text-shadow: 0 0 14px rgba(96,165,250,.45);
+    color: var(--accent, #ee6365);
+    text-shadow: 0 0 14px rgba(238, 99, 101,.45);
   }
 }
 a:not([class]):focus-visible { background-size: 100% 2px; }
@@ -79,7 +79,7 @@ a:not([class]):focus-visible { background-size: 100% 2px; }
   border-radius: 50%;
   transform: scale(0);
   pointer-events: none;
-  background: radial-gradient(circle, rgba(167,139,250,.45), rgba(96,165,250,.18) 60%, transparent 70%);
+  background: radial-gradient(circle, rgba(238, 99, 122,.45), rgba(238, 99, 101,.18) 60%, transparent 70%);
   animation: cg-ripple .62s cubic-bezier(.22,.61,.36,1) forwards;
   z-index: 0;
   mix-blend-mode: screen;
@@ -94,7 +94,7 @@ a:not([class]):focus-visible { background-size: 100% 2px; }
   pointer-events: none; opacity: 0;
   transition: opacity .45s ease;
   background: radial-gradient(280px circle at var(--cg-x, -100px) var(--cg-y, -100px),
-              rgba(124,150,255,.08), rgba(167,139,250,.04) 40%, transparent 62%);
+              rgba(238, 99, 108,.08), rgba(238, 99, 122,.04) 40%, transparent 62%);
 }
 
 /* ── Neon pulse system ─────────────────────────────────────────────────
@@ -127,7 +127,7 @@ a:not([class]):focus-visible { background-size: 100% 2px; }
   pointer-events: none;
   background: linear-gradient(115deg,
     rgba(var(--cg-neon-cyan), .7),
-    rgba(255, 255, 255, .32) 27%,
+    rgba(14, 14, 14, .32) 27%,
     rgba(var(--cg-neon-violet), .7) 56%,
     rgba(var(--cg-neon-magenta), .5));
   filter: blur(11px);
@@ -156,7 +156,7 @@ a:not([class]):focus-visible { background-size: 100% 2px; }
   height: 1px;
   pointer-events: none;
   background: linear-gradient(90deg, transparent,
-    rgba(var(--cg-neon-cyan),.75), rgba(255,255,255,.72),
+    rgba(var(--cg-neon-cyan),.75), rgba(14, 14, 14,.72),
     rgba(var(--cg-neon-violet),.7), transparent);
   box-shadow: 0 0 10px rgba(var(--cg-neon-cyan),.4),
               0 0 22px rgba(var(--cg-neon-violet),.24);
@@ -416,9 +416,9 @@ body:has(#kit-fallback) > header.bar {
 }
 
 body:has(#kit-fallback) {
-  --smb-neon-cyan: rgba(56, 189, 248, .78);
-  --smb-neon-violet: rgba(167, 139, 250, .72);
-  --smb-neon-pink: rgba(244, 114, 182, .52);
+  --smb-neon-cyan: rgba(234, 70, 72, .78);
+  --smb-neon-violet: rgba(238, 99, 122, .72);
+  --smb-neon-pink: rgba(238, 99, 117, .52);
 }
 
 body:has(#kit-fallback) .hero {
@@ -434,34 +434,34 @@ body:has(#kit-fallback) .hero::before {
   pointer-events: none;
   border-radius: 48px;
   background:
-    radial-gradient(circle at 24% 22%, rgba(56,189,248,.22), transparent 34%),
-    radial-gradient(circle at 76% 28%, rgba(167,139,250,.22), transparent 36%),
-    radial-gradient(circle at 50% 78%, rgba(244,114,182,.12), transparent 42%);
+    radial-gradient(circle at 24% 22%, rgba(234, 70, 72,.22), transparent 34%),
+    radial-gradient(circle at 76% 28%, rgba(238, 99, 122,.22), transparent 36%),
+    radial-gradient(circle at 50% 78%, rgba(238, 99, 117,.12), transparent 42%);
   filter: blur(28px);
   animation: smb-neon-breathe 7s ease-in-out infinite alternate;
 }
 
 body:has(#kit-fallback) .hero .eyebrow {
   box-shadow:
-    0 0 0 1px rgba(56,189,248,.12),
-    0 0 20px rgba(56,189,248,.28),
-    0 0 42px rgba(167,139,250,.16),
+    0 0 0 1px rgba(234, 70, 72,.12),
+    0 0 20px rgba(234, 70, 72,.28),
+    0 0 42px rgba(238, 99, 122,.16),
     inset 0 0 18px rgba(255,255,255,.16);
 }
 
 body:has(#kit-fallback) .hero h1 .g {
-  filter: drop-shadow(0 0 10px rgba(56,189,248,.32))
-          drop-shadow(0 0 22px rgba(167,139,250,.22));
+  filter: drop-shadow(0 0 10px rgba(234, 70, 72,.32))
+          drop-shadow(0 0 22px rgba(238, 99, 122,.22));
 }
 
 body:has(#kit-fallback) :is(.card, .dcard, .console, .closer) {
   position: relative;
   overflow: hidden;
   box-shadow:
-    0 16px 46px rgba(15,23,42,.10),
+    0 16px 46px rgba(33, 24, 25,.10),
     0 0 0 1px rgba(255,255,255,.48),
-    0 0 28px rgba(56,189,248,.10),
-    0 0 48px rgba(167,139,250,.07);
+    0 0 28px rgba(234, 70, 72,.10),
+    0 0 48px rgba(238, 99, 122,.07);
 }
 
 body:has(#kit-fallback) :is(.card, .dcard, .console, .closer)::after {
@@ -472,10 +472,10 @@ body:has(#kit-fallback) :is(.card, .dcard, .console, .closer)::after {
   border-radius: inherit;
   padding: 1px;
   background: linear-gradient(125deg,
-    rgba(56,189,248,.72),
+    rgba(234, 70, 72,.72),
     rgba(255,255,255,.20) 24%,
-    rgba(167,139,250,.70) 52%,
-    rgba(244,114,182,.42) 74%,
+    rgba(238, 99, 122,.70) 52%,
+    rgba(238, 99, 117,.42) 74%,
     rgba(52,211,153,.50));
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
@@ -486,10 +486,10 @@ body:has(#kit-fallback) :is(.card, .dcard, .console, .closer)::after {
 @media (hover: hover) {
   body:has(#kit-fallback) :is(.card, .dcard, .console, .closer):hover {
     box-shadow:
-      0 20px 58px rgba(15,23,42,.14),
+      0 20px 58px rgba(33, 24, 25,.14),
       0 0 0 1px rgba(255,255,255,.62),
-      0 0 34px rgba(56,189,248,.22),
-      0 0 64px rgba(167,139,250,.16);
+      0 0 34px rgba(234, 70, 72,.22),
+      0 0 64px rgba(238, 99, 122,.16);
   }
 }
 
@@ -497,16 +497,16 @@ body:has(#kit-fallback) .btn.primary,
 body:has(#kit-fallback) .cinput button,
 body:has(#kit-fallback) .console .av {
   box-shadow:
-    0 0 18px rgba(56,189,248,.38),
-    0 0 34px rgba(167,139,250,.26),
-    0 12px 32px -12px rgba(96,165,250,.68);
+    0 0 18px rgba(234, 70, 72,.38),
+    0 0 34px rgba(238, 99, 122,.26),
+    0 12px 32px -12px rgba(238, 99, 101,.68);
 }
 
 body:has(#kit-fallback) .cell.sel {
   box-shadow:
     0 0 0 2px rgba(255,255,255,.92),
     0 0 18px currentColor,
-    0 0 34px rgba(167,139,250,.30);
+    0 0 34px rgba(238, 99, 122,.30);
 }
 
 body:has(#kit-fallback) .clive i,
@@ -521,7 +521,7 @@ body:has(#kit-fallback) .eyebrow .dot {
 
 @keyframes smb-status-pulse {
   0%, 100% { transform: scale(1); box-shadow: 0 0 8px currentColor; }
-  50% { transform: scale(1.18); box-shadow: 0 0 18px currentColor, 0 0 30px rgba(56,189,248,.35); }
+  50% { transform: scale(1.18); box-shadow: 0 0 18px currentColor, 0 0 30px rgba(234, 70, 72,.35); }
 }
 
 /* ── respect reduced-motion preferences ──────────────────────────────────── */

@@ -7,8 +7,8 @@
 
 /* ── scroll progress bar ─────────────────────────────────────────────────── */
 #cg-progress{position:fixed;top:0;left:0;height:2.5px;width:0;z-index:2147483640;pointer-events:none;
-  background:linear-gradient(90deg,#38bdf8,#a78bfa 45%,#f472b6 72%,#34d399);
-  box-shadow:0 0 10px rgba(124,150,255,.6);transition:width .08s linear;border-radius:0 2px 2px 0}
+  background:linear-gradient(90deg,#ea4648,#ee637a 45%,#ee6375 72%,#34d399);
+  box-shadow:0 0 10px rgba(238, 99, 108,.6);transition:width .08s linear;border-radius:0 2px 2px 0}
 
 /* ── crystal-text shimmer (animates the existing brand gradient) ─────────── */
 @keyframes cg-shimmer{0%{background-position:0% 50%}100%{background-position:200% 50%}}
@@ -21,17 +21,17 @@ html.cg-fx [class*="crystal"]{
 
 /* ── paired scroll controls ──────────────────────────────────────────────── */
 #cg-top,#cg-bottom{position:fixed;left:max(18px,env(safe-area-inset-left));z-index:2147483600;width:42px;height:42px;border-radius:50%;
-  display:grid;place-items:center;cursor:pointer;border:1px solid rgba(124,150,255,.4);color:#dbe4ff;
-  background:linear-gradient(180deg,rgba(20,24,46,.86),rgba(11,14,30,.91));backdrop-filter:blur(12px) saturate(155%);
+  display:grid;place-items:center;cursor:pointer;border:1px solid rgba(238, 99, 108,.4);color:#f2e8e9;
+  background:linear-gradient(180deg,rgba(37, 29, 29,.86),rgba(24, 17, 18,.91));backdrop-filter:blur(12px) saturate(155%);
   -webkit-backdrop-filter:blur(12px) saturate(155%);
-  box-shadow:0 10px 26px -12px rgba(8,12,28,.9),inset 0 1px 0 rgba(255,255,255,.15);font-size:17px;line-height:1;
+  box-shadow:0 10px 26px -12px rgba(21, 15, 15,.9),inset 0 1px 0 rgba(255,255,255,.15);font-size:17px;line-height:1;
   opacity:0;transform:translateY(14px) scale(.9);pointer-events:none;
   transition:opacity .28s cubic-bezier(.16,1,.3,1),transform .28s cubic-bezier(.16,1,.3,1),border-color .2s,box-shadow .2s}
 #cg-top{bottom:max(18px,env(safe-area-inset-bottom))}
 #cg-bottom{bottom:calc(68px + env(safe-area-inset-bottom))}
 #cg-top.show,#cg-bottom.show{opacity:1;transform:none;pointer-events:auto}
-#cg-top:hover,#cg-bottom:hover{border-color:rgba(124,150,255,.85);transform:translateY(-2px);box-shadow:0 14px 30px -12px rgba(8,12,28,.95),0 0 18px rgba(96,165,250,.18),inset 0 1px 0 rgba(255,255,255,.18)}
-#cg-top:focus-visible,#cg-bottom:focus-visible{outline:2px solid #60a5fa;outline-offset:3px}
+#cg-top:hover,#cg-bottom:hover{border-color:rgba(238, 99, 108,.85);transform:translateY(-2px);box-shadow:0 14px 30px -12px rgba(21, 15, 15,.95),0 0 18px rgba(238, 99, 101,.18),inset 0 1px 0 rgba(255,255,255,.18)}
+#cg-top:focus-visible,#cg-bottom:focus-visible{outline:2px solid #ee6365;outline-offset:3px}
 
 @media(max-width:720px){
   #cg-top,#cg-bottom{left:max(12px,env(safe-area-inset-left));right:auto;width:38px;height:38px;font-size:16px}

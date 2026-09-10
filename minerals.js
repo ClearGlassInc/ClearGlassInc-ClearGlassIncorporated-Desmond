@@ -17,7 +17,7 @@
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
+      .replaceAll("'", "&#8a0f17;");
   }
 
   function safeUrl(value) {

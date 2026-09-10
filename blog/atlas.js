@@ -32,9 +32,9 @@
 
   /* ---------------------------------------------------------------- palette */
   var INK = {
-    rose:   { body: '#ff9ec7', deep: '#6e2450', glow: '255,158,199' },
-    violet: { body: '#b9a3ff', deep: '#34246e', glow: '157,123,255' },
-    teal:   { body: '#8bf0dc', deep: '#174f49', glow: '85,242,166' },
+    rose:   { body: '#ee6375', deep: '#6e242e', glow: '255,158,199' },
+    violet: { body: '#ee637a', deep: '#6e2430', glow: '157,123,255' },
+    teal:   { body: '#8bf0dc', deep: '#4f1718', glow: '85,242,166' },
     gold:   { body: '#e9b95e', deep: '#4d3410', glow: '255,214,150' }
   };
 
@@ -445,8 +445,8 @@
     ctx.clearRect(0, 0, W, H);
     /* deep vignette pool behind the core */
     var g = ctx.createRadialGradient(core.x, core.y, 40, core.x, core.y, Math.max(W, H) * 0.72);
-    g.addColorStop(0, 'rgba(22,34,58,.55)');
-    g.addColorStop(0.5, 'rgba(8,13,24,.25)');
+    g.addColorStop(0, 'rgba(46, 34, 35,.55)');
+    g.addColorStop(0.5, 'rgba(19, 13, 14,.25)');
     g.addColorStop(1, 'rgba(2,3,7,0)');
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
@@ -454,7 +454,7 @@
     /* star dust with slow twinkle */
     dust.forEach(function (d) {
       var a = 0.10 + 0.14 * (0.5 + 0.5 * Math.sin(time * d.f + d.p));
-      ctx.fillStyle = 'rgba(190,214,255,' + a.toFixed(3) + ')';
+      ctx.fillStyle = 'rgba(231, 214, 215,' + a.toFixed(3) + ')';
       ctx.beginPath();
       ctx.arc(d.x * W, d.y * H, d.r, 0, TAU);
       ctx.fill();

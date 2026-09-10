@@ -1,9 +1,10 @@
-/* ClearGlass · global theme layer — unifies every page on the homepage's
-   blue-violet identity. Linked last in <head> on all content pages.
+/* ClearGlass · global theme layer — unifies every page on the ClearGlass
+   crimson identity. Linked in <head> on all content pages; the full canvas
+   treatment lives in clearglass-crimson.css, which loads after this.
 
-   Palette (from index.html):
-     sky-blue  #60a5fa   violet  #a78bfa   indigo glow rgba(124,150,255,…)
-     mint #34d399   amber-accent retired → blue   alert → homepage pink #f472b6
+   Palette (sampled from the capabilities-brief reference):
+     crimson #c4363a   bright #eb4344   wine #7a123d   deep bar #6f1c1d
+     rose #d9575a      alert → #eb4344  positive → #4fb98a  warn → #d98c3a
 
    Strategy: remap the common accent CSS variables used across the site so any
    element that references them shifts automatically. Uses !important so it wins
@@ -14,57 +15,57 @@
 :root[data-theme],
 html {
   /* generic accent names */
-  --accent:   #60a5fa !important;
-  --accent-2: #a78bfa !important;
-  --accent2:  #a78bfa !important;
-  --acc:      #60a5fa !important;
-  --acc-2:    #a78bfa !important;
-  --primary:  #60a5fa !important;
-  --secondary:#a78bfa !important;
-  --brand:    #60a5fa !important;
-  --brand-2:  #a78bfa !important;
-  --main:     #60a5fa !important;
-  --c1:       #60a5fa !important;
-  --c2:       #a78bfa !important;
+  --accent:   #c4363a !important;
+  --accent-2: #eb4344 !important;
+  --accent2:  #eb4344 !important;
+  --acc:      #c4363a !important;
+  --acc-2:    #eb4344 !important;
+  --primary:  #c4363a !important;
+  --secondary:#7a123d !important;
+  --brand:    #c4363a !important;
+  --brand-2:  #7a123d !important;
+  --main:     #c4363a !important;
+  --c1:       #c4363a !important;
+  --c2:       #7a123d !important;
 
-  /* amber / orange families → blue-violet */
-  --amber:    #60a5fa !important;
-  --amber-2:  #a78bfa !important;
-  --am:       #60a5fa !important;
-  --am2:      #a78bfa !important;
-  --am3:      #818cf8 !important;
-  --am4:      #6d8fd6 !important;
-  --orange:   #a78bfa !important;
-  --orange-2: #60a5fa !important;
-  --gold:     #a78bfa !important;
-  --yellow:   #60a5fa !important;
-  --yw:       #a78bfa !important;
+  /* amber / orange families → crimson */
+  --amber:    #c4363a !important;
+  --amber-2:  #eb4344 !important;
+  --am:       #c4363a !important;
+  --am2:      #eb4344 !important;
+  --am3:      #a92934 !important;
+  --am4:      #8f2e31 !important;
+  --orange:   #eb4344 !important;
+  --orange-2: #c4363a !important;
+  --gold:     #d9575a !important;
+  --yellow:   #c4363a !important;
+  --yw:       #d9575a !important;
 
-  /* red / "cyan"(mislabelled red) families → blue-violet brand, pink for alerts */
-  --red:      #7c9cff !important;
-  --red-2:    #6d5cf0 !important;
-  --rd:       #7c9cff !important;
-  --cyan:     #60a5fa !important;
-  --cyan-2:   #3b82f6 !important;
-  --ice:      #bcd4ff !important;
+  /* red / cyan families → crimson brand, bright crimson for alerts */
+  --red:      #c4363a !important;
+  --red-2:    #7a123d !important;
+  --rd:       #c4363a !important;
+  --cyan:     #c4363a !important;
+  --cyan-2:   #a92934 !important;
+  --ice:      #f0d6d7 !important;
 
-  /* cohesive cyans already-blue → align to palette */
-  --teal:     #5eead4 !important;
+  /* cohesive cyans → align to palette */
+  --teal:     #d9575a !important;
 
-  /* lines / glows → indigo */
-  --line:     rgba(124,150,255,.16) !important;
-  --line-2:   rgba(124,150,255,.30) !important;
-  --glow:     rgba(96,165,250,.55)  !important;
+  /* lines / glows → crimson */
+  --line:     rgba(201,52,58,.18) !important;
+  --line-2:   rgba(201,52,58,.34) !important;
+  --glow:     rgba(197,52,58,.55)  !important;
 
   /* shared positive/danger semantics on-palette */
-  --ok:       #34d399 !important;
-  --good:     #34d399 !important;
-  --warn:     #fbbf24 !important;
-  --bad:      #f472b6 !important;
-  --danger:   #f472b6 !important;
+  --ok:       #4fb98a !important;
+  --good:     #4fb98a !important;
+  --warn:     #d98c3a !important;
+  --bad:      #eb4344 !important;
+  --danger:   #eb4344 !important;
 }
 
-/* keep the nav menu mark consistent everywhere (already blue-violet) */
+/* keep the nav menu mark consistent everywhere (crimson) */
 
 /* ── ADVANCED RENDERING SHARPNESS ──────────────────────────────────
    Site-wide crispness layer. Smooths type consistently across engines and
@@ -83,31 +84,33 @@ svg,
   image-rendering: auto;          /* high-quality resampling on downscale */
 }
 
-/* ── ClearGlass Artemis cyber-neon design tokens ───────────────────────────
+/* ── ClearGlass Artemis command tokens ─────────────────────────────────────
    Additive variables only: pages can opt in directly, while ui.css consumes
    these as the shared command-interface glow system. Values are RGB triplets
-   where alpha blending is needed for performant layered bloom. */
+   where alpha blending is needed for performant layered bloom. Retuned onto the
+   crimson palette; the historical --cg-cyber-* names are kept so no consumer
+   breaks. */
 :root,
 :root[data-theme],
 html {
-  --cg-cyber-bg: #040716;
-  --cg-cyber-panel: 8, 14, 32;
-  --cg-cyber-panel-strong: 13, 22, 48;
-  --cg-cyber-cyan: 34, 211, 238;
-  --cg-cyber-blue: 96, 165, 250;
-  --cg-cyber-violet: 167, 139, 250;
-  --cg-cyber-magenta: 244, 114, 182;
-  --cg-cyber-ultraviolet: 88, 28, 135;
-  --cg-cyber-mint: 52, 211, 153;
-  --cg-cyber-text: #f6fbff;
-  --cg-cyber-muted: #a9b8df;
-  --cg-cyber-border: rgba(34, 211, 238, .28);
-  --cg-cyber-glass: rgba(8, 14, 32, .62);
-  --cg-cyber-glass-light: rgba(255, 255, 255, .68);
-  --cg-cyber-halo: 0 0 28px rgba(34, 211, 238, .22), 0 0 58px rgba(167, 139, 250, .16), 0 0 92px rgba(244, 114, 182, .10);
-  --cg-cyber-edge: linear-gradient(120deg, rgba(34,211,238,.78), rgba(255,255,255,.28) 24%, rgba(167,139,250,.74) 54%, rgba(244,114,182,.58) 78%, rgba(52,211,153,.54));
+  --cg-cyber-bg: #07080b;
+  --cg-cyber-panel: 14, 12, 17;
+  --cg-cyber-panel-strong: 22, 14, 18;
+  --cg-cyber-cyan: 196, 54, 58;
+  --cg-cyber-blue: 169, 41, 52;
+  --cg-cyber-violet: 122, 18, 61;
+  --cg-cyber-magenta: 235, 67, 68;
+  --cg-cyber-ultraviolet: 84, 12, 42;
+  --cg-cyber-mint: 217, 87, 90;
+  --cg-cyber-text: #f3eeee;
+  --cg-cyber-muted: #bcaeb0;
+  --cg-cyber-border: rgba(201, 52, 58, .28);
+  --cg-cyber-glass: rgba(15, 14, 14, .70);
+  --cg-cyber-glass-light: rgba(24, 14, 18, .72);
+  --cg-cyber-halo: 0 0 28px rgba(196, 54, 58, .22), 0 0 58px rgba(122, 18, 61, .16), 0 0 92px rgba(235, 67, 68, .10);
+  --cg-cyber-edge: linear-gradient(120deg, rgba(196,54,58,.78), rgba(255,255,255,.22) 24%, rgba(122,18,61,.74) 54%, rgba(235,67,68,.58) 78%, rgba(143,46,49,.54));
   --cg-cyber-scanline: repeating-linear-gradient(180deg, rgba(255,255,255,.035) 0 1px, transparent 1px 4px);
-  --cg-cyber-grid: linear-gradient(rgba(34,211,238,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(167,139,250,.055) 1px, transparent 1px);
+  --cg-cyber-grid: linear-gradient(rgba(196,54,58,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(122,18,61,.055) 1px, transparent 1px);
   --cg-cyber-ease: cubic-bezier(.16, 1, .3, 1);
   --cg-cyber-pulse: 7.2s;
 }

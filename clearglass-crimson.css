@@ -1,0 +1,620 @@
+/* ClearGlass · CRIMSON CANVAS — site-wide colour layer (v1)
+   ────────────────────────────────────────────────────────────────────────────
+   Purpose: put every page of the site on ONE palette — a near-black canvas with
+   crimson signal accents and warm-grey type — matching the ClearGlass
+   capabilities-brief reference (classification bar, dark glass nav, crimson
+   headline, warm-grey mono).
+
+   Hex values below were sampled directly off that reference, so this file is
+   the colour source of truth rather than an approximation:
+
+     #6f1c1d  classification bar fill        #8f2e31  its bottom rule
+     #c4363a  primary crimson (headline)     #eb4344  bright crimson (signal/glow)
+     #7a123d  wine bloom                     #07080b  canvas base
+     #f3eeee  ink                            #bcaeb0  ink-2 (body copy)
+     #baa8ad  mono / caption                 #8b7d81  faint / eyebrow
+
+   COLOUR ONLY. This layer never touches layout, geometry, spacing, typography
+   scale, z-index, display or positioning — nothing moves, nothing is hidden,
+   nothing is removed. It only repaints.
+
+   WHY !important AND WHY IT LOADS LAST
+   `assets/css/glass.css` is a light-mode enforcement sheet: ~200 `!important`
+   declarations pinning html/body/nav/cards/type to white-on-light. Winning
+   against it needs equal-or-greater specificity, `!important`, and a later
+   position in the cascade — so this file is linked as the final stylesheet in
+   <head> on every page, and mirrors that sheet's selector list. Rules are
+   prefixed with `html`/`html body` where an extra element selector is needed to
+   out-specify a `!important` rule of the same weight.
+
+   Pages keep their own structure and their own page-local <style> blocks; those
+   inherit the palette through the variable remaps in §1 wherever they use
+   var(), and are repainted by §3+ where they hard-code light values. */
+
+/* ══ 1 · PALETTE + VARIABLE REMAPS ══════════════════════════════════════════
+   Every accent/surface/text variable name in circulation across the site
+   (tokens.css, theme.css, brand-system.css, cg-design-system.css, glass.css,
+   future-buttons.css and dozens of page-local :root blocks) is pointed at the
+   crimson palette here. Anything consuming these through var() flips with no
+   further rules needed — that is what carries most of the site. */
+:root,
+:root[data-theme],
+html {
+  /* ── crimson primitives (named, so pages can opt in directly) ───────────── */
+  --cg-crimson-bg:      #07080b;
+  --cg-crimson-bg-2:    #0a0a0d;
+  --cg-crimson-bg-3:    #06070a;
+  --cg-crimson-panel:   #0c0d11;
+  --cg-crimson-panel-2: #101015;
+  --cg-crimson-deep:    #6f1c1d;
+  --cg-crimson-rule:    #8f2e31;
+  --cg-crimson:         #c4363a;
+  --cg-crimson-bright:  #eb4344;
+  --cg-crimson-wine:    #7a123d;
+  --cg-crimson-ink:     #f3eeee;
+  --cg-crimson-ink-2:   #bcaeb0;
+  --cg-crimson-ink-3:   #a2969a;
+  --cg-crimson-ink-4:   #8b7d81;
+  --cg-crimson-line:    rgba(201, 52, 58, .22);
+  --cg-crimson-line-2:  rgba(201, 52, 58, .38);
+  --cg-crimson-hair:    rgba(255, 255, 255, .07);
+  --cg-crimson-glow:    rgba(197, 52, 58, .55);
+  --cg-crimson-canvas:
+    radial-gradient(circle at 8% 20%, rgba(26, 70, 70, .18), transparent 28%),
+    radial-gradient(circle at 92% 30%, rgba(112, 20, 44, .20), transparent 30%),
+    linear-gradient(180deg, #08090c 0%, #0a0a0d 52%, #06070a 100%);
+
+  /* ── generic accent names ───────────────────────────────────────────────── */
+  --accent:    #c4363a !important;
+  --accent-2:  #eb4344 !important;
+  --accent2:   #eb4344 !important;
+  --acc:       #c4363a !important;
+  --acc-2:     #eb4344 !important;
+  --primary:   #c4363a !important;
+  --secondary: #7a123d !important;
+  --brand:     #c4363a !important;
+  --brand-2:   #7a123d !important;
+  --main:      #c4363a !important;
+  --c1:        #c4363a !important;
+  --c2:        #7a123d !important;
+
+  /* ── prism family (tokens.css + cg-design-system.css) → crimson ─────────── */
+  --prism-1: #c4363a !important;
+  --prism-2: #eb4344 !important;
+  --prism-3: #7a123d !important;
+  --prism-4: #d9575a !important;
+  --prism-5: #8f2e31 !important;
+  --prism-6: #a92934 !important;
+  --cg-prism-1: #c4363a !important;
+  --cg-prism-2: #eb4344 !important;
+  --cg-prism-3: #7a123d !important;
+  --cg-prism-4: #d9575a !important;
+  --cg-prism-5: #8f2e31 !important;
+  --cg-prism-6: #a92934 !important;
+  --crystal:       linear-gradient(135deg, #f2e9e8 0%, #d3484d 52%, #8f1d3f 100%) !important;
+  --cg-crystal:    linear-gradient(135deg, #f2e9e8 0%, #d3484d 52%, #8f1d3f 100%) !important;
+  --crystal-soft:  linear-gradient(135deg, rgba(201, 52, 58, .16), rgba(122, 18, 61, .12)) !important;
+
+  /* ── amber / orange / gold families → crimson ───────────────────────────── */
+  --amber:    #c4363a !important;
+  --amber-2:  #eb4344 !important;
+  --am:       #c4363a !important;
+  --am2:      #eb4344 !important;
+  --am3:      #a92934 !important;
+  --am4:      #8f2e31 !important;
+  --orange:   #eb4344 !important;
+  --orange-2: #c4363a !important;
+  --gold:     #d9575a !important;
+  --yellow:   #c4363a !important;
+  --yw:       #d9575a !important;
+
+  /* ── hue-named accents. These names still mean "the brand accent" wherever a
+        page or a shared sheet uses them, so they are pinned to the palette
+        rather than left to whatever value a page happens to declare. ───────── */
+  --blue:     #c4363a !important;
+  --blue-2:   #a92934 !important;
+  --sky:      #eb4344 !important;
+  --indigo:   #a92934 !important;
+  --violet:   #b0345a !important;
+  --purple:   #b0345a !important;
+  --pink:     #eb4344 !important;
+  --magenta:  #b02d5e !important;
+  --rose:     #d9575a !important;
+  --crimson:  #c4363a !important;
+  --wine:     #b0345a !important;
+  --gov-blue:   #c4363a !important;
+  --gov-blue-2: #a92934 !important;
+  --blue-light: rgba(201, 52, 58, .10) !important;
+  --blue-border: rgba(201, 52, 58, .24) !important;
+  --gov-light:  rgba(201, 52, 58, .10) !important;
+
+  /* ── red / cyan / ice families → crimson ────────────────────────────────── */
+  --red:      #c4363a !important;
+  --red-2:    #7a123d !important;
+  --rd:       #c4363a !important;
+  --cyan:     #c4363a !important;
+  --cyan-2:   #a92934 !important;
+  --ice:      #f0d6d7 !important;
+  --teal:     #d9575a !important;
+
+  /* ── lines / glows ──────────────────────────────────────────────────────── */
+  --line:   rgba(201, 52, 58, .18) !important;
+  --line-2: rgba(201, 52, 58, .34) !important;
+  --glow:   rgba(197, 52, 58, .55) !important;
+
+  /* ── status semantics — kept legible, tuned onto the crimson canvas ─────── */
+  --ok:     #4fb98a !important;
+  --good:   #4fb98a !important;
+  --sync:   #4fb98a !important;
+  --warn:   #d98c3a !important;
+  --bad:    #eb4344 !important;
+  --danger: #eb4344 !important;
+  --crit:   #eb4344 !important;
+  --info:   #a2969a !important;
+  --idle:   #8b7d81 !important;
+  --flag:   #a2969a !important;
+
+  /* ── surfaces: light glass → dark glass ─────────────────────────────────── */
+  --white:  #0c0d11 !important;
+  --off:    #101015 !important;
+  --glass:          rgba(12, 11, 15, .62) !important;
+  --glass-strong:   rgba(10, 9, 12, .86) !important;
+  --glass-border:   rgba(201, 52, 58, .20) !important;
+  --cg-glass:        rgba(12, 11, 15, .62) !important;
+  --cg-glass-strong: rgba(10, 9, 12, .86) !important;
+  --cg-glass-border: rgba(201, 52, 58, .20) !important;
+  --cg-bg:      #07080b !important;
+  --cg-surface:        rgba(14, 12, 17, .74) !important;
+  --cg-surface-strong: rgba(11, 10, 14, .94) !important;
+  --cg-line:    rgba(201, 52, 58, .18) !important;
+  --cg-hairline:      rgba(201, 52, 58, .28) !important;
+  --cg-hairline-soft: rgba(201, 52, 58, .16) !important;
+  --cg-dark:    #0a0a0d !important;
+  --dark:       #0a0a0d !important;
+  --dark-2:     #101015 !important;
+  --dark-3:     #17171d !important;
+  --toggle:     rgba(255, 255, 255, .08) !important;
+
+  /* ── type ───────────────────────────────────────────────────────────────── */
+  --text:   #f3eeee !important;
+  --text-2: #bcaeb0 !important;
+  --text-3: #a2969a !important;
+  --text-4: #8b7d81 !important;
+  --cg-ink:    #f3eeee !important;
+  --cg-text:   #f3eeee !important;
+  --cg-text-2: #bcaeb0 !important;
+  --cg-text-3: #a2969a !important;
+  --cg-text-4: #8b7d81 !important;
+  --cg-muted:  #a2969a !important;
+  --cg-faint:  #8b7d81 !important;
+  --cg-on-surface:     #f3eeee !important;
+  --cg-on-surface-dim: #bcaeb0 !important;
+  --cg-glow: rgba(197, 52, 58, .55) !important;
+
+  /* ── brand convenience aliases (buttons.css, control-surface.js) ────────── */
+  --cg-blue:   #c4363a !important;
+  --cg-violet: #7a123d !important;
+  --cg-pink:   #eb4344 !important;
+  --cg-green:  #4fb98a !important;
+
+  /* ── glow families (cg-design-system.css) ───────────────────────────────── */
+  --cg-glow-cyan:   rgba(201, 52, 58, .18) !important;
+  --cg-glow-blue:   rgba(197, 52, 58, .16) !important;
+  --cg-glow-violet: rgba(122, 18, 61, .14) !important;
+  --cg-glow-mint:   rgba(217, 87, 90, .12) !important;
+
+  /* ── neon families (cg-design-system.css §neon, ui.css) ─────────────────── */
+  --cg-neon-cyan:    #eb4344 !important;
+  --cg-neon-blue:    #c4363a !important;
+  --cg-neon-purple:  #7a123d !important;
+  --cg-neon-magenta: #b02d5e !important;
+  --cg-neon-line: linear-gradient(90deg, rgba(235, 67, 68, .78), rgba(196, 54, 58, .62), rgba(122, 18, 61, .65), rgba(176, 45, 94, .58)) !important;
+  --cg-neon-bloom:        0 0 18px rgba(235, 67, 68, .20), 0 0 42px rgba(122, 18, 61, .12) !important;
+  --cg-neon-bloom-strong: 0 0 22px rgba(235, 67, 68, .34), 0 0 58px rgba(122, 18, 61, .20), 0 0 90px rgba(176, 45, 94, .10) !important;
+  --cg-neon-hue: 358 !important;
+
+  /* ── artemis cyber tokens (theme.css) ───────────────────────────────────── */
+  --cg-cyber-bg: #07080b !important;
+  --cg-cyber-panel: 14, 12, 17 !important;
+  --cg-cyber-panel-strong: 22, 14, 18 !important;
+  --cg-cyber-cyan: 196, 54, 58 !important;
+  --cg-cyber-blue: 169, 41, 52 !important;
+  --cg-cyber-violet: 122, 18, 61 !important;
+  --cg-cyber-magenta: 235, 67, 68 !important;
+  --cg-cyber-ultraviolet: 84, 12, 42 !important;
+  --cg-cyber-mint: 217, 87, 90 !important;
+  --cg-cyber-text: #f3eeee !important;
+  --cg-cyber-muted: #bcaeb0 !important;
+  --cg-cyber-border: rgba(201, 52, 58, .28) !important;
+  --cg-cyber-glass: rgba(14, 12, 17, .70) !important;
+  --cg-cyber-glass-light: rgba(24, 14, 18, .72) !important;
+  --cg-cyber-halo: 0 0 28px rgba(196, 54, 58, .22), 0 0 58px rgba(122, 18, 61, .16), 0 0 92px rgba(235, 67, 68, .10) !important;
+  --cg-cyber-edge: linear-gradient(120deg, rgba(196, 54, 58, .78), rgba(255, 255, 255, .22) 24%, rgba(122, 18, 61, .74) 54%, rgba(235, 67, 68, .58) 78%, rgba(143, 46, 49, .54)) !important;
+  --cg-cyber-grid: linear-gradient(rgba(196, 54, 58, .07) 1px, transparent 1px), linear-gradient(90deg, rgba(122, 18, 61, .055) 1px, transparent 1px) !important;
+
+  /* ── future-buttons.css glass controls ──────────────────────────────────── */
+  --glass-btn-bg:        rgba(20, 9, 12, .78) !important;
+  --glass-btn-bg-hover:  rgba(43, 12, 19, .88) !important;
+  --glass-btn-border:    rgba(235, 130, 133, .30) !important;
+  --glass-btn-highlight: rgba(255, 235, 235, .34) !important;
+  --glass-btn-glow:      rgba(235, 67, 68, .26) !important;
+  --glass-btn-text:      #fdf4f4 !important;
+
+  /* ── sentinel widget (sentinel.css) ─────────────────────────────────────── */
+  --sn-text: #f3eeee !important;
+
+  /* ── shadows: deepened for a black canvas ───────────────────────────────── */
+  --sh:      0 2px 12px rgba(0, 0, 0, .46) !important;
+  --shadow:  0 2px 12px rgba(0, 0, 0, .46) !important;
+  --drop:    0 4px 20px rgba(0, 0, 0, .50) !important;
+  --lift:    0 8px 32px rgba(0, 0, 0, .52) !important;
+  --lift2:   0 16px 48px rgba(0, 0, 0, .58) !important;
+  --cg-shadow:      0 18px 60px rgba(0, 0, 0, .52) !important;
+  --cg-shadow-lift: 0 24px 80px rgba(0, 0, 0, .58) !important;
+  --cg-sh-1: 0 2px 20px rgba(0, 0, 0, .40) !important;
+  --cg-sh-2: 0 12px 50px rgba(0, 0, 0, .46) !important;
+  --cg-sh-3: 0 24px 60px -24px rgba(0, 0, 0, .82) !important;
+}
+
+/* Some pages ship a light/dark switch; both branches land on the same canvas so
+   the site reads as one brief regardless of which one is active. */
+:root[data-theme="light"],
+:root[data-theme="dark"] { color-scheme: dark; }
+html { color-scheme: dark; }
+
+/* ══ 2 · CANVAS ═════════════════════════════════════════════════════════════
+   The three-stop wash reproduces the reference exactly: a cool slate bloom top
+   left, a wine bloom upper right, near-black everywhere else. */
+html {
+  background: #07080b !important;
+}
+html body {
+  background-color: #07080b !important;   /* solid floor: the wash below is only imagery */
+  background-image:
+    radial-gradient(circle at 8% 20%, rgba(26, 70, 70, .18), transparent 28%),
+    radial-gradient(circle at 92% 30%, rgba(112, 20, 44, .20), transparent 30%),
+    linear-gradient(180deg, #08090c 0%, #0a0a0d 52%, #06070a 100%) !important;
+  background-attachment: fixed !important;
+  color: #f3eeee !important;
+}
+/* brand-system.css paints a light grid over body::before; recolour it rather
+   than hiding it, so the texture survives. */
+html body::before {
+  background-image:
+    linear-gradient(rgba(201, 52, 58, .055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201, 52, 58, .04) 1px, transparent 1px) !important;
+}
+::selection { background: rgba(201, 52, 58, .34) !important; color: #fff !important; }
+:focus-visible { outline-color: rgba(235, 67, 68, .72) !important; }
+::-webkit-scrollbar-track { background: #0a0a0d !important; }
+::-webkit-scrollbar-thumb { background: #3a2226 !important; }
+::-webkit-scrollbar-thumb:hover { background: #6f1c1d !important; }
+
+/* ══ 3 · CLASSIFICATION BAR ═════════════════════════════════════════════════
+   The crimson bar at the top of the reference. Values sampled off it: a top-to-
+   bottom crimson gradient closing on #6f1c1d, over a brighter #8f2e31 rule. */
+.class-banner,
+#darpa-banner,
+.darpa-banner {
+  background: linear-gradient(180deg, #4a1315 0%, #6f1c1d 100%) !important;
+  color: #fff !important;
+  border-bottom: 2px solid #8f2e31 !important;
+}
+.class-banner span { color: rgba(255, 255, 255, .78) !important; }
+.unclass-banner {
+  background: #14090b !important;
+  color: #d9575a !important;
+  border-top: 1px solid rgba(201, 52, 58, .24) !important;
+}
+
+/* ══ 4 · NAVIGATION ═════════════════════════════════════════════════════════
+   Dark glass pill with a crimson hairline, per the reference. Selector list
+   mirrors glass.css §4 so every page's nav variant is covered. */
+html nav,
+html header.nav,
+html .nav,
+html .site-nav,
+html #hdr,
+html #nav,
+html header {
+  background: rgba(8, 8, 11, .74) !important;
+  border-color: rgba(197, 47, 53, .22) !important;
+  color: #f3eeee !important;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, .46), inset 0 1px 0 rgba(255, 255, 255, .05) !important;
+}
+html .nav.scrolled { background: rgba(7, 7, 10, .88) !important; border-color: rgba(197, 47, 53, .32) !important; }
+html .nav-brand,
+html .nav-name,
+html .brand { color: #f6eeee !important; }
+html .nav-name em { color: #a2969a !important; }
+html .nav-links,
+html .links { background: rgba(255, 255, 255, .025) !important; border-color: rgba(255, 255, 255, .08) !important; }
+html .nav-links a,
+html .links a { color: #bcaeb0 !important; }
+html .nav-links a:hover,
+html .nav-links a:focus-visible,
+html .nav-links a.is-active,
+html .links a.active { color: #fff !important; background: rgba(198, 50, 57, .12) !important; }
+html .nav-links a::after { background: linear-gradient(90deg, #c4363a, #7a123d) !important; }
+html .nav-cursor { background: rgba(198, 50, 57, .14) !important; }
+html .nav-cta { background: #a92934 !important; color: #fff !important; border-color: #a92934 !important; }
+html .nav-cta:hover, html .nav-cta:focus-visible { background: #c4363a !important; }
+html .nav-toggle { color: #f3eeee !important; }
+html .nav-toggle svg { stroke: #f3eeee !important; }
+html .mobile-menu { background: rgba(9, 8, 11, .95) !important; border-color: rgba(201, 52, 58, .22) !important; }
+html .mobile-menu a { color: #f3eeee !important; }
+html .mobile-menu a:hover, html .mobile-menu a:focus-visible { background: rgba(198, 50, 57, .14) !important; }
+html .nav-mark { background: #0c0d11 !important; box-shadow: 0 8px 24px rgba(0, 0, 0, .5) !important; }
+html .nav-drop-btn { color: #bcaeb0 !important; }
+html .nav-dropdown { background: rgba(9, 8, 11, .96) !important; border-color: rgba(201, 52, 58, .22) !important; }
+html .nav-dropdown a { color: #f3eeee !important; }
+html .nav-dropdown a:hover { background: rgba(198, 50, 57, .14) !important; }
+html .nav-dd-icon { color: #eb4344 !important; }
+html .nav-dd-sub { color: #8b7d81 !important; }
+/* Nav pill decoration. These four layers are hard-coded blue/violet in the
+   homepage's inline <style>; each keeps its own shape and geometry here and is
+   only repainted, so the pill reads as the reference's dark glass with a
+   crimson hairline and one thin bright rail. */
+html .nav::before {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .07), transparent 35%),
+    linear-gradient(90deg, rgba(201, 52, 58, .16), transparent 28%, rgba(122, 18, 61, .16) 74%, rgba(255, 255, 255, .04)),
+    repeating-linear-gradient(90deg, transparent 0 230px, rgba(201, 52, 58, .12) 232px, transparent 236px) !important;
+  box-shadow: inset 0 0 34px rgba(122, 18, 61, .26), inset 0 0 0 1px rgba(201, 52, 58, .16) !important;
+}
+html .nav::after {
+  background: linear-gradient(90deg, transparent, rgba(196, 54, 58, .95) 20%, #f6e9e9 42%, rgba(122, 18, 61, .95) 63%, transparent) !important;
+  box-shadow: 0 0 20px rgba(197, 52, 58, .75), 0 0 44px rgba(122, 18, 61, .42) !important;
+}
+html .nav-neon-rail {
+  background: linear-gradient(90deg, transparent, rgba(235, 67, 68, .85), rgba(122, 18, 61, .78), transparent) !important;
+  box-shadow: 0 0 14px rgba(235, 67, 68, .5), 0 0 22px rgba(122, 18, 61, .44) !important;
+}
+html .nav-inner-glow {
+  background:
+    radial-gradient(180px 80px at 86% 50%, rgba(201, 52, 58, .16), transparent 72%),
+    radial-gradient(220px 90px at 3% 50%, rgba(255, 235, 235, .10), transparent 72%) !important;
+}
+html #hclock, html #hdate, html .hl-mark, html .hl-sub { color: #bcaeb0 !important; }
+html .hpill { background: rgba(255, 255, 255, .05) !important; border-color: rgba(201, 52, 58, .22) !important; color: #a2969a !important; }
+html .skip-link { background: #a92934 !important; color: #fff !important; }
+
+/* ══ 5 · TYPE ═══════════════════════════════════════════════════════════════
+   Warm-grey ink on black; the crimson is reserved for signal, exactly as in the
+   reference where only "Operate securely." carries it. */
+html h1, html h2, html h3, html h4, html h5, html h6 { color: #f3eeee !important; }
+html p  { color: #bcaeb0 !important; }
+html li { color: #bcaeb0 !important; }
+html blockquote { color: #f3eeee !important; }
+html cite { color: #8b7d81 !important; }
+html small { color: #a2969a !important; }
+html strong, html b { color: #f6eeee !important; }
+html [class*="kicker"],
+html [class*="eyebrow"],
+html .label,
+html .tag,
+html .mission-label,
+html .sh-tag,
+html .founder-kicker,
+html .credential-label,
+html .vc-num,
+html .pc-era { color: #cf6668 !important; }
+html .sh-tag::before, html .sh-tag::after { background: rgba(201, 52, 58, .5) !important; }
+html .lead, html .sub, html .subtitle { color: #bcaeb0 !important; }
+html .mission-text { color: #bcaeb0 !important; }
+html .mission-text strong { color: #f3eeee !important; }
+html .sh-dark h2 { color: #f3eeee !important; }
+html .sh-dark p  { color: #bcaeb0 !important; }
+html a { color: #f3eeee !important; }
+html a:hover { color: #eb4344 !important; }
+html hr { border-color: rgba(201, 52, 58, .2) !important; }
+
+/* Gradient headline text — the crystal wash, restated in crimson. */
+html .crystal-text,
+html .hero h1 .crystal-text,
+html [class*="gradient-text"] {
+  background: linear-gradient(135deg, #f2e9e8 0%, #d3484d 52%, #8f1d3f 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* ══ 6 · HERO ═══════════════════════════════════════════════════════════════ */
+html .hero { background: radial-gradient(circle at 50% 22%, rgba(128, 20, 43, .16), transparent 34%), linear-gradient(180deg, rgba(0, 0, 0, .02), rgba(0, 0, 0, .34)) !important; }
+html .hero-prism { background: radial-gradient(circle, rgba(197, 46, 55, .10) 0%, rgba(99, 18, 49, .07) 34%, transparent 70%) !important; }
+html .hero-line, html .hero-lines .hero-line { background: linear-gradient(90deg, transparent, rgba(188, 47, 55, .20), rgba(88, 30, 53, .10), transparent) !important; }
+html .cursor-glow { background: radial-gradient(circle, rgba(197, 52, 58, .07) 0%, rgba(122, 18, 61, .05) 30%, transparent 70%) !important; }
+html .hero-sub, html .hero p { color: #bcaeb0 !important; }
+html .hero-year { color: #8b7d81 !important; }
+html .hero-eyebrow { color: rgba(243, 238, 238, .5) !important; }
+html .hero-eyebrow::before, html .hero-eyebrow::after { background: rgba(201, 52, 58, .35) !important; }
+html .hero-domain-line { background: rgba(5, 5, 8, .58) !important; border-color: rgba(196, 48, 55, .22) !important; color: #bcaeb0 !important; }
+html .hero-domain-line a { color: #f3eeee !important; }
+html .hero-profile { border-color: rgba(201, 52, 58, .24) !important; box-shadow: 0 14px 40px rgba(0, 0, 0, .55) !important; }
+html .scroll-line { background: linear-gradient(180deg, rgba(201, 52, 58, .7), transparent) !important; }
+html .hero-scroll span { color: rgba(243, 238, 238, .40) !important; }
+html .manifesto { background: transparent !important; }
+html .manifesto-bg { background: radial-gradient(ellipse 60% 50% at 30% 40%, rgba(201, 52, 58, .06), transparent), radial-gradient(ellipse 50% 40% at 70% 60%, rgba(122, 18, 61, .05), transparent) !important; }
+html .manifesto blockquote { color: #f3eeee !important; }
+html .cta-sect::before { background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(201, 52, 58, .06), transparent) !important; }
+
+/* ══ 7 · SECTIONS ═══════════════════════════════════════════════════════════ */
+html .sect:not(.sect-dark) { background: rgba(7, 8, 11, .96) !important; color: #f3eeee !important; }
+/* Selector list mirrors glass.css §6 — that sheet repaints all five of these as
+   a light section, so all five have to be answered or a page keeps a white band. */
+html .sect-dark,
+html .dark-section,
+html .bg-dark,
+html [class*="sect-dark"],
+html [class*="dark-bg"] { background: #050608 !important; color: #f3eeee !important; }
+html .sect-dark *,
+html [class*="sect-dark"] *,
+html .dark-section * { color: #bcaeb0 !important; }
+html .sect-dark h1, html .sect-dark h2, html .sect-dark h3,
+html [class*="sect-dark"] h1, html [class*="sect-dark"] h2, html [class*="sect-dark"] h3 { color: #f3eeee !important; }
+html .mission-strip { border-color: rgba(201, 52, 58, .16) !important; }
+html .tl-item { border-color: rgba(201, 52, 58, .16) !important; }
+html .tl-year { color: #8b7d81 !important; }
+
+/* ══ 8 · BUTTONS ════════════════════════════════════════════════════════════ */
+html .btn-dark,
+html .btn-primary,
+html .btn.primary,
+html .cta.primary,
+html a.primary {
+  background: #a92934 !important;
+  color: #fff !important;
+  border-color: #a92934 !important;
+  box-shadow: 0 2px 14px rgba(169, 41, 52, .34) !important;
+}
+html .btn-dark:hover, html .btn-primary:hover,
+html .btn.primary:hover, html .cta.primary:hover { background: #c4363a !important; color: #fff !important; }
+html .btn-crystal {
+  background: linear-gradient(135deg, #9d2631, #c33c40 50%, #681332) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 28px rgba(173, 38, 48, .28) !important;
+}
+html .btn-crystal:hover { color: #fff !important; }
+html .btn-glass,
+html .btn.secondary,
+html .cta.secondary,
+html a.secondary {
+  background: rgba(10, 9, 12, .68) !important;
+  color: #f7eeee !important;
+  border-color: rgba(201, 52, 58, .22) !important;
+}
+html .btn-glass:hover, html .btn.secondary:hover, html .cta.secondary:hover { background: rgba(24, 12, 16, .86) !important; }
+
+/* ══ 9 · CARDS, PANELS, SURFACES ════════════════════════════════════════════ */
+/* The substring selectors ([class*="-card"] and friends) are glass.css §5's own
+   net — it repaints every card-ish, panel-ish and tile-ish element on the site
+   white. Matching that net exactly is what keeps stray white cards from showing
+   through on pages this file has never seen. */
+html :is(.card, .win, .window, .glass, .glass2, .glass-card, .panel, .tile,
+         [class*="-card"], [class*="card-"],
+         [class*="-panel"], [class*="panel-"],
+         [class*="-tile"], [class*="tile-"],
+         .console, .module, .box, .pricing-card, .offer-card,
+         .connect-card, .credentials-card, .founder-card, .cgr-box) {
+  background: rgba(12, 11, 15, .70) !important;
+  border-color: rgba(201, 52, 58, .18) !important;
+  color: #f3eeee !important;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, .52) !important;
+}
+@media (hover: hover) {
+  html :is(.card, .win, .window, .glass, .glass2, .glass-card, .panel, .tile,
+           [class*="-card"], [class*="card-"],
+           [class*="-panel"], [class*="panel-"],
+           .console, .module, .box, .pricing-card, .offer-card):hover {
+    border-color: rgba(235, 67, 68, .40) !important;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, .6), 0 0 20px rgba(197, 52, 58, .12) !important;
+  }
+}
+html .wb, html [class*="win-bar"] { background: rgba(255, 255, 255, .04) !important; border-color: rgba(201, 52, 58, .16) !important; }
+html .tech-card { background: rgba(255, 255, 255, .03) !important; border-color: rgba(201, 52, 58, .16) !important; color: #f3eeee !important; }
+html .tech-card h3 { color: #f3eeee !important; }
+html .tech-card p  { color: #bcaeb0 !important; }
+html .tc-icon { background: linear-gradient(135deg, rgba(201, 52, 58, .18), rgba(122, 18, 61, .12)) !important; }
+html .tc-tags span { background: rgba(201, 52, 58, .10) !important; color: #cfa9ab !important; border-color: rgba(201, 52, 58, .18) !important; }
+html .product-card.hero-product { background: linear-gradient(145deg, rgba(201, 52, 58, .06), rgba(10, 9, 12, .92)) !important; }
+html .pc-visual { background: linear-gradient(145deg, #0b0b0f, #121218) !important; border-color: rgba(201, 52, 58, .16) !important; color: #8b7d81 !important; }
+html .pc-dot { background: #3a2b2e !important; }
+html .pc-feat, html .pc-feat .ck { color: #d9575a !important; }
+html .pc-feat .ck { background: rgba(201, 52, 58, .14) !important; }
+html .value-card { background: #0d0d12 !important; }
+html .value-card:hover { background: #121218 !important; }
+html .value-card::after { background: linear-gradient(90deg, #c4363a, #7a123d) !important; }
+html .founder-card { background: linear-gradient(145deg, rgba(14, 12, 17, .94), rgba(8, 8, 11, .92)) !important; }
+html .founder-role { color: #d9575a !important; }
+html .founder-copy p { color: #bcaeb0 !important; }
+html .founder-copy strong { color: #f3eeee !important; }
+html .credentials-card { background: rgba(11, 10, 14, .94) !important; }
+html .credential-item { border-color: rgba(201, 52, 58, .14) !important; }
+html .credential-value { color: #bcaeb0 !important; }
+html .credential-value a { color: #f3eeee !important; border-bottom-color: rgba(201, 52, 58, .35) !important; }
+html .credential-sub { color: #8b7d81 !important; }
+html .signup-card { background: linear-gradient(160deg, #12090c, #0c0709 60%, #0c0a10) !important; border-color: rgba(201, 52, 58, .18) !important; }
+html .signup-card::before { background: radial-gradient(circle at 10% 10%, rgba(201, 52, 58, .20), transparent 35%), radial-gradient(circle at 88% 18%, rgba(122, 18, 61, .18), transparent 42%) !important; }
+html .wt, html .wb * { color: #a2969a !important; }
+html .cgr-box .cgr-crumb { color: #8b7d81 !important; }
+html .cgr-box li a { background: rgba(255, 255, 255, .035) !important; border-color: rgba(201, 52, 58, .16) !important; color: #f3eeee !important; }
+html .cgr-cta a { background: #a92934 !important; color: #fff !important; }
+
+/* ══ 10 · TABLES, FORMS, CODE ═══════════════════════════════════════════════ */
+html table { border-color: rgba(201, 52, 58, .18) !important; }
+html thead, html thead tr { background: rgba(201, 52, 58, .10) !important; }
+html th { color: #f3eeee !important; border-color: rgba(201, 52, 58, .18) !important; }
+html td { color: #bcaeb0 !important; border-color: rgba(201, 52, 58, .12) !important; }
+html tbody tr:nth-child(even) { background: rgba(255, 255, 255, .02) !important; }
+html tbody tr:hover { background: rgba(201, 52, 58, .07) !important; }
+html input, html textarea, html select {
+  background: #0d0c11 !important;
+  color: #f3eeee !important;
+  border-color: rgba(201, 52, 58, .26) !important;
+}
+html input::placeholder, html textarea::placeholder { color: #8b7d81 !important; }
+html input:focus, html textarea:focus, html select:focus {
+  border-color: #c4363a !important;
+  box-shadow: 0 0 0 3px rgba(196, 54, 58, .18) !important;
+}
+html code, html pre, html kbd, html samp {
+  background: rgba(201, 52, 58, .08) !important;
+  color: #e8c4c5 !important;
+  border-color: rgba(201, 52, 58, .18) !important;
+}
+
+/* ══ 11 · FOOTER ════════════════════════════════════════════════════════════ */
+html footer, html .footer { background: #08080b !important; border-color: rgba(201, 52, 58, .16) !important; }
+html footer *, html .footer * { color: #a2969a !important; }
+html footer a, html .footer a { color: #f3eeee !important; }
+html footer a:hover, html .footer a:hover { color: #eb4344 !important; }
+html .footer-mark img { filter: none !important; }
+
+/* ══ 12 · SENTINEL ASSISTANT WIDGET ═════════════════════════════════════════
+   The launcher pill and side panel present on most pages (sentinel.css). */
+html .sentinel-hero {
+  border-color: rgba(201, 52, 58, .38) !important;
+  background: radial-gradient(circle at var(--cg-energy-x, 50%) var(--cg-energy-y, 50%), rgba(201, 52, 58, .09), transparent 48%), linear-gradient(145deg, rgba(18, 8, 11, .97), rgba(5, 6, 9, .96)) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .5), 0 0 20px rgba(172, 37, 51, .14), inset 0 1px rgba(255, 255, 255, .06) !important;
+}
+html .sentinel-hero:before { background: conic-gradient(from var(--cg-border-angle, 0deg), transparent 0 55deg, rgba(217, 59, 59, .68) 95deg, transparent 140deg 360deg) !important; }
+html .sentinel-hero:after { background-image: linear-gradient(rgba(190, 48, 57, .25) 1px, transparent 1px), linear-gradient(90deg, rgba(190, 48, 57, .25) 1px, transparent 1px) !important; }
+html .sentinel-hero h2 { color: #fff !important; }
+html .sentinel-status, html .sentinel-session b, html .sentinel-modebar strong { color: #f1dddd !important; }
+html .sentinel-command-label, html .sentinel-zone-label { color: #a68b8d !important; }
+html .sentinel-quick-grid button, html .sentinel-replies button {
+  border-color: rgba(201, 52, 58, .22) !important;
+  background: rgba(14, 8, 11, .78) !important;
+  color: #f1dddd !important;
+}
+html .sentinel-quick-grid button:hover,
+html .sentinel-replies button:hover,
+html .sentinel-quick-grid button[aria-pressed=true] {
+  border-color: rgba(217, 59, 59, .72) !important;
+  background: rgba(112, 24, 37, .25) !important;
+  box-shadow: 0 0 14px rgba(201, 52, 58, .16) !important;
+}
+html .sentinel-hero-open { border-color: rgba(201, 52, 58, .55) !important; background: linear-gradient(135deg, rgba(158, 38, 49, .28), rgba(77, 15, 39, .20)) !important; }
+html .sentinel-launcher-button {
+  border-color: rgba(190, 45, 54, .58) !important;
+  background: linear-gradient(135deg, rgba(13, 7, 10, .98), rgba(42, 9, 18, .96)) !important;
+  box-shadow: 0 0 0 1px rgba(104, 17, 35, .18), 0 12px 34px rgba(0, 0, 0, .46), inset 0 1px rgba(255, 255, 255, .06) !important;
+}
+html .sentinel-launcher-button small { color: #9e7d82 !important; }
+html .sentinel-launcher-button strong { color: #fff !important; }
+html .sentinel-mark { border-color: #c63b42 !important; background: radial-gradient(circle at 30% 20%, rgba(213, 61, 67, .32), rgba(87, 15, 35, .22)) !important; box-shadow: 0 0 18px rgba(197, 52, 58, .26) !important; }
+html .sentinel-launcher-close { background: #180b0f !important; border-color: rgba(217, 59, 59, .25) !important; }
+html .sentinel-panel {
+  background: radial-gradient(circle at 100% 0, rgba(141, 22, 52, .18), transparent 28%), linear-gradient(rgba(190, 48, 57, .022) 1px, transparent 1px), linear-gradient(90deg, rgba(190, 48, 57, .022) 1px, transparent 1px), #07080b !important;
+  border-left-color: rgba(197, 52, 58, .38) !important;
+}
+html .sentinel-panel-header, html .sentinel-modebar { border-color: rgba(197, 52, 58, .16) !important; }
+html .sentinel-modebar button { border-color: rgba(197, 52, 58, .28) !important; background: rgba(145, 26, 43, .10) !important; color: #e8b8ba !important; }
+html .sentinel-message-avatar { border-color: rgba(197, 52, 58, .35) !important; background: rgba(197, 52, 58, .08) !important; color: #e25b60 !important; }
+html .sentinel-message-body { background: rgba(18, 9, 13, .88) !important; }
+html .sentinel-message--user .sentinel-message-body { border-color: rgba(197, 52, 58, .25) !important; background: rgba(102, 29, 42, .22) !important; }
+html .sentinel-message-meta a { color: #e66a6d !important; }
+
+/* ══ 13 · STATUS DOTS & PILLS ═══════════════════════════════════════════════ */
+html .dot, html .status-dot, html [class*="signal-dot"] { box-shadow: 0 0 10px rgba(235, 67, 68, .5) !important; }
+html .badge, html .chip, html .pill { border-color: rgba(201, 52, 58, .22) !important; }

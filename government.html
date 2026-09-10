@@ -6,10 +6,10 @@
 <link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
 <link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
 <link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
-<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#c4363a">
 <link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#07111f">
-<meta name="msapplication-TileColor" content="#07111f">
+<meta name="theme-color" content="#07080b">
+<meta name="msapplication-TileColor" content="#07080b">
 <meta name="msapplication-TileImage" content="/icon-192.png">
 <meta name="msapplication-config" content="/browserconfig.xml">
 
@@ -51,15 +51,15 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --white:#fafbfc;--off:#f3f5f8;
-  --glass:rgba(255,255,255,0.55);--glass-border:rgba(0,0,0,0.06);
-  --dark:#0a0c10;--dark-2:#1a1d25;--dark-3:#0d1020;
-  --text:#0a0c10;--text-2:#3a3f4a;--text-3:#6b7280;--text-4:#9ca3af;
-  --navy:#0a1628;--navy-2:#0f1f3d;--navy-3:#1a2d4a;
-  --gold:#5b4bc8;--gold-2:#887ae8;--gold-3:#2f1e8a;
-  --gov-blue:#1a3a6b;--gov-blue-2:#2a5298;--gov-light:#4a7fd4;
-  --prism-1:#38bdf8;--prism-2:#a78bfa;--prism-4:#34d399;--prism-5:#4929f6;
-  --crystal:linear-gradient(135deg,#38bdf8 0%,#a78bfa 25%,#f472b6 50%,#4929f6 75%,#34d399 100%);
+  --white:#0c0f13;--off:#0e1115;
+  --glass:rgba(14, 14, 14,0.55);--glass-border:rgba(0,0,0,0.06);
+  --dark:#0e0c0c;--dark-2:#211e1e;--dark-3:#1a1314;
+  --text:#e7e3e3;--text-2:#c0afb0;--text-3:#968283;--text-4:#af9c9d;
+  --navy:#1e1415;--navy-2:#2e1e20;--navy-3:#4a1a1d;
+  --gold:#c84b53;--gold-2:#e56b73;--gold-3:#8a1e25;
+  --gov-blue:#6b1a1f;--gov-blue-2:#982a31;--gov-light:#d44a53;
+  --prism-1:#ea4648;--prism-2:#ee637a;--prism-4:#34d399;--prism-5:#e93642;
+  --crystal:linear-gradient(135deg,#ea4648 0%,#ee637a 25%,#ee6375 50%,#e93642 75%,#34d399 100%);
   --serif:'Cormorant Garamond',Georgia,serif;
   --sans:'Urbanist',system-ui,sans-serif;
   --mono:'IBM Plex Mono',monospace
@@ -69,10 +69,10 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
 
 /* ── CLASSIFICATION BANNER ── */
 .class-banner{
-  background:#af1cb7;color:#fff;text-align:center;
+  background:#b71c31;color:#fff;text-align:center;
   font-family:var(--mono);font-size:11px;letter-spacing:.18em;font-weight:700;
   padding:6px 16px;position:relative;z-index:200;
-  border-bottom:2px solid #74057a;
+  border-bottom:2px solid #720d1a;
 }
 .class-banner span{opacity:.8;font-weight:400;margin:0 8px}
 
@@ -81,12 +81,12 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
   position:sticky;top:0;z-index:100;height:68px;
   display:flex;align-items:center;justify-content:space-between;
   padding:0 clamp(1rem,3vw,2rem);
-  background:rgba(10,22,40,.97);
+  background:rgba(30, 20, 21,.97);
   border-bottom:1px solid rgba(255,255,255,.08);
   backdrop-filter:blur(20px);
 }
 .nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none}
-.nav-mark{width:38px;height:38px;border-radius:9px;overflow:hidden;background:#fff;display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.nav-mark{width:38px;height:38px;border-radius:9px;overflow:hidden;background:#0e0e0e;display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.3)}
 .nav-mark img{width:100%;height:100%;object-fit:cover}
 .nav-name{font-family:var(--serif);font-size:19px;font-weight:600;color:#fff;letter-spacing:-.01em}
 .nav-name em{font-style:italic;font-weight:300;color:rgba(255,255,255,.45)}
@@ -94,8 +94,8 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
 .nav-links a{color:rgba(255,255,255,.55);text-decoration:none;font-size:13px;font-weight:600;padding:8px 14px;border-radius:8px;transition:all .18s}
 .nav-links a:hover{color:#fff;background:rgba(255,255,255,.08)}
 .nav-links a.active{color:#fff}
-.nav-cta{color:#fff!important;background:var(--gov-blue-2)!important;border:1px solid rgba(74,127,212,.4)!important}
-.nav-cta:hover{background:#3464b8!important}
+.nav-cta{color:#fff!important;background:var(--gov-blue-2)!important;border:1px solid rgba(212, 74, 83,.4)!important}
+.nav-cta:hover{background:#b8343d!important}
 @media(max-width:860px){.nav-links{display:none}}
 
 /* ── HERO ── */
@@ -107,14 +107,14 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
 .hero-grid-lines{
   position:absolute;inset:0;pointer-events:none;
   background-image:
-    linear-gradient(rgba(74,127,212,.05) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(74,127,212,.05) 1px,transparent 1px);
+    linear-gradient(rgba(212, 74, 83,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(212, 74, 83,.05) 1px,transparent 1px);
   background-size:40px 40px;
 }
 .hero-glow{
   position:absolute;top:-200px;left:50%;transform:translateX(-50%);
   width:800px;height:600px;
-  background:radial-gradient(ellipse,rgba(42,82,152,.3) 0%,transparent 70%);
+  background:radial-gradient(ellipse,rgba(152, 42, 49,.3) 0%,transparent 70%);
   pointer-events:none;
 }
 .container{width:min(1180px,92vw);margin:0 auto;padding:0 clamp(1rem,3vw,2rem)}
@@ -149,10 +149,10 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
   letter-spacing:.01em;
 }
 .btn-gold{
-  color:var(--navy);background:linear-gradient(135deg,var(--gold),var(--gold-2));
-  box-shadow:0 4px 20px rgba(91,75,200,.25);
+  color:#bcaeb0;background:linear-gradient(135deg,var(--gold),var(--gold-2));
+  box-shadow:0 4px 20px rgba(200, 75, 83,.25);
 }
-.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(91,75,200,.35)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(200, 75, 83,.35)}
 .btn-outline{
   color:rgba(255,255,255,.85);
   background:rgba(255,255,255,.06);
@@ -168,9 +168,9 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
   border:1px solid;
 }
 .hb-green{color:#4ade80;border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.07)}
-.hb-blue{color:#60a5fa;border-color:rgba(96,165,250,.3);background:rgba(96,165,250,.06)}
-.hb-gold{color:var(--gold-2);border-color:rgba(91,75,200,.3);background:rgba(91,75,200,.06)}
-.hb-purple{color:#c084fc;border-color:rgba(192,132,252,.28);background:rgba(192,132,252,.05)}
+.hb-blue{color:#ee6365;border-color:rgba(238, 99, 101,.3);background:rgba(238, 99, 101,.06)}
+.hb-gold{color:var(--gold-2);border-color:rgba(200, 75, 83,.3);background:rgba(200, 75, 83,.06)}
+.hb-purple{color:#ee637a;border-color:rgba(238, 99, 122,.28);background:rgba(238, 99, 122,.05)}
 
 /* ── STAT STRIP ── */
 .stat-strip{
@@ -210,7 +210,7 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
 }
 .sh-tag::before{content:'';width:20px;height:1px;background:currentColor}
 .sh-tag.light{color:rgba(255,255,255,.35)}
-.sh-tag.light::before{background:rgba(255,255,255,.35)}
+.sh-tag.light::before{background:rgba(14, 14, 14,.35)}
 .sh-tag.gold{color:var(--gold);opacity:.85}
 .sh-tag.gold::before{background:var(--gold)}
 .sh h2{
@@ -249,17 +249,17 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
 .comp-card h3{font-size:15px;font-weight:700;color:#fff;margin-bottom:8px}
 .comp-card p{font-size:13px;color:rgba(255,255,255,.45);line-height:1.7}
 .badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25)}
-.badge-blue{background:rgba(96,165,250,.1);color:#60a5fa;border:1px solid rgba(96,165,250,.22)}
-.badge-gold{background:rgba(91,75,200,.12);color:var(--gold-2);border:1px solid rgba(91,75,200,.25)}
-.badge-purple{background:rgba(192,132,252,.1);color:#c084fc;border:1px solid rgba(192,132,252,.22)}
-.badge-red{background:rgba(241,113,248,.08);color:#f171f8;border:1px solid rgba(241,113,248,.22)}
-.badge-cyan{background:rgba(34,211,238,.08);color:#22d3ee;border:1px solid rgba(34,211,238,.2)}
+.badge-blue{background:rgba(238, 99, 101,.1);color:#ee6365;border:1px solid rgba(238, 99, 101,.22)}
+.badge-gold{background:rgba(200, 75, 83,.12);color:var(--gold-2);border:1px solid rgba(200, 75, 83,.25)}
+.badge-purple{background:rgba(238, 99, 122,.1);color:#ee637a;border:1px solid rgba(238, 99, 122,.22)}
+.badge-red{background:rgba(238, 99, 117,.08);color:#ee6375;border:1px solid rgba(238, 99, 117,.22)}
+.badge-cyan{background:rgba(231, 41, 44,.08);color:#e7292c;border:1px solid rgba(231, 41, 44,.2)}
 
 /* ── USE CASE CARDS ── */
 .usecase-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
 .uc-card{
   padding:clamp(24px,3vw,36px);border-radius:16px;
-  border:1px solid var(--glass-border);background:#fff;
+  border:1px solid var(--glass-border);background:#0e0e0e;
   box-shadow:0 8px 32px rgba(0,0,0,.04);
   transition:all .3s;
 }
@@ -291,8 +291,8 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
 .cap-card:hover{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.05)}
 .cap-card.hero-cap{
   grid-column:1/-1;
-  background:linear-gradient(140deg,rgba(42,82,152,.2),rgba(26,58,107,.15));
-  border-color:rgba(74,127,212,.22);
+  background:linear-gradient(140deg,rgba(152, 42, 49,.2),rgba(107, 26, 31,.15));
+  border-color:rgba(212, 74, 83,.22);
 }
 .cap-badge{
   font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;
@@ -313,7 +313,7 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
 @media(max-width:740px){.proc-grid{grid-template-columns:1fr}}
 .proc-card{
   padding:clamp(24px,3vw,36px);border-radius:16px;
-  border:1px solid var(--glass-border);background:#fff;
+  border:1px solid var(--glass-border);background:#0e0e0e;
   box-shadow:0 6px 28px rgba(0,0,0,.04);
 }
 .proc-flag{
@@ -346,7 +346,7 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
 .ci-val a:hover{text-decoration:underline}
 .info-card{
   padding:clamp(28px,3.5vw,40px);border-radius:20px;
-  background:#fff;border:1px solid var(--glass-border);
+  background:#0e0e0e;border:1px solid var(--glass-border);
   box-shadow:0 12px 40px rgba(0,0,0,.05);
 }
 .info-card h3{font-family:var(--serif);font-size:1.5rem;font-weight:500;margin-bottom:18px}
@@ -389,6 +389,7 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
   <link rel="stylesheet" href="brand-system.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Service","@id":"https://www.clearglassinc.com/government.html#service","name":"Federal & Government Solutions","serviceType":"Government intelligence platforms, zero-trust cybersecurity and AI command surfaces","description":"ClearGlass Inc. delivers intelligence platforms, zero-trust cybersecurity architecture, and AI-driven command surfaces for Canadian and US federal, provincial and municipal agencies.","url":"https://www.clearglassinc.com/government.html","provider":{"@id":"https://www.clearglassinc.com/#org"},"audience":{"@type":"Audience","audienceType":"Federal, provincial and municipal government agencies"},"areaServed":[{"@type":"Country","name":"Canada"},{"@type":"Country","name":"United States"}],"hasOfferCatalog":{"@type":"OfferCatalog","name":"Government capability areas","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"Zero-trust security architecture","description":"Identity-first, least-privilege architecture design and implementation for government environments."}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Intelligence & command surfaces","description":"Operational dashboards and decision surfaces with auditable, human-in-the-loop governance."}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"OSINT and investigative automation","description":"Open-source intelligence tooling and investigative workflow automation with source grading."}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Procurement readiness","description":"Federal and Ontario procurement documentation, security posture evidence and supplier onboarding."}}]}},{"@type":"BreadcrumbList","@id":"https://www.clearglassinc.com/government.html#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.clearglassinc.com/"},{"@type":"ListItem","position":2,"name":"Federal & Government Solutions","item":"https://www.clearglassinc.com/government.html"}]}]}</script>
 <link rel="stylesheet" href="/assets/css/future-buttons.css">
+<link rel="stylesheet" href="/clearglass-crimson.css">
 </head>
 <body>
 
@@ -412,7 +413,7 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
     <a href="clearglass-nexus.html">NEXUS v12</a>
     <a href="artemis-iv.html">Artemis IV</a>
     <a href="guardian.html">Guardian</a>
-    <a href="bluedesk.html" style="background:linear-gradient(90deg,#f43f5e,#a855f7 60%,#7e22ce);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:700">BLUEDESK</a>
+    <a href="bluedesk.html" style="background:linear-gradient(90deg,#f43f5e,#ed5f77 60%,#ce223f);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:700">BLUEDESK</a>
     <a href="operations/procurement-readiness.html">Procurement</a>
     <a href="mailto:desmondotieno@icloud.com" class="nav-cta">Secure Contact →</a>
   </div>
@@ -480,27 +481,27 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
         <h3>FedRAMP Authorization</h3>
         <p>Cloud infrastructure aligned to FedRAMP Moderate baselines. NIST SP 800-53 Rev 5 controls implemented across all compute and storage layers.</p>
       </div>
-      <div class="comp-card rv" style="--bar-color:rgba(96,165,250,.5)">
+      <div class="comp-card rv" style="--bar-color:rgba(238, 99, 101,.5)">
         <span class="comp-badge badge-blue">CMMC LEVEL 2</span>
         <h3>CMMC 2.0 Level 2</h3>
         <p>Cybersecurity Maturity Model Certification Level 2 practices implemented — safeguarding Controlled Unclassified Information (CUI) for DoD supply chain eligibility.</p>
       </div>
-      <div class="comp-card rv" style="--bar-color:rgba(91,75,200,.5)">
+      <div class="comp-card rv" style="--bar-color:rgba(200, 75, 83,.5)">
         <span class="comp-badge badge-gold">CCCS ALIGNED</span>
         <h3>Canadian Centre for Cyber Security</h3>
         <p>Platforms aligned to CCCS Security Controls Catalogue (ITSG-33) and the Government of Canada Cloud Security Risk Management Framework.</p>
       </div>
-      <div class="comp-card rv" style="--bar-color:rgba(192,132,252,.5)">
+      <div class="comp-card rv" style="--bar-color:rgba(238, 99, 122,.5)">
         <span class="comp-badge badge-purple">SOC 2 TYPE II</span>
         <h3>SOC 2 Type II Readiness</h3>
         <p>Trust Service Criteria (Security, Availability, Confidentiality, Processing Integrity, Privacy) built into operational controls and audit logging.</p>
       </div>
-      <div class="comp-card rv" style="--bar-color:rgba(241,113,248,.5)">
+      <div class="comp-card rv" style="--bar-color:rgba(238, 99, 117,.5)">
         <span class="comp-badge badge-red">ITAR ALIGNED</span>
         <h3>ITAR / EAR Compliance</h3>
         <p>Technology transfer controls aligned to US ITAR and EAR requirements. Dual-use technology classification reviewed and documented for defense export purposes.</p>
       </div>
-      <div class="comp-card rv" style="--bar-color:rgba(34,211,238,.5)">
+      <div class="comp-card rv" style="--bar-color:rgba(231, 41, 44,.5)">
         <span class="comp-badge badge-cyan">PIPEDA</span>
         <h3>PIPEDA / Privacy Act</h3>
         <p>Full alignment to Canada's Personal Information Protection and Electronic Documents Act. Data residency controls keep Canadian citizen data within Canadian jurisdiction.</p>
@@ -510,7 +511,7 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
         <h3>Zero-Trust Architecture</h3>
         <p>NIST SP 800-207 Zero Trust Architecture implemented. mTLS everywhere, microsegmentation, least-privilege identity, and continuous session verification.</p>
       </div>
-      <div class="comp-card rv" style="--bar-color:rgba(96,165,250,.4)">
+      <div class="comp-card rv" style="--bar-color:rgba(238, 99, 101,.4)">
         <span class="comp-badge badge-blue">PBMM READY</span>
         <h3>Protected B / Medium / Medium</h3>
         <p>Platform architecture supports Protected B data classification under the Government of Canada's cloud security profile — validated for sensitive federal workloads.</p>
@@ -533,26 +534,26 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
         <h3>NEXUS v12 — Global Intelligence Command Surface</h3>
         <p style="color:rgba(255,255,255,.55)">DARPA-grade full-spectrum intelligence platform operated from the Burlington Operations Center. Real-time multi-domain awareness across 45+ live feeds, AI-driven threat analysis, geospatial mapping, SIGINT-class signal intelligence, and a neuromorphic SyNAPSE threat engine. The most advanced open-source intelligence command surface available to government operators.</p>
         <div class="cap-feats">
-          <div class="cap-feat"><span class="ck" style="background:rgba(91,75,200,.12);color:var(--gold-2)">✓</span> SyNAPSE neuromorphic threat scoring engine</div>
-          <div class="cap-feat"><span class="ck" style="background:rgba(91,75,200,.12);color:var(--gold-2)">✓</span> 45-camera MTO COMPASS surveillance integration</div>
-          <div class="cap-feat"><span class="ck" style="background:rgba(91,75,200,.12);color:var(--gold-2)">✓</span> HELIX geospatial threat heatmap (ARGUS overlay)</div>
-          <div class="cap-feat"><span class="ck" style="background:rgba(91,75,200,.12);color:var(--gold-2)">✓</span> DARPA SIGMA anomaly detection (2.5σ threshold)</div>
-          <div class="cap-feat"><span class="ck" style="background:rgba(91,75,200,.12);color:var(--gold-2)">✓</span> CASCADE infrastructure dependency failure prediction</div>
-          <div class="cap-feat"><span class="ck" style="background:rgba(91,75,200,.12);color:var(--gold-2)">✓</span> MEMEX cross-domain intelligence correlation engine</div>
-          <div class="cap-feat"><span class="ck" style="background:rgba(91,75,200,.12);color:var(--gold-2)">✓</span> ISS orbital tracking + space weather monitoring (NOAA SWPC)</div>
-          <div class="cap-feat"><span class="ck" style="background:rgba(91,75,200,.12);color:var(--gold-2)">✓</span> Real-time AIS maritime + OpenSky airspace surveillance</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(200, 75, 83,.12);color:var(--gold-2)">✓</span> SyNAPSE neuromorphic threat scoring engine</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(200, 75, 83,.12);color:var(--gold-2)">✓</span> 45-camera MTO COMPASS surveillance integration</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(200, 75, 83,.12);color:var(--gold-2)">✓</span> HELIX geospatial threat heatmap (ARGUS overlay)</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(200, 75, 83,.12);color:var(--gold-2)">✓</span> DARPA SIGMA anomaly detection (2.5σ threshold)</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(200, 75, 83,.12);color:var(--gold-2)">✓</span> CASCADE infrastructure dependency failure prediction</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(200, 75, 83,.12);color:var(--gold-2)">✓</span> MEMEX cross-domain intelligence correlation engine</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(200, 75, 83,.12);color:var(--gold-2)">✓</span> ISS orbital tracking + space weather monitoring (NOAA SWPC)</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(200, 75, 83,.12);color:var(--gold-2)">✓</span> Real-time AIS maritime + OpenSky airspace surveillance</div>
         </div>
         <a href="clearglass-nexus.html" class="btn btn-gold">Launch NEXUS v12 →</a>
       </div>
 
-      <div class="cap-card rv" style="border-color:rgba(56,189,248,.18);background:rgba(56,189,248,.04)">
-        <span class="cap-badge" style="color:#38bdf8">ARTEMIS IV CORE · TACTICAL INTELLIGENCE</span>
+      <div class="cap-card rv" style="border-color:rgba(234, 70, 72,.18);background:rgba(234, 70, 72,.04)">
+        <span class="cap-badge" style="color:#ea4648">ARTEMIS IV CORE · TACTICAL INTELLIGENCE</span>
         <h3>Artemis IV Core</h3>
         <p style="color:rgba(255,255,255,.5)">High-intensity command shell for tactical intelligence workflows, mission logging, and threat matrix navigation. Designed for operational tempo in field and command center environments.</p>
         <div class="cap-feats">
-          <div class="cap-feat"><span class="ck" style="background:rgba(56,189,248,.12);color:#38bdf8">✓</span> Threat matrix with APT actor tracking</div>
-          <div class="cap-feat"><span class="ck" style="background:rgba(56,189,248,.12);color:#38bdf8">✓</span> Mission logging and console quick commands</div>
-          <div class="cap-feat"><span class="ck" style="background:rgba(56,189,248,.12);color:#38bdf8">✓</span> CAM/sensor data integration</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(234, 70, 72,.12);color:#ea4648">✓</span> Threat matrix with APT actor tracking</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(234, 70, 72,.12);color:#ea4648">✓</span> Mission logging and console quick commands</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(234, 70, 72,.12);color:#ea4648">✓</span> CAM/sensor data integration</div>
         </div>
         <a href="artemis-iv.html" class="btn btn-outline">Open Artemis IV →</a>
       </div>
@@ -569,14 +570,14 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
         <a href="guardian.html" class="btn btn-outline">Open Guardian →</a>
       </div>
 
-      <div class="cap-card rv" style="border-color:rgba(167,139,250,.18);background:rgba(167,139,250,.04)">
-        <span class="cap-badge" style="color:#a78bfa">ARTEMIS BLUE TEAM · DEFENSIVE OPERATIONS</span>
+      <div class="cap-card rv" style="border-color:rgba(238, 99, 122,.18);background:rgba(238, 99, 122,.04)">
+        <span class="cap-badge" style="color:#ee637a">ARTEMIS BLUE TEAM · DEFENSIVE OPERATIONS</span>
         <h3>Artemis Blue Team</h3>
         <p style="color:rgba(255,255,255,.5)">Blue team defensive operations platform for continuous network monitoring, incident triage, and adversarial simulation — aligned to MITRE ATT&CK defensive playbooks.</p>
         <div class="cap-feats">
-          <div class="cap-feat"><span class="ck" style="background:rgba(167,139,250,.12);color:#a78bfa">✓</span> MITRE ATT&CK defensive coverage mapping</div>
-          <div class="cap-feat"><span class="ck" style="background:rgba(167,139,250,.12);color:#a78bfa">✓</span> Continuous threat hunting + IOC feeds</div>
-          <div class="cap-feat"><span class="ck" style="background:rgba(167,139,250,.12);color:#a78bfa">✓</span> Incident triage and response playbooks</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(238, 99, 122,.12);color:#ee637a">✓</span> MITRE ATT&CK defensive coverage mapping</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(238, 99, 122,.12);color:#ee637a">✓</span> Continuous threat hunting + IOC feeds</div>
+          <div class="cap-feat"><span class="ck" style="background:rgba(238, 99, 122,.12);color:#ee637a">✓</span> Incident triage and response playbooks</div>
         </div>
         <a href="artemis-blue-team.html" class="btn btn-outline">Open Blue Team →</a>
       </div>
@@ -597,7 +598,7 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
         <div class="uc-flag">
           <span>🍁</span> CANADIAN DEFENCE — DND / CAF
         </div>
-        <div class="uc-icon" style="background:rgba(211,38,220,.08)">🛡️</div>
+        <div class="uc-icon" style="background:rgba(220, 38, 62,.08)">🛡️</div>
         <h3>National Defence & Armed Forces</h3>
         <p>NEXUS v12 provides the Canadian Armed Forces and DND with full-spectrum OSINT awareness, threat scoring, and geospatial intelligence — aligned to CF operational security doctrine.</p>
         <div class="uc-tags">
@@ -611,7 +612,7 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
         <div class="uc-flag">
           <span>🍁</span> INTELLIGENCE — CSIS / CSE
         </div>
-        <div class="uc-icon" style="background:rgba(30,64,175,.08)">🔭</div>
+        <div class="uc-icon" style="background:rgba(175, 30, 40,.08)">🔭</div>
         <h3>Intelligence Agencies</h3>
         <p>ARIA intelligence mining and MEMEX correlation engines provide CSIS and CSE-grade analysts with structured OSINT, dark-web pulse monitoring, and cross-domain threat correlation at machine speed.</p>
         <div class="uc-tags">
@@ -639,7 +640,7 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
         <div class="uc-flag">
           <span>🍁</span> BORDER SERVICES — CBSA / PUBLIC SAFETY
         </div>
-        <div class="uc-icon" style="background:rgba(72,11,245,.08)">🛂</div>
+        <div class="uc-icon" style="background:rgba(230, 26, 60,.08)">🛂</div>
         <h3>Border & Public Safety</h3>
         <p>Real-time maritime AIS tracking, airspace surveillance, geomagnetic storm alerts, and infrastructure health monitoring support CBSA and Public Safety Canada operational mandates.</p>
         <div class="uc-tags">
@@ -653,7 +654,7 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
         <div class="uc-flag">
           <span>🇺🇸</span> US FEDERAL — DHS / CISA
         </div>
-        <div class="uc-icon" style="background:rgba(99,102,241,.08)">🏛️</div>
+        <div class="uc-icon" style="background:rgba(238, 99, 108,.08)">🏛️</div>
         <h3>Homeland Security & CISA</h3>
         <p>Critical infrastructure protection, cyber threat intelligence (dark web pulse, IOC feeds), and anomaly detection aligned to CISA's Cross-Sector Cybersecurity Performance Goals (CPGs).</p>
         <div class="uc-tags">
@@ -667,7 +668,7 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
         <div class="uc-flag">
           <span>🇺🇸</span> DEFENSE — DoD / DARPA PROGRAMS
         </div>
-        <div class="uc-icon" style="background:rgba(230,68,239,.08)">⚔️</div>
+        <div class="uc-icon" style="background:rgba(235, 72, 94,.08)">⚔️</div>
         <h3>Department of Defense</h3>
         <p>NEXUS v12 neuromorphic SyNAPSE engine, XAI explainable AI threat factors, and DARPA CASCADE failure prediction are directly aligned to DoD AI/ML modernization and DARPA program objectives.</p>
         <div class="uc-tags">
@@ -692,7 +693,7 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
     <div class="proc-grid">
       <!-- Canada -->
       <div class="proc-card rv">
-        <div class="proc-flag" style="color:#a92bc0">🍁 CANADA — GOVERNMENT OF CANADA</div>
+        <div class="proc-flag" style="color:#d5435b">🍁 CANADA — GOVERNMENT OF CANADA</div>
         <h3>Canadian Federal Procurement</h3>
         <div class="proc-list">
           <div class="proc-item">
@@ -718,7 +719,7 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
       </div>
       <!-- USA -->
       <div class="proc-card rv">
-        <div class="proc-flag" style="color:#1a3a6b">🇺🇸 UNITED STATES — FEDERAL ACQUISITION</div>
+        <div class="proc-flag" style="color:#e38b91">🇺🇸 UNITED STATES — FEDERAL ACQUISITION</div>
         <h3>US Federal Procurement</h3>
         <div class="proc-list">
           <div class="proc-item">
@@ -755,17 +756,17 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
       <p style="color:rgba(255,255,255,.5)">ClearGlass NEXUS is architected for intelligence sharing standards across Five Eyes alliance members. Our OSINT data structures, classification handling, and API schemas are designed for interoperability with UKUSA agreement frameworks.</p>
     </div>
     <div class="compliance-grid">
-      <div class="comp-card rv" style="--bar-color:rgba(96,165,250,.5)">
+      <div class="comp-card rv" style="--bar-color:rgba(238, 99, 101,.5)">
         <span class="comp-badge badge-blue">CANADA</span>
         <h3>CSE / CCCS</h3>
         <p>ITSG-33 security controls, CCCS cloud security profile, Protected B data handling, and Government of Canada IT Security Policy alignment.</p>
       </div>
-      <div class="comp-card rv" style="--bar-color:rgba(96,165,250,.5)">
+      <div class="comp-card rv" style="--bar-color:rgba(238, 99, 101,.5)">
         <span class="comp-badge badge-blue">UNITED STATES</span>
         <h3>NSA / CISA / DARPA</h3>
         <p>NIST SP 800-53, CMMC 2.0 Level 2, ITAR/EAR, FedRAMP Moderate baseline. NSA-aligned cryptographic standards (CNSA Suite).</p>
       </div>
-      <div class="comp-card rv" style="--bar-color:rgba(91,75,200,.5)">
+      <div class="comp-card rv" style="--bar-color:rgba(200, 75, 83,.5)">
         <span class="comp-badge badge-gold">UNITED KINGDOM</span>
         <h3>GCHQ / NCSC</h3>
         <p>Cyber Essentials Plus alignment. NCSC Cloud Security Principles (14 controls). UK Government Security Classifications (OFFICIAL / SECRET) architecture support.</p>
@@ -913,7 +914,7 @@ rvEls.forEach(function(el){ rvObs.observe(el); });
 <script defer src="/stealth-glass.js"></script>
 <!-- cg-related:start -->
 <aside id="cg-related">
-  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(231, 41, 44,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(238, 99, 108,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(231, 41, 44,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(237, 95, 119,.16),transparent 36%),linear-gradient(165deg,rgba(20, 13, 13,.97),rgba(18, 13, 13,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(231, 41, 44,.34);border-radius:16px;padding:24px 26px;color:#f1e6e7;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(231, 41, 44,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(231, 41, 44,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#e7292c,#ed5f77,transparent);box-shadow:0 0 18px rgba(231, 41, 44,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#ee636c;margin:0 0 12px}#cg-related .cgr-crumb a{color:#ee6365;text-decoration:none;text-shadow:0 0 12px rgba(231, 41, 44,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(24, 15, 16,.52);border:1px solid rgba(238, 99, 108,.15);color:#ede1e2;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#e7292c;color:#fff;box-shadow:0 0 18px rgba(231, 41, 44,.14)}#cg-related .cgr-route b{display:block;color:#ee6365;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#ede1e2;text-decoration:none;border:1px solid rgba(238, 99, 108,.08);background:rgba(24, 15, 16,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(231, 41, 44,.1);border-color:rgba(231, 41, 44,.42);color:#fff;box-shadow:0 0 22px rgba(231, 41, 44,.14)}#cg-related li a b{color:#ee6365;font-weight:700;text-shadow:0 0 12px rgba(231, 41, 44,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(231, 41, 44,.18);font-size:13.5px;color:#dfa9ad}#cg-related .cgr-cta a{color:#ee6365;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(231, 41, 44,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
   <nav class="cgr-box" aria-label="Related ClearGlass pages">
     <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › Government &amp; Procurement</p>
     <h2>Inside Government &amp; Procurement</h2>
