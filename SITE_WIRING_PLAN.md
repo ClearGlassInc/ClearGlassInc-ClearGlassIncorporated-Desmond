@@ -16,7 +16,7 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 - **CTA bridge:** Each cluster ends in two relevant, non-coercive next steps such as offers, pricing, readiness, or booking.
 - **Responsive behavior:** Three route cards collapse to one column below 620px; related cards use an adaptive grid; motion is disabled when reduced motion is requested.
 - **SEO and accessibility:** Links are static HTML, labels are descriptive, navigation landmarks are named, focus states are visible, and all routes remain unchanged.
-- **Audit coverage:** 152 public pages are connected and 12 utility, completion, prototype, or private pages are explicitly excluded.
+- **Audit coverage:** 159 public pages are connected and 14 utility, completion, prototype, or private pages are explicitly excluded.
 
 ## Page-by-page flow map
 
@@ -33,7 +33,7 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 | `environmental-cyber-risk.html` — Environmental Cyber-Risk | OT and environmental threat monitoring | ATT&CK Prompt Integrator | Cyber Defense Console | BLUEDESK Mobile | Book a security engagement / Start with the $249 Security Quick-Audit |
 | `bluedesk-mobile.html` — BLUEDESK Mobile | the CISO risk console on a phone-first canvas | Environmental Cyber-Risk | Cyber Defense Console | Cyber Defense Console | Book a security engagement / Start with the $249 Security Quick-Audit |
 | **Intelligence & OSINT** | **Topic cluster** |  |  |  |  |
-| `intelligence.html` — Intelligence | the ClearGlass intelligence practice | Guardian Command Nexus Spec | Intelligence | Flowsint | Book a security engagement / See pricing & plans |
+| `intelligence.html` — Intelligence | the ClearGlass intelligence practice | Critical Minerals Intelligence | Intelligence | Flowsint | Book a security engagement / See pricing & plans |
 | `flowsint.html` — Flowsint | OSINT investigation graph for domains, IPs and transforms | Intelligence | Intelligence | ClearGlass NEXUS | Book a security engagement / See pricing & plans |
 | `clearglass-nexus.html` — ClearGlass NEXUS | full-spectrum intelligence platform | Flowsint | Intelligence | Ontario OSINT Deck | Book a security engagement / See pricing & plans |
 | `Ontario-osint.html` — Ontario OSINT Deck | regional open-source intelligence control deck | ClearGlass NEXUS | Intelligence | Network Flow Intelligence | Book a security engagement / See pricing & plans |
@@ -44,7 +44,8 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 | `ClearGlass-NEXUS-v12-FINAL.html` — NEXUS v12 | the flagship intelligence platform build | Intelligence Platform Architecture | Intelligence | NEXUS v12 · Ontario | Book a security engagement / See pricing & plans |
 | `artemis.html` — NEXUS v12 · Ontario | intelligence platform deployment profile | NEXUS v12 | Intelligence | XENOLITH | Book a security engagement / See pricing & plans |
 | `xenolith.html` — XENOLITH | the sovereign intelligence lattice — governed multi-domain command substrate | NEXUS v12 · Ontario | Intelligence | Guardian Command Nexus Spec | Book a security engagement / See pricing & plans |
-| `docs/guardian_command_nexus_spec.html` — Guardian Command Nexus Spec | the implementation specification for the Guardian command surface | XENOLITH | Intelligence | Intelligence | Book a security engagement / See pricing & plans |
+| `docs/guardian_command_nexus_spec.html` — Guardian Command Nexus Spec | the implementation specification for the Guardian command surface | XENOLITH | Intelligence | Critical Minerals Intelligence | Book a security engagement / See pricing & plans |
+| `minerals.html` — Critical Minerals Intelligence | source-transparent mineral profiles and Canadian supply-chain risk | Guardian Command Nexus Spec | Intelligence | Intelligence | Book a security engagement / See pricing & plans |
 | **Artemis Platform** | **Topic cluster** |  |  |  |  |
 | `artemis-os.html` — Artemis OS | the Artemis intelligence operating system | Air Systems Control | Artemis OS | ARTEMIS IV | See pricing & plans / Book a security engagement |
 | `artemis-iv.html` — ARTEMIS IV | tactical intelligence core | Artemis OS | Artemis OS | AI Cyber Intelligence Platform | See pricing & plans / Book a security engagement |
@@ -55,7 +56,7 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 | `air-control.html` — ZEPHYR | air systems control surface | ARTEMIS // FAWL | Artemis OS | Air Systems Control | See pricing & plans / Book a security engagement |
 | `air-systems-control.html` — Air Systems Control | the Artemis airspace control surface | ZEPHYR | Artemis OS | Artemis OS | See pricing & plans / Book a security engagement |
 | **Command & Autonomous Operations** | **Topic cluster** |  |  |  |  |
-| `percival-os.html` — PERCIVAL OS | mission-ready governed command center | Command Center | PERCIVAL OS | AVALON | Browse services & engagements / See pricing & plans |
+| `percival-os.html` — PERCIVAL OS | mission-ready governed command center | Mission Control | PERCIVAL OS | AVALON | Browse services & engagements / See pricing & plans |
 | `artemis-percival.html` — AVALON | the ARTEMIS ⊕ PERCIVAL unified fusion core | PERCIVAL OS | PERCIVAL OS | Agent Mesh | Browse services & engagements / See pricing & plans |
 | `agentmesh.html` — Agent Mesh | multi-agent OSINT orchestration | AVALON | PERCIVAL OS | AI Operator Workspace | Browse services & engagements / See pricing & plans |
 | `ai-operator.html` — AI Operator Workspace | human-in-the-loop agent operations | Agent Mesh | PERCIVAL OS | Advanced Features, Tools & Systems | Browse services & engagements / See pricing & plans |
@@ -70,7 +71,8 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 | `CG-os.html` — CG OS | the ClearGlass command HUD | Event Control Surface | PERCIVAL OS | PERCIVAL BUILD | Browse services & engagements / See pricing & plans |
 | `percival-build.html` — PERCIVAL BUILD | spatial engineering workspace | CG OS | PERCIVAL OS | CLEARSIGHT | Browse services & engagements / See pricing & plans |
 | `clearsight.html` — CLEARSIGHT | edge-AI camera vision & object detection | PERCIVAL BUILD | PERCIVAL OS | Command Center | Browse services & engagements / See pricing & plans |
-| `command-center.html` — Command Center | executive security operations deck | CLEARSIGHT | PERCIVAL OS | PERCIVAL OS | Browse services & engagements / See pricing & plans |
+| `command-center.html` — Command Center | executive security operations deck | CLEARSIGHT | PERCIVAL OS | Mission Control | Browse services & engagements / See pricing & plans |
+| `mission-control.html` — Mission Control | the operational portfolio across automation, defense and deployments | Command Center | PERCIVAL OS | PERCIVAL OS | Browse services & engagements / See pricing & plans |
 | **Legal, Tax & Compliance** | **Topic cluster** |  |  |  |  |
 | `legal/index.html` — Legal Infrastructure | the ClearGlass corporate legal stack | Accessibility Statement | Legal Infrastructure | AEGIS | Book a security engagement / Browse services & engagements |
 | `aegis.html` — AEGIS | legal process shield | Legal Infrastructure | Legal Infrastructure | ClearCounsel | Book a security engagement / Browse services & engagements |
@@ -117,8 +119,9 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 | `offers/autonomous-threat-modeling.html` — Autonomous Threat Modeling | continuous threat-modeling assessment and implementation services | Security Quick-Audit | Services & Engagements | Hardening Sprint | Book a security engagement / See pricing & plans |
 | `offers/hardening-sprint.html` — Hardening Sprint | Microsoft 365 + Windows hardening engagement | Autonomous Threat Modeling | Services & Engagements | Guardian Command Nexus Blueprint | Book a security engagement / See pricing & plans |
 | `offers/guardian-command-nexus-blueprint.html` — Guardian Command Nexus Blueprint | the full SPEC-1 architecture blueprint, sold as a digital deliverable | Hardening Sprint | Services & Engagements | Revenue Engine | Book a security engagement / See pricing & plans |
-| `revenue-engine.html` — Revenue Engine | AI-driven business growth system | Guardian Command Nexus Blueprint | Services & Engagements | Side Store | Book a security engagement / See pricing & plans |
-| `side-store.html` — Side Store | electronics, cables and components | Revenue Engine | Services & Engagements | ClearGlass Products | Book a security engagement / See pricing & plans |
+| `revenue-engine.html` — Revenue Engine | AI-driven business growth system | Guardian Command Nexus Blueprint | Services & Engagements | Canada–US Control Assessment | Book a security engagement / See pricing & plans |
+| `offers/canada-us-control-assessment.html` — Canada–US Control Assessment | fixed-scope mapping of cross-border transfers, agent surfaces and dual incident clocks | Revenue Engine | Services & Engagements | Side Store | Book a security engagement / See pricing & plans |
+| `side-store.html` — Side Store | electronics, cables and components | Canada–US Control Assessment | Services & Engagements | ClearGlass Products | Book a security engagement / See pricing & plans |
 | `products.html` — ClearGlass Products | the unified ClearGlass product catalog | Side Store | Services & Engagements | Business Productivity Suite | Book a security engagement / See pricing & plans |
 | `business-productivity-suite.html` — Business Productivity Suite | Canadian-first business productivity planning | ClearGlass Products | Services & Engagements | Global Growth Engine | Book a security engagement / See pricing & plans |
 | `global-growth-engine.html` — Global Growth Engine | governed multi-market growth intelligence | Business Productivity Suite | Services & Engagements | Growth Command Centre | Book a security engagement / See pricing & plans |
@@ -152,8 +155,12 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 | `blog/zero-trust-is-outdated.html` — Zero Trust Is Outdated | the original argument | Shadow AI: Enterprise Security’s Biggest Blind Spot | ClearGlass Intelligence | The Secure Deployment Agent | Book a security engagement / See pricing & plans |
 | `blog/clearglass-secure-deployment-agent.html` — The Secure Deployment Agent | governed authorization for every production push | Zero Trust Is Outdated | ClearGlass Intelligence | Inside the Command Center | Book a security engagement / See pricing & plans |
 | `blog/clearglass-command-center-cyber-defense-console.html` — Inside the Command Center | designing a cyber defense console | The Secure Deployment Agent | ClearGlass Intelligence | ClearGlass AgentOps | Book a security engagement / See pricing & plans |
-| `blog/clearglass-agentops-microsoft-foundry-future-stack.html` — ClearGlass AgentOps | the Microsoft Foundry future stack | Inside the Command Center | ClearGlass Intelligence | The OSINT Workflow That Survives Contact With Reality | Book a security engagement / See pricing & plans |
-| `blog/osint-workflow-that-survives-contact-with-reality.html` — The OSINT Workflow That Survives Contact With Reality | field-tested investigation practice | ClearGlass AgentOps | ClearGlass Intelligence | They Sealed the Evidence | Book a security engagement / See pricing & plans |
+| `blog/clearglass-agentops-microsoft-foundry-future-stack.html` — ClearGlass AgentOps | the Microsoft Foundry future stack | Inside the Command Center | ClearGlass Intelligence | AI Safety Beyond the Black Box | Book a security engagement / See pricing & plans |
+| `blog/ai-safety-black-box-activation-analysis-gavel.html` — AI Safety Beyond the Black Box | activation analysis and the GAVEL evaluation harness | ClearGlass AgentOps | ClearGlass Intelligence | The Canada–US Control Problem | Book a security engagement / See pricing & plans |
+| `blog/canada-us-cross-border-cybersecurity-evidence-controls.html` — The Canada–US Control Problem | why North American operations fail at the evidence layer | AI Safety Beyond the Black Box | ClearGlass Intelligence | CPCSC vs CMMC | Book a security engagement / See pricing & plans |
+| `blog/cpcsc-vs-cmmc-residency-split.html` — CPCSC vs CMMC | control reuse and the data-residency split | The Canada–US Control Problem | ClearGlass Intelligence | Dual-Clock Incident Runbook | Book a security engagement / See pricing & plans |
+| `blog/dual-clock-incident-runbook-ccspa-circia-pipeda.html` — Dual-Clock Incident Runbook | reporting under CCSPA, CIRCIA and PIPEDA at once | CPCSC vs CMMC | ClearGlass Intelligence | The OSINT Workflow That Survives Contact With Reality | Book a security engagement / See pricing & plans |
+| `blog/osint-workflow-that-survives-contact-with-reality.html` — The OSINT Workflow That Survives Contact With Reality | field-tested investigation practice | Dual-Clock Incident Runbook | ClearGlass Intelligence | They Sealed the Evidence | Book a security engagement / See pricing & plans |
 | `blog/ontario-accountability-sealed-evidence.html` — They Sealed the Evidence | a source-led Ontario accountability brief | The OSINT Workflow That Survives Contact With Reality | ClearGlass Intelligence | Master Investigator | Book a security engagement / See pricing & plans |
 | `blog/master-investigator-legal-tech-osint-government-accountability.html` — Master Investigator | legal-tech OSINT for government accountability | They Sealed the Evidence | ClearGlass Intelligence | Frontier Intelligence Briefing | Book a security engagement / See pricing & plans |
 | `blog/frontier-intelligence-briefing-quantum-gravity-asi-biosecurity.html` — Frontier Intelligence Briefing | quantum gravity, ASI timelines, biosecurity | Master Investigator | ClearGlass Intelligence | Post-Quantum Security Advisor | Book a security engagement / See pricing & plans |
@@ -194,10 +201,12 @@ These pages remain intact but are not eligible for generated journey updates. Ex
 | Page | Role | Exclusion rationale |
 |---|---|---|
 | `404.html` | Error recovery | noindex redirect and route-recovery page |
+| `assets/canada-us-30-day-diagnostic.html` | Sales collateral | noindex one-page checklist handed out with the Canada–US assessment; no inbound links and deliberately outside sitemap.xml |
 | `cg-loader.html` | Application utility | noindex branded loading surface |
 | `google23RWyXWkoxqgArev8achU8IfVxYC5EIUAYBsuTYKLFM.html` | Site verification | Google ownership verification artifact |
 | `header-mockup-2040.html` | Design prototype | noindex, nofollow header study |
 | `loader.html` | Application utility | noindex branded loading surface |
+| `guardian_command_nexus_spec.html` | Duplicate surface | noindex root copy of docs/guardian_command_nexus_spec.html; every inbound link targets the docs/ URL, which is the one in sitemap.xml |
 | `offers/thank-you.html` | Conversion completion | noindex form-success destination |
 | `offline.html` | Error recovery | noindex service-worker fallback |
 | `platform-command-center.html` | Private operations | noindex command surface |

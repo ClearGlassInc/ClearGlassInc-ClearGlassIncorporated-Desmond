@@ -43,12 +43,22 @@ END = "<!-- cg-related:end -->"
 # path -> (journey role, reason it must not receive the generated module)
 EXCLUDED_PAGES: dict[str, tuple[str, str]] = {
     "404.html": ("Error recovery", "noindex redirect and route-recovery page"),
+    "assets/canada-us-30-day-diagnostic.html": (
+        "Sales collateral",
+        "noindex one-page checklist handed out with the Canada–US assessment; "
+        "no inbound links and deliberately outside sitemap.xml",
+    ),
     "cg-loader.html": ("Application utility", "noindex branded loading surface"),
     "google23RWyXWkoxqgArev8achU8IfVxYC5EIUAYBsuTYKLFM.html": (
         "Site verification", "Google ownership verification artifact"
     ),
     "header-mockup-2040.html": ("Design prototype", "noindex, nofollow header study"),
     "loader.html": ("Application utility", "noindex branded loading surface"),
+    "guardian_command_nexus_spec.html": (
+        "Duplicate surface",
+        "noindex root copy of docs/guardian_command_nexus_spec.html; every inbound link "
+        "targets the docs/ URL, which is the one in sitemap.xml",
+    ),
     "offers/thank-you.html": ("Conversion completion", "noindex form-success destination"),
     "offline.html": ("Error recovery", "noindex service-worker fallback"),
     "platform-command-center.html": ("Private operations", "noindex command surface"),
@@ -94,6 +104,7 @@ PAGES: dict[str, tuple[str, str]] = {
 
     # Intelligence & OSINT
     "intelligence.html": ("Intelligence", "the ClearGlass intelligence practice"),
+    "minerals.html": ("Critical Minerals Intelligence", "source-transparent mineral profiles and Canadian supply-chain risk"),
     "flowsint.html": ("Flowsint", "OSINT investigation graph for domains, IPs and transforms"),
     "Ontario-osint.html": ("Ontario OSINT Deck", "regional open-source intelligence control deck"),
     "clearglass.html": ("Network Flow Intelligence", "see network traffic as living structure"),
@@ -129,6 +140,7 @@ PAGES: dict[str, tuple[str, str]] = {
     "systems.html": ("Systems Console", "PERCIVAL operations console"),
     "control-surface.html": ("Systems Control Surface v3.1", "the live command dashboard"),
     "command-center.html": ("Command Center", "executive security operations deck"),
+    "mission-control.html": ("Mission Control", "the operational portfolio across automation, defense and deployments"),
     "percival-build.html": ("PERCIVAL BUILD", "spatial engineering workspace"),
     "clearsight.html": ("CLEARSIGHT", "edge-AI camera vision & object detection"),
 
@@ -180,6 +192,7 @@ PAGES: dict[str, tuple[str, str]] = {
     "smb.html": ("SMB Suite", "intelligent systems for small business"),
     "side-store.html": ("Side Store", "electronics, cables and components"),
     "offers/hardening-sprint.html": ("Hardening Sprint", "Microsoft 365 + Windows hardening engagement"),
+    "offers/canada-us-control-assessment.html": ("Canada–US Control Assessment", "fixed-scope mapping of cross-border transfers, agent surfaces and dual incident clocks"),
     "offers/security-quick-audit.html": ("Security Quick-Audit", "a focused $249 security review"),
     "offers/guardian-command-nexus-blueprint.html": ("Guardian Command Nexus Blueprint", "the full SPEC-1 architecture blueprint, sold as a digital deliverable"),
     "offers/autonomous-threat-modeling.html": ("Autonomous Threat Modeling", "continuous threat-modeling assessment and implementation services"),
@@ -206,10 +219,14 @@ PAGES: dict[str, tuple[str, str]] = {
     # Insights / blog
     "blog/index.html": ("ClearGlass Intelligence", "essays on governed AI, cyber defense and OSINT"),
     "blog/autonomous-threat-modeling-2026.html": ("Autonomous Threat Modeling in 2026", "continuous architecture-grounded security for agentic and cyber-physical systems"),
+    "blog/ai-safety-black-box-activation-analysis-gavel.html": ("AI Safety Beyond the Black Box", "activation analysis and the GAVEL evaluation harness"),
     "blog/ai-agent-governance-governed-autonomy.html": ("AI Agent Governance", "the governed-autonomy playbook"),
     "blog/ai-agents-insider-threat.html": ("AI Agents Are the New Insider Threat", "why agent identity is a security boundary"),
     "blog/almach-scalp-engine.html": ("ALMACH Scalp Engine", "a directional neural-mesh trading study"),
     "blog/artemis-governed-ai-gtm-visual-growth-engine.html": ("Governed AI Threat Modeling", "the Artemis GTM visual growth engine"),
+    "blog/canada-us-cross-border-cybersecurity-evidence-controls.html": ("The Canada–US Control Problem", "why North American operations fail at the evidence layer"),
+    "blog/cpcsc-vs-cmmc-residency-split.html": ("CPCSC vs CMMC", "control reuse and the data-residency split"),
+    "blog/dual-clock-incident-runbook-ccspa-circia-pipeda.html": ("Dual-Clock Incident Runbook", "reporting under CCSPA, CIRCIA and PIPEDA at once"),
     "blog/clearglass-agentops-microsoft-foundry-future-stack.html": ("ClearGlass AgentOps", "the Microsoft Foundry future stack"),
     "blog/clearglass-command-center-cyber-defense-console.html": ("Inside the Command Center", "designing a cyber defense console"),
     "blog/clearglass-platform-audit-2026.html": ("The ClearGlass Platform Audit", "keep, simplify, gate, build — the platform upgrade doctrine"),
@@ -273,7 +290,7 @@ CLUSTERS: dict[str, dict] = {
             "clearglass.html", "intelligence-command-surface.html",
             "intelligence-interface.html", "intelligence-platform.html",
             "ClearGlass-NEXUS-v12-FINAL.html", "artemis.html", "xenolith.html",
-            "docs/guardian_command_nexus_spec.html",
+            "docs/guardian_command_nexus_spec.html", "minerals.html",
         ],
         "cta": [CTA_STORE, CTA_PRICING],
     },
@@ -297,7 +314,7 @@ CLUSTERS: dict[str, dict] = {
             "conduit.html", "postloop.html", "command-console.html",
             "control-surface.html", "systems.html", "saas-platform.html",
             "CG-os.html", "percival-build.html", "clearsight.html",
-            "command-center.html",
+            "command-center.html", "mission-control.html",
         ],
         "cta": [CTA_OFFERS, CTA_PRICING],
     },
@@ -348,6 +365,7 @@ CLUSTERS: dict[str, dict] = {
             "smb.html", "offers/security-quick-audit.html",
             "offers/autonomous-threat-modeling.html", "offers/hardening-sprint.html",
             "offers/guardian-command-nexus-blueprint.html", "revenue-engine.html",
+            "offers/canada-us-control-assessment.html",
             "side-store.html", "products.html",
             "business-productivity-suite.html", "global-growth-engine.html",
             "apps/command-center/index.html",
@@ -392,6 +410,10 @@ CLUSTERS: dict[str, dict] = {
             "blog/clearglass-secure-deployment-agent.html",
             "blog/clearglass-command-center-cyber-defense-console.html",
             "blog/clearglass-agentops-microsoft-foundry-future-stack.html",
+            "blog/ai-safety-black-box-activation-analysis-gavel.html",
+            "blog/canada-us-cross-border-cybersecurity-evidence-controls.html",
+            "blog/cpcsc-vs-cmmc-residency-split.html",
+            "blog/dual-clock-incident-runbook-ccspa-circia-pipeda.html",
             "blog/osint-workflow-that-survives-contact-with-reality.html",
             "blog/ontario-accountability-sealed-evidence.html",
             "blog/master-investigator-legal-tech-osint-government-accountability.html",
