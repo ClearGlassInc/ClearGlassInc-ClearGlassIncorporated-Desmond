@@ -9,5 +9,7 @@ export class DisabledDevelopmentSource implements LiveDataSource<Snapshot> {
   name = "development-disabled-source";
   async healthCheck(): Promise<SourceHealth> { return { healthy: false, checkedAt: new Date().toISOString(), detail: "disabled" }; }
   async fetchSnapshot(input: SnapshotInput): Promise<Snapshot> { return { stream: input.stream, generatedAt: new Date().toISOString(), sequence: 0, signals: [], sourceConfigured: false }; }
-  async *subscribe(): AsyncIterable<LiveEvent> { return; }
+  // Accepts the interface's input even though a disabled source ignores it:
+  // callers type against LiveDataSource and pass one.
+  async *subscribe(_input: SubscriptionInput): AsyncIterable<LiveEvent> { return; }
 }
