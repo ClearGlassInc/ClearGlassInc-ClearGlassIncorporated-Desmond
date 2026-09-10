@@ -1,0 +1,146 @@
+name: Dependency Updater
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  update-python-deps:
+    name: Check & Update Python Dependencies
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: automation-write
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write  # label creation (gh label create) targets the Issues API
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: true # Required only for this job's audited git push.
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install current dependencies
+        run: pip install -r requirements.txt || true
+
+      - name: Detect outdated packages
+        id: outdated
+        run: |
+          OUTDATED=$(pip list --outdated --format=json 2>/dev/null || echo "[]")
+          COUNT=$(echo "$OUTDATED" | python3 -c "import json,sys; print(len(json.load(sys.stdin)))")
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          echo "json<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$OUTDATED" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+          echo "Outdated packages: $COUNT"
+
+      - name: Apply updates to requirements.txt
+        if: steps.outdated.outputs.count != '0'
+        run: |
+          pip install --upgrade pytest pytest-cov pytest-asyncio ruff pyyaml 2>/dev/null || true
+          python3 - <<'PY'
+          import subprocess, re
+          from pathlib import Path
+
+          frozen = subprocess.run(
+              ["pip", "freeze"], capture_output=True, text=True
+          ).stdout.strip()
+
+          new_versions = {}
+          for line in frozen.splitlines():
+              if "==" in line:
+                  name, ver = line.split("==", 1)
+                  new_versions[name.lower()] = f"{name}=={ver}"
+
+          req_path = Path("requirements.txt")
+          lines = req_path.read_text().splitlines(keepends=True)
+          updated = []
+          changed = []
+          for line in lines:
+              stripped = line.strip()
+              if stripped and not stripped.startswith("#"):
+                  pkg = re.split(r"[=><~!]", stripped)[0].lower()
+                  if pkg in new_versions and new_versions[pkg].lower() != stripped.lower():
+                      changed.append(f"  {stripped} → {new_versions[pkg]}")
+                      updated.append(new_versions[pkg] + "\n")
+                  else:
+                      updated.append(line)
+              else:
+                  updated.append(line)
+
+          req_path.write_text("".join(updated))
+          for c in changed:
+              print(c)
+          print(f"{len(changed)} package(s) updated in requirements.txt")
+          PY
+
+      - name: Create dependency update PR
+        if: steps.outdated.outputs.count != '0'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          OUTDATED_JSON: ${{ steps.outdated.outputs.json }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet requirements.txt; then
+            echo "No requirements.txt changes — skipping PR"
+            exit 0
+          fi
+
+          DATE=$(date +%Y%m%d)
+          BRANCH="bot/dependency-update-$DATE"
+
+          git checkout -b "$BRANCH"
+          git add requirements.txt
+          git commit -m "chore: update Python test dependencies"
+          git push -u origin "$BRANCH"
+
+          PKG_LIST=$(echo "$OUTDATED_JSON" | python3 -c "
+          import json, sys
+          data = json.loads(sys.stdin.read() or '[]')
+          for p in data[:20]:
+              print(f\"- {p['name']}: {p['version']} → {p['latest_version']}\")
+          " 2>/dev/null || echo "See diff for details")
+
+          # Labels are cosmetic — ensure they exist, and never let labeling
+          # abort PR creation (a missing label previously failed the whole run).
+          gh label create dependencies --color 0366d6 --description "Dependency updates" 2>/dev/null || true
+          gh label create automated --color 5319e7 --description "Created by repo automation" 2>/dev/null || true
+
+          # Some orgs disable "Allow GitHub Actions to create and approve pull
+          # requests", which makes `gh pr create` fail even though the branch
+          # pushed fine. Treat that as non-fatal: the branch is already on the
+          # remote, so surface a manual-open link instead of failing the run.
+          if gh pr create \
+            --repo "$GH_REPO" \
+            --title "chore: automated dependency updates ($(date +%Y-%m-%d))" \
+            --body "## Automated Dependency Update
+
+          **Outdated packages detected:** ${{ steps.outdated.outputs.count }}
+
+          ### Changes
+          ${PKG_LIST}
+
+          ### Review checklist
+          - [ ] CI passes with updated versions
+          - [ ] No breaking API changes in updated packages
+          - [ ] requirements.txt diff looks correct
+
+          ---
+          *Auto-generated by ClearGlass Dependency Updater*" \
+            --base main; then
+            gh pr edit "$BRANCH" --repo "$GH_REPO" --add-label dependencies --add-label automated \
+              || echo "::warning::PR created but labeling failed (non-fatal)"
+          else
+            echo "::warning::Could not open a PR automatically (GitHub Actions may be blocked from creating pull requests). Branch '$BRANCH' was pushed — open one manually: https://github.com/$GH_REPO/pull/new/$BRANCH"
+          fi

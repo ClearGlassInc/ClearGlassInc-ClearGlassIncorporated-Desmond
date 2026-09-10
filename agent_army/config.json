@@ -1,0 +1,167 @@
+{
+  "system": "ClearGlass Engineering and Marketing Agent Army",
+  "policy": "AGENT_POLICY.md",
+  "version": "1.0.0",
+  "roles": [
+    {
+      "key": "chief_of_staff",
+      "division": "command",
+      "title": "Chief of Staff",
+      "mandate": "Normalize the objective, sequence the divisions, and hold every approval gate.",
+      "always": true,
+      "triggers": []
+    },
+    {
+      "key": "staff_engineer",
+      "division": "engineering",
+      "title": "Staff Engineer",
+      "mandate": "Select the smallest robust design and implement it with minimal blast radius.",
+      "triggers": [
+        "api", "backend", "build", "code", "deploy", "endpoint", "engineer",
+        "implement", "infrastructure", "integration", "performance", "pipeline",
+        "platform", "product", "refactor", "reliability", "service", "software",
+        "system", "tool"
+      ]
+    },
+    {
+      "key": "quality_security",
+      "division": "engineering",
+      "title": "Quality and Security Engineer",
+      "mandate": "Prove the change with tests, security review, and a validated rollback path.",
+      "triggers": [
+        "audit", "compliance", "coverage", "credential", "harden", "privacy",
+        "quality", "regression", "reliable", "rollback", "secure", "security",
+        "test", "validate", "verify", "vulnerability"
+      ]
+    },
+    {
+      "key": "legacy_modernization",
+      "division": "engineering",
+      "title": "Legacy Modernization Engineer",
+      "mandate": "Preserve existing behavior while the surrounding system moves forward.",
+      "triggers": [
+        "backward", "deprecat", "existing", "legacy", "migrat", "modernize",
+        "preserv", "rewrite", "upgrade"
+      ]
+    },
+    {
+      "key": "market_intelligence",
+      "division": "marketing",
+      "title": "Market Intelligence Analyst",
+      "mandate": "Define the ideal customer, the urgent problem, and the buying signal before any volume.",
+      "triggers": [
+        "audience", "brand", "campaign", "competitor", "customer", "demand",
+        "go-to-market", "gtm", "launch", "market", "marketing", "positioning",
+        "prospect", "research", "segment"
+      ]
+    },
+    {
+      "key": "content_strategist",
+      "division": "marketing",
+      "title": "Content Strategist",
+      "mandate": "Build authority through useful analysis tied to a specific offer.",
+      "triggers": [
+        "article", "authority", "blog", "brief", "campaign", "content", "copy",
+        "editorial", "launch", "marketing", "message", "narrative", "post",
+        "story", "thought leadership", "write"
+      ]
+    },
+    {
+      "key": "campaign_bot_commander",
+      "division": "marketing",
+      "title": "Campaign Bot Commander",
+      "mandate": "Operate the marketing bot ecosystem within its rate limits and platform terms.",
+      "triggers": [
+        "agent army", "automation", "bot", "bot army", "orchestrat", "scheduler",
+        "swarm", "worker"
+      ]
+    },
+    {
+      "key": "distribution_planner",
+      "division": "marketing",
+      "title": "Distribution Planner",
+      "mandate": "Adapt each asset to its channel without changing the underlying facts.",
+      "triggers": [
+        "campaign", "channel", "distribut", "email", "launch", "linkedin",
+        "marketing", "newsletter", "outreach", "publish", "reach", "seo",
+        "social", "syndicat"
+      ]
+    },
+    {
+      "key": "revenue_operator",
+      "division": "marketing",
+      "title": "Revenue Operator",
+      "mandate": "Connect every campaign to an offer and a measurable pipeline stage.",
+      "triggers": [
+        "arr", "billing", "checkout", "conversion", "deal", "funnel", "lead",
+        "monetiz", "mrr", "offer", "pipeline", "price", "pricing", "profit",
+        "revenue", "sales", "sell", "subscription", "upsell"
+      ]
+    },
+    {
+      "key": "analytics_controller",
+      "division": "marketing",
+      "title": "Analytics Controller",
+      "mandate": "Report qualified demand, conversion and risk reduction, never impressions alone.",
+      "triggers": [
+        "analytics", "attribut", "benchmark", "campaign", "dashboard", "kpi",
+        "launch", "marketing", "measur", "metric", "report", "revenue", "roi",
+        "telemetry", "track"
+      ]
+    }
+  ],
+  "approval_gates": [
+    {
+      "key": "production_deploy",
+      "description": "Deploying to production or merging a release with production impact.",
+      "triggers": [
+        "cutover", "deploy", "go live", "golive", "production", "release",
+        "roll out", "rollout", "ship to production"
+      ]
+    },
+    {
+      "key": "external_publish",
+      "description": "Publishing externally.",
+      "triggers": [
+        "announce", "broadcast", "go public", "post publicly", "press",
+        "publish", "release publicly"
+      ]
+    },
+    {
+      "key": "external_outreach",
+      "description": "Sending external outreach or direct messages.",
+      "triggers": [
+        "cold email", "contact prospects", "direct message", "dm", "email",
+        "email prospects", "outreach", "send to"
+      ]
+    },
+    {
+      "key": "paid_spend",
+      "description": "Spending money or activating paid promotion.",
+      "triggers": [
+        "ad budget", "ads", "advertis", "boost", "budget", "paid", "ppc",
+        "spend", "sponsor"
+      ]
+    }
+  ],
+  "execution_sequence": [
+    {"step": "assess", "owner": "chief_of_staff", "division": "command",
+     "description": "Normalize the objective, current state, constraints, evidence, acceptance criteria, and business outcome."},
+    {"step": "architect", "owner": "staff_engineer", "division": "engineering",
+     "description": "Select the smallest robust technical and operational design."},
+    {"step": "build", "owner": "staff_engineer", "division": "engineering",
+     "description": "Implement modularly with explicit error handling and minimal blast radius."},
+    {"step": "validate", "owner": "quality_security", "division": "engineering",
+     "description": "Run tests, security checks, policy checks, factual verification, and rollback validation."},
+    {"step": "position", "owner": "market_intelligence", "division": "marketing",
+     "description": "Define audience, pain, differentiation, offer, proof, and claim boundaries."},
+    {"step": "design_campaign", "owner": "content_strategist", "division": "marketing",
+     "description": "Produce the content system, channel plan, conversion path, and approval packet."},
+    {"step": "approve", "owner": "chief_of_staff", "division": "command",
+     "description": "Stop at every required human approval gate."},
+    {"step": "execute", "owner": "distribution_planner", "division": "marketing",
+     "description": "Perform only approved external actions through authorized systems."},
+    {"step": "measure", "owner": "analytics_controller", "division": "marketing",
+     "description": "Report qualified demand, conversion, revenue, reliability, risk reduction, and next decision."}
+  ]
+}

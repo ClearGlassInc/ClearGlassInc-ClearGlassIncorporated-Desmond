@@ -1,0 +1,322 @@
+name: Auto-Store
+
+# Fail-closed storefront and commerce-control-plane pipeline:
+# validate -> test + checkout-health -> deploy -> verify
+#                                      \-> rollback only after an actual deploy attempt
+# Any unattended failure opens or updates an incident issue.
+on:
+  pull_request:
+    paths:
+      - "store.html"
+      - "pricing.html"
+      - "data/store/**"
+      - "apps/autostore/**"
+      - "control-plane/**"
+      - "storefront/**"
+      - "admin/**"
+      - "scripts/store_sync.py"
+      - "bots/store_smoke_bot.py"
+      - ".github/workflows/auto-store.yml"
+      - ".github/actions/store-setup/**"
+  push:
+    branches: ["main"]
+    paths:
+      - "store.html"
+      - "pricing.html"
+      - "data/store/**"
+      - "apps/autostore/**"
+      - "control-plane/**"
+      - "storefront/**"
+      - "admin/**"
+      - "scripts/store_sync.py"
+      - "bots/store_smoke_bot.py"
+      - ".github/workflows/auto-store.yml"
+      - ".github/actions/store-setup/**"
+  schedule:
+    - cron: "0 12 * * *"
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: "Run the gated deploy and production verification path."
+        type: boolean
+        default: false
+      change_ticket:
+        description: "Approved change-ticket reference required for production deployment."
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: auto-store-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate codebase + store data
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/store-setup
+      - name: Lint (ruff)
+        run: ruff check .
+      - name: Workflow hygiene (workflow doctor)
+        run: python scripts/workflow_doctor.py
+      - name: Store catalog in sync with storefront
+        run: python scripts/store_sync.py --check
+
+  test:
+    name: Tests (bots + autostore control plane)
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/store-setup
+        with:
+          requirements: apps/autostore/control_plane/requirements.txt
+      - name: Auto-store root regression suite
+        # Keep this deployment gate scoped to code the workflow can release.
+        # Repository-wide tests belong to ci.yml; coupling scheduled store
+        # health to unrelated agents made healthy commerce builds fail closed.
+        run: |
+          python -m pytest -q \
+            tests/test_store_smoke_bot.py \
+            tests/test_store_sync.py \
+            tests/test_validate_production_deploy.py
+      - name: Autostore control-plane trust loop
+        # apps/autostore/ is not present in this repository. Run the loop when
+        # the tree exists and say so plainly when it does not, rather than
+        # failing this deployment gate on a subsystem it cannot see.
+        run: |
+          set -euo pipefail
+          if [ -d apps/autostore/control_plane ]; then
+            cd apps/autostore/control_plane && pytest tests/ -q
+          else
+            echo "::warning title=Autostore control plane absent::apps/autostore/control_plane is not in this repository; its trust loop did not run."
+          fi
+
+  checkout-health:
+    name: Checkout health (storefront smoke)
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/store-setup
+      - name: Storefront checkout smoke test
+        run: python bots/store_smoke_bot.py
+      - name: Revenue-continuity note
+        if: always()
+        run: |
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          import pathlib
+
+          doc = json.loads(pathlib.Path("data/store/catalog.json").read_text())
+          live = doc["summary"]["live_checkout_skus"]
+          print("### Checkout health")
+          print(f"- SKUs: **{doc['summary']['sku_count']}**, live card checkout: **{live}**")
+          if not live:
+              print(f"- {doc.get('fallback_note', 'Fallback payment flow active.')}")
+          PY
+
+  deploy:
+    name: Deploy (gated, rollback-anchored)
+    needs: [test, checkout-health]
+    # A merge proves source review, but it does not manufacture production
+    # authority. Deployment requires a deliberate dispatch plus the protected
+    # environment approval below; ordinary main pushes remain validation-only.
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production
+    outputs:
+      release: ${{ steps.marker.outputs.hash }}
+      deployment_attempted: ${{ steps.attempt.outputs.attempted }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Verify production configuration before release
+        env:
+          CHANGE_TICKET: ${{ inputs.change_ticket }}
+          CONTROL_PLANE_URL: ${{ secrets.CONTROL_PLANE_URL }}
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          RENDER_ROLLBACK_HOOK_URL: ${{ secrets.RENDER_ROLLBACK_HOOK_URL }}
+        run: python scripts/validate_production_deploy.py
+      - uses: ./.github/actions/store-setup
+
+      - name: Record release marker
+        id: marker
+        run: |
+          set -euo pipefail
+          HASH=$(python -c "import json;print(json.load(open('data/store/catalog.json'))['content_hash'])")
+          echo "hash=$HASH" >> "$GITHUB_OUTPUT"
+          echo "Releasing store catalog $HASH"
+
+      - name: Promote last-known-good (rollback anchor)
+        run: python scripts/store_sync.py --promote
+
+      - name: Upload rollback anchor
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: store-rollback-anchor-${{ github.run_id }}
+          path: data/store/last-known-good.json
+          retention-days: 30
+
+      - name: Mark deployment attempt
+        id: attempt
+        run: echo "attempted=true" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger control-plane deploy (Render)
+        env:
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          set -euo pipefail
+          curl -fsS -X POST "$HOOK" >/dev/null
+          echo "Control-plane deploy triggered."
+          echo "render_deploy=triggered" >> "$GITHUB_ENV"
+
+      - name: Release summary
+        run: |
+          {
+            echo "### Auto-store release"
+            echo "- Change ticket: \`${{ inputs.change_ticket }}\`"
+            echo "- Catalog: \`${{ steps.marker.outputs.hash }}\`"
+            echo "- Rollback anchor promoted and uploaded (retention 30d)."
+            echo "- Render control-plane deploy: \`${render_deploy:-unknown}\`."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  verify:
+    name: Verify (post-deploy checkout health)
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/store-setup
+      - name: Post-deploy storefront smoke
+        run: python bots/store_smoke_bot.py
+      - name: Production storefront probes
+        run: |
+          set -euo pipefail
+          for path in / /store.html /pricing.html; do
+            curl --fail --silent --show-error --location --max-redirs 5 \
+              --connect-timeout 10 --max-time 30 \
+              "https://www.clearglassinc.com${path}" >/dev/null
+          done
+      - name: Control-plane health probe
+        env:
+          URL: ${{ secrets.CONTROL_PLANE_URL }}
+        run: |
+          set -euo pipefail
+          for i in 1 2 3 4 5; do
+            if curl -fsS --max-time 10 "${URL%/}/healthz" >/dev/null; then
+              echo "Control plane healthy after attempt $i."
+              exit 0
+            fi
+            echo "Health probe attempt $i failed; retrying..."
+            sleep $((i * 3))
+          done
+          echo "::error::Control plane did not become healthy."
+          exit 1
+
+  rollback:
+    name: Rollback (after attempted deploy/verification failure)
+    needs: [deploy, verify]
+    if: |
+      always() &&
+      (
+        needs.verify.result == 'failure' ||
+        (
+          needs.deploy.result == 'failure' &&
+          needs.deploy.outputs.deployment_attempted == 'true'
+        )
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: production
+    steps:
+      - name: Download rollback anchor
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: store-rollback-anchor-${{ github.run_id }}
+      - name: Trigger control-plane rollback (Render)
+        env:
+          HOOK: ${{ secrets.RENDER_ROLLBACK_HOOK_URL }}
+        run: |
+          set -euo pipefail
+          curl -fsS -X POST "$HOOK" >/dev/null
+          echo "Control-plane rollback triggered."
+      - name: Rollback summary
+        if: always()
+        run: |
+          {
+            echo "### Rollback engaged"
+            echo "A control-plane deployment was attempted and deploy/verification failed."
+            if [ -f last-known-good.json ]; then
+              echo '```json'
+              cat last-known-good.json
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  alert:
+    name: Alert on failure
+    needs: [validate, test, checkout-health, deploy, verify, rollback]
+    if: failure() && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Open or update incident issue
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          gh label create auto-store-alert --repo "$GH_REPO" --color B60205 \
+            --description "Auto-store pipeline failure" 2>/dev/null || true
+          DATE=$(date -u +%Y-%m-%d)
+          TITLE="[AUTO-STORE] Pipeline failure — $DATE"
+          BODY=$(printf '%s\n' \
+            "The auto-store pipeline failed on \`${{ github.ref_name }}\` (${{ github.event_name }})." \
+            "" \
+            "- Run: $RUN_URL" \
+            "- validate: ${{ needs.validate.result }}" \
+            "- test: ${{ needs.test.result }}" \
+            "- checkout-health: ${{ needs.checkout-health.result }}" \
+            "- deploy: ${{ needs.deploy.result }}" \
+            "- deployment attempted: ${{ needs.deploy.outputs.deployment_attempted || 'false' }}" \
+            "- verify: ${{ needs.verify.result }}" \
+            "- rollback: ${{ needs.rollback.result }}" \
+            "" \
+            "If deployment was not attempted, configure the required production environment secrets. If it was attempted, inspect deploy/verify and rollback logs.")
+          EXISTING=$(gh issue list --repo "$GH_REPO" --label auto-store-alert --state open \
+            --json number,title --jq ".[] | select(.title==\"$TITLE\") | .number" 2>/dev/null | head -1 || true)
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --repo "$GH_REPO" --body "$BODY"
+          else
+            gh issue create --repo "$GH_REPO" --title "$TITLE" --body "$BODY" \
+              --label auto-store-alert 2>/dev/null \
+              || gh issue create --repo "$GH_REPO" --title "$TITLE" --body "$BODY"
+          fi

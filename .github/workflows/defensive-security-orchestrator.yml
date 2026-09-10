@@ -1,0 +1,141 @@
+name: Defensive Security Orchestrator
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+  id-token: write
+
+concurrency:
+  group: defensive-security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  integrity-gate:
+    name: SBOM, integrity, and secret validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout immutable revision
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Capture source and lockfile integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p security-evidence
+          printf 'repository=%s\ncommit=%s\nref=%s\nrun_id=%s\n' \
+            "$GITHUB_REPOSITORY" "$GITHUB_SHA" "$GITHUB_REF" "$GITHUB_RUN_ID" \
+            > security-evidence/build-context.txt
+          find . -type f \
+            \( -name 'package-lock.json' -o -name 'npm-shrinkwrap.json' -o -name 'pnpm-lock.yaml' -o -name 'yarn.lock' -o -name 'requirements*.txt' -o -name 'poetry.lock' -o -name 'Pipfile.lock' -o -name 'Cargo.lock' -o -name 'go.sum' \) \
+            -not -path './.git/*' -print0 | sort -z | xargs -0 -r sha256sum \
+            > security-evidence/lockfile-sha256.txt
+          sha256sum security-evidence/build-context.txt security-evidence/lockfile-sha256.txt \
+            > security-evidence/evidence-sha256.txt
+
+      - name: Generate CycloneDX SBOM
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # v0.24.0
+        with:
+          path: .
+          format: cyclonedx-json
+          output-file: security-evidence/sbom.cdx.json
+
+      - name: Scan repository for vulnerabilities
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: sarif
+          output: security-evidence/trivy-results.sarif
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: '1'
+
+      - name: Upload vulnerability results
+        if: always()
+        uses: github/codeql-action/upload-sarif@03e4368ac7daa2bd82b3e85262f3bf87ee112f57 # v3.36.0
+        with:
+          sarif_file: security-evidence/trivy-results.sarif
+
+      - name: Detect committed secrets
+        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Finalize evidence digests
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          find security-evidence -maxdepth 1 -type f ! -name 'manifest.sha256' -print0 \
+            | sort -z | xargs -0 -r sha256sum > security-evidence/manifest.sha256
+
+      - name: Preserve security evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: defensive-security-evidence-${{ github.run_id }}
+          path: security-evidence/
+          if-no-files-found: error
+          retention-days: 90
+
+  policy-gate:
+    name: Repository policy gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Validate defensive-security policy files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s docs/security/AUTONOMOUS_DEFENSIVE_SECURITY_ORCHESTRATOR.md
+          grep -q 'Final operating rule' docs/security/AUTONOMOUS_DEFENSIVE_SECURITY_ORCHESTRATOR.md
+          grep -q 'NIST SP 800-53' docs/security/AUTONOMOUS_DEFENSIVE_SECURITY_ORCHESTRATOR.md
+          grep -q 'human approval' docs/security/AUTONOMOUS_DEFENSIVE_SECURITY_ORCHESTRATOR.md
+
+  report:
+    name: Evidence summary
+    if: always()
+    needs: [integrity-gate, policy-gate]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Emit machine-readable decision record
+        shell: bash
+        env:
+          INTEGRITY_RESULT: ${{ needs.integrity-gate.result }}
+          POLICY_RESULT: ${{ needs.policy-gate.result }}
+        run: |
+          set -euo pipefail
+          status=GREEN
+          if [ "$INTEGRITY_RESULT" != success ] || [ "$POLICY_RESULT" != success ]; then status=RED; fi
+          cat > decision.json <<EOF
+          {
+            "executive_status": "$status",
+            "asset": "$GITHUB_REPOSITORY",
+            "scope": "repository CI defensive validation",
+            "commit": "$GITHUB_SHA",
+            "run_id": "$GITHUB_RUN_ID",
+            "integrity_gate": "$INTEGRITY_RESULT",
+            "policy_gate": "$POLICY_RESULT",
+            "nist_controls": ["CM", "SI", "AU", "AC", "IA", "SC", "SA", "SR", "RA", "CA"],
+            "audit_record_id": "gh-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          }
+          EOF
+          cat decision.json
+          if [ "$status" = RED ]; then exit 1; fi

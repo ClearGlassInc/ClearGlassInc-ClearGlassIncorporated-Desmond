@@ -1,0 +1,86 @@
+name: Deploy Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # configure-pages calls the Pages API; without this the job's token gets
+    # "Resource not accessible by integration" and the build fails before rsync.
+    permissions:
+      contents: read
+      pages: write
+    steps:
+      - name: Checkout site source
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: '3.12'
+
+      - name: Verify links, assets, and exposed secrets
+        run: python3 scripts/verify_site.py
+
+      - name: Configure Pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+      - name: Build site artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/build_pages.py dist
+
+          if [ ! -s dist/index.html ]; then
+            echo "::error file=dist/index.html::GitHub Pages artifact is missing a non-empty index.html"
+            exit 1
+          fi
+
+          touch dist/.nojekyll
+          chmod -R +rX dist
+
+          echo "Pages artifact validated:"
+          du -sh dist
+          # sed (not head) caps the listing: head exits early and SIGPIPEs sort,
+          # which under `set -o pipefail` intermittently fails this step with
+          # exit 2 ("sort: write failed: Broken pipe") even though the artifact
+          # is valid. sed consumes all input, so the pipeline is race-free.
+          find dist -maxdepth 2 -type f | sort | sed -n '1,100p'
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: dist
+
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: build
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+
+      - name: Record deployment URL
+        run: echo "Published ${{ steps.deployment.outputs.page_url }}"

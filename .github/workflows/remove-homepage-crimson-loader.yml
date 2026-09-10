@@ -1,0 +1,62 @@
+name: Remove homepage crimson loader
+
+on:
+  workflow_dispatch:
+    inputs:
+      change_ticket:
+        description: "Approved change-ticket identifier recorded in the pull request"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - name: Remove crimson homepage redirect gate only
+        run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+          # Remove exactly the loader-gate <script> block, anchored on its unique
+          # banner comment through the first following </script>. Nothing else matches.
+          pattern = re.compile(r"<script>\s*/\* ClearGlass loader gate.*?</script>\n?", re.DOTALL)
+          if not pattern.search(text):
+              # Already applied on a previous run — idempotent success, not a failure.
+              print('Crimson homepage redirect gate not found; nothing to do.')
+              raise SystemExit(0)
+          updated = pattern.sub('', text, count=1)
+          path.write_text(updated, encoding='utf-8')
+          print('Removed crimson homepage loader gate.')
+          PY
+      - name: Verify primary loader remains and crimson redirect removed
+        run: |
+          test "$(grep -c "window.location.replace('cg-loader.html?next=index.html')" index.html || true)" = "0"
+          grep -q 'id="cg-loader"' index.html
+          grep -q 'CLEARGLASS PREMIUM LOADER' index.html
+      - name: Open governed patch pull request
+        uses: peter-evans/create-pull-request@84ae59a2cdc2258d6fa0732dd66352dddae2a412 # v7.0.9
+        with:
+          branch: automation/remove-homepage-crimson-loader
+          delete-branch: true
+          commit-message: "fix(site): remove crimson homepage loader gate"
+          title: "fix(site): remove crimson homepage loader gate"
+          body: |
+            Automated, narrowly scoped homepage patch.
+
+            Change ticket: `${{ inputs.change_ticket }}`
+
+            This pull request must pass normal branch protection and human review.
+            Closing it without merge is the rollback before deployment.

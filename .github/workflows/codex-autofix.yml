@@ -1,0 +1,129 @@
+name: Codex Autofix (Hardened)
+
+# Governed AI autofix: an LLM (OpenAI Codex CLI) proposes minimal fixes for a
+# failing branch, but the result is ALWAYS a pull request — never a direct push
+# to a protected branch, never an auto-merge. It is manual-dispatch ONLY: it does
+# NOT auto-run on every CI failure, because an LLM with repo write access firing
+# unattended on untrusted test output is a prompt-injection / supply-chain risk.
+#
+# Required secret: OPENAI_API_KEY (repo or org secret). Without it the run fails
+# closed at the Codex step.
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to attempt to fix (defaults to the ref this is dispatched on)"
+        required: false
+        default: ""
+        type: string
+      instructions:
+        description: "Optional extra guidance for the autofix (scope, files, constraints)"
+        required: false
+        default: ""
+        type: string
+
+# Least privilege: read-only by default; the job elevates only what it needs.
+permissions:
+  contents: read
+
+concurrency:
+  group: codex-autofix-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -eo pipefail {0}
+
+jobs:
+  autofix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write        # create the fix branch
+      pull-requests: write    # open the PR
+    steps:
+      - name: Checkout target branch
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+
+      # Optional integration: Codex autofix only runs when OPENAI_API_KEY is
+      # configured. When it is absent the job is a clean, green no-op (a skip),
+      # not a red failure — the LLM still never runs without a key, so the
+      # fail-safe posture is preserved; we just don't paint the Actions tab red
+      # for an unconfigured optional secret (see docs/secrets.md).
+      - name: Check OPENAI_API_KEY availability
+        id: guard
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          if [ -z "${OPENAI_API_KEY:-}" ]; then
+            echo "::warning::OPENAI_API_KEY secret is not set — skipping Codex autofix (optional integration)."
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install Codex
+        if: steps.guard.outputs.configured == 'true'
+        run: npm install -g @openai/codex
+
+      - name: Run Codex autofix
+        if: steps.guard.outputs.configured == 'true'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          EXTRA_INSTRUCTIONS: ${{ github.event.inputs.instructions }}
+        run: |
+          codex -a auto-edit --quiet "
+          You are Codex, a careful and conservative automated developer working inside the repository.
+          Your goal is to make the minimal, well-scoped changes necessary to make the repository pass
+          its CI checks and local test suite, and to fix clear runtime errors revealed by running the
+          project checks.
+
+          Rules:
+          - Only change files strictly required to fix the failing tests or errors.
+          - Never change pricing, payment, tax, refund, or fulfillment logic, and never touch secrets
+            or credentials. If a fix would require that, stop and leave a note instead.
+          - Run the repo tests and linters, inspect failures, apply minimal patches, and re-run the checks.
+          - Do NOT commit, push, or open a pull request yourself — leave the working tree modified and a
+            later automated step will open a governed pull request for human review.
+
+          Additional maintainer guidance (may be empty): ${EXTRA_INSTRUCTIONS}
+          "
+
+      - name: Show git status
+        if: steps.guard.outputs.configured == 'true'
+        run: git status --short
+
+      - name: Open pull request with proposed fixes
+        if: steps.guard.outputs.configured == 'true'
+        uses: peter-evans/create-pull-request@84ae59a2cdc2258d6fa0732dd66352dddae2a412 # v7.0.9
+        with:
+          commit-message: "fix(ci): Codex autofix for failing checks"
+          branch: codex/autofix-${{ github.run_id }}
+          delete-branch: true
+          title: "Codex autofix: proposed fixes for failing checks"
+          body: |
+            ## Summary
+            Automated, **advisory** fixes proposed by the Codex autofix workflow for a failing branch.
+
+            - Source branch: `${{ github.event.inputs.branch || github.ref_name }}`
+            - Triggered by: @${{ github.actor }} (manual dispatch)
+            - Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            ## Governance
+            - Manual-dispatch only — this does **not** auto-run on CI failures.
+            - Output is a pull request; nothing is pushed to a protected branch and nothing auto-merges.
+            - Requires human review and green CI before merge.
+
+            > Generated by an LLM. Review every line before merging.
+          labels: ci, automated-pr, codex-autofix
+          signoff: true

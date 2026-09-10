@@ -1,0 +1,133 @@
+name: Semgrep Trial (advisory)
+
+# Architect checklist item 7 — trial one vuln-detection tool in a non-prod pipeline.
+#
+# WHY SEMGREP AND NOT CODEQL
+# The first draft of this trial used CodeQL. That was wrong, and CI proved it:
+#   1. CodeQL *default setup* is already enabled on this repository. Its runs
+#      appear as "Analyze (python)" / "Analyze (javascript-typescript)" under the
+#      synthetic path `dynamic/github-code-scanning/codeql`. It is configured in
+#      repo settings, not in `.github/workflows/`, which is why a file-level audit
+#      of this directory did not see it.
+#   2. GitHub refuses to process an advanced CodeQL workflow while default setup
+#      is enabled, so a hand-written CodeQL workflow here would never produce
+#      results — it would sit in the tree looking like coverage while doing nothing.
+#
+# Semgrep is additive rather than duplicative: a different engine with a different
+# rule corpus, so it finds a different slice of bugs. It also does not depend on
+# GitHub Advanced Security — which matters here, because GHAS and the dependency
+# graph are currently disabled on this repo (that is why `Dependency Review` and
+# `IP Risk Assessment` fail on every PR).
+#
+# TRIAL POSTURE — deliberately non-production:
+#   * schedule + manual dispatch only. Never runs on pull_request, so it cannot
+#     block a merge or become a required check while we are evaluating it.
+#   * `continue-on-error` on the scan: a scanner failure is trial noise, not a
+#     broken build. Judge the trial on findings, not on run colour.
+#   * Findings go to the step summary and a build artifact, NOT to code scanning.
+#     SARIF upload to the Security tab needs GHAS on a private repo; writing to an
+#     artifact keeps the trial independent of that repo-settings decision.
+#
+# Promotion/rejection criteria and the review date are recorded in
+# operations/architect-checklist/2026-W31.md. Do not add this to branch
+# protection until that review concludes.
+
+on:
+  schedule:
+    # Weekly, Mondays 05:42 UTC — off-peak, clear of the 04:17 multi-repo audit.
+    - cron: "42 5 * * 1"
+  workflow_dispatch:
+
+# Least privilege: read the tree. Nothing else — no alert write, no PR write.
+permissions:
+  contents: read
+
+concurrency:
+  group: semgrep-trial-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    name: Semgrep advisory scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+
+      - name: Install Semgrep
+        run: pip install --quiet "semgrep==1.148.0"
+
+      # p/security-audit is the broad audit corpus; the language packs add
+      # framework-aware rules. During a trial we want the wider net — the
+      # false-positive rate is one of the things being measured.
+      - name: Scan
+        id: scan
+        continue-on-error: true
+        run: |
+          semgrep scan \
+            --config p/security-audit \
+            --config p/python \
+            --config p/javascript \
+            --metrics off \
+            --json --output semgrep.json \
+            --exclude node_modules --exclude .git
+        env:
+          SEMGREP_SEND_METRICS: "off"
+
+      - name: Summarize findings
+        if: always()
+        env:
+          SCAN_OUTCOME: ${{ steps.scan.outcome }}
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json, os, pathlib, collections
+
+          print("### Semgrep trial — advisory scan\n")
+          print(f"- Scan step outcome: `{os.environ.get('SCAN_OUTCOME', 'unknown')}`")
+
+          path = pathlib.Path("semgrep.json")
+          if not path.is_file():
+              print("- No result file produced; see the scan step log.")
+              raise SystemExit(0)
+
+          data = json.loads(path.read_text() or "{}")
+          results = data.get("results", [])
+          by_sev = collections.Counter(
+              r.get("extra", {}).get("severity", "UNKNOWN") for r in results
+          )
+          print(f"- Total findings: **{len(results)}**")
+          for sev in ("ERROR", "WARNING", "INFO", "UNKNOWN"):
+              if by_sev.get(sev):
+                  print(f"  - {sev}: {by_sev[sev]}")
+
+          # Rank the noisiest rules — the triage-cost signal the trial is measuring.
+          by_rule = collections.Counter(r.get("check_id", "?") for r in results)
+          if by_rule:
+              print("\n| Rule | Count |")
+              print("|---|---:|")
+              for rule, n in by_rule.most_common(15):
+                  print(f"| `{rule}` | {n} |")
+
+          print("\nAdvisory trial run — non-gating by design. Full results are in the")
+          print("`semgrep-findings` artifact. Criteria and review date:")
+          print("`operations/architect-checklist/2026-W31.md`.")
+          PY
+
+      - name: Upload findings
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: semgrep-findings
+          path: semgrep.json
+          retention-days: 30
+          if-no-files-found: warn

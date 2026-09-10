@@ -1,0 +1,107 @@
+name: Health Monitor
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: health-monitor
+  cancel-in-progress: true
+
+jobs:
+  site-health:
+    name: Site Health Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+
+      - name: Run site health bot
+        id: health
+        run: |
+          python bots/site_health_bot.py && echo "healthy=true" >> "$GITHUB_OUTPUT" \
+            || echo "healthy=false" >> "$GITHUB_OUTPUT"
+
+      - name: Upload health report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: health-report-${{ github.run_id }}
+          path: operations/output/site_health_report.*
+          retention-days: 14
+
+      - name: Create or update issue on failure
+        if: steps.health.outputs.healthy == 'false'
+        continue-on-error: true          # alerting must never fail the monitor itself
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          # Ensure required labels exist (idempotent) — a missing label must not
+          # turn a health *alert* into a workflow *failure*.
+          gh label create health-alert --repo "$GH_REPO" --color B60205 \
+            --description "Automated site health alert" 2>/dev/null || true
+          gh label create automated --repo "$GH_REPO" --color ededed \
+            --description "Automated workflow output" 2>/dev/null || true
+
+          REPORT=$(cat operations/output/site_health_report.md 2>/dev/null || echo "Report unavailable — check workflow artifacts.")
+          DATE=$(date -u +%Y-%m-%d)
+          TITLE="[HEALTH] Site health check failed — $DATE"
+
+          # Reuse an open health alert issue from today rather than creating duplicates
+          EXISTING=$(gh issue list \
+            --repo "$GH_REPO" \
+            --label "health-alert" \
+            --state open \
+            --json number,title \
+            --jq ".[0] | select(.title | contains(\"$DATE\")) | .number" 2>/dev/null || true)
+
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" \
+              --repo "$GH_REPO" \
+              --body "Health check still failing at $(date -u +%H:%M UTC).
+
+          $REPORT"
+            echo "Updated existing issue #$EXISTING"
+          else
+            gh issue create \
+              --repo "$GH_REPO" \
+              --title "$TITLE" \
+              --body "$REPORT" \
+              --label "health-alert,automated"
+            echo "Created new health alert issue"
+          fi
+
+      - name: Write health summary
+        if: always()
+        run: |
+          echo "## 🏥 Site Health Check" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f "operations/output/site_health_report.md" ]; then
+            cat operations/output/site_health_report.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No health report generated." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Enforce production health gate
+        if: always()
+        env:
+          HEALTHY: ${{ steps.health.outputs.healthy }}
+        run: |
+          if [ "$HEALTHY" != "true" ]; then
+            echo "::error::Production site health check failed; inspect the report artifact and alert issue."
+            exit 1
+          fi

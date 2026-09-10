@@ -1,0 +1,35 @@
+# Reusable Percival v9 policy gate (workflow_call pattern from
+# docs/CROSS_REPO_GITHUB_ACTIONS.md). Callable from this repo today and from
+# sibling repos later via `uses: ClearGlassInc/ClearGlassInc.github.io/...@<sha>`.
+name: Percival Policy Tests (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: Python version to test against
+        required: false
+        type: string
+        default: "3.11"
+
+permissions:
+  contents: read
+
+jobs:
+  policy-tests:
+    name: Fail-closed policy tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: ${{ inputs.python-version }}
+          cache: pip
+      - run: pip install pytest
+      - name: Run Percival v9 fail-closed boundary tests
+        run: pytest tests/test_percival_v9_policy.py -q
+      - name: Log cross-workflow handoff
+        run: echo "Percival policy gate completed for ${{ github.repository }}@${{ github.sha }}"

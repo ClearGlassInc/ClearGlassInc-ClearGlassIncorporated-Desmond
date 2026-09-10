@@ -1,0 +1,81 @@
+name: Burlington Release
+
+# Defense-grade release gate for the Ontario OSINT Control Deck.
+#
+# Doctrine: dry-run by default, fail closed on ambiguity, least privilege, no
+# autonomous publishing. This workflow VALIDATES and produces an auditable
+# report + release notes; it does NOT deploy or publish. The deck ships through
+# the existing GitHub Pages path on merge to `main`, and a real release run is a
+# human-authorized, environment-protected action.
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        type: choice
+        options: [staging, production]
+        default: staging
+      release:
+        description: "Run as a release gate (fail closed). Leave unchecked for a dry-run."
+        type: boolean
+        default: false
+      confirm:
+        description: "Type RELEASE to authorize a release-gate run (required when 'release' is checked)"
+        type: string
+        default: ""
+  schedule:
+    - cron: "17 7 * * *" # daily dry-run health check, 07:17 UTC
+
+# Least privilege: read-only token. This workflow never writes to the repo,
+# never deploys, and never touches secrets.
+permissions:
+  contents: read
+
+jobs:
+  release-gate:
+    name: OSINT Deck Release Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Production runs go through a protected environment so they require the
+    # reviewers configured on that environment (human approval). Dry-runs and
+    # scheduled checks use staging.
+    environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'staging' }}
+    steps:
+      # SHA-pinned (supply-chain hardening) — same pins the Policy Gate enforces.
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Guard — confirm release authorization
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.release == true }}
+        run: |
+          set -euo pipefail
+          if [ "${{ inputs.confirm }}" != "RELEASE" ]; then
+            echo "::error::Release run requested without confirmation. Type RELEASE in the 'confirm' input."
+            exit 1
+          fi
+          echo "Release authorization confirmed for '${{ inputs.environment }}'."
+
+      - name: Validate deck (dry-run unless a release is authorized)
+        run: |
+          set -euo pipefail
+          ARGS="--out release/osint-deck-report.md"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.release }}" = "true" ]; then
+            # Authorized release: fail closed on any failing gate.
+            ARGS="$ARGS --release --strict"
+          fi
+          echo "Running: python3 scripts/osint_deck_release.py $ARGS"
+          python3 scripts/osint_deck_release.py $ARGS
+
+      - name: Publish report to job summary
+        if: always()
+        run: cat release/osint-deck-report.md >> "$GITHUB_STEP_SUMMARY" || true
+
+      - name: Upload release report (audit artifact)
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: osint-deck-release-report
+          path: release/osint-deck-report.md
+          if-no-files-found: warn

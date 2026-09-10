@@ -45,7 +45,7 @@ PUBLIC_DATA_FEEDS = {
     "data/seo/performance.json",
 }
 
-DENIED_PARTS = {"node_modules", "__pycache__", ".pytest_cache", ".mypy_cache"}
+DENIED_PARTS = {".next", "node_modules", "__pycache__", ".pytest_cache", ".mypy_cache"}
 DENIED_NAMES = {"package.json", "package-lock.json", "pyproject.toml", "requirements.txt"}
 
 CSP_POLICY = (

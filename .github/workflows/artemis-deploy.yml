@@ -1,0 +1,167 @@
+# ARTEMIS // CLEARGLASS INC.
+# Copyright (c) 2026 ClearGlass Inc. All rights reserved.
+# Original Author and Systems Architect: Desmond Otieno Odhiambo.
+# System: ARTEMIS | Classification: Proprietary
+#
+# Deploys the ARTEMIS agent stack: validates agent configurations, runs the
+# IP Guardian gate in strict (fail-closed) mode, regenerates the provenance
+# manifest, and commits the generated reports back to the repository.
+name: ARTEMIS Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'agents/artemis_command_system/**'
+      - 'agents/artemis_ip_guardian/**'
+      - 'bots/artemis_ip_guardian_bot.py'
+      - 'bots/artemis_provenance_bot.py'
+      - '.github/workflows/artemis-deploy.yml'
+      - 'prompts/general_assistant_system_prompt.md'
+      - 'NOTICE'
+      - 'TRADEMARKS.md'
+      - 'docs/PROVENANCE.md'
+      - 'docs/IP-POLICY.md'
+  schedule:
+    - cron: '30 6 * * *'
+  workflow_dispatch:
+    inputs:
+      strict:
+        description: 'Fail the run on any IP/attribution violation'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: artemis-deploy
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate ARTEMIS agents
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+
+      - name: Validate agent configurations
+        run: |
+          python - <<'EOF'
+          import json, pathlib, sys
+          failed = False
+          for agent in ("artemis_command_system", "artemis_ip_guardian"):
+              config_path = pathlib.Path("agents") / agent / "agent.json"
+              try:
+                  config = json.loads(config_path.read_text(encoding="utf-8"))
+              except Exception as exc:
+                  print(f"::error file={config_path}::invalid JSON: {exc}")
+                  failed = True
+                  continue
+              prompt = config_path.parent / config.get("system_prompt_path", "")
+              if not prompt.is_file():
+                  print(f"::error file={config_path}::system prompt missing: {prompt}")
+                  failed = True
+              else:
+                  print(f"OK {config_path} -> {prompt}")
+          sys.exit(1 if failed else 0)
+          EOF
+
+      - name: Compile ARTEMIS bots
+        run: python -m py_compile bots/artemis_ip_guardian_bot.py bots/artemis_provenance_bot.py
+
+  ip-guardian-gate:
+    name: IP Guardian gate (fail closed)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: validate
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+
+      - name: Run IP Guardian audit
+        env:
+          ARTEMIS_STRICT: ${{ (github.event_name != 'workflow_dispatch' || inputs.strict) && '1' || '0' }}
+        run: python bots/artemis_ip_guardian_bot.py
+
+      - name: Upload guardian report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: artemis-ip-guardian-${{ github.run_id }}
+          path: operations/artemis/
+          retention-days: 30
+
+  provenance:
+    name: Provenance manifest
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: ip-guardian-gate
+    environment: automation-write
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: true # Required only for this job's audited git push.
+          fetch-depth: 0
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+
+      - name: Generate reports
+        run: |
+          python bots/artemis_ip_guardian_bot.py
+          python bots/artemis_provenance_bot.py
+
+      - name: Commit generated outputs
+        if: github.event_name != 'pull_request'
+        run: |
+          git config user.name "artemis-bot"
+          git config user.email "artemis-bot@users.noreply.github.com"
+          git add operations/artemis/
+          if git diff --cached --quiet; then
+            echo "No provenance changes to commit."
+            exit 0
+          fi
+          git commit -m "bot: refresh ARTEMIS provenance + IP guardian reports [skip ci]"
+          # Concurrent bots push to main during our run; rebase and retry so a
+          # non-fast-forward rejection doesn't silently drop generated outputs.
+          for attempt in 1 2 3 4 5; do
+            if git push origin HEAD; then
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/5) — rebasing onto latest main"
+            git pull --rebase origin main || break
+          done
+          echo "::error::Could not push ARTEMIS outputs after 5 attempts"
+          exit 1
+
+      - name: Write job summary
+        if: always()
+        run: |
+          {
+            echo "## ARTEMIS Deploy"
+            echo ""
+            echo "Powered by ARTEMIS — A ClearGlass Inc. Intelligence System."
+            echo ""
+            if [ -f operations/artemis/ip_guardian_report.md ]; then
+              cat operations/artemis/ip_guardian_report.md
+            else
+              echo "_No guardian report generated._"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

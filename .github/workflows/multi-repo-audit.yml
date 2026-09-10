@@ -1,0 +1,97 @@
+name: Multi-Repo Audit
+
+on:
+  schedule:
+    # Nightly at 04:17 UTC (off-peak)
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+    inputs:
+      owner:
+        description: "GitHub owner/org to audit"
+        required: false
+        default: "ClearGlassInc"
+      parallel:
+        description: "Parallel audit workers"
+        required: false
+        default: "4"
+      skip_deps:
+        description: "Skip pip-audit / npm audit (faster)"
+        required: false
+        default: "false"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: Discover, audit, aggregate
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      # CG_ORG_PAT is deliberately NOT set here. It is the broadest credential in the
+      # repo (org-scoped, long-lived), and a job-level env exposes it to every step —
+      # including `pip install` and `apt-get`, which execute third-party code. It is
+      # bound only to the two steps that actually call the GitHub API.
+      GH_OWNER: ${{ github.event.inputs.owner || 'ClearGlassInc' }}
+      PARALLEL: ${{ github.event.inputs.parallel || '4' }}
+      SKIP_DEPS: ${{ github.event.inputs.skip_deps == 'true' && '1' || '0' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+
+      - name: Install pip-audit
+        run: pip install --quiet pip-audit
+
+      - name: Install jq
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq jq
+
+      - name: Verify gh auth
+        id: auth
+        env:
+          # Org-scoped PAT with repo:read + read:org. Add as repo secret CG_ORG_PAT.
+          GH_TOKEN: ${{ secrets.CG_ORG_PAT }}
+        run: |
+          # Optional-secret convention (mirrors commerce-deploy's RENDER hook):
+          # without an org-scoped PAT the audit cannot discover sibling repos, so
+          # skip cleanly instead of hard-failing the nightly run. Adding the
+          # CG_ORG_PAT secret (repo:read + read:org) re-enables the full audit.
+          if [[ -z "${GH_TOKEN:-}" ]]; then
+            echo "::warning::CG_ORG_PAT secret not set — skipping org-wide audit. Add an org-scoped PAT with repo:read + read:org to enable it."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          gh auth status
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
+      - name: Run audit pipeline
+        if: steps.auth.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.CG_ORG_PAT }}
+        run: bash scripts/audit/run_audit.sh
+
+      - name: Upload audit artifacts
+        if: always() && steps.auth.outputs.skip != 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: audit-out
+          path: audit-out/
+          retention-days: 14
+
+      - name: Job summary
+        if: always()
+        run: |
+          if [[ "${{ steps.auth.outputs.skip }}" == "true" ]]; then
+            echo "Multi-repo audit skipped — CG_ORG_PAT secret not configured (add an org-scoped PAT with repo:read + read:org to enable)." >> "$GITHUB_STEP_SUMMARY"
+          elif [[ -f audit-out/audit_report.md ]]; then
+            cat audit-out/audit_report.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No report generated." >> "$GITHUB_STEP_SUMMARY"
+          fi
