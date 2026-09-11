@@ -48,6 +48,14 @@ PUBLIC_DATA_FEEDS = {
 DENIED_PARTS = {".next", "node_modules", "__pycache__", ".pytest_cache", ".mypy_cache"}
 DENIED_NAMES = {"package.json", "package-lock.json", "pyproject.toml", "requirements.txt"}
 
+# Timestamped generator output that accumulates at the repository root
+# (e.g. 20260515T152813.json) — internal marketing narrative reports carrying
+# run_utc/prompt_source/output_dir/narratives. The .md half of each pair was
+# already excluded by PUBLIC_MARKDOWN; the .json half was publishing. Nothing
+# on the site references them: no HTML, JS, CSS, JSON or Python in the tree
+# mentions the pattern.
+DENIED_NAME_PATTERNS = (re.compile(r"^\d{8}T\d{6}\.[A-Za-z0-9]+$"),)
+
 CSP_POLICY = (
     "default-src 'self'; "
     "base-uri 'self'; "
@@ -152,7 +160,9 @@ def public_relative_paths() -> list[Path]:
             and not inside_public_exception
         ) or any(p in DENIED_PARTS for p in relative.parts):
             continue
-        if source.name in DENIED_NAMES:
+        if source.name in DENIED_NAMES or any(
+            pattern.match(source.name) for pattern in DENIED_NAME_PATTERNS
+        ):
             continue
         if (
             source.suffix.lower() in PUBLIC_EXTENSIONS
