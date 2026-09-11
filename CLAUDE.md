@@ -118,6 +118,25 @@ are documented in `DEPLOY.md` (Render blueprint recommended).
 
 ## CI gates that must stay green
 
+> **Actions is not dispatching runners.** Since 2026-09-06 every workflow job
+> fails in 3-5 seconds with `runner_id 0`, 0 billable ms and no retrievable
+> logs (`PRODUCTION-RECOVERY.md` §1.1). That is an organisation-level
+> entitlement problem — billing hold, spending limit, or an allowed-actions
+> policy — so it is fixed in settings, not in this repo. **Until it is, CI
+> reports nothing: a green check is absence of signal, not success.**
+>
+> Run the gates yourself before pushing:
+>
+> ```bash
+> pip install pytest pytest-cov pyyaml "ruff==0.15.8"   # CI's pinned versions
+> python3 scripts/ci_local.py            # every ci.yml gate, offline
+> python3 scripts/ci_local.py --list     # what it covers
+> ```
+>
+> It exits non-zero if any gate fails, so it works as a pre-push hook. Keep it
+> in step with `ci.yml`: a job added there and not there under-reports, which
+> is the failure mode it exists to prevent.
+
 - **Commerce Deploy** (`commerce-deploy.yml`): `ruff check control-plane` +
   full pytest in `control-plane/`, plus a `npm ci && next build` gate for
   `storefront` and `admin`, then an optional Render deploy hook. Triggered by
