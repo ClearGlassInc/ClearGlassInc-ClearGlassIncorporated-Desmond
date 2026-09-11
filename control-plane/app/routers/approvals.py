@@ -1,7 +1,7 @@
 """Approvals route — the human gate for high/critical actions."""
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
@@ -51,7 +51,7 @@ def _decide(
     decider = _resolve_decider(principal, req)
     approval.status = decision
     approval.decided_by = decider
-    approval.decided_at = datetime.now(timezone.utc)
+    approval.decided_at = datetime.now(UTC)
     session.flush()
     payload = {"approval_id": approval_id, "note": req.note}
     # Preserve any self-asserted label for forensic context, but only as an annotation —

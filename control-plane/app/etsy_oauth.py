@@ -116,7 +116,7 @@ def _default_post(settings: Settings) -> Poster:
             method="POST",
         )
         try:
-            with urllib.request.urlopen(req, timeout=15) as resp:  # noqa: S310 (fixed https base)
+            with urllib.request.urlopen(req, timeout=15) as resp:
                 return resp.status, json.loads(resp.read() or b"{}")
         except urllib.error.HTTPError as exc:
             try:
