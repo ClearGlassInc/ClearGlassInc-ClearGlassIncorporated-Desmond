@@ -10,26 +10,26 @@ import os
 
 os.environ.setdefault("DATABASE_URL", "sqlite://")
 
-from app import etsy
 from app.config import Settings
 from app.governance import RiskTier, score_action
 
+from app import etsy
+
 try:
+    from app.main import create_app
+    from app.models import Base
     from fastapi.testclient import TestClient
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
     from sqlalchemy.pool import StaticPool
 
     from app import db as db_module
-    from app.main import create_app
-    from app.models import Base
 
     _HAS_WEB_STACK = True
 except (ImportError, RuntimeError):  # pragma: no cover - minimal env still runs the pure tests
     _HAS_WEB_STACK = False
 
 import pytest
-
 
 # --- pure connection detection (no DB, no network) -------------------------------
 

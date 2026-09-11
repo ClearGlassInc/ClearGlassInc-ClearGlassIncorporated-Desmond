@@ -24,14 +24,13 @@ that run this gate without the web stack. Keep this file stdlib-only too.
 from __future__ import annotations
 
 import pytest
-
+from app.daily_loop import governance_selfcheck
 from app.governance import (
     ACTION_RISK,
     ALWAYS_ESCALATE,
     RiskTier,
     score_action,
 )
-from app.daily_loop import governance_selfcheck
 
 # Payloads that raise a score. If any of these could talk an action *down*, the
 # gate could be argued out of existence one field at a time.

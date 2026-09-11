@@ -12,10 +12,10 @@ import os
 os.environ.setdefault("DATABASE_URL", "sqlite://")
 
 import pytest
-
-from app import etsy_connect, etsy_oauth
 from app.config import Settings
 from app.etsy import REQUIRED_SCOPES
+
+from app import etsy_connect, etsy_oauth
 
 
 def _settings(**over) -> Settings:

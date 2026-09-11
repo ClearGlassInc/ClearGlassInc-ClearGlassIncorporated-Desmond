@@ -15,7 +15,7 @@ import hmac
 import json
 import os
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Any
 
@@ -132,7 +132,7 @@ def create_checkout_session(
             "currency": currency,
         }
 
-    import stripe  # noqa: PLC0415 — lazy import; only needed in live mode
+    import stripe
 
     stripe.api_key = _secret_key()
 
@@ -235,7 +235,7 @@ def create_billing_portal_session(checkout_session_id: str, return_url: str | No
     if not is_live():
         return {"url": f"{safe_return_url}?portal=mock", "mode": "mock"}
 
-    import stripe  # noqa: PLC0415 — lazy import; only needed in live mode
+    import stripe
 
     stripe.api_key = _secret_key()
     checkout = stripe.checkout.Session.retrieve(checkout_session_id)
@@ -312,14 +312,14 @@ def parse_payout(obj: dict[str, Any]) -> dict[str, Any]:
 
     arrival_ts = obj.get("arrival_date")
     arrival = (
-        datetime.fromtimestamp(int(arrival_ts), tz=timezone.utc)
+        datetime.fromtimestamp(int(arrival_ts), tz=UTC)
         if isinstance(arrival_ts, (int, float))
         else None
     )
 
     return {
         "stripe_payout_id": obj.get("id"),
-        "amount": Decimal(str(obj.get("amount", 0))) / Decimal("100"),
+        "amount": Decimal(str(obj.get("amount", 0))) / Decimal(100),
         "currency": (obj.get("currency") or "cad").upper(),
         "status": obj.get("status") or "pending",
         "destination": destination,

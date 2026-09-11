@@ -32,7 +32,7 @@ import os
 import smtplib
 import ssl
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from email.message import EmailMessage
 
 from sqlalchemy import create_engine, func, select
@@ -85,9 +85,9 @@ def _money(value: object) -> float:
 
 def compute_briefing(session: Session, now: datetime, *, live: bool) -> Briefing:
     today = now.date()
-    yest_start = datetime(today.year, today.month, today.day, tzinfo=timezone.utc) - timedelta(days=1)
+    yest_start = datetime(today.year, today.month, today.day, tzinfo=UTC) - timedelta(days=1)
     yest_end = yest_start + timedelta(days=1)
-    month_start = datetime(today.year, today.month, 1, tzinfo=timezone.utc)
+    month_start = datetime(today.year, today.month, 1, tzinfo=UTC)
     days_in_month = calendar.monthrange(today.year, today.month)[1]
     days_elapsed = today.day
 
@@ -116,7 +116,7 @@ def compute_briefing(session: Session, now: datetime, *, live: bool) -> Briefing
     if days_elapsed > 0:
         b.projected_month_end = round(b.mtd_revenue / days_elapsed * days_in_month, 2)
     prev_month_end = month_start - timedelta(days=1)
-    prev_month_start = datetime(prev_month_end.year, prev_month_end.month, 1, tzinfo=timezone.utc)
+    prev_month_start = datetime(prev_month_end.year, prev_month_end.month, 1, tzinfo=UTC)
     b.last_month_total, _ = revenue_between(prev_month_start, month_start)
     b.forecast_movement = round(b.projected_month_end - b.last_month_total, 2)
 
@@ -193,7 +193,7 @@ def compute_briefing(session: Session, now: datetime, *, live: bool) -> Briefing
 
 def _aware(dt: datetime) -> datetime:
     """SQLite hands back naive datetimes; treat them as UTC for age math."""
-    return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+    return dt if dt.tzinfo else dt.replace(tzinfo=UTC)
 
 
 def _derive_actions(b: Briefing, pending_approvals: int) -> list[str]:
@@ -334,7 +334,7 @@ def main() -> int:
 
     session, live = _make_session()
     try:
-        briefing = compute_briefing(session, datetime.now(timezone.utc), live=live)
+        briefing = compute_briefing(session, datetime.now(UTC), live=live)
     finally:
         session.close()
 

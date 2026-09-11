@@ -119,7 +119,7 @@ def _default_get(settings: Settings) -> Fetcher:
             method="GET",
         )
         try:
-            with urllib.request.urlopen(req, timeout=10) as resp:  # noqa: S310 (fixed https base)
+            with urllib.request.urlopen(req, timeout=10) as resp:
                 body = resp.read() or b"{}"
                 return resp.status, json.loads(body)
         except urllib.error.HTTPError as exc:  # 4xx/5xx still carry a useful status + body
