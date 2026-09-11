@@ -129,6 +129,7 @@ PAGES: dict[str, tuple[str, str]] = {
 
     # Command & autonomous operations
     "percival-os.html": ("PERCIVAL OS", "mission-ready governed command center"),
+    "mission-control.html": ("Mission Control", "the operational portfolio across automation, cyber defense and deployment"),
     "artemis-percival.html": ("AVALON", "the ARTEMIS ⊕ PERCIVAL unified fusion core"),
     "agentmesh.html": ("Agent Mesh", "multi-agent OSINT orchestration"),
     "ai-operator.html": ("AI Operator Workspace", "human-in-the-loop agent operations"),
@@ -196,6 +197,8 @@ PAGES: dict[str, tuple[str, str]] = {
     "offers/security-quick-audit.html": ("Security Quick-Audit", "a focused $249 security review"),
     "offers/guardian-command-nexus-blueprint.html": ("Guardian Command Nexus Blueprint", "the full SPEC-1 architecture blueprint, sold as a digital deliverable"),
     "offers/autonomous-threat-modeling.html": ("Autonomous Threat Modeling", "continuous threat-modeling assessment and implementation services"),
+    "offers/canada-us-control-assessment.html": ("Canada–US Control Assessment", "fixed-scope mapping of cross-border transfers, agent surfaces and dual incident clocks"),
+    "assets/canada-us-30-day-diagnostic.html": ("30-Day Canada–US Control Diagnostic", "one-page checklist for mapping cross-border data, agents and dual-jurisdiction evidence"),
     "revenue-engine.html": ("Revenue Engine", "AI-driven business growth system"),
 
     # Design & UI engineering
@@ -259,6 +262,10 @@ PAGES: dict[str, tuple[str, str]] = {
     "blog/network-orchestration-ai-automation-cybersecurity.html": ("AI-Driven Network Orchestration", "a field guide to safe, governed network automation"),
     "blog/ontario-influence-environment-august-2026.html": ("Ontario Influence Environment", "verification-first Ontario public-interest intelligence"),
     "blog/shadow-ai-incident-response-logs-gone.html": ("Shadow AI Incident Response", "forensic readiness before security evidence disappears"),
+    "blog/ai-safety-black-box-activation-analysis-gavel.html": ("AI Safety Beyond the Black Box", "activation analysis, cognitive elements and model-agnostic GAVEL evaluation"),
+    "blog/canada-us-cross-border-cybersecurity-evidence-controls.html": ("The Canada–US Control Problem", "why North American operations fail at the cross-border evidence layer"),
+    "blog/cpcsc-vs-cmmc-residency-split.html": ("CPCSC vs CMMC", "control reuse and the Canadian data-residency split for defence suppliers"),
+    "blog/dual-clock-incident-runbook-ccspa-circia-pipeda.html": ("Dual-Clock Incident Runbook", "a Canada–US incident ledger for CCSPA, CIRCIA and PIPEDA clocks"),
 }
 
 # --------------------------------------------------------------------------
@@ -369,6 +376,8 @@ CLUSTERS: dict[str, dict] = {
             "side-store.html", "products.html",
             "business-productivity-suite.html", "global-growth-engine.html",
             "apps/command-center/index.html",
+            "offers/canada-us-control-assessment.html",
+            "assets/canada-us-30-day-diagnostic.html",
         ],
         "cta": [CTA_STORE, CTA_PRICING],
     },
@@ -439,6 +448,10 @@ CLUSTERS: dict[str, dict] = {
             "blog/network-orchestration-ai-automation-cybersecurity.html",
             "blog/ontario-influence-environment-august-2026.html",
             "blog/shadow-ai-incident-response-logs-gone.html",
+            "blog/ai-safety-black-box-activation-analysis-gavel.html",
+            "blog/canada-us-cross-border-cybersecurity-evidence-controls.html",
+            "blog/cpcsc-vs-cmmc-residency-split.html",
+            "blog/dual-clock-incident-runbook-ccspa-circia-pipeda.html",
         ],
         "cta": [CTA_STORE, CTA_PRICING],
     },
