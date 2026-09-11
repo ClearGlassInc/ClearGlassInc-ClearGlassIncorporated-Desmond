@@ -21,7 +21,7 @@ from playwright.sync_api import TimeoutError as PWTimeout
 from playwright.sync_api import sync_playwright
 
 CHROME = os.environ.get("CHROME", "/opt/pw-browsers/chromium-1194/chrome-linux/chrome")
-URL = "http://127.0.0.1:8099/index.html"
+URL = os.environ.get("URL", "http://127.0.0.1:8099/index.html")
 SHOTS = os.environ.get("SHOTS", "./shots")
 os.makedirs(SHOTS, exist_ok=True)
 ARGS = ["--no-sandbox", "--use-gl=angle", "--use-angle=swiftshader"]
