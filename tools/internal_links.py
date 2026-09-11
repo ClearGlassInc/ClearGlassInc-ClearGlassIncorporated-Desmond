@@ -43,11 +43,6 @@ END = "<!-- cg-related:end -->"
 # path -> (journey role, reason it must not receive the generated module)
 EXCLUDED_PAGES: dict[str, tuple[str, str]] = {
     "404.html": ("Error recovery", "noindex redirect and route-recovery page"),
-    "assets/canada-us-30-day-diagnostic.html": (
-        "Sales collateral",
-        "noindex one-page checklist handed out with the Canada–US assessment; "
-        "no inbound links and deliberately outside sitemap.xml",
-    ),
     "cg-loader.html": ("Application utility", "noindex branded loading surface"),
     "google23RWyXWkoxqgArev8achU8IfVxYC5EIUAYBsuTYKLFM.html": (
         "Site verification", "Google ownership verification artifact"
@@ -129,7 +124,7 @@ PAGES: dict[str, tuple[str, str]] = {
 
     # Command & autonomous operations
     "percival-os.html": ("PERCIVAL OS", "mission-ready governed command center"),
-    "mission-control.html": ("Mission Control", "the operational portfolio across automation, cyber defense and deployment"),
+    "mission-control.html": ("Mission Control", "the operational portfolio across automation, defense and deployments"),
     "artemis-percival.html": ("AVALON", "the ARTEMIS ⊕ PERCIVAL unified fusion core"),
     "agentmesh.html": ("Agent Mesh", "multi-agent OSINT orchestration"),
     "ai-operator.html": ("AI Operator Workspace", "human-in-the-loop agent operations"),
@@ -141,7 +136,6 @@ PAGES: dict[str, tuple[str, str]] = {
     "systems.html": ("Systems Console", "PERCIVAL operations console"),
     "control-surface.html": ("Systems Control Surface v3.1", "the live command dashboard"),
     "command-center.html": ("Command Center", "executive security operations deck"),
-    "mission-control.html": ("Mission Control", "the operational portfolio across automation, defense and deployments"),
     "percival-build.html": ("PERCIVAL BUILD", "spatial engineering workspace"),
     "clearsight.html": ("CLEARSIGHT", "edge-AI camera vision & object detection"),
 
@@ -197,7 +191,6 @@ PAGES: dict[str, tuple[str, str]] = {
     "offers/security-quick-audit.html": ("Security Quick-Audit", "a focused $249 security review"),
     "offers/guardian-command-nexus-blueprint.html": ("Guardian Command Nexus Blueprint", "the full SPEC-1 architecture blueprint, sold as a digital deliverable"),
     "offers/autonomous-threat-modeling.html": ("Autonomous Threat Modeling", "continuous threat-modeling assessment and implementation services"),
-    "offers/canada-us-control-assessment.html": ("Canada–US Control Assessment", "fixed-scope mapping of cross-border transfers, agent surfaces and dual incident clocks"),
     "assets/canada-us-30-day-diagnostic.html": ("30-Day Canada–US Control Diagnostic", "one-page checklist for mapping cross-border data, agents and dual-jurisdiction evidence"),
     "revenue-engine.html": ("Revenue Engine", "AI-driven business growth system"),
 
@@ -222,14 +215,14 @@ PAGES: dict[str, tuple[str, str]] = {
     # Insights / blog
     "blog/index.html": ("ClearGlass Intelligence", "essays on governed AI, cyber defense and OSINT"),
     "blog/autonomous-threat-modeling-2026.html": ("Autonomous Threat Modeling in 2026", "continuous architecture-grounded security for agentic and cyber-physical systems"),
-    "blog/ai-safety-black-box-activation-analysis-gavel.html": ("AI Safety Beyond the Black Box", "activation analysis and the GAVEL evaluation harness"),
+    "blog/ai-safety-black-box-activation-analysis-gavel.html": ("AI Safety Beyond the Black Box", "activation analysis, cognitive elements and model-agnostic GAVEL evaluation"),
     "blog/ai-agent-governance-governed-autonomy.html": ("AI Agent Governance", "the governed-autonomy playbook"),
     "blog/ai-agents-insider-threat.html": ("AI Agents Are the New Insider Threat", "why agent identity is a security boundary"),
     "blog/almach-scalp-engine.html": ("ALMACH Scalp Engine", "a directional neural-mesh trading study"),
     "blog/artemis-governed-ai-gtm-visual-growth-engine.html": ("Governed AI Threat Modeling", "the Artemis GTM visual growth engine"),
-    "blog/canada-us-cross-border-cybersecurity-evidence-controls.html": ("The Canada–US Control Problem", "why North American operations fail at the evidence layer"),
-    "blog/cpcsc-vs-cmmc-residency-split.html": ("CPCSC vs CMMC", "control reuse and the data-residency split"),
-    "blog/dual-clock-incident-runbook-ccspa-circia-pipeda.html": ("Dual-Clock Incident Runbook", "reporting under CCSPA, CIRCIA and PIPEDA at once"),
+    "blog/canada-us-cross-border-cybersecurity-evidence-controls.html": ("The Canada–US Control Problem", "why North American operations fail at the cross-border evidence layer"),
+    "blog/cpcsc-vs-cmmc-residency-split.html": ("CPCSC vs CMMC", "control reuse and the Canadian data-residency split for defence suppliers"),
+    "blog/dual-clock-incident-runbook-ccspa-circia-pipeda.html": ("Dual-Clock Incident Runbook", "a Canada–US incident ledger for CCSPA, CIRCIA and PIPEDA clocks"),
     "blog/clearglass-agentops-microsoft-foundry-future-stack.html": ("ClearGlass AgentOps", "the Microsoft Foundry future stack"),
     "blog/clearglass-command-center-cyber-defense-console.html": ("Inside the Command Center", "designing a cyber defense console"),
     "blog/clearglass-platform-audit-2026.html": ("The ClearGlass Platform Audit", "keep, simplify, gate, build — the platform upgrade doctrine"),
@@ -262,10 +255,6 @@ PAGES: dict[str, tuple[str, str]] = {
     "blog/network-orchestration-ai-automation-cybersecurity.html": ("AI-Driven Network Orchestration", "a field guide to safe, governed network automation"),
     "blog/ontario-influence-environment-august-2026.html": ("Ontario Influence Environment", "verification-first Ontario public-interest intelligence"),
     "blog/shadow-ai-incident-response-logs-gone.html": ("Shadow AI Incident Response", "forensic readiness before security evidence disappears"),
-    "blog/ai-safety-black-box-activation-analysis-gavel.html": ("AI Safety Beyond the Black Box", "activation analysis, cognitive elements and model-agnostic GAVEL evaluation"),
-    "blog/canada-us-cross-border-cybersecurity-evidence-controls.html": ("The Canada–US Control Problem", "why North American operations fail at the cross-border evidence layer"),
-    "blog/cpcsc-vs-cmmc-residency-split.html": ("CPCSC vs CMMC", "control reuse and the Canadian data-residency split for defence suppliers"),
-    "blog/dual-clock-incident-runbook-ccspa-circia-pipeda.html": ("Dual-Clock Incident Runbook", "a Canada–US incident ledger for CCSPA, CIRCIA and PIPEDA clocks"),
 }
 
 # --------------------------------------------------------------------------
@@ -376,7 +365,6 @@ CLUSTERS: dict[str, dict] = {
             "side-store.html", "products.html",
             "business-productivity-suite.html", "global-growth-engine.html",
             "apps/command-center/index.html",
-            "offers/canada-us-control-assessment.html",
             "assets/canada-us-30-day-diagnostic.html",
         ],
         "cta": [CTA_STORE, CTA_PRICING],
@@ -448,10 +436,6 @@ CLUSTERS: dict[str, dict] = {
             "blog/network-orchestration-ai-automation-cybersecurity.html",
             "blog/ontario-influence-environment-august-2026.html",
             "blog/shadow-ai-incident-response-logs-gone.html",
-            "blog/ai-safety-black-box-activation-analysis-gavel.html",
-            "blog/canada-us-cross-border-cybersecurity-evidence-controls.html",
-            "blog/cpcsc-vs-cmmc-residency-split.html",
-            "blog/dual-clock-incident-runbook-ccspa-circia-pipeda.html",
         ],
         "cta": [CTA_STORE, CTA_PRICING],
     },
