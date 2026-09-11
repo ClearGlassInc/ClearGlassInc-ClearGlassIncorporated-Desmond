@@ -2,6 +2,30 @@
 
 Guidance for agents working in this repository.
 
+> ## Accuracy notice — read before trusting any path below
+>
+> This repository was imported through GitHub's web uploader, not with git, and
+> the import was lossy: it flattened directories and dropped files. Parts of
+> this document describe the **pre-import** layout and will send you to paths
+> that do not exist here. Verified on 2026-09-11:
+>
+> | Documented | Actually in this repo |
+> |---|---|
+> | `clearglass-commerce/` — "the flagship backend" | **0 tracked files.** Absent. Its control plane, storefront, admin, pricebook and test suite are all missing. Every command in "Running & testing the commerce control plane" fails. |
+> | `apps/autostore/` | **0 tracked files.** Absent. `tests/test_side_store_storefront.py` still points at it. |
+> | "~29 workflows" in `.github/workflows/` | 19 registered. A further 65 sit inert in a top-level **`workflows/`** directory that GitHub never reads — same import damage. |
+> | "CI gates that must stay green" (Commerce Deploy, Commerce Frontend CI, Commerce Daily Loop) | Not present. `ci.yml` is now registered and does gate `pytest tests/` + `ruff check .`. |
+> | `tests/` for the Python suite | Correct — but only since the `agent_os`/`tests` re-nesting; the suite previously sat flattened in the repository root. |
+>
+> Also missing and referenced by live code or workflows: `scripts/verify_site.py`
+> (blocks `pages.yml`), `scripts/workflow_doctor.py` (blocks `ci.yml` and
+> `auto-store.yml`), `scripts/validate_production_deploy.py`, `agent_army/`, and
+> `security/HARDENING_AND_THREAT_MODEL.md`. None of them exist in
+> `ClearGlasslabs/ClearGlassInc.` either — that repository was checked.
+>
+> Treat the sections below as the intended architecture, not as a map of what is
+> on disk. Verify a path exists before acting on it.
+
 ## What this repo is
 
 `ClearGlassInc.github.io` is the ClearGlass Inc. GitHub Pages site **plus** the
