@@ -354,19 +354,42 @@
     if (!host) return;
     var fills = host.querySelectorAll(".bar-fill"), i, targets = [];
     for (i = 0; i < fills.length; i++) {
-      targets.push(fills[i].style.width || "0%");
+      // The authored inline width is the target. It is converted once to a
+      // compositor scale factor so the reveal never re-enters layout.
+      targets.push(Math.max(0, Math.min(1, (parseFloat(fills[i].style.width) || 0) / 100)));
       if (!reduce) {
-        fills[i].style.transition = "width 1.1s cubic-bezier(.2,.8,.2,1)";
-        fills[i].style.width = "0%";
+        fills[i].style.width = "100%";
+        fills[i].style.transformOrigin = "0 50%";
+        fills[i].style.transform = "scaleX(0)";
+        fills[i].style.willChange = "transform";
+        fills[i].style.transition = "transform 1.1s cubic-bezier(.2,.8,.2,1)";
       }
     }
     if (reduce) return;                     // already at target, no motion
+    var STAGGER = 90;                       // ms between bar releases
+    var release = function (el, frac) {
+      if (frac <= 0) { el.style.willChange = "auto"; return; }
+      // Drop the promoted layer once the reveal settles, so nine bars do not
+      // hold nine compositor layers for the life of the page.
+      el.addEventListener("transitionend", function () {
+        el.style.willChange = "auto";
+      }, { once: true });
+      el.style.transform = "scaleX(" + frac.toFixed(5) + ")";
+    };
     var run = function () {
-      for (var j = 0; j < fills.length; j++) {
-        (function (el, w, d) {
-          setTimeout(function () { el.style.width = w; }, d);
-        })(fills[j], targets[j], j * 90);
-      }
+      // Stagger is driven off the rAF clock, not timers: the bars are released
+      // on the frames that actually present them.
+      var start = 0, released = 0;
+      var step = function (now) {
+        if (!start) start = now;
+        var elapsed = now - start;
+        while (released < fills.length && elapsed >= released * STAGGER) {
+          release(fills[released], targets[released]);
+          released++;
+        }
+        if (released < fills.length) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
     };
     if ("IntersectionObserver" in window) {
       var io = new IntersectionObserver(function (entries) {

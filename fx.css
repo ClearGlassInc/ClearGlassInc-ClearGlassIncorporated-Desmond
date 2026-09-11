@@ -6,9 +6,11 @@
    and collision-free. */
 
 /* ── scroll progress bar ─────────────────────────────────────────────────── */
-#cg-progress{position:fixed;top:0;left:0;height:2.5px;width:0;z-index:2147483640;pointer-events:none;
+#cg-progress{position:fixed;top:0;left:0;height:2.5px;width:100%;z-index:2147483640;pointer-events:none;
   background:linear-gradient(90deg,#ea4648,#ee637a 45%,#ee6375 72%,#34d399);
-  box-shadow:0 0 10px rgba(238, 99, 108,.6);transition:width .08s linear;border-radius:0 2px 2px 0}
+  box-shadow:0 0 10px rgba(238, 99, 108,.6);border-radius:0 2px 2px 0;
+  transform:scaleX(0);transform-origin:0 50%;will-change:transform;
+  transition:transform .08s linear}
 
 /* ── crystal-text shimmer (animates the existing brand gradient) ─────────── */
 @keyframes cg-shimmer{0%{background-position:0% 50%}100%{background-position:200% 50%}}
