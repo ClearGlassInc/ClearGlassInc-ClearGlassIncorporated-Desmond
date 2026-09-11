@@ -74,6 +74,18 @@
     var dpr = Math.min(window.devicePixelRatio || 1, 1.75);
     var nodes = [], W = 0, H = 0, raf = 0, running = false;
 
+    // Link alpha is quantised into a fixed set of buckets so every link sharing
+    // a bucket is emitted as one stroked path. The colour strings are built once
+    // here rather than concatenated per link per frame, which is what drove the
+    // allocation churn in this loop.
+    var LINK_BUCKETS = 8, LINK_D2 = 15000;
+    var LINK_STYLES = [], linkBuckets = [];
+    for (var s = 0; s < LINK_BUCKETS; s++) {
+      LINK_STYLES.push("rgba(235, 76, 79," + (((s + 1) / LINK_BUCKETS) * 0.5).toFixed(3) + ")");
+      linkBuckets.push([]);
+    }
+    var NODE_STYLE = "rgba(238, 99, 122,.85)";
+
     function resize() {
       W = canvas.clientWidth; H = canvas.clientHeight;
       canvas.width = Math.floor(W * dpr); canvas.height = Math.floor(H * dpr);
@@ -98,28 +110,38 @@
         if (n.x < 0 || n.x > W) n.vx *= -1;
         if (n.y < 0 || n.y > H) n.vy *= -1;
       }
-      // links between nearby nodes (secure network pathways)
+      // links between nearby nodes (secure network pathways), bucketed by alpha
+      for (var r = 0; r < LINK_BUCKETS; r++) linkBuckets[r].length = 0;
       for (var a = 0; a < nodes.length; a++) {
         for (var b = a + 1; b < nodes.length; b++) {
           var dx = nodes[a].x - nodes[b].x, dy = nodes[a].y - nodes[b].y;
           var d2 = dx * dx + dy * dy;
-          if (d2 < 15000) {
-            var o = (1 - d2 / 15000) * 0.5;
-            ctx.strokeStyle = "rgba(235, 76, 79," + o.toFixed(3) + ")";
-            ctx.beginPath();
-            ctx.moveTo(nodes[a].x, nodes[a].y);
-            ctx.lineTo(nodes[b].x, nodes[b].y);
-            ctx.stroke();
+          if (d2 < LINK_D2) {
+            var bi = ((1 - d2 / LINK_D2) * LINK_BUCKETS) | 0;
+            if (bi >= LINK_BUCKETS) bi = LINK_BUCKETS - 1;
+            linkBuckets[bi].push(nodes[a].x, nodes[a].y, nodes[b].x, nodes[b].y);
           }
         }
       }
-      // nodes (moving data packets)
-      for (var k = 0; k < nodes.length; k++) {
-        ctx.fillStyle = "rgba(238, 99, 122,.85)";
+      for (var g = 0; g < LINK_BUCKETS; g++) {
+        var pts = linkBuckets[g];
+        if (!pts.length) continue;
+        ctx.strokeStyle = LINK_STYLES[g];
         ctx.beginPath();
-        ctx.arc(nodes[k].x, nodes[k].y, 1.6, 0, 6.2832);
-        ctx.fill();
+        for (var p = 0; p < pts.length; p += 4) {
+          ctx.moveTo(pts[p], pts[p + 1]);
+          ctx.lineTo(pts[p + 2], pts[p + 3]);
+        }
+        ctx.stroke();
       }
+      // nodes (moving data packets) - one path, one fill
+      ctx.fillStyle = NODE_STYLE;
+      ctx.beginPath();
+      for (var k = 0; k < nodes.length; k++) {
+        ctx.moveTo(nodes[k].x + 1.6, nodes[k].y);   // avoids a connecting line
+        ctx.arc(nodes[k].x, nodes[k].y, 1.6, 0, 6.2832);
+      }
+      ctx.fill();
       raf = requestAnimationFrame(frame);
     }
 
