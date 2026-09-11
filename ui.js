@@ -130,11 +130,20 @@
   } else { buildCommandLayer(); }
 
   if (finePointer && !reduce) {
+    var orbitRaf = 0, orbitX = 0, orbitY = 0, orbitLayer = null;
+    var paintOrbit = function () {
+      orbitRaf = 0;
+      // Resolved lazily: the atmosphere layer is built on DOMContentLoaded,
+      // which may land after this listener binds.
+      if (!orbitLayer) orbitLayer = document.getElementById("cg-command-atmosphere");
+      if (!orbitLayer) return;
+      orbitLayer.style.setProperty("--cg-orbit-x", orbitX + "%");
+      orbitLayer.style.setProperty("--cg-orbit-y", orbitY + "%");
+    };
     window.addEventListener("pointermove", function (e) {
-      var layer = document.getElementById("cg-command-atmosphere");
-      if (!layer) return;
-      layer.style.setProperty("--cg-orbit-x", Math.round((e.clientX / Math.max(1, window.innerWidth)) * 100) + "%");
-      layer.style.setProperty("--cg-orbit-y", Math.round((e.clientY / Math.max(1, window.innerHeight)) * 100) + "%");
+      orbitX = Math.round((e.clientX / Math.max(1, window.innerWidth)) * 100);
+      orbitY = Math.round((e.clientY / Math.max(1, window.innerHeight)) * 100);
+      if (!orbitRaf) orbitRaf = requestAnimationFrame(paintOrbit);
     }, { passive: true });
   }
 
