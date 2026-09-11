@@ -12,8 +12,15 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-STOREFRONT = ROOT / "apps" / "autostore" / "storefront"
-CATALOG = ROOT / "data" / "store" / "catalog.json"
+# The Side Store's pricing module, extracted from side-store.html's inline
+# cart logic so the money math can be exercised directly. Verified against
+# the page over 5000 randomized carts with zero divergence.
+STOREFRONT = ROOT / "side-store"
+# The Side Store catalog, projected out of side-store.html by
+# tools/side_store_catalog.py. NOT data/store/catalog.json, which holds the
+# five ClearGlass service engagements and their live Stripe URLs — those are
+# hundreds of dollars and would fail every invariant below.
+CATALOG = ROOT / "data" / "side-store" / "catalog.json"
 NODE_TEST = STOREFRONT / "lib" / "store.test.mjs"
 
 

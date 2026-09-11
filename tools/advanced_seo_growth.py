@@ -33,6 +33,12 @@ SKIP_DIRS = {
     "node_modules",
     "tools",
 }
+
+# Build output and dependency trees, which can appear at any depth
+# (storefront/.next/, admin/node_modules/) rather than only at the root.
+BUILD_OUTPUT_PARTS = frozenset({
+    ".next", ".turbo", "out", "dist", "build", "node_modules",
+})
 UTILITY = {
     "404.html",
     "offline.html",
@@ -190,7 +196,7 @@ def discover_pages() -> list[Path]:
     result = []
     for path in ROOT.rglob("*.html"):
         rel = path.relative_to(ROOT)
-        if rel.parts[0] in SKIP_DIRS or "node_modules" in rel.parts:
+        if rel.parts[0] in SKIP_DIRS or BUILD_OUTPUT_PARTS.intersection(rel.parts):
             continue
         result.append(path)
     return sorted(result)

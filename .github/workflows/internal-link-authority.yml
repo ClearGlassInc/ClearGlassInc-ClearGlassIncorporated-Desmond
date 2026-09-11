@@ -1,0 +1,148 @@
+name: Internal Link Authority
+
+on:
+  pull_request:
+    paths:
+      - "**/*.html"
+      - "sitemap*.xml"
+      - "robots.txt"
+      - "nav.js"
+      - "tools/internal_links.py"
+      - "tools/authority_network.py"
+      - "tools/authority_network_ci.py"
+      - "tests/test_authority_network.py"
+      - "docs/**authority-network*.md"
+      - "llms*.txt"
+      - ".github/workflows/internal-link-authority.yml"
+  push:
+    branches: [main]
+    paths:
+      - "**/*.html"
+      - "sitemap*.xml"
+      - "robots.txt"
+      - "nav.js"
+      - "tools/internal_links.py"
+      - "tools/authority_network.py"
+      - "tools/authority_network_ci.py"
+      - "tests/test_authority_network.py"
+      - "docs/**authority-network*.md"
+      - "llms*.txt"
+      - ".github/workflows/internal-link-authority.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: internal-link-authority-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-authority-network:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.13"
+
+      - name: Install focused validation dependencies
+        # ruff capped below 0.16: its expanded default rule set (EXE001, RUF059,
+        # RUF100, ...) flags pre-existing style and fails the focused-lint gate.
+        run: python3 -m pip install "pytest>=8,<9" "ruff==0.15.8"
+
+      - name: Capture focused authority-network lint
+        id: authority_lint
+        shell: bash
+        run: |
+          set +e
+          ruff check tools/authority_network.py tools/authority_network_ci.py tests/test_authority_network.py > authority-lint.txt 2>&1
+          status=$?
+          cat authority-lint.txt
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Upload focused lint diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: authority-network-lint-diagnostics
+          path: authority-lint.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Enforce focused authority-network lint
+        run: test "${{ steps.authority_lint.outputs.status }}" = "0"
+
+      - name: Verify legacy generated blocks remain current
+        run: python3 tools/internal_links.py --check
+
+      - name: Capture self-evolving authority diagnostics
+        id: authority
+        shell: bash
+        run: |
+          set +e
+          python3 tools/authority_network_ci.py --check --report > authority-diagnostics.txt 2>&1
+          status=$?
+          cat authority-diagnostics.txt
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Upload authority diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: authority-network-diagnostics
+          path: authority-diagnostics.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Enforce self-evolving authority graph
+        run: test "${{ steps.authority.outputs.status }}" = "0"
+
+      - name: Capture focused authority-network tests
+        id: authority_tests
+        shell: bash
+        run: |
+          set +e
+          python3 -m pytest -q tests/test_authority_network.py > authority-tests.txt 2>&1
+          status=$?
+          cat authority-tests.txt
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Upload focused test diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: authority-network-test-diagnostics
+          path: authority-tests.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Enforce focused authority-network tests
+        run: test "${{ steps.authority_tests.outputs.status }}" = "0"
+
+      - name: Verify all registered sitemaps are advertised
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          robots = Path("robots.txt").read_text(encoding="utf-8")
+          missing = [
+              sitemap.name
+              for sitemap in sorted(Path(".").glob("sitemap*.xml"))
+              if f"Sitemap: https://www.clearglassinc.com/{sitemap.name}" not in robots
+          ]
+          if missing:
+              raise SystemExit("Sitemaps missing from robots.txt: " + ", ".join(missing))
+          print("robots.txt advertises every sitemap*.xml source.")
+          PY

@@ -1,0 +1,117 @@
+name: PR Automation
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  triage:
+    name: Label & Triage PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Compute PR metadata
+        id: meta
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          ADDITIONS=$(gh pr view "$PR_NUMBER" --repo "$GH_REPO" --json additions --jq '.additions')
+          DELETIONS=$(gh pr view "$PR_NUMBER" --repo "$GH_REPO" --json deletions --jq '.deletions')
+          TOTAL=$((ADDITIONS + DELETIONS))
+          FILES=$(gh pr view "$PR_NUMBER" --repo "$GH_REPO" --json files --jq '[.files[].path] | join(" ")')
+
+          if   [ "$TOTAL" -lt 10  ]; then SIZE="size:XS"
+          elif [ "$TOTAL" -lt 50  ]; then SIZE="size:S"
+          elif [ "$TOTAL" -lt 200 ]; then SIZE="size:M"
+          elif [ "$TOTAL" -lt 500 ]; then SIZE="size:L"
+          else SIZE="size:XL"
+          fi
+
+          echo "size=$SIZE" >> "$GITHUB_OUTPUT"
+          echo "total_lines=$TOTAL" >> "$GITHUB_OUTPUT"
+          echo "files=$FILES" >> "$GITHUB_OUTPUT"
+          echo "PR size: $SIZE ($TOTAL lines changed)"
+
+      - name: Apply size label
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          SIZE: ${{ steps.meta.outputs.size }}
+        run: |
+          for label in "size:XS" "size:S" "size:M" "size:L" "size:XL"; do
+            gh pr edit "$PR_NUMBER" --repo "$GH_REPO" --remove-label "$label" 2>/dev/null || true
+          done
+          gh label create "$SIZE" --repo "$GH_REPO" --color "0075ca" 2>/dev/null || true
+          gh pr edit "$PR_NUMBER" --repo "$GH_REPO" --add-label "$SIZE"
+
+      - name: Apply area labels
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          FILES: ${{ steps.meta.outputs.files }}
+        run: |
+          add_label() {
+            local lbl="$1" color="$2"
+            gh label create "$lbl" --repo "$GH_REPO" --color "$color" 2>/dev/null || true
+            gh pr edit "$PR_NUMBER" --repo "$GH_REPO" --add-label "$lbl" 2>/dev/null || true
+          }
+          echo "$FILES" | grep -q '\.github/workflows/' && add_label "area:workflows" "e4e669"
+          echo "$FILES" | grep -q '^bots/'             && add_label "area:bots"      "bfd4f2"
+          echo "$FILES" | grep -q '^scripts/'          && add_label "area:scripts"   "d4c5f9"
+          echo "$FILES" | grep -q '^tests/'            && add_label "area:tests"     "c2e0c6"
+          echo "$FILES" | grep -q '^docs/'             && add_label "area:docs"      "fef2c0"
+          echo "$FILES" | grep -q '\.html$'            && add_label "area:site"      "f9d0c4"
+          echo "$FILES" | grep -q '^infra/'            && add_label "area:infra"     "e11d48"
+          echo "$FILES" | grep -q '^deployment/'       && add_label "area:deploy"    "cc317c"
+          echo "$FILES" | grep -q '^services/'         && add_label "area:services"  "7057ff"
+          true  # the last grep may return 1 (no match) — ensure step always exits 0
+
+      - name: Post checklist on first open
+        if: github.event.action == 'opened'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          SIZE: ${{ steps.meta.outputs.size }}
+          LINES: ${{ steps.meta.outputs.total_lines }}
+        run: |
+          gh pr comment "$PR_NUMBER" --repo "$GH_REPO" --body "## PR Checklist
+
+          > **$SIZE** — $LINES lines changed
+
+          ### Code Quality
+          - [ ] CI passes (tests, lint, site audit, workflow doctor)
+          - [ ] No secrets, credentials, or private keys in diff
+          - [ ] New bots have a matching test file in \`tests/\`
+
+          ### Site Changes
+          - [ ] HTML tested locally or via deploy preview
+          - [ ] Sitemap updated if new pages were added
+          - [ ] \`schema.json\` updated if structured data changed
+
+          ### Automation / Workflow Changes
+          - [ ] Workflows validated with \`python scripts/workflow_doctor.py\`
+          - [ ] Action versions pinned to stable (v4/v5)
+          - [ ] \`GITHUB_TOKEN\` permissions scoped to minimum required
+
+          ### Deployment
+          - [ ] \`render.yaml\` / \`fly.toml\` updated if service config changed
+          - [ ] Environment variables documented if new ones added
+
+          ---
+          *Auto-generated by ClearGlass PR Automation*"

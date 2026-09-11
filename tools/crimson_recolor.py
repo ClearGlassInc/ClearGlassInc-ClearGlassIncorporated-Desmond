@@ -68,21 +68,21 @@ def map_hue(h_deg: float) -> float | None:
 
 def shift(r: int, g: int, b: int) -> tuple[int, int, int] | None:
     """Return the crimson counterpart of an RGB triple, or None to leave it."""
-    h, l, s = colorsys.rgb_to_hls(r / 255, g / 255, b / 255)
-    if s < SAT_FLOOR or l >= L_HI or l <= L_LO:
+    h, lightness, s = colorsys.rgb_to_hls(r / 255, g / 255, b / 255)
+    if s < SAT_FLOOR or lightness >= L_HI or lightness <= L_LO:
         return None
     target = map_hue(h * 360)
     if target is None:
         return None
-    if l < DARK_L:
+    if lightness < DARK_L:
         s *= DARK_SAT_SCALE          # deep tones → near-black with a warm cast
-    elif l > TINT_L:
+    elif lightness > TINT_L:
         s = min(s, TINT_SAT_CEIL)    # highlights / light type → warm off-white
     else:
         s = min(s, SAT_CEIL)
         if s > ACCENT_S_MIN:
-            l = min(l, ACCENT_L_CEIL)
-    nr, ng, nb = colorsys.hls_to_rgb((target % 360) / 360, l, s)
+            lightness = min(lightness, ACCENT_L_CEIL)
+    nr, ng, nb = colorsys.hls_to_rgb((target % 360) / 360, lightness, s)
     return round(nr * 255), round(ng * 255), round(nb * 255)
 
 
@@ -158,17 +158,17 @@ ALPHA_RE = re.compile(r'\brgba\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*([\
 
 
 def _relight(r: int, g: int, b: int, to_dark: bool) -> tuple[int, int, int] | None:
-    h, l, s = colorsys.rgb_to_hls(r / 255, g / 255, b / 255)
+    h, lightness, s = colorsys.rgb_to_hls(r / 255, g / 255, b / 255)
     if to_dark:
-        if l < SURFACE_L:
+        if lightness < SURFACE_L:
             return None
-        l = 0.055 + (1 - l) * 0.35          # white → near-black, keeping order
+        lightness = 0.055 + (1 - lightness) * 0.35          # white → near-black, keeping order
         s = min(s, 0.20)
     else:
-        if l >= TEXT_L:
+        if lightness >= TEXT_L:
             return None
-        l = 0.94 - l * 0.85                 # near-black type → warm off-white
-    nr, ng, nb = colorsys.hls_to_rgb(h, max(0.0, min(1.0, l)), s)
+        lightness = 0.94 - lightness * 0.85                 # near-black type → warm off-white
+    nr, ng, nb = colorsys.hls_to_rgb(h, max(0.0, min(1.0, lightness)), s)
     return round(nr * 255), round(ng * 255), round(nb * 255)
 
 
@@ -293,10 +293,10 @@ def lift_ink(text: str, names: set[str]) -> tuple[str, int]:
         if len(h) == 3:
             h = ''.join(c * 2 for c in h)
         r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
-        hh, l, ss = colorsys.rgb_to_hls(r / 255, g / 255, b / 255)
-        if ss > INK_SAT_MAX or l >= INK_L_MAX:
+        hh, lightness, ss = colorsys.rgb_to_hls(r / 255, g / 255, b / 255)
+        if ss > INK_SAT_MAX or lightness >= INK_L_MAX:
             return m.group(0)
-        nr, ng, nb = colorsys.hls_to_rgb(hh, 0.94 - l * 0.85, ss)
+        nr, ng, nb = colorsys.hls_to_rgb(hh, 0.94 - lightness * 0.85, ss)
         n += 1
         return '%s%s#%02x%02x%02x' % (m.group(1), m.group(2),
                                       round(nr * 255), round(ng * 255), round(nb * 255))

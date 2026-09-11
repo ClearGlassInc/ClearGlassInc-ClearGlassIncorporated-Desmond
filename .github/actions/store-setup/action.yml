@@ -1,0 +1,53 @@
+# Reusable toolchain + dependency setup for the auto-store pipeline.
+#
+# Centralizes "set up Python and install what the job needs" so every job in
+# auto-store.yml (validate, test, checkout-health, deploy) stays DRY and pins
+# the same toolchain. Local composite action -> exempt from the SHA-pin policy
+# gate, but the actions it calls are kept on the workflow-doctor stable majors.
+name: "Auto-Store Setup"
+description: "Install the Python toolchain and dependencies for the auto-store workflow."
+
+inputs:
+  python-version:
+    description: "Python version to install."
+    required: false
+    default: "3.11"
+  requirements:
+    description: "Optional extra requirements file to install (e.g. a control-plane requirements.txt)."
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: pip
+
+    - name: Install base toolchain
+      shell: bash
+      run: |
+        set -euo pipefail
+        python -m pip install --upgrade pip
+        # Root requirements pin pytest / pytest-cov / jsonschema; add the lint +
+        # YAML tooling the validate job needs. Pinned, least-surprise install.
+        pip install -r requirements.txt
+        # Pin ruff: an unpinned install lets CI pull a newer ruff whose expanded
+        # default rule set flags hundreds of pre-existing style issues, turning
+        # the validate job's repo-wide `ruff check .` red with no code change.
+        pip install "ruff==0.15.8" "pyyaml==6.0.3"
+
+    - name: Install extra requirements
+      if: inputs.requirements != ''
+      shell: bash
+      run: |
+        set -euo pipefail
+        # The caller may name a requirements file belonging to a subsystem that
+        # is not present in this checkout. Announce that rather than failing the
+        # whole pipeline on it, and never skip a file that does exist.
+        if [ -f "${{ inputs.requirements }}" ]; then
+          pip install -r "${{ inputs.requirements }}"
+        else
+          echo "::warning title=Missing requirements::${{ inputs.requirements }} is not in this repository; skipping its install."
+        fi

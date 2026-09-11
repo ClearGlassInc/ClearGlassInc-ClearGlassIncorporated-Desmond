@@ -1,0 +1,34 @@
+name: Commerce Daily Loop
+
+on:
+  schedule:
+    - cron: "0 13 * * *"   # 13:00 UTC daily — executive report + governance self-check
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  daily-loop:
+    name: Daily executive report + governance self-check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+      - name: Storefront checkout smoke test (SOUL.md daily smoke guardrail)
+        run: python bots/store_smoke_bot.py
+      - name: Governance self-check (fails if any financial action is auto-executable)
+        working-directory: control-plane
+        run: python -m app.daily_loop --json
+      - name: Executive report
+        working-directory: control-plane
+        run: |
+          python -m app.daily_loop | tee "$GITHUB_STEP_SUMMARY"
+      - name: RFED governance self-check (fails if a privileged agent action is auto-executable)
+        run: |
+          python -m bots.rfed_audit_bot --self-check | tee -a "$GITHUB_STEP_SUMMARY"

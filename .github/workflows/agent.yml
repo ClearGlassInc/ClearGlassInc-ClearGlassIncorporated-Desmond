@@ -1,0 +1,101 @@
+name: Workflow Repair Agent (Claude)
+
+# Manually-triggered agent that diagnoses (and optionally repairs) failing
+# GitHub Actions workflows in this repository.
+#
+# Hardening choices:
+#   - workflow_dispatch only: GitHub already requires *write* access to start a
+#     manual run, so the trigger itself gates who can invoke the agent.
+#   - Least-privilege GITHUB_TOKEN: scoped to exactly what the agent needs
+#     (read run logs, push a branch, open a PR). No org/admin scopes.
+#   - diagnose mode is read-only: it never pushes code, only reports findings.
+#   - Never pushes to the default branch: fixes land on a dedicated branch and
+#     are surfaced as a *draft* PR for human review.
+#   - Concurrency + timeout: prevents overlapping/runaway runs.
+#
+# Required secret:
+#   ANTHROPIC_API_KEY  (or CLAUDE_CODE_OAUTH_TOKEN) — add under
+#   Settings → Secrets and variables → Actions.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "diagnose = read-only report; fix = make changes + open a draft PR"
+        type: choice
+        required: true
+        default: diagnose
+        options:
+          - diagnose
+          - fix
+      scope:
+        description: "What to look at (e.g. 'all workflows', 'security.yml', 'the latest failing run')"
+        type: string
+        required: false
+        default: "all workflows"
+
+# Don't let two repair runs stomp on each other.
+concurrency:
+  group: workflow-repair-agent
+  cancel-in-progress: false
+
+# Top-level default: read-only. Each job opts into exactly what it needs.
+permissions:
+  contents: read
+
+jobs:
+  repair:
+    name: Diagnose / Repair Workflows
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write        # create the fix branch (fix mode)
+      pull-requests: write   # open the draft PR / comment findings
+      actions: read          # read failing workflow run logs
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      # Optional-secret convention (mirrors multi-repo-audit's CG_ORG_PAT):
+      # without an agent credential the run cannot do anything useful, so skip
+      # cleanly instead of hard-failing every manual dispatch. Adding either
+      # secret re-enables the agent.
+      - name: Check agent credentials
+        id: creds
+        env:
+          HAS_KEY: ${{ (secrets.CLAUDE_CODE_OAUTH_TOKEN != '' || secrets.ANTHROPIC_API_KEY != '') && 'true' || 'false' }}
+        run: |
+          if [[ "$HAS_KEY" != "true" ]]; then
+            echo "::warning::Neither CLAUDE_CODE_OAUTH_TOKEN nor ANTHROPIC_API_KEY is set — skipping repair agent. Add one under Settings → Secrets and variables → Actions."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run repair agent
+        if: steps.creds.outputs.skip != 'true'
+        uses: anthropics/claude-code-action@b76a0776ae74036e77cd11018083743453d7ad35 # v1
+        with:
+          # Prefer an OAuth token if present, otherwise fall back to API key.
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: |
+            Read agents/workflow_repair/system_prompt.md and follow it exactly
+            as your operating contract. (PROMPT.md at the repository root is
+            the release commander's contract, not yours — ignore it.)
+
+            Run parameters for this invocation:
+              mode:  ${{ github.event.inputs.mode }}
+              scope: ${{ github.event.inputs.scope }}
+
+            Honor the mode strictly:
+              - "diagnose": investigate only and post a findings report. Do NOT
+                modify files, push commits, or open a PR.
+              - "fix": apply the smallest correct fix on a new branch named
+                agent/workflow-repair-<short-sha>, then open a DRAFT pull
+                request describing the root cause and the change. Never push to
+                the default branch.

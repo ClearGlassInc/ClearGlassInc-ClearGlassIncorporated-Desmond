@@ -1,0 +1,77 @@
+name: Minerals Data Sync
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: minerals-data-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Fetch, validate, normalize, publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.13"
+
+      - name: Fetch and normalize public mineral signals
+        run: python scripts/minerals_data_sync.py
+
+      - name: Validate production JSON
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = Path('feeds/minerals')
+          files = sorted(root.rglob('*.json'))
+          if not files:
+              raise SystemExit('No minerals JSON files found')
+          for path in files:
+              with path.open('r', encoding='utf-8') as handle:
+                  json.load(handle)
+          print(f'validated {len(files)} minerals JSON files')
+          PY
+
+      - name: Check generated diff
+        id: diff
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          if git diff --quiet -- feeds/minerals/manifest.json feeds/minerals/latest; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit changed public snapshots
+        if: steps.diff.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "clearglass-minerals-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add feeds/minerals/manifest.json feeds/minerals/latest
+          git commit -m "bot(minerals): refresh validated public feeds [skip ci]"
+          git push
+
+      - name: No data changes
+        if: steps.diff.outputs.changed != 'true'
+        run: echo "No validated Minerals feed changes to publish." >> "$GITHUB_STEP_SUMMARY"

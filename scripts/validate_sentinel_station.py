@@ -5,7 +5,6 @@ This validator is intentionally dependency-free so it can run locally even when
 GitHub Actions execution is blocked. It does not modify repository files.
 """
 from pathlib import Path
-import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]

@@ -1,0 +1,110 @@
+name: Verified commit
+description: >
+  Commit already-staged (or path-specified) changes so GitHub renders them as
+  "Verified". It commits via the GraphQL createCommitOnBranch mutation — GitHub
+  signs commits made through the API — and falls back to a plain git commit+push
+  if the API path fails for any reason, so a caller can never silently stop
+  committing. Branch-only (createCommitOnBranch does not apply to tags).
+
+inputs:
+  paths:
+    description: Space-separated paths to stage before committing (git pathspecs).
+    required: true
+  message:
+    description: Commit message.
+    required: true
+  branch:
+    description: Branch to commit onto. Defaults to the current ref name.
+    required: false
+    default: ${{ github.ref_name }}
+  token:
+    description: Token with contents:write on the repo.
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  committed:
+    description: "'true' if a commit was created, 'false' if there was nothing to commit."
+    value: ${{ steps.commit.outputs.committed }}
+  verified:
+    description: "'true' if committed via the signing API, 'false' if the git fallback was used."
+    value: ${{ steps.commit.outputs.verified }}
+
+runs:
+  using: composite
+  steps:
+    - id: commit
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        CG_PATHS: ${{ inputs.paths }}
+        CG_MESSAGE: ${{ inputs.message }}
+        CG_BRANCH: ${{ inputs.branch }}
+        GH_REPO: ${{ github.repository }}
+      run: |
+        set -euo pipefail
+        git add -- $CG_PATHS 2>/dev/null || git add -A -- $CG_PATHS || true
+        if git diff --cached --quiet; then
+          echo "Nothing to commit for: $CG_PATHS"
+          echo "committed=false" >> "$GITHUB_OUTPUT"
+          echo "verified=false" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        # --- Fallback: plain git commit + rebase-retry push (worst case: Unverified) ---
+        git_fallback() {
+          echo "::notice::verified-commit falling back to git push"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "$CG_MESSAGE" || true
+          for attempt in 1 2 3 4 5; do
+            if git push origin "HEAD:$CG_BRANCH"; then
+              echo "committed=true" >> "$GITHUB_OUTPUT"
+              echo "verified=false" >> "$GITHUB_OUTPUT"
+              return 0
+            fi
+            echo "Push rejected (attempt $attempt/5) — rebasing"
+            git pull --rebase origin "$CG_BRANCH" || break
+          done
+          echo "::error::verified-commit fallback push failed"
+          return 1
+        }
+
+        # Build the GraphQL fileChanges payload from the staged diff.
+        payload="$(python3 "$GITHUB_ACTION_PATH/build_file_changes.py")" || { git_fallback; exit $?; }
+
+        api_commit() {
+          local head_oid="$1"
+          gh api graphql -f query='
+            mutation($input: CreateCommitOnBranchInput!) {
+              createCommitOnBranch(input: $input) { commit { oid } }
+            }' \
+            -f "input[branch][repositoryNameWithOwner]=$GH_REPO" \
+            -f "input[branch][branchName]=$CG_BRANCH" \
+            -f "input[message][headline]=$CG_MESSAGE" \
+            -f "input[expectedHeadOid]=$head_oid" \
+            -f "input[fileChanges]=$payload" 2>/dev/null
+        }
+
+        committed_via_api=false
+        for attempt in 1 2 3 4 5; do
+          git fetch origin "$CG_BRANCH" --quiet || true
+          head_oid="$(git rev-parse "origin/$CG_BRANCH" 2>/dev/null || git rev-parse HEAD)"
+          if api_commit "$head_oid" >/dev/null; then
+            committed_via_api=true
+            break
+          fi
+          echo "createCommitOnBranch attempt $attempt/5 failed (head may have moved); retrying"
+          sleep 2
+        done
+
+        if [ "$committed_via_api" = true ]; then
+          # Sync local checkout to the new signed commit so later steps see it.
+          git fetch origin "$CG_BRANCH" --quiet || true
+          git reset --hard "origin/$CG_BRANCH" || true
+          echo "committed=true" >> "$GITHUB_OUTPUT"
+          echo "verified=true" >> "$GITHUB_OUTPUT"
+          echo "::notice::verified-commit created a signed commit on $CG_BRANCH"
+        else
+          git_fallback
+        fi

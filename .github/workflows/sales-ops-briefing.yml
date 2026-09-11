@@ -1,0 +1,60 @@
+name: Sales-Ops Briefing
+
+# Every morning: build a factual sales-ops briefing from the commerce control plane
+# (Stripe-backed orders/payouts/approvals/audit ledger) and email it via Gmail SMTP.
+#
+# Runs in safe mode without secrets — it prints a clearly-marked "no live source" briefing and
+# skips the email, so the workflow never fails before you wire it up. To send real numbers, add:
+#   DATABASE_URL          control-plane Postgres URL (read-only use here)
+#   GMAIL_USER            sending Gmail address
+#   GMAIL_APP_PASSWORD    Gmail App Password (NOT your account password; requires 2FA)
+#   BRIEFING_TO           recipient(s), comma-separated (defaults to GMAIL_USER)
+# as repo Settings → Secrets and variables → Actions.
+
+on:
+  schedule:
+    # 11:17 UTC ≈ 07:17 America/Toronto (EDT). Shifts to 06:17 ET during winter (EST) — cron is
+    # fixed-UTC and does not follow DST. Adjust if you want a strict local clock time year-round.
+    - cron: "17 11 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  briefing:
+    name: Build & email morning briefing
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+      - name: Install control-plane deps
+        run: pip install -r control-plane/requirements.txt
+      # The briefing body carries live revenue, per-order amounts and at-risk deals.
+      # Actions step summaries and run logs are readable by anyone who can read the
+      # repository, so the body goes to email only; the summary gets a status line.
+      - name: Build briefing + email
+        working-directory: control-plane
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          BRIEFING_TO: ${{ secrets.BRIEFING_TO }}
+        run: |
+          if python -m app.sales_ops_briefing --email > /dev/null 2>briefing.err; then
+            echo "Briefing generated and dispatched to the configured recipients." >> "$GITHUB_STEP_SUMMARY"
+          else
+            status=$?
+            # Diagnostics can embed the rewritten DATABASE_URL, which no longer matches the
+            # registered secret and so is not covered by Actions secret masking. Report the
+            # failure without echoing the captured stderr.
+            echo "Briefing failed (exit $status). Diagnostics withheld: they may contain connection credentials." >> "$GITHUB_STEP_SUMMARY"
+            rm -f briefing.err
+            exit "$status"
+          fi
+          rm -f briefing.err

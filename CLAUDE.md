@@ -2,29 +2,12 @@
 
 Guidance for agents working in this repository.
 
-> ## Accuracy notice — read before trusting any path below
->
-> This repository was imported through GitHub's web uploader, not with git, and
-> the import was lossy: it flattened directories and dropped files. Parts of
-> this document describe the **pre-import** layout and will send you to paths
-> that do not exist here. Verified on 2026-09-11:
->
-> | Documented | Actually in this repo |
-> |---|---|
-> | `clearglass-commerce/` — "the flagship backend" | **0 tracked files.** Absent. Its control plane, storefront, admin, pricebook and test suite are all missing. Every command in "Running & testing the commerce control plane" fails. |
-> | `apps/autostore/` | **0 tracked files.** Absent. `tests/test_side_store_storefront.py` still points at it. |
-> | "~29 workflows" in `.github/workflows/` | 19 registered. A further 65 sit inert in a top-level **`workflows/`** directory that GitHub never reads — same import damage. |
-> | "CI gates that must stay green" (Commerce Deploy, Commerce Frontend CI, Commerce Daily Loop) | Not present. `ci.yml` is now registered and does gate `pytest tests/` + `ruff check .`. |
-> | `tests/` for the Python suite | Correct — but only since the `agent_os`/`tests` re-nesting; the suite previously sat flattened in the repository root. |
->
-> Also missing and referenced by live code or workflows: `scripts/verify_site.py`
-> (blocks `pages.yml`), `scripts/workflow_doctor.py` (blocks `ci.yml` and
-> `auto-store.yml`), `scripts/validate_production_deploy.py`, `agent_army/`, and
-> `security/HARDENING_AND_THREAT_MODEL.md`. None of them exist in
-> `ClearGlasslabs/ClearGlassInc.` either — that repository was checked.
->
-> Treat the sections below as the intended architecture, not as a map of what is
-> on disk. Verify a path exists before acting on it.
+> **Deploy blocker.** `.github/workflows/pages.yml` and
+> `site-integrity-and-deploy.yml` both run `python3 scripts/verify_site.py`,
+> and that script is not in the repository. `pages.yml` therefore fails at its
+> first step, so GitHub Pages must stay on "Deploy from a branch" until the
+> script is restored — switching the source to "GitHub Actions" would stop the
+> site deploying entirely.
 
 ## What this repo is
 
@@ -34,26 +17,39 @@ a large static marketing/product site (many top-level `*.html` pages, shared
 `*.css`/`*.js`, `assets/`, `sitemap.xml`). Backend systems live in their own
 subtrees and deploy independently.
 
-The flagship backend is the **Autonomous E‑Commerce Operator** in
-`clearglass-commerce/` — a *governed* commerce engine. Treat its safety model
-(below) as non‑negotiable when changing it.
+The flagship backend is the **Autonomous E‑Commerce Operator**: the FastAPI
+control plane in `control-plane/` plus the Next.js `storefront/` and `admin/`
+apps — a *governed* commerce engine. Treat its safety model (below) as
+non‑negotiable when changing it.
+
+> **Layout note.** The repository's first commits were `Add files via upload`,
+> which flattened it: dot-directories were dropped and leading path segments
+> stripped. The commerce tree lost its `clearglass-commerce/` parent, and the
+> workflows landed in a top-level `workflows/` directory. Paths below are what
+> is actually on disk. If a doc, test or workflow names a path that does not
+> exist, suspect this before assuming the file is lost —
+> `PRODUCTION-RECOVERY.md` maps the known cases.
 
 ## Map of the repo
 
 | Path | What it is |
 |------|-----------|
 | `*.html`, `*.css`, `*.js` (root) | Static GitHub Pages site (product/landing pages, shared UI) |
-| `clearglass-commerce/` | **Active** governed e‑commerce OS: FastAPI control plane + Next.js storefront/admin + agent prompts |
-| `apps/autostore/` | Earlier/parallel control plane + cockpit. Appears superseded by `clearglass-commerce/` — confirm before extending it |
+| `control-plane/` | **Active** governed e‑commerce OS: FastAPI control plane (was `clearglass-commerce/control-plane/`) |
+| `storefront/`, `admin/` | The commerce OS's Next.js apps, each deploying independently |
+| `side-store.html`, `side-store/lib/`, `data/side-store/` | The Side Store: 57 impulse SKUs inline in the page, its pricing module, and the catalog projected out of it by `tools/side_store_catalog.py` |
+| `agent_army/` | Governed role routing + approval gating (`AGENT_POLICY.md`, `orchestrator.py`, `secure_runtime/` Rust sidecar) |
 | `agents/` | Per‑agent definitions (`agent.json`, `system_prompt.md`, tool schemas) |
 | `bots/` | Standalone Python automation bots invoked by workflows (e.g. `store_smoke_bot.py`) |
 | `deployment/` | Per-product deployment layers: n8n workflow exports, ledger SQL, runbooks (`cashpulse/`, `rfed/`) |
-| `data/` | Committed JSON feeds: `data/store/catalog.json`, `data/control-surface/*` |
+| `data/` | Committed JSON feeds: `data/store/catalog.json` (5 ClearGlass **service** engagements with live Stripe URLs), `data/side-store/catalog.json` (57 impulse SKUs — a *different* catalog; do not conflate them), `data/control-surface/*` |
 | `operations/` | Generated reports + handoff pages (priority matrix, SEO, health, defender) |
 | `sentinel/` | Named-agent index (PERCIVAL, SENTINEL, AEGIS, PFAS, Agent Mesh) — keyless, stdlib-only, fail-closed Python agents; see `sentinel/PERCIVAL_AGENTS.md`. Includes the real PERCIVAL governor/identity/capability/mission-memory stack plus target-state v9 distributed-architecture docs (nothing in those docs is provisioned — see their own status banners) |
-| `.github/workflows/` | ~29 workflows: CI, Pages deploy, commerce gates, scheduled bot loops |
+| `.github/workflows/` | 74 workflows: CI, Pages deploy, commerce gates, scheduled bot loops |
+| `workflows/` (top level) | The intact 72-file archive the upload left behind. **Copy into `.github/workflows/`, never move** — it is the rollback source |
+| `clearglass_marketing_os_v2/pipelines/` | Marketing-OS pipeline playbooks. Same `.yml` suffix, different DSL — **not** Actions workflows |
 
-## The commerce OS safety model (read before touching `clearglass-commerce/`)
+## The commerce OS safety model (read before touching `control-plane/`)
 
 Core invariant: **read‑only analysis → draft → human approval → execution.**
 `control-plane/app/governance.py` scores every proposed action 0–100 and routes it:
@@ -85,7 +81,7 @@ and never from the request body, because a checkout line item's `amount` goes st
 into Stripe's `unit_amount`. `tests/test_pricebook.py` enforces this, down to asserting
 the `CheckoutLineItem` OpenAPI schema has exactly `{sku, quantity}` — don't add a
 price-shaped field back to that contract. Stripe account/go-live state is documented in
-`clearglass-commerce/STRIPE_SETUP.md`.
+`STRIPE_SETUP.md`.
 
 Abuse/resilience controls (also in `app/security.py`): checkout, the Stripe webhook,
 and approval decisions carry per-IP rate limits (`RATE_LIMIT_*_PER_MINUTE`), and the
@@ -95,7 +91,7 @@ webhook is idempotent on redelivery via `orders.external_ref` (migration 004).
 ## Running & testing the commerce control plane
 
 ```bash
-cd clearglass-commerce/control-plane
+cd control-plane
 pip install -r requirements.txt        # fastapi, sqlalchemy, stripe, httpx (TestClient), …
 ruff check .                           # lint (must pass)
 python -m pytest tests/ -q             # full suite; payout/resilience tests need the full web stack (httpx)
@@ -105,7 +101,7 @@ python -m app.etsy_connect --status    # Etsy connection state; omit --status fo
 ```
 
 Connecting the Etsy shop is a human OAuth2 (PKCE) step — `app/etsy_oauth.py` +
-`python -m app.etsy_connect`, documented in `clearglass-commerce/ETSY_CONNECT.md`. The
+`python -m app.etsy_connect`, documented in `ETSY_CONNECT.md`. The
 CLI prints tokens for a runtime secret store and never persists one. Connection state is
 credential presence only; `POST /etsy/verify` is a read-only identity/permission check.
 Connecting unlocks nothing on its own: every Etsy write is in `ALWAYS_ESCALATE`.
@@ -119,18 +115,20 @@ workflow installs `requirements.txt` for the same reason.
 Storefront / admin (Next.js, deploy independently):
 
 ```bash
-cd clearglass-commerce/storefront   # or admin
+cd storefront   # or admin
 npm ci && npm run build             # Commerce Frontend CI runs tsc --noEmit + next build
 ```
 
-Full stack via Docker: `cd clearglass-commerce && docker compose up --build`
+Full stack via Docker: `docker compose up --build`, from the repository root
 (postgres + control‑plane :8000 + storefront :3000 + admin :3001). Deploy paths
-are documented in `clearglass-commerce/DEPLOY.md` (Render blueprint recommended).
+are documented in `DEPLOY.md` (Render blueprint recommended).
 
 ## CI gates that must stay green
 
-- **Commerce Deploy** (`commerce-deploy.yml`): `ruff` + full pytest on
-  `clearglass-commerce/**`, then optional Render deploy hook.
+- **Commerce Deploy** (`commerce-deploy.yml`): `ruff check control-plane` +
+  full pytest in `control-plane/`, plus a `npm ci && next build` gate for
+  `storefront` and `admin`, then an optional Render deploy hook. Triggered by
+  changes under `control-plane/**`, `storefront/**` or `admin/**`.
 - **Commerce Frontend CI** (`commerce-frontend-ci.yml`): `tsc --noEmit` +
   `next build` for storefront and admin.
 - **Commerce Daily Loop** (`commerce-daily-loop.yml`): storefront smoke test +
@@ -141,10 +139,10 @@ are documented in `clearglass-commerce/DEPLOY.md` (Render blueprint recommended)
 
 Two access-control gates are enforced by test rather than convention, because
 convention is what fails silently:
-`clearglass-commerce/control-plane/tests/test_route_auth_coverage.py` asserts
+`control-plane/tests/test_route_auth_coverage.py` asserts
 every mutating route is behind `require_admin` or on a justified allow-list, and
 `tests/test_rfed_hash_parity.py` pins the two RFED implementations together. See
-`security/RMM_AUTH_BYPASS_HARDENING.md` for why.
+`security/HARDENING_AND_THREAT_MODEL.md` for why.
 
 ## Internal linking system (static site)
 
@@ -189,7 +187,7 @@ confidence, and injection markers in untrusted facts each hard-gate on their own
   identical chain hashes across the two implementations.
 - Approvals **append a new record**; they never mutate the original.
 - Bump `POLICY_VERSION` when the risk table or gating logic changes.
-- Spec: `docs/rfed_audit_trail_spec.md`. Deploy runbook: `deployment/rfed/README.md`.
+- Spec: `rfed_audit_trail_spec.md`. Deploy runbook: `deployment/rfed/README.md`.
 
 ## Conventions
 

@@ -1,483 +1,374 @@
-# ClearGlass Production Recovery
+# PRODUCTION-RECOVERY.md
 
-Audit date: 2026-09-10 · Repository: `ClearGlassInc/ClearGlassInc-ClearGlassIncorporated-Desmond`
-Branch: `claude/clearglass-production-recovery-qwyrne` · Base commit audited: `2fe1fa7`
+Audit window: 2026-09-10 20:23–20:30 UTC  
+Auditor: independent GitHub + live-edge pass (no assumed facts)  
+Requested URL: `https://github.com/ClearGlassInc/ClearGlassIncorporated-Desmond`  
+Audited production repository: `ClearGlassInc/ClearGlassInc-ClearGlassIncorporated-Desmond`  
+Default branch / HEAD at audit start: `main` @ `69373f9b44916569a1f3fe3424be323d05dbf9d6`  
+HEAD commit: `Merge pull request #7 from ClearGlassInc/claude/clearglass-production-recovery-qwyrne` (2026-09-10T17:28:34Z)
 
-Every claim below is followed by the command or API field it came from. Where a
-fact could not be observed from this environment it is marked **UNVERIFIED**
-rather than inferred.
+**Final readiness: NOT PRODUCTION-READY.**  
+Successful static homepage is live. CI, user workflows, Pages rebuilds after 2026-09-06, and backend health checks are not verified green.
+
+Every claim below is tagged with the observation that produced it. Anything not observed is marked **UNVERIFIED**.
+
+---
+
+## 0. Scope correction (must be read first)
+
+| Check | Result | Evidence |
+|---|---|---|
+| Requested repo URL | **HTTP 404** | `GET https://github.com/ClearGlassInc/ClearGlassIncorporated-Desmond` → “Page not found”; GitHub API `GET /repos/ClearGlassInc/ClearGlassIncorporated-Desmond` → 404 |
+| Org public repo that matches the name + has Pages + admin on this token | `ClearGlassInc/ClearGlassInc-ClearGlassIncorporated-Desmond` | GitHub repo search; `permissions.admin=true`; `has_pages=true`; `pushed_at=2026-09-10T17:28:34Z` |
+| Name-collision copy | `connectors-testing-pplx/ClearGlassIncorporated-Desmond` | Public search hit; `permissions.pull=true` only; `has_pages=false`; last push 2026-09-07. **Not used as the production target.** |
+| Authenticated GitHub actor | `ClearGlasslabs` (id 77194670) | `github___get_me` |
+
+This audit proceeds against the org repository that exists and that this account can write. It does **not** treat the 404 URL as a live codebase.
+
+Prior recovery work already exists in-tree: `PRODUCTION-RECOVERY.md` on `main` (blob SHA `f5f39dd…`), produced on branch `claude/clearglass-production-recovery-qwyrne` and merged via PR #7. This file is an independent re-verification against HEAD plus live HTTP/DNS, not a copy of that document.
 
 ---
 
 ## 1. Verified Findings
 
-### 1.1 GitHub Actions has not executed a single job since 2026-09-06 13:14 UTC
+### 1.1 Repository identity
 
-This is the top production blocker and it is not a code defect.
-
-Observed over all 185 workflow runs in the repository's history
-(`actions_list/list_workflow_runs`, pages 1–2, window
-`2026-09-06T11:57:38Z .. 2026-09-10T13:45:16Z`):
-
-| Conclusion | Runs |
-|---|---|
-| `success` | 57 — **all** of them GitHub-managed: `pages build and deployment` ×50, Dependabot `Graph Update: pip` ×7 |
-| `failure` | 127 |
-| `cancelled` | 1 |
-
-* **Last successful run of any kind: `2026-09-06T13:14:52Z`** (`pages build and deployment`).
-* Every run created after that timestamp failed — 4 days, 8 distinct workflows,
-  and 6 different trigger types (`push`, `pull_request`, `schedule`,
-  `workflow_dispatch`, `workflow_run`, `dynamic`).
-* **Not one user-authored workflow has ever succeeded in this repository.**
-
-The failures are pre-execution. For run `34484619029` job `102895644518`
-(`actions_get/get_workflow_job` and `get_workflow_run_usage`):
-
-```
-runner_id       : 0
-runner_name     : ""
-steps           : (absent from the response entirely)
-billable.UBUNTU : { total_ms: 0, jobs: 1, job_runs: [{ duration_ms: 0 }] }
-run_duration_ms : 5000
-```
-
-Zero billable milliseconds, no runner assigned, and no steps array: the job was
-never dispatched to a runner. Job logs return **HTTP 404**, consistent with a
-job that produced no log stream.
-
-Ruled out by direct observation:
-
-* **Not a workflow-level disable.** All 12 workflows report `state: "active"`
-  (`actions_list/list_workflows`), including `pages-build-deployment`.
-* **Not free-minute exhaustion.** The repository is `"visibility":"public"`
-  (`list_repos`), and public repositories get unmetered standard runners.
-* **Not the workflow YAML.** Every precondition each of the 6 registered
-  workflows asserts passes against the current tree (§4.1), and the one
-  non-trivial inline script parses cleanly (`bash -n` → `SYNTAX OK`).
-
-What remains consistent with the evidence is an **account- or
-organisation-level Actions entitlement or runner-provisioning block**. The
-organisation owns private repositories (`ClearGlassInc/Gaurdian`,
-`ClearGlasslabs/clearglass-marketing-os`, `ClearCut`, `ClearClean`,
-`safe-add-animations.ps1`) whose paid-minute usage is billed, and a billing
-suspension or an org-level Actions policy would produce exactly this
-signature. **UNVERIFIED — the billing and org-policy pages are not readable
-through the tooling available to this audit.** Check, in order:
-
-1. Organisation → Settings → **Billing and plans** → payment method / spending limit.
-2. Organisation → Settings → **Actions → General** → policy and allowed actions.
-3. Repository → Settings → **Actions → General**.
-
-### 1.2 Production has been serving stale content for 4 days
-
-`pages build and deployment` is the repository's actual deploy mechanism —
-GitHub's built-in Pages builder, meaning Pages is configured in **"Deploy from
-a branch"** mode (there is no `deploy-pages` workflow in `.github/workflows/`).
-
-Its last run was `2026-09-06T13:14:52Z`. **No Pages build has been created
-since.** Every commit merged after that point has therefore not reached
-`www.clearglassinc.com` — including PR #4 (site-wide crimson palette) and PR #5
-(homepage centring fix), both merged 2026-09-10.
-
-**UNVERIFIED:** the live site could not be probed from this environment —
-outbound HTTPS to `www.clearglassinc.com` is refused by the agent proxy
-(`curl: (56) CONNECT tunnel failed, response 403`). The deployment *record*
-above is nonetheless conclusive.
-
-### 1.3 Root cause of the repository's structural damage: a lossy web upload
-
-The repository was not migrated with git. Its first three commits are
-`Add files via upload` (GitHub web UI). Commit `f924863` alone added **1862
-files / 361,219 insertions**, and contained **zero** `.github/workflows/`
-files (`git show --name-only f924863 | grep -c '^.github/workflows/'` → `0`).
-
-The upload dropped dot-directories and stripped leading path segments. The
-source was **not lost** — it landed at the wrong paths:
-
-| Expected path | Actual path in this repo |
-|---|---|
-| `.github/workflows/` (78 files) | `workflows/` |
-| `.github/ISSUE_TEMPLATE/` | `ISSUE_TEMPLATE/` |
-| `.github/actions/` | `actions/` |
-| `.well-known/security.txt` | `security.txt` (repo root) |
-| `clearglass-commerce/control-plane/` | `control-plane/` |
-| `marketing/local_growth_planner.py` | `local_growth_planner.py` |
-| `marketing/content_engine/` | `content_engine/` |
-| `marketing/config/…watchlist.json` | `config/…watchlist.json` |
-| `docs/contracts/…schema.json` | `contracts/…schema.json` |
-| `scripts/build_pages.py` | `tools/build_pages.py` |
-| `percival_v9/__init__.py` | *dropped* (subpackage `__init__.py` files survived) |
-
-Two consequences that were live defects, not cosmetic:
-
-* **`.well-known/security.txt` was unreachable in production.** `_headers`
-  serves `/.well-known/security.txt` and the file's own `Canonical:` line
-  declares that URL, but the dot-directory was stripped — so the RFC 9116
-  security contact 404'd.
-* **The entire governed-commerce test suite was silently uncollected** (§1.4).
-
-### 1.4 The test suite could not run at all, and 98 governed-commerce tests were dead
-
-`pyproject.toml` pointed `testpaths` and `pythonpath` at
-`clearglass-commerce/control-plane`, which does not exist. Result:
-`control-plane/tests/` — 98 tests covering checkout, pricing, Etsy and
-fulfilment — **were never collected**. This is precisely the silent-skip failure
-mode `CLAUDE.md` warns about for the money-movement paths.
-
-Worse, `pytest` with the project's own configuration **aborted during
-collection** on 6 import errors, so no test ran:
-
-```
-$ python3 -m pytest -q            # project config, as CI would
-Interrupted: 6 errors during collection
-1 skipped, 6 errors in 3.27s
-```
-
-Forcing past collection revealed the real baseline:
-**28 failed, 1445 passed, 3 skipped, 10 errors.**
-
-### 1.5 78 of 84 workflows are inert, and CI runs neither tests nor lint
-
-`.github/workflows/` holds 6 workflows. `workflows/` holds **78** that GitHub
-never reads — including the ones the test suite asserts must exist: `pages.yml`,
-`ci.yml`, `auto-store.yml`, `enterprise-patch-deploy.yml`,
-`minerals-data-sync.yml`, `site-integrity-and-deploy.yml`, `workflow-doctor.yml`,
-`commerce-deploy.yml`, `commerce-frontend-ci.yml`, `commerce-daily-loop.yml`.
-
-None of the 6 registered workflows runs `pytest` or `ruff`. The Python suite and
-linter have **no CI gate whatsoever**. `CLAUDE.md`'s "CI gates that must stay
-green" section describes gates that are not wired up in this repository.
-
-### 1.6 Static analysis
-
-| Scope | Command | Result |
+| Field | Observed value | Source |
 |---|---|---|
-| Whole repo | `ruff check .` | **1016 errors** (739 auto-fixable) |
-| Control plane | `ruff check control-plane/` | **70 errors** (36 auto-fixable) |
+| full_name | `ClearGlassInc/ClearGlassInc-ClearGlassIncorporated-Desmond` | repo search object |
+| visibility | public | same |
+| default_branch | `main` | same |
+| language | HTML | same |
+| has_pages | true | same |
+| has_issues | true | same |
+| is_template | true | same |
+| releases | **none** | `list_releases` → `[]` |
+| open issues | 0 | search object `open_issues_count=0` |
+| repo security advisories | **none listed** | `list_repository_security_advisories` → `[]` |
+| CNAME | `www.clearglassinc.com` | file `CNAME` on `69373f9` |
+| `.nojekyll` | present (1 byte) | root listing |
+| branches | `main`, `backup/pre-legacy-visual-2026-09-08`, 4 `claude/*` / `copilot/*` / `code-coverage-agent/*` branches | `list_branches` (8 total); **none protected** |
 
-`CLAUDE.md` states `ruff check .` "must pass" for the control plane. It does not.
-These are overwhelmingly import-ordering and `subprocess` `check=` findings, not
-correctness bugs, but the stated gate is unmet.
+`main` is not branch-protected. That is an operational risk, not a build failure.
 
-### 1.7 Cloudflare
+### 1.2 Live website (verified 2026-09-10 20:25 UTC)
 
-Three Workers are deployed (`workers_list`):
+| Probe | Result |
+|---|---|
+| `https://www.clearglassinc.com/` | HTTP/2 **200**; `server: GitHub.com`; `content-type: text/html`; `last-modified: Sun, 06 Sep 2026 13:15:18 GMT`; body length 191232 |
+| `https://clearglassinc.com/` | HTTP/2 **301** → `https://www.clearglassinc.com/` |
+| `https://clearglassinc.github.io/ClearGlassInc-ClearGlassIncorporated-Desmond/` | HTTP/2 **301** → `https://www.clearglassinc.com/` |
+| DNS `www.clearglassinc.com` / `clearglassinc.com` | `185.199.108–111.153` = **GitHub Pages** (`clearglassinc.github.io`) |
+| TLS | Let’s Encrypt `YR2`; `CN=clearglassinc.com`; `notBefore=2026-07-13`; `notAfter=2026-10-11` (~31 days remaining at audit time) |
+| Page title / H1 | `ClearGlass Inc — AI Automation, Cybersecurity & Operational Strategy` |
+| `robots.txt` | HTTP 200, last-modified 2026-09-06 13:15:18 GMT |
+| `sitemap.xml` | HTTP 200, same last-modified |
+| `/.well-known/security.txt` | HTTP **404** |
+| `/health` | HTTP **404** (static Pages origin; no application health endpoint on this host) |
 
-| Worker | Created | Last modified |
+Conclusion: the public site is a **GitHub Pages static origin** with a custom domain. It is **up**. It is also **stale relative to `main`**.
+
+The `Last-Modified` header (2026-09-06 13:15:18 GMT) matches the last successful Pages workflow run (§1.3) to the second. Commits merged on 2026-09-10 (PRs #4, #5, #6, #7), including `.well-known/security.txt` now present on `main`, are **not** on the live edge.
+
+Cloudflare is **not** the public DNS/edge for this hostname. A Cloudflare Pages/Workers/KV/D1 review of the *live hostname* therefore cannot be completed from DNS: the A/ALIAS answers are GitHub Pages IPs. Repo-side Cloudflare config is covered in §1.7.
+
+### 1.3 GitHub Pages deploy mechanism
+
+Registered workflow:
+
+- Name: `pages-build-deployment`
+- Path: `dynamic/pages/pages-build-deployment` (GitHub-managed, not a file under `.github/workflows/`)
+- ID: `351526813`
+- State: `active`
+
+Latest runs (`actions_list` on workflow id `351526813`):
+
+| Run | Created | Conclusion | HEAD SHA | Commit message |
+|---|---|---|---|---|
+| 51 / `34035508995` | 2026-09-06T13:14:52Z | **success** | `1fa058e` | Add files via upload |
+| 50 | 2026-09-06T13:13:32Z | success | `84acff1` | Add files via upload |
+| …runs 42–49… | 2026-09-06 | success | various | Add files via upload |
+
+No `pages-build-deployment` run exists after 2026-09-06T13:14:52Z. `main` is now `69373f9` (2026-09-10T17:28:34Z). Pages is configured as **Deploy from a branch** (no `actions/deploy-pages` workflow in `.github/workflows/`). When that builder stops creating runs, the custom domain keeps serving the last successful artifact.
+
+### 1.4 User-authored Actions do not execute
+
+`.github/workflows/` contains **6** files. All 6 plus 6 GitHub-managed/dynamic workflows report `state: active` (`list_workflows`, total_count=12).
+
+Registered user workflows:
+
+| Workflow | File | Triggers |
 |---|---|---|
-| `clearglassincorporated-desmond2` | 2026-08-29 | 2026-08-31 |
-| `spring-pine-9614` | 2026-08-23 | 2026-08-23 |
-| `clearglassincorporated-desmond` | 2026-08-22 | 2026-08-22 |
+| ARTEMIS Engineering CI | `artemis-engineering.yml` | push/PR on `apps/artemis-engineering/**`, dispatch |
+| Auto Heal | `auto-heal.yml` | cron `17 4 * * *`, dispatch |
+| Cert Bot | `cert-bot.yml` | cron `17 6 * * *`, dispatch |
+| ClearGlass GitHub Pages Check | `pages-check.yml` | push `main`, dispatch |
+| Site Reliability Audit | `site-reliability.yml` | push/PR path filters, weekly cron, dispatch |
+| Apply ClearGlass visual restoration layer | `visual-restoration.yml` | push `main`, dispatch |
 
-The repository's only Cloudflare config, `infra/cloudflare/workers/wrangler.toml`,
-declares a **different** worker (`name = "cg-asset-guard"`) against placeholder
-hosts (`ALLOWED_REFERER_HOST = "clearglass.example"`), with its `routes` block
-commented out. **No deployed Worker corresponds to any committed config, and no
-committed config is deployable as written.** `spring-pine-9614` is an
-auto-generated name and its purpose is undocumented in the repo.
+Latest `main` push (`69373f9`, 2026-09-10T17:28:37Z) produced:
 
-No KV, D1, R2 or Hyperdrive resources were enumerated as part of this audit.
+| Run | Workflow | Conclusion | Duration |
+|---|---|---|---|
+| `34508447415` | Pages Check | **failure** | ~5s |
+| `34508447340` | Visual restoration | **failure** | ~5s |
+| `34508447416` | Site Reliability Audit | **failure** | ~4s |
 
-### 1.8 Secrets exposure review
-
-No credential material is committed. `git ls-files` shows `.env.example` and
-`.env.growth.example` only; both contain placeholders. The static site's
-`_headers` sets a strict CSP, HSTS with `preload`, `X-Content-Type-Options`,
-`Referrer-Policy` and a restrictive `Permissions-Policy` — this is a
-well-constructed header set.
-
-The 78 inert workflows reference **30 distinct secrets**, several of them
-high-consequence:
+Job `102976294854` (`validate-site` on run `34508447415`):
 
 ```
-STRIPE_LIVE_SECRET_KEY   STRIPE_SECRET_KEY      CLOUDFLARE_API_TOKEN
-CLOUDFLARE_EDGE_APPLY_TOKEN                     CG_ORG_PAT
-GMAIL_APP_PASSWORD       DATABASE_URL           RENDER_DEPLOY_HOOK_URL
-ANTHROPIC_API_KEY        OPENAI_API_KEY         AUDIT_VALID_TOKEN
+status        : completed
+conclusion    : failure
+runner_id     : 0
+runner_name   : ""
+started_at    : 2026-09-10T17:28:38Z
+completed_at  : 2026-09-10T17:28:41Z
+steps         : absent from the job payload
 ```
 
-This matters for §5: those workflows are currently inert. Registering them
-activates every one of these credential paths at once.
+That is a **pre-runner failure**. The job was never assigned a GitHub-hosted runner, so YAML body, `index.html` markers, and action SHAs were never evaluated on this run. The same ~4–5 second signature repeats across Pages Check, Site Reliability, and Visual Restoration on every `main` push observed on 2026-09-10.
+
+Dependabot’s managed `Graph Update: pip` run `34498916171` (2026-09-10T15:56:31Z) concluded **success**. GitHub-managed jobs can still complete. User-authored `runs-on: ubuntu-latest` jobs on this repository currently cannot.
+
+**UNVERIFIED (org settings, not readable here):** billing hold, Actions policy, allowed-actions list, or spending limit. Those pages are outside the connected GitHub tools. They are the remaining consistent explanation after YAML and public-repo minute quotas are ruled out as *sufficient* causes.
+
+### 1.5 Seventy-eight workflows are inert
+
+Directory `workflows/` (repo root, **not** `.github/workflows/`) contains **78** YAML files, including `ci.yml`, `pages.yml`, `commerce-deploy.yml`, `auto-store.yml`, `workflow-doctor.yml`, `site-integrity-and-deploy.yml`. GitHub Actions only loads `.github/workflows/*`. Those 78 files are documentation/source copies, not registered workflows.
+
+They must **not** be bulk-copied into `.github/workflows/`. Several are scheduled, several write back to the repo, and they reference high-consequence secret names (see §1.8). Registering them while runner provisioning is already failing would multiply failed runs and, if entitlement returns, could fire Stripe/Cloudflare/Gmail side effects.
+
+### 1.6 Architecture / package / deployment maps (observed tree only)
+
+**Architecture (what this repo actually is on `main`)**
+
+```
+Public edge          GitHub Pages (www.clearglassinc.com) ← CNAME + .nojekyll + root HTML/CSS/JS
+Optional Next fabric root package.json (@clearglass/live-signal-fabric, next 15.5.25) — not what Pages serves as the homepage
+Commerce             control-plane/ (FastAPI, Docker) + storefront/ + admin/
+Other apps           apps/artemis-engineering/, clearglass-agentops/, clearglass-air-control/, procurement-legal-tech/
+Orchestration docs   percival_v9/, ARTEMIS_*.md, DEPLOY.md
+Inert CI copies      workflows/ (78 files)
+Live CI              .github/workflows/ (6 files) — registered, not executing
+```
+
+**Package map (package.json files found by code search)**
+
+| Path | Role implied by path |
+|---|---|
+| `/package.json` | `@clearglass/live-signal-fabric` — Next 15.5.25, React 19.1.1, scripts: dev/build/start/typecheck/test |
+| `admin/package.json` | commerce admin |
+| `storefront/package.json` | commerce storefront |
+| `clearglass-agentops/package.json` | agent ops app |
+| `clearglass-air-control/package.json` | air-control app |
+| `procurement-legal-tech/package.json` | legal-tech app |
+| `apps/artemis-engineering/package.json` | Artemis engineering CI target |
+
+**Container map (Dockerfiles found by code search)**
+
+`admin/Dockerfile`, `storefront/Dockerfile`, `control-plane/Dockerfile`, `deployment/artemis/Dockerfile`, `percival_v9/deploy/Dockerfile.governor`, `services/clearglass_agent_service/Dockerfile`
+
+No evidence was collected that any of those images are built or published in this repository’s Actions history. **No GitHub Releases exist.**
+
+**Deployment map**
+
+| Target | Status |
+|---|---|
+| GitHub Pages + `www.clearglassinc.com` | Live, stale (last build 2026-09-06) |
+| `github-pages` environment | **UNVERIFIED** (no environments list tool returned data this pass) |
+| `production` / `staging` / `automation-write` named environments | **UNVERIFIED** — names appear in the operator directive, not in any file read this pass |
+| Render blueprint (`DEPLOY.md` + `render.yaml` referenced) | Documented only. Live `/health` on the public hostname is 404. |
+| Fly.io / docker-compose | Documented in `DEPLOY.md` only |
+
+### 1.7 Cloudflare review (repo + DNS only)
+
+Repo file `infra/cloudflare/workers/wrangler.toml`:
+
+- Worker name: `cg-asset-guard`
+- Routes: **commented out**
+- `ALLOWED_REFERER_HOST = "clearglass.example"` (placeholder)
+- Secret `ASSET_SIGNING_SECRET` instructed to be set out of band
+
+Live DNS for `clearglassinc.com` / `www` is GitHub Pages, not a Cloudflare anycast prefix. Therefore:
+
+- Pages / Workers / KV / D1 / SSL / redirects **in front of the public site** are **not observed**
+- Prior audit text that listed three deployed Workers (`clearglassincorporated-desmond`, `clearglassincorporated-desmond2`, `spring-pine-9614`) is **not re-verified in this pass** (no Cloudflare account connector). Treat as **UNVERIFIED** until an authenticated `wrangler`/`Cloudflare API` listing is produced.
+
+A PDF named `Cloudflare Domain Name Certificate.pdf` exists at repo root. Presence of a file is not proof of current DNS.
+
+### 1.8 Secrets and credentials
+
+Observed committed env templates:
+
+- `.env.example` — feature flags default **fail-closed** (`LIVE_FABRIC_ENABLED=false`, `LIVE_FABRIC_PRODUCTION_APPROVED=false`); empty `DATABASE_URL`, `REDIS_URL`, snapshot token
+- `.env.growth.example` — present (287 bytes); not re-opened this pass
+
+No raw secret values were read out of git objects in this pass. `github___run_secret_scanning` was not pointed at the whole tree (tool requires file contents, not a repo crawl).
+
+Secret **names** referenced by inert `workflows/*` and `DEPLOY.md` (names only):
+
+`STRIPE_SECRET_KEY`, `STRIPE_LIVE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PUBLISHABLE_KEY`, `CLOUDFLARE_API_TOKEN`, `RENDER_DEPLOY_HOOK_URL`, `GMAIL_APP_PASSWORD`, `GMAIL_USER`, `DATABASE_URL`, `ADMIN_API_KEY`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, plus others listed in the prior in-repo audit.
+
+Whether those GitHub Actions secrets actually exist in repo settings is **UNVERIFIED**.
+
+### 1.9 Static analysis / tests / build (this pass)
+
+This pass did **not** clone the full working tree and re-run `pytest`, `ruff`, or `next build`. Those numbers in the already-merged `PRODUCTION-RECOVERY.md` are **prior-audit claims**, not re-measured here.
+
+Independently verified now:
+
+| Item | Status |
+|---|---|
+| Root `package.json` pins `next@15.5.25` (not 15.5.2) | file on `69373f9` |
+| Live homepage H1 matches `pages-check.yml` required string | live title + workflow YAML |
+| `.well-known/security.txt` exists on `main` | directory listing |
+| Same path 404s in production | live HTTP |
+| `DEPLOY.md` documents `/health` and `/ready` on a Render/FastAPI control plane | file; those paths 404 on the public Pages host |
+| User workflow YAML is syntactically present and least-privilege (`contents: read`) | six files read in full |
+
+### 1.10 Security review (what can be stated)
+
+| Control | Observation |
+|---|---|
+| Exposed secrets in files read | None in `CNAME`, six workflows, `.env.example`, `wrangler.toml`, `package.json`, `DEPLOY.md` |
+| Insecure workflow permissions (registered set) | All six use `contents: read` (auto-heal also `actions: read`). No `pull-requests: write` / `contents: write` on the registered set. |
+| `visual-restoration.yml` pinned `actions/checkout@v4` by **tag**; the other five pin checkout `df4cb1c…` (v6.0.3) by SHA | file contents; pin applied on this recovery branch |
+| XSS / SSRF / CSRF / RCE / privilege escalation | **Not claimed scanned.** No CodeQL run results were fetched this pass beyond noting dynamic CodeQL workflows exist and are `active`. |
+| Public repo advisories | empty list |
+| Live TLS | valid Let’s Encrypt; expires 2026-10-11 |
+| Live security.txt | missing on edge (404) even though present on `main` |
+| Dependabot | graph-update workflow succeeded 2026-09-10 |
 
 ---
 
 ## 2. Repository Risks
 
-| # | Risk | Severity | Evidence |
+| ID | Risk | Severity | Evidence |
 |---|---|---|---|
-| R1 | Actions entitlement blocked → no CI, no deploys, no scheduled bots | **Critical** | §1.1 |
-| R2 | Production serving 4-day-stale content; no deploy path under repo control | **Critical** | §1.2 |
-| R3 | Money-movement tests (checkout/pricing/fulfilment) were uncollected | **High** | §1.4 |
-| R4 | Registering the 78 inert workflows would fire 33 scheduled jobs, 15 self-committing jobs and 30 credential paths simultaneously | **High** | §1.5, §1.8, §5 |
-| R5 | `agent_army` and `scripts/validate_production_deploy.py` absent → suite still aborts under default config | **High** | §3.3 |
-| R6 | Cloudflare deployed state is undocumented and unreproducible from the repo | **Medium** | §1.7 |
-| R7 | `CLAUDE.md` documents a layout this repo does not have — actively misleads agents and contributors | **Medium** | §1.3 |
-| R8 | No `ruff`/`pytest` gate; `CLAUDE.md`'s stated gates are fictional here | **Medium** | §1.5, §1.6 |
-| R9 | 9 pages ship without the canonical logo/tab icon; 1 indexable page missing from `sitemap.xml` | **Low** | §4.2 |
-| R10 | `visual-restoration.yml` pins `actions/checkout@v4` by tag while every other workflow pins by SHA | **Low** | grep of `.github/workflows/` |
+| R1 | Requested canonical URL 404s; two similarly named repos exist | High | §0 |
+| R2 | User Actions jobs never reach a runner | **Critical** | §1.4 |
+| R3 | Pages builder has not run since 2026-09-06; production HTML is stale | **Critical** | §1.2, §1.3 |
+| R4 | `main` is unprotected | High | `list_branches` `protected:false` |
+| R5 | 78 inert workflows would activate secrets + schedules if copied blindly | High | §1.5, §1.8 |
+| R6 | Public hostname has no `/health`; commerce health lives only in docs | Medium | live 404 vs `DEPLOY.md` |
+| R7 | Cloudflare config in repo does not match live DNS | Medium | §1.7 |
+| R8 | TLS expires 2026-10-11; cert-bot workflow cannot run while runners are blocked | Medium | cert dates + §1.4 |
+| R9 | Duplicate public copy under `connectors-testing-pplx/` | Low | repo search |
+| R10 | Checkout tag pin on `visual-restoration.yml` | Low | YAML; remediated on this branch |
+| R11 | Environments named in the operator directive were not observed | Medium | UNVERIFIED |
+| R12 | Test/lint/build gates described in `CLAUDE.md` / prior audit are not executing in Actions | High | §1.4, §1.9 |
 
 ---
 
 ## 3. Remediation Actions
 
-### 3.1 Applied and validated (commit `88470b1`)
+### 3.1 Applied in this pass
 
-Each fix is a path correction justified by evidence inside the repository.
-Tests were pointed at real file locations rather than moving files, because the
-flat layout is what Pages serves as the live site — relocating trees would
-change production URLs.
-
-| Target | Change | Justification |
+| Change | Why it is safe | Validation |
 |---|---|---|
-| `pyproject.toml` | `clearglass-commerce/control-plane` → `control-plane` in `testpaths` + `pythonpath` | directory does not exist; tree is at `control-plane/` |
-| `control-plane/tests/test_cart.py` | `REPO_ROOT` `parents[3]` → `parents[2]` | `parents[3]` resolved `/home/user`; correct only at the old nesting depth |
-| `percival_v9/__init__.py` | **added** — re-exports 11 symbols | package `__init__.py` was dropped; all 11 symbols located in `percival_v9/internal/`; surface documented in `PERCIVAL_V10_ARCHITECTURE.md` |
-| `.well-known/security.txt` | **added** (copy; root file untouched) | `_headers` and the file's own `Canonical:` line both specify this path |
-| `scripts/control_surface_feeds.py` | `SCHEMA_PATH` `docs/contracts/` → `contracts/` | **production code**; schema is at `contracts/` |
-| `scripts/market_intelligence_lane.py` | `CONFIG` `marketing/config/` → `config/` | watchlist is at `config/` |
-| `tests/test_side_store_storefront.py` | `CATALOG` → `data/store/catalog.json` | the path `CLAUDE.md` documents as the committed catalog |
-| `tests/test_local_growth_planner.py` | `marketing.local_growth_planner` → `local_growth_planner` | every imported symbol verified present in the target first |
-| `tests/test_strategic_viral_engine.py` | `marketing.content_engine.…` → `content_engine.…` | same verification |
-| `tests/test_build_pages.py` | import `_harden_html` | test called it without importing; defined at `tools/build_pages.py:80` |
-
-No test was skipped, disabled, quarantined or weakened.
+| Rewrite `PRODUCTION-RECOVERY.md` with independently observed evidence, including the live-site probe the prior file marked UNVERIFIED | Documentation only | File content traces to API + `curl -sI` + DNS |
+| Pin `actions/checkout` in `visual-restoration.yml` to SHA `df4cb1c069e1874edd31b4311f1884172cec0e10` (same as the other five workflows) | No behavior change intended; removes mutable tag | YAML diff only. **Cannot be proven green in Actions until R2 is cleared.** |
 
 ### 3.2 Deliberately not done
 
-* **Registering the 78 inert workflows.** 33 are scheduled, 15 commit or push
-  back to the repository, and collectively they hold 30 secrets including
-  `STRIPE_LIVE_SECRET_KEY`, `CLOUDFLARE_API_TOKEN` and `GMAIL_APP_PASSWORD`.
-  Enabling them in one move — into a repo whose Actions is already broken —
-  risks a self-commit storm, live Stripe product mutation, Cloudflare DNS/email
-  changes and outbound mail the moment entitlement is restored. This needs a
-  staged, owner-approved rollout (§5).
-* **Fabricating the missing modules** (§3.3). Writing a production-deploy
-  validator from scratch to satisfy its own test would manufacture false
-  assurance about deploys.
-* **Auto-fixing 1016 ruff findings.** A 739-file mechanical rewrite is
-  unreviewable alongside a diagnosis, and would bury the 10 substantive fixes.
+- Did not invent `ClearGlassInc/ClearGlassIncorporated-Desmond`.
+- Did not copy `workflows/*` into `.github/workflows/`.
+- Did not push a Pages rebuild that GitHub is not creating.
+- Did not fabricate passing `pytest` / `ruff` / `next build` numbers.
+- Did not rotate or print secrets.
+- Did not change live DNS or Cloudflare.
 
-### 3.3 Blocked on genuinely absent source
+### 3.3 Owner actions that this token cannot complete
 
-Three modules are absent from the repository entirely — not relocated
-(`find` across the whole tree returns nothing; `agent_army` never appears in
-any commit):
-
-| Missing | Referenced by |
-|---|---|
-| `agent_army` | `tests/test_agent_army.py` |
-| `scripts/validate_production_deploy.py` | `tests/test_validate_production_deploy.py` |
-| `scripts/workflow_doctor.py` | `tests/test_workflow_doctor.py` (4 errors), `tests/test_agent_os_operator.py`, `workflows/workflow-doctor.yml` |
-
-Recover them from the upstream repository rather than rewriting them. There is
-no `ClearGlassInc.github.io` in the organisation; the closest candidate is
-**`ClearGlasslabs/ClearGlassInc.`** (note the trailing dot), last pushed
-`2026-09-06T14:04:56Z` — 50 minutes after this repository's last healthy Pages
-deploy, consistent with being the source of the upload.
+1. GitHub.com → `ClearGlassInc` → Settings → Billing: confirm payment method and Actions spending limit.
+2. Org + repo → Settings → Actions → General: allowed actions, fork PR settings, “Disable Actions” toggle.
+3. Repo → Settings → Pages: confirm source branch/`/ (root)` and that the builder is enabled.
+4. Repo → Settings → Branches: protect `main` (required reviewers + linear history).
+5. After runners return: dispatch `pages-check.yml` and confirm a **new** `pages-build-deployment` run appears, then re-probe `Last-Modified` on `www.clearglassinc.com`.
+6. Decide the canonical repo name. Either restore `ClearGlassInc/ClearGlassIncorporated-Desmond` as a redirect/rename or stop publishing the 404 URL.
 
 ---
 
 ## 4. Validation Evidence
 
-### 4.1 Workflow preconditions (all 6 registered workflows)
-
 ```
-index.html present                                        PASS
-"ClearGlass Inc — AI Automation, Cybersecurity" in index   PASS  (1 match)
-@keyframes in index.html                                   PASS  (9 matches)
-prismPulse in index.html                                   PASS  (1 match)
-exact <link … href="sentinel.css"/>                        PASS
-exact <link … href="clearglass-legacy-visual.css">         PASS
-sentinel.css / clearglass-legacy-visual.css on disk        PASS
-404.html, CNAME, .nojekyll, artemis-command-layer.css      PASS
-scripts/{cert_bot,site_reliability_audit,                   PASS  (all 4 present)
-         live_sitemap_crawl,audit_github_actions}.py
-cert-bot.yml inline script                                 bash -n → SYNTAX OK
-```
+# Requested repo
+curl -sI https://github.com/ClearGlassInc/ClearGlassIncorporated-Desmond
+# → 404
 
-Every gate the 6 registered workflows enforce is satisfiable by the current
-tree. **They fail for the reason in §1.1, not because of their content.**
+# Live edge
+curl -sI https://www.clearglassinc.com/
+# HTTP/2 200
+# server: GitHub.com
+# last-modified: Sun, 06 Sep 2026 13:15:18 GMT
 
-### 4.2 Test suite, before → after
+getent hosts www.clearglassinc.com
+# 185.199.108-111.153 clearglassinc.github.io
 
-Measured with `pytest --continue-on-collection-errors` (identical invocation
-both times):
+# Pages builder
+actions_list method=list_workflow_runs resource_id=351526813
+# newest success: 2026-09-06T13:14:52Z run 34035508995
 
-| | Baseline `2fe1fa7` | After `88470b1` | Δ |
-|---|---|---|---|
-| passed | 1445 | **1578** | **+133** |
-| failed | 28 | **23** | −5 |
-| collection errors | 10 | **6** | −4 |
-| skipped | 3 | 3 | — |
-
-Per-fix validation, each run immediately after its change:
-
-```
-control-plane collection      0 tests  →  98 tests collected
-control-plane/tests/test_cart.py         34 passed   (was 3 failed / 31 passed)
-tests/test_percival_v9_policy.py +
-  tests/test_percival_v10_recovery.py    20 passed   (were 2 collection errors)
-tests/test_build_pages.py                 8 passed   (was 2 failed)
-5 relocated-path modules                 32 passed / 1 failed → then 8 passed
-percival_v9/__init__.py                  ruff check → All checks passed!
+# User workflow job
+actions_get method=get_workflow_job resource_id=102976294854
+# runner_id=0, no steps, conclusion=failure
 ```
 
-The 34 passing cart tests are load-bearing: three of them assert the server's
-price book matches the storefront's constants. They were erroring on a path,
-not passing — so server-vs-storefront price parity was unverified until now,
-and is now positively confirmed.
-
-The 20 passing Percival tests are the deny-by-default, escalation-gate,
-fail-closed-audit and hash-chain tamper-detection cases. They were entirely
-unexercised.
-
-### 4.3 Remaining local failures — 23 failed, 6 errors
-
-Grouped by cause, all traceable to §1.3 or §1.5:
-
-* **Missing workflow files (blocked on §5)** — 6 failures assert
-  `.github/workflows/{pages,auto-store,enterprise-patch-deploy,minerals-data-sync,site-integrity-and-deploy}.yml`.
-  All five exist in `workflows/`.
-* **Missing source (§3.3)** — 6 errors + 1 failure.
-* **Site content regressions (§4.4)** — ~10 failures.
-* **Node storefront smoke** — 1 failure (`node --test`; node v22.22.2 present, so this is a real failure, not a tooling gap).
-
-Under the **default** pytest configuration the suite still aborts, now on 2
-collection errors instead of 6 — both from §3.3. **The suite does not yet exit
-zero, and this report does not claim it does.**
-
-### 4.4 Site content regressions (verified, not yet fixed)
-
-9 pages ship without the canonical logo and desktop tab icon:
-
-```
-minerals.html                 mission-control.html
-apps/command-center/index.html
-assets/canada-us-30-day-diagnostic.html
-offers/canada-us-control-assessment.html
-blog/ai-safety-black-box-activation-analysis-gavel.html
-blog/canada-us-cross-border-cybersecurity-evidence-controls.html
-blog/cpcsc-vs-cmmc-residency-split.html
-blog/dual-clock-incident-runbook-ccspa-circia-pipeda.html
-```
-
-`guardian_command_nexus_spec.html` is indexable but absent from `sitemap.xml`.
-`tools/internal_links.py --check` reports `index.html` generated-block staleness.
-
-The repository ships idempotent generators for all three
-(`tools/tab_icons.py`, `tools/internal_links.py`,
-`tools/security_release_manifest.py`). These are content changes to 10+ live
-pages and were held back from a diagnostic commit deliberately — see §5 step 4.
+HEAD SHA audited: `69373f9b44916569a1f3fe3424be323d05dbf9d6`.
 
 ---
 
 ## 5. Deployment Plan
 
-Ordered by dependency. **Step 1 gates everything else** — until Actions
-executes, no CI result and no deploy can be verified.
+Gate 0 — entitlement  
+Restore GitHub-hosted runner dispatch for public workflows on `ClearGlassInc/ClearGlassInc-ClearGlassIncorporated-Desmond`. Evidence of success: any user workflow job with `runner_id != 0` and a non-empty `steps` array.
 
-**Step 1 — Restore Actions entitlement (owner action, blocking).**
-Work the three checks in §1.1. Confirm success by dispatching `Cert Bot`
-(`workflow_dispatch`, ~5s, no secrets, read-only) and checking that
-`get_workflow_run_usage` reports **non-zero** `billable.UBUNTU.total_ms`. That
-single number is the pass/fail signal — a green tick alone is not, since these
-jobs currently fail without ever running.
+Gate 1 — do not expand surface  
+Keep only the six registered workflows. Do not register the 78 copies.
 
-**Step 2 — Confirm Pages deployment resumes.**
-Once Step 1 passes, push any trivial commit to `main` and confirm a new
-`pages build and deployment` run appears. Then verify
-`https://www.clearglassinc.com/` serves the crimson palette from PR #4 and
-returns `200`, and that `https://www.clearglassinc.com/.well-known/security.txt`
-resolves (it will only do so with this branch merged).
+Gate 2 — Pages  
+Confirm Settings → Pages source is `main` / root. Push a no-op or re-run the Pages builder. Evidence: new `pages-build-deployment` run after 2026-09-06, and `Last-Modified` on `www.clearglassinc.com` moves forward. Confirm `/.well-known/security.txt` returns 200.
 
-**Step 3 — Merge this branch.** Path repairs only; no runtime behaviour
-changes on the static site. Validation in §4.2.
+Gate 3 — static gates (after runners work)  
+Dispatch `pages-check.yml` and `site-reliability.yml`. Both must reach steps and complete `success`.
 
-**Step 4 — Regenerate site content (separate PR).**
-`python3 tools/tab_icons.py` · `python3 tools/internal_links.py` ·
-add `guardian_command_nexus_spec.html` to `sitemap.xml` · bump `VERSION` in
-`sw.js` so returning visitors refetch. Review the rendered diff of all 10 pages
-before merging; then re-run `--check` on both generators.
+Gate 4 — app CI (optional, separate product)  
+`artemis-engineering.yml` only runs when `apps/artemis-engineering/**` changes. Root Next fabric and `control-plane` still have **no** registered test workflow. Add one later, scoped, with `contents: read` only.
 
-**Step 5 — Recover the three missing modules** from
-`ClearGlasslabs/ClearGlassInc.` (§3.3). This clears the last 2 default-config
-collection errors and lets `pytest` exit zero.
-
-**Step 6 — Register workflows in tranches, never all at once.**
-Order chosen so the safest, most valuable gate lands first:
-
-1. **Tranche A — inert CI gates.** `ci.yml`, `commerce-frontend-ci.yml`,
-   `function-agent-ci.yml`, `policy-gate.yml`, `percival-policy-gate.yml`,
-   `repository-health.yml`, `xenolith-gate.yml`. All `push`/`pull_request`
-   only, no secrets, no write permissions, no push-back. This is what finally
-   gives the Python suite and `ruff` a CI gate (R8).
-2. **Tranche B — read-only scheduled audits.** `security.yml`,
-   `semgrep-trial.yml`, `compliance-evidence.yml`, `repo-audit.yml`,
-   `seo-continuous-audit.yml`.
-3. **Tranche C — `pages.yml`.** Requires a decision first: it uses
-   `actions/deploy-pages`, which needs Pages source switched from "Deploy from a
-   branch" to "GitHub Actions". Do not register it while Pages is in branch
-   mode — it will fail, and it is what `tests/test_pages_deployment_workflows.py`
-   expects to be the *only* Pages deployer.
-4. **Tranche D — the 15 self-committing and credential-bearing workflows.**
-   One at a time, each with its secret verified present and its schedule
-   reviewed. `dispatch-all-workflows.yml` and `master-orchestrator.yml` last.
-
-**Step 7 — Reconcile Cloudflare (R6).** Identify what the 3 deployed Workers
-serve, then either commit deployable `wrangler.toml` config for them or retire
-them. Resolve the `clearglass.example` placeholders.
-
-**Step 8 — Correct `CLAUDE.md` (R7).** Its paths (`clearglass-commerce/`,
-`apps/autostore/`, "~29 workflows", `ci.yml` gates) describe the pre-upload
-layout and misdirect every agent that reads it.
+Gate 5 — commerce  
+Treat Render/Fly as a different system. Do not claim `www.clearglassinc.com/health` will ever be the control-plane probe; put `/health` on the API hostname documented in `DEPLOY.md`.
 
 ---
 
 ## 6. Rollback Plan
 
-| Change | Rollback | Blast radius if wrong |
-|---|---|---|
-| This branch (`88470b1`) | `git revert 88470b1` | Test configuration and two script paths. No static-site page content is touched, so production rendering cannot regress. |
-| `percival_v9/__init__.py` | delete the file | Returns `percival_v9` to a namespace package; only the 2 test modules that import it are affected. |
-| `.well-known/security.txt` | delete the directory | Purely additive; the root `security.txt` is unchanged, so removal restores the prior state exactly. |
-| Step 4 content regeneration | `git revert` the content PR, bump `sw.js` `VERSION` again | 10 live pages. Regenerate rather than hand-edit. |
-| Step 6 workflow tranche | delete the file from `.github/workflows/` (the copy in `workflows/` is untouched, so nothing is lost) | Per tranche. Tranche D can write to the repo — revert its commits and rotate any secret it used. |
-| Step 6 Tranche C (`pages.yml`) | remove the workflow **and** switch Pages source back to "Deploy from a branch" | Site deployment. Both halves must be reverted together. |
-| Step 7 Cloudflare | Workers keep prior versions; roll back in the Cloudflare dashboard | Edge routing. Never change DNS and Worker routes in one action. |
-
-Two standing rules for this repository:
-
-* `workflows/` is the intact 78-file archive. Always **copy** into
-  `.github/workflows/`, never move — the archive is the rollback source.
-* A green check on this repository is not evidence a job ran. Confirm
-  `billable.UBUNTU.total_ms > 0` before trusting any Actions result.
+| Layer | Rollback |
+|---|---|
+| This documentation + checkout pin | Revert the commits on `grok/production-recovery-2026-09-10`; `main` stays at `69373f9` if the PR is not merged |
+| Live Pages content | Last known good artifact is Pages run `34035508995` / SHA `1fa058e` (2026-09-06). Restoring that tree to `main` (or pointing Pages at `backup/pre-legacy-visual-2026-09-08`, SHA `73e8e1bd`) rolls the public site back. Verify with `Last-Modified` and H1. |
+| Domain | CNAME file content is `www.clearglassinc.com`. Removing it would publish under `clearglassinc.github.io/ClearGlassInc-ClearGlassIncorporated-Desmond/` only after a Pages rebuild. Do not remove CNAME to “fix” CI. |
+| Commerce / Stripe / Cloudflare | No live mutations were made. Nothing to roll back. |
 
 ---
 
 ## 7. Final Readiness Assessment
 
-**Not production-ready.** Against the eight stated success criteria:
-
-| Criterion | Status | Basis |
+| Success criterion | Status | Notes |
 |---|---|---|
-| Successful build | **Partial** | Python imports resolve and 1578 tests pass. Node/Next builds not exercised — `node_modules` absent, and `npm ci` for 7 manifests was out of scope for this pass. |
-| Passing tests | **No** | 23 failed / 6 errors; suite still aborts under default config on 2 missing modules (§3.3). Improved from a state where it could not run at all. |
-| Passing workflows | **No** | Zero user-authored workflow runs have ever succeeded (§1.1). |
-| Successful deployment | **No** | No Pages build since 2026-09-06 13:14 UTC (§1.2). |
-| Production health validation | **Unverified** | Live site unreachable from this environment (proxy 403). |
-| Dependency integrity | **Partial** | No committed secrets; 7 manifests present; Dependabot graph updates succeeded. No `npm audit`/`pip-audit` run — both need network egress unavailable here. |
-| Security review completion | **Partial** | Secrets, headers, CSP and workflow permissions reviewed (§1.8). CodeQL has never completed a run (6 failures, §1.1). No SAST executed. |
-| Deployment verification | **No** | Nothing to verify while §1.1 holds. |
+| successful build | **NOT VERIFIED** | No user job executed a build this pass |
+| passing tests | **NOT VERIFIED** | No test job executed |
+| passing workflows | **FAIL** | User workflows fail pre-runner; Dependabot graph-update succeeds |
+| successful deployment | **STALE PASS** | Last Pages success 2026-09-06; site still 200 |
+| production health validation | **PARTIAL** | Homepage 200; `/health` 404; security.txt 404 |
+| dependency integrity | **PARTIAL** | `next@15.5.25` pinned in root package.json; lockfile/audit not re-run here |
+| security review completion | **PARTIAL** | Registered workflows least-privilege; no full SAST/DAST evidence this pass |
+| deployment verification | **FAIL vs HEAD** | Live `Last-Modified` does not match `main` |
 
-**The single highest-value action is Step 1.** It is an owner action in GitHub
-settings, not an engineering change, and it unblocks six of the eight criteria.
-Every code-level finding in this report is downstream of it.
+**Readiness verdict: NOT READY for “verified production.”**  
+The public marketing origin is alive and served by GitHub Pages. It is four days behind `main`. Continuous integration and continuous deployment are not functioning for user-authored workflows. The repository name in the operator directive does not exist.
 
-What genuinely improved in this pass: the test suite went from *unrunnable* to
-1578 passing; the governed-commerce suite went from *0 collected* to 98, with
-server-vs-storefront price parity now positively verified; the Percival
-deny-by-default and tamper-detection tests went from *unexercised* to passing;
-and the RFC 9116 security contact is reachable again. The structural cause of
-the damage is identified with commit-level evidence, and the intact source for
-every remaining path defect is located.
+Do not announce production recovery complete until:
+
+1. a user-authored workflow job shows `runner_id != 0` and `conclusion=success`, and  
+2. `pages-build-deployment` runs against current `main`, and  
+3. `curl -sI https://www.clearglassinc.com/` shows a `Last-Modified` at or after that run.
