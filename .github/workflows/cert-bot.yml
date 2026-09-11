@@ -2,6 +2,7 @@ name: Cert Bot
 
 on:
   schedule:
+    # 06:17 UTC daily — surface expiring certs well ahead of the threshold
     - cron: "17 6 * * *"
   workflow_dispatch:
     inputs:
@@ -38,27 +39,4 @@ jobs:
           CERT_BOT_HOSTS: ${{ inputs.hosts || vars.CERT_BOT_HOSTS || 'www.clearglassinc.com' }}
           CERT_BOT_MIN_DAYS: ${{ inputs.min_days || '21' }}
           CERT_BOT_STRICT: "1"
-        run: |
-          if [ -f scripts/cert_bot.py ]; then
-            python scripts/cert_bot.py
-          else
-            python - <<'PY'
-          import os, socket, ssl, sys
-          from datetime import datetime, timezone
-          hosts = [h.strip() for h in os.environ.get('CERT_BOT_HOSTS', 'www.clearglassinc.com').split(',') if h.strip()]
-          min_days = int(os.environ.get('CERT_BOT_MIN_DAYS', '21'))
-          failed = 0
-          for host in hosts:
-              ctx = ssl.create_default_context()
-              with socket.create_connection((host, 443), timeout=15) as sock:
-                  with ctx.wrap_socket(sock, server_hostname=host) as ssock:
-                      cert = ssock.getpeercert()
-              not_after = datetime.strptime(cert['notAfter'], '%b %d %H:%M:%S %Y %Z').replace(tzinfo=timezone.utc)
-              days = (not_after - datetime.now(timezone.utc)).days
-              print(f"{host}: expires in {days} days ({not_after.date()})")
-              if days < min_days:
-                  print(f"::warning::{host} below {min_days}-day threshold")
-                  failed += 1
-          sys.exit(1 if failed else 0)
-          PY
-          fi
+        run: python scripts/cert_bot.py

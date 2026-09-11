@@ -1,0 +1,56 @@
+# PHOENIX — governed self-healing engine gate.
+# Runs the FULL sentinel unit suite (both recovery engines + the governance,
+# policy, capability, identity and mission-memory stack) and the PHOENIX
+# safety-invariant self-check (fail-closed / no high-risk auto-exec /
+# tamper-evident audit) on any change to the sentinel subtree. Pure stdlib —
+# no install needed for the self-check.
+name: Phoenix Self-Heal
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "sentinel/**"
+      - ".github/workflows/phoenix-self-heal.yml"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "sentinel/**"
+      - ".github/workflows/phoenix-self-heal.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  self-heal-gate:
+    name: Recovery-loop tests + safety invariants
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Lint (ruff)
+        run: |
+          # Pin ruff below 0.16 so its expanded default rules can't fail this gate.
+          pip install "ruff==0.15.8"
+          ruff check sentinel/sentinel/selfheal.py sentinel/tests/test_selfheal.py \
+                     sentinel/sentinel/artemis_fawl.py sentinel/tests/test_artemis_fawl.py
+      - name: Recovery-loop unit suite
+        run: |
+          pip install pytest
+          python -m pytest sentinel/tests/test_selfheal.py sentinel/tests/test_artemis_fawl.py -q
+      - name: Safety-invariant self-check (fail-closed gate)
+        # Non-zero exit if any invariant is violated (high-risk auto-exec,
+        # broken audit chain, or an integrity incident that failed to escalate).
+        run: python -m sentinel.selfheal --check
+      - name: ARTEMIS//FAWL governance self-check (fail-closed gate)
+        # Non-zero exit if any invariant is violated (level-4 executed, AI
+        # self-authorized a level≥2 action, kill switch bypassed, malicious
+        # signal not quarantined, or a broken audit chain).
+        run: python -m sentinel.artemis_fawl --json

@@ -1,0 +1,63 @@
+name: Agent Army Validation
+
+on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "agent_army/**"
+      - "tests/test_agent_army.py"
+      - ".github/workflows/agent-army.yml"
+  push:
+    branches: ["main"]
+    paths:
+      - "agent_army/**"
+      - "tests/test_agent_army.py"
+      - ".github/workflows/agent-army.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-army-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate governed orchestration
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+
+      - name: Run focused unit tests
+        run: python -m unittest tests.test_agent_army -v
+
+      - name: Generate governed sample plan
+        run: |
+          python -m agent_army.orchestrator \
+            --request "Build and test a secure service, then prepare a compliant revenue campaign" \
+            --format json \
+            --output /tmp/agent-army-plan.json
+          python -m json.tool /tmp/agent-army-plan.json >/dev/null
+
+      - name: Verify approval gates
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          payload = json.loads(Path("/tmp/agent-army-plan.json").read_text())
+          assert payload["steps"], "execution plan must contain steps"
+          assert "staff_engineer" in payload["selected_agents"]
+          assert "revenue_operator" in payload["selected_agents"]
+          print("Agent-army validation passed.")
+          PY

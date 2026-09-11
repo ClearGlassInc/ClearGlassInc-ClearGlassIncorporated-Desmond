@@ -1,0 +1,293 @@
+name: Sync Stripe Products
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Write to Stripe. Leave false for a dry run."
+        type: boolean
+        default: false
+      live:
+        description: "Target LIVE Stripe. Also needs ALLOW_STRIPE_LIVE_SYNC=true and approval."
+        type: boolean
+        default: false
+      sources:
+        description: "Comma-separated sources: side-store, store, pricebook, or all."
+        type: string
+        default: "side-store,store"
+      deactivate_old_prices:
+        description: "Deactivate Prices superseded by a new amount."
+        type: boolean
+        default: false
+  workflow_run:
+    workflows: ["Deploy Pages"]
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-stripe-products
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Type check and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - name: Type check
+        run: npm run typecheck
+      - name: Unit tests
+        run: npm test
+
+  sync-test-mode:
+    name: Sync (Stripe test mode)
+    needs: verify
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      inputs.live != true
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+
+      - name: Sync test catalogue or offline dry run
+        env:
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          SITE_BASE_URL: ${{ vars.SITE_BASE_URL || 'https://www.clearglassinc.com' }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          APPLY: ${{ inputs.apply }}
+          SOURCES: ${{ inputs.sources }}
+          DEACTIVATE: ${{ inputs.deactivate_old_prices }}
+        run: |
+          set -euo pipefail
+          args=(--source "${SOURCES}" --report stripe-sync-report.json)
+
+          if [ "${DEACTIVATE}" = "true" ]; then
+            args+=(--deactivate-old-prices)
+          fi
+
+          if [ -z "${STRIPE_SECRET_KEY}" ]; then
+            if [ "${APPLY}" = "true" ]; then
+              echo "::error::STRIPE_SECRET_KEY is required when apply=true."
+              exit 1
+            fi
+            echo "No STRIPE_SECRET_KEY configured — running offline dry run." >> "$GITHUB_STEP_SUMMARY"
+            args+=(--offline)
+          else
+            case "${STRIPE_SECRET_KEY}" in
+              sk_test_*|rk_test_*) echo "Credential is a Stripe test-mode key." ;;
+              *) echo "::error::STRIPE_SECRET_KEY is not a test-mode key. This job refuses to run with it."; exit 1 ;;
+            esac
+            if [ "${APPLY}" = "true" ]; then
+              args+=(--apply)
+            fi
+          fi
+
+          npm run --silent sync:stripe -- "${args[@]}"
+
+      - name: Upload sync report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: stripe-sync-report-test
+          path: stripe-sync-report.json
+          if-no-files-found: warn
+          retention-days: 30
+
+  plan-live-mode:
+    name: Plan (Stripe LIVE mode, read-only)
+    needs: verify
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      inputs.live == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    outputs:
+      plan_hash: ${{ steps.plan.outputs.plan_hash }}
+    steps:
+      - name: Refuse unless the repository opt-in is set
+        env:
+          ALLOW_STRIPE_LIVE_SYNC: ${{ vars.ALLOW_STRIPE_LIVE_SYNC }}
+        run: |
+          set -euo pipefail
+          if [ "${ALLOW_STRIPE_LIVE_SYNC}" != "true" ]; then
+            echo "::error::live sync requires repository variable ALLOW_STRIPE_LIVE_SYNC=true."
+            exit 1
+          fi
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - name: Compute the live plan
+        id: plan
+        env:
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_LIVE_SECRET_KEY }}
+          ALLOW_STRIPE_LIVE_SYNC: ${{ vars.ALLOW_STRIPE_LIVE_SYNC }}
+          SITE_BASE_URL: ${{ vars.SITE_BASE_URL || 'https://www.clearglassinc.com' }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          SOURCES: ${{ inputs.sources }}
+          DEACTIVATE: ${{ inputs.deactivate_old_prices }}
+        run: |
+          set -euo pipefail
+          if [ -z "${STRIPE_SECRET_KEY}" ]; then
+            echo "::error::STRIPE_LIVE_SECRET_KEY is required for live planning."
+            exit 1
+          fi
+          args=(--source "${SOURCES}" --live --report stripe-sync-report.json)
+          if [ "${DEACTIVATE}" = "true" ]; then
+            args+=(--deactivate-old-prices)
+          fi
+          npm run --silent sync:stripe -- "${args[@]}" | tee plan.txt
+          hash="$(sed -n 's/^Plan hash: //p' plan.txt | tail -n 1)"
+          echo "plan_hash=${hash}" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Live plan awaiting approval"
+            echo ""
+            echo "Plan hash: \`${hash}\`"
+            echo ""
+            echo '```'
+            cat plan.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload live plan
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: stripe-sync-plan-live
+          path: stripe-sync-report.json
+          if-no-files-found: warn
+          retention-days: 90
+
+  apply-live-mode:
+    name: Apply (Stripe LIVE mode)
+    needs: [verify, plan-live-mode]
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      inputs.live == true &&
+      inputs.apply == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: stripe-live
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - name: Apply the approved plan
+        env:
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_LIVE_SECRET_KEY }}
+          ALLOW_STRIPE_LIVE_SYNC: ${{ vars.ALLOW_STRIPE_LIVE_SYNC }}
+          SITE_BASE_URL: ${{ vars.SITE_BASE_URL || 'https://www.clearglassinc.com' }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          SOURCES: ${{ inputs.sources }}
+          DEACTIVATE: ${{ inputs.deactivate_old_prices }}
+          PLAN_HASH: ${{ needs.plan-live-mode.outputs.plan_hash }}
+        run: |
+          set -euo pipefail
+          if [ -z "${STRIPE_SECRET_KEY}" ]; then
+            echo "::error::STRIPE_LIVE_SECRET_KEY is required for live apply."
+            exit 1
+          fi
+          if [ -z "${PLAN_HASH}" ]; then
+            echo "::error::the planning job published no plan hash; refusing to apply."
+            exit 1
+          fi
+          args=(--source "${SOURCES}" --apply --live --expect-plan-hash "${PLAN_HASH}" --report stripe-sync-report.json)
+          if [ "${DEACTIVATE}" = "true" ]; then
+            args+=(--deactivate-old-prices)
+          fi
+          npm run --silent sync:stripe -- "${args[@]}"
+      - name: Upload sync report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: stripe-sync-report-live
+          path: stripe-sync-report.json
+          if-no-files-found: warn
+          retention-days: 90
+
+  post-deploy-drift-check:
+    name: Post-deploy drift check (dry run)
+    needs: verify
+    if: >-
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - name: Dry run against Stripe test mode or offline
+        env:
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          SITE_BASE_URL: ${{ vars.SITE_BASE_URL || 'https://www.clearglassinc.com' }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if [ -z "${STRIPE_SECRET_KEY}" ]; then
+            echo "No STRIPE_SECRET_KEY configured — planning offline." >> "$GITHUB_STEP_SUMMARY"
+            npm run --silent sync:stripe -- --offline --report stripe-sync-report.json | tee drift.txt
+          else
+            npm run --silent sync:stripe -- --report stripe-sync-report.json | tee drift.txt
+          fi
+          {
+            echo "### Stripe catalogue drift (dry run)"
+            echo ""
+            echo '```'
+            tail -n 60 drift.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload sync report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: stripe-sync-report-post-deploy
+          path: stripe-sync-report.json
+          if-no-files-found: warn
+          retention-days: 14

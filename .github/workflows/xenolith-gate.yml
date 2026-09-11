@@ -1,0 +1,71 @@
+name: XENOLITH Gate
+
+# Governance gate for the sovereign intelligence lattice. The self-check asserts
+# that no high/critical action can execute without a recorded approval from
+# someone other than the requester — a change that opens an ungoverned path
+# fails here rather than shipping quietly.
+
+on:
+  push:
+    paths:
+      - "xenolith/**"
+      - "tests/test_xenolith_*.py"
+      - ".github/workflows/xenolith-gate.yml"
+  pull_request:
+    paths:
+      - "xenolith/**"
+      - "tests/test_xenolith_*.py"
+      - ".github/workflows/xenolith-gate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: Lint, invariants, and test suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+
+      - name: Install tooling
+        # Pin ruff to match ci.yml and commerce-deploy.yml: an unpinned install
+        # lets CI pull a newer ruff whose expanded default rules fail the gate
+        # with no code change. Bump deliberately, repo-wide.
+        run: pip install --disable-pip-version-check "ruff==0.15.8" pytest
+
+      - name: Lint
+        run: ruff check xenolith/ tests/test_xenolith_core.py tests/test_xenolith_governance.py tests/test_xenolith_intelligence.py
+
+      # The lattice is stdlib-only by design so it runs in a minimal container.
+      # This step fails if an import outside the standard library creeps in.
+      - name: Verify the lattice imports with no third-party packages
+        run: python -c "import xenolith; print(xenolith.__version__)"
+
+      - name: Governance self-check (fails if any gated action is auto-executable)
+        run: python -m xenolith.cli --check | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Test suite
+        run: python -m pytest tests/test_xenolith_core.py tests/test_xenolith_governance.py tests/test_xenolith_intelligence.py -q
+
+      - name: Confirm the committed command-surface feed is current in shape
+        run: |
+          python -m xenolith.cli --write /tmp/lattice.json
+          python - <<'PY'
+          import json, pathlib, sys
+          committed = json.loads(pathlib.Path("data/xenolith/lattice.json").read_text())
+          fresh = json.loads(pathlib.Path("/tmp/lattice.json").read_text())
+          # Timestamps and hashes legitimately differ between runs; the shape and
+          # the governance posture must not.
+          if sorted(committed) != sorted(fresh):
+              sys.exit(f"feed keys drifted: {sorted(committed)} != {sorted(fresh)}")
+          if not committed["governance"]["fail_closed"]:
+              sys.exit("committed feed records a governance failure")
+          print("feed shape current; posture fail-closed")
+          PY

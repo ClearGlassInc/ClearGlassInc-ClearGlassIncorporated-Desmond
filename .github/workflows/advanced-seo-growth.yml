@@ -1,0 +1,105 @@
+name: Advanced SEO Growth
+
+# Manual execution refresh: 2026-07-30T17:16:00-04:00
+on:
+  pull_request:
+    paths:
+      - "**/*.html"
+      - "sitemap*.xml"
+      - "robots.txt"
+      - "tools/advanced_seo_growth.py"
+      - "tools/test_advanced_seo_growth.py"
+      - ".github/workflows/advanced-seo-growth.yml"
+  push:
+    branches: [main]
+    paths:
+      - "**/*.html"
+      - "sitemap*.xml"
+      - "robots.txt"
+      - "tools/advanced_seo_growth.py"
+      - "tools/test_advanced_seo_growth.py"
+      - ".github/workflows/advanced-seo-growth.yml"
+  schedule:
+    - cron: "15 7 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: advanced-seo-growth-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    name: Sitewide search growth audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+
+      - name: Compile engine and tests
+        run: python3 -m py_compile tools/advanced_seo_growth.py tools/test_advanced_seo_growth.py
+
+      - name: Run deterministic parser self-tests
+        run: python3 tools/advanced_seo_growth.py --self-test
+
+      - name: Run independent regression suite
+        run: python3 -m unittest -v tools/test_advanced_seo_growth.py
+
+      - name: Generate complete site audit
+        run: python3 tools/advanced_seo_growth.py --write || echo "SEO defects detected and recorded in the backlog"
+
+      - name: Validate generated reports
+        run: |
+          test -s data/seo/advanced-growth.json
+          test -s data/seo/advanced-growth.md
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path("data/seo/advanced-growth.json").read_text())
+          required = {"generated_at", "site", "score", "totals", "clusters", "pages", "findings"}
+          missing = required - report.keys()
+          if missing:
+              raise SystemExit(f"Missing report keys: {sorted(missing)}")
+          if report["site"] != "https://www.clearglassinc.com":
+              raise SystemExit("Unexpected site identity")
+          if report["totals"]["pages"] < 1:
+              raise SystemExit("No HTML pages were audited")
+          print(f"Validated {report['totals']['pages']} pages; {len(report['findings'])} findings recorded")
+          PY
+
+      - name: Publish audit summary
+        if: always()
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          from pathlib import Path
+          path = Path("data/seo/advanced-growth.json")
+          if not path.exists():
+              print("Advanced SEO report was not generated.")
+              raise SystemExit(0)
+          report = json.loads(path.read_text())
+          totals = report["totals"]
+          print("# Advanced SEO Growth\n")
+          print(f"**Score:** {report['score']}/100 · **Pages:** {totals['pages']} · **Errors:** {totals['errors']} · **Warnings:** {totals['warnings']} · **Info:** {totals['info']}\n")
+          print("## Highest-priority findings\n")
+          for finding in report["findings"][:30]:
+              print(f"- **{finding['level'].upper()}** `{finding['page']}` — {finding['message']} **Action:** {finding['action']}")
+          PY
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: advanced-seo-growth-${{ github.run_id }}
+          path: |
+            data/seo/advanced-growth.json
+            data/seo/advanced-growth.md
+          if-no-files-found: error
+          retention-days: 30

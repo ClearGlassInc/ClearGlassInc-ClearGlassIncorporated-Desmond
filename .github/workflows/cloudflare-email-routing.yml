@@ -1,0 +1,179 @@
+# Execution retrigger: 2026-08-06T07:43-04:00
+name: Configure Cloudflare Email Routing
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/cloudflare-email-routing.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-email-routing-clearglassinc
+  cancel-in-progress: false
+
+jobs:
+  configure:
+    name: Route Desmond@clearglassinc.com to Outlook
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      DOMAIN: clearglassinc.com
+      CUSTOM_ADDRESS: Desmond@clearglassinc.com
+      DESTINATION_ADDRESS: desmondodhiambo@hotmail.com
+
+    steps:
+      - name: Validate Cloudflare token
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${CF_API_TOKEN:-}" ]]; then
+            echo "::error::Repository secret CLOUDFLARE_API_TOKEN is missing. Create a Cloudflare API token with Zone Read, Zone Settings Write, Email Routing Addresses Write, and Email Routing Rules Write permissions, then save it under Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+
+      - name: Configure Email Routing
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          API_BASE="https://api.cloudflare.com/client/v4"
+
+          cf_api() {
+            local method="$1"
+            local path="$2"
+            local data="${3:-}"
+            local response
+
+            if [[ -n "$data" ]]; then
+              response=$(curl --silent --show-error --fail-with-body \
+                --request "$method" \
+                "$API_BASE$path" \
+                --header "Authorization: Bearer $CF_API_TOKEN" \
+                --header "Content-Type: application/json" \
+                --data "$data")
+            else
+              response=$(curl --silent --show-error --fail-with-body \
+                --request "$method" \
+                "$API_BASE$path" \
+                --header "Authorization: Bearer $CF_API_TOKEN" \
+                --header "Content-Type: application/json")
+            fi
+
+            if ! jq -e '.success == true' >/dev/null <<<"$response"; then
+              echo "$response" | jq . >&2
+              return 1
+            fi
+
+            printf '%s' "$response"
+          }
+
+          echo "Resolving Cloudflare zone for $DOMAIN"
+          zone_response=$(cf_api GET "/zones?name=$DOMAIN&status=active&per_page=50")
+          zone_count=$(jq '.result | length' <<<"$zone_response")
+
+          if [[ "$zone_count" -ne 1 ]]; then
+            echo "::error::Expected exactly one active Cloudflare zone named $DOMAIN; found $zone_count."
+            exit 1
+          fi
+
+          zone_id=$(jq -r '.result[0].id' <<<"$zone_response")
+          account_id=$(jq -r '.result[0].account.id' <<<"$zone_response")
+
+          echo "Enabling Cloudflare-managed Email Routing DNS"
+          routing_settings=$(cf_api GET "/zones/$zone_id/email/routing")
+          routing_enabled=$(jq -r '.result.enabled // false' <<<"$routing_settings")
+          routing_status=$(jq -r '.result.status // "unknown"' <<<"$routing_settings")
+
+          if [[ "$routing_enabled" != "true" || "$routing_status" != "ready" ]]; then
+            enable_payload=$(jq -nc --arg name "$DOMAIN" '{name:$name}')
+            cf_api POST "/zones/$zone_id/email/routing/dns" "$enable_payload" >/dev/null
+          fi
+
+          echo "Ensuring Outlook destination exists"
+          addresses_response=$(cf_api GET "/accounts/$account_id/email/routing/addresses?per_page=100")
+          destination=$(jq -c --arg email "$DESTINATION_ADDRESS" \
+            '.result[]? | select((.email | ascii_downcase) == ($email | ascii_downcase))' \
+            <<<"$addresses_response" | head -n 1)
+
+          if [[ -z "$destination" ]]; then
+            destination_payload=$(jq -nc --arg email "$DESTINATION_ADDRESS" '{email:$email}')
+            created_response=$(cf_api POST "/accounts/$account_id/email/routing/addresses" "$destination_payload")
+            destination=$(jq -c '.result' <<<"$created_response")
+          fi
+
+          destination_verified=$(jq -r '.verified // empty' <<<"$destination")
+
+          if [[ -z "$destination_verified" ]]; then
+            {
+              echo "## Cloudflare Email Routing pending verification"
+              echo
+              echo "Cloudflare Email Routing DNS has been enabled for \`$DOMAIN\`."
+              echo
+              echo "Cloudflare sent a verification message to **$DESTINATION_ADDRESS**. Open that message, verify the destination, then re-run this workflow. The second run will create and enable the forwarding rule."
+            } >> "$GITHUB_STEP_SUMMARY"
+
+            echo "::notice::Destination $DESTINATION_ADDRESS is awaiting Cloudflare verification. Verify it and re-run this workflow."
+            exit 0
+          fi
+
+          echo "Creating or updating the forwarding rule"
+          rules_response=$(cf_api GET "/zones/$zone_id/email/routing/rules?per_page=100")
+          existing_rule=$(jq -c --arg address "$CUSTOM_ADDRESS" '
+            .result[]?
+            | select(any(.matchers[]?;
+                .type == "literal"
+                and .field == "to"
+                and ((.value | ascii_downcase) == ($address | ascii_downcase))))
+          ' <<<"$rules_response" | head -n 1)
+
+          rule_payload=$(jq -nc \
+            --arg source_address "$CUSTOM_ADDRESS" \
+            --arg destination "$DESTINATION_ADDRESS" \
+            '{
+              actions: [{type:"forward", value:[$destination]}],
+              enabled: true,
+              matchers: [{type:"literal", field:"to", value:$source_address}],
+              name: ("Forward " + $source_address + " to Outlook"),
+              priority: 0,
+              source: "api"
+            }')
+
+          if [[ -z "$existing_rule" ]]; then
+            rule_response=$(cf_api POST "/zones/$zone_id/email/routing/rules" "$rule_payload")
+          else
+            rule_source=$(jq -r '.source // "api"' <<<"$existing_rule")
+            if [[ "$rule_source" == "wrangler" ]]; then
+              echo "::error::A Wrangler-managed routing rule already owns $CUSTOM_ADDRESS. Refusing to overwrite it."
+              exit 1
+            fi
+
+            rule_id=$(jq -r '.id' <<<"$existing_rule")
+            rule_response=$(cf_api PUT "/zones/$zone_id/email/routing/rules/$rule_id" "$rule_payload")
+          fi
+
+          rule_id=$(jq -r '.result.id' <<<"$rule_response")
+          mx_records=$(dig +short MX "$DOMAIN" | sort -n || true)
+
+          {
+            echo "## Cloudflare Email Routing configured"
+            echo
+            echo "- Source: **$CUSTOM_ADDRESS**"
+            echo "- Destination: **$DESTINATION_ADDRESS**"
+            echo "- Rule ID: \`$rule_id\`"
+            echo "- Cloudflare routing status: \`ready\`"
+            echo
+            echo "### Published MX records"
+            echo '```text'
+            printf '%s\n' "$mx_records"
+            echo '```'
+            echo
+            echo "Send a test message from an unrelated account to **$CUSTOM_ADDRESS** and confirm it arrives in Outlook."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          echo "Cloudflare Email Routing is configured for $CUSTOM_ADDRESS"

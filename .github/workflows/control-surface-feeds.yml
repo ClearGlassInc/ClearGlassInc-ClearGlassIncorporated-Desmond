@@ -1,0 +1,80 @@
+name: Control Surface Feeds
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One feed refresh at a time; never cancel a publish mid-flight.
+concurrency:
+  group: control-surface-feeds
+  cancel-in-progress: false
+
+jobs:
+  publish-feeds:
+    name: Generate & Publish Data Feeds
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: automation-write
+    permissions:
+      contents: write   # commit refreshed feeds
+      actions: read     # read workflow runs for the feeds
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: true # Required only for this job's audited git push.
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - run: pip install jsonschema
+
+      - name: Generate feeds from live sources
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/control_surface_feeds.py --strict
+
+      - name: Commit refreshed feeds
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- data/control-surface; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Feeds unchanged — nothing to publish"
+            exit 0
+          fi
+          git add data/control-surface
+          git commit -m "bot: refresh control-surface data feeds [skip ci]"
+          # Other bots push to main during our run; a plain push hits a
+          # non-fast-forward rejection. Rebase onto the latest main and retry.
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              echo "changed=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/5) — rebasing onto latest main"
+            git pull --rebase origin main
+          done
+          echo "::error::Failed to push refreshed feeds after 5 attempts"
+          exit 1
+
+  dispatch-pages-deploy:
+    name: Publish to Pages
+    needs: publish-feeds
+    if: ${{ always() && needs.publish-feeds.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: write    # dispatch pages.yml ([skip ci] commit suppresses its push trigger)
+    steps:
+      - name: Dispatch Pages deploy
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: gh workflow run pages.yml --ref main || echo "::warning::Pages dispatch failed — next deploy will pick feeds up"

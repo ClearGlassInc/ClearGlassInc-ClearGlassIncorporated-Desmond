@@ -1,0 +1,87 @@
+name: Agent OS Self-Check
+
+# Dry-run assurance pass for the ClearGlass Autonomous Agent OS v8.0.
+#
+# Runs the stdlib-only governance + structural + audit self-check and emits a
+# demo executive report. It proves the safety invariant (every money /
+# production / access / data action, every unknown action, and every
+# unverifiable or evidence-free conclusion is gated behind human approval),
+# verifies the audit chain is tamper-evident, and fails the job if any invariant
+# is violated — fail closed by design.
+#
+# No secrets, no network, no writes: read-only and safe to run on every push.
+
+on:
+  schedule:
+    - cron: "30 13 * * *"   # 13:30 UTC daily — after the commerce daily loop
+  push:
+    branches: ["main"]
+    paths:
+      - "agent_os/**"
+      - "tests/test_agent_os*.py"
+      - ".github/workflows/agent-os.yml"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "agent_os/**"
+      - "tests/test_agent_os*.py"
+      - ".github/workflows/agent-os.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-os-self-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  self-check:
+    name: Governance self-check + executive report
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Unit tests (runtime + governance gate + advanced sub-agents)
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+          pytest tests/test_agent_os.py tests/test_agent_os_advanced.py \
+                 tests/test_agent_os_operator.py -q
+      - name: Governance self-check (fails closed on any invariant violation)
+        run: python -m agent_os.self_check --json
+      - name: Executive report (step summary)
+        if: always()
+        run: python -m agent_os.self_check | tee "$GITHUB_STEP_SUMMARY"
+      # The unattended pass: route every READ-ONLY registered capability through
+      # the same governance gate and run it. Writing capabilities are excluded by
+      # construction (Operator.sweep), so this stays safe with no human present.
+      # Non-zero exit if any capability fails, so a broken estate turns the job red.
+      - name: Operator sweep (all read-only capabilities)
+        run: |
+          python -m agent_os.operator --sweep | tee /tmp/sweep.json
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          d = json.load(open("/tmp/sweep.json"))
+          print("\n## Operator sweep\n")
+          print(f"- audit chain verified: `{d['audit_verified']}`")
+          print(f"- {d['summary']}\n")
+          print("| capability | result | first line |")
+          print("|---|---|---|")
+          for e in d["executed"]:
+              head = (e["output"].splitlines() or [""])[0][:80].replace("|", "\\|")
+              print(f"| `{e['key']}` | {'PASS' if e['ok'] else 'FAIL'} | {head} |")
+          PY
+      - name: Upload sweep report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: operator-sweep
+          path: /tmp/sweep.json
+          if-no-files-found: warn

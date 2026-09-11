@@ -1,0 +1,101 @@
+name: SEO Continuous Audit
+
+on:
+  pull_request:
+    paths:
+      - "**/*.html"
+      - "robots.txt"
+      - "sitemap*.xml"
+      - "llms*.txt"
+      - "feed.xml"
+      - "opensearch.xml"
+      - "seo-targets.json"
+      - "tools/seo_audit.py"
+      - ".github/workflows/seo-continuous-audit.yml"
+  push:
+    branches: [main]
+    paths:
+      - "**/*.html"
+      - "robots.txt"
+      - "sitemap*.xml"
+      - "llms*.txt"
+      - "feed.xml"
+      - "opensearch.xml"
+      - "seo-targets.json"
+      - "tools/seo_audit.py"
+      - ".github/workflows/seo-continuous-audit.yml"
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: seo-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    name: Crawl and indexability audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Run dependency-free SEO audit
+        id: audit
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          python3 tools/seo_audit.py --write 2>&1 | tee seo-audit.txt
+
+      - name: Publish audit summary
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          report_path = Path("data/seo/audit.json")
+          summary_path = Path(os.environ["GITHUB_STEP_SUMMARY"])
+          lines = ["# ClearGlass SEO Audit", ""]
+
+          if not report_path.exists():
+              lines.append("The auditor did not produce a JSON report. Review the audit step logs.")
+          else:
+              report = json.loads(report_path.read_text(encoding="utf-8"))
+              totals = report["totals"]
+              lines.extend([
+                  f"**Health score:** {report['score']}/100",
+                  "",
+                  "| Metric | Result |",
+                  "|---|---:|",
+                  f"| Pages scanned | {totals['pages']} |",
+                  f"| Indexable pages | {totals['indexable']} |",
+                  f"| Pages in sitemap | {totals['in_sitemap']} |",
+                  f"| Pages with structured data | {totals['with_schema']} |",
+                  f"| Errors | {totals['errors']} |",
+                  f"| Warnings | {totals['warnings']} |",
+                  f"| Informational findings | {totals['info']} |",
+                  "",
+                  "This workflow is observational: findings are surfaced without blocking deployment.",
+              ])
+
+          summary_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+          PY
+
+      - name: Upload audit evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: seo-audit-${{ github.run_id }}
+          path: |
+            seo-audit.txt
+            data/seo/audit.json
+          if-no-files-found: warn
+          retention-days: 30

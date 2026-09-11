@@ -1,0 +1,134 @@
+name: SEO Dashboard
+
+on:
+  schedule:
+    - cron: "40 6 * * *"   # daily, after Search Console finalises the prior day
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "**/*.html"
+      - "sitemap.xml"
+      - "robots.txt"
+      - "tools/seo_audit.py"
+      - "tools/seo_dashboard.py"
+      - "data/seo/config.json"
+
+permissions:
+  contents: read
+
+# One refresh at a time; never cancel a feed publish mid-flight.
+concurrency:
+  group: seo-dashboard
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    name: Technical SEO audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+
+      # stdlib only — nothing to install. Non-zero exit means a blocking
+      # indexability error (noindex in sitemap, dead sitemap entry, broken
+      # internal link, missing title), which should fail the build.
+      - name: Audit
+        run: python3 tools/seo_audit.py
+
+  publish-feeds:
+    name: Refresh dashboard feeds
+    # Only the scheduled/manual runs publish; push runs just gate the audit.
+    if: ${{ github.event_name != 'push' }}
+    needs: audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: automation-write
+    permissions:
+      contents: write   # commit refreshed feeds
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: true # Required only for this job's audited git push.
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+
+      - name: Refresh local audit feed
+        run: python3 tools/seo_audit.py --write || true
+
+      # Connectors degrade to "unconfigured" when a secret is absent, so this
+      # step stays green before Search Console / Bing are wired up.
+      - name: Pull Search Console + Bing performance
+        env:
+          GSC_PROPERTY: ${{ secrets.GSC_PROPERTY }}
+          GSC_ACCESS_TOKEN: ${{ secrets.GSC_ACCESS_TOKEN }}
+          GSC_CLIENT_ID: ${{ secrets.GSC_CLIENT_ID }}
+          GSC_CLIENT_SECRET: ${{ secrets.GSC_CLIENT_SECRET }}
+          GSC_REFRESH_TOKEN: ${{ secrets.GSC_REFRESH_TOKEN }}
+          BING_API_KEY: ${{ secrets.BING_API_KEY }}
+          BING_SITE_URL: ${{ secrets.BING_SITE_URL }}
+        run: python3 tools/seo_dashboard.py --days 28
+
+      - name: Surface alerts in the run summary
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json, pathlib
+          p = pathlib.Path("data/seo/alerts.json")
+          if not p.exists():
+              print("No alert feed generated."); raise SystemExit(0)
+          feed = json.loads(p.read_text())
+          c = feed.get("counts", {})
+          print("## SEO alerts\n")
+          print(f"**{c.get('critical',0)} critical · {c.get('warning',0)} warning · {c.get('info',0)} info**\n")
+          for a in feed.get("alerts", []):
+              print(f"- `{a['level']}` **{a['kind']}** — {a['message']}")
+          audit = pathlib.Path("data/seo/audit.json")
+          if audit.exists():
+              t = json.loads(audit.read_text())
+              print(f"\n**Health score:** {t.get('score')}/100 · "
+                    f"{t['totals']['errors']} errors · {t['totals']['warnings']} warnings")
+          PY
+
+      - name: Commit refreshed feeds
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- data/seo; then
+            echo "SEO feeds unchanged — nothing to publish"
+            exit 0
+          fi
+          git add data/seo
+          git commit -m "bot: refresh SEO dashboard feeds [skip ci]"
+          # Other bots push to main during our run; a plain push hits a
+          # non-fast-forward rejection. Rebase onto the latest main and retry.
+          for attempt in 1 2 3 4 5; do
+            if git push; then exit 0; fi
+            echo "Push rejected (attempt $attempt/5) — rebasing onto latest main"
+            git pull --rebase origin main
+          done
+          echo "::error::Failed to push refreshed SEO feeds after 5 attempts"
+          exit 1
+
+      - name: Fail the run on a critical alert
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, sys
+          p = pathlib.Path("data/seo/alerts.json")
+          if not p.exists():
+              sys.exit(0)
+          feed = json.loads(p.read_text())
+          crit = [a for a in feed.get("alerts", []) if a["level"] == "critical"]
+          # Connector gaps are a setup task, not a search-visibility regression.
+          crit = [a for a in crit if a["kind"] != "connector"]
+          for a in crit:
+              print(f"::error title=SEO {a['kind']}::{a['message']}")
+          sys.exit(1 if crit else 0)
+          PY

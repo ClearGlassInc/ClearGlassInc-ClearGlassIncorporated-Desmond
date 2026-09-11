@@ -77,6 +77,6 @@ shell.addEventListener("keydown",function(e){if(e.key==="Escape"){closePanel();r
   }
   launcher.addEventListener("click",function(){setTimeout(openStation,0)});
   shell.addEventListener("click",function(e){var link=e.target.closest&&e.target.closest(".cg-station-item");if(link){panel.classList.add("cg-station-routing");}}
-  });
+  );
 })();
 }());

@@ -1,0 +1,52 @@
+name: Daily Marketing Content
+
+on:
+  schedule:
+    - cron: "0 7 * * *" # 07:00 UTC daily — restore one new marketing issue/page every day
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Generate and validate content without opening the GitHub issue"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-marketing-content
+  cancel-in-progress: false
+
+jobs:
+  create-daily-page:
+    name: Generate daily content issue
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+
+      - name: Generate daily content bundle
+        run: python -m bots.content_engine
+
+      - name: Validate daily content bundle
+        run: python -m bots.content_validator
+
+      - name: Create daily marketing issue page
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          if [ "${{ inputs.dry_run || 'false' }}" = "true" ]; then
+            python scripts/create_daily_marketing_issue.py --dry-run
+          else
+            python scripts/create_daily_marketing_issue.py
+          fi
