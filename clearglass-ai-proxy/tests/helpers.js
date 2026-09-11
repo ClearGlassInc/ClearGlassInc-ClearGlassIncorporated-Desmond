@@ -11,7 +11,10 @@ import { resetRateLimiter } from '../src/middleware/rate-limit.js';
 
 /** At least MIN_TOKEN_LENGTH (24) characters, as the gateway requires. */
 export const TEST_TOKEN = 'test-proxy-token-0123456789abcdef';
-export const TEST_API_KEY = 'sk-test-provider-key-DO-NOT-USE';
+// Deliberately not 'sk-'-shaped. The public-artifact credential scanner
+// (tests/test_public_artifact_security.py) flags /sk-[A-Za-z0-9_-]{20,}/ in a
+// public repo, and a fixture that looks like a real provider key trips it.
+export const TEST_API_KEY = 'test-provider-key-DO-NOT-USE';
 
 /**
  * Baseline environment. Rate limits are set high so unrelated tests are not
