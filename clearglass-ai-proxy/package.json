@@ -1,0 +1,22 @@
+{
+  "name": "clearglass-ai-proxy",
+  "version": "1.0.0",
+  "description": "ClearGlass AI Gateway - an authenticated, rate-limited, validating proxy for OpenAI-compatible AI providers, running on Cloudflare Workers.",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "check": "node --check src/index.js && node --check src/config.js && node --check src/lib/errors.js && node --check src/lib/log.js && node --check src/lib/response.js && node --check src/lib/validation.js && node --check src/middleware/security.js && node --check src/middleware/authentication.js && node --check src/middleware/rate-limit.js && node --check src/providers/openai.js && node --check src/providers/provider-router.js && node --check src/routes/health.js && node --check src/routes/chat.js && node --check src/routes/models.js && node --check src/routes/embeddings.js",
+    "test": "node --test \"tests/*.test.js\"",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "validate": "wrangler deploy --dry-run"
+  },
+  "devDependencies": {
+    "wrangler": "^4.131.1"
+  }
+}

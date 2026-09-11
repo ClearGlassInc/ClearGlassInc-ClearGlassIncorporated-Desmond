@@ -1,0 +1,232 @@
+# ClearGlass AI Gateway - security checks.
+#
+# Separate from ai-proxy-deploy.yml so that security findings are legible on
+# their own and can run on a schedule: a dependency that is clean today can be
+# a published advisory next week, with no commit to trigger a re-check.
+
+name: AI Proxy Security
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "clearglass-ai-proxy/**"
+      - ".github/workflows/ai-proxy-security.yml"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "clearglass-ai-proxy/**"
+      - ".github/workflows/ai-proxy-security.yml"
+  schedule:
+    # Mondays 06:30 UTC. Catches advisories published against a frozen lockfile.
+    - cron: "30 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-proxy-security-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: clearglass-ai-proxy
+
+jobs:
+  dependency-audit:
+    name: Dependency audit and integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: clearglass-ai-proxy/package-lock.json
+
+      - name: Install from the lockfile
+        run: npm ci
+
+      # The runtime dependency surface is the real attack surface: these
+      # packages would execute at the edge with access to the provider key.
+      # Wrangler and its tree are build-time only.
+      - name: Fail on any vulnerable runtime dependency
+        run: npm audit --omit=dev --audit-level=low
+
+      - name: Report vulnerable build dependencies
+        # Advisory: a build-time finding does not ship to the edge, so it is
+        # surfaced rather than made a merge blocker.
+        continue-on-error: true
+        run: npm audit --audit-level=high
+
+      # Detects a lockfile edited by hand or a package.json changed without a
+      # matching lockfile update - the shape a dependency-confusion attack takes.
+      - name: Verify lockfile integrity
+        run: |
+          set -euo pipefail
+          npm ci --dry-run
+          if ! git diff --quiet -- package-lock.json; then
+            echo "::error::package-lock.json changed during install; commit the updated lockfile"
+            git diff -- package-lock.json
+            exit 1
+          fi
+          echo "Lockfile is consistent with package.json."
+
+      # Every dependency here is build-time. A runtime dependency is not
+      # forbidden, but it must be a deliberate, reviewed decision.
+      - name: Report runtime dependency surface
+        run: |
+          set -euo pipefail
+          count=$(node -p "Object.keys(require('./package.json').dependencies || {}).length")
+          echo "Runtime dependencies: $count"
+          if [ "$count" -ne 0 ]; then
+            echo "::warning::this Worker now has runtime dependencies; each one executes at the edge with access to the provider credential"
+            node -p "JSON.stringify(require('./package.json').dependencies, null, 2)"
+          fi
+
+  secret-scan:
+    name: Secret scanning
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          # Full history: a secret removed in a later commit is still published.
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Scan tracked files for credential material
+        run: |
+          set -euo pipefail
+          status=0
+
+          # Provider key shapes and generic assignments. Restricted to tracked
+          # files so node_modules and build output cannot create false hits.
+          patterns=(
+            'sk-[A-Za-z0-9_-]{20,}'
+            'sk-proj-[A-Za-z0-9_-]{20,}'
+            'xox[baprs]-[A-Za-z0-9-]{10,}'
+            'gh[pousr]_[A-Za-z0-9]{30,}'
+            'AKIA[0-9A-Z]{16}'
+            '-----BEGIN [A-Z ]*PRIVATE KEY-----'
+          )
+
+          files=$(git ls-files)
+          for pattern in "${patterns[@]}"; do
+            # .env.example and the docs carry deliberate REPLACE_ME placeholders.
+            hits=$(printf '%s\n' "$files" \
+              | xargs -r grep -nEI "$pattern" 2>/dev/null \
+              | grep -vE '(REPLACE_ME|EXAMPLE|example|YOUR_|placeholder|not-real|DO-NOT-USE)' || true)
+            if [ -n "$hits" ]; then
+              echo "::error::possible credential matching /$pattern/:"
+              echo "$hits"
+              status=1
+            fi
+          done
+
+          if [ "$status" -eq 0 ]; then
+            echo "No credential material found in tracked files."
+          fi
+          exit "$status"
+        working-directory: .
+
+      - name: Assert secret files are untracked and ignored
+        run: |
+          set -euo pipefail
+          for path in .env .dev.vars; do
+            if git ls-files --error-unmatch "clearglass-ai-proxy/$path" >/dev/null 2>&1; then
+              echo "::error::clearglass-ai-proxy/$path is tracked in git"
+              exit 1
+            fi
+          done
+
+          # The ignore rules are themselves the control; assert they hold.
+          for path in .env .dev.vars; do
+            if ! git check-ignore -q "clearglass-ai-proxy/$path"; then
+              echo "::error::clearglass-ai-proxy/$path is not gitignored"
+              exit 1
+            fi
+          done
+          echo "Secret files are untracked and ignored."
+        working-directory: .
+
+  source-validation:
+    name: Source validation and security tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: clearglass-ai-proxy/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Syntax check
+        run: npm run check
+
+      # The suite includes the security assertions: fail-closed auth, model
+      # allowlisting, SSRF resistance, secret containment and log redaction.
+      - name: Run the test suite
+        run: npm test
+
+      # Guards the architectural invariants that a test cannot easily express -
+      # each of these is a property of the source layout itself.
+      - name: Assert security invariants in source
+        run: |
+          set -euo pipefail
+          status=0
+
+          # 1. Exactly one module may perform an outbound request. A fetch()
+          #    call anywhere else is a potential SSRF or exfiltration path.
+          #    The Worker's own `async fetch(request, ...)` handler declaration
+          #    is excluded - it is the inbound entry point, not an outbound call.
+          offenders=$(grep -rnE '(^|[^.[:alnum:]_])fetch\(' src/ \
+            | grep -vE '^[^:]+:[0-9]+:[[:space:]]*(async[[:space:]]+)?fetch\([[:space:]]*request' \
+            | grep -v '^src/providers/openai.js:' || true)
+          if [ -n "$offenders" ]; then
+            echo "::error::outbound fetch() outside the provider adapter:"
+            echo "$offenders"
+            status=1
+          fi
+
+          # 2. The upstream URL must come from configuration, never a request.
+          if grep -rnE 'baseUrl\s*=\s*(body|payload|request|url\.searchParams)' src/; then
+            echo "::error::upstream URL derived from request input"
+            status=1
+          fi
+
+          # 3. No hard-coded credential material in source.
+          if grep -rnE '(sk-[A-Za-z0-9]{20,}|Bearer [A-Za-z0-9]{20,})' src/; then
+            echo "::error::hard-coded credential in src/"
+            status=1
+          fi
+
+          # 4. Every route must declare its auth posture explicitly, so a new
+          #    route cannot become public by omission.
+          routes=$(grep -cE "^\s*\{ path: '" src/index.js)
+          declared=$(grep -cE "^\s*\{ path: '.*auth: (true|false)" src/index.js)
+          if [ "$routes" -ne "$declared" ]; then
+            echo "::error::a route in src/index.js does not declare auth: $declared of $routes"
+            status=1
+          fi
+          echo "Checked $routes routes; all declare an auth posture."
+
+          if [ "$status" -eq 0 ]; then
+            echo "Security invariants hold."
+          fi
+          exit "$status"
+
+      - name: Validate Worker build and configuration
+        run: npx wrangler deploy --dry-run
