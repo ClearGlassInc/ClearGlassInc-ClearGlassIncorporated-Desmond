@@ -1,0 +1,31 @@
+/* ClearGlass Visual Engine · decorative host layer.
+ * Additive, layout-neutral. The stage is a fixed, pointer-events-free layer that
+ * sits strictly beneath all content (z-index:-1, matching .cgm-atmos) and is
+ * transparent so it ENHANCES any existing background canvas instead of hiding
+ * content. `contain:strict` isolates its paint from the document flow, so it can
+ * never cause layout shift (directive §36). */
+
+.cg-visual-stage {
+  position: fixed;
+  inset: 0;
+  z-index: -1;                 /* strictly beneath content, composites over .cgm-atmos */
+  pointer-events: none;
+  overflow: hidden;
+  background: transparent;     /* additive: let any existing backdrop show through */
+  contain: strict;
+}
+
+.cg-visual-stage .cg-visual-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: block;
+}
+
+/* Under reduced motion the engine paints one static frame and stops; nothing
+   here pulses or rotates. Kept explicit so intent survives future edits. */
+@media (prefers-reduced-motion: reduce) {
+  .cg-visual-stage { will-change: auto; }
+}
