@@ -2,6 +2,13 @@
 
 Guidance for agents working in this repository.
 
+> **Deploy blocker.** `.github/workflows/pages.yml` and
+> `site-integrity-and-deploy.yml` both run `python3 scripts/verify_site.py`,
+> and that script is not in the repository. `pages.yml` therefore fails at its
+> first step, so GitHub Pages must stay on "Deploy from a branch" until the
+> script is restored — switching the source to "GitHub Actions" would stop the
+> site deploying entirely.
+
 ## What this repo is
 
 `ClearGlassInc.github.io` is the ClearGlass Inc. GitHub Pages site **plus** the
