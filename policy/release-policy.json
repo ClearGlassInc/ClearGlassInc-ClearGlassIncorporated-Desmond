@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "description": "Release policy for the CircleCI control-plane pipeline. Deploys are only permitted from the refs listed below.",
+  "allowed_refs": [
+    "main",
+    "refs/tags/v*"
+  ],
+  "change_reference": {
+    "format": "CG-CHANGE-<YYYYMMDD>-<seq>",
+    "description": "A change reference (ticket/approval id) is required for every deploy so each release is traceable to an approved change.",
+    "required_for": [
+      "deploy_staging",
+      "deploy_production"
+    ]
+  }
+}
