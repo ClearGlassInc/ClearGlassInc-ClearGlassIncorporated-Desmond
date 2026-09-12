@@ -76,10 +76,42 @@ def benign(text: str) -> bool:
     return any(token in text for token in BENIGN)
 
 
+# Pages legitimately pull webfonts and other third-party assets. Whether those
+# hosts are reachable says nothing about the site's own code, and in a sandboxed
+# or offline runner every one of them fails and buries the real findings. Serve
+# them locally as empty 200s so each page is measured on its own behaviour and
+# the result is identical online and off.
+_EMPTY_BODY = {
+    "css": ("text/css", ""),
+    "js": ("application/javascript", ""),
+    "json": ("application/json", "{}"),
+}
+
+
+def stub_external(route, request) -> None:
+    if request.url.startswith(BASE):
+        route.continue_()
+        return
+    kind = request.resource_type
+    if kind == "stylesheet":
+        ctype, body = _EMPTY_BODY["css"]
+    elif kind == "script":
+        ctype, body = _EMPTY_BODY["js"]
+    elif kind in ("fetch", "xhr"):
+        ctype, body = _EMPTY_BODY["json"]
+    else:  # fonts, images, media
+        ctype, body = "application/octet-stream", ""
+    try:
+        route.fulfill(status=200, content_type=ctype, body=body)
+    except PWError:
+        pass
+
+
 def check_page(ctx, url: str, width: int) -> tuple[list[str], bool]:
     """Return (errors, overflowed) for one page at one viewport width."""
     errors: list[str] = []
     page = ctx.new_page()
+    page.route("**/*", stub_external)
     page.on("pageerror", lambda e: errors.append(f"pageerror: {e}"))
     page.on(
         "console",
