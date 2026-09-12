@@ -1,0 +1,250 @@
+# CircleCI control-plane pipeline (scaffolding).
+#
+# STATUS: INERT. This project is NOT yet connected on circleci.com and there is
+# no CircleCI API token. Nothing here runs until a human connects the project
+# and defines the three contexts (ci-readonly, staging-deploy, production-deploy)
+# and their credentials. Deploy/rollback commands are REPLACE_ME_* placeholders.
+#
+# Safety model mirrors the repo's commerce OS: read-only validation -> draft
+# (release manifest) -> human approval (approval jobs) -> execution.
+version: 2.1
+
+parameters:
+  run_validation:
+    type: boolean
+    default: true
+  dry_run:
+    type: boolean
+    default: true
+  deploy_staging:
+    type: boolean
+    default: false
+  deploy_production:
+    type: boolean
+    default: false
+
+executors:
+  ci:
+    docker:
+      - image: cimg/python:3.11
+
+jobs:
+  preflight:
+    executor: ci
+    environment:
+      RUN_VALIDATION: "<< pipeline.parameters.run_validation >>"
+      DEPLOY_STAGING: "<< pipeline.parameters.deploy_staging >>"
+      DEPLOY_PRODUCTION: "<< pipeline.parameters.deploy_production >>"
+      DRY_RUN: "<< pipeline.parameters.dry_run >>"
+    steps:
+      - checkout
+      - run:
+          name: Validate pipeline parameter combinations (fail closed)
+          command: sh scripts/ci/preflight.sh
+
+  verify-lockfiles:
+    executor: ci
+    steps:
+      - checkout
+      - run:
+          name: Verify a supported lockfile is present
+          command: sh scripts/ci/verify-lockfiles.sh
+
+  validate-workflows:
+    executor: ci
+    steps:
+      - checkout
+      - run:
+          name: Parse GitHub workflows and flag unpinned actions
+          command: sh scripts/ci/validate-github-workflows.sh
+      - store_artifacts:
+          path: artifacts/evidence
+          destination: evidence
+
+  agent-contract-tests:
+    executor: ci
+    environment:
+      DRY_RUN: "true"
+      SANDBOX_MODE: "true"
+    steps:
+      - checkout
+      - run:
+          name: Non-destructive agent contract checks (dry-run, sandboxed)
+          command: sh scripts/ci/run-agent-contract-tests.sh
+      - store_artifacts:
+          path: artifacts/evidence
+          destination: evidence
+
+  build-release-manifest:
+    executor: ci
+    steps:
+      - checkout
+      - run:
+          name: Build immutable release manifest with SHA-256 digest
+          command: sh scripts/ci/build-release-manifest.sh
+      - persist_to_workspace:
+          root: .
+          paths:
+            - artifacts/release
+      - store_artifacts:
+          path: artifacts/release
+          destination: release
+
+  deploy-staging:
+    executor: ci
+    environment:
+      DEPLOY_TARGET: "staging"
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Verify artifact digest, capture current version, deploy staging
+          command: sh scripts/ci/deploy-staging.sh
+
+  verify-staging:
+    executor: ci
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Post-deploy verification (staging)
+          command: sh scripts/ci/post-deploy-verify.sh staging
+      - store_artifacts:
+          path: artifacts/evidence
+          destination: evidence
+
+  deploy-production:
+    executor: ci
+    environment:
+      DEPLOY_TARGET: "production"
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Verify artifact digest, capture current version, deploy production
+          command: sh scripts/ci/deploy-production.sh
+
+  verify-production:
+    executor: ci
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Post-deploy verification (production)
+          command: sh scripts/ci/post-deploy-verify.sh production
+      - store_artifacts:
+          path: artifacts/evidence
+          destination: evidence
+
+  rollback-staging:
+    executor: ci
+    environment:
+      DEPLOY_TARGET: "staging"
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Roll staging back to last verified artifact
+          command: sh scripts/ci/rollback-staging.sh
+
+  rollback-production:
+    executor: ci
+    environment:
+      DEPLOY_TARGET: "production"
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Roll production back to last verified artifact
+          command: sh scripts/ci/rollback-production.sh
+
+workflows:
+  validate:
+    when: << pipeline.parameters.run_validation >>
+    jobs:
+      - preflight:
+          context: ci-readonly
+      - verify-lockfiles:
+          context: ci-readonly
+          requires:
+            - preflight
+      - validate-workflows:
+          context: ci-readonly
+          requires:
+            - preflight
+      - agent-contract-tests:
+          context: ci-readonly
+          requires:
+            - preflight
+      - build-release-manifest:
+          context: ci-readonly
+          requires:
+            - verify-lockfiles
+            - validate-workflows
+            - agent-contract-tests
+
+  staging:
+    when: << pipeline.parameters.deploy_staging >>
+    jobs:
+      - preflight:
+          context: staging-deploy
+      - build-release-manifest:
+          context: staging-deploy
+          requires:
+            - preflight
+      - hold-staging:
+          type: approval
+          requires:
+            - build-release-manifest
+      - deploy-staging:
+          context: staging-deploy
+          requires:
+            - hold-staging
+      - verify-staging:
+          context: staging-deploy
+          requires:
+            - deploy-staging
+      - hold-rollback-staging:
+          type: approval
+          requires:
+            - deploy-staging
+      - rollback-staging:
+          context: staging-deploy
+          requires:
+            - hold-rollback-staging
+
+  production:
+    when: << pipeline.parameters.deploy_production >>
+    jobs:
+      - preflight:
+          context: production-deploy
+      - build-release-manifest:
+          context: production-deploy
+          requires:
+            - preflight
+      - hold-production:
+          type: approval
+          requires:
+            - build-release-manifest
+      - deploy-production:
+          context: production-deploy
+          requires:
+            - hold-production
+      - verify-production:
+          context: production-deploy
+          requires:
+            - deploy-production
+      - hold-rollback-production:
+          type: approval
+          requires:
+            - deploy-production
+      - rollback-production:
+          context: production-deploy
+          requires:
+            - hold-rollback-production
