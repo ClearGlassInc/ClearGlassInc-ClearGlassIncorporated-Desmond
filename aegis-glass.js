@@ -335,9 +335,16 @@
   const bindPointerAmbient = () => {
     if (pointerBound || !canHover()) return;
     pointerBound = true;
+    let frame = 0, px = 0, py = 0;
+    const flush = () => {
+      frame = 0;
+      document.body.style.setProperty('--cg-command-pointer-x', `${px}px`);
+      document.body.style.setProperty('--cg-command-pointer-y', `${py}px`);
+    };
     window.addEventListener('pointermove', (event) => {
-      document.body.style.setProperty('--cg-command-pointer-x', `${event.clientX}px`);
-      document.body.style.setProperty('--cg-command-pointer-y', `${event.clientY}px`);
+      px = event.clientX;
+      py = event.clientY;
+      if (!frame) frame = requestAnimationFrame(flush);
     }, { passive: true });
   };
 

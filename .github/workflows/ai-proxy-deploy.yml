@@ -1,0 +1,228 @@
+# ClearGlass AI Gateway - production deployment.
+#
+# Named ai-proxy-deploy.yml rather than deploy.yml because this monorepo
+# already carries 74 workflows; the prefix keeps the gateway's CI separate from
+# the static site and the commerce control plane.
+#
+# Path-filtered: a change to the marketing site never redeploys the gateway.
+
+name: AI Proxy Deploy
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "clearglass-ai-proxy/**"
+      - ".github/workflows/ai-proxy-deploy.yml"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "clearglass-ai-proxy/**"
+      - ".github/workflows/ai-proxy-deploy.yml"
+  workflow_dispatch:
+
+# Least privilege: the workflow reads the repo and nothing else.
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-proxy-deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: clearglass-ai-proxy
+
+jobs:
+  verify:
+    name: Lint, build and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: clearglass-ai-proxy/package-lock.json
+
+      # `npm ci` installs exactly the locked tree and fails if package.json and
+      # the lockfile disagree - `npm install` would silently resolve new code.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Syntax check
+        run: npm run check
+
+      - name: Test
+        run: npm test
+
+      # Proves the Worker bundles and that wrangler.toml is valid before any
+      # deploy step touches production.
+      - name: Validate Worker build
+        run: npx wrangler deploy --dry-run
+
+      # A committed secret would be published to the edge on the next deploy.
+      - name: Assert no secrets are committed
+        run: |
+          set -euo pipefail
+          if [ -f .env ] || [ -f .dev.vars ]; then
+            echo "::error::.env or .dev.vars is committed; secrets must not be in git"
+            exit 1
+          fi
+          # wrangler.toml is public config. A secret placed in it is readable by
+          # anyone with repo access.
+          if grep -nEi '^[[:space:]]*(OPENAI_API_KEY|PROXY_ACCESS_TOKEN)[[:space:]]*=' wrangler.toml; then
+            echo "::error::secrets must be set with 'wrangler secret put', not in wrangler.toml"
+            exit 1
+          fi
+          echo "No committed secrets detected."
+
+  deploy:
+    name: Deploy to Cloudflare Workers
+    needs: verify
+    # Never deploys from a pull request, including one from a fork.
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: clearglass-ai-proxy/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Secrets are pushed before the code that depends on them, so the Worker
+      # is never live with a missing credential. Values arrive on stdin: they
+      # never appear in a command line, a log, or the process table.
+      - name: Publish Worker secrets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PROXY_ACCESS_TOKEN: ${{ secrets.PROXY_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+          for name in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID OPENAI_API_KEY PROXY_ACCESS_TOKEN; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::required secret $name is not set in repository settings"
+              exit 1
+            fi
+          done
+          printf '%s' "$OPENAI_API_KEY" | npx wrangler secret put OPENAI_API_KEY
+          printf '%s' "$PROXY_ACCESS_TOKEN" | npx wrangler secret put PROXY_ACCESS_TOKEN
+
+      - name: Deploy
+        id: deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npm run deploy
+
+      # A green deploy step is not proof the Worker serves traffic. This asserts
+      # on the live response, and on the two behaviours that matter most:
+      # the service answers, and it is not open.
+      - name: Post-deployment health and authentication check
+        env:
+          GATEWAY_URL: ${{ vars.GATEWAY_URL }}
+          PROXY_ACCESS_TOKEN: ${{ secrets.PROXY_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${GATEWAY_URL:-}" ]; then
+            echo "::warning::repository variable GATEWAY_URL is not set; skipping post-deploy verification."
+            echo "::warning::Set it to the deployed Worker URL to enable this gate."
+            exit 0
+          fi
+
+          echo "Waiting for the new version to become available..."
+          sleep 10
+
+          echo "--- GET /health ---"
+          health_status=$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 20 "${GATEWAY_URL}/health")
+          cat /tmp/health.json
+          if [ "$health_status" != "200" ]; then
+            echo "::error::health check returned $health_status, expected 200"
+            exit 1
+          fi
+          if ! grep -q '"ok":true' /tmp/health.json; then
+            echo "::error::health payload did not report ok"
+            exit 1
+          fi
+          if ! grep -q '"ready":true' /tmp/health.json; then
+            echo "::error::gateway reports it is not ready; check that secrets are set"
+            exit 1
+          fi
+
+          echo "--- unauthenticated request must be refused ---"
+          unauth_status=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 \
+            -X POST "${GATEWAY_URL}/v1/chat/completions" \
+            -H 'Content-Type: application/json' \
+            -d '{"messages":[{"role":"user","content":"ping"}]}')
+          if [ "$unauth_status" != "401" ]; then
+            echo "::error::unauthenticated request returned $unauth_status, expected 401 - the gateway may be open"
+            exit 1
+          fi
+
+          echo "--- an invalid token must also be refused ---"
+          bad_status=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 \
+            -X POST "${GATEWAY_URL}/v1/chat/completions" \
+            -H 'Authorization: Bearer invalid-token-used-only-for-this-check' \
+            -H 'Content-Type: application/json' \
+            -d '{"messages":[{"role":"user","content":"ping"}]}')
+          if [ "$bad_status" != "401" ]; then
+            echo "::error::invalid token returned $bad_status, expected 401"
+            exit 1
+          fi
+
+          # An authenticated call is verified WITHOUT spending provider tokens:
+          # an over-limit request is rejected by the gateway's own validation
+          # after authentication succeeds, which proves the credential works.
+          # Set RUN_LIVE_AI_CHECK to make a real, billable completion instead.
+          echo "--- authenticated request must pass authentication ---"
+          authed_status=$(curl -sS -o /tmp/authed.json -w '%{http_code}' --max-time 30 \
+            -X POST "${GATEWAY_URL}/v1/chat/completions" \
+            -H "Authorization: Bearer ${PROXY_ACCESS_TOKEN}" \
+            -H 'Content-Type: application/json' \
+            -d '{"messages":[]}')
+          cat /tmp/authed.json
+          if [ "$authed_status" = "401" ]; then
+            echo "::error::a valid token was rejected; the deployed PROXY_ACCESS_TOKEN may not match"
+            exit 1
+          fi
+          if [ "$authed_status" != "400" ]; then
+            echo "::warning::expected 400 from request validation, got $authed_status"
+          fi
+
+          echo "Post-deployment verification passed."
+
+      - name: Optional live AI call
+        # Off by default: this spends real provider tokens on every deploy.
+        # Enable with repository variable RUN_LIVE_AI_CHECK=true.
+        if: ${{ vars.RUN_LIVE_AI_CHECK == 'true' }}
+        env:
+          GATEWAY_URL: ${{ vars.GATEWAY_URL }}
+          PROXY_ACCESS_TOKEN: ${{ secrets.PROXY_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+          status=$(curl -sS -o /tmp/live.json -w '%{http_code}' --max-time 60 \
+            -X POST "${GATEWAY_URL}/v1/chat/completions" \
+            -H "Authorization: Bearer ${PROXY_ACCESS_TOKEN}" \
+            -H 'Content-Type: application/json' \
+            -d '{"messages":[{"role":"user","content":"Reply with the single word: ready"}],"max_completion_tokens":16}')
+          cat /tmp/live.json
+          if [ "$status" != "200" ]; then
+            echo "::error::live AI call returned $status"
+            exit 1
+          fi

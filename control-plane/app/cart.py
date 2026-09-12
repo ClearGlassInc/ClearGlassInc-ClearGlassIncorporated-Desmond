@@ -125,7 +125,7 @@ def _bundle_rate(quantity: int, tiers: list[dict[str, Any]]) -> Decimal:
     Tiers are evaluated most-generous-first so the customer always gets the
     better of two overlapping thresholds.
     """
-    best = Decimal("0")
+    best = Decimal(0)
     for tier in sorted(tiers, key=lambda t: int(t.get("min_qty", 0)), reverse=True):
         if quantity >= int(tier.get("min_qty", 0)):
             best = max(best, Decimal(str(tier.get("rate", "0"))))
@@ -135,7 +135,7 @@ def _bundle_rate(quantity: int, tiers: list[dict[str, Any]]) -> Decimal:
 
 def _round_cents(value: Decimal) -> int:
     """Half-up, the way a till rounds — banker's rounding surprises people."""
-    return int(value.quantize(Decimal("1"), rounding=ROUND_HALF_UP))
+    return int(value.quantize(Decimal(1), rounding=ROUND_HALF_UP))
 
 
 def price_cart(requested: list[dict[str, Any]]) -> CartTotals:
@@ -251,7 +251,7 @@ def to_stripe_line_items(totals: CartTotals) -> list[dict[str, Any]]:
         line_items = [_line(i, i.unit_amount, i.quantity) for i in totals.items]
     else:
         draft = [
-            (item, _round_cents(Decimal(item.unit_amount) * (Decimal("1") - rate)), item.quantity)
+            (item, _round_cents(Decimal(item.unit_amount) * (Decimal(1) - rate)), item.quantity)
             for item in totals.items
         ]
         delta = totals.discounted_subtotal - sum(unit * qty for _, unit, qty in draft)

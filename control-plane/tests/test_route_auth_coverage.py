@@ -25,17 +25,18 @@ from __future__ import annotations
 import pytest
 
 try:
+    import os as _os
+
     from fastapi.testclient import TestClient
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
     from sqlalchemy.pool import StaticPool
-
-    import os as _os
     _os.environ.setdefault("DATABASE_URL", "sqlite://")
-    from app import config as config_module
-    from app import db as db_module
     from app.main import create_app
     from app.models import Base
+
+    from app import config as config_module
+    from app import db as db_module
 
     _HAS_WEB_STACK = True
 except (ImportError, RuntimeError):  # pragma: no cover - minimal env runs pure tests only

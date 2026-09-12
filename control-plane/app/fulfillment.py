@@ -17,7 +17,7 @@ business while nothing is shipping.
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Any
 
@@ -40,7 +40,7 @@ class FulfillmentError(RuntimeError):
 
 
 def _utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def _parse_ship_date(value: Any) -> datetime | None:
@@ -55,7 +55,7 @@ def _parse_ship_date(value: Any) -> datetime | None:
         parsed = datetime.fromisoformat(value.strip().replace("Z", "+00:00"))
     except ValueError:
         return None
-    return parsed if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
+    return parsed if parsed.tzinfo else parsed.replace(tzinfo=UTC)
 
 
 def shipping_from_stripe_session(obj: dict[str, Any]) -> dict[str, Any]:

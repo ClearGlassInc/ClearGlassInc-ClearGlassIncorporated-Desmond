@@ -4,7 +4,7 @@ The append-only ``events`` table is the audit ledger; ``approvals`` is the human
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 
 from sqlalchemy import (
@@ -26,7 +26,7 @@ PortableJSON = JSON().with_variant(JSONB(), "postgresql")
 
 
 def _utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 class Base(DeclarativeBase):
@@ -50,7 +50,7 @@ class Variant(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     product_id: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="CASCADE"))
     sku: Mapped[str] = mapped_column(String(120), unique=True)
-    price: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0"))
+    price: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal(0))
     currency: Mapped[str] = mapped_column(String(3), default="CAD")
 
 
@@ -69,7 +69,7 @@ class Order(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     customer_id: Mapped[int | None] = mapped_column(ForeignKey("customers.id"), nullable=True)
     status: Mapped[str] = mapped_column(String(32), default="pending")
-    total: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0"))
+    total: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal(0))
     currency: Mapped[str] = mapped_column(String(3), default="CAD")
     source: Mapped[str | None] = mapped_column(String(64), nullable=True)
     # Upstream payment reference (Stripe checkout-session id) — dedupe key so
@@ -161,7 +161,7 @@ class Payout(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     stripe_payout_id: Mapped[str] = mapped_column(String(120), unique=True, index=True)
-    amount: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0"))
+    amount: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal(0))
     currency: Mapped[str] = mapped_column(String(3), default="CAD")
     status: Mapped[str] = mapped_column(String(32), default="pending")
     destination: Mapped[str | None] = mapped_column(String(120), nullable=True)
@@ -242,8 +242,8 @@ class MetricsDaily(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     day: Mapped[str] = mapped_column(String(10), unique=True)
-    revenue: Mapped[Decimal] = mapped_column(Numeric(14, 2), default=Decimal("0"))
+    revenue: Mapped[Decimal] = mapped_column(Numeric(14, 2), default=Decimal(0))
     orders: Mapped[int] = mapped_column(Integer, default=0)
-    conversion_rate: Mapped[Decimal] = mapped_column(Numeric(6, 4), default=Decimal("0"))
-    aov: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0"))
-    refund_rate: Mapped[Decimal] = mapped_column(Numeric(6, 4), default=Decimal("0"))
+    conversion_rate: Mapped[Decimal] = mapped_column(Numeric(6, 4), default=Decimal(0))
+    aov: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal(0))
+    refund_rate: Mapped[Decimal] = mapped_column(Numeric(6, 4), default=Decimal(0))

@@ -1,0 +1,98 @@
+#:schema node_modules/wrangler/config-schema.json
+#
+# ClearGlass AI Gateway - Cloudflare Worker configuration.
+#
+# SECRETS DO NOT BELONG IN THIS FILE. It is committed to the repository.
+# Set them out of band, where they are encrypted at rest and never rendered:
+#
+#   npx wrangler secret put OPENAI_API_KEY
+#   npx wrangler secret put PROXY_ACCESS_TOKEN
+#
+# Everything under [vars] is non-secret configuration and is visible to anyone
+# who can read this repo or the Cloudflare dashboard.
+
+name = "clearglass-ai-proxy"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# Ships structured request logs to Workers Logs. `npm run tail` streams them.
+[observability]
+enabled = true
+
+[vars]
+# --- Provider -------------------------------------------------------------
+# Adapter to use. "openai" or "openai-compatible"; see src/providers/provider-router.js.
+PROVIDER = "openai"
+
+# The ONLY upstream the gateway will call. Must be https (http is permitted
+# only for loopback, for local development against a mock). No request field can
+# override this - that is what keeps the Worker from being an open forwarder.
+OPENAI_BASE_URL = "https://api.openai.com/v1"
+
+# Model used when a request omits "model".
+DEFAULT_MODEL = "gpt-5-mini"
+
+# Comma-separated allowlist of models this deployment will serve. Anything not
+# listed is refused with 403 before any upstream call is made.
+#
+# VERIFY these against the models your provider account can actually serve
+# before going live; an unavailable model id fails at the provider, not here.
+# Leave unset and only DEFAULT_MODEL is reachable (fail-closed).
+ALLOWED_MODELS = "gpt-5-mini"
+
+# Optional. /v1/embeddings stays disabled (404) while this is empty.
+# ALLOWED_EMBEDDING_MODELS = "text-embedding-3-small"
+
+# --- CORS -----------------------------------------------------------------
+# Comma-separated list of exact origins permitted to call the gateway from a
+# browser. Empty means no browser origin is allowed - server-to-server callers
+# are unaffected, since CORS is enforced by browsers only.
+#
+# "*" is accepted for local development. DO NOT ship "*" to production:
+# it lets any site on the internet drive your gateway from a visitor's browser.
+ALLOWED_ORIGIN = ""
+
+# --- Limits ---------------------------------------------------------------
+# Requests per minute, per source IP and per access token independently.
+RATE_LIMIT_PER_MINUTE = "30"
+
+# Hard ceiling on the request body, in bytes.
+MAX_REQUEST_BYTES = "32768"
+
+# Hard ceiling on generated tokens. A request may ask for less, never more.
+MAX_OUTPUT_TOKENS = "2048"
+
+# Which field carries the injected ceiling when a request names no limit.
+# "max_completion_tokens" for current OpenAI chat models; "max_tokens" for
+# providers that still expect the legacy field; "none" to inject nothing.
+MAX_OUTPUT_TOKENS_FIELD = "max_completion_tokens"
+
+# Maximum messages in one conversation payload.
+MAX_MESSAGES = "64"
+
+# Maximum value accepted for "n" (completions per request). Caps cost blow-up.
+MAX_COMPLETIONS = "4"
+
+# Upstream request timeout, in milliseconds.
+UPSTREAM_TIMEOUT_MS = "30000"
+
+# Set to "false" to refuse streaming requests entirely.
+ALLOW_STREAMING = "true"
+
+# --- Edge-enforced rate limiting (recommended for production) --------------
+# The built-in limiter counts per isolate, so the real ceiling is higher than
+# RATE_LIMIT_PER_MINUTE under load. Uncomment to enforce globally at the edge;
+# src/middleware/rate-limit.js detects the binding and uses it automatically.
+# `period` accepts 10 or 60 (seconds); keep `limit` in step with the var above.
+#
+# [[unsafe.bindings]]
+# name = "RATE_LIMITER"
+# type = "ratelimit"
+# namespace_id = "1001"
+# simple = { limit = 30, period = 60 }
+
+# --- Custom domain --------------------------------------------------------
+# Serve the gateway from your own hostname instead of *.workers.dev.
+# [[routes]]
+# pattern = "ai.clearglassinc.com/*"
+# zone_name = "clearglassinc.com"

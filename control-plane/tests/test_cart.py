@@ -196,7 +196,7 @@ def test_server_catalog_matches_the_storefront_catalog() -> None:
     """Every id, and every price, identical on both sides."""
     html = SIDE_STORE_HTML.read_text(encoding="utf-8")
     embedded = json.loads(
-        re.search(r'<script[^>]*id="catalog"[^>]*>(.*?)</script>', html, re.S).group(1)
+        re.search(r'<script[^>]*id="catalog"[^>]*>(.*?)</script>', html, re.DOTALL).group(1)
     )
     page = {i["id"]: int(round(float(i["price"]) * 100)) for i in embedded}
     server = {i["id"]: i["amount"] for i in cart.catalog()}
@@ -211,7 +211,7 @@ def test_full_cart_total_matches_the_storefront_arithmetic() -> None:
     server_catalog = {i["id"]: i["amount"] for i in cart.catalog()}
     sub = sum(server_catalog[b["id"]] * b["quantity"] for b in basket)
     qty = sum(b["quantity"] for b in basket)
-    rate = Decimal("0.15") if qty >= 5 else Decimal("0.10") if qty >= 3 else Decimal("0")
+    rate = Decimal("0.15") if qty >= 5 else Decimal("0.10") if qty >= 3 else Decimal(0)
     disc = cart._round_cents(Decimal(sub) * rate)
     dsub = sub - disc
     ship = 0 if dsub >= 2500 else 499
@@ -224,16 +224,17 @@ def test_full_cart_total_matches_the_storefront_arithmetic() -> None:
 # ------------------------------------------------------------------- the API
 
 try:
+    import os as _os
+
     from fastapi.testclient import TestClient
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
     from sqlalchemy.pool import StaticPool
-
-    import os as _os
     _os.environ.setdefault("DATABASE_URL", "sqlite://")
-    from app import db as db_module
     from app.main import create_app
     from app.models import Base
+
+    from app import db as db_module
 
     _HAS_WEB_STACK = True
 except (ImportError, RuntimeError):  # pragma: no cover - minimal env runs pure tests only

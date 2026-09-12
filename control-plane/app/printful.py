@@ -117,7 +117,7 @@ def _default_requester(settings: Settings) -> Requester:
             headers["X-PF-Store-Id"] = settings.printful_store_id
         req = urllib.request.Request(url, data=data, headers=headers, method=method)
         try:
-            with urllib.request.urlopen(req, timeout=30) as response:  # noqa: S310 - fixed https base
+            with urllib.request.urlopen(req, timeout=30) as response:
                 raw = response.read()
                 return response.status, _decode_body(raw)
         except urllib.error.HTTPError as exc:  # Printful puts the reason in the body

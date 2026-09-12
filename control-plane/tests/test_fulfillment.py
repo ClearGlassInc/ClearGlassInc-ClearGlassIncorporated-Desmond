@@ -9,13 +9,13 @@ from __future__ import annotations
 from decimal import Decimal
 
 import pytest
+from app.config import Settings
+from app.models import Approval, Base, Event, Order, Shipment
 from sqlalchemy import create_engine, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app import fulfillment, printful
-from app.config import Settings
-from app.models import Approval, Base, Event, Order, Shipment
 
 
 @pytest.fixture()

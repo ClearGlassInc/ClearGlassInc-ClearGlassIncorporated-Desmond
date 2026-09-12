@@ -57,7 +57,7 @@
         var max = (h.scrollHeight - h.clientHeight) || 1;
         var pct = Math.min(100, Math.max(0, y / max * 100));
         var nearBottom = (max - y) < 360;
-        bar.style.width = pct + "%";
+        bar.style.transform = "scaleX(" + (pct / 100).toFixed(5) + ")";
         top.classList.toggle("show", y > 480);
         bottom.classList.toggle("show", max > 900 && !nearBottom);
         ticking = false;

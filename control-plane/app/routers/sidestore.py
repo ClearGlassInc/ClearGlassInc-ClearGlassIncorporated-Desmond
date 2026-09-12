@@ -15,8 +15,8 @@ from ..audit import log_event
 from ..db import get_session
 from ..schemas import (
     CheckoutSessionOut,
-    SideStoreCatalogItemOut,
     SideStoreCartRequest,
+    SideStoreCatalogItemOut,
     SideStoreQuoteOut,
 )
 from ..security import rate_limit

@@ -16,7 +16,7 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 - **CTA bridge:** Each cluster ends in two relevant, non-coercive next steps such as offers, pricing, readiness, or booking.
 - **Responsive behavior:** Three route cards collapse to one column below 620px; related cards use an adaptive grid; motion is disabled when reduced motion is requested.
 - **SEO and accessibility:** Links are static HTML, labels are descriptive, navigation landmarks are named, focus states are visible, and all routes remain unchanged.
-- **Audit coverage:** 159 public pages are connected and 14 utility, completion, prototype, or private pages are explicitly excluded.
+- **Audit coverage:** 160 public pages are connected and 13 utility, completion, prototype, or private pages are explicitly excluded.
 
 ## Page-by-page flow map
 
@@ -106,7 +106,7 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 | `traffic-enforcement.html` — Speed Vision AI | AI traffic-enforcement platform | Counter-UAS OS | Government Solutions | SATS Digital Twin | Book a security engagement / Check our procurement readiness |
 | `sats-digital-twin.html` — SATS Digital Twin | storm-adaptive transit simulation with governed operations | Speed Vision AI | Government Solutions | Government Solutions | Book a security engagement / Check our procurement readiness |
 | **Services & Engagements** | **Topic cluster** |  |  |  |  |
-| `offers/index.html` — Services & Engagements | every ClearGlass offer in one place | Growth Command Centre | Services & Engagements | ClearGlass Store | Book a security engagement / See pricing & plans |
+| `offers/index.html` — Services & Engagements | every ClearGlass offer in one place | 30-Day Canada–US Control Diagnostic | Services & Engagements | ClearGlass Store | Book a security engagement / See pricing & plans |
 | `store.html` — ClearGlass Store | book a security engagement | Services & Engagements | Services & Engagements | Pricing & Engagements | Book a security engagement / See pricing & plans |
 | `pricing.html` — Pricing & Engagements | plans and engagement models | ClearGlass Store | Services & Engagements | Guardian Plans & Pricing | Book a security engagement / See pricing & plans |
 | `plans.html` — Guardian Plans & Pricing | per-seat subscription tiers for the Guardian console | Pricing & Engagements | Services & Engagements | ClearGlass Workspace | Book a security engagement / See pricing & plans |
@@ -125,7 +125,8 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 | `products.html` — ClearGlass Products | the unified ClearGlass product catalog | Side Store | Services & Engagements | Business Productivity Suite | Book a security engagement / See pricing & plans |
 | `business-productivity-suite.html` — Business Productivity Suite | Canadian-first business productivity planning | ClearGlass Products | Services & Engagements | Global Growth Engine | Book a security engagement / See pricing & plans |
 | `global-growth-engine.html` — Global Growth Engine | governed multi-market growth intelligence | Business Productivity Suite | Services & Engagements | Growth Command Centre | Book a security engagement / See pricing & plans |
-| `apps/command-center/index.html` — Growth Command Centre | governed Burlington growth operations and approvals | Global Growth Engine | Services & Engagements | Services & Engagements | Book a security engagement / See pricing & plans |
+| `apps/command-center/index.html` — Growth Command Centre | governed Burlington growth operations and approvals | Global Growth Engine | Services & Engagements | 30-Day Canada–US Control Diagnostic | Book a security engagement / See pricing & plans |
+| `assets/canada-us-30-day-diagnostic.html` — 30-Day Canada–US Control Diagnostic | one-page checklist for mapping cross-border data, agents and dual-jurisdiction evidence | Growth Command Centre | Services & Engagements | Services & Engagements | Book a security engagement / See pricing & plans |
 | **Web Design & UI Engineering** | **Topic cluster** |  |  |  |  |
 | `web-design.html` — Web Design & Development | growth infrastructure built by ClearGlass | Hover Menu | Web Design & Development | Ultra Glass | Book a security engagement / See pricing & plans |
 | `ultra-glass.html` — Ultra Glass | governed intelligence, rendered visible | Web Design & Development | Web Design & Development | ClearGlass Ultra | Book a security engagement / See pricing & plans |
@@ -201,7 +202,6 @@ These pages remain intact but are not eligible for generated journey updates. Ex
 | Page | Role | Exclusion rationale |
 |---|---|---|
 | `404.html` | Error recovery | noindex redirect and route-recovery page |
-| `assets/canada-us-30-day-diagnostic.html` | Sales collateral | noindex one-page checklist handed out with the Canada–US assessment; no inbound links and deliberately outside sitemap.xml |
 | `cg-loader.html` | Application utility | noindex branded loading surface |
 | `google23RWyXWkoxqgArev8achU8IfVxYC5EIUAYBsuTYKLFM.html` | Site verification | Google ownership verification artifact |
 | `header-mockup-2040.html` | Design prototype | noindex, nofollow header study |
