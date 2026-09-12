@@ -301,16 +301,35 @@
       }
       var railLis = [].slice.call(rail.querySelectorAll('li'));
       var pctEl = rail.querySelector('.ix-toc-pct');
-      function spy() {
-        var mark = scrollY + innerHeight * 0.28;
-        var idx = 0;
-        heads.forEach(function (h, i) { if (h.offsetTop <= mark) idx = i; });
-        railLis.forEach(function (li, i) { li.classList.toggle('on', i === idx); });
-        var h = document.documentElement;
-        var max = h.scrollHeight - h.clientHeight;
-        pctEl.textContent = (max > 0 ? Math.min(100, Math.round(scrollY / max * 100)) : 0) + '% read';
+      // Scroll spy. Heading offsets and the scroll range are measured once (and
+      // on resize/load) so the scroll path performs ZERO forced layout reads —
+      // previously every scroll event read h.offsetTop for each heading plus
+      // scrollHeight/clientHeight, and the classList/textContent writes that
+      // followed re-dirtied layout for the next event. Scroll bursts are
+      // coalesced into one rAF, and writes are gated on an actual value change.
+      var offsets = [], maxScroll = 0, ticking = false, lastIdx = -1, lastPct = -1;
+      function measure() {
+        offsets = heads.map(function (h) { return h.offsetTop; });
+        var d = document.documentElement;
+        maxScroll = d.scrollHeight - d.clientHeight;
       }
+      function paint() {
+        ticking = false;
+        var mark = scrollY + innerHeight * 0.28, idx = 0;
+        for (var i = 0; i < offsets.length; i++) { if (offsets[i] <= mark) idx = i; }
+        if (idx !== lastIdx) {
+          if (lastIdx >= 0 && railLis[lastIdx]) railLis[lastIdx].classList.remove('on');
+          if (railLis[idx]) railLis[idx].classList.add('on');
+          lastIdx = idx;
+        }
+        var pct = maxScroll > 0 ? Math.min(100, Math.round(scrollY / maxScroll * 100)) : 0;
+        if (pct !== lastPct) { pctEl.textContent = pct + '% read'; lastPct = pct; }
+      }
+      function spy() { if (!ticking) { ticking = true; requestAnimationFrame(paint); } }
+      measure();
       addEventListener('scroll', spy, { passive: true });
+      addEventListener('resize', function () { measure(); spy(); }, { passive: true });
+      addEventListener('load', measure);
       spy();
     }
     var endbar = article.querySelector('.endbar');

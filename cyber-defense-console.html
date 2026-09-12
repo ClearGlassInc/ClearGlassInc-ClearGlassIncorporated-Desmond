@@ -771,11 +771,16 @@ function runGauge(){
   g.style.transition = "none"; g.style.strokeDashoffset = "212";
   void g.getBoundingClientRect();
   g.style.transition = ""; g.style.strokeDashoffset = String(212 - 212*((100-target)/100)*0.79);
-  var n = document.getElementById("gaugeNum"), c = 0;
-  var iv = setInterval(function(){
-    c++; n.textContent = (c<10?"0":"")+c;
-    if (c >= target) clearInterval(iv);
-  }, 45);
+  // rAF-driven, elapsed-time interpolated: preserves the original 810ms sweep
+  // (18 steps x 45ms) but is vsync-synced and frame-rate independent, and only
+  // writes when the displayed integer actually changes.
+  var n = document.getElementById("gaugeNum");
+  var DUR = target * 45, t0 = performance.now(), last = -1;
+  requestAnimationFrame(function step(now){
+    var k = Math.min(1, (now - t0) / DUR), v = Math.round(k * target);
+    if (v !== last) { n.textContent = (v < 10 ? "0" : "") + v; last = v; }
+    if (k < 1) requestAnimationFrame(step);
+  });
 }
 setTimeout(runGauge, reduce ? 0 : 1400);
 

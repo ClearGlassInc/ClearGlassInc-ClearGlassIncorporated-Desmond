@@ -499,16 +499,19 @@ if(!reduceMotion){
     const final=h.textContent;let done=false;
     const ob=new IntersectionObserver(es=>es.forEach(en=>{
       if(!en.isIntersecting||done)return;done=true;ob.disconnect();
-      let frame=0;const total=16;
-      const timer=setInterval(()=>{
-        frame++;
+      // rAF-driven: same 544ms settle (16 frames x 34ms) but synced to the
+      // display refresh instead of a 29Hz timer that drifts against vsync.
+      const total=16,DUR=total*34,t0=performance.now();
+      requestAnimationFrame(function step(now){
+        const k=Math.min(1,(now-t0)/DUR),frame=Math.ceil(k*total);
+        if(k>=1){h.textContent=final;return;}
         h.textContent=final.split('').map((ch,idx)=>{
           if(ch===' ')return ' ';
           const settle=idx/final.length*total;
           return frame>settle?ch:glyphs[Math.floor(Math.random()*glyphs.length)];
         }).join('');
-        if(frame>=total){clearInterval(timer);h.textContent=final;}
-      },34);
+        requestAnimationFrame(step);
+      });
     }),{threshold:.6});
     ob.observe(h);
   });
