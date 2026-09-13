@@ -295,9 +295,16 @@ def main() -> int:
                 for s in res["stranded"][:2]:
                     print(f"              .{s['cls']} :: {s['txt']!r}")
 
+            # A page with no JS-driven system is not an unanimated page: most of
+            # this site animates through CSS keyframes alone. Saying "none" of a
+            # page running 30 concurrent CSS animations would be plainly wrong.
+            systems = "+".join(res["systems"])
+            if not systems:
+                systems = "css-only" if res["loops"] > 0 else "static"
+
             rows.append((
                 rel,
-                "+".join(res["systems"]) or "none",
+                systems,
                 res["status"],
                 " | ".join(res["errors"])[:160],
                 f"loops={res['loops']}",
