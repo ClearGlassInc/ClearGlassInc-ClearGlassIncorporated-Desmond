@@ -84,6 +84,193 @@ Before delivery or merge:
 - Treat target-state architecture documents as specifications, not proof that infrastructure exists.
 - Do not remove existing functionality, content, safeguards, tests, or documentation unless explicitly authorized and validated.
 
+## Change-scope and approval gate
+
+Classify every proposed change before modifying the repository. This section governs how much change an instruction authorizes. It never weakens the repository invariants above, and it never overrides a stricter rule in `CLAUDE.md` or subtree documentation.
+
+### Scope classification
+
+Classify every proposed change as Scope A, Scope B, or Scope C.
+
+#### SCOPE A — safe patch
+
+May proceed without additional approval when strictly limited to:
+
+- fixing an identified homepage bug;
+- correcting a broken animation reference;
+- correcting an incorrect import or path;
+- fixing a JavaScript exception;
+- fixing scroll jitter or stutter caused by existing code;
+- preventing duplicate animation initialization;
+- optimizing existing animation loops;
+- adding defensive browser fallbacks;
+- adding `prefers-reduced-motion` support;
+- fixing layout shift caused by existing animation;
+- correcting CSS rendering behavior;
+- improving existing animation performance;
+- adding tests for existing functionality;
+- correcting CI validation related directly to the task.
+
+A Scope A change must preserve existing behavior and visual identity.
+
+#### SCOPE B — enhancement
+
+Requires explicit approval before implementation if the change would:
+
+- introduce a substantially new visual effect;
+- introduce a new animation subsystem;
+- introduce Canvas or WebGL;
+- introduce a new animation framework or library;
+- add a new external dependency;
+- substantially alter animation timing;
+- change the visual hierarchy;
+- change the hero animation;
+- add new persistent background effects;
+- materially change desktop or mobile behavior;
+- modify deployment architecture;
+- modify GitHub Actions beyond what is necessary for validation;
+- modify build tooling;
+- change security headers;
+- modify routing;
+- change hosting configuration.
+
+The implementation plan and proposed diff may be prepared. Do not apply a Scope B change until approval is explicitly provided.
+
+#### SCOPE C — prohibited without explicit approval
+
+Never perform these actions automatically:
+
+- delete homepage sections;
+- delete existing functionality;
+- replace the homepage;
+- redesign the homepage;
+- replace the ClearGlass visual identity;
+- remove existing animations;
+- remove assets merely because they appear unused;
+- change production hosting;
+- change DNS;
+- rotate credentials;
+- modify secrets;
+- modify authentication;
+- change payment systems;
+- remove GitHub workflows;
+- disable CI checks;
+- bypass branch protection;
+- force-push;
+- rewrite Git history;
+- overwrite production with an unverified build;
+- publish packages;
+- expose credentials or tokens.
+
+If any such action appears necessary, stop and request approval.
+
+### Approval gate
+
+Before making any change outside the approved Scope A patch:
+
+1. Identify the proposed change.
+2. Explain why it is necessary.
+3. Identify affected files.
+4. Identify affected functionality.
+5. Identify potential regression risk.
+6. Provide the smallest safe implementation.
+7. Wait for explicit approval.
+
+Do not interpret "fix it", "make it advanced", "make it futuristic", or "do whatever is necessary" as permission to perform a Scope B or Scope C change. Those instructions authorize the objective, not unrestricted architectural or destructive change.
+
+### Change budget
+
+Prefer the smallest viable patch. Before editing, establish the baseline, the proposed change, and the expected effect. After editing, patch, test, and compare against the baseline.
+
+If the same result can be achieved with fewer files or fewer lines changed, use the smaller change.
+
+- Do not refactor unrelated code.
+- Do not perform opportunistic cleanup.
+- Do not rename unrelated files.
+- Do not upgrade dependencies unless required.
+
+### File-level change control
+
+Before modifying each file, determine its purpose, its current behavior, the required change, and the risk.
+
+Do not modify unrelated files merely because they could be improved. If an existing animation file can be repaired, repair it instead of creating a replacement. If a new file is genuinely required, explain why.
+
+### Delete gate
+
+Deletion requires special handling. Never delete a file automatically merely because:
+
+- it appears unused;
+- it is old;
+- another implementation exists;
+- the filename looks obsolete;
+- a linter reports it;
+- an agent believes it is unnecessary.
+
+Before deletion, prove that no production page references it, no build process references it, no workflow references it, no deployment process references it, no runtime dynamically references it, and removing it does not alter existing functionality.
+
+If that proof is unavailable, do not delete it.
+
+### Design preservation gate
+
+Any visual enhancement must pass this test: does it improve the existing ClearGlass homepage without changing what the homepage fundamentally is?
+
+If yes, proceed only within the approved scope. If no, stop. Do not convert a bug-fix task into a redesign.
+
+### Production deployment gate
+
+A successful build does not authorize production deployment. Before deploying to production, verify that the build passes, tests pass, no new console errors appear, no assets are broken, the homepage loads, scrolling works, animations initialize, responsive layout works, reduced motion works, and existing functionality remains intact.
+
+If production deployment itself requires a protected approval mechanism, do not bypass it. Use the repository's normal approval process.
+
+### Rollback gate
+
+Every modification must be reversible. If a patch causes new scroll problems, animation failure, layout regression, browser incompatibility, console errors, CI failures, broken links, or deployment failure, then stop, identify the regression, revert or repair it, and retest.
+
+Never continue stacking patches on top of a known regression.
+
+### Approval state machine
+
+Use this internal state model for a Scope A change:
+
+```text
+DISCOVERED → BASELINED → SCOPE CLASSIFIED → SAFE PATCH → IMPLEMENT → TEST → VERIFY
+```
+
+Use this model for a Scope B or Scope C change:
+
+```text
+DISCOVERED → BASELINED → SCOPE CLASSIFIED → APPROVAL REQUIRED → WAIT → APPROVED → IMPLEMENT → TEST → VERIFY
+```
+
+Never skip the approval state.
+
+### Change log requirement
+
+For every modified file, record the file, the change, the reason, the scope, the risk, and the validation. For example:
+
+```text
+index.html
+- Change: corrected animation initialization hook
+- Reason: existing animation target was never initialized
+- Scope: A — safe patch
+- Risk: low
+- Validation: homepage runtime test passed
+```
+
+### Final change-scope report
+
+At completion, report:
+
+- **Safe patches applied** — every Scope A change.
+- **Enhancements applied** — every approved Scope B change.
+- **Changes not performed** — every proposed change that required approval but was not authorized.
+- **Files modified** — exact paths.
+- **Files deleted** — state `NONE` unless deletion was explicitly authorized and independently verified.
+- **Production changes** — exactly what was deployed.
+- **Verification** — use only `VERIFIED`, `PARTIALLY VERIFIED`, or `NOT VERIFIED`.
+
+Never imply approval or successful deployment when it did not occur.
+
 ## Engineering management standard
 
 For substantial work, maintain:
