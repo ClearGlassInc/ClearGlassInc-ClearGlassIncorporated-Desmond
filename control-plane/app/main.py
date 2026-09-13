@@ -17,6 +17,7 @@ from .routers import (
     payments,
     sidestore,
     store,
+    subscriptions,
 )
 from .security import (
     auth_enabled,
@@ -67,15 +68,7 @@ def create_app() -> FastAPI:
 
     @app.get("/health", tags=["meta"])
     def health(request: Request) -> dict:
-        """Liveness: the process is up. Makes no external calls.
-
-        Also reports the address this request arrived from and whether its
-        ``X-Forwarded-For`` is currently trusted. Behind a reverse proxy the per-IP
-        throttles can only key on the real caller once ``TRUSTED_PROXY_IPS`` names the
-        router, and that address is otherwise hard to discover — this turns it into one
-        curl against the deployed service. It echoes the caller its own address; no
-        other party's data is exposed.
-        """
+        """Liveness: the process is up. Makes no external calls."""
         peer = request.client.host if request.client else "unknown"
         return {
             "status": "ok",
@@ -113,25 +106,19 @@ def create_app() -> FastAPI:
             "governance": "high/critical actions require human approval",
         }
 
-    # Administrative surfaces (governed actions + the approval gate itself) require an
-    # admin credential. Customer flows (checkout), the Stripe webhook (signature-verified),
-    # and read-only telemetry (metrics/events) stay open by design.
+    # Administrative surfaces require an admin credential. Customer checkout, Stripe
+    # subscription webhooks (signature-verified), and read-only telemetry stay open.
     admin = [Depends(require_admin)]
     app.include_router(store.router, dependencies=admin)
     app.include_router(payments.router)  # per-endpoint: only the refund is gated (see router)
+    app.include_router(subscriptions.router)  # subscription lifecycle + hosted billing portal
     app.include_router(sidestore.router)  # customer cart: public, rate limited, server-priced
     app.include_router(orders.router, dependencies=admin)
     app.include_router(inventory.router, dependencies=admin)
     app.include_router(metrics.router)
     app.include_router(events.router)
     app.include_router(approvals.router, dependencies=admin)
-    # Etsy is an operator surface end to end: connection state and verification read
-    # credential-backed shop identity, and the write endpoints propose live-shop changes.
     app.include_router(etsy.router, dependencies=admin)
-    # Fulfillment mixes surfaces, so it is gated per endpoint rather than wholesale:
-    # the supplier catalogue and an order's tracking are read-only, confirming a
-    # supplier order is admin-gated, and the shipment webhook cannot carry an
-    # operator credential (it is authenticated by its URL secret instead).
     app.include_router(fulfillment.router)
     return app
 
