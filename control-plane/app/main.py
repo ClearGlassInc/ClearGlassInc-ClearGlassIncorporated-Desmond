@@ -17,6 +17,7 @@ from .routers import (
     payments,
     sidestore,
     store,
+    subscriptions,
 )
 from .security import (
     auth_enabled,
@@ -119,6 +120,7 @@ def create_app() -> FastAPI:
     admin = [Depends(require_admin)]
     app.include_router(store.router, dependencies=admin)
     app.include_router(payments.router)  # per-endpoint: only the refund is gated (see router)
+    app.include_router(subscriptions.router)  # durable subscription lifecycle + billing portal
     app.include_router(sidestore.router)  # customer cart: public, rate limited, server-priced
     app.include_router(orders.router, dependencies=admin)
     app.include_router(inventory.router, dependencies=admin)
