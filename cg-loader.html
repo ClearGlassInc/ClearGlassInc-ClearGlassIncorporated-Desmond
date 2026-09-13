@@ -596,7 +596,7 @@ body.exiting .ambient{
   <div class="bot-bar">
     <div class="bot-col">
       <span class="bc-label">Node</span>
-      <span class="bc-value">CG-ONT-BURL-01</span>
+      <span class="bc-value">CG-ONT-TOR-01</span>
     </div>
     <div class="bot-col">
       <span class="bc-label">Encryption</span>
@@ -674,7 +674,7 @@ const NEXT_URL = resolveNext();
 
 // ── Generate session ID ──
 (function generateSession(){
-  const hex = '0123456789ABCDEF';
+  const hex = '1133DESMOND';
   const part = (n) => Array.from({length:n},()=>hex[Math.floor(Math.random()*16)]).join('');
   document.getElementById('sessionId').textContent = `CG-${part(4)}-${part(4)}`;
 })();
