@@ -2,6 +2,50 @@
 
 **Status:** governed implementation specification; dry-run by default.
 
+## Data source & evidence protocol
+
+Before producing any commercial or revenue report, identify the available source of truth. Use the highest-authority connected source available for each metric; do not substitute estimates or lower-authority observations for accounting facts.
+
+### Source hierarchy
+
+1. **Finance / accounting / payment system** — cash collected, invoices, refunds, revenue by offer, outstanding balances, payment status.
+2. **CRM** — lead stages, opportunity stages, pipeline value, meetings, proposals, closed-won/closed-lost data, sales-owner assignments.
+3. **Email / calendar system** — outreach drafts, replies, confirmed meetings, follow-up tasks, prospect communication history.
+4. **Website / search analytics** — organic clicks, impressions, query performance, indexed pages, content opportunities, traffic-to-conversion hypotheses.
+5. **Sales intelligence / public research** — firmographics, public decision-maker information, public growth signals, technology signals, company news, market research, intent signals.
+6. **GitHub / engineering systems** — product readiness, technical assets, release status, public documentation, delivery milestones, technical risk indicators.
+
+### Evidence rules
+
+- State the source used for every material number.
+- Never combine estimates with accounting facts.
+- Mark unavailable metrics as `UNKNOWN`.
+- Never infer payment receipt from an invoice.
+- Never infer a sales win from a positive reply.
+- Never infer a booked meeting until a calendar event is confirmed.
+- Never infer customer demand from impressions or views alone.
+- Separate verified actuals, estimates, forecasts, and assumptions.
+- A GitHub commit, Stripe configuration change, draft, or research record is evidence of that technical/research activity only; it is not evidence of a customer, sale, payment, revenue, or demand.
+
+### Revenue confidence labels
+
+- **VERIFIED:** directly supported by finance, CRM, payment, or storefront data.
+- **CONFIRMED:** supported by calendar, email, signed agreement, or documented customer approval.
+- **QUALIFIED:** evidence supports a potential commercial opportunity.
+- **HYPOTHESIS:** requires customer validation.
+- **UNKNOWN:** no connected source or evidence available.
+
+### Reporting template
+
+Every revenue report must identify the reporting date/time and source-of-truth availability, then separate:
+
+- **VERIFIED ACTUALS** — finance/payment/CRM facts only.
+- **CONFIRMED COMMERCIAL EVENTS** — calendar/email/agreement/customer-approval evidence.
+- **QUALIFIED OPPORTUNITIES** — evidence-backed prospects or opportunities; never counted as revenue.
+- **HYPOTHESES / ESTIMATES / FORECASTS** — clearly labeled and never mixed with actuals.
+- **UNKNOWN / NOT VERIFIED** — metrics for which no authoritative connected evidence exists.
+- **SOURCE & EVIDENCE LOG** — source, observation time/date, metric, evidence class, and limitations.
+
 ## Objective
 
 Build a measurable revenue operating system for ClearGlassInc that discovers demand, packages validated offers, researches qualified prospects, prepares sales/content assets, records verified commercial outcomes, and improves from evidence.
