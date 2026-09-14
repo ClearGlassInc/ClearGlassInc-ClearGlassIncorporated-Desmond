@@ -52,7 +52,9 @@ def validate(text: str) -> int:
 
     contacted_match = re.search(METRICS["Contacted"], text)
     contacted = int(contacted_match.group(1)) if contacted_match else None
-    evidence_count = len(re.findall(r"^- Message sent: ", text, flags=re.MULTILINE))
+    evidence_count = len(
+        re.findall(r"^\s*(?:-\s*)?Message sent:\s*", text, flags=re.MULTILINE)
+    )
 
     if contacted is None:
         failures.append("contacted metric is not verifiable")
