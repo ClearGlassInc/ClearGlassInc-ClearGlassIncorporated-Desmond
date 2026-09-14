@@ -1,0 +1,22 @@
+name: ClearGlass Revenue Pipeline Agent
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 13 * * 1-5"
+
+permissions:
+  contents: read
+
+jobs:
+  pipeline-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate commercial evidence
+        run: python agents/revenue_pipeline_agent/agent.py --validate
+
+      - name: Report pipeline state
+        run: python agents/revenue_pipeline_agent/agent.py --report
