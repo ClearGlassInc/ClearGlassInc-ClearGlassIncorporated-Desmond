@@ -1,21 +1,55 @@
 # ClearGlass Commercial Prospecting Queue
 
-**Created:** 2026-09-13
-**Status:** RESEARCHED — NOT CONTACTED
+**Created:** 2026-09-13  
+**Status:** ACTIVE — 2 CONTACTED  
 **Primary offer:** Security Quick-Audit — CAD $249
+
+## Live scoreboard
+
+| Metric | Verified actual |
+|---|---:|
+| Prospects researched | 8 |
+| Contacted | 2 |
+| Meetings | 0 |
+| Proposals | 0 |
+| Customers | 0 |
+| Verified revenue | CAD $0 |
+| Verified MRR | CAD $0 |
 
 ## Priority accounts
 
 | Priority | Account | Burlington evidence | Commercial angle | Status |
 |---|---|---|---|---|
 | A | Rice Tool & Manufacturing Inc. | CNC manufacturing; public materials identify ISO/TS 16949, Controlled Goods Program and NATO/NCAGE exposure | Supplier/customer security evidence, access control, incident readiness, audit evidence | UNCONTACTED |
-| A | URtech Manufacturing Inc. | Electronics manufacturing; product development, production, testing and traceability | IP protection, M365/identity hardening, supplier/customer security questionnaires | UNCONTACTED |
+| A | URtech Manufacturing Inc. | Electronics manufacturing; public materials identify Burlington operations, traceability, quality assurance and supply-chain activity | IP protection, M365/identity hardening, supplier/customer security questionnaires | CONTACTED — 2026-09-13 |
 | A | onsemi Burlington | Semiconductor assembly/test manufacturing site | High-assurance access, endpoint/identity controls, evidence and resilience | UNCONTACTED |
-| A | PV Labs Ltd. | Burlington ICT/advanced technology; defence-related expansion | Security governance, sensitive IP, supplier/customer assurance | UNCONTACTED |
+| A | PV Labs Ltd. | Burlington ICT/advanced technology; defence-related expansion | Security governance, sensitive IP, supplier/customer assurance | CONTACTED — 2026-09-13 |
 | A | SEKISUI Canada Modular Solutions | New Burlington manufacturing/operations hub announced Aug. 2026 | New-site security baseline, M365/identity, governance and resilience | UNCONTACTED |
 | B | Deeth & Co. LLP | Burlington accounting firm | Confidential client data, M365 security, phishing/BEC, documented controls | UNCONTACTED |
 | B | BLR, LLP | Burlington CPA firm | Client-data protection, identity/access, business continuity | UNCONTACTED |
 | B | Accounting Tax Management Services Inc. | Burlington accounting firm | M365/email security, access controls, backup and evidence | UNCONTACTED |
+
+## Contact evidence
+
+### URtech Manufacturing Inc.
+- Channel: public business sales address
+- Address: `sales@urtechmfg.com`
+- Source: URtech Manufacturing public company material / LinkedIn listing
+- Message sent: 2026-09-13
+- Subject: `Burlington manufacturing security — 15-minute fit check`
+- Offer: CAD $249 Security Quick-Audit
+- Evidence: Outlook send action completed; delivery/read/response not yet verified
+- Next action: monitor for reply; do not follow up until response/permission or other lawful basis is established
+
+### PV Labs Ltd.
+- Channel: public business information address
+- Address: `info@pv-labs.com`
+- Source: PV Labs official website
+- Message sent: 2026-09-13
+- Subject: `Burlington aerospace technology security — 15-minute fit check`
+- Offer: CAD $249 Security Quick-Audit
+- Evidence: Outlook send action completed; delivery/read/response not yet verified
+- Next action: monitor for reply; do not follow up until response/permission or other lawful basis is established
 
 ## Exclusions / lower priority
 
