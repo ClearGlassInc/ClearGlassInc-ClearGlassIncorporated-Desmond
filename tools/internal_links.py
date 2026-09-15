@@ -220,6 +220,7 @@ PAGES: dict[str, tuple[str, str]] = {
     "blog/ai-agents-insider-threat.html": ("AI Agents Are the New Insider Threat", "why agent identity is a security boundary"),
     "blog/almach-scalp-engine.html": ("ALMACH Scalp Engine", "a directional neural-mesh trading study"),
     "blog/artemis-governed-ai-gtm-visual-growth-engine.html": ("Governed AI Threat Modeling", "the Artemis GTM visual growth engine"),
+    "blog/canada-multipolar-sovereignty-resilience-strategy.html": ("Canada in a Multipolar World", "turning strategic uncertainty into sovereign resilience"),
     "blog/canada-us-cross-border-cybersecurity-evidence-controls.html": ("The Canada–US Control Problem", "why North American operations fail at the cross-border evidence layer"),
     "blog/cpcsc-vs-cmmc-residency-split.html": ("CPCSC vs CMMC", "control reuse and the Canadian data-residency split for defence suppliers"),
     "blog/dual-clock-incident-runbook-ccspa-circia-pipeda.html": ("Dual-Clock Incident Runbook", "a Canada–US incident ledger for CCSPA, CIRCIA and PIPEDA clocks"),
@@ -254,6 +255,7 @@ PAGES: dict[str, tuple[str, str]] = {
     "blog/clearglass-workplace-surveillance-intelligence-defense-system.html": ("Workplace Surveillance Intelligence & Defense", "defensive research for worker rights, privacy and accountability"),
     "blog/network-orchestration-ai-automation-cybersecurity.html": ("AI-Driven Network Orchestration", "a field guide to safe, governed network automation"),
     "blog/ontario-influence-environment-august-2026.html": ("Ontario Influence Environment", "verification-first Ontario public-interest intelligence"),
+    "blog/2026-09-15-strategic-chokepoint-sitrep.html": ("Strategic Chokepoint Sitrep", "a verification-first open-source assessment of Hormuz, the Red Sea and Ukraine"),
     "blog/shadow-ai-incident-response-logs-gone.html": ("Shadow AI Incident Response", "forensic readiness before security evidence disappears"),
 }
 
@@ -409,6 +411,7 @@ CLUSTERS: dict[str, dict] = {
             "blog/clearglass-agentops-microsoft-foundry-future-stack.html",
             "blog/ai-safety-black-box-activation-analysis-gavel.html",
             "blog/canada-us-cross-border-cybersecurity-evidence-controls.html",
+            "blog/canada-multipolar-sovereignty-resilience-strategy.html",
             "blog/cpcsc-vs-cmmc-residency-split.html",
             "blog/dual-clock-incident-runbook-ccspa-circia-pipeda.html",
             "blog/osint-workflow-that-survives-contact-with-reality.html",
@@ -436,6 +439,7 @@ CLUSTERS: dict[str, dict] = {
             "blog/network-orchestration-ai-automation-cybersecurity.html",
             "blog/ontario-influence-environment-august-2026.html",
             "blog/shadow-ai-incident-response-logs-gone.html",
+            "blog/2026-09-15-strategic-chokepoint-sitrep.html",
         ],
         "cta": [CTA_STORE, CTA_PRICING],
     },

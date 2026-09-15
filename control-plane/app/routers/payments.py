@@ -10,8 +10,9 @@ from sqlalchemy.orm import Session
 from .. import payments, pricebook
 from ..audit import log_event
 from ..db import get_session
-from ..fulfillment import apply_shipping_details
-from ..models import Order, Payout
+from ..fulfillment import shipping_from_stripe_session
+from ..models import Payout
+from ..order_ledger import record_payment_order
 from ..schemas import (
     ActionResult,
     BillingPortalOut,
@@ -294,70 +295,29 @@ def _record_order(
     event: str,
     shipping_source: dict | None = None,
 ) -> None:
-    """Book (or promote) an order idempotently, keyed on Stripe's own id.
+    """Book a Stripe payment through the shared order ledger.
 
-    Redelivery of an event we already handled is a no-op. The one case that is *not*
-    a no-op is a pending order whose payment later settles: that promotes the existing
-    row instead of inserting a second one for the same money.
+    The booking rules (idempotent on redelivery, promote rather than duplicate a
+    settling order) live in :mod:`app.order_ledger` because PayPal settles into the
+    same table and two copies of "count this money once" would drift. All this
+    adapter adds is the Stripe-specific step of reading the destination address out
+    of a Checkout Session.
     """
-    existing = (
-        session.scalar(select(Order).where(Order.external_ref == external_ref))
-        if external_ref
-        else None
-    )
-
-    if existing is not None:
-        if existing.status == status:
-            log_event(
-                session,
-                actor="stripe",
-                action="order_event_duplicate_skipped",
-                target=str(existing.id),
-                payload={"verified": verified, "external_ref": external_ref, "event": event},
-                result="skipped",
-            )
-            return
-        previous, existing.status = existing.status, status
-        existing.total = total
-        # A pending order settling is the point at which an async payment method
-        # finally yields a shippable order, so re-apply the address here too:
-        # the promoting event carries it and the original may not have.
-        if shipping_source is not None:
-            apply_shipping_details(existing, shipping_source)
-        session.flush()
-        log_event(
-            session,
-            actor="stripe",
-            action=f"order_{status}",
-            target=str(existing.id),
-            payload={
-                "verified": verified,
-                "event": event,
-                "from_status": previous,
-                "amount_total": str(total),
-            },
-            result="executed",
-        )
-        return
-
-    order = Order(
-        status=status,
+    record_payment_order(
+        session,
+        actor="stripe",
+        external_ref=external_ref,
         total=total,
         currency=currency,
         source=source,
-        external_ref=external_ref,
-    )
-    if shipping_source is not None:
-        apply_shipping_details(order, shipping_source)
-    session.add(order)
-    session.flush()
-    log_event(
-        session,
-        actor="stripe",
-        action=f"order_{status}",
-        target=str(order.id),
-        payload={"verified": verified, "event": event, "amount_total": str(total)},
-        result="executed",
+        status=status,
+        verified=verified,
+        event=event,
+        shipping=(
+            shipping_from_stripe_session(shipping_source)
+            if shipping_source is not None
+            else None
+        ),
     )
 
 

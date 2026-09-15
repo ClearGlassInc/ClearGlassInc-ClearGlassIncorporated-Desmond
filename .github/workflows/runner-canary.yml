@@ -1,0 +1,25 @@
+name: Runner Canary
+
+# Minimal diagnostic: proves whether GitHub-hosted runners dispatch at all.
+# No checkout, no actions, no secrets, no environment - just a shell echo.
+# If this fails, the cause is org-level runner entitlement, not workflow YAML.
+
+on:
+  push:
+    branches:
+      - percival/gracious-lamport-tazinj
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Prove a runner picked up this job
+        run: |
+          echo "runner dispatched ok"
+          echo "host=$(uname -a)"
+          echo "time=$(date -u +%FT%TZ)"

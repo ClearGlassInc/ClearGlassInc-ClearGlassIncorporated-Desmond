@@ -7,8 +7,8 @@ services:
     runtime: docker
     plan: starter
     region: oregon
-    dockerfilePath: ./clearglass-commerce/control-plane/Dockerfile
-    dockerContext: ./clearglass-commerce/control-plane
+    dockerfilePath: ./control-plane/Dockerfile
+    dockerContext: ./control-plane
     healthCheckPath: /health
     autoDeploy: true
     envVars:
@@ -58,7 +58,7 @@ services:
         sync: false
       # Stripe Tax. Keep false until Settings → Tax has an origin address, a
       # registration and a default tax code; Stripe rejects session creation
-      # otherwise. See clearglass-commerce/STRIPE_SETUP.md.
+      # otherwise. See STRIPE_SETUP.md.
       - key: STRIPE_AUTOMATIC_TAX
         value: "false"
       - key: CHECKOUT_SUCCESS_URL
@@ -71,8 +71,8 @@ services:
     runtime: docker
     plan: starter
     region: oregon
-    dockerfilePath: ./clearglass-commerce/storefront/Dockerfile
-    dockerContext: ./clearglass-commerce/storefront
+    dockerfilePath: ./storefront/Dockerfile
+    dockerContext: ./storefront
     autoDeploy: true
     envVars:
       - key: NEXT_PUBLIC_API_BASE
@@ -83,8 +83,8 @@ services:
     runtime: docker
     plan: starter
     region: oregon
-    dockerfilePath: ./clearglass-commerce/admin/Dockerfile
-    dockerContext: ./clearglass-commerce/admin
+    dockerfilePath: ./admin/Dockerfile
+    dockerContext: ./admin
     autoDeploy: true
     envVars:
       - key: NEXT_PUBLIC_API_BASE

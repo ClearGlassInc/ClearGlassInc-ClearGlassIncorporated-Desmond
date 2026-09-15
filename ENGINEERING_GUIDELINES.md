@@ -20,7 +20,8 @@ the cross-cutting engineering bar.
 
 ## The commerce safety model is non-negotiable
 
-For anything under `clearglass-commerce/`, the core invariant is
+For anything under the commerce tree (`control-plane/`, `storefront/`,
+`admin/`), the core invariant is
 **read-only analysis → draft → human approval → execution.**
 
 - `control-plane/app/governance.py` scores every proposed action 0–100 and routes
@@ -40,7 +41,7 @@ For anything under `clearglass-commerce/`, the core invariant is
 place, keep markup accessible, verify links and that `sitemap.xml` still resolves.
 No build step — changes deploy through GitHub Pages.
 
-**Commerce control plane** (`clearglass-commerce/control-plane`):
+**Commerce control plane** (`control-plane/`):
 ```bash
 pip install -r requirements.txt   # fastapi, sqlalchemy, stripe, httpx, …
 ruff check .                      # must pass
@@ -50,7 +51,7 @@ python -m app.daily_loop --json   # governance self-check + report (stdlib only)
 `requirements.txt` pins `httpx` because `TestClient` needs it — without it the
 webhook→DB→`/payouts` money-movement tests silently skip. Do not drop that pin.
 
-**Commerce frontend** (`clearglass-commerce/storefront`, `.../admin`):
+**Commerce frontend** (`storefront/`, `admin/`):
 ```bash
 npm ci && npm run build           # tsc --noEmit + next build (the CI gate)
 ```
@@ -77,7 +78,8 @@ dataclasses, workflow inputs mirroring env vars).
 
 ## CI gates that must stay green
 
-- **Commerce Deploy** — ruff + full pytest on `clearglass-commerce/**`.
+- **Commerce Deploy** — ruff + full pytest on `control-plane/**`,
+  `storefront/**`, `admin/**`.
 - **Commerce Frontend CI** — `tsc --noEmit` + `next build` for storefront/admin.
 - **Commerce Daily Loop** — storefront smoke + governance self-check + report.
 

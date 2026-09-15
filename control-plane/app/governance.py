@@ -39,6 +39,10 @@ ACTION_RISK: dict[str, int] = {
     "printful_catalog_snapshot": 10,
     "printful_order_status": 10,
     "printful_shipping_estimate": 15,
+    # low — PayPal reads: credential detection and reconciling captures against the
+    # ledger. Neither changes anything at PayPal.
+    "paypal_connection_check": 0,
+    "paypal_reconcile_captures": 10,
     # medium — content/catalog changes that are reversible but customer-visible
     "refresh_products": 35,
     "publish_content": 45,
@@ -65,7 +69,12 @@ ACTION_RISK: dict[str, int] = {
     # cancelling one abandons a parcel a customer is waiting for.
     "printful_confirm_order": 88,
     "printful_cancel_order": 85,
+    # high — capturing a PayPal order takes the customer's money. It is not the
+    # irreversible half (a capture can be refunded) but it is money movement that
+    # no automation should initiate unwatched.
+    "paypal_capture_order": 88,
     # critical — irreversible or platform-level exposure
+    "paypal_refund_capture": 95,
     "update_payment_settings": 100,
     "update_tax_settings": 95,
     "trigger_refund": 95,
@@ -91,6 +100,10 @@ ALWAYS_ESCALATE = {
     # open the gate.
     "printful_confirm_order",
     "printful_cancel_order",
+    # Capturing a PayPal order moves the customer's money; refunding one moves it
+    # back. Both are human decisions, and neither is ever taken from a webhook.
+    "paypal_capture_order",
+    "paypal_refund_capture",
 }
 
 

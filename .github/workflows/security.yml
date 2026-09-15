@@ -110,47 +110,13 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
+      # The pattern list lives in scripts/secret_scan.py rather than inline here,
+      # because the Maintenance Review loop reads the same result as a circuit
+      # breaker: a red secret scan halts all automated change. Two copies of the
+      # list would drift, and the copy feeding the breaker is the one that would
+      # quietly stop matching.
       - name: Detect hardcoded secrets
-        run: |
-          python3 - <<'PYEOF'
-          import re, sys
-          from pathlib import Path
-
-          PATTERNS = {
-            "AWS access key":        r"AKIA[0-9A-Z]{16}",
-            "GitHub PAT (ghp_)":     r"ghp_[A-Za-z0-9]{36}",
-            "GitHub PAT (ghs_)":     r"ghs_[A-Za-z0-9]{36}",
-            "GitLab PAT":            r"glpat-[A-Za-z0-9_-]{20}",
-            "Generic API key":       r"(?i)api[_-]?key\s*[:=]\s*['\"][A-Za-z0-9/+]{20,}['\"]",
-            "Private key header":    r"-----BEGIN (RSA|EC|DSA|OPENSSH) PRIVATE KEY-----",
-          }
-
-          EXTENSIONS = {
-            ".py", ".js", ".mjs", ".cjs", ".ts", ".tsx",
-            ".env", ".json", ".yaml", ".yml", ".sh",
-          }
-          SKIP_PARTS = {".git", "node_modules", "dist", "build"}
-
-          findings = []
-          for path in Path(".").rglob("*"):
-            if not path.is_file() or path.suffix not in EXTENSIONS:
-              continue
-            if SKIP_PARTS & set(path.parts):
-              continue
-            try:
-              text = path.read_text(encoding="utf-8", errors="ignore")
-            except OSError:
-              continue
-            for label, pattern in PATTERNS.items():
-              if re.search(pattern, text):
-                findings.append(f"{path}: {label}")
-
-          if findings:
-            for f in findings:
-              print(f"::error::{f}")
-            sys.exit(1)
-          print("No hardcoded secrets detected.")
-          PYEOF
+        run: python3 scripts/secret_scan.py
 
   workflow-lint:
     name: Workflow YAML Lint

@@ -1,0 +1,210 @@
+name: Rollback
+
+# One documented way back to a known-good deployment.
+#
+# The rule this exists to enforce is in docs/INCIDENT_RESPONSE.md: after a
+# failed production deployment you roll BACK, capture evidence, and open a
+# remediation pull request. You do not roll forward repeatedly hoping the next
+# commit fixes it — that is how a ten-minute outage becomes an afternoon.
+#
+# Manual dispatch only, and deliberately so. A rollback that fires
+# automatically on a failed health check can flap between two broken states,
+# and an automated rollback of a *data* migration is worse than the outage it
+# is reverting. A human names the target and takes responsibility for it.
+#
+# This workflow does not push to any branch and does not revert commits. It
+# redeploys an existing, previously-built revision and records what happened.
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_sha:
+        description: "Full commit SHA of the known-good revision to redeploy"
+        required: true
+        type: string
+      reason:
+        description: "What is broken, in one line (goes into the incident record)"
+        required: true
+        type: string
+      surface:
+        description: "Which deployment to roll back"
+        required: true
+        type: choice
+        options:
+          - control-plane
+          - storefront
+          - admin
+
+permissions:
+  contents: read
+
+concurrency:
+  # Never run two rollbacks at once: the second would race the first and the
+  # surviving revision would be whichever finished last, not whichever was asked for.
+  group: rollback-${{ inputs.surface }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate the rollback target
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      short_sha: ${{ steps.check.outputs.short_sha }}
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Confirm the target exists and is an ancestor of the default branch
+        id: check
+        env:
+          TARGET_SHA: ${{ inputs.target_sha }}
+        run: |
+          set -euo pipefail
+
+          # A tag or branch name can move; a full SHA cannot. Rolling back to a
+          # name would redeploy whatever that name points at by the time the job
+          # runs, which is not a rollback.
+          if ! printf '%s' "$TARGET_SHA" | grep -qE '^[0-9a-f]{40}$'; then
+            echo "::error::target_sha must be a full 40-character commit SHA, got '$TARGET_SHA'"
+            exit 1
+          fi
+
+          if ! git cat-file -e "${TARGET_SHA}^{commit}" 2>/dev/null; then
+            echo "::error::commit $TARGET_SHA does not exist in this repository"
+            exit 1
+          fi
+
+          # Refuse a revision that was never on the default branch: it was never
+          # the deployed state, so "rolling back" to it is really deploying
+          # something new, unreviewed, during an incident.
+          if ! git merge-base --is-ancestor "$TARGET_SHA" "origin/${{ github.event.repository.default_branch }}"; then
+            echo "::error::$TARGET_SHA is not an ancestor of the default branch; it was never deployed"
+            exit 1
+          fi
+
+          echo "short_sha=$(git rev-parse --short "$TARGET_SHA")" >> "$GITHUB_OUTPUT"
+          echo "Rolling back ${{ inputs.surface }} to:"
+          git --no-pager log -1 --format='  %h %an %ad%n  %s' "$TARGET_SHA"
+
+      - name: Verify the target passes the gates it will be deployed behind
+        run: |
+          set -euo pipefail
+          git checkout --quiet "${{ inputs.target_sha }}"
+          pip install --quiet pytest pyyaml "ruff==0.15.8"
+          pip install --quiet -r control-plane/requirements.txt
+          ruff check control-plane
+          (cd control-plane && python -m pytest tests/ -q)
+
+  deploy:
+    name: Redeploy the known-good revision
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # The protected environment is the gate: a rollback still deploys, and a
+    # deployment during an incident is exactly when an approval matters most.
+    environment: production
+    steps:
+      - name: Checkout the target revision
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          ref: ${{ inputs.target_sha }}
+          persist-credentials: false
+
+      - name: Trigger the deployment
+        env:
+          # Secrets reach the script through the environment, never through
+          # string interpolation into the shell.
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+          TARGET_SHA: ${{ inputs.target_sha }}
+        run: |
+          set -euo pipefail
+          if [ -z "${RENDER_DEPLOY_HOOK:-}" ]; then
+            echo "::error::RENDER_DEPLOY_HOOK is not configured for this environment."
+            echo "Set it in the production environment's secrets, or roll back from"
+            echo "the hosting provider's dashboard and record the deploy id below."
+            exit 1
+          fi
+          curl --fail --silent --show-error --location \
+            --max-time 60 \
+            "${RENDER_DEPLOY_HOOK}?ref=${TARGET_SHA}"
+          echo "Deployment of ${TARGET_SHA} requested."
+
+      - name: Confirm the rolled-back deployment is healthy
+        env:
+          HEALTH_URL: ${{ vars.PRODUCTION_HEALTH_URL }}
+        run: |
+          set -euo pipefail
+          if [ -z "${HEALTH_URL:-}" ]; then
+            echo "::warning::PRODUCTION_HEALTH_URL is not set; health could not be confirmed."
+            echo "::warning::Verify the service by hand before closing the incident."
+            exit 0
+          fi
+          # Deployments take time to come up; poll rather than sample once.
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent --show-error --max-time 10 "$HEALTH_URL" >/dev/null; then
+              echo "Health check passed on attempt ${attempt}."
+              exit 0
+            fi
+            echo "Health check attempt ${attempt} failed; retrying in 15s."
+            sleep 15
+          done
+          echo "::error::${HEALTH_URL} did not become healthy after the rollback."
+          echo "::error::Do not roll forward. Escalate per docs/INCIDENT_RESPONSE.md."
+          exit 1
+
+  record:
+    name: Record the incident
+    needs: [validate, deploy]
+    # Runs whether or not the deploy succeeded: a failed rollback is the more
+    # important thing to have written down.
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Open an incident record
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          REASON: ${{ inputs.reason }}
+          TARGET_SHA: ${{ inputs.target_sha }}
+          SURFACE: ${{ inputs.surface }}
+          DEPLOY_RESULT: ${{ needs.deploy.result }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          # The reason is operator-supplied text. It is passed through a file and
+          # an environment variable rather than interpolated into the command, so
+          # it cannot be read as shell.
+          {
+            echo "## Rollback of ${SURFACE}"
+            echo
+            echo "- Target revision: \`${TARGET_SHA}\`"
+            echo "- Deployment result: **${DEPLOY_RESULT}**"
+            echo "- Run: ${RUN_URL}"
+            echo
+            echo "### Reason given"
+            echo
+            printf '> %s\n' "${REASON}"
+            echo
+            echo "### Required follow-up"
+            echo
+            echo "- [ ] Confirm the service is healthy and customers are unaffected"
+            echo "- [ ] Reconcile any orders taken during the incident window"
+            echo "- [ ] Open a remediation pull request against the change that caused this"
+            echo "- [ ] Do not roll forward until that remediation has a passing test"
+          } > incident.md
+
+          gh issue create --repo "$GH_REPO" \
+            --title "Rollback: ${SURFACE} to ${TARGET_SHA:0:7}" \
+            --body-file incident.md \
+            --label incident || {
+              echo "::warning::could not open the incident issue; the record is in this run's log"
+              cat incident.md
+            }

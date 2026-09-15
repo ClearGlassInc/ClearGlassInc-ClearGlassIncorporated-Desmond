@@ -2,12 +2,17 @@
 
 Guidance for agents working in this repository.
 
-> **Deploy blocker.** `.github/workflows/pages.yml` and
-> `site-integrity-and-deploy.yml` both run `python3 scripts/verify_site.py`,
-> and that script is not in the repository. `pages.yml` therefore fails at its
-> first step, so GitHub Pages must stay on "Deploy from a branch" until the
-> script is restored — switching the source to "GitHub Actions" would stop the
-> site deploying entirely.
+> **Deploy blocker.** GitHub Pages must stay on "Deploy from a branch."
+> Since 2026-09-10 GitHub Actions dispatches no runners for this repository
+> (`runner_id: 0`, no steps, empty check output, 4-15 second runs), so an
+> Actions-based Pages deploy would publish nothing. That is an
+> organisation-level entitlement problem — billing hold, spending limit,
+> allowed-actions policy, or the Actions toggle — fixed in settings, not here.
+> See `docs/BASELINE.md` F1 and `PRODUCTION-RECOVERY.md` §1.4.
+>
+> `scripts/verify_site.py`, which `pages.yml` and `site-integrity-and-deploy.yml`
+> both run, **is present** — restored in `be0b7cd`, and it exits 0. An earlier
+> version of this notice said it was missing; that is no longer true.
 
 ## What this repo is
 
