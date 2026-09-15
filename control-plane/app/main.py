@@ -14,6 +14,7 @@ from .routers import (
     inventory,
     metrics,
     orders,
+    paypal,
     payments,
     sidestore,
     store,
@@ -120,6 +121,10 @@ def create_app() -> FastAPI:
     admin = [Depends(require_admin)]
     app.include_router(store.router, dependencies=admin)
     app.include_router(payments.router)  # per-endpoint: only the refund is gated (see router)
+    # PayPal mixes surfaces the same way: creating an order is a customer flow, the
+    # webhook authenticates by PayPal's signature, and the capture (which moves
+    # money) is admin-gated and queued for approval inside the router.
+    app.include_router(paypal.router)
     app.include_router(subscriptions.router)  # durable subscription lifecycle + billing portal
     app.include_router(sidestore.router)  # customer cart: public, rate limited, server-priced
     app.include_router(orders.router, dependencies=admin)

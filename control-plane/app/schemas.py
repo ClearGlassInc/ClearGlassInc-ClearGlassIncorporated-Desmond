@@ -122,6 +122,24 @@ class RefundRequest(BaseModel):
     reason: str = ""
 
 
+class PayPalOrderOut(BaseModel):
+    """A created PayPal order and where to send the buyer to approve it."""
+
+    id: str
+    approve_url: str
+    mode: str               # live | mock
+    status: str             # PayPal's own order status (CREATED, APPROVED, …)
+    amount_total: int       # cents, resolved server-side from the price book
+    currency: str
+
+
+class PayPalCaptureRequest(BaseModel):
+    """Propose capturing an approved PayPal order (HIGH risk — always gated)."""
+
+    paypal_order_id: str = Field(min_length=3, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
+    reason: str = ""
+
+
 class EtsyPublishListingRequest(BaseModel):
     """Propose publishing a listing to the live Etsy shop (HIGH risk — always gated)."""
 
