@@ -199,11 +199,63 @@ commit the result"), so this is a usability sharp edge, not a defect.
 Classified LOW: either make the check write to a temp tree, or have it state
 that it has modified the working tree.
 
-### F4 — Node build status unknown — MEDIUM
+### F4 — Node build status largely unknown — MEDIUM
 
-No Node install, build, typecheck or test was executed in this pass. Four
-separate npm projects exist (`.`, `storefront/`, `admin/`, plus others). Their
-status is `NOT VERIFIED`, not "passing".
+Node builds were not executed for the root app, `storefront/` or
+`apps/artemis-engineering`. Their status is `NOT VERIFIED`, not "passing".
+
+`admin/` was executed, and it is broken. See F6.
+
+### F6 — `admin/` cannot be installed: `npm ci` exits 1 — HIGH
+
+`Commerce Frontend CI` runs `npm ci && next build` for `storefront` and `admin`.
+On `main`, the first command fails for `admin`, so the app cannot be installed,
+cannot be built, and cannot be deployed.
+
+Reproduced on `origin/main`:
+
+```
+cd admin && npm ci
+npm error code ERESOLVE
+npm error While resolving: react-dom@18.3.1
+npm error Found: react@19.3.0
+npm error Could not resolve dependency:
+npm error peer react@"^18.3.1" from react-dom@18.3.1
+exit code: 1
+```
+
+**Root cause — React major mismatch.** `admin/package.json` declares
+`react: ^19.3.0` alongside `react-dom: ^18.3.0`. React and ReactDOM must share
+a major version. `react-dom@18.3.1` declares a peer of `react@^18.3.1`, which
+`react@19.3.0` cannot satisfy.
+
+**Second defect, latent behind the first.** `admin/package.json` declares
+`typescript: ^5.4.0`, which resolves to `>=5.4.0 <6.0.0`. `admin/package-lock.json`
+pins `node_modules/typescript` to **7.0.2**, which is outside that range. `npm ci`
+validates the lockfile against the manifest, so this would fail on its own even
+once the React conflict is resolved. This arrived with PR #50,
+"deps(admin): bump typescript from 5.9.3 to 7.0.2 in /admin", merged
+2026-09-15 with no CI verification.
+
+**Scope — `admin/` only.** Verified consistent elsewhere:
+
+| Project | react | react-dom | Consistent |
+|---|---|---|---|
+| `admin/` | `^19.3.0` | `^18.3.0` | **No** |
+| `storefront/` | `^18.3.0` | `^18.3.0` | Yes |
+| repo root | `19.1.1` | `19.1.1` | Yes |
+| `apps/artemis-engineering` | `19.1.1` | `19.1.1` | Yes |
+
+**Not repaired here, and deliberately so.** `package.json` and lockfiles are
+protected paths requiring a pull request and human approval. The React fix is
+also a genuine product decision rather than a mechanical correction: Next 16
+accepts `^18.2.0 || ^19.0.0`, so `admin/` can move either way, and the codebase
+currently contains both choices — `storefront/` on React 18, root and
+`apps/artemis-engineering` on React 19. Picking one silently would align
+`admin/` with a major version nobody chose for it. The same question applies to
+whether TypeScript 7 was intended at all.
+
+This is the second confirmed defect on `main` traceable to F1, after F5.
 
 ---
 
@@ -307,7 +359,8 @@ What **is** already enforced in code, and must not be weakened:
 | R6 | No staging environment | HIGH | §4 | Yes — provision |
 | R7 | `main` is not branch-protected | HIGH | `PRODUCTION-RECOVERY.md` §1.1 | Yes — repo settings |
 | R8 | Canonical catalog lacks the fields needed to validate a checkout | MEDIUM | §5 | No — schema work |
-| R9 | Node build/typecheck status unverified | MEDIUM | F4 | No |
+| R9 | Node build/typecheck unverified for root, storefront, artemis | MEDIUM | F4 | No |
+| R9a | **`admin/` cannot be installed.** `npm ci` exits 1; app is undeployable | HIGH | F6 | Yes — React major decision |
 | R10 | `CLAUDE.md` deploy-blocker notice is stale | LOW | F3 | No |
 | R12 | `search-integrity` gate leaves generated files dirty when they are stale | LOW | F5 side observation | No |
 | R11 | No Stripe read source connected, so cash reporting cannot be completed | HIGH | §5 | Yes — connect or export |
@@ -466,8 +519,10 @@ Work that remains available and unblocked, in priority order:
    `docs/CHANGELOG.md`.
 3. Canonical catalog schema (R8).
 4. Stale `CLAUDE.md` deploy-blocker notice (R10).
-5. Verify the Node build (R9).
-6. Make the `search-integrity` gate write to a temp tree, or have it state that
+5. Repair `admin/` (R9a/F6). Needs an owner decision on which React major
+   `admin/` targets, then a protected-path PR for the manifest and lockfile.
+6. Verify the remaining Node builds (R9).
+7. Make the `search-integrity` gate write to a temp tree, or have it state that
    it modified the working tree (R12).
 
 Each is a separate small PR. None of them requires Gate 0.
