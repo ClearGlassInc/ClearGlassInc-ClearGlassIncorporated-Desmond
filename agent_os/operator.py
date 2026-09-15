@@ -139,7 +139,7 @@ CAPABILITIES: tuple[Capability, ...] = (
     ),
 )
 
-_COMMERCE_CWD = "clearglass-commerce/control-plane"
+_COMMERCE_CWD = "control-plane"
 
 
 def _default_runner(argv: Sequence[str], cwd: Path) -> tuple[int, str]:
