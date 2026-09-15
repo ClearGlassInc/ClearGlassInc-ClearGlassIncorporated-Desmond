@@ -180,11 +180,24 @@ This is R2 stated as a fact rather than a hypothetical: merging without CI has
 now produced a real defect on `main`. Repair is tracked separately from this
 baseline and is a small, well-specified change.
 
-**Side observation.** Running `python3 scripts/ci_local.py` modifies tracked
-files as a side effect — `data/seo/page-intents.json`, `feed.xml` and
-`sitemap.xml` came back dirty after a run. A verification gate that mutates the
-working tree is a hazard: an operator running the gate to check cleanliness can
-unknowingly stage generated output. Classified LOW, worth a follow-up.
+**Side observation, refined after testing both states.** The
+`search-integrity` gate compares generator output against **what is committed**,
+and writes the regenerated output into the working tree. The consequence is
+conditional:
+
+- Generated assets already current: the gate passes and `git status` stays
+  clean. Verified.
+- Generated assets stale: the gate fails *and* leaves
+  `data/seo/page-intents.json`, `feed.xml` and `sitemap.xml` modified in the
+  working tree. Verified on `main` at `16057ab`.
+
+So the tree is mutated exactly when the operator is most likely to be confused
+by it — during a failing run, where a subsequent `git add -A` would silently
+stage generated output the operator never reviewed. The gate is doing real work
+and the failure message is clear ("Re-run `tools/generate_search_assets.py` and
+commit the result"), so this is a usability sharp edge, not a defect.
+Classified LOW: either make the check write to a temp tree, or have it state
+that it has modified the working tree.
 
 ### F4 — Node build status unknown — MEDIUM
 
@@ -296,7 +309,7 @@ What **is** already enforced in code, and must not be weakened:
 | R8 | Canonical catalog lacks the fields needed to validate a checkout | MEDIUM | §5 | No — schema work |
 | R9 | Node build/typecheck status unverified | MEDIUM | F4 | No |
 | R10 | `CLAUDE.md` deploy-blocker notice is stale | LOW | F3 | No |
-| R12 | `ci_local.py` mutates tracked files while verifying | LOW | F5 side observation | No |
+| R12 | `search-integrity` gate leaves generated files dirty when they are stale | LOW | F5 side observation | No |
 | R11 | No Stripe read source connected, so cash reporting cannot be completed | HIGH | §5 | Yes — connect or export |
 
 ---
@@ -454,7 +467,7 @@ Work that remains available and unblocked, in priority order:
 3. Canonical catalog schema (R8).
 4. Stale `CLAUDE.md` deploy-blocker notice (R10).
 5. Verify the Node build (R9).
-6. Make `ci_local.py` non-mutating, or have it fail loudly when it dirties the
-   tree (R12).
+6. Make the `search-integrity` gate write to a temp tree, or have it state that
+   it modified the working tree (R12).
 
 Each is a separate small PR. None of them requires Gate 0.
