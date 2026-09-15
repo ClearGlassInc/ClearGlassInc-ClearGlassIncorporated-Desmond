@@ -255,6 +255,7 @@ PAGES: dict[str, tuple[str, str]] = {
     "blog/clearglass-workplace-surveillance-intelligence-defense-system.html": ("Workplace Surveillance Intelligence & Defense", "defensive research for worker rights, privacy and accountability"),
     "blog/network-orchestration-ai-automation-cybersecurity.html": ("AI-Driven Network Orchestration", "a field guide to safe, governed network automation"),
     "blog/ontario-influence-environment-august-2026.html": ("Ontario Influence Environment", "verification-first Ontario public-interest intelligence"),
+    "blog/2026-09-15-strategic-chokepoint-sitrep.html": ("Strategic Chokepoint Sitrep", "a verification-first open-source assessment of Hormuz, the Red Sea and Ukraine"),
     "blog/shadow-ai-incident-response-logs-gone.html": ("Shadow AI Incident Response", "forensic readiness before security evidence disappears"),
 }
 
@@ -438,6 +439,7 @@ CLUSTERS: dict[str, dict] = {
             "blog/network-orchestration-ai-automation-cybersecurity.html",
             "blog/ontario-influence-environment-august-2026.html",
             "blog/shadow-ai-incident-response-logs-gone.html",
+            "blog/2026-09-15-strategic-chokepoint-sitrep.html",
         ],
         "cta": [CTA_STORE, CTA_PRICING],
     },
