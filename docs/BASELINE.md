@@ -5,6 +5,11 @@
 **Default branch:** `main`
 **Observed by:** read-only discovery pass. No file was modified to produce this report.
 
+> **Status as of 2026-09-15 18:30 UTC.** F5, F6 and F7 are **resolved and
+> verified**; F8 is fixed and awaiting merge. R9 and R10 are **closed**. F1
+> remains the blocker on everything else. Details in §11 and
+> `docs/CHANGELOG.md`.
+
 This document is the reference point every later automation change is measured
 against. It records what is verified, what is broken, and what is unknown. It
 does not record intentions.
@@ -199,14 +204,32 @@ commit the result"), so this is a usability sharp edge, not a defect.
 Classified LOW: either make the check write to a temp tree, or have it state
 that it has modified the working tree.
 
-### F4 — Node build status largely unknown — MEDIUM
+### F4 — Node build status — RESOLVED 2026-09-15
 
-Node builds were not executed for the root app, `storefront/` or
-`apps/artemis-engineering`. Their status is `NOT VERIFIED`, not "passing".
+All three CI-relevant Node projects were executed and pass:
 
-`admin/` was executed, and it is broken. See F6.
+| Project | `npm ci` | build / typecheck | vulnerabilities |
+|---|---|---|---|
+| repo root | exit 0 | `tsc --noEmit` exit 0 | **0** |
+| `storefront/` | exit 0 | `next build` exit 0 | **3** — see below |
+| `admin/` | exit 0 | `next build` exit 0 | present, not enumerated |
 
-### F6 — `admin/` cannot be installed: `npm ci` exits 1 — HIGH
+`apps/artemis-engineering` was not executed; it is not in any CI gate. Still
+`NOT VERIFIED`.
+
+**New finding — 3 vulnerabilities in `storefront/`**, from `npm audit`:
+
+| Severity | Package | Advisory |
+|---|---|---|
+| high | `nanoid` | custom generators can loop indefinitely when size is zero |
+| high | `sharp` | libheif — GHSA-g89c-p67h-r497, GHSA-2jg2-4ch7-h545 |
+| moderate | `baseline-browser-mapping` | process termination on invalid input (DoS) |
+
+Not remediated. Lockfiles are a protected path, and `npm audit fix` on a
+transitive `sharp`/libheif chain is not a change to make without a build
+verification behind it.
+
+### F6 — `admin/` cannot be installed: `npm ci` exits 1 — RESOLVED 2026-09-15
 
 `Commerce Frontend CI` runs `npm ci && next build` for `storefront` and `admin`.
 On `main`, the first command fails for `admin`, so the app cannot be installed,
@@ -255,7 +278,38 @@ currently contains both choices — `storefront/` on React 18, root and
 `admin/` with a major version nobody chose for it. The same question applies to
 whether TypeScript 7 was intended at all.
 
-This is the second confirmed defect on `main` traceable to F1, after F5.
+**Resolved** in PR #56 by another contributor: `react-dom` raised to `^19.3.0`
+to match `react`, the lockfile corrected, and
+`tests/test_frontend_dependency_integrity.py` added to gate the cause.
+Independently verified here — `npm ci` and `next build` both exit 0.
+
+This was the second confirmed defect on `main` traceable to F1, after F5.
+
+### F8 — `commerce.selfcheck` ran in a directory that does not exist — FIXED, PR #67
+
+`agent_os/operator.py` set the commerce capability's working directory to
+`clearglass-commerce/control-plane`. Same flattening root cause as F7.
+
+The failure was **silent**: `_default_runner` catches the `OSError` and returns
+`(127, "could not execute: ...")` rather than raising, so the capability has
+been reporting a failure code indefinitely with nothing surfacing it.
+
+Measured:
+
+```
+cwd = clearglass-commerce/control-plane   exists: False   exit: 127
+cwd = control-plane                       exists: True    exit: 0
+```
+
+Fixed, with `test_every_capability_runs_in_a_directory_that_exists` added — the
+existing suite asserted every capability's *command* resolves but never the
+*directory it runs in*.
+
+**Two references that must never be swept**, found in the same pass:
+`control-plane/app/printful.py:114` carries `"User-Agent": "clearglass-commerce/1.0"`
+(not a path), and `agents/*/agent.json` carries `"clearglass-commerce/"` in what
+appears to be a path allowlist (changing an agent's permitted scope is not a docs
+fix). Roughly 70 further references are prose, several *correct as history*.
 
 ---
 
@@ -359,9 +413,10 @@ What **is** already enforced in code, and must not be weakened:
 | R6 | No staging environment | HIGH | §4 | Yes — provision |
 | R7 | `main` is not branch-protected | HIGH | `PRODUCTION-RECOVERY.md` §1.1 | Yes — repo settings |
 | R8 | Canonical catalog lacks the fields needed to validate a checkout | MEDIUM | §5 | No — schema work |
-| R9 | Node build/typecheck unverified for root, storefront, artemis | MEDIUM | F4 | No |
-| R9a | **`admin/` cannot be installed.** `npm ci` exits 1; app is undeployable | HIGH | F6 | Yes — React major decision |
-| R10 | `CLAUDE.md` deploy-blocker notice is stale | LOW | F3 | No |
+| ~~R9~~ | ~~Node build/typecheck unverified~~ — **CLOSED**; root/storefront/admin all pass | — | F4 | Done |
+| R9b | 3 dependency vulnerabilities in `storefront/` (2 high, 1 moderate) | MEDIUM | F4 | No — protected path |
+| ~~R9a~~ | ~~`admin/` cannot be installed~~ — **RESOLVED** in #56, verified | — | F6 | Done |
+| ~~R10~~ | ~~`CLAUDE.md` deploy-blocker notice is stale~~ — **CLOSED**; notice corrected | — | F3 | Done |
 | R12 | `search-integrity` gate leaves generated files dirty when they are stale | LOW | F5 side observation | No |
 | R11 | No Stripe read source connected, so cash reporting cannot be completed | HIGH | §5 | Yes — connect or export |
 
