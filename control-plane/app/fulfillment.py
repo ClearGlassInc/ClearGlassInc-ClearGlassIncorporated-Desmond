@@ -29,6 +29,7 @@ from .audit import log_event
 from .config import Settings, get_settings
 from .governance import score_action
 from .models import Approval, Order, Shipment
+from .order_ledger import apply_shipping
 from .service import run_governed_action
 
 #: Terminal-ish states that a re-run must not disturb.
@@ -92,15 +93,7 @@ def shipping_from_stripe_session(obj: dict[str, Any]) -> dict[str, Any]:
 
 def apply_shipping_details(order: Order, obj: dict[str, Any]) -> None:
     """Copy a Stripe session's shipping address onto the order."""
-    shipping = shipping_from_stripe_session(obj)
-    order.ship_to_name = shipping.get("name")
-    order.ship_to_address1 = shipping.get("address1")
-    order.ship_to_address2 = shipping.get("address2")
-    order.ship_to_city = shipping.get("city")
-    order.ship_to_state = shipping.get("state_code")
-    order.ship_to_country = shipping.get("country_code")
-    order.ship_to_zip = shipping.get("zip")
-    order.ship_to_email = shipping.get("email")
+    apply_shipping(order, shipping_from_stripe_session(obj))
 
 
 def recipient_from_order(order: Order) -> dict[str, Any]:
