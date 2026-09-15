@@ -63,6 +63,25 @@ class Settings(BaseSettings):
     stripe_webhook_secret: str = ""
     stripe_publishable_key: str = ""
 
+    # ── PayPal Orders v2 (second customer-facing processor) ─────────────────
+    # Unset client id/secret = mock mode: no order is created at PayPal and no
+    # network call is made, mirroring the no-Stripe-key behaviour of payments.
+    paypal_client_id: str = ""
+    paypal_client_secret: str = ""     # never logged, never echoed
+    # The id of the webhook subscription PayPal delivers to. Signature verification
+    # is impossible without it, so an unset value means every PayPal notification is
+    # refused — deliberately, since an unverified notification is indistinguishable
+    # from a forged one and would otherwise book revenue on an anonymous POST.
+    paypal_webhook_id: str = ""
+    # Sandbox by default: going live is a deliberate, reviewable config change, not
+    # something that happens the moment credentials appear.
+    paypal_api_base: str = "https://api-m.sandbox.paypal.com"
+    paypal_return_url: str = "http://localhost:3000/paypal/return"
+    paypal_cancel_url: str = "http://localhost:3000/cancel"
+    # Ask PayPal for the buyer's stored address. Needed for physical goods; off for
+    # a services/digital catalogue, which should not collect an address it never uses.
+    paypal_collect_shipping: bool = False
+
     escalation_email: str = "info@clearglassinc.com"
     slack_webhook_url: str = ""
 

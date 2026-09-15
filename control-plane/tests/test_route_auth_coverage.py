@@ -71,6 +71,31 @@ EXEMPT: dict[str, str] = {
         "customer id and derives the customer from the checkout session id instead, "
         "so the caller cannot name whose portal to open. Rate limited per IP."
     ),
+    "/paypal/order": (
+        "Customer PayPal checkout. Same server-priced contract as "
+        "/checkout/session: the request names SKUs and quantities, and the amount "
+        "PayPal is told to charge is resolved from the price book. Rate limited "
+        "per IP."
+    ),
+    "/webhooks/paypal": (
+        "PayPal webhook. Authenticated by PayPal's signature, verified through "
+        "PayPal's verify-webhook-signature API, which an operator credential "
+        "cannot substitute for. Fails closed: an unverified event is refused, not "
+        "processed. Idempotent on redelivery via orders.external_ref. Rate limited "
+        "per IP."
+    ),
+    "/subscriptions/webhook": (
+        "Stripe subscription-lifecycle webhook. Stricter than /webhooks/stripe: it "
+        "refuses any event whose signature does not verify, including when no "
+        "webhook secret is configured, so it cannot run open. Idempotent on "
+        "redelivery via the processed-event table. Rate limited per IP."
+    ),
+    "/subscriptions/portal": (
+        "Customer billing portal for a subscription. Same contract as "
+        "/billing/portal: it refuses a caller-supplied Stripe customer id and "
+        "derives the customer from the checkout session instead, so the caller "
+        "cannot name whose portal to open. Rate limited per IP."
+    ),
     "/fulfillment/webhooks/printful/{secret}": (
         "Supplier shipment webhook, authenticated by the secret in its own URL — "
         "Printful cannot present an operator credential. A wrong secret is refused "

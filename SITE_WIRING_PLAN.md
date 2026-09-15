@@ -16,7 +16,7 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 - **CTA bridge:** Each cluster ends in two relevant, non-coercive next steps such as offers, pricing, readiness, or booking.
 - **Responsive behavior:** Three route cards collapse to one column below 620px; related cards use an adaptive grid; motion is disabled when reduced motion is requested.
 - **SEO and accessibility:** Links are static HTML, labels are descriptive, navigation landmarks are named, focus states are visible, and all routes remain unchanged.
-- **Audit coverage:** 160 public pages are connected and 13 utility, completion, prototype, or private pages are explicitly excluded.
+- **Audit coverage:** 161 public pages are connected and 13 utility, completion, prototype, or private pages are explicitly excluded.
 
 ## Page-by-page flow map
 
@@ -158,8 +158,9 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 | `blog/clearglass-command-center-cyber-defense-console.html` — Inside the Command Center | designing a cyber defense console | The Secure Deployment Agent | ClearGlass Intelligence | ClearGlass AgentOps | Book a security engagement / See pricing & plans |
 | `blog/clearglass-agentops-microsoft-foundry-future-stack.html` — ClearGlass AgentOps | the Microsoft Foundry future stack | Inside the Command Center | ClearGlass Intelligence | AI Safety Beyond the Black Box | Book a security engagement / See pricing & plans |
 | `blog/ai-safety-black-box-activation-analysis-gavel.html` — AI Safety Beyond the Black Box | activation analysis, cognitive elements and model-agnostic GAVEL evaluation | ClearGlass AgentOps | ClearGlass Intelligence | The Canada–US Control Problem | Book a security engagement / See pricing & plans |
-| `blog/canada-us-cross-border-cybersecurity-evidence-controls.html` — The Canada–US Control Problem | why North American operations fail at the cross-border evidence layer | AI Safety Beyond the Black Box | ClearGlass Intelligence | CPCSC vs CMMC | Book a security engagement / See pricing & plans |
-| `blog/cpcsc-vs-cmmc-residency-split.html` — CPCSC vs CMMC | control reuse and the Canadian data-residency split for defence suppliers | The Canada–US Control Problem | ClearGlass Intelligence | Dual-Clock Incident Runbook | Book a security engagement / See pricing & plans |
+| `blog/canada-us-cross-border-cybersecurity-evidence-controls.html` — The Canada–US Control Problem | why North American operations fail at the cross-border evidence layer | AI Safety Beyond the Black Box | ClearGlass Intelligence | Canada in a Multipolar World | Book a security engagement / See pricing & plans |
+| `blog/canada-multipolar-sovereignty-resilience-strategy.html` — Canada in a Multipolar World | turning strategic uncertainty into sovereign resilience | The Canada–US Control Problem | ClearGlass Intelligence | CPCSC vs CMMC | Book a security engagement / See pricing & plans |
+| `blog/cpcsc-vs-cmmc-residency-split.html` — CPCSC vs CMMC | control reuse and the Canadian data-residency split for defence suppliers | Canada in a Multipolar World | ClearGlass Intelligence | Dual-Clock Incident Runbook | Book a security engagement / See pricing & plans |
 | `blog/dual-clock-incident-runbook-ccspa-circia-pipeda.html` — Dual-Clock Incident Runbook | a Canada–US incident ledger for CCSPA, CIRCIA and PIPEDA clocks | CPCSC vs CMMC | ClearGlass Intelligence | The OSINT Workflow That Survives Contact With Reality | Book a security engagement / See pricing & plans |
 | `blog/osint-workflow-that-survives-contact-with-reality.html` — The OSINT Workflow That Survives Contact With Reality | field-tested investigation practice | Dual-Clock Incident Runbook | ClearGlass Intelligence | They Sealed the Evidence | Book a security engagement / See pricing & plans |
 | `blog/ontario-accountability-sealed-evidence.html` — They Sealed the Evidence | a source-led Ontario accountability brief | The OSINT Workflow That Survives Contact With Reality | ClearGlass Intelligence | Master Investigator | Book a security engagement / See pricing & plans |

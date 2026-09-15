@@ -14,6 +14,11 @@ from ..security import rate_limit
 
 router = APIRouter(prefix="/subscriptions", tags=["subscriptions"])
 _webhook_throttle = rate_limit("stripe_subscription_webhook", "rate_limit_webhook_per_minute")
+# The portal is unauthenticated by design (the customer has no account with us),
+# and each call costs a Stripe API round-trip, so it carries the same per-IP
+# throttle as /billing/portal. Without it an anonymous caller can pin the
+# endpoint and burn the account's Stripe rate budget for free.
+_portal_throttle = rate_limit("subscription_portal", "rate_limit_checkout_per_minute")
 
 ACTIVE_STATUSES = {"active", "trialing"}
 
@@ -120,7 +125,7 @@ def _mark_event(session: Session, event_id: str, event_type: str) -> bool:
     return result.rowcount == 1
 
 
-@router.post("/portal")
+@router.post("/portal", dependencies=[Depends(_portal_throttle)])
 def billing_portal(req: PortalRequest) -> dict[str, str]:
     """Create a Stripe-hosted Billing Portal session from a subscription checkout session."""
     try:

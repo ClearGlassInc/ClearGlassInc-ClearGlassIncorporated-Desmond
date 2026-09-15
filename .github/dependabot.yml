@@ -1,0 +1,88 @@
+# Dependency updates, opened as pull requests and never merged automatically.
+#
+# Every manifest here is a protected path in scripts/automation_governance.py: a
+# resolved lockfile is third-party code that will execute in CI and in
+# production, so an update is a reviewed change regardless of how routine the
+# version bump looks. Dependabot's job is to surface them; a human's job is to
+# merge them.
+#
+# The open-PR limits are low on purpose. They are the same reasoning as the
+# automation circuit breakers: a queue of twenty update PRs nobody reads is not
+# better maintenance than three that get reviewed.
+version: 2
+
+updates:
+  # The commerce control plane — FastAPI, SQLAlchemy, Stripe, httpx.
+  - package-ecosystem: pip
+    directory: /control-plane
+    schedule:
+      interval: weekly
+      day: monday
+      time: "12:00"
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - automated-pr
+      - human-approval-required
+    commit-message:
+      prefix: "deps(control-plane)"
+    groups:
+      # One PR for the routine patch/minor churn, so review effort goes to the
+      # majors that actually change behaviour.
+      routine:
+        patterns: ["*"]
+        update-types: ["patch", "minor"]
+
+  - package-ecosystem: npm
+    directory: /storefront
+    schedule:
+      interval: weekly
+      day: monday
+      time: "12:00"
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - automated-pr
+      - human-approval-required
+    commit-message:
+      prefix: "deps(storefront)"
+    groups:
+      routine:
+        patterns: ["*"]
+        update-types: ["patch", "minor"]
+
+  - package-ecosystem: npm
+    directory: /admin
+    schedule:
+      interval: weekly
+      day: monday
+      time: "12:00"
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - automated-pr
+      - human-approval-required
+    commit-message:
+      prefix: "deps(admin)"
+    groups:
+      routine:
+        patterns: ["*"]
+        update-types: ["patch", "minor"]
+
+  # Actions are pinned to full commit SHAs throughout this repository (enforced
+  # by scripts/audit_github_actions.py). Dependabot understands that pinning and
+  # updates the SHA while keeping the version comment accurate, which is the only
+  # sustainable way to keep pinned actions current.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "12:00"
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - area:workflows
+      - human-approval-required
+    commit-message:
+      prefix: "deps(actions)"

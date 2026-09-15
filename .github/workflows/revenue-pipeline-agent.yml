@@ -11,9 +11,16 @@ permissions:
 jobs:
   pipeline-check:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        # Pinned to a full commit SHA like every other action in this
+        # repository: a moving tag is remote code that can change under a
+        # scheduled job nobody is watching. Enforced by
+        # scripts/audit_github_actions.py, which ci.yml runs.
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
 
       - name: Validate commercial evidence
         run: python agents/revenue_pipeline_agent/agent.py --validate
