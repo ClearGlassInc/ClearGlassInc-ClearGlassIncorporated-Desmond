@@ -25,7 +25,7 @@ append-only ledger trigger; `004_order_external_ref.sql` adds the webhook idempo
 ### Continuous deploy (GitHub Actions)
 
 `.github/workflows/commerce-deploy.yml` runs on every push to `main` that touches
-`clearglass-commerce/**`: it gates on `ruff` + the test suite, then triggers a Render deploy via a
+`control-plane/**`, `storefront/**` and `admin/**`: it gates on `ruff` + the test suite, then triggers a Render deploy via a
 **Deploy Hook**. To enable it:
 
 1. Render → your API service → **Settings** → **Deploy Hook** → copy the URL.
@@ -46,7 +46,7 @@ docker compose exec db psql -U commerce -d commerce -f /migrations/001_init.sql
 ## C. Fly.io (API only)
 
 ```bash
-fly launch --dockerfile clearglass-commerce/control-plane/Dockerfile --no-deploy
+fly launch --dockerfile control-plane/Dockerfile --no-deploy
 fly postgres create && fly postgres attach <db>     # sets DATABASE_URL
 fly secrets set STRIPE_SECRET_KEY=... STRIPE_WEBHOOK_SECRET=...
 fly deploy
