@@ -47,6 +47,14 @@ updates:
     commit-message:
       prefix: "deps(storefront)"
     groups:
+      # react and react-dom MUST move together. Left ungrouped, Dependabot bundles
+      # react with @types/react (they are linked) and raises react-dom separately,
+      # which produced PR #48: react 19.3.0 against react-dom 18.3.1, an install
+      # that `npm ci` refuses outright with ERESOLVE. Every update-type is listed
+      # so the grouping holds on a major, which is exactly when it matters.
+      react:
+        patterns: ["react", "react-dom", "@types/react", "@types/react-dom"]
+        update-types: ["patch", "minor", "major"]
       routine:
         patterns: ["*"]
         update-types: ["patch", "minor"]
@@ -65,6 +73,10 @@ updates:
     commit-message:
       prefix: "deps(admin)"
     groups:
+      # See the storefront block: react and react-dom move as one unit.
+      react:
+        patterns: ["react", "react-dom", "@types/react", "@types/react-dom"]
+        update-types: ["patch", "minor", "major"]
       routine:
         patterns: ["*"]
         update-types: ["patch", "minor"]
