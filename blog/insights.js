@@ -268,7 +268,21 @@
   }
 
   function initArticle() {
-    var article = document.querySelector('article');
+    // The blog's markup is not uniform: most briefs are one <article>, a few
+    // are several small <article class="fact"> cards, and at least one puts
+    // its <article> beside the headings rather than around them. Taking the
+    // first match scoped the contents rail and heading anchors to whichever
+    // fragment happened to come first, so score the candidates on how much of
+    // the piece each actually contains.
+    var cands = [].slice.call(document.querySelectorAll('article'));
+    var mainEl = document.querySelector('main.wrap') || document.querySelector('main');
+    if (mainEl) cands.push(mainEl);
+    var article = null, bestScore = -1;
+    for (var ci = 0; ci < cands.length; ci++) {
+      var score = cands[ci].querySelectorAll('h2, h3').length * 1000 +
+                  (cands[ci].textContent || '').length;
+      if (score > bestScore) { bestScore = score; article = cands[ci]; }
+    }
     if (!article) return;
     var heads = [].slice.call(article.querySelectorAll('h2'));
     heads.forEach(function (h) {

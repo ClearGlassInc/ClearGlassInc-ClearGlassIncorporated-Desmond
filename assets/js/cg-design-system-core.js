@@ -99,6 +99,11 @@
         'main > section, body > section, article, .card, .product-card, .tech-card, .connect-card, .value-card, .offer-card, .cg-glass-card'
       );
       if (!targets.length) return;
+      // threshold must stay 0: a percentage threshold is a fraction of the
+      // ELEMENT, not the viewport, so a section taller than
+      // viewport/threshold can never satisfy it and would sit at opacity:0
+      // permanently. Blog sections run past 10,000px on a phone. rootMargin
+      // provides the easing instead, and works at any element height.
       var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (en) {
           if (en.isIntersecting) {
@@ -106,7 +111,7 @@
             io.unobserve(en.target);
           }
         });
-      }, { threshold: 0.08, rootMargin: '0px 0px -6% 0px' });
+      }, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
       for (var i = 0; i < targets.length && i < 80; i++) {
         var t = targets[i];
         var r = t.getBoundingClientRect();
@@ -115,6 +120,24 @@
         t.classList.add('cg-rv');
         io.observe(t);
       }
+      // Failsafe: a block the reader has already reached must be painted even
+      // if its observation was missed. Visibility never depends on animation.
+      var sweep = function () {
+        var pending = document.querySelectorAll('.cg-rv:not(.cg-vis)');
+        for (var j = 0; j < pending.length; j++) {
+          if (pending[j].getBoundingClientRect().top < window.innerHeight) {
+            pending[j].classList.add('cg-vis');
+          }
+        }
+      };
+      window.addEventListener('scroll', sweep, { passive: true });
+      window.addEventListener('resize', sweep, { passive: true });
+      window.addEventListener('load', sweep);
+      window.addEventListener('pageshow', function (e) { if (e.persisted) sweep(); });
+      window.addEventListener('beforeprint', function () {
+        var all = document.querySelectorAll('.cg-rv:not(.cg-vis)');
+        for (var k = 0; k < all.length; k++) all[k].classList.add('cg-vis');
+      });
     } catch (e) { /* reveal is progressive enhancement only */ }
   }
 

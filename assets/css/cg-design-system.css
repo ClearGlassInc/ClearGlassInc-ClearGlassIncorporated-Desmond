@@ -305,6 +305,8 @@ a:hover { color: #ee6669 !important; }
   transition: opacity .8s var(--cg-ease), transform .8s var(--cg-ease);
 }
 .cg-rv.cg-vis { opacity: 1; transform: translateY(0); }
+/* Printing must never capture a half-revealed page. */
+@media print { .cg-rv { opacity: 1 !important; transform: none !important; } }
 
 /* ── 7. GLOBAL TOP BAR — the homepage nav menu, futurized and mounted
        site-wide by cg-design-system.js. Pages that already ship the
