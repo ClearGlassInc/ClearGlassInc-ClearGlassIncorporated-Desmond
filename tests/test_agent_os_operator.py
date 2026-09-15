@@ -160,6 +160,20 @@ def test_every_registered_capability_points_at_a_file_that_exists():
             assert (REPO / t).exists(), f"{cap.key} points at missing {t}"
 
 
+def test_every_capability_runs_in_a_directory_that_exists():
+    """A capability whose cwd is missing dies in the runner, not in a test.
+
+    ``_default_runner`` catches the OSError and returns 127, so a capability
+    pointed at a directory that is not there fails *silently* forever. That is
+    what happened to ``commerce.selfcheck``: its cwd still carried the
+    ``clearglass-commerce/`` prefix the upload flattening removed.
+    """
+    op = Operator(root=REPO)
+    for cap in CAPABILITIES:
+        cwd = op._cwd_for(cap)
+        assert cwd.is_dir(), f"{cap.key} would run in missing dir {cwd}"
+
+
 def test_capabilities_that_write_are_marked_and_gated():
     for cap in CAPABILITIES:
         if cap.writes:
