@@ -1,0 +1,94 @@
+/* ClearGlass Insights — article enhancement layer.
+   Progressive enhancement only: every class here is applied by
+   article-enhance.js at runtime, so a no-JS or script-blocked visit renders
+   the article exactly as it did before this file existed. Nothing in here may
+   hide content. Classes are namespaced cga- to stay clear of the ix- layer in
+   insights.css and of each article's own hand-written styles.
+
+   Theme follows <body data-ix-theme>, same as insights.css, and falls back to
+   the shared ix- custom properties when the article defines them. */
+
+:root{
+  --cga-line:var(--ix-line,rgba(238,99,101,.18));
+  --cga-panel:var(--ix-panel,#191112);
+  --cga-text:var(--ix-text,#f8fbff);
+  --cga-muted:var(--ix-muted,#c7a8aa);
+  --cga-accent:var(--ix-accent,#eb4d4f);
+  --cga-accent-3:var(--ix-accent-3,#55f2a6);
+  --cga-mono:var(--ix-mono,'IBM Plex Mono',ui-monospace,monospace);
+  --cga-sans:var(--ix-sans,'Inter',system-ui,sans-serif);
+}
+
+/* ---------- reading progress ----------
+   Tracks the ARTICLE's own extent, not the document, so the bar reads 100% at
+   the end of the piece rather than at the end of the footer and related links. */
+.cga-progress{position:fixed;left:0;top:0;height:3px;width:100%;z-index:350;
+  background:transparent;pointer-events:none}
+.cga-progress>i{display:block;height:100%;width:0;
+  background:linear-gradient(90deg,var(--cga-accent),var(--cga-accent-3));
+  box-shadow:0 0 12px rgba(235,77,79,.45);transition:width .12s linear}
+@media(prefers-reduced-motion:reduce){.cga-progress>i{transition:none}}
+
+/* ---------- article meta strip ----------
+   Read time and word count are measured from the rendered article text at
+   runtime. They are never authored figures. */
+.cga-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+  margin:18px 0 26px;padding:0;list-style:none}
+.cga-meta li{display:inline-flex;align-items:center;gap:7px;
+  font:600 10.5px/1 var(--cga-mono);letter-spacing:.12em;text-transform:uppercase;
+  color:var(--cga-muted);border:1px solid var(--cga-line);border-radius:999px;
+  padding:7px 11px;background:rgba(255,255,255,.035)}
+.cga-meta li b{color:var(--cga-text);font-weight:700;font-variant-numeric:tabular-nums}
+.cga-meta li::before{content:"";width:5px;height:5px;border-radius:50%;
+  background:var(--cga-accent-3);box-shadow:0 0 7px var(--cga-accent-3);flex:none}
+
+/* ---------- copy button on code blocks ---------- */
+.cga-pre{position:relative}
+.cga-copy{position:absolute;top:9px;right:9px;z-index:2;
+  border:1px solid var(--cga-line);background:rgba(10,8,9,.82);color:var(--cga-muted);
+  border-radius:9px;padding:6px 10px;cursor:pointer;
+  font:700 10px var(--cga-mono);letter-spacing:.12em;text-transform:uppercase;
+  opacity:0;transition:opacity .2s,color .2s,border-color .2s;backdrop-filter:blur(6px)}
+.cga-pre:hover .cga-copy,.cga-copy:focus-visible{opacity:1}
+.cga-copy:hover{color:var(--cga-text);border-color:var(--cga-accent)}
+.cga-copy.done{color:var(--cga-accent-3);border-color:var(--cga-accent-3);opacity:1}
+/* Touch devices get no hover, so the control stays visible. */
+@media(hover:none){.cga-copy{opacity:.75}}
+
+/* ---------- anchor landing ----------
+   Sticky headers on several articles used to swallow the heading you jumped
+   to. Reserve the space so a #section link lands below the chrome. */
+.cga-on [id]{scroll-margin-top:86px}
+
+/* ---------- end-of-article bar ----------
+   Created only when the article has no .endbar of its own; insights.js then
+   fills it with the copy / share / cite / save controls. */
+.cga-endbar{margin:38px 0 0;padding:20px 0 0;border-top:1px solid var(--cga-line)}
+.cga-endbar .cga-endbar-label{display:block;margin-bottom:12px;
+  font:700 10px var(--cga-mono);letter-spacing:.2em;text-transform:uppercase;
+  color:var(--cga-muted)}
+
+/* ---------- keyboard hint ---------- */
+.cga-keys{margin:26px 0 0;font:600 11px var(--cga-sans);color:var(--cga-muted)}
+.cga-keys kbd{display:inline-block;min-width:18px;text-align:center;
+  border:1px solid var(--cga-line);border-bottom-width:2px;border-radius:6px;
+  padding:2px 5px;margin:0 2px;font:700 10px var(--cga-mono);color:var(--cga-text);
+  background:rgba(255,255,255,.05)}
+
+/* ---------- print ----------
+   A printed or PDF-saved brief must carry the whole article and its sources,
+   with no floating chrome and with link targets spelled out. */
+@media print{
+  .cga-progress,.cga-copy,.cga-keys,
+  .ix-top,.ix-toc,.ix-palette,.ix-toast,
+  .cgw-dock,#cgw-panel,.future-controls,.cg-topbar{display:none!important}
+  .cga-on [id]{scroll-margin-top:0}
+  .ix-toc-inline{display:block!important}
+  .ix-toc-inline>ol{display:block!important}
+  article a[href^="http"]::after{content:" (" attr(href) ")";
+    font-size:10px;word-break:break-all;color:#555}
+  article,article *{color:#000!important;background:transparent!important;
+    box-shadow:none!important}
+  article pre,article code{border:1px solid #bbb!important}
+  .cga-meta li{border:1px solid #bbb!important}
+}

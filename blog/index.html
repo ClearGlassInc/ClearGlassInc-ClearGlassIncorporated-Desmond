@@ -15,6 +15,12 @@
 
 <meta charset="UTF-8"/>
 <script>
+/* Opt in to scroll-reveal only when scripting is actually live. The reveal
+   rules hang off .js-reveal, so a no-JS or script-blocked visit renders the
+   whole hub at full opacity instead of a blank column. */
+document.documentElement.className+=' js-reveal';
+</script>
+<script>
 /* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
    session on every page except the homepage. Bypass with ?skipboot=1, or visit
    /loader.html directly to replay. */
@@ -226,17 +232,22 @@ section{padding:42px 0}
 .footer a:hover{color:#fff}
 .ft{font-family:var(--serif);font-style:italic;color:#fff;margin-top:22px}
 
-/* scroll-reveal */
-.reveal{opacity:0;transform:translateY(26px);transition:opacity .9s var(--ease-soft),transform .9s var(--ease-soft)}
-.reveal.in{opacity:1;transform:translateY(0)}
-.stagger>*{opacity:0;transform:translateY(22px);transition:opacity .8s var(--ease-soft),transform .8s var(--ease-soft)}
-.stagger.in>*{opacity:1;transform:translateY(0)}
-.stagger.in>*:nth-child(1){transition-delay:.03s}
-.stagger.in>*:nth-child(2){transition-delay:.12s}
-.stagger.in>*:nth-child(3){transition-delay:.21s}
-.stagger.in>*:nth-child(4){transition-delay:.30s}
-.stagger.in>*:nth-child(5){transition-delay:.39s}
-.stagger.in>*:nth-child(6){transition-delay:.48s}
+/* scroll-reveal
+   Guarded by .js-reveal on <html>, set by the inline script below only when
+   scripting is live. If JS is disabled, blocked, or errors before that line,
+   the rule never applies and the page renders fully — an animation must never
+   be able to leave content invisible. */
+.js-reveal .reveal{opacity:0;transform:translateY(26px);transition:opacity .9s var(--ease-soft),transform .9s var(--ease-soft)}
+.js-reveal .reveal.in{opacity:1;transform:translateY(0)}
+@media print{.js-reveal .reveal,.js-reveal .stagger>*{opacity:1!important;transform:none!important}}
+.js-reveal .stagger>*{opacity:0;transform:translateY(22px);transition:opacity .8s var(--ease-soft),transform .8s var(--ease-soft)}
+.js-reveal .stagger.in>*{opacity:1;transform:translateY(0)}
+.js-reveal .stagger.in>*:nth-child(1){transition-delay:.03s}
+.js-reveal .stagger.in>*:nth-child(2){transition-delay:.12s}
+.js-reveal .stagger.in>*:nth-child(3){transition-delay:.21s}
+.js-reveal .stagger.in>*:nth-child(4){transition-delay:.30s}
+.js-reveal .stagger.in>*:nth-child(5){transition-delay:.39s}
+.js-reveal .stagger.in>*:nth-child(6){transition-delay:.48s}
 
 @media(max-width:920px){.hero-grid,.feature,.two,.newsletter,.footer-grid{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}.nav-links a:not(.nav-cta){display:none}}
 @media(max-width:640px){.wrap{width:min(100% - 28px,var(--max))}.grid,.metrics{grid-template-columns:1fr}.hero{padding-top:46px}.nav-name{font-size:20px}.section-head{display:block}.command{padding:10px}.radar{height:190px}#field{opacity:.35}}
@@ -850,9 +861,35 @@ if(deskFilm&&deskToggle){
   setToggle(false);
 }
 
-/* scroll-reveal */
-const io=new IntersectionObserver(entries=>{entries.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}})},{threshold:.15});
+/* scroll-reveal
+   threshold must stay 0: a percentage threshold is a fraction of the ELEMENT,
+   not the viewport, so any block taller than viewport/threshold can never
+   satisfy it and would stay at opacity:0 forever. The feature and post grids
+   are >10,000px tall on a phone, which is exactly how this page went blank.
+   rootMargin does the easing instead — it fires as the top edge rises into
+   the lower part of the viewport, at any element height. */
+const io=new IntersectionObserver(entries=>{entries.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}})},{threshold:0,rootMargin:'0px 0px -8% 0px'});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+/* Failsafe: no block on this page may stay invisible. Content visibility is
+   never allowed to depend on an animation firing. This does NOT blanket-reveal
+   (that would kill the effect) — it sweeps only blocks the reader has already
+   reached, so anything the observer missed still paints. */
+(function(){
+  const revealAll=()=>document.querySelectorAll('.reveal:not(.in)').forEach(el=>el.classList.add('in'));
+  if(!('IntersectionObserver'in window)||reduceMotion){revealAll();return;}
+  const sweep=()=>{
+    document.querySelectorAll('.reveal:not(.in)').forEach(el=>{
+      /* already scrolled into or past — it should be painted by now */
+      if(el.getBoundingClientRect().top<innerHeight)el.classList.add('in');
+    });
+  };
+  addEventListener('scroll',sweep,{passive:true});
+  addEventListener('resize',sweep,{passive:true});
+  addEventListener('load',sweep);
+  addEventListener('pageshow',e=>{if(e.persisted)sweep();});
+  addEventListener('beforeprint',revealAll);
+  sweep();
+})();
 
 /* count-up stat pills */
 const counters=[...document.querySelectorAll('[data-count]')];
