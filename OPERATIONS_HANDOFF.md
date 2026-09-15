@@ -193,3 +193,180 @@ this system can guarantee income.
 | Production incidents attributable to an automated change | 0 |
 | PayPal sandbox verification completed and recorded | 1 |
 | Weekly report showing verified sales, refunds and exceptions | 4 |
+
+---
+
+# Session addendum — 2026-09-15
+
+The section above documents the PayPal channel and remains accurate. This
+addendum covers a separate production-automation pass on the same day, and
+**supersedes nothing above it.**
+
+Baseline commit for this pass: `16057ab`. Final commit: `c765a04`.
+
+## What was changed
+
+Seven pull requests, all merged, all verified locally before pushing.
+
+| PR | Change | Class |
+|---|---|---|
+| #52 | `docs/BASELINE.md` — verified state, classified failures, risk register | docs |
+| #53 | **F5** — registered an orphaned blog page; `pytest` 7 failed → 0 | fix |
+| #54 | `docs/ARCHITECTURE.md`, `docs/RUNBOOK.md` | docs |
+| #55 | **F7** — `render.yaml` build contexts pointed at a directory that does not exist | fix, protected path |
+| #67 | **F8** — `commerce.selfcheck` ran in a missing directory; exit 127 → 0 | fix |
+| #68 | `docs/CHANGELOG.md`, corrected `CLAUDE.md` and `ENGINEERING_GUIDELINES.md` | docs |
+| #69 | **R8** — canonical catalog contract, validator, owner checklist | feature |
+
+**#56 was merged by another contributor** and independently verified here: it
+repaired `admin/`, which could not be installed at all (`npm ci` exit 1).
+
+Eight defects were classified F1–F8. Five are now fixed. **Every one of them
+reached `main` through the CI gap described below** — and the repository's own
+test suite was adequate to catch all of them.
+
+## What is automated
+
+Nothing new was automated in this pass, deliberately.
+
+`--strict` on the catalog validator is the one new gate, and it is **switched
+off**: `tests/test_catalog_contract.py::test_strict_is_not_wired_into_the_blocking_gate_yet`
+fails if someone wires it in before the catalog fields exist. Turning it on
+today would fail the build on all 65 SKUs to report what the tool already
+reports on demand.
+
+No scheduled workflow, auto-merge path or unattended mutation was added.
+
+## What still requires you
+
+Nothing below can be done from inside this repository.
+
+| # | Action | Where | Unblocks |
+|---|---|---|---|
+| 1 | **Restore Actions entitlement** — billing, spending limit, allowed-actions policy, Actions toggle | GitHub org + repo settings | Everything. See below. |
+| 2 | Confirm which provider serves `www.clearglassinc.com` | Hosting dashboards | Deploy + rollback automation (R5) |
+| 3 | Resolve three live entry prices: 1,250 quoted / 297 price book / 249 live checkout — and **no SKU exists for the 1,250 assessment** | Business decision | Selling anything (R3) |
+| 4 | Supply the catalog field values | `docs/CATALOG_SCHEMA.md` §4 | Governed checkout validation (R8) |
+| 5 | Protect `main` | Repo → Settings → Branches | R7 |
+| 6 | Decide on 3 `storefront/` vulnerabilities — `nanoid` (high), `sharp`/libheif (high), `baseline-browser-mapping` (moderate) | Protected path | R9b |
+| 7 | Review 8 recurring agent routines, 6 firing within 13:00–13:08 UTC daily | Routines list | Circuit-breaker compliance |
+
+### Item 1 is the one that matters
+
+**GitHub Actions has dispatched no runners since 2026-09-10.** `runner_id: 0`,
+no steps, empty check output, 4–15 second runs, every workflow, every PR.
+
+The consequence is not "CI is flaky." It is that **a red check and a green check
+both carry zero information.** Twenty-two PRs merged into `main` during the
+outage. Three confirmed defects came through that gap in a single day.
+
+Exit condition (**Gate 0**): any user-authored workflow job reporting
+`runner_id != 0` with a non-empty `steps` array.
+
+### Item 7, stated plainly
+
+Eight recurring routines fire daily against this repository, six of them inside
+an eight-minute window, several open-ended. The automation policy in this
+repository allows **at most 1 auto-merged PR per day and 3 open bot PRs**. Eight
+uncoordinated daily agents cannot honour either. Pull-request numbers advanced
+from 55 to 67 in roughly an hour on 2026-09-15.
+
+**No routine was disabled.** They are yours, several may be deliberate, and
+deleting them is destructive.
+
+## Required secrets, and where
+
+Names only. Never a value, never in a file, never in a commit. Full inventory in
+`control-plane/.env.example`, which is complete and names-only.
+
+Set every one in the hosting platform's secret manager — Render environment
+groups or equivalent.
+
+| Variable | What it blocks today |
+|---|---|
+| `ADMIN_API_KEY` | Production startup. The app **fails closed** without it, by design |
+| `PAYPAL_WEBHOOK_ID` | All PayPal webhook verification — every notification is refused |
+| `PAYPAL_CLIENT_ID` / `PAYPAL_CLIENT_SECRET` | PayPal order creation |
+| `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` | Stripe checkout and webhook booking |
+| `ETSY_KEYSTRING` / `ETSY_SHARED_SECRET` / `ETSY_ACCESS_TOKEN` / `ETSY_REFRESH_TOKEN` | Etsy reconciliation |
+
+Also: `TRUSTED_PROXY_HOPS` **and** `TRUSTED_PROXY_IPS` must be set together
+behind a reverse proxy, or every caller shares one throttle bucket and a single
+abusive client can 429 the storefront. `GET /health` reports `client_peer` so one
+curl against the deployed service yields the value. An RFC1918-wide allowlist is
+**not** sufficient — see `render.yaml`'s own comments.
+
+## Exact validation steps
+
+```bash
+pip install pytest pytest-cov pyyaml "ruff==0.15.8"
+pip install -r control-plane/requirements.txt
+
+python3 scripts/ci_local.py                        # expect 9 passed, 0 failed, 1 skipped
+python3 -m pytest tests/ -q                        # expect 1253 passed, 5 skipped
+cd control-plane && python3 -m pytest tests/ -q    # expect 378 passed, 1 skipped
+python3 tools/catalog_contract.py                  # gap report; exits 0 by design
+python3 -m bots.rfed_audit_bot --self-check
+cd control-plane && python -m app.daily_loop --json
+```
+
+Node, all verified on `c765a04`:
+
+```bash
+npm ci && npm run typecheck                    # root — exit 0, 0 vulnerabilities
+cd storefront && npm ci && npm run build       # exit 0 (3 vulnerabilities, R9b)
+cd admin && npm ci && npm run build            # exit 0 (was exit 1 before #56)
+```
+
+`git status` must be clean after a gate run. If `generated search assets are
+current` fails, run `python3 tools/generate_search_assets.py` **and commit** —
+the gate compares against what is committed, not the working tree.
+
+Until Gate 0 passes, **the operator is the CI.** Run these before every push.
+
+## Rollback
+
+Every PR in this pass states its own rollback command, and each is a single
+`git revert <merge-commit>`. No migration, schema change or data transformation
+was introduced, so no rollback requires a data step.
+
+Reverting #67 returns `commerce.selfcheck` to exit 127. Reverting #55 returns
+the Render blueprint to a state where it cannot build. Reverting #53 returns
+`main` to 7 failing tests.
+
+## Known risks
+
+Full register in `docs/BASELINE.md`. The ones that would surprise a new operator:
+
+1. **No staging environment.** The first place a change meets real traffic is
+   production. Unchanged from the section above.
+2. **Hosting is ambiguous.** GitHub Pages `CNAME`, `netlify.toml`, and
+   `_headers`/`_redirects` coexist. Which one serves the live domain is
+   **unconfirmed**, and a rollback aimed at the wrong provider is worse than none.
+3. **80 registered workflows**, 36 scheduled, 16 able to commit back. They are
+   dormant only because runners are down. When entitlement returns they resume
+   **at once** — stage that, do not flip it.
+4. **No payment channel is live.** No integration has completed both a sandbox
+   test and a production verification. None may be described as live.
+5. **~70 stale `clearglass-commerce/` prose references remain**, deliberately
+   unswept: several are *correct as history*, and two must never be swept — a
+   `User-Agent` string in `control-plane/app/printful.py` and a path allowlist in
+   `agents/*/agent.json`.
+
+## First 30 days — what to measure
+
+Operational readiness only. **None of these is a revenue target**, and nothing
+here can guarantee income. Revenue targets are the owner's to set; this pass
+produced no evidence that would support one.
+
+| Metric | Now | Target |
+|---|---|---|
+| Gate 0: a job reporting `runner_id != 0` with steps | **0** | 1 |
+| Defects reaching `main` without CI signal | 3 in one day | 0 |
+| Catalog SKUs contract-complete | **0 of 65** | 65 |
+| Live entry prices for the same offer | **3** | 1 |
+| Payment channels with sandbox **and** production verification recorded | 0 | ≥1 |
+| Hosting provider for the live domain, confirmed in writing | unknown | confirmed |
+| `main` branch-protected | no | yes |
+| Open high-severity dependency vulnerabilities | 2 | 0 |
+| Recurring agent routines against this repository | 8 | ≤2 |
