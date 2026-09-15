@@ -21,6 +21,37 @@
 
 `REVENUE ACTUALS: PARTIAL — PAYPAL VERIFIED, STRIPE UNKNOWN, NO CRM, NO ACCOUNTING SYSTEM.`
 
+### Two different PayPal facts, do not conflate them
+
+`docs/REVENUE_OPERATIONS.md`, merged to main in PR #37 on 2026-09-15, states that the
+control-plane's PayPal Orders v2 integration is code-complete, credential-empty, runs in
+mock mode, and books nothing. That is true of the **product**.
+
+The figures in this report come from the **business PayPal account** read directly through
+its connected API. That account has real activity. None of it is inbound customer revenue.
+
+Both statements hold at once: the storefront cannot yet take a PayPal payment, and the
+account has not received one. Neither is evidence for the other.
+
+The same document records that no Stripe or PayPal integration is considered live until a
+sandbox test and a production verification have both been recorded, and that neither has
+been recorded for PayPal. Nothing in this report should be read as a claim that any channel
+is taking payments.
+
+### Pricebook check, 2026-09-15
+
+`control-plane/app/data/pricebook.json` on main contains exactly three SKUs:
+
+| SKU | Amount | Kind |
+|---|---:|---|
+| `risk-audit-90` | CAD 297.00 | one time |
+| `business-protection-monthly` | CAD 100.00 | recurring |
+| `business-protection-annual` | CAD 1,000.00 | recurring |
+
+There is no SKU for the CAD 1,250 AI Operations and Exposure Assessment. The offer this
+engine is directed to sell three of does not exist as a purchasable item in either the
+price book or the site catalog.
+
 ---
 
 ## Cash Status
