@@ -99,6 +99,11 @@ GATES: list[Gate] = [
         [sys.executable, "tools/internal_links.py", "--check"],
     ),
     Gate(
+        "search-integrity",
+        "generated Insights hub",
+        [sys.executable, "tools/insights_index.py", "--check"],
+    ),
+    Gate(
         "workflow-doctor",
         "workflow doctor",
         [sys.executable, "scripts/workflow_doctor.py"],

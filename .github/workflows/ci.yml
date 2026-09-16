@@ -79,6 +79,8 @@ jobs:
         run: python3 tools/seo_audit.py
       - name: Validate generated internal links
         run: python3 tools/internal_links.py --check
+      - name: Validate the generated Insights hub
+        run: python3 tools/insights_index.py --check
 
   lighthouse:
     name: Lighthouse budgets
