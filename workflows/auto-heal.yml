@@ -2,6 +2,11 @@ name: Auto Heal
 
 on:
   workflow_run:
+    # Required by GitHub: a workflow_run trigger with no "workflows" key makes
+    # the whole file invalid, so the workflow never runs on any of its triggers.
+    # "*" keeps the original intent - react to every workflow - while the job
+    # guard below still filters to failures and skips Auto Heal's own runs.
+    workflows: ["*"]
     types: [completed]
   schedule:
     - cron: "*/30 * * * *"

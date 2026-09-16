@@ -51,34 +51,17 @@ on:
         type: string
         required: true
         default: "https://www.clearglassinc.com"
-      enable_custom_waf:
-        description: "Create/manage custom WAF phase after state ownership is confirmed."
-        type: boolean
-        default: false
-      enable_managed_waf:
-        description: "Create/manage managed WAF phase after state ownership and plan support are confirmed."
-        type: boolean
-        default: false
-      enable_rate_limits:
-        description: "Create/manage rate-limit phase after state ownership is confirmed."
-        type: boolean
-        default: false
-      enable_security_headers:
-        description: "Create/manage response-header transforms. CSP remains report-only."
-        type: boolean
-        default: false
-      enable_logpush:
-        description: "Create firewall-event Logpush job; requires destination secret."
-        type: boolean
-        default: false
-      enable_geo_asn_rules:
-        description: "Enable explicitly configured geo/ASN rules. Off by default."
-        type: boolean
-        default: false
-      enable_emergency_mode:
-        description: "TEMPORARY high-security managed challenge. Use only during active containment."
-        type: boolean
-        default: false
+      features:
+        description: >-
+          Comma-separated edge phases to manage. Empty means none, which is the
+          same default the individual toggles had. Valid names: custom_waf,
+          managed_waf, rate_limits, security_headers, logpush, geo_asn_rules,
+          emergency_mode. An unrecognised name fails the run. logpush needs
+          EDGE_LOGPUSH_DESTINATION; emergency_mode is a TEMPORARY managed
+          challenge for active containment only.
+        type: string
+        required: false
+        default: ""
       custom_waf_action:
         description: "Custom WAF rollout action. Log may require Enterprise."
         type: choice
@@ -300,13 +283,7 @@ jobs:
           LOG_FULL_CLIENT_IP: ${{ vars.EDGE_LOG_FULL_CLIENT_IP }}
           HSTS_INCLUDE_SUBDOMAINS: ${{ vars.EDGE_HSTS_INCLUDE_SUBDOMAINS }}
           HSTS_PRELOAD: ${{ vars.EDGE_HSTS_PRELOAD }}
-          ENABLE_CUSTOM_WAF: ${{ inputs.enable_custom_waf }}
-          ENABLE_MANAGED_WAF: ${{ inputs.enable_managed_waf }}
-          ENABLE_RATE_LIMITS: ${{ inputs.enable_rate_limits }}
-          ENABLE_SECURITY_HEADERS: ${{ inputs.enable_security_headers }}
-          ENABLE_LOGPUSH: ${{ inputs.enable_logpush }}
-          ENABLE_GEO_ASN: ${{ inputs.enable_geo_asn_rules }}
-          ENABLE_EMERGENCY: ${{ inputs.enable_emergency_mode }}
+          EDGE_FEATURES: ${{ inputs.features }}
           CUSTOM_WAF_ACTION: ${{ inputs.custom_waf_action }}
           MANAGED_WAF_ACTION: ${{ inputs.managed_waf_action }}
           RATE_LIMIT_ACTION: ${{ inputs.rate_limit_action }}
@@ -335,6 +312,23 @@ jobs:
                   raise SystemExit(f"{name} must contain a JSON array")
               return value
 
+          EDGE_FEATURES = {
+              "custom_waf", "managed_waf", "rate_limits", "security_headers",
+              "logpush", "geo_asn_rules", "emergency_mode",
+          }
+
+          def selected_features():
+              names = {n.strip() for n in os.getenv("EDGE_FEATURES", "").split(",") if n.strip()}
+              unknown = names - EDGE_FEATURES
+              if unknown:
+                  raise SystemExit(
+                      "unknown feature(s): " + ", ".join(sorted(unknown))
+                      + ". Valid names: " + ", ".join(sorted(EDGE_FEATURES))
+                  )
+              return names
+
+          features = selected_features()
+
           data = {
               "account_id": os.environ["ACCOUNT_ID"],
               "zone_id": os.environ["ZONE_ID"],
@@ -342,13 +336,13 @@ jobs:
               "public_hostname": os.getenv("PUBLIC_HOSTNAME") or "www.clearglassinc.com",
               "api_hostname": os.getenv("API_HOSTNAME", ""),
               "admin_hostname": os.getenv("ADMIN_HOSTNAME", ""),
-              "enable_custom_waf": bool_env("ENABLE_CUSTOM_WAF"),
-              "enable_managed_waf": bool_env("ENABLE_MANAGED_WAF"),
-              "enable_rate_limits": bool_env("ENABLE_RATE_LIMITS"),
-              "enable_security_headers": bool_env("ENABLE_SECURITY_HEADERS"),
-              "enable_logpush": bool_env("ENABLE_LOGPUSH"),
-              "enable_geo_asn_rules": bool_env("ENABLE_GEO_ASN"),
-              "enable_emergency_mode": bool_env("ENABLE_EMERGENCY"),
+              "enable_custom_waf": "custom_waf" in features,
+              "enable_managed_waf": "managed_waf" in features,
+              "enable_rate_limits": "rate_limits" in features,
+              "enable_security_headers": "security_headers" in features,
+              "enable_logpush": "logpush" in features,
+              "enable_geo_asn_rules": "geo_asn_rules" in features,
+              "enable_emergency_mode": "emergency_mode" in features,
               "custom_waf_action": os.getenv("CUSTOM_WAF_ACTION") or "log",
               "managed_waf_override_action": os.getenv("MANAGED_WAF_ACTION") or "log",
               "rate_limit_action": os.getenv("RATE_LIMIT_ACTION") or "managed_challenge",
@@ -488,13 +482,7 @@ jobs:
           LOG_FULL_CLIENT_IP: ${{ vars.EDGE_LOG_FULL_CLIENT_IP }}
           HSTS_INCLUDE_SUBDOMAINS: ${{ vars.EDGE_HSTS_INCLUDE_SUBDOMAINS }}
           HSTS_PRELOAD: ${{ vars.EDGE_HSTS_PRELOAD }}
-          ENABLE_CUSTOM_WAF: ${{ inputs.enable_custom_waf }}
-          ENABLE_MANAGED_WAF: ${{ inputs.enable_managed_waf }}
-          ENABLE_RATE_LIMITS: ${{ inputs.enable_rate_limits }}
-          ENABLE_SECURITY_HEADERS: ${{ inputs.enable_security_headers }}
-          ENABLE_LOGPUSH: ${{ inputs.enable_logpush }}
-          ENABLE_GEO_ASN: ${{ inputs.enable_geo_asn_rules }}
-          ENABLE_EMERGENCY: ${{ inputs.enable_emergency_mode }}
+          EDGE_FEATURES: ${{ inputs.features }}
           CUSTOM_WAF_ACTION: ${{ inputs.custom_waf_action }}
           MANAGED_WAF_ACTION: ${{ inputs.managed_waf_action }}
           RATE_LIMIT_ACTION: ${{ inputs.rate_limit_action }}
@@ -516,15 +504,21 @@ jobs:
               value = json.loads(os.getenv(name, "").strip() or "[]")
               if not isinstance(value, list): raise SystemExit(f"{name} must contain a JSON array")
               return value
+          EDGE_FEATURES = {"custom_waf", "managed_waf", "rate_limits", "security_headers",
+                           "logpush", "geo_asn_rules", "emergency_mode"}
+          features = {n.strip() for n in os.getenv("EDGE_FEATURES", "").split(",") if n.strip()}
+          if features - EDGE_FEATURES:
+              raise SystemExit("unknown feature(s): " + ", ".join(sorted(features - EDGE_FEATURES))
+                               + ". Valid names: " + ", ".join(sorted(EDGE_FEATURES)))
           data = {
               "account_id": os.environ["ACCOUNT_ID"], "zone_id": os.environ["ZONE_ID"],
               "zone_name": os.getenv("ZONE_NAME") or "clearglassinc.com",
               "public_hostname": os.getenv("PUBLIC_HOSTNAME") or "www.clearglassinc.com",
               "api_hostname": os.getenv("API_HOSTNAME", ""), "admin_hostname": os.getenv("ADMIN_HOSTNAME", ""),
-              "enable_custom_waf": b("ENABLE_CUSTOM_WAF"), "enable_managed_waf": b("ENABLE_MANAGED_WAF"),
-              "enable_rate_limits": b("ENABLE_RATE_LIMITS"), "enable_security_headers": b("ENABLE_SECURITY_HEADERS"),
-              "enable_logpush": b("ENABLE_LOGPUSH"), "enable_geo_asn_rules": b("ENABLE_GEO_ASN"),
-              "enable_emergency_mode": b("ENABLE_EMERGENCY"),
+              "enable_custom_waf": "custom_waf" in features, "enable_managed_waf": "managed_waf" in features,
+              "enable_rate_limits": "rate_limits" in features, "enable_security_headers": "security_headers" in features,
+              "enable_logpush": "logpush" in features, "enable_geo_asn_rules": "geo_asn_rules" in features,
+              "enable_emergency_mode": "emergency_mode" in features,
               "custom_waf_action": os.getenv("CUSTOM_WAF_ACTION") or "log",
               "managed_waf_override_action": os.getenv("MANAGED_WAF_ACTION") or "log",
               "rate_limit_action": os.getenv("RATE_LIMIT_ACTION") or "managed_challenge",
