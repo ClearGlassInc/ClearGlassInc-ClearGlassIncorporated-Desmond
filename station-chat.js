@@ -27,7 +27,8 @@
   // ── destinations ─────────────────────────────────────────────────────────
   var LINKS = [
     { code: "01", title: "Web Design", sub: "Design &amp; Development", href: "web-design.html" },
-    { code: "02", title: "Insights", sub: "ClearGlass Intelligence", href: "blog/" }
+    { code: "02", title: "Insights", sub: "ClearGlass Intelligence", href: "blog/" },
+    { code: "03", title: "Project Board", sub: "Sprint operations console", href: "project-board.html" }
   ];
 
   // ── icons (inline, so nothing is fetched) ────────────────────────────────

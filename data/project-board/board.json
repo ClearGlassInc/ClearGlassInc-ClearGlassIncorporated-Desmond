@@ -1,0 +1,837 @@
+{
+  "schema": "clearglass.project-board/v1",
+  "generated": "2026-09-16",
+  "workspace": {
+    "name": "Dev.ai",
+    "sprint": "Sprint 2",
+    "heading": "All Tasks"
+  },
+  "projects": [
+    {
+      "id": "ana-store",
+      "name": "Ana Store",
+      "glyph": "slash",
+      "hue": 210
+    },
+    {
+      "id": "bmn-app",
+      "name": "BMN App",
+      "glyph": "cross",
+      "hue": 0
+    },
+    {
+      "id": "dev-ai",
+      "name": "Dev.ai",
+      "glyph": "wings",
+      "hue": 258,
+      "active": true
+    },
+    {
+      "id": "solaris",
+      "name": "Solaris",
+      "glyph": "slash",
+      "hue": 32
+    }
+  ],
+  "boards": [
+    {
+      "id": "landing-page",
+      "name": "Landing page",
+      "icon": "book",
+      "hue": 6
+    },
+    {
+      "id": "dashboard-design",
+      "name": "Dashboard design",
+      "icon": "snow",
+      "hue": 205,
+      "expanded": true,
+      "children": [
+        {
+          "id": "admin",
+          "name": "Admin",
+          "count": 4
+        },
+        {
+          "id": "client",
+          "name": "Client"
+        },
+        {
+          "id": "publishers",
+          "name": "Publishers"
+        }
+      ]
+    },
+    {
+      "id": "responsive",
+      "name": "Responsive",
+      "icon": "asterisk",
+      "hue": 45
+    },
+    {
+      "id": "ux-research",
+      "name": "Ux research",
+      "icon": "cycle",
+      "hue": 160,
+      "count": 3
+    }
+  ],
+  "sprints": [
+    {
+      "id": "sprint-1",
+      "name": "Sprint 1",
+      "start": "2026-11-24",
+      "end": "2026-12-08",
+      "state": "done"
+    },
+    {
+      "id": "sprint-2",
+      "name": "Sprint 2",
+      "start": "2026-12-08",
+      "end": "2026-12-24",
+      "state": "active"
+    },
+    {
+      "id": "sprint-3",
+      "name": "Sprint 3",
+      "start": "2026-12-26",
+      "end": "2027-01-09",
+      "state": "planned"
+    }
+  ],
+  "members": [
+    {
+      "id": "mehmet",
+      "name": "Mehmet oguz",
+      "initials": "MO",
+      "hue": 258,
+      "role": "Product designer"
+    },
+    {
+      "id": "sarah",
+      "name": "Sarah James",
+      "initials": "SJ",
+      "hue": 18,
+      "role": "Design lead"
+    },
+    {
+      "id": "aramin",
+      "name": "Aramin Gized",
+      "initials": "AG",
+      "hue": 28,
+      "role": "UX engineer"
+    },
+    {
+      "id": "anna",
+      "name": "Anna Fedorova",
+      "initials": "AF",
+      "hue": 320,
+      "role": "Researcher"
+    },
+    {
+      "id": "benjamin",
+      "name": "Benjamin Cole",
+      "initials": "BC",
+      "hue": 200,
+      "role": "Frontend"
+    },
+    {
+      "id": "grace",
+      "name": "Grace Lindt",
+      "initials": "GL",
+      "hue": 150,
+      "role": "Brand"
+    }
+  ],
+  "columns": [
+    {
+      "id": "in-progress",
+      "name": "In progress",
+      "hue": 217,
+      "color": "#3b82f6"
+    },
+    {
+      "id": "ready-for-sprint",
+      "name": "Ready for sprint",
+      "hue": 38,
+      "color": "#f59e0b",
+      "collapsed": true
+    },
+    {
+      "id": "dev-qa",
+      "name": "Dev.QA",
+      "hue": 268,
+      "color": "#a855f7",
+      "collapsed": true
+    },
+    {
+      "id": "ready-to-design",
+      "name": "Ready to design",
+      "hue": 188,
+      "color": "#22d3ee"
+    },
+    {
+      "id": "final-review",
+      "name": "Final review",
+      "hue": 330,
+      "color": "#ec4899"
+    },
+    {
+      "id": "completed",
+      "name": "Completed",
+      "hue": 142,
+      "color": "#22c55e"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t-101",
+      "title": "Refine Dashboard Navigation Flow",
+      "board": "dashboard-design",
+      "column": "in-progress",
+      "start": "2026-12-19",
+      "end": "2026-12-24",
+      "priority": "high",
+      "assignees": [
+        "mehmet",
+        "sarah",
+        "aramin"
+      ],
+      "subtasks": [
+        {
+          "title": "Audit current sidebar depth",
+          "done": true
+        },
+        {
+          "title": "Prototype the collapsed rail",
+          "done": false
+        }
+      ],
+      "sprint": "sprint-2"
+    },
+    {
+      "id": "t-102",
+      "title": "Improve Board Responsiveness for Mobile Devices",
+      "board": "dashboard-design",
+      "column": "in-progress",
+      "start": "2026-12-17",
+      "end": "2026-12-23",
+      "priority": "medium",
+      "assignees": [
+        "benjamin",
+        "anna"
+      ],
+      "subtasks": [
+        {
+          "title": "Define breakpoint ladder",
+          "done": true
+        },
+        {
+          "title": "Column swipe behaviour",
+          "done": false
+        }
+      ],
+      "sprint": "sprint-2"
+    },
+    {
+      "id": "t-103",
+      "title": "Rebuild Time Sheet Leaderboard Rows",
+      "board": "dashboard-design",
+      "column": "in-progress",
+      "start": "2026-12-18",
+      "end": "2026-12-22",
+      "priority": "medium",
+      "assignees": [
+        "mehmet",
+        "grace"
+      ],
+      "subtasks": [
+        {
+          "title": "Medal states",
+          "done": false
+        }
+      ],
+      "sprint": "sprint-2"
+    },
+    {
+      "id": "t-104",
+      "title": "Wire Sprint Velocity to the live feed",
+      "board": "dashboard-design",
+      "column": "in-progress",
+      "start": "2026-12-20",
+      "end": "2026-12-26",
+      "priority": "high",
+      "assignees": [
+        "aramin"
+      ],
+      "subtasks": [
+        {
+          "title": "Gauge easing curve",
+          "done": false
+        },
+        {
+          "title": "Empty-series fallback",
+          "done": false
+        }
+      ],
+      "sprint": "sprint-2"
+    },
+    {
+      "id": "t-201",
+      "title": "Implement Dark Mode for the Board",
+      "board": "dashboard-design",
+      "column": "ready-to-design",
+      "priority": "low",
+      "assignees": [
+        "sarah",
+        "benjamin"
+      ],
+      "subtasks": [
+        {
+          "title": "Token pass on surfaces",
+          "done": false
+        },
+        {
+          "title": "Contrast check on chips",
+          "done": false
+        }
+      ],
+      "sprint": "sprint-2"
+    },
+    {
+      "id": "t-202",
+      "title": "Customize User Roles and Permissions",
+      "board": "admin",
+      "column": "ready-to-design",
+      "start": "2026-12-08",
+      "end": "2026-12-14",
+      "priority": "medium",
+      "assignees": [
+        "anna",
+        "mehmet",
+        "grace"
+      ],
+      "attachment": {
+        "name": "Dashboard Main Screen Kit",
+        "kind": "figma"
+      },
+      "subtasks": [
+        {
+          "title": "Role matrix draft",
+          "done": true
+        }
+      ],
+      "sprint": "sprint-2"
+    },
+    {
+      "id": "t-203",
+      "title": "Design the Backlog Intake Drawer",
+      "board": "dashboard-design",
+      "column": "ready-to-design",
+      "start": "2026-12-11",
+      "end": "2026-12-18",
+      "priority": "low",
+      "assignees": [
+        "sarah"
+      ],
+      "subtasks": [
+        {
+          "title": "Quick-add affordance",
+          "done": false
+        }
+      ],
+      "sprint": "sprint-2"
+    },
+    {
+      "id": "t-204",
+      "title": "Activity Feed Reply Composer",
+      "board": "ux-research",
+      "column": "ready-to-design",
+      "priority": "medium",
+      "assignees": [
+        "grace",
+        "benjamin"
+      ],
+      "subtasks": [
+        {
+          "title": "Mention autocomplete",
+          "done": false
+        },
+        {
+          "title": "Emoji reactions",
+          "done": false
+        }
+      ],
+      "sprint": "sprint-2"
+    },
+    {
+      "id": "t-301",
+      "title": "Enhance Visual Feedback",
+      "board": "dashboard-design",
+      "column": "final-review",
+      "priority": "medium",
+      "assignees": [
+        "mehmet",
+        "sarah",
+        "aramin"
+      ],
+      "subtasks": [
+        {
+          "title": "Drag shadow + placeholder",
+          "done": true
+        },
+        {
+          "title": "Toast timing",
+          "done": true
+        }
+      ],
+      "sprint": "sprint-2"
+    },
+    {
+      "id": "t-302",
+      "title": "Refine Calendar Week Strip",
+      "board": "dashboard-design",
+      "column": "final-review",
+      "start": "2026-12-15",
+      "end": "2026-12-21",
+      "priority": "low",
+      "assignees": [
+        "anna"
+      ],
+      "subtasks": [
+        {
+          "title": "Selected-day pill",
+          "done": true
+        }
+      ],
+      "sprint": "sprint-2"
+    },
+    {
+      "id": "t-303",
+      "title": "Publisher Analytics Empty States",
+      "board": "publishers",
+      "column": "final-review",
+      "priority": "high",
+      "assignees": [
+        "benjamin",
+        "grace"
+      ],
+      "subtasks": [
+        {
+          "title": "Copy review",
+          "done": true
+        }
+      ],
+      "sprint": "sprint-2"
+    },
+    {
+      "id": "t-304",
+      "title": "Client Brief Upload Progress",
+      "board": "client",
+      "column": "final-review",
+      "start": "2026-12-16",
+      "end": "2026-12-20",
+      "priority": "medium",
+      "assignees": [
+        "sarah"
+      ],
+      "subtasks": [
+        {
+          "title": "Chunked retry",
+          "done": true
+        }
+      ],
+      "sprint": "sprint-2"
+    },
+    {
+      "id": "t-401",
+      "title": "Refine Sprint Velocity Widget",
+      "board": "dashboard-design",
+      "column": "completed",
+      "start": "2026-12-01",
+      "end": "2026-12-09",
+      "priority": "medium",
+      "assignees": [
+        "aramin",
+        "mehmet"
+      ],
+      "subtasks": [
+        {
+          "title": "Arc gradient",
+          "done": true
+        },
+        {
+          "title": "Legend rotation",
+          "done": true
+        }
+      ],
+      "sprint": "sprint-1"
+    },
+    {
+      "id": "t-402",
+      "title": "Ship the Pricing Card",
+      "board": "landing-page",
+      "column": "completed",
+      "start": "2026-12-02",
+      "end": "2026-12-06",
+      "priority": "low",
+      "assignees": [
+        "grace"
+      ],
+      "subtasks": [
+        {
+          "title": "Money-back badge",
+          "done": true
+        }
+      ],
+      "sprint": "sprint-1"
+    },
+    {
+      "id": "t-501",
+      "title": "Sprint 3 Discovery Interviews",
+      "board": "ux-research",
+      "column": "ready-for-sprint",
+      "priority": "low",
+      "assignees": [
+        "anna",
+        "grace"
+      ],
+      "subtasks": [
+        {
+          "title": "Recruit 6 participants",
+          "done": false
+        }
+      ],
+      "sprint": "sprint-3"
+    },
+    {
+      "id": "t-502",
+      "title": "Board Virtualisation Spike",
+      "board": "dashboard-design",
+      "column": "ready-for-sprint",
+      "priority": "medium",
+      "assignees": [
+        "benjamin"
+      ],
+      "subtasks": [
+        {
+          "title": "Measure 500-card scroll",
+          "done": false
+        }
+      ],
+      "sprint": "sprint-3"
+    },
+    {
+      "id": "t-601",
+      "title": "Regression Pass on Drag and Drop",
+      "board": "dashboard-design",
+      "column": "dev-qa",
+      "start": "2026-12-19",
+      "end": "2026-12-21",
+      "priority": "high",
+      "assignees": [
+        "aramin",
+        "benjamin"
+      ],
+      "subtasks": [
+        {
+          "title": "Keyboard move path",
+          "done": true
+        },
+        {
+          "title": "Touch pointer path",
+          "done": false
+        }
+      ],
+      "sprint": "sprint-2"
+    },
+    {
+      "id": "t-602",
+      "title": "Accessibility Audit of Card Menus",
+      "board": "dashboard-design",
+      "column": "dev-qa",
+      "priority": "medium",
+      "assignees": [
+        "anna"
+      ],
+      "subtasks": [
+        {
+          "title": "Focus trap on dialog",
+          "done": false
+        }
+      ],
+      "sprint": "sprint-2"
+    }
+  ],
+  "timesheet": {
+    "label": "Time Sheet",
+    "entries": [
+      {
+        "member": "mehmet",
+        "seconds": 16344,
+        "running": true
+      },
+      {
+        "member": "sarah",
+        "seconds": 11533
+      },
+      {
+        "member": "aramin",
+        "seconds": 6306
+      },
+      {
+        "member": "anna",
+        "seconds": 4121
+      },
+      {
+        "member": "benjamin",
+        "seconds": 3187
+      },
+      {
+        "member": "grace",
+        "seconds": 2044
+      }
+    ]
+  },
+  "velocity": {
+    "label": "Sprint Velocity",
+    "average": 87.29,
+    "unit": "Avg daily Points",
+    "selected": "Jan",
+    "series": [
+      {
+        "label": "Jan",
+        "percent": 24,
+        "color": "#22d3ee"
+      },
+      {
+        "label": "Feb",
+        "percent": 58,
+        "color": "#f59e0b"
+      },
+      {
+        "label": "Apr",
+        "percent": 81,
+        "color": "#ef4444"
+      }
+    ]
+  },
+  "activity": [
+    {
+      "id": "a-1",
+      "kind": "upload",
+      "member": "sarah",
+      "text": "Uploading a new File on Client Brief!",
+      "time": "Nov",
+      "file": {
+        "name": "Project Brief.txt",
+        "size": "24.19 KB",
+        "percent": 43,
+        "state": "Uploading..."
+      },
+      "hours": 0.2
+    },
+    {
+      "id": "a-2",
+      "kind": "comment",
+      "member": "benjamin",
+      "target": "Enhance Visual Feedback",
+      "time": "1h",
+      "body": "Awesome design! I love how you handled the spacing. Where can I snag the link?",
+      "reply": {
+        "mention": "@Benjamin",
+        "text": "here is the link Gdrive.com/download",
+        "emoji": "👍"
+      },
+      "hours": 1
+    },
+    {
+      "id": "a-3",
+      "kind": "comment",
+      "member": "grace",
+      "target": "Dev.ai UI Kit",
+      "time": "4h",
+      "body": "Just having a blast with these activity components! They might turn into a freebie, so keep an eye out for updates!",
+      "reply": {
+        "mention": "@Grace",
+        "text": "That would be awesome",
+        "emoji": "🔥"
+      },
+      "hours": 4
+    },
+    {
+      "id": "a-4",
+      "kind": "move",
+      "member": "aramin",
+      "hours": 38,
+      "target": "Refine Calendar Week Strip",
+      "time": "2d",
+      "text": "moved Refine Calendar Week Strip to Final review"
+    },
+    {
+      "id": "a-5",
+      "kind": "comment",
+      "member": "mehmet",
+      "hours": 122,
+      "target": "Customize User Roles and Permissions",
+      "time": "5d",
+      "body": "Role matrix is signed off. Publishers inherit Client read scopes, nothing more."
+    },
+    {
+      "id": "a-6",
+      "kind": "upload",
+      "member": "anna",
+      "hours": 508,
+      "text": "Uploaded the research readout for Sprint 1",
+      "time": "3w",
+      "file": {
+        "name": "Sprint 1 Readout.pdf",
+        "size": "1.84 MB",
+        "percent": 100,
+        "state": "Uploaded"
+      }
+    }
+  ],
+  "calendar": {
+    "label": "Calendar",
+    "month": "December 2026",
+    "selected": "2026-12-21",
+    "days": [
+      {
+        "date": "2026-12-18",
+        "day": 18,
+        "weekday": "Mo"
+      },
+      {
+        "date": "2026-12-19",
+        "day": 19,
+        "weekday": "Tu"
+      },
+      {
+        "date": "2026-12-20",
+        "day": 20,
+        "weekday": "We"
+      },
+      {
+        "date": "2026-12-21",
+        "day": 21,
+        "weekday": "Th"
+      },
+      {
+        "date": "2026-12-22",
+        "day": 22,
+        "weekday": "Fr"
+      },
+      {
+        "date": "2026-12-23",
+        "day": 23,
+        "weekday": "Sa"
+      },
+      {
+        "date": "2026-12-24",
+        "day": 24,
+        "weekday": "Su"
+      }
+    ],
+    "schedule": [
+      {
+        "date": "2026-12-21",
+        "time": "08:00",
+        "title": "Refine Dashboard Navigation Flow",
+        "attendees": [
+          "mehmet",
+          "sarah"
+        ]
+      },
+      {
+        "date": "2026-12-21",
+        "time": "10:00",
+        "title": "Sprint 2 Design Review",
+        "attendees": [
+          "aramin",
+          "anna",
+          "grace"
+        ]
+      },
+      {
+        "date": "2026-12-21",
+        "time": "13:30",
+        "title": "Client Brief Walkthrough",
+        "attendees": [
+          "sarah",
+          "benjamin"
+        ]
+      },
+      {
+        "date": "2026-12-18",
+        "time": "09:00",
+        "title": "Backlog Grooming",
+        "attendees": [
+          "mehmet",
+          "benjamin"
+        ]
+      },
+      {
+        "date": "2026-12-19",
+        "time": "11:00",
+        "title": "Dark Mode Token Pass",
+        "attendees": [
+          "sarah"
+        ]
+      },
+      {
+        "date": "2026-12-20",
+        "time": "15:00",
+        "title": "Publisher Analytics Sync",
+        "attendees": [
+          "grace",
+          "anna"
+        ]
+      },
+      {
+        "date": "2026-12-22",
+        "time": "09:30",
+        "title": "Dev.QA Regression Window",
+        "attendees": [
+          "aramin",
+          "benjamin"
+        ]
+      },
+      {
+        "date": "2026-12-23",
+        "time": "14:00",
+        "title": "Sprint 3 Discovery Interviews",
+        "attendees": [
+          "anna"
+        ]
+      },
+      {
+        "date": "2026-12-24",
+        "time": "10:30",
+        "title": "Release Notes + Handoff",
+        "attendees": [
+          "mehmet",
+          "grace"
+        ]
+      }
+    ]
+  },
+  "pricing": {
+    "amount": "7$",
+    "badge": "Popular",
+    "period": "unlimited",
+    "headline": [
+      "The best",
+      "WORK",
+      "solution,",
+      "for the best",
+      "PRICE"
+    ],
+    "guarantee": "100% Money-Back Guarantee"
+  },
+  "promo": {
+    "title": "Direct sharing of documentation GitHub for quicker access.",
+    "primary": "Share Now",
+    "secondary": "Learn more"
+  }
+}
