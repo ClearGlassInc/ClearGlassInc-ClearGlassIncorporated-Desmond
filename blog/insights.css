@@ -116,6 +116,26 @@ h2:hover .ix-anchor,.ix-anchor:focus{opacity:.9}
 .ix-hub-hint{margin:-34px 0 40px;font:500 11.5px var(--ix-mono);color:var(--ix-muted)}
 .ix-hub-hint .ix-kbd{margin:0 3px}
 
+/* ---------- hub: search matches + empty state ---------- */
+/* `.article-card{display:flex}` lives in an author stylesheet, so it beats the
+   user-agent `[hidden]{display:none}` rule and `card.hidden = true` rendered
+   nothing at all — every archive card painted while the status line claimed
+   six. Pagination and the saved/topic filters both depend on `hidden`, so make
+   it authoritative here. */
+.article-card[hidden]{display:none!important}
+
+.ix-mark{background:rgba(238, 99, 122,.24);color:inherit;border-radius:3px;padding:0 2px}
+.ix-empty{grid-column:1/-1;display:flex;flex-direction:column;align-items:flex-start;gap:10px;
+  padding:34px 28px;border:1px dashed var(--ix-line);border-radius:22px;background:var(--ix-panel)}
+.ix-empty b{font:700 12px var(--ix-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ix-text)}
+.ix-empty p{margin:0;color:var(--ix-muted);font:500 14px/1.6 var(--ix-sans)}
+.ix-empty[hidden]{display:none}
+
+/* Keyboard focus must stay visible on every control this layer adds. */
+.ix-chip:focus-visible,.ix-top:focus-visible,.ix-anchor:focus-visible,
+.ix-related-card:focus-visible,.ix-palette-input:focus-visible,
+.ix-palette-list a:focus-visible{outline:2px solid var(--ix-accent-2);outline-offset:3px}
+
 @media(prefers-reduced-motion:reduce){
   .ix-toast,.ix-top,.ix-related-card,.ix-toc a{transition:none}
 }

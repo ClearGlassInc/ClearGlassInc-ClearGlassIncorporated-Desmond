@@ -949,8 +949,10 @@ def render_related(index: dict, post: dict) -> str:
     body = "\n      ".join(cards[:2])
     return (
         f"  {RELATED_START}\n"
-        '  <section class="ix-related" id="ixRelated" aria-labelledby="ixRelatedTitle">\n'
-        '    <b id="ixRelatedTitle">Related from the desk</b>\n'
+        # aria-label rather than aria-labelledby: blog/insights.js replaces this
+        # section's innerHTML when it re-ranks, which would orphan an id target.
+        '  <section class="ix-related" id="ixRelated" aria-label="Related from the desk">\n'
+        "    <b>Related from the desk</b>\n"
         '    <div class="ix-related-grid">\n'
         f"      {body}\n"
         "    </div>\n"
