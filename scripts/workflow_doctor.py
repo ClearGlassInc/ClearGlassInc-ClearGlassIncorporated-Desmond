@@ -173,6 +173,68 @@ def unpinned_external_actions(path: Path, text: str) -> list[str]:
     return findings
 
 
+# GitHub rejects a workflow whose trigger block breaks one of these limits. The
+# rejection happens *before* a runner is assigned, so it surfaces only as a
+# zero-second run named by file path, with no logs and no steps to read. Nothing
+# in the repository caught that, which is why `auto-heal.yml` accumulated 203
+# such runs before anyone looked. These checks are the local equivalent.
+WORKFLOW_DISPATCH_INPUT_LIMIT = 10
+
+
+def _trigger_block(data: Any) -> dict[str, Any]:
+    """The ``on:`` mapping, which YAML 1.1 parses as the boolean ``True``."""
+    if not isinstance(data, dict):
+        return {}
+    block = data.get(True, data.get("on"))
+    return block if isinstance(block, dict) else {}
+
+
+def event_schema_violations(path: Path, text: str) -> list[str]:
+    """Report trigger blocks GitHub will reject when it registers the workflow.
+
+    Both rules are GitHub hard limits, not style preferences:
+
+    * ``workflow_run`` requires a non-empty ``workflows`` list naming the
+      workflows to react to. Omitting it makes the whole file invalid, so the
+      workflow never runs on *any* of its triggers — not just ``workflow_run``.
+    * ``workflow_dispatch`` accepts at most ten inputs. Exceeding it does not
+      invalidate the file, but every manual dispatch is refused, which silently
+      kills an operator-only workflow while its push and pull_request triggers
+      keep reporting green.
+    """
+    try:
+        data = yaml.safe_load(text)
+    except yaml.YAMLError:
+        # unpinned_external_actions already reports unparseable YAML; one
+        # finding per broken file is enough.
+        return []
+
+    findings: list[str] = []
+    triggers = _trigger_block(data)
+
+    if "workflow_run" in triggers:
+        spec = triggers["workflow_run"]
+        listed = spec.get("workflows") if isinstance(spec, dict) else None
+        if not isinstance(listed, list) or not listed:
+            findings.append(
+                f"ERROR {path}: on.workflow_run requires a non-empty 'workflows' "
+                f"list; without it GitHub rejects the entire workflow file. Use "
+                f'\'workflows: ["*"]\' to react to every workflow.'
+            )
+
+    if "workflow_dispatch" in triggers:
+        spec = triggers["workflow_dispatch"]
+        inputs = spec.get("inputs") if isinstance(spec, dict) else None
+        if isinstance(inputs, dict) and len(inputs) > WORKFLOW_DISPATCH_INPUT_LIMIT:
+            findings.append(
+                f"ERROR {path}: on.workflow_dispatch declares {len(inputs)} inputs "
+                f"but GitHub allows at most {WORKFLOW_DISPATCH_INPUT_LIMIT}; "
+                f"manual dispatch of this workflow is refused."
+            )
+
+    return findings
+
+
 def iter_targets() -> list[Path]:
     """Every workflow and composite action definition, in a stable order."""
     targets = sorted(WORKFLOW_DIR.glob("*.yml")) + sorted(WORKFLOW_DIR.glob("*.yaml"))
@@ -202,6 +264,7 @@ def main(argv: list[str] | None = None) -> int:
         rel = path.relative_to(ROOT)
 
         errors.extend(unpinned_external_actions(rel, text))
+        errors.extend(event_schema_violations(rel, text))
 
         updated, changes = patch_action_versions(text)
         if changes:

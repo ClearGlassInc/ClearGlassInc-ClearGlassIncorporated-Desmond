@@ -13,6 +13,15 @@ Guidance for agents working in this repository.
 > `scripts/verify_site.py`, which `pages.yml` and `site-integrity-and-deploy.yml`
 > both run, **is present** — restored in `be0b7cd`, and it exits 0. An earlier
 > version of this notice said it was missing; that is no longer true.
+>
+> Re-verified 2026-09-16: still true. Job `104850767490` on that day's `main`
+> push reports `runner_id: 0`, no `steps`, and its logs 404. But the
+> GitHub-managed `pages build and deployment` run succeeded the same minute in
+> 40 seconds, so **the branch-deploy path is the only reason the site still
+> ships.** Moving Pages onto Actions would silently stop publishing altogether.
+> `PRODUCTION-RECOVERY.md` §1.3 says no Pages build has run since 2026-09-06;
+> that is now out of date — GitHub-managed builders and Dependabot still run,
+> only user-authored `runs-on` jobs cannot get a runner.
 
 ## What this repo is
 
@@ -43,6 +52,7 @@ non‑negotiable when changing it.
 | `control-plane/` | **Active** governed e‑commerce OS: FastAPI control plane (was `clearglass-commerce/control-plane/`) |
 | `storefront/`, `admin/` | The commerce OS's Next.js apps, each deploying independently |
 | `side-store.html`, `side-store/lib/`, `data/side-store/` | The Side Store: 57 impulse SKUs inline in the page, its pricing module, and the catalog projected out of it by `tools/side_store_catalog.py` |
+| `.github/auto-heal/` | Self-healing controller for Actions (`auto_heal.py` + its JSON policy). Landed at the root as `auto-heal/` in the upload flattening, so the workflow that runs it found nothing; restored to the path `auto_heal.py` itself resolves |
 | `agent_army/` | Governed role routing + approval gating (`AGENT_POLICY.md`, `orchestrator.py`, `secure_runtime/` Rust sidecar) |
 | `agents/` | Per‑agent definitions (`agent.json`, `system_prompt.md`, tool schemas) |
 | `bots/` | Standalone Python automation bots invoked by workflows (e.g. `store_smoke_bot.py`) |
