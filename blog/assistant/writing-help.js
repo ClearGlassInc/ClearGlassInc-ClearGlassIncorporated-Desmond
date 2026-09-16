@@ -259,7 +259,7 @@
     ".cgw-x:hover{color:#fff;border-color:#eb4d4f}" +
     ".cgw-tools{display:flex;flex-wrap:wrap;gap:6px;padding:12px 16px;border-bottom:1px solid rgba(238, 99, 101,.1)}" +
     ".cgw-tool{border:1px solid rgba(238, 99, 101,.18);background:rgba(255,255,255,.05);color:#e5d3d4;border-radius:999px;padding:7px 11px;font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.04em;cursor:pointer;text-transform:uppercase}" +
-    ".cgw-tool[aria-pressed=true]{background:linear-gradient(135deg,#eb4d4f,#55f2a6);color:#d1ecf9;border-color:transparent}" +
+    ".cgw-tool[aria-selected=true]{background:linear-gradient(135deg,#eb4d4f,#55f2a6);color:#d1ecf9;border-color:transparent}" +
     ".cgw-body{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:12px}" +
     ".cgw-hint{color:#ba8a8d;font-size:12px}" +
     ".cgw-input{width:100%;min-height:110px;resize:vertical;border-radius:12px;border:1px solid rgba(238, 99, 101,.2);background:#100b0b;color:#eef4ff;padding:12px;font:500 13px/1.5 Inter,system-ui,sans-serif}" +
@@ -306,7 +306,10 @@
   if (dock) { dock.insertBefore(fab, dock.firstChild); }
   else { fab.classList.add("cgw-fab-float"); document.body.appendChild(fab); }
 
-  var panel = document.createElement("aside");
+  // A <div>, not an <aside>: `role="dialog"` is not allowed to override the
+  // implicit `complementary` role of <aside>, so the panel exposed no role at
+  // all to assistive technology.
+  var panel = document.createElement("div");
   panel.id = "cgw-panel";
   panel.setAttribute("role", "dialog");
   panel.setAttribute("aria-modal", "false");
@@ -314,7 +317,9 @@
   panel.innerHTML =
     '<div class="cgw-head"><div><b>Writing help</b><small>ClearGlass Insights desk assistant · ' + (CFG.endpoint ? "proxy mode" : "local mode") + '</small></div><button class="cgw-x" aria-label="Close writing help">✕</button></div>' +
     '<div class="cgw-tools" role="tablist" aria-label="Writing tools">' +
-    Object.keys(TOOLS).map(function (k, i) { return '<button class="cgw-tool" role="tab" data-tool="' + k + '" aria-pressed="' + (i === 0) + '">' + esc(TOOLS[k].label) + "</button>"; }).join("") +
+    // role="tab" takes aria-selected; aria-pressed is a toggle-button
+    // attribute and is not allowed here, so the selected tab was not announced.
+    Object.keys(TOOLS).map(function (k, i) { return '<button class="cgw-tool" type="button" role="tab" data-tool="' + k + '" aria-selected="' + (i === 0) + '">' + esc(TOOLS[k].label) + "</button>"; }).join("") +
     "</div>" +
     '<div class="cgw-body">' +
     '<p class="cgw-hint" id="cgw-hint"></p>' +
@@ -342,7 +347,7 @@
 
   function setTool(key) {
     activeTool = key;
-    panel.querySelectorAll(".cgw-tool").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.tool === key)); });
+    panel.querySelectorAll(".cgw-tool").forEach(function (b) { b.setAttribute("aria-selected", String(b.dataset.tool === key)); });
     hint.textContent = TOOLS[key].hint || "";
     extra.innerHTML = TOOLS[key].extra || "";
   }
