@@ -19,6 +19,11 @@ _webhook_throttle = rate_limit("stripe_subscription_webhook", "rate_limit_webhoo
 # throttle as /billing/portal. Without it an anonymous caller can pin the
 # endpoint and burn the account's Stripe rate budget for free.
 _portal_throttle = rate_limit("subscription_portal", "rate_limit_checkout_per_minute")
+# /status is unauthenticated for the same reason and makes the same Stripe round-trip
+# per call, so it needs the same ceiling: without one an anonymous caller can pin it
+# and burn the account's Stripe rate budget, starving checkout and the webhooks.
+# Its own scope keeps a customer polling status from spending their portal budget.
+_status_throttle = rate_limit("subscription_status", "rate_limit_checkout_per_minute")
 
 ACTIVE_STATUSES = {"active", "trialing"}
 
@@ -134,7 +139,7 @@ def billing_portal(req: PortalRequest) -> dict[str, str]:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
-@router.get("/status")
+@router.get("/status", dependencies=[Depends(_status_throttle)])
 def subscription_status(
     checkout_session_id: str,
     session: Session = Depends(get_session),
