@@ -1,11 +1,16 @@
+import importlib.util
 import json
 from pathlib import Path
 
-from product.automation_kit.validation.validate_kit import (
-    validate_asset_register,
-    validate_required_notice,
-    validate_text_policy,
-)
+
+_MODULE_PATH = Path(__file__).parents[1] / "validation" / "validate_kit.py"
+_SPEC = importlib.util.spec_from_file_location("validate_kit", _MODULE_PATH)
+assert _SPEC and _SPEC.loader
+_MODULE = importlib.util.module_from_spec(_SPEC)
+_SPEC.loader.exec_module(_MODULE)
+validate_asset_register = _MODULE.validate_asset_register
+validate_required_notice = _MODULE.validate_required_notice
+validate_text_policy = _MODULE.validate_text_policy
 
 
 def test_valid_package_has_no_policy_findings(tmp_path: Path):
