@@ -1,8 +1,16 @@
+import importlib.util
 import math
+from pathlib import Path
 
 import pytest
 
-from product.automation_kit.calculators.automation_value import calculate
+
+_MODULE_PATH = Path(__file__).parents[1] / "calculators" / "automation_value.py"
+_SPEC = importlib.util.spec_from_file_location("automation_value", _MODULE_PATH)
+assert _SPEC and _SPEC.loader
+_MODULE = importlib.util.module_from_spec(_SPEC)
+_SPEC.loader.exec_module(_MODULE)
+calculate = _MODULE.calculate
 
 
 NOTICE = (
