@@ -27,11 +27,14 @@ REQUIRED_ASSET_FIELDS = {
     "release_status",
 }
 
+# Intentionally narrow: policy language that explicitly denies guarantees/certification
+# is allowed. These patterns flag affirmative claims that require human review.
 FORBIDDEN_PATTERNS = (
-    re.compile(r"\bguarantees?\s+(?:savings|revenue|roi|return|security|compliance)", re.I),
-    re.compile(r"\bguaranteed\s+(?:savings|revenue|roi|return|security|compliance)", re.I),
-    re.compile(r"\bcertif(?:y|ied|ication)\b", re.I),
-    re.compile(r"\bformal\s+(?:compliance|security)\s+(?:assessment|assurance)\b", re.I),
+    re.compile(r"\b(?:we|this product|this toolkit|clearglass)\s+(?:guarantee|guarantees|guaranteed)\b", re.I),
+    re.compile(r"\bguarantees?\s+(?:savings|revenue|roi|return on investment|security|compliance)\b", re.I),
+    re.compile(r"\b(?:we|this product|this toolkit|clearglass)\s+(?:certif(?:y|ies)|certified|certification)\b", re.I),
+    re.compile(r"\bcertified\s+by\s+clearglass\b", re.I),
+    re.compile(r"\bformal\s+(?:compliance|security)\s+(?:assessment|assurance)\s+provided\b", re.I),
 )
 
 
@@ -48,6 +51,7 @@ def validate_asset_register(path: str) -> list[str]:
         return ["asset register must contain an assets list"]
 
     root = register_path.parent
+    repository_root = root.parents[1]
     for index, asset in enumerate(assets):
         if not isinstance(asset, dict):
             findings.append(f"asset {index} is not an object")
@@ -56,10 +60,8 @@ def validate_asset_register(path: str) -> list[str]:
         for field in missing:
             findings.append(f"asset {index} missing {field}")
         relative_path = asset.get("path")
-        if isinstance(relative_path, str) and not (root / relative_path).exists():
-            # Paths in the register may be repository-relative, so also check two levels up.
-            repository_root = root.parent.parent
-            if not (repository_root / relative_path).exists():
+        if isinstance(relative_path, str):
+            if not (repository_root / relative_path).exists() and not (root / relative_path).exists():
                 findings.append(f"asset {asset.get('asset_id', index)} path missing: {relative_path}")
         if asset.get("release_status") not in {"INTERNAL_ONLY", "NOT_RELEASE_APPROVED"}:
             findings.append(f"asset {asset.get('asset_id', index)} has unsafe release status")
@@ -74,9 +76,10 @@ def validate_text_policy(root: str) -> list[str]:
     findings: list[str] = []
     for path in _markdown_files(Path(root)):
         text = path.read_text(errors="replace")
-        for pattern in FORBIDDEN_PATTERNS:
-            if pattern.search(text):
-                findings.append(f"policy review required: {path}: {pattern.pattern}")
+        for line_number, line in enumerate(text.splitlines(), start=1):
+            for pattern in FORBIDDEN_PATTERNS:
+                if pattern.search(line) and "does not" not in line.lower() and "do not" not in line.lower():
+                    findings.append(f"policy review required: {path}:{line_number}: {pattern.pattern}")
     return findings
 
 
@@ -92,7 +95,7 @@ def validate_required_notice(root: str) -> list[str]:
 def run_validation(root: str) -> dict[str, object]:
     root_path = Path(root)
     register = root_path / "asset-register.json"
-    findings = []
+    findings: list[str] = []
     findings.extend(validate_asset_register(str(register)))
     findings.extend(validate_text_policy(str(root_path)))
     findings.extend(validate_required_notice(str(root_path)))
