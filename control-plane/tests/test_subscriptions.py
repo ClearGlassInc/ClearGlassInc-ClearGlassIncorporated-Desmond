@@ -154,3 +154,230 @@ def test_status_has_its_own_throttle_bucket(live_client) -> None:
         "/subscriptions/portal", json={"checkout_session_id": "cs_test_abcdefgh"}
     )
     assert portal.status_code != 429
+
+
+# ------------------------------------------------------------- audit-ledger coverage
+#
+# CLAUDE.md's commerce invariant is that every material change lands in the append-only
+# `events` ledger. Every sibling money router honours it — payments, fulfillment,
+# sidestore, etsy, order_ledger — but the subscription webhook wrote none, so a plan
+# change, a cancellation or a failed payment moved a customer's billing state with no
+# ledger row behind it. These tests pin the rows down so the gap cannot reopen.
+
+_WEBHOOK_SECRET = "whsec_test_subscription_ledger"
+
+
+@pytest.fixture()
+def webhook_client(monkeypatch):
+    """A client whose Stripe webhook signature verifies, backed by the real schema."""
+    if not _HAS_WEB_STACK:
+        pytest.skip("fastapi/sqlalchemy not installed")
+
+    from sqlalchemy import event as sa_event
+
+    from app import payments, security
+
+    monkeypatch.setattr(security, "_limiter", security.SlidingWindowLimiter())
+    monkeypatch.setattr(payments, "_webhook_secret", lambda: _WEBHOOK_SECRET)
+
+    engine = create_engine(
+        "sqlite://", future=True,
+        connect_args={"check_same_thread": False}, poolclass=StaticPool,
+    )
+
+    # The router's upsert is Postgres-flavoured and stamps `updated_at = now()`.
+    # SQLite has no now(), so register one rather than forking the SQL for tests —
+    # the point is to exercise the statements that actually ship.
+    @sa_event.listens_for(engine, "connect")
+    def _add_now(dbapi_conn, _record):  # pragma: no cover - driver callback
+        from datetime import UTC as _utc
+        from datetime import datetime as _dt
+        dbapi_conn.create_function("now", 0, lambda: _dt.now(_utc).isoformat(sep=" "))
+
+    Base.metadata.create_all(engine)
+    with engine.begin() as conn:
+        # Mirrors migrations/006_subscriptions.sql, which ships as raw DDL.
+        conn.execute(sa_text("""
+            CREATE TABLE IF NOT EXISTS subscriptions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                stripe_customer_id VARCHAR(120) NOT NULL UNIQUE,
+                stripe_subscription_id VARCHAR(120) UNIQUE,
+                customer_email VARCHAR(254),
+                plan VARCHAR(120) NOT NULL,
+                stripe_price_id VARCHAR(120),
+                interval VARCHAR(16),
+                status VARCHAR(32) NOT NULL,
+                current_period_end TIMESTAMP,
+                cancel_at_period_end BOOLEAN NOT NULL DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """))
+        conn.execute(sa_text("""
+            CREATE TABLE IF NOT EXISTS stripe_events (
+                id VARCHAR(120) PRIMARY KEY,
+                event_type VARCHAR(120) NOT NULL,
+                received_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """))
+
+    TestingSession = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
+
+    def override_session():
+        session = TestingSession()
+        try:
+            yield session
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+        finally:
+            session.close()
+
+    app = create_app()
+    app.dependency_overrides[db_module.get_session] = override_session
+    return TestClient(app), TestingSession
+
+
+def _post_event(client, event: dict):
+    """Deliver a correctly signed Stripe event to the subscription webhook."""
+    import json
+
+    from app import payments
+
+    body = json.dumps(event).encode()
+    return client.post(
+        "/subscriptions/webhook",
+        content=body,
+        headers={"stripe-signature": payments.sign_payload(body, _WEBHOOK_SECRET)},
+    )
+
+
+def _ledger(SessionFactory, action: str | None = None) -> list:
+    from sqlalchemy import select
+
+    from app.models import Event
+
+    with SessionFactory() as session:
+        rows = session.scalars(select(Event).order_by(Event.id)).all()
+    return [r for r in rows if action is None or r.action == action]
+
+
+def _subscription_event(event_id: str, status: str, **overrides) -> dict:
+    obj = {
+        "id": "sub_test_1",
+        "customer": "cus_test_1",
+        "status": status,
+        "cancel_at_period_end": False,
+        "current_period_end": 1793000000,
+        "items": {"data": [{"price": {
+            "id": "price_1U0wlFL8uR92FksUG6ZT87rG",
+            "recurring": {"interval": "month"},
+        }}]},
+    }
+    obj.update(overrides)
+    return {
+        "id": event_id,
+        "type": "customer.subscription.updated",
+        "data": {"object": obj},
+    }
+
+
+def test_subscription_lifecycle_writes_an_audit_row(webhook_client) -> None:
+    """An active subscription must leave a ledger row naming plan and status."""
+    client, SessionFactory = webhook_client
+    response = _post_event(client, _subscription_event("evt_1", "active"))
+
+    assert response.status_code == 200
+    assert response.json()["duplicate"] is False
+
+    rows = _ledger(SessionFactory, "subscription_active")
+    assert len(rows) == 1, "subscription lifecycle event left no audit row"
+    assert rows[0].actor == "stripe"
+    assert rows[0].target == "cus_test_1"
+    assert rows[0].result == "executed"
+    assert rows[0].payload["plan"] == "business-protection-monthly"
+    assert rows[0].payload["from_status"] is None
+
+
+def test_status_transition_records_where_it_came_from(webhook_client) -> None:
+    """A cancellation is only auditable if the row says what it replaced."""
+    client, SessionFactory = webhook_client
+    _post_event(client, _subscription_event("evt_1", "active"))
+    _post_event(client, _subscription_event("evt_2", "canceled"))
+
+    rows = _ledger(SessionFactory, "subscription_canceled")
+    assert len(rows) == 1
+    assert rows[0].payload["from_status"] == "active", (
+        "cancellation did not record the status it replaced"
+    )
+
+
+def test_redelivered_event_is_skipped_and_recorded(webhook_client) -> None:
+    """Stripe retries; the second delivery must change nothing but still be visible."""
+    client, SessionFactory = webhook_client
+    first = _post_event(client, _subscription_event("evt_dup", "active"))
+    second = _post_event(client, _subscription_event("evt_dup", "canceled"))
+
+    assert first.json()["duplicate"] is False
+    assert second.json()["duplicate"] is True
+
+    # The duplicate must not have applied the canceled status.
+    with SessionFactory() as session:
+        status = session.execute(sa_text(
+            "SELECT status FROM subscriptions WHERE stripe_customer_id = 'cus_test_1'"
+        )).scalar_one()
+    assert status == "active", "a redelivered event overwrote live billing state"
+
+    skipped = _ledger(SessionFactory, "subscription_event_duplicate_skipped")
+    assert len(skipped) == 1
+    assert skipped[0].result == "skipped"
+    assert skipped[0].target == "evt_dup"
+
+
+def test_failed_payment_is_recorded_without_touching_status(webhook_client) -> None:
+    """Dunning must be auditable, but `customer.subscription.updated` owns status."""
+    client, SessionFactory = webhook_client
+    _post_event(client, _subscription_event("evt_1", "active"))
+    _post_event(client, {
+        "id": "evt_invoice_1",
+        "type": "invoice.payment_failed",
+        "data": {"object": {
+            "customer": "cus_test_1",
+            "subscription": "sub_test_1",
+            "attempt_count": 2,
+            "next_payment_attempt": 1793600000,
+            "amount_due": 19900,
+            "currency": "cad",
+        }},
+    })
+
+    rows = _ledger(SessionFactory, "subscription_invoice_payment_failed")
+    assert len(rows) == 1, "a failed subscription payment left no audit row"
+    assert rows[0].result == "flagged"
+    assert rows[0].target == "cus_test_1"
+    assert rows[0].payload["attempt_count"] == 2
+
+    with SessionFactory() as session:
+        status = session.execute(sa_text(
+            "SELECT status FROM subscriptions WHERE stripe_customer_id = 'cus_test_1'"
+        )).scalar_one()
+    assert status == "active", (
+        "invoice.payment_failed wrote status; that column has a single writer"
+    )
+
+
+def test_unsigned_webhook_is_rejected_and_writes_nothing(webhook_client) -> None:
+    """The ledger must not be forgeable by an unsigned caller."""
+    client, SessionFactory = webhook_client
+    import json
+
+    body = json.dumps(_subscription_event("evt_forged", "active")).encode()
+    response = client.post(
+        "/subscriptions/webhook",
+        content=body,
+        headers={"stripe-signature": "t=1,v1=deadbeef"},
+    )
+
+    assert response.status_code == 400
+    assert _ledger(SessionFactory) == [], "an unverified event reached the ledger"
