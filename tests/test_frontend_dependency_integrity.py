@@ -143,3 +143,63 @@ def test_react_and_next_are_declared_at_all(app: str) -> None:
     deps = declared(app)
     for required in ("next", "react", "react-dom"):
         assert required in deps, f"{app} no longer declares {required}; these are Next.js apps"
+
+
+def caret_bounds(spec: str) -> tuple[tuple[int, ...], tuple[int, ...]]:
+    """Inclusive lower and exclusive upper bound of a caret range.
+
+    npm's caret keeps the leftmost non-zero component fixed, so `^7.0.2` allows
+    `<8.0.0` but `^0.35.3` only allows `<0.36.0`. Getting that wrong in the
+    permissive direction would make this check pass on ranges npm rejects.
+    """
+    lower = version_parts(spec.lstrip("^"))
+    major, minor, patch = (lower + (0, 0, 0))[:3]
+    if major:
+        return lower, (major + 1, 0, 0)
+    if minor:
+        return lower, (0, minor + 1, 0)
+    return lower, (0, 0, patch + 1)
+
+
+def version_parts(version: str) -> tuple[int, ...]:
+    """`7.0.2` -> `(7, 0, 2)`, for ordering comparisons."""
+    return tuple(int(part) for part in version.split("."))
+
+
+@pytest.mark.parametrize("app", APPS)
+def test_resolved_versions_satisfy_the_declared_ranges(app: str) -> None:
+    """The pin npm installs must be a version the manifest actually allows.
+
+    This is the gap the range comparison above leaves open, and the one that
+    reached `main`. On 2026-09-15 the merge `6bcf849` took main's side of the
+    `storefront/package.json` conflict while keeping the Dependabot branch's
+    lockfile, so the manifest asked for `typescript@^5.4.0` while the lockfile
+    resolved `7.0.2`. Both *ranges* still read `^5.4.0`, so
+    `test_the_lockfile_agrees_with_the_manifest` passed — but `npm ci` refuses
+    the install outright:
+
+        Invalid: lock file's typescript@7.0.2 does not satisfy typescript@5.9.3
+
+    `Commerce Frontend CI` and `Commerce Deploy` both run `npm ci` and would
+    have failed in seconds, but neither reported anything: Actions has not
+    dispatched a runner since 2026-09-10. Comparing the resolved pin against
+    the declared range needs no runner, so it holds while Actions is down.
+    """
+    deps = declared(app)
+    violations = {}
+    for name, spec in deps.items():
+        if not spec.startswith("^"):
+            continue  # only caret ranges are used here; see `caret_bounds`
+        pin = resolved(app, name)
+        if pin is None or "-" in pin:
+            continue  # not locked at top level, or a prerelease this cannot order
+        lower, upper = caret_bounds(spec)
+        if not lower <= version_parts(pin) < upper:
+            violations[name] = {"package.json": spec, "lock resolves": pin}
+
+    assert not violations, (
+        f"{app}: package-lock.json resolves versions package.json does not allow: "
+        f"{violations}. `npm ci` installs the lockfile and validates it against the "
+        f"manifest, so it will fail outright. Align package.json and regenerate with "
+        f"`npm install --package-lock-only`."
+    )
