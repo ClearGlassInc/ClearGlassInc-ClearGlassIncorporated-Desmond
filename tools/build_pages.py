@@ -76,9 +76,12 @@ CSP_POLICY = (
 AEGIS_STYLESHEET = '<link rel="stylesheet" href="/aegis-glass.css" data-aegis-global="true">'
 SECURITY_STACK_STYLESHEET = '<link rel="stylesheet" href="/security-stack-fusion.css" data-security-stack-fusion="true">'
 FX_STYLESHEET = '<link rel="stylesheet" href="/fx.css" data-fx-global="true">'
+CINEMATIC_MOTION_STYLESHEET = '<link rel="stylesheet" href="/clearglass-motion.css" data-cgm-motion-global="true">'
 AEGIS_SCRIPT = '<script src="/aegis-glass.js" defer data-aegis-global="true"></script>'
 STEALTH_SCRIPT = '<script src="/stealth-glass.js" defer data-stealth-global="true"></script>'
 FX_SCRIPT = '<script src="/fx.js" defer data-fx-global="true"></script>'
+CINEMATIC_MOTION_SCRIPT = '<script src="/clearglass-motion.js" defer data-cgm-motion-global="true"></script>'
+CINEMATIC_MOTION_BODY = """<div class="cgm-atmos" aria-hidden="true">\n  <div class="cgm-atmos__field cgm-atmos__field--signal"></div>\n  <div class="cgm-atmos__field cgm-atmos__field--wine"></div>\n  <div class="cgm-atmos__grid"></div>\n  <div class="cgm-atmos__scan"></div>\n  <div class="cgm-atmos__cursor"></div>\n  <div class="cgm-atmos__noise"></div>\n</div>\n<div class="cgm-cursor" aria-hidden="true"></div>\n<button type="button" class="cgm-motion-toggle" data-cgm-motion-toggle data-no-future-glass aria-pressed="false">Reduce visual effects</button>"""
 
 
 def _has_asset(text: str, pattern: str) -> bool:
