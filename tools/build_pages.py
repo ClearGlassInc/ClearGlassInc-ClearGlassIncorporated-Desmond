@@ -138,6 +138,19 @@ def _harden_html(path: Path) -> None:
     if not _has_asset(text, r"<script\b[^>]*src\s*=\s*['\"]/fx\.js['\"]"):
         tags.append(FX_SCRIPT)
 
+    if not _has_asset(text, r"<link\\b[^>]*href\\s*=\\s*[\'\"]/clearglass-motion\\.css[\'\"]"):
+        tags.append(CINEMATIC_MOTION_STYLESHEET)
+    if not _has_asset(text, r"<script\\b[^>]*src\\s*=\\s*[\'\"]/clearglass-motion\\.js[\'\"]"):
+        tags.append(CINEMATIC_MOTION_SCRIPT)
+
+    # Mount the cinematic layer once per published page. Reduced-motion and
+    # unsupported-renderer paths remain readable and do not hide content.
+    body = re.search(r"<body(?:\\s[^>]*)?>", text, flags=re.IGNORECASE)
+    if body and "data-cgm-motion-mounted" not in text:
+        marker = body.group(0) + "\\n<div data-cgm-motion-mounted>" + CINEMATIC_MOTION_BODY + "</div>"
+        text = text.replace(body.group(0), marker, 1)
+        metadata_replaced = True
+
     if not tags and not metadata_replaced:
         return
 
