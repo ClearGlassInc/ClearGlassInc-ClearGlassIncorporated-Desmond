@@ -160,8 +160,15 @@
   // ── persistence ───────────────────────────────────────────────────────
 
   function save() {
+    var snapshot = {
+      schema: data ? data.schema : "",
+      tasks: state.tasks, collapsed: state.collapsed, board: state.board,
+      sprint: state.sprint, project: state.project, sort: state.sort,
+      priority: state.priority, day: state.day, series: state.series, range: state.range
+    };
+    if (!data || !validateLocalState(snapshot)) return false;
     try {
-      localStorage.setItem(STORE, JSON.stringify({
+      localStorage.setItem(STORE, JSON.stringify(snapshot));
         schema: data ? data.schema : "",
         tasks: state.tasks, collapsed: state.collapsed, board: state.board,
         sprint: state.sprint, project: state.project, sort: state.sort,
