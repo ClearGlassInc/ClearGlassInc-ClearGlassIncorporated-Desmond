@@ -169,14 +169,9 @@
     if (!data || !validateLocalState(snapshot)) return false;
     try {
       localStorage.setItem(STORE, JSON.stringify(snapshot));
-        schema: data ? data.schema : "",
-        tasks: state.tasks, collapsed: state.collapsed, board: state.board,
-        sprint: state.sprint, project: state.project, sort: state.sort,
-        priority: state.priority, day: state.day, series: state.series, range: state.range
-      }));
-    } catch (e) { /* private mode or quota — the session still works */ }
+      return true;
+    } catch (e) { /* private mode or quota — the session still works */ return false; }
   }
-
   function restore() {
     var raw, saved;
     try { raw = localStorage.getItem(STORE); } catch (e) { return false; }
