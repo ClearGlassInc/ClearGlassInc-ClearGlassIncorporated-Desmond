@@ -1,4 +1,4 @@
-# ClearGlass — Secure Subscription System
+# ClearGlass — Secure Stripe Subscription System
 
 **Brand:** CLEARGLASS — See Through Everything.  
 **Purpose:** Cybersecurity, AI governance, digital resilience, intelligence, automation, risk engineering, evidence provenance, auditable decision-making.
