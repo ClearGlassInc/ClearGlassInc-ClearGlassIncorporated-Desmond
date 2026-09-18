@@ -175,7 +175,10 @@
     try { raw = localStorage.getItem(STORE); } catch (e) { return false; }
     if (!raw) return false;
     try { saved = JSON.parse(raw); } catch (e) { return false; }
-    if (!saved || saved.schema !== data.schema || !(saved.tasks instanceof Array)) return false;
+    if (!validateLocalState(saved)) {
+      try { localStorage.removeItem(STORE); } catch (e) { /* storage may be unavailable */ }
+      return false;
+    }
     state.tasks = saved.tasks;
     state.collapsed = saved.collapsed || state.collapsed;
     state.board = saved.board || state.board;
@@ -186,6 +189,66 @@
     state.day = saved.day || state.day;
     state.series = saved.series || state.series;
     state.range = saved.range || state.range;
+    return true;
+  }
+
+  // ── local-state trust boundary ────────────────────────────────────────
+
+  // The Project Board is a static client-side console: there is no server API,
+  // identity provider, or database behind these edits today. Treat the feed and
+  // localStorage as untrusted input and fail closed before rendering/mutating.
+  var MAX_TASKS = 500;
+  var MAX_SUBTASKS = 100;
+  var MAX_TITLE = 120;
+  var MAX_SUBTASK_TITLE = 240;
+  var ID_RE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
+  var PRIORITIES = { high: true, medium: true, low: true, none: true };
+
+  function hasId(list, id) {
+    for (var i = 0; i < list.length; i++) if (list[i] && list[i].id === id) return true;
+    return false;
+  }
+
+  function isIsoDate(value) {
+    if (value === null || value === "") return true;
+    if (typeof value !== "string" || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return false;
+    var d = new Date(value + "T00:00:00Z");
+    return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === value;
+  }
+
+  function validTask(task) {
+    if (!task || typeof task !== "object" || Array.isArray(task)) return false;
+    if (typeof task.id !== "string" || !ID_RE.test(task.id)) return false;
+    if (typeof task.title !== "string" || task.title.trim() === "" || task.title.length > MAX_TITLE) return false;
+    if (!data || !hasId(data.columns || [], task.column)) return false;
+    if (!data || !hasId([].concat(data.boards || [], (data.boards || []).reduce(function (a, b) { return a.concat(b.children || []); }, [])), task.board)) return false;
+    if (!data || !hasId(data.sprints || [], task.sprint)) return false;
+    if (!PRIORITIES[task.priority || "none"]) return false;
+    if (!isIsoDate(task.start) || !isIsoDate(task.end)) return false;
+    if (task.start && task.end && task.start > task.end) return false;
+    if (!Array.isArray(task.assignees) || task.assignees.length > (data.members || []).length) return false;
+    var seen = {};
+    for (var i = 0; i < task.assignees.length; i++) {
+      var aid = task.assignees[i];
+      if (typeof aid !== "string" || seen[aid] || !hasId(data.members || [], aid)) return false;
+      seen[aid] = true;
+    }
+    if (!Array.isArray(task.subtasks) || task.subtasks.length > MAX_SUBTASKS) return false;
+    for (var j = 0; j < task.subtasks.length; j++) {
+      var sub = task.subtasks[j];
+      if (!sub || typeof sub !== "object" || typeof sub.title !== "string" ||
+          sub.title.trim() === "" || sub.title.length > MAX_SUBTASK_TITLE || typeof sub.done !== "boolean") return false;
+    }
+    return true;
+  }
+
+  function validateLocalState(saved) {
+    if (!saved || typeof saved !== "object" || saved.schema !== data.schema || !Array.isArray(saved.tasks) || saved.tasks.length > MAX_TASKS) return false;
+    var ids = {};
+    for (var i = 0; i < saved.tasks.length; i++) {
+      if (!validTask(saved.tasks[i]) || ids[saved.tasks[i].id]) return false;
+      ids[saved.tasks[i].id] = true;
+    }
     return true;
   }
 
@@ -1012,12 +1075,22 @@
       subtasks: subtasks
     };
 
+    if (!validTask(Object.assign({
+      id: state.editing || "draft-task",
+      sprint: state.sprint === "all" ? (data.sprints[1] || data.sprints[0] || {}).id : state.sprint
+    }, patch))) {
+      toast("Task input rejected — invalid or out-of-scope data");
+      return;
+    }
+
     if (state.editing) {
       var task = taskById(state.editing);
       if (task) for (var k in patch) if (Object.prototype.hasOwnProperty.call(patch, k)) task[k] = patch[k];
       toast("Task updated");
     } else {
-      patch.id = "t-" + Date.now().toString(36);
+      patch.id = "t-" + (window.crypto && typeof window.crypto.randomUUID === "function"
+        ? window.crypto.randomUUID().replace(/-/g, "").slice(0, 24)
+        : Date.now().toString(36));
       patch.sprint = state.sprint === "all" ? (data.sprints[1] || data.sprints[0] || {}).id : state.sprint;
       state.tasks.unshift(patch);
       toast("Task added to " + (column(patch.column) || {}).name);
