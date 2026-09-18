@@ -175,7 +175,7 @@ async def stripe_webhook(request: Request, session: Session = Depends(get_sessio
     sig = request.headers.get("stripe-signature", "")
     check = payments.verify_webhook(payload, sig)
 
-    if payments.webhook_secret_set() and not check["verified"]:
+    if payments.webhook_requires_signature() and not check["verified"]:
         raise HTTPException(status_code=400, detail=f"webhook rejected: {check['reason']}")
 
     event = check["event"]
