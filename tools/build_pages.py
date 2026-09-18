@@ -138,9 +138,9 @@ def _harden_html(path: Path) -> None:
     if not _has_asset(text, r"<script\b[^>]*src\s*=\s*['\"]/fx\.js['\"]"):
         tags.append(FX_SCRIPT)
 
-    if not _has_asset(text, r"<link\b[^>]*href\s*=\\s*[\'\"]/clearglass-motion\.css[\'\"]"):
+    if not _has_asset(text, r"<link\b[^>]*href\s*=\s*[\'\"]/clearglass-motion\.css[\'\"]"):
         tags.append(CINEMATIC_MOTION_STYLESHEET)
-    if not _has_asset(text, r"<script\b[^>]*src\s*=\\s*[\'\"]/clearglass-motion\.js[\'\"]"):
+    if not _has_asset(text, r"<script\b[^>]*src\s*=\s*[\'\"]/clearglass-motion\.js[\'\"]"):
         tags.append(CINEMATIC_MOTION_SCRIPT)
 
     # Mount the cinematic layer once per published page. Reduced-motion and
