@@ -319,7 +319,7 @@ Work is done only when:
 
 ## High-assurance engineering doctrine
 
-Apply this doctrine to security-sensitive, safety-critical, privacy-impacting, financial, infrastructure, autonomous-agent, and mission-critical work. It draws on established public high-assurance and advanced-research engineering practices. It does not imply endorsement by, access to, or affiliation with NSA, DARPA, the United States Government, or any defense organization.
+Apply this doctrine to security-sensitive, safety-critical, privacy-impacting, financial, infrastructure, autonomous-agent, and mission-critical work. It draws on established public high-assurance and advanced-research engineering practices. Do not use U.S. intelligence or defense agencies as branding, quality shorthand, affiliation signals, or capability claims on any ClearGlass page or publication.
 
 ### Mission assurance
 
