@@ -314,7 +314,7 @@ class RevenueControlLogRequest(BaseModel):
     evidence: str = Field(default="", max_length=2000)
     result: str = Field(default="", max_length=2000)
     next_action: str = Field(default="", max_length=2000)
-    due_date: str | None = Field(default=None, pattern=r"^\\d{4}-\\d{2}-\\d{2}$")
+    due_date: str | None = Field(default=None, pattern=r"^\d{4}-\d{2}-\d{2}$")
     owner: str = Field(default="unassigned", max_length=120)
     status: str = Field(default="NOT_STARTED", max_length=40)
 
