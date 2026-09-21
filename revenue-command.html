@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="ClearGlass Revenue Command System — diagnostic services and qualification">
+<meta name="robots" content="index,follow">
+<meta name="cg-revenue-api" content="">
+<title>ClearGlass Revenue Command</title>
+<style>
+:root{color-scheme:dark;--bg:#070b14;--panel:rgba(17,25,40,.78);--line:rgba(115,214,255,.2);--text:#f4f7fb;--muted:#9aa7b8;--cyan:#66e8ff;--violet:#b394ff;--gold:#f2cf75;--danger:#ff867e}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;background:radial-gradient(circle at 20% 0%,#112037 0,#070b14 45%);color:var(--text);min-height:100vh}
+main{max-width:1180px;margin:auto;padding:32px 20px 64px}.eyebrow{text-transform:uppercase;letter-spacing:.16em;font-size:12px;color:var(--cyan)}
+h1{font-size:clamp(36px,7vw,72px);line-height:.95;margin:10px 0 18px}.hero p,.muted{color:var(--muted);max-width:720px;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-top:28px}.panel{background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(18px);border-radius:20px;padding:22px}
+.price{font-size:42px;font-weight:800}.tag{display:inline-flex;padding:5px 9px;border:1px solid var(--line);border-radius:999px;color:var(--cyan);font-size:12px}
+button{border:0;border-radius:12px;padding:13px 16px;font-weight:700;cursor:pointer}.primary{background:linear-gradient(135deg,var(--cyan),#7aa7ff);color:#051019}.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+form{display:grid;gap:12px}label{display:grid;gap:6px;font-size:13px;color:var(--muted)}input,textarea,select{width:100%;background:#0a1120;border:1px solid rgba(255,255,255,.14);color:var(--text);border-radius:10px;padding:12px;font:inherit}textarea{min-height:110px;resize:vertical}
+.actions{display:flex;gap:10px;flex-wrap:wrap}.status{min-height:24px;color:var(--muted)}.success{color:#9ef3c8}.warn{color:var(--gold)}.error{color:var(--danger)}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;vertical-align:top}th{color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}.kpi{padding:14px;border-radius:14px;background:#0a1120;border:1px solid rgba(255,255,255,.08)}.kpi strong{font-size:24px;display:block;margin-top:4px}
+.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:700px){main{padding:22px 14px 50px}.panel{padding:17px}}
+</style>
+</head>
+<body>
+<main>
+<section class="hero"><div class="eyebrow">ClearGlass · Revenue Command</div><h1>Turn a live technical problem into a defined next action.</h1><p>Start with a fixed-scope website and deployment diagnostic. The system records the lead, verifies payment through the commerce control plane, and places paid work into a delivery queue. Simulated or expected money is never presented as revenue.</p></section>
+
+<section class="grid" aria-label="Entry offer and qualification">
+<article class="panel"><span class="tag">ENTRY OFFER</span><h2 id="offer-name">Rapid Website &amp; Deployment Diagnostic</h2><div id="offer-price" class="price">CAD $125</div><p id="offer-description" class="muted">Fixed-scope diagnosis for website, GitHub deployment, workflow, performance, or broken conversion-path problems.</p><ul id="offer-scope" class="muted"></ul><p id="offer-status" class="status" aria-live="polite">Loading verified offer state...</p></article>
+
+<article class="panel"><h2>Qualification</h2><form id="lead-form">
+<label>Full name<input name="full_name" autocomplete="name" required maxlength="160"></label>
+<label>Work email<input name="work_email" type="email" autocomplete="email" required maxlength="254"></label>
+<label>Company<input name="company" autocomplete="organization" maxlength="240"></label>
+<label>Website / primary digital property<input name="website" type="url" maxlength="500" placeholder="https://"></label>
+<label>Role<input name="role" maxlength="160"></label>
+<label>Service interest<select name="service_interest"><option>Rapid Diagnostic</option><option>AI &amp; Security Revenue Systems Audit</option><option>Implementation Sprint</option><option>Managed Optimization &amp; Technical Advisory</option></select></label>
+<label>Primary goal<textarea name="primary_goal" required maxlength="2000"></textarea></label>
+<label>Current challenge<textarea name="current_challenge" required maxlength="4000"></textarea></label>
+<label>Business context<textarea name="business_context" maxlength="4000"></textarea></label>
+<label>Desired timeline<select name="desired_timeline"><option value="">Select</option><option>0-7 days</option><option>8-30 days</option><option>31-90 days</option><option>90+ days</option></select></label>
+<label>Investment range<select name="investment_range"><option value="">Select</option><option>CAD $125-$500</option><option>CAD $500-$2,500</option><option>CAD $2,500+</option><option>Not sure</option></select></label>
+<label>Notes<textarea name="notes" maxlength="4000"></textarea></label>
+<label><input type="checkbox" name="consent_marketing"> I agree to receive ClearGlass marketing communications.</label>
+<label class="visually-hidden">Website<input name="website_honeypot" tabindex="-1" autocomplete="off"></label>
+<input type="hidden" name="source"><input type="hidden" name="landing_page"><input type="hidden" name="referrer">
+<div class="actions"><button class="primary" type="submit">Submit qualification</button><button class="ghost" id="buy-btn" type="button" disabled>Start purchase</button></div>
+<div id="form-status" class="status" aria-live="polite"></div>
+</form></article></section>
+
+<section class="panel" style="margin-top:18px" aria-labelledby="admin-title">
+<h2 id="admin-title">Owner Revenue Cockpit</h2><p class="muted">The browser never contains an admin key. Enter it for this session only; it is kept in memory, not localStorage.</p>
+<div class="actions"><label style="min-width:280px">Admin API key<input id="admin-key" type="password" autocomplete="off"></label><button class="primary" id="load-dashboard" type="button">Load cockpit</button></div>
+<div id="dash-status" class="status" aria-live="polite"></div><div id="kpis" class="kpis" style="margin-top:14px"></div>
+<div style="overflow:auto;margin-top:16px"><table><thead><tr><th>Lead</th><th>Stage</th><th>Score</th><th>Next action</th><th>Owner</th></tr></thead><tbody id="lead-rows"></tbody></table></div>
+</section>
+</main>
+<script>
+var API_BASE=(document.querySelector('meta[name="cg-revenue-api"]')||{}).content||window.CG_REVENUE_API_BASE||'';
+API_BASE=API_BASE.replace(//$/,'');
+function api(path){return API_BASE+path}
+function qs(s){return document.querySelector(s)}
+function params(){return new URLSearchParams(location.search)}
+function captureAttribution(){
+ var u=params(), raw=localStorage.getItem('cg-utm-first'), first=raw?JSON.parse(raw):null;
+ if(!first){first={source:u.get('utm_source'),medium:u.get('utm_medium'),campaign:u.get('utm_campaign')};localStorage.setItem('cg-utm-first',JSON.stringify(first))}
+ return {source:u.get('utm_source')||'direct',landing_page:location.href,referrer:document.referrer||null,utm_first_source:first.source,utm_first_medium:first.medium,utm_first_campaign:first.campaign,utm_last_source:u.get('utm_source'),utm_last_medium:u.get('utm_medium'),utm_last_campaign:u.get('utm_campaign')}
+}
+function escapeHtml(x){return String(x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+var offer=null, adminKey='';
+fetch(api('/revenue/public-offer'),{headers:{Accept:'application/json'}}).then(function(r){if(!r.ok)throw new Error('Offer state unavailable');return r.json()}).then(function(o){
+ offer=o;qs('#offer-name').textContent=o.name;qs('#offer-price').textContent=o.currency+' $'+Number(o.amount_cad).toFixed(0);qs('#offer-description').textContent=o.description;qs('#offer-scope').innerHTML=o.scope.map(function(x){return '<li>'+escapeHtml(x)+'</li>'}).join('');
+ var st=qs('#offer-status');st.textContent=o.payment_ready?'Payment route configured and owner-enabled.':'Payment activation is blocked until the approved live-payment configuration is present.';st.className='status '+(o.payment_ready?'success':'warn');qs('#buy-btn').disabled=!o.payment_ready;
+}).catch(function(err){qs('#offer-status').textContent=err.message;qs('#offer-status').className='status error'});
+
+qs('#lead-form').addEventListener('submit',function(e){
+ e.preventDefault();var f=e.currentTarget,data=Object.fromEntries(new FormData(f).entries());Object.assign(data,captureAttribution());data.consent_marketing=f.consent_marketing.checked;qs('#form-status').textContent='Submitting...';
+ fetch(api('/revenue/leads'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(function(r){return r.json().then(function(out){if(!r.ok)throw new Error(out.detail||'Submission failed');return out})}).then(function(out){qs('#form-status').textContent='Lead '+out.id+' recorded. Stage: '+out.stage+'.';qs('#form-status').className='status success';f.dataset.leadId=out.id}).catch(function(err){qs('#form-status').textContent=err.message;qs('#form-status').className='status error'})
+});
+qs('#buy-btn').addEventListener('click',function(){
+ var f=qs('#lead-form'),email=f.work_email.value.trim(),leadId=f.dataset.leadId||'';if(!email){qs('#form-status').textContent='Enter a work email first.';return}
+ fetch(api('/revenue/checkout'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customer_email:email,lead_id:leadId?Number(leadId):null})}).then(function(r){return r.json().then(function(out){if(!r.ok)throw new Error(out.detail||'Checkout unavailable');return out})}).then(function(out){if(out.url)location.href=out.url}).catch(function(err){qs('#form-status').textContent=err.message;qs('#form-status').className='status error'})
+});
+qs('#load-dashboard').addEventListener('click',function(){
+ adminKey=qs('#admin-key').value.trim();if(!adminKey){qs('#dash-status').textContent='Admin key required.';return}
+ qs('#dash-status').textContent='Loading...';var headers={Authorization:'Bearer '+adminKey,Accept:'application/json'};
+ Promise.all([fetch(api('/revenue/cockpit'),{headers:headers}),fetch(api('/revenue/leads?limit=50'),{headers:headers})]).then(function(pair){return Promise.all(pair.map(function(r){return r.json().then(function(x){return {ok:r.ok,data:x}})}))}).then(function(x){
+ var c=x[0],l=x[1];if(!c.ok)throw new Error(c.data.detail||'Cockpit access failed');
+ var k=[['Confirmed revenue','CAD $'+Number(c.data.confirmed_revenue_cad).toFixed(2)],['Pipeline','CAD $'+Number(c.data.pipeline_estimate_cad).toFixed(2)],['MRR','CAD $'+Number(c.data.mrr_cad).toFixed(2)],['Qualified leads',c.data.qualified_leads],['Meetings',c.data.meetings_booked],['Proposals',c.data.proposals],['Won',c.data.won],['Lost',c.data.lost],['Due actions',c.data.due_actions]];
+ qs('#kpis').innerHTML=k.map(function(v){return '<div class="kpi"><span class="muted">'+v[0]+'</span><strong>'+v[1]+'</strong></div>'}).join('');
+ if(l.ok&&Array.isArray(l.data))qs('#lead-rows').innerHTML=l.data.map(function(y){return '<tr><td>'+escapeHtml(y.full_name)+'<br><span class="muted">'+escapeHtml(y.company||'')+'</span></td><td>'+escapeHtml(y.stage)+'</td><td>'+y.lead_score+'</td><td>'+escapeHtml(y.next_action)+'</td><td>'+escapeHtml(y.owner)+'</td></tr>'}).join('');
+ qs('#dash-status').textContent='Generated '+c.data.generated_at+'. Webhook: '+c.data.webhook_health+'.';qs('#dash-status').className='status success';
+ }).catch(function(err){qs('#dash-status').textContent=err.message;qs('#dash-status').className='status error'})
+});
+captureAttribution();
+</script>
+</body>
+</html>
