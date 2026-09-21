@@ -72,7 +72,7 @@ class Order(Base):
     total: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal(0))
     currency: Mapped[str] = mapped_column(String(3), default="CAD")
     source: Mapped[str | None] = mapped_column(String(64), nullable=True)
-# live | test | unknown; dashboard counts only live for confirmed revenue.
+    # live | test | unknown; dashboard counts only live for confirmed revenue.
     environment: Mapped[str] = mapped_column(String(16), default="unknown")
         # Upstream payment reference (Stripe checkout-session id) — dedupe key so
     # webhook redelivery can never book the same order twice.
