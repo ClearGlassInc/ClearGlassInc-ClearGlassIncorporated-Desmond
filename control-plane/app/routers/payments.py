@@ -217,14 +217,18 @@ async def stripe_webhook(request: Request, session: Session = Depends(get_sessio
         )
         # CRCS starts fulfillment only from a verified live payment. A test event can
         # exercise the webhook and ledger without creating a customer delivery commitment.
+        metadata = obj.get("metadata") or {}
+        # Only CRCS-originated checkouts may enter the CRCS service-delivery queue.
+        # Existing commerce offers continue to be booked normally without creating
+        # an unrelated CRCS delivery record.
         if (
             order is not None
             and status == "paid"
             and check["verified"]
             and environment == "live"
+            and metadata.get("crcs_revenue_system") == "v1"
         ):
             upsert_customer_for_order(session, order, customer_email)
-            metadata = obj.get("metadata") or {}
             raw_lead_id = str(metadata.get("crcs_lead_id") or "").strip()
             lead_id = int(raw_lead_id) if raw_lead_id.isdigit() else None
             provision_paid_service(
