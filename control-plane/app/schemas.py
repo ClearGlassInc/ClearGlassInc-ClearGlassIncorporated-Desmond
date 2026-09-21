@@ -306,7 +306,7 @@ class RevenueLeadStageUpdate(BaseModel):
 
 
 class RevenueControlLogRequest(BaseModel):
-    action_date: str = Field(pattern=r"^\\d{4}-\\d{2}-\\d{2}$")
+    action_date: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")
     action: str = Field(min_length=2, max_length=2000)
     target: str = Field(default="", max_length=1000)
     expected_outcome: str = Field(default="", max_length=2000)
