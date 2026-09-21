@@ -266,3 +266,152 @@ class SideStoreQuoteOut(BaseModel):
     #: estimate and the final amount is computed at checkout.
     tax_basis: str
     tax_is_estimate: bool
+
+
+class RevenueLeadRequest(BaseModel):
+    """Public qualification submission. Sensitive free text stays out of analytics."""
+    full_name: str = Field(min_length=2, max_length=160)
+    work_email: str = Field(min_length=5, max_length=254)
+    company: str | None = Field(default=None, max_length=240)
+    website: str | None = Field(default=None, max_length=500)
+    role: str | None = Field(default=None, max_length=160)
+    service_interest: str = Field(min_length=2, max_length=160)
+    primary_goal: str = Field(min_length=5, max_length=2000)
+    current_challenge: str = Field(min_length=5, max_length=4000)
+    business_context: str = Field(default="", max_length=4000)
+    desired_timeline: str | None = Field(default=None, max_length=80)
+    investment_range: str | None = Field(default=None, max_length=80)
+    notes: str = Field(default="", max_length=4000)
+    source: str = Field(default="direct", max_length=120)
+    landing_page: str | None = Field(default=None, max_length=500)
+    referrer: str | None = Field(default=None, max_length=500)
+    utm_first_source: str | None = Field(default=None, max_length=120)
+    utm_first_medium: str | None = Field(default=None, max_length=120)
+    utm_first_campaign: str | None = Field(default=None, max_length=160)
+    utm_last_source: str | None = Field(default=None, max_length=120)
+    utm_last_medium: str | None = Field(default=None, max_length=120)
+    utm_last_campaign: str | None = Field(default=None, max_length=160)
+    consent_marketing: bool = False
+    website_honeypot: str = Field(default="", max_length=100)
+
+
+class RevenueLeadStageUpdate(BaseModel):
+    stage: str
+    owner: str | None = Field(default=None, max_length=120)
+    next_action: str = Field(min_length=2, max_length=1000)
+    next_action_at: datetime | None = None
+    expected_value_cad: float | None = Field(default=None, ge=0)
+    monthly_recurring_value_cad: float | None = Field(default=None, ge=0)
+    note: str = Field(default="", max_length=2000)
+
+
+class RevenueControlLogRequest(BaseModel):
+    action_date: str = Field(pattern=r"^\\d{4}-\\d{2}-\\d{2}$")
+    action: str = Field(min_length=2, max_length=2000)
+    target: str = Field(default="", max_length=1000)
+    expected_outcome: str = Field(default="", max_length=2000)
+    action_taken: str = Field(default="", max_length=2000)
+    evidence: str = Field(default="", max_length=2000)
+    result: str = Field(default="", max_length=2000)
+    next_action: str = Field(default="", max_length=2000)
+    due_date: str | None = Field(default=None, pattern=r"^\\d{4}-\\d{2}-\\d{2}$")
+    owner: str = Field(default="unassigned", max_length=120)
+    status: str = Field(default="NOT_STARTED", max_length=40)
+
+
+class RevenueCheckoutRequest(BaseModel):
+    customer_email: str = Field(min_length=5, max_length=254)
+    lead_id: int | None = Field(default=None, ge=1)
+
+
+class RevenueOfferOut(BaseModel):
+    sku: str
+    name: str
+    description: str
+    amount_cad: float
+    currency: str
+    scope: list[str]
+    exclusions: list[str]
+    enabled: bool
+    payment_ready: bool
+    payment_mode: str
+    payment_url: str | None = None
+    calendar_url: str | None = None
+
+
+class RevenueCockpitOut(BaseModel):
+    generated_at: datetime
+    confirmed_revenue_cad: float
+    test_revenue_cad: float
+    pipeline_estimate_cad: float
+    mrr_cad: float
+    gross_margin_cad: float | None
+    qualified_leads: int
+    new_leads: int
+    meetings_booked: int
+    proposals: int
+    won: int
+    lost: int
+    close_rate: float | None
+    open_service_orders: int
+    due_actions: int
+    webhook_health: str
+    booking_health: str
+    crm_health: str
+    revenue_action_required: bool
+
+
+class RevenueLeadOut(BaseModel):
+    id: int
+    full_name: str
+    email: str
+    company: str | None
+    website: str | None
+    role: str | None
+    service_interest: str
+    desired_timeline: str | None
+    investment_range: str | None
+    source: str
+    stage: str
+    owner: str
+    next_action: str
+    next_action_at: datetime | None
+    lead_score: int
+    score_explanation: str
+    expected_value_cad: float | None
+    monthly_recurring_value_cad: float | None
+    consent_marketing: bool
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class RevenueActivityOut(BaseModel):
+    id: int
+    lead_id: int
+    activity_type: str
+    actor: str
+    detail: str
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class RevenueServiceOrderOut(BaseModel):
+    id: int
+    order_id: int
+    lead_id: int | None
+    sku: str
+    status: str
+    scope_status: str
+    delivery_owner: str
+    due_at: datetime | None
+    customer_next_step: str
+    delivery_confirmed_at: datetime | None
+    follow_up_at: datetime | None
+    testimonial_eligible: bool
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
