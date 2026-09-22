@@ -9,6 +9,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from .. import payments, pricebook
+from ..audit import log_event
 from ..db import get_session
 from ..security import rate_limit
 
@@ -41,7 +42,13 @@ def _price_plan(price_id: str | None) -> str:
     return "unknown"
 
 
-def _upsert_subscription(session: Session, obj: dict, *, email: str | None = None) -> None:
+def _upsert_subscription(session: Session, obj: dict, *, email: str | None = None) -> dict:
+    """Write Stripe's subscription state through to our cache.
+
+    Returns a summary of what changed (``customer_id``, ``plan``, ``status``,
+    ``from_status``) so the caller can record the transition in the audit ledger.
+    ``from_status`` is ``None`` for a subscription we have not seen before.
+    """
     customer_id = obj.get("customer")
     subscription_id = obj.get("id")
     if isinstance(customer_id, dict):
@@ -60,9 +67,9 @@ def _upsert_subscription(session: Session, obj: dict, *, email: str | None = Non
     period_dt = datetime.fromtimestamp(int(period_end), tz=UTC) if period_end else None
 
     existing = session.execute(
-        text("SELECT id FROM subscriptions WHERE stripe_customer_id = :customer_id"),
+        text("SELECT id, status FROM subscriptions WHERE stripe_customer_id = :customer_id"),
         {"customer_id": customer_id},
-    ).first()
+    ).mappings().first()
 
     values = {
         "customer_id": str(customer_id),
@@ -116,6 +123,14 @@ def _upsert_subscription(session: Session, obj: dict, *, email: str | None = Non
             """),
             values,
         )
+
+    return {
+        "customer_id": str(customer_id),
+        "plan": plan,
+        "status": values["status"],
+        "from_status": existing["status"] if existing else None,
+        "cancel_at_period_end": values["cancel_at_period_end"],
+    }
 
 
 def _mark_event(session: Session, event_id: str, event_type: str) -> bool:
@@ -199,6 +214,16 @@ async def subscription_webhook(
     if not event_id:
         raise HTTPException(status_code=400, detail="missing Stripe event id")
     if not _mark_event(session, event_id, event_type):
+        # Record the redelivery rather than dropping it silently: a run of duplicates
+        # is how a misconfigured endpoint or a Stripe retry storm shows up.
+        log_event(
+            session,
+            actor="stripe",
+            action="subscription_event_duplicate_skipped",
+            target=event_id,
+            payload={"event": event_type},
+            result="skipped",
+        )
         session.commit()
         return {"received": True, "duplicate": True, "type": event_type}
 
@@ -219,11 +244,60 @@ async def subscription_webhook(
                 """),
                 {"customer_id": customer_id, "subscription_id": obj.get("subscription"), "email": email},
             )
+            # The subscriptions row already holds the email, so the ledger keys on the
+            # Stripe customer id instead of carrying a second copy of the address.
+            log_event(
+                session,
+                actor="stripe",
+                action="subscription_checkout_completed",
+                target=str(customer_id) if customer_id else None,
+                payload={"event": event_type, "subscription_id": obj.get("subscription")},
+                result="executed",
+            )
     elif event_type in {
         "customer.subscription.created",
         "customer.subscription.updated",
         "customer.subscription.deleted",
     }:
-        _upsert_subscription(session, obj)
+        change = _upsert_subscription(session, obj)
+        log_event(
+            session,
+            actor="stripe",
+            action=f"subscription_{change['status']}",
+            target=change["customer_id"],
+            payload={
+                "event": event_type,
+                "plan": change["plan"],
+                "from_status": change["from_status"],
+                "cancel_at_period_end": change["cancel_at_period_end"],
+            },
+            result="executed",
+        )
+    elif event_type in {"invoice.paid", "invoice.payment_failed"}:
+        # Dunning signals are recorded but deliberately do not write status:
+        # `customer.subscription.updated` is the single writer for that column, and
+        # Stripe sends it alongside these. Two writers would race on redelivery and
+        # could park the cache on a stale status.
+        customer_id = obj.get("customer")
+        if isinstance(customer_id, dict):
+            customer_id = customer_id.get("id")
+        log_event(
+            session,
+            actor="stripe",
+            action=f"subscription_{event_type.replace('.', '_')}",
+            target=str(customer_id) if customer_id else None,
+            payload={
+                "event": event_type,
+                "subscription_id": obj.get("subscription"),
+                "attempt_count": obj.get("attempt_count"),
+                "next_payment_attempt": obj.get("next_payment_attempt"),
+                "amount_due": obj.get("amount_due"),
+                "currency": obj.get("currency"),
+            },
+            # "flagged" is the ledger's existing word for an adverse payment event
+            # (payments.py uses it for Stripe failures, paypal.py for adverse captures),
+            # so dunning surfaces in the same query as the rest of them.
+            result="executed" if event_type == "invoice.paid" else "flagged",
+        )
     session.commit()
     return {"received": True, "duplicate": False, "type": event_type}

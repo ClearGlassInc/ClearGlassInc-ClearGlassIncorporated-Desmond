@@ -15,6 +15,7 @@ from .routers import (
     metrics,
     orders,
     paypal,
+    revenue,
     payments,
     sidestore,
     store,
@@ -125,6 +126,7 @@ def create_app() -> FastAPI:
     # webhook authenticates by PayPal's signature, and the capture (which moves
     # money) is admin-gated and queued for approval inside the router.
     app.include_router(paypal.router)
+    app.include_router(revenue.router)
     app.include_router(subscriptions.router)  # durable subscription lifecycle + billing portal
     app.include_router(sidestore.router)  # customer cart: public, rate limited, server-priced
     app.include_router(orders.router, dependencies=admin)
