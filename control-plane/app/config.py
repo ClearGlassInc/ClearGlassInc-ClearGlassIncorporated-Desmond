@@ -41,6 +41,8 @@ class Settings(BaseSettings):
     rate_limit_checkout_per_minute: int = 30
     rate_limit_webhook_per_minute: int = 240
     rate_limit_decisions_per_minute: int = 60
+    # The public CRCS lead form, POST /revenue/leads.
+    revenue_lead_rate_limit_per_minute: int = 30
     # Number of trusted reverse proxies in front of this service (Render/Cloudflare = 1).
     # 0 (default) = direct exposure: the throttles key on the TCP peer address.
     # >0 = read the caller from X-Forwarded-For, counting this many hops back from the
@@ -124,6 +126,16 @@ class Settings(BaseSettings):
     printful_auto_confirm: bool = False
     # Shared secret on the webhook URL Printful calls with shipment notices.
     printful_webhook_secret: str = ""
+
+    # ClearGlass Revenue Command System (CRCS). Defaults mirror .env.example.
+    # The first offer is priced from the server-side price book, never the request.
+    crcs_first_offer_sku: str = "rapid-website-deployment-diagnostic"
+    # Live purchase is refused (409) until the owner confirms price, refund policy,
+    # delivery promise, payment route and support route. See
+    # docs/REVENUE_COMMAND_SYSTEM.md.
+    crcs_rapid_diagnostic_enabled: bool = False
+    crcs_rapid_diagnostic_payment_link: str = ""
+    crcs_calendar_booking_url: str = ""
 
 
 @lru_cache

@@ -102,6 +102,18 @@ EXEMPT: dict[str, str] = {
         "with 404 rather than 401, which is asserted separately below so the "
         "exemption cannot hide an endpoint that accepts anything."
     ),
+    "/revenue/leads": (
+        "Public CRCS lead form. Writes a lead, its activity and an audit event and "
+        "nothing else: no payment, pricing, fulfillment or outbound message. A "
+        "honeypot field rejects naive bots. Rate limited per IP."
+    ),
+    "/revenue/checkout": (
+        "Customer checkout for the CRCS first offer. The request carries only an "
+        "email and an optional lead id; the SKU is fixed server-side and priced from "
+        "the price book, so the caller chooses neither product nor amount. Refused "
+        "with 409 until the owner enables CRCS_RAPID_DIAGNOSTIC_ENABLED. Rate "
+        "limited per IP."
+    ),
 }
 
 # Stand-ins for path parameters. The value is irrelevant — an unauthenticated

@@ -150,6 +150,13 @@ def start_checkout(req: RevenueCheckoutRequest, session: Session = Depends(get_s
     }
 
 
+def _latest_stripe_event(session: Session) -> Event | None:
+    """The newest audit event Stripe itself produced: the webhook-health evidence."""
+    return session.scalar(
+        select(Event).where(Event.actor == "stripe").order_by(Event.ts.desc()).limit(1)
+    )
+
+
 @router.get("/health")
 def public_health(session: Session = Depends(get_session)) -> dict:
     settings = get_settings()
@@ -159,9 +166,7 @@ def public_health(session: Session = Depends(get_session)) -> dict:
     except Exception:
         db_ok = False
 
-    recent_stripe = session.scalar(
-        select(Event).where(Event.actor == "stripe").order_by(Event.ts.desc()).limit(1)
-    )
+    recent_stripe = _latest_stripe_event(session)
     return {
         "service": "clearglass-revenue-command",
         "status": "ok" if db_ok else "degraded",
@@ -191,6 +196,7 @@ def cockpit(session: Session = Depends(get_session)) -> RevenueCockpitOut:
     activities = list(session.scalars(
         select(LeadActivity).where(LeadActivity.created_at >= window)
     ).all())
+    recent_stripe = _latest_stripe_event(session)
 
     live_paid = [o for o in orders if o.status == "paid" and o.environment == "live"]
     test_paid = [o for o in orders if o.status == "paid" and o.environment == "test"]
@@ -198,13 +204,13 @@ def cockpit(session: Session = Depends(get_session)) -> RevenueCockpitOut:
     test_revenue = sum((Decimal(o.total) for o in test_paid), Decimal(0))
 
     pipeline = sum(
-        (Decimal(l.expected_value_cad or 0) for l in leads
-         if l.stage not in {"WON", "LOST", "CLOSED", "CUSTOMER_ACTIVE", "RETENTION_RISK"}),
+        (Decimal(lead.expected_value_cad or 0) for lead in leads
+         if lead.stage not in {"WON", "LOST", "CLOSED", "CUSTOMER_ACTIVE", "RETENTION_RISK"}),
         Decimal(0),
     )
     mrr = sum(
-        (Decimal(l.monthly_recurring_value_cad or 0) for l in leads
-         if l.stage in {"WON", "CUSTOMER_ACTIVE", "RETENTION_RISK", "EXPANSION_OPPORTUNITY"}),
+        (Decimal(lead.monthly_recurring_value_cad or 0) for lead in leads
+         if lead.stage in {"WON", "CUSTOMER_ACTIVE", "RETENTION_RISK", "EXPANSION_OPPORTUNITY"}),
         Decimal(0),
     )
 
@@ -213,12 +219,12 @@ def cockpit(session: Session = Depends(get_session)) -> RevenueCockpitOut:
     known_costs = sum((Decimal(s.delivery_cost_cad or 0) for s in cost_rows), Decimal(0))
     gross_margin = confirmed_revenue - known_costs if cost_rows else None
 
-    won = sum(1 for l in leads if l.stage == "WON")
-    lost = sum(1 for l in leads if l.stage == "LOST")
+    won = sum(1 for lead in leads if lead.stage == "WON")
+    lost = sum(1 for lead in leads if lead.stage == "LOST")
     close_rate = won / (won + lost) if won + lost else None
     due_actions = sum(
-        1 for l in leads
-        if l.next_action_at and l.next_action_at <= now and l.stage not in {"LOST", "CLOSED"}
+        1 for lead in leads
+        if lead.next_action_at and lead.next_action_at <= now and lead.stage not in {"LOST", "CLOSED"}
     )
     today = now.date().isoformat()
     today_logs = list(session.scalars(
@@ -235,12 +241,12 @@ def cockpit(session: Session = Depends(get_session)) -> RevenueCockpitOut:
         pipeline_estimate_cad=float(pipeline),
         mrr_cad=float(mrr),
         gross_margin_cad=float(gross_margin) if gross_margin is not None else None,
-        qualified_leads=sum(1 for l in leads if l.stage == "QUALIFIED"),
-        new_leads=sum(1 for l in leads if l.created_at >= week),
+        qualified_leads=sum(1 for lead in leads if lead.stage == "QUALIFIED"),
+        new_leads=sum(1 for lead in leads if lead.created_at >= week),
         meetings_booked=sum(1 for a in activities if a.activity_type == "meeting_booked"),
         proposals=sum(
-            1 for l in leads
-            if l.stage in {"PROPOSAL_PENDING", "PROPOSAL_SENT", "NEGOTIATION", "WON"}
+            1 for lead in leads
+            if lead.stage in {"PROPOSAL_PENDING", "PROPOSAL_SENT", "NEGOTIATION", "WON"}
         ),
         won=won,
         lost=lost,
