@@ -66,6 +66,7 @@ SITEMAP_EXEMPT = {
 # breaks domain verification — so it is the sole legitimate exemption.
 LOGO_EXEMPT = {
     "google23RWyXWkoxqgArev8achU8IfVxYC5EIUAYBsuTYKLFM.html",
+    "artemis-vi.html",  # standalone spec page, no chrome
 }
 
 
