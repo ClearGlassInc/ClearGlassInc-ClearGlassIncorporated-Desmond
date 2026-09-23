@@ -104,9 +104,10 @@ def start_checkout(req: RevenueCheckoutRequest, session: Session = Depends(get_s
 
     email = req.customer_email.strip().lower()
     lead = session.get(Lead, req.lead_id) if req.lead_id else None
-    if req.lead_id and lead is None:
-        raise HTTPException(status_code=404, detail="lead not found")
-    if lead and lead.email != email:
+    # One answer for "no such lead" and "not your lead": lead ids are
+    # sequential, so distinct answers would let anyone count leads or confirm
+    # that a given address submitted the qualification form.
+    if req.lead_id and (lead is None or lead.email != email):
         raise HTTPException(status_code=403, detail="checkout email does not match lead")
 
     if settings.crcs_rapid_diagnostic_payment_link.strip():

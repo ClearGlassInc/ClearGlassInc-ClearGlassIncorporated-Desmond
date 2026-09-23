@@ -103,6 +103,27 @@ def test_checkout_is_refused_until_the_owner_enables_it(client) -> None:
     assert response.status_code == 409, response.text
 
 
+def test_checkout_does_not_reveal_which_leads_exist(client, monkeypatch) -> None:
+    """Lead ids are sequential. If an unknown id answered differently from a
+    known id with the wrong email, anyone could count the leads or confirm that
+    a given address had submitted the qualification form."""
+    monkeypatch.setenv("CRCS_RAPID_DIAGNOSTIC_ENABLED", "true")
+    config_module.get_settings.cache_clear()
+    lead_id = client.post("/revenue/leads", json=LEAD).json()["id"]
+
+    wrong_email = client.post(
+        "/revenue/checkout", json={"customer_email": "someone@else.test", "lead_id": lead_id}
+    )
+    unknown_lead = client.post(
+        "/revenue/checkout", json={"customer_email": "someone@else.test", "lead_id": lead_id + 1}
+    )
+    assert wrong_email.status_code == unknown_lead.status_code == 403
+    assert wrong_email.json() == unknown_lead.json()
+
+    owner = client.post("/revenue/checkout", json={"customer_email": LEAD["work_email"], "lead_id": lead_id})
+    assert owner.status_code == 200, owner.text
+
+
 def test_the_admin_cockpit_renders(client) -> None:
     response = client.get("/revenue/cockpit")
     assert response.status_code == 200, response.text

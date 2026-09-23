@@ -254,6 +254,27 @@ CURATED: dict[str, dict] = {
         topics="osint strategic-resilience systems",
         series="ClearGlass Strategic Intelligence",
     ),
+    # Authored by hand into blog/posts.json on 2026-09-18 (912f310, 7663b17),
+    # which the next regeneration would have erased. Carried here verbatim,
+    # except `featured`: that flag means "shown in the hand-kept spotlight", but
+    # both cards were placed in the archive grid, which is where readers saw
+    # them. deskRank still orders them in blog/future-editorial.js.
+    "canada-strategic-resilience-command-brief-2026": dict(
+        category="Strategic Resilience",
+        quote="Engineer organizations that can survive several plausible futures.",
+        cta="Open the command brief →",
+        topics="strategic-resilience cyber governed-ai osint systems cross-border",
+        series="ClearGlass Strategic Intelligence",
+        deskRank=1,
+    ),
+    "csis-threat-reduction-botnets-canadian-iot-federal-court-2026": dict(
+        category="Cyber Intelligence &amp; Critical Infrastructure",
+        quote="A Canadian-owned device can become foreign-controlled relay infrastructure.",
+        cta="Read the case analysis →",
+        topics="cyber osint systems strategic-resilience cross-border",
+        series="ClearGlass Intelligence",
+        deskRank=2,
+    ),
     "ai-safety-black-box-activation-analysis-gavel": dict(
         category="AI Safety",
         quote="Inspect the activations, not the output.",

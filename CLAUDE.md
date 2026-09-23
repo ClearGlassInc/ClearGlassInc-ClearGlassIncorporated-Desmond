@@ -22,6 +22,10 @@ Guidance for agents working in this repository.
 > `PRODUCTION-RECOVERY.md` §1.3 says no Pages build has run since 2026-09-06;
 > that is now out of date — GitHub-managed builders and Dependabot still run,
 > only user-authored `runs-on` jobs cannot get a runner.
+>
+> Re-verified 2026-09-23: still true. Job `107260634855` (Health Monitor)
+> reported `runner_id: 0` and finished in 2 seconds; Pages run #177 deployed
+> `main` normally. See `docs/AUDIT-2026-09-23.md`.
 
 ## What this repo is
 
@@ -178,6 +182,11 @@ every mutating route is behind `require_admin` or on a justified allow-list, and
 `tests/test_rfed_hash_parity.py` pins the two RFED implementations together. See
 `security/HARDENING_AND_THREAT_MODEL.md` for why.
 
+`tests/test_inline_script_syntax.py` compiles every inline `<script>` on every
+page. A single syntax error kills the whole block, so a page renders but does
+nothing; on `revenue-command.html` it made the lead form GET its fields into the
+URL. It needs `node` on `PATH`, which `ubuntu-latest` provides.
+
 ## Internal linking system (static site)
 
 Every indexable page carries a generated "Continue exploring" block (marked
@@ -189,7 +198,11 @@ live in `tools/internal_links.py` (stdlib only).
 - **Adding/renaming a page?** Add it to `PAGES` and a cluster in
   `tools/internal_links.py`, then run `python3 tools/internal_links.py`
   (idempotent; `--check` verifies freshness). Add the URL to `sitemap.xml`.
-- Don't hand-edit the generated blocks — regenerate them.
+- Don't hand-edit the generated blocks — regenerate them. That includes
+  `blog/posts.json` and the `cg-insights-*` blocks in `blog/index.html`:
+  editorial copy for a brief (category, quote, CTA, topics, deskRank) goes in
+  `CURATED` in `tools/insights_index.py`, tags in the brief's JSON-LD
+  `keywords`. Hand edits there are erased by the next regeneration.
 - Full-viewport HUD pages (`body{overflow:hidden}`) are listed in
   `FIXED_VIEWPORT` and get a fixed corner chip instead of a footer block.
 - When many pages change, bump `VERSION` in `sw.js` so returning visitors'
