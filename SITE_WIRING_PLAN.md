@@ -209,6 +209,7 @@ These pages remain intact but are not eligible for generated journey updates. Ex
 | Page | Role | Exclusion rationale |
 |---|---|---|
 | `404.html` | Error recovery | noindex redirect and route-recovery page |
+| `artemis-vi.html` | Standalone spec page | noindex vision page whose spec forbids extra body content |
 | `cg-loader.html` | Application utility | noindex branded loading surface |
 | `google23RWyXWkoxqgArev8achU8IfVxYC5EIUAYBsuTYKLFM.html` | Site verification | Google ownership verification artifact |
 | `header-mockup-2040.html` | Design prototype | noindex, nofollow header study |

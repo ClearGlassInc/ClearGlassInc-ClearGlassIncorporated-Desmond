@@ -43,6 +43,9 @@ END = "<!-- cg-related:end -->"
 # path -> (journey role, reason it must not receive the generated module)
 EXCLUDED_PAGES: dict[str, tuple[str, str]] = {
     "404.html": ("Error recovery", "noindex redirect and route-recovery page"),
+    "artemis-vi.html": (
+        "Standalone spec page", "noindex vision page whose spec forbids extra body content"
+    ),
     "cg-loader.html": ("Application utility", "noindex branded loading surface"),
     "google23RWyXWkoxqgArev8achU8IfVxYC5EIUAYBsuTYKLFM.html": (
         "Site verification", "Google ownership verification artifact"
