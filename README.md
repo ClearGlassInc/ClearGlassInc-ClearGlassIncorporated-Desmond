@@ -1,171 +1,139 @@
-# ClearGlass — Secure Stripe Subscription System
+# ClearGlass Inc.
 
-**Brand:** CLEARGLASS — See Through Everything.  
-**Purpose:** Cybersecurity, AI governance, digital resilience, intelligence, automation, risk engineering, evidence provenance, auditable decision-making.
+**CLEARGLASS — See Through Everything.**
 
-Production-capable paid subscription built on **Next.js 14 App Router + Prisma + Auth.js + Stripe**.
+This repository is the `www.clearglassinc.com` static site **and** the source of
+the backend systems that ship beside it. They deploy independently; there is no
+single build.
 
----
+> **CI is not running.** Since 2026-09-10 GitHub Actions dispatches no runners
+> for this repository (`runner_id: 0`, re-confirmed 2026-09-23), so a green or
+> red check carries no information. Run the gates yourself before pushing:
+> `python3 scripts/ci_local.py`. See `docs/BASELINE.md` F1.
 
-## 1. Repository Findings (actual evidence)
+## What is here
 
-- Previous artifact: React + Tailwind (zinc palette, accent #0a66c2, rounded-[16px]/[20px], branch/PR workflow note).
-- No package.json/backend detected in uploaded workspace — treated as static-first repo.
-- Decision: Keep front-end design language, add minimal secure backend compatible with Vercel/Cloudflare Pages/Netlify.
-- Existing pages: rescue landing draft only — pricing/dashboard/subscription added without deleting existing functionality.
-- No existing auth or DB — implemented smallest secure compatible: **Prisma (Postgres) + Auth.js Email magic link + Resend**.
+| Layer | Path | Stack | Deploys to |
+|---|---|---|---|
+| Static site | repo root: `*.html`, `*.css`, `*.js`, `assets/`, `blog/` | Static HTML, no build step | GitHub Pages ("Deploy from a branch"), `CNAME` = `www.clearglassinc.com` |
+| Commerce control plane | `control-plane/` | Python 3.11, FastAPI, SQLAlchemy | Render (`render.yaml`, Docker) |
+| Storefront, Admin | `storefront/`, `admin/` | Next.js 16 | Render (`render.yaml`, Docker) |
+| Live Signal Fabric | root `package.json` | Next.js 15.5 | Not deployed by any registered workflow |
+| Agents and bots | `agent_army/`, `agents/`, `bots/`, `sentinel/` | Python, stdlib-first | Invoked by workflows |
 
-## 2. Architecture Decision
+The system map is `docs/ARCHITECTURE.md`. Operational procedures are
+`docs/RUNBOOK.md`. What is verified, broken and unknown is `docs/BASELINE.md`.
 
-**Chosen:** Next.js API Routes + Prisma Postgres + Auth.js + Stripe Checkout + Webhook + Customer Portal.
+The control plane is a **governed** engine: read-only analysis, then draft, then
+human approval, then execution. Pricing, payments, refunds and fulfilment are
+blocked until an approval is recorded. Read the safety model in `CLAUDE.md`
+before changing `control-plane/`.
 
-Why secure & compatible:
-- Server-only Stripe secret key (`lib/stripe.ts` reads `getEnv()` server-side only).
-- Pricing page sends only `planKey` — server resolves allowlisted Price ID from env.
-- Webhook uses raw body + `stripe.webhooks.constructEvent` with `STRIPE_WEBHOOK_SECRET`.
-- Idempotency via `ProcessedEvent` table (unique `stripeEventId`).
-- Entitlement checked server-side in `lib/entitlement.ts` — never from localStorage or success page.
-- Auth required for dashboard/account/portal — Customer ID retrieved only from DB.
-- Deployment compatible: Vercel Functions (or Netlify/Cloudflare via next-on-pages). No secrets in client bundle.
-- Minimal data: User, stripeCustomerId, Subscription (status, period end, entitlement), ProcessedEvent, AuditLog. No card data.
+## Prerequisites
 
-What requires manual Stripe Dashboard setup: products/prices, portal config, webhook endpoint, tax.
-
-## 3. Implementation Plan
-
-Files to add:
-- `app/` marketing + pricing + dashboard + success/cancel/account/login
-- `app/api/checkout`, `webhook`, `portal`, `me`
-- `lib/env.ts`, `plans.ts`, `stripe.ts`, `db.ts`, `entitlement.ts`, `auth.ts`, `rateLimit.ts`
-- `components/Header.tsx`, `PricingCard.tsx`
-- `prisma/schema.prisma`
-- `__tests__/plans.test.ts`, `entitlement.test.ts`
-- `.env.example`, `tailwind.config.ts`, `next.config.js`, etc.
-
-Files modified: none (greenfield scaffold preserving design system).
-
-Files not touched: existing rescue draft artifact kept separate (do not delete).
-
-Risks: If deploying to pure GitHub Pages, serverless companion required. Resend needed for email in prod, else dev console log.
-
-## 4. Implementation (done in this scaffold)
-
-- Plan registry with 5 keys: signal_monthly/annual, assurance_monthly/annual, northstar_enterprise — maps to env vars, entitlement keys, features.
-- Checkout endpoint: validates planKey (zod), rate limit, resolves allowlisted Price ID, creates Stripe Checkout Session subscription mode, success/cancel URLs from `APP_BASE_URL`, metadata (planKey, entitlement, userId, environment), returns URL.
-- Webhook endpoint: reads raw body, verifies signature, handles 7 events, idempotent, upserts subscription, audit logs.
-- Access control: `getEntitlement()` checks active/trialing/past_due (policy: past_due still entitled briefly), `cancel_at_period_end` preserves until period end.
-- Customer Portal: requires auth, retrieves Customer ID from DB only, creates portal session.
-- UI: pricing with loading/disabled/error/success states, success page does NOT grant access — polls `/api/me`, dashboard redirects non-entitled to pricing message.
-- Security: env validation at startup, CSP headers in next.config, rate limiting, no secrets in client, `.env.example` no real values.
-
-## 5. Validation Results
-
-Run:
-```
-npm install
-npx prisma generate
-npx prisma db push (or migrate)
-npm run test  # vitest — plan allowlist, injection, entitlement hierarchy
-npm run lint
-npm run build
-```
-
-Expected:
-- Tests pass: allowlist maps only to env Price IDs, invalid plan fails, injection rejected.
-- Build passes with `APP_BASE_URL`, `DATABASE_URL`, `AUTH_SECRET`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` set (use .env.example template).
-- Secret scan: `grep -R "sk_live" --exclude-dir=node_modules` must be empty, no `whsec_` in repo.
-
-## 6. Stripe Dashboard Checklist
-
-1. Products:
-   - Create Product: ClearGlass Signal, ClearGlass Assurance, ClearGlass Northstar (if self-serve)
-2. Recurring Prices:
-   - Signal Monthly — e.g., $49/mo, copy Price ID → STRIPE_PRICE_SIGNAL_MONTHLY
-   - Signal Annual — e.g., $490/yr
-   - Assurance Monthly — e.g., $199/mo
-   - Assurance Annual — e.g., $1990/yr
-   - Northstar Enterprise — leave empty if sales-led, else annual
-3. Customer Portal:
-   - Settings → Billing → Customer Portal → Enable, allow: cancel, update payment method, invoices, promotion codes.
-   - Set Business info, terms, privacy.
-4. Webhook endpoint:
-   - URL: `https://yourdomain.com/api/webhook` (Vercel deployment URL)
-   - Events: `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.paid`, `invoice.payment_failed`, `customer.updated`
-   - Copy Signing secret → STRIPE_WEBHOOK_SECRET
-5. Test mode verification:
-   - Use Stripe CLI: `stripe listen --forward-to localhost:3000/api/webhook`
-   - Test card: 4242 4242 4242 4242, any future date, CVC any, ZIP any.
-   - Complete checkout → verify webhook 200, DB subscription active, dashboard unlocks.
-6. Live mode transition:
-   - Repeat products/prices in Live mode, new Price IDs, new webhook endpoint with live URL, new STRIPE_WEBHOOK_SECRET, switch keys.
-
-## 7. Deployment Checklist
-
-**Vercel (recommended):**
-- Import repo, Framework: Next.js
-- Env vars: set all from .env.example (DATABASE_URL = Neon/Vercel Postgres), AUTH_SECRET=`openssl rand -base64 32`, APP_BASE_URL=`https://yourdomain.com`
-- Build: `next build`
-- After deploy, set webhook URL in Stripe to `https://yourdomain.com/api/webhook`
-- Test: `curl https://yourdomain.com/api/me` → unauthenticated false
-- Real test: sign in via /login, go /pricing, checkout with test card, wait for webhook, /dashboard should show entitled
-
-**Cloudflare Pages:**
-- Use `@cloudflare/next-on-pages`, set compatibility, env vars in Pages settings, D1/Neon for Postgres or adapt schema to D1 SQLite.
-
-**Netlify:**
-- Next.js plugin, env vars in Netlify UI, same webhook URL.
-
-Database:
-- For local: change prisma datasource provider to sqlite for dev.db quickly if needed, but prod must be Postgres.
-- `npx prisma migrate dev --name init`
-
-## 8. Final Acceptance Checklist
-
-- [ ] Pricing page renders with 3 tiers (Signal/Assurance/Northstar) using existing design system
-- [ ] Plan selection sends only planKey, not Price ID
-- [ ] Checkout Session created server-side with allowlisted Price ID
-- [ ] Stripe Checkout receives user correctly (email or customer)
-- [ ] Webhook signature verification works with raw body
-- [ ] Verified event updates subscriber status (upsert + audit)
-- [ ] Duplicate webhook event ignored (ProcessedEvent unique)
-- [ ] Subscriber access server-authorized (dashboard redirects if none)
-- [ ] Customer Portal works (retrieves Customer ID from DB only)
-- [ ] Cancellation at period end preserves until period end, deleted revokes
-- [ ] Success page does not grant access by itself (polls /api/me)
-- [ ] No secrets in repo, .env.example only placeholders
-- [ ] Build, lint, tests pass
-- [ ] Documentation complete
-- [ ] Live mode not claimed until live keys + webhook + e2e verified
-
-## 9. Security Notes
-
-- Never expose `STRIPE_SECRET_KEY` or `STRIPE_WEBHOOK_SECRET` in browser. Checked: only imported in `lib/stripe.ts`, `app/api/*` (server only).
-- Checkout rate limit per IP (default 10/min, env configurable).
-- Safe errors: generic messages to client, detailed logs server-side only.
-- CSP, X-Frame DENY, nosniff in next.config.
-- Minimal data: no card numbers, no CVV.
-
-## 10. Known Limitations & Future
-
-- Seat-based billing not implemented (quantity=1). Add `quantity` + org membership table later.
-- Trial periods: Stripe trial supported via dashboard price config; entitlement treats trialing as entitled.
-- Promotional access / manual grant: add `manualEntitlement` table and merge logic in `getEntitlement`.
-- Enterprise contracts not billed via Checkout: create subscription via Stripe API directly and same webhook path.
-- Auth: Email magic link only. Add OAuth (Google, GitHub) if needed via Auth.js providers.
-- For GitHub Pages only hosting, you must deploy this Next.js app separately and link from static site, as secret keys cannot live in static.
-
----
-
-## Run Locally
+- Python 3.11, Node 20 or later, npm
+- Test tooling at CI's pinned versions:
 
 ```bash
-cp .env.example .env.local
-# fill values
-npm install
-npx prisma generate
-npx prisma db push
-npm run dev
-# in another terminal
-npm run stripe:listen
-# open http://localhost:3000/pricing
+pip install pytest pytest-cov pyyaml "ruff==0.15.8"
+pip install -r control-plane/requirements.txt   # includes httpx; without it the payment-path tests skip silently
 ```
+
+## Run and test
+
+**Every gate `ci.yml` runs, offline:**
+
+```bash
+python3 scripts/ci_local.py          # exit code is the verdict; use it as a pre-push hook
+python3 scripts/ci_local.py --list   # what it covers
+```
+
+**Static site.** No build. Serve the root and open a page:
+
+```bash
+python3 -m http.server 8765 --bind 127.0.0.1
+```
+
+**Control plane:**
+
+```bash
+cd control-plane
+ruff check .
+python3 -m pytest tests/ -q
+uvicorn app.main:app --reload        # http://localhost:8000/docs
+python -m app.daily_loop --json      # governance self-check; governance_failures must be []
+```
+
+With no Stripe or PayPal keys set, payments run in mock mode: nothing reaches a
+processor and no money moves.
+
+**Storefront and admin** (each independently):
+
+```bash
+cd storefront        # or admin
+npm ci && npx tsc --noEmit && npm run build
+```
+
+**Full stack** (Postgres, control plane :8000, storefront :3000, admin :3001):
+
+```bash
+docker compose up --build
+```
+
+Not run in the 2026-09-23 audit, which had no Docker daemon. Every other command
+in this file was run and passed then.
+
+## Configuration
+
+Names only are committed. Values belong in the hosting platform's secret store.
+
+| File | Covers |
+|---|---|
+| `control-plane/.env.example` | The commerce surface: `APP_ENV`, `ADMIN_API_KEY`, `DATABASE_URL`, Stripe, PayPal, Etsy, Printful, rate limits |
+| `.env.example` | The Live Signal Fabric flags, fail-closed by default |
+
+Two settings that catch people:
+
+- `APP_ENV=production` with no `ADMIN_API_KEY` **refuses to start**. That is
+  intended.
+- `revenue-command.html` reads its API base from its own
+  `<meta name="cg-revenue-api">` tag, which ships empty. Until it is set to the
+  control plane's public URL, its lead form cannot record leads.
+  `CRCS_PUBLIC_API_BASE_URL` does not configure it; no code reads that variable.
+
+## Adding or renaming a page
+
+Skipping a step breaks about seven tests. It has happened twice (2026-09-15 and
+2026-09-17 to 21). Follow `docs/RUNBOOK.md` §2: register the page in
+`tools/internal_links.py`, run the generators, add the authority-grid link, bump
+`VERSION` in `sw.js`, then `python3 scripts/ci_local.py`. Never hand-edit a
+generated block, `blog/posts.json` included; editorial copy for the Insights hub
+goes in `CURATED` in `tools/insights_index.py`.
+
+## Deployment
+
+- **Static site:** merging to `main` publishes it through GitHub's own
+  `pages build and deployment` builder, which still runs while user workflows
+  cannot. Keep Pages on "Deploy from a branch"; an Actions-based Pages deploy
+  would publish nothing while F1 lasts.
+- **Control plane, storefront, admin:** `render.yaml` blueprint. See `DEPLOY.md`.
+  Whether these services are live is not verified in this repository.
+
+## Troubleshooting
+
+| Symptom | Cause |
+|---|---|
+| Every Actions job fails in 2 to 15 seconds with no logs | F1, an organisation-level entitlement problem. Fixed in GitHub settings, not in code |
+| Seven tests fail after adding one HTML page | The page is not registered. See "Adding or renaming a page" |
+| `generated search assets are current` fails and leaves `sitemap.xml` modified | By design: commit the regenerated output, or `git checkout -- sitemap.xml feed.xml data/seo/page-intents.json`. Until then later test runs read the uncommitted output |
+| A page renders but nothing on it responds | An inline script failed to parse. `pytest tests/test_inline_script_syntax.py` names the file and line |
+| Control-plane webhook or payout tests are skipped | `httpx` is missing; install `control-plane/requirements.txt` |
+
+## Security
+
+Report vulnerabilities as described in `SECURITY.md`. Never commit a secret;
+`python3 scripts/secret_scan.py` runs in `security.yml` and locally.
+
+## Licence
+
+See `LICENSE`, `NOTICE`, `TRADEMARKS.md` and `IP-POLICY.md`.
