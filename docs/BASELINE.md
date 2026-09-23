@@ -5,6 +5,14 @@
 **Default branch:** `main`
 **Observed by:** read-only discovery pass. No file was modified to produce this report.
 
+> **Re-measured 2026-09-23 against `1d7de3c`: `main` was red again**
+> (21 root tests, 6 `ci_local` gates), repaired on
+> `claude/production-readiness-audit-7k5ptr`. F1 still holds. F4's
+> storefront vulnerabilities are patched and admin's identical three with
+> them. R3 now has **four** entry prices (a CAD 125 diagnostic was added). R12
+> is re-rated MEDIUM: its dirty tree hid a real failure from a later run.
+> Full report: `docs/AUDIT-2026-09-23.md`.
+>
 > **Status as of 2026-09-15 18:30 UTC.** F5, F6 and F7 are **resolved and
 > verified**; F8 is fixed and awaiting merge. R9 and R10 are **closed**. F1
 > remains the blocker on everything else. Details in §11 and
