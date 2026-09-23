@@ -53,7 +53,7 @@ Plain HTML/CSS/JS at the repository root. No build step and no framework.
 | Jekyll | Disabled via `.nojekyll` |
 | Deploy gate | `.github/workflows/pages.yml` runs `scripts/verify_site.py`, builds `dist/`, publishes via `actions/deploy-pages` |
 | Edge config | `_headers` (CSP, frame-ancestors, form-action), `_redirects` |
-| Service worker | `sw.js`, cache keyed on `VERSION` (currently `cg-v50`) |
+| Service worker | `sw.js`, cache keyed on `VERSION` (currently `cg-v52`) |
 
 `pages.yml` pins every third-party action to a full commit SHA, which is the
 required practice.

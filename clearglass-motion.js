@@ -361,6 +361,12 @@
 
     render();
     startAmbient(stage, nodes, state);
+    // Lets the motion control bring the live field back without a reload. The
+    // node buttons are built once above, so only the renderer is re-created.
+    stage.cgRestart = function () {
+      if (stage.querySelector('canvas')) return;
+      startAmbient(stage, nodes, state);
+    };
   }
 
   /* ─────────────────────────────────────────────────────────────────────
@@ -390,8 +396,14 @@
     var running = false, rafId = 0, last = 0;
     var disposed = false, onScreen = true;
     var minFrame = 1000 / CONFIG.FPS_CAP;
+    // Both gates must be open before a frame is drawn. Tracking them as state
+    // (rather than reacting to each event in isolation) is what stops a tab
+    // switch from restarting a loop the observer had already parked, or from
+    // resurrecting one after teardown.
+    var onscreen = true, disposed = false;
 
     function resize() {
+      if (disposed) return;
       var rect = stage.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
       canvas.width = Math.round(rect.width * dpr);
@@ -679,7 +691,7 @@
     });
 
     if (reduceQuery.addEventListener) {
-      reduceQuery.addEventListener('change', paint);
+      reduceQuery.addEventListener('change', function () { paint(); syncRenderers(); });
     }
   }
 
@@ -714,6 +726,7 @@
   function initAtmosphereField() {
     var atmos = document.querySelector('.cgm-atmos');
     if (!atmos || !advancedAllowed()) return;
+    if (atmos.querySelector('canvas')) return;   // already live — re-entry safe
 
     var dpr = Math.min(window.devicePixelRatio || 1, CONFIG.DPR_CAP);
     var canvas = document.createElement('canvas');
@@ -727,11 +740,21 @@
 
     var running = false, rafId = 0, last = 0, disposed = false;
     var minFrame = 1000 / CONFIG.FPS_CAP;
+    var disposed = false;
+    var lastW = 0, lastH = 0;
 
     function resize() {
-      canvas.width = Math.round(window.innerWidth * dpr);
-      canvas.height = Math.round(window.innerHeight * dpr);
-      renderer.resize(canvas.width, canvas.height, dpr);
+      if (disposed) return;
+      var w = Math.round(window.innerWidth * dpr);
+      var h = Math.round(window.innerHeight * dpr);
+      // Mobile browsers fire `resize` on every address-bar collapse, and each
+      // assignment to canvas.width reallocates the backing store. Only pay that
+      // cost when the size genuinely changed.
+      if (w === lastW && h === lastH) return;
+      lastW = w; lastH = h;
+      canvas.width = w;
+      canvas.height = h;
+      renderer.resize(w, h, dpr);
     }
     function frame(now) {
       if (!running) return;

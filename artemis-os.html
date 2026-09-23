@@ -665,8 +665,8 @@ body{
   var ctx=canvas.getContext('2d'),W=0,H=0,dpr=Math.min(window.devicePixelRatio||1,2);
   var pts=[],N=0;
   function resize(){
-    W=canvas.clientWidth=window.innerWidth;
-    H=canvas.clientHeight=window.innerHeight;
+    W=window.innerWidth;
+    H=window.innerHeight;
     canvas.width=W*dpr;canvas.height=H*dpr;
     ctx.setTransform(dpr,0,0,dpr,0,0);
     N=Math.max(28,Math.min(70,Math.floor(W*H/26000)));
