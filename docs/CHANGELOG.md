@@ -9,6 +9,64 @@ recorded as done unless it was observed.
 
 ---
 
+## 2026-09-23
+
+`main` had gone red again. 156 commits (PRs #52 to #101) merged with no CI,
+because F1 still holds: job `107260634855` today reported `runner_id: 0`.
+Every item below was verified locally. Full per-issue report:
+`docs/AUDIT-2026-09-23.md`.
+
+### Fixed
+
+- **The Revenue Command lead form wrote prospects' personal data into the
+  URL** (live since 2026-09-21). A `//$/` regex parsed as a comment, the
+  script died, and the form fell back to a native GET. Reproduced in
+  Chromium; fixed, and the form is now `method="post"`.
+- **Two more pages were dead on load:** `artemis-iv.html` (duplicate
+  `const`) and `counter-uas-commercialization-os.html` (stray `)`).
+- **14 pages shipped outside the site graph** (F5 again, at scale): 21 root
+  tests and 5 of 10 `ci_local` gates red. Four registered as public pages;
+  ten raw uploads classified and marked noindex.
+- **Hand edits to generated Insights files** would have been erased by the
+  next regeneration. The editorial copy now lives in `CURATED`.
+- **`sharp`, `nanoid`, `baseline-browser-mapping`** advisories patched in
+  storefront **and** admin (2 high + 1 moderate each → 0).
+- **`/revenue/checkout` revealed which leads exist** (404 vs 403 on
+  sequential ids). Latent until payments are enabled.
+- **Storefront and admin containers ran as root** and had no
+  `.dockerignore`.
+- **The README described a codebase that is not here** (0 of 13 named files
+  exist). Moved to `docs/proposals/`; README rewritten from verified facts.
+- A test pinned one exact action SHA, so Dependabot bumps turned `main` red;
+  it now asserts SHA-pin shape. Four ruff errors cleared. Two dead
+  `.env.example` keys marked unread.
+
+### Added
+
+- `tests/test_inline_script_syntax.py`: every inline script on every page
+  must parse (298 blocks, one Node process).
+- `docs/AUDIT-2026-09-23.md`.
+
+### Verified
+
+| Target | Result |
+|---|---|
+| `python3 scripts/ci_local.py` | 4/6/1 → **10 passed, 0 failed**, 1 skipped (Lighthouse, network) |
+| `pytest tests/` | 21 failed → **1568 passed**, 12 skipped |
+| `pytest control-plane/tests/` | **402 passed**, 1 skipped |
+| storefront, admin: `npm ci`, `tsc --noEmit`, `next build` | exit 0 |
+| `npm audit` root / storefront / admin | 0 / 0 / 0 |
+| `pip-audit` control plane | no known vulnerabilities |
+| Secrets, current tree and full history | none |
+| Reflected DOM XSS, 93 pages in Chromium | 0 hits (probe validated on a planted positive) |
+
+### Not verified
+
+The live site (this session's network policy blocked it), the Docker image
+builds (no daemon), and Render. See the audit's §4.
+
+---
+
 ## 2026-09-15
 
 The day the repository's own tests started being run again. GitHub Actions has

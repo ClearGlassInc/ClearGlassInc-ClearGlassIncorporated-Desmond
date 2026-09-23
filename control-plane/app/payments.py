@@ -41,6 +41,12 @@ def webhook_secret_set() -> bool:
     return bool(_webhook_secret())
 
 
+def webhook_requires_signature() -> bool:
+    """Return whether this environment must reject unsigned Stripe webhooks."""
+    app_env = os.environ.get("APP_ENV", "development").strip().lower()
+    return bool(_webhook_secret()) or bool(_secret_key()) or app_env in {"production", "prod"}
+
+
 def automatic_tax_enabled() -> bool:
     """Whether to ask Stripe Tax to calculate tax on each session.
 

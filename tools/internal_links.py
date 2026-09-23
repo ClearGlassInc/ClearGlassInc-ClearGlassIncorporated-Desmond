@@ -68,6 +68,23 @@ EXCLUDED_PAGES: dict[str, tuple[str, str]] = {
     ),
     "seo-dashboard.html": ("Private operations", "noindex, nofollow SEO console"),
     "threads.html": ("Campaign review", "noindex, nofollow draft review surface"),
+    # Raw "Add files via upload" exports (2026-09-17/18). Nine carry the generic
+    # title "React Artifact"; two are named as a preview and a draft. They stay
+    # reachable by URL but are noindex until the owner decides whether each is
+    # a public page, which needs its own title, canonical and cluster.
+    "Clearglass-Animation-Repair-Ultracode.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
+    "Fantasy-Pool-Dashboard.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
+    "HoloSurg-surgical-visualization-blueprint.html": (
+        "Uploaded prototype",
+        "noindex upload awaiting owner classification; contains the FANTASY COMMAND page, not HoloSurg",
+    ),
+    "Orelogic-Final-Dashboard-Production.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
+    "Orelogic-V4-Ultra-Beyond.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
+    "artemis-nonprofit-os.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
+    "clearglass-sat-mission-deploy.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
+    "clearglass_x5f_pricing_x5f_preview.html": ("Uploaded prototype", "noindex pricing preview upload"),
+    "clearglass_x5f_rescue_x5f_draft_x5f_landing.html": ("Uploaded prototype", "noindex draft landing upload"),
+    "fantasy-command-live.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
 }
 
 # --------------------------------------------------------------------------
@@ -99,6 +116,7 @@ PAGES: dict[str, tuple[str, str]] = {
     "stegoforge.html": ("STEGOFORGE", "steganography and covert-channel analysis terminal"),
     "attack-prompt-core.html": ("ATT&CK Prompt Integrator", "MITRE ATT&CK-aligned analysis prompts"),
     "environmental-cyber-risk.html": ("Environmental Cyber-Risk", "OT and environmental threat monitoring"),
+    "shield.html": ("ClearGlass Shield", "privacy-first secure connectivity you can verify"),
 
     # Intelligence & OSINT
     "intelligence.html": ("Intelligence", "the ClearGlass intelligence practice"),
@@ -197,6 +215,7 @@ PAGES: dict[str, tuple[str, str]] = {
     "offers/autonomous-threat-modeling.html": ("Autonomous Threat Modeling", "continuous threat-modeling assessment and implementation services"),
     "assets/canada-us-30-day-diagnostic.html": ("30-Day Canada–US Control Diagnostic", "one-page checklist for mapping cross-border data, agents and dual-jurisdiction evidence"),
     "revenue-engine.html": ("Revenue Engine", "AI-driven business growth system"),
+    "revenue-command.html": ("Revenue Command", "diagnostic services and qualification"),
 
     # Design & UI engineering
     "web-design.html": ("Web Design & Development", "growth infrastructure built by ClearGlass"),
@@ -261,6 +280,8 @@ PAGES: dict[str, tuple[str, str]] = {
     "blog/ontario-influence-environment-august-2026.html": ("Ontario Influence Environment", "verification-first Ontario public-interest intelligence"),
     "blog/2026-09-15-strategic-chokepoint-sitrep.html": ("Strategic Chokepoint Sitrep", "a verification-first open-source assessment of Hormuz, the Red Sea and Ukraine"),
     "blog/shadow-ai-incident-response-logs-gone.html": ("Shadow AI Incident Response", "forensic readiness before security evidence disappears"),
+    "blog/canada-strategic-resilience-command-brief-2026.html": ("Canada Strategic Resilience Command Brief", "an evidence-led brief on economic capacity, foreign interference, cyber risk and infrastructure dependencies"),
+    "blog/csis-threat-reduction-botnets-canadian-iot-federal-court-2026.html": ("CSIS, Botnets and Canada's Connected Devices", "Federal Court File C-6-24 and threat-reduction warrants reaching into routers and IoT"),
 }
 
 # --------------------------------------------------------------------------
@@ -280,7 +301,7 @@ CLUSTERS: dict[str, dict] = {
             "sentinel.html", "bluedesk.html", "guardian.html",
             "artemis-blue-team.html", "stegoforge.html",
             "attack-prompt-core.html", "environmental-cyber-risk.html",
-            "bluedesk-mobile.html",
+            "bluedesk-mobile.html", "shield.html",
         ],
         "cta": [CTA_STORE, ("offers/security-quick-audit.html", "Start with the $249 Security Quick-Audit")],
     },
@@ -367,6 +388,7 @@ CLUSTERS: dict[str, dict] = {
             "smb.html", "offers/security-quick-audit.html",
             "offers/autonomous-threat-modeling.html", "offers/hardening-sprint.html",
             "offers/guardian-command-nexus-blueprint.html", "revenue-engine.html",
+            "revenue-command.html",
             "offers/canada-us-control-assessment.html",
             "side-store.html", "products.html",
             "business-productivity-suite.html", "global-growth-engine.html",
@@ -444,6 +466,8 @@ CLUSTERS: dict[str, dict] = {
             "blog/ontario-influence-environment-august-2026.html",
             "blog/shadow-ai-incident-response-logs-gone.html",
             "blog/2026-09-15-strategic-chokepoint-sitrep.html",
+            "blog/canada-strategic-resilience-command-brief-2026.html",
+            "blog/csis-threat-reduction-botnets-canadian-iot-federal-court-2026.html",
         ],
         "cta": [CTA_STORE, CTA_PRICING],
     },

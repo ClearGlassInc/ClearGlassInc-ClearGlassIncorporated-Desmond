@@ -11,7 +11,7 @@ from .. import payments, pricebook
 from ..audit import log_event
 from ..db import get_session
 from ..fulfillment import shipping_from_stripe_session
-from ..models import Payout
+from ..models import Order, Payout
 from ..order_ledger import record_payment_order
 from ..schemas import (
     ActionResult,
@@ -26,6 +26,7 @@ from ..schemas import (
 )
 from ..security import rate_limit, require_admin
 from ..service import run_governed_action
+from ..revenue_service import provision_paid_service, upsert_customer_for_order
 
 router = APIRouter(tags=["payments"])
 
@@ -175,7 +176,7 @@ async def stripe_webhook(request: Request, session: Session = Depends(get_sessio
     sig = request.headers.get("stripe-signature", "")
     check = payments.verify_webhook(payload, sig)
 
-    if payments.webhook_secret_set() and not check["verified"]:
+    if payments.webhook_requires_signature() and not check["verified"]:
         raise HTTPException(status_code=400, detail=f"webhook rejected: {check['reason']}")
 
     event = check["event"]
@@ -195,7 +196,12 @@ async def stripe_webhook(request: Request, session: Session = Depends(get_sessio
             paid = obj.get("payment_status") in {"paid", "no_payment_required"}
             status = "paid" if paid else "pending"
 
-        _record_order(
+        environment = "live" if bool(event.get("livemode")) else "test"
+        customer_email = (
+            ((obj.get("customer_details") or {}).get("email"))
+            or obj.get("customer_email")
+        )
+        order = _record_order(
             session,
             # Stripe redelivers webhooks; key the order on the checkout-session id so a
             # retry never books the same revenue twice.
@@ -206,11 +212,31 @@ async def stripe_webhook(request: Request, session: Session = Depends(get_sessio
             status=status,
             verified=check["verified"],
             event=etype,
-            # A checkout session is the only place the destination address exists.
-            # If it is not captured here it is gone, and a paid physical order has
-            # nowhere to ship.
             shipping_source=obj,
+            environment=environment,
         )
+        # CRCS starts fulfillment only from a verified live payment. A test event can
+        # exercise the webhook and ledger without creating a customer delivery commitment.
+        metadata = obj.get("metadata") or {}
+        # Only CRCS-originated checkouts may enter the CRCS service-delivery queue.
+        # Existing commerce offers continue to be booked normally without creating
+        # an unrelated CRCS delivery record.
+        if (
+            order is not None
+            and status == "paid"
+            and check["verified"]
+            and environment == "live"
+            and metadata.get("crcs_revenue_system") == "v1"
+        ):
+            upsert_customer_for_order(session, order, customer_email)
+            raw_lead_id = str(metadata.get("crcs_lead_id") or "").strip()
+            lead_id = int(raw_lead_id) if raw_lead_id.isdigit() else None
+            provision_paid_service(
+                session,
+                order,
+                sku=str(metadata.get("crcs_sku") or "").strip() or None,
+                lead_id=lead_id,
+            )
     elif etype == "invoice.paid":
         # Subscription renewals arrive as invoices, not checkout sessions. Without this
         # every month after the first would settle in Stripe and never reach the ledger.
@@ -294,7 +320,8 @@ def _record_order(
     verified: bool,
     event: str,
     shipping_source: dict | None = None,
-) -> None:
+    environment: str = "unknown",
+) -> Order | None:
     """Book a Stripe payment through the shared order ledger.
 
     The booking rules (idempotent on redelivery, promote rather than duplicate a
@@ -303,7 +330,7 @@ def _record_order(
     adapter adds is the Stripe-specific step of reading the destination address out
     of a Checkout Session.
     """
-    record_payment_order(
+    return record_payment_order(
         session,
         actor="stripe",
         external_ref=external_ref,
@@ -313,6 +340,7 @@ def _record_order(
         status=status,
         verified=verified,
         event=event,
+        environment=environment,
         shipping=(
             shipping_from_stripe_session(shipping_source)
             if shipping_source is not None

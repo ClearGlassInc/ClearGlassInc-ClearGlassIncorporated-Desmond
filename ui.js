@@ -22,11 +22,19 @@
     finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   } catch (e) {}
 
+  /* The global navigation animates itself: nav.js owns the bar's transform
+     (it is centred with translateX(-50%) and slides out with a second
+     translate on scroll) and styles its own controls. Exclude it by the ids
+     nav.js actually creates — #cg-nav has never existed in this repository, so
+     the original guard matched nothing and let these behaviors run inside the
+     bar anyway. */
+  var NAV_OWNED = "#cg-global-nav,#cg-mobile-nav";
+
   function isControl(node) {
     if (!node || !node.closest) return null;
     var el = node.closest(SEL);
     if (!el) return null;
-    if (el.closest("#cg-nav")) return null;          // nav manages itself
+    if (el.closest(NAV_OWNED)) return null;          // nav manages itself
     if (el.disabled || el.getAttribute("aria-disabled") === "true") return null;
     return el;
   }
@@ -59,6 +67,15 @@
   var MAG = 5;                                        // max px displacement
   function bindMagnet(el) {
     if (el.__cgMag) return;
+    /* One owner per control. assets/js/future-buttons.js runs its own magnetic
+       pull on .future-glass-primary, driven through the individual `translate`
+       property (assets/css/future-buttons.css). `translate` composes with
+       `transform` rather than overriding it, so binding here as well would
+       displace the control twice and run a second rAF loop with its own forced
+       layout read per pointermove; .cg-magnetic would also replace the
+       `transition` shorthand that file relies on for translate/scale/filter.
+       Defer there, and keep magnetizing every other control as before. */
+    if (el.classList.contains("future-glass-primary")) return;
     el.__cgMag = true;
     el.classList.add("cg-magnetic");
     var raf = 0, tx = 0, ty = 0;

@@ -1,0 +1,80 @@
+import random
+import numpy as np
+from dataclasses import dataclass
+
+@dataclass
+class StrategyParams:
+    # Example: parameters you want to optimize
+    # For ClearGlass: could be retry_count, cache_ttl, timeout
+    retry: int
+    timeout: float
+    cache_factor: float
+
+    def mutate(self, rate=0.2):
+        """Self-mutation — small random change"""
+        return StrategyParams(
+            retry = max(1, self.retry + random.randint(-1, 1)) if random.random() < rate else self.retry,
+            timeout = max(0.1, self.timeout + random.uniform(-0.5, 0.5)) if random.random() < rate else self.timeout,
+            cache_factor = max(0.1, min(2.0, self.cache_factor + random.uniform(-0.2, 0.2))) if random.random() < rate else self.cache_factor,
+        )
+
+def monte_carlo_evaluate(params: StrategyParams, trials=5000):
+    """
+    Monte Carlo evaluation — simulate outcome distribution.
+    Replace this with REAL cost data from your CI/CD audit.
+    """
+    outcomes = []
+    for _ in range(trials):
+        # Simulated: failure probability decreases with higher retry/timeout/cache
+        base_failure = 0.3
+        failure_prob = base_failure / (params.retry * 0.5 + params.timeout * 0.1 + params.cache_factor)
+        failure_prob = np.clip(failure_prob, 0.01, 0.9)
+
+        # Cost model: failure = $500 in eng time, success = -$50 [compute saved]
+        cost = 500 if random.random() < failure_prob else -50
+        outcomes.append(cost)
+
+    expected_cost = np.mean(outcomes)
+    risk_95 = np.percentile(outcomes, 95) # 95th percentile worst case
+    return expected_cost, risk_95, outcomes
+
+def evolutionary_loop(generations=20, pop_size=20):
+    """Manual -> Repeat -> Measure -> Standardize -> Automate"""
+    # Initial population
+    population = [StrategyParams(retry=2, timeout=5.0, cache_factor=1.0) for _ in range(pop_size)]
+
+    audit_log = []
+    for gen in range(generations):
+        scored = []
+        for p in population:
+            exp_cost, risk, _ = monte_carlo_evaluate(p, trials=2000)
+            # Fitness = minimize expected cost + risk penalty
+            fitness = -(exp_cost + risk * 0.2)
+            scored.append((fitness, p, exp_cost, risk))
+
+        scored.sort(key=lambda x: x[0], reverse=True)
+        best = scored[0]
+
+        audit_log.append({
+            "generation": gen,
+            "best_params": best[1],
+            "expected_cost": best[2],
+            "risk_95": best[3],
+            "fitness": best[0]
+        })
+
+        print(f"Gen {gen}: Best Cost=${best[2]:.2f} Risk95=${best[3]:.2f} Params={best[1]}")
+
+        # Selection + mutation — keep top 30%, mutate rest
+        survivors = [s[1] for s in scored[:int(pop_size*0.3)]]
+        new_pop = survivors.copy()
+        while len(new_pop) < pop_size:
+            parent = random.choice(survivors)
+            new_pop.append(parent.mutate(rate=0.4))
+        population = new_pop
+
+    return audit_log
+
+# EXECUTE — This is where you start measuring
+if __name__ == "__main__":
+    log = evolutionary_loop(generations=15, pop_size=15)

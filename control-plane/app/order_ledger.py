@@ -69,6 +69,7 @@ def record_payment_order(
     verified: bool,
     event: str,
     shipping: Mapping[str, Any] | None = None,
+    environment: str = "unknown",
 ) -> Order | None:
     """Book (or promote) an order idempotently, keyed on the processor's own id.
 
@@ -101,6 +102,7 @@ def record_payment_order(
             return None
         previous, existing.status = existing.status, status
         existing.total = total
+        existing.environment = environment
         # A pending order settling is the point at which an asynchronous payment
         # method finally yields a shippable order, so re-apply the address here
         # too: the promoting event carries it and the original may not have.
@@ -128,6 +130,7 @@ def record_payment_order(
         currency=currency,
         source=source,
         external_ref=external_ref,
+        environment=environment,
     )
     if shipping is not None:
         apply_shipping(order, shipping)

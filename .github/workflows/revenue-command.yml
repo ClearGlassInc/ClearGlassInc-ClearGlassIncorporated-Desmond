@@ -1,0 +1,52 @@
+name: Revenue Command System
+
+on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "control-plane/app/revenue_service.py"
+      - "control-plane/app/routers/revenue.py"
+      - "control-plane/app/models.py"
+      - "control-plane/app/schemas.py"
+      - "control-plane/app/config.py"
+      - "control-plane/app/data/pricebook.json"
+      - "control-plane/tests/test_revenue_command.py"
+      - "control-plane/migrations/007_revenue_command.sql"
+      - "revenue-command.html"
+  push:
+    branches: ["main"]
+    paths:
+      - "control-plane/app/revenue_service.py"
+      - "control-plane/app/routers/revenue.py"
+      - "control-plane/app/models.py"
+      - "control-plane/app/schemas.py"
+      - "control-plane/app/config.py"
+      - "control-plane/app/data/pricebook.json"
+      - "control-plane/tests/test_revenue_command.py"
+      - "control-plane/migrations/007_revenue_command.sql"
+      - "revenue-command.html"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  revenue-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+      - name: Install control-plane dependencies
+        run: pip install -r control-plane/requirements.txt pytest
+      - name: Run CRCS unit tests
+        working-directory: control-plane
+        run: pytest tests/test_revenue_command.py -q
+      - name: Compile CRCS Python modules
+        run: python -m compileall -q control-plane/app
+      - name: Check static revenue surface
+        run: python -c "from pathlib import Path; t=Path('revenue-command.html').read_text(encoding='utf-8'); assert '<form' in t and 'aria-live' in t and 'sk_live' not in t and 'whsec_' not in t; print('CRCS static surface checks passed')"

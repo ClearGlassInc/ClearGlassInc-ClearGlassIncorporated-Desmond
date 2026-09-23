@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>When the Court Lets an Intelligence Service Reach Into a Router: CSIS, Botnets and Canada's Connected Devices</title>
+<meta name="description" content="ClearGlass Intelligence analysis of Federal Court File C-6-24: CSIS threat-reduction warrants, infected Canadian servers, SOHO routers and IoT devices, botnet relay infrastructure, legal boundaries and the Ontario exposure question.">
+<meta name="author" content="Desmond Otieno Odhiambo">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.clearglassinc.com/blog/csis-threat-reduction-botnets-canadian-iot-federal-court-2026.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="ClearGlass Inc.">
+<meta property="og:title" content="When the Court Lets an Intelligence Service Reach Into a Router">
+<meta property="og:description" content="Federal Court File C-6-24, CSIS threat-reduction powers, botnet relay infrastructure and what the decision means for Canadian SOHO and IoT security.">
+<meta property="og:url" content="https://www.clearglassinc.com/blog/csis-threat-reduction-botnets-canadian-iot-federal-court-2026.html">
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-holographic-seal.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="When the Court Lets an Intelligence Service Reach Into a Router">
+<meta name="twitter:description" content="A source-led ClearGlass analysis of Federal Court File C-6-24 and Canada's first publicized CSIS cyber threat-reduction warrant of this kind.">
+<meta name="twitter:image" content="https://www.clearglassinc.com/assets/images/clearglass-holographic-seal.png">
+<meta property="article:author" content="Desmond Otieno Odhiambo">
+<meta property="article:section" content="Cyber Intelligence &amp; Critical Infrastructure">
+<meta property="article:published_time" content="2026-09-18">
+<link rel="stylesheet" href="insights.css">
+<link rel="stylesheet" href="/clearglass-crimson.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+<link rel="stylesheet" href="article-enhance.css">
+<style>
+body{margin:0;background:#03070d;color:#eee1e2;font:17px/1.72 Inter,system-ui,sans-serif}
+.wrap{width:min(900px,calc(100% - 36px));margin:auto;padding:34px 0 80px}
+nav.top{padding:14px 22px;border-bottom:1px solid #481819}nav.top a{color:#fff;font-weight:800;text-decoration:none}
+.eyebrow{font:700 11px ui-monospace,SFMono-Regular,monospace;letter-spacing:.18em;color:#63f4b5;text-transform:uppercase}
+h1{font-size:clamp(34px,6vw,64px);line-height:1.02;color:#fff;max-width:880px}
+h2{color:#fff;margin-top:44px;line-height:1.15}
+h3{color:#fff}
+a{color:#67e8f9}
+.lede{font-size:21px;color:#cbd5e1;max-width:820px}
+.notice,.source,.analysis,.evidence,.callout{border:1px solid rgba(103,232,249,.25);background:linear-gradient(145deg,rgba(8,16,32,.92),rgba(18,7,12,.88));border-radius:16px;padding:20px;margin:26px 0}
+.notice{border-color:rgba(245,158,11,.4);background:rgba(34,24,6,.72);color:#f3dfab}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:22px 0}
+.card{border:1px solid rgba(148,163,184,.18);border-radius:14px;padding:17px;background:rgba(9,14,25,.75)}
+.card strong{display:block;color:#67e8f9;margin-bottom:5px}
+.chain{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:25px 0}
+.node{min-height:95px;border:1px solid rgba(103,232,249,.25);border-radius:12px;padding:12px;background:rgba(5,12,24,.86);position:relative}
+.node b{display:block;color:#fff;margin-bottom:5px}.node span{font-size:13px;color:#aebbd0}
+.node:not(:last-child):after{content:'→';position:absolute;right:-12px;top:37px;color:#67e8f9;z-index:2}
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+th,td{border:1px solid rgba(148,163,184,.2);padding:11px;text-align:left;vertical-align:top}
+th{background:rgba(103,232,249,.08);color:#fff}
+details{border:1px solid rgba(148,163,184,.2);border-radius:12px;padding:12px 15px;margin:10px 0;background:rgba(7,12,22,.72)}
+summary{cursor:pointer;color:#fff;font-weight:750}
+.tag{display:inline-block;padding:5px 9px;border:1px solid rgba(103,232,249,.25);border-radius:999px;margin:3px;font:11px ui-monospace,monospace;color:#a9dff0}
+.kicker{color:#94a3b8;font-size:13px}
+.small{font-size:13px;color:#aebbd0}
+@media(max-width:760px){.grid,.chain{grid-template-columns:1fr}.node:not(:last-child):after{display:none}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<script type="application/ld+json">
+{
+ "@context":"https://schema.org",
+ "@type":"Article",
+ "headline":"When the Court Lets an Intelligence Service Reach Into a Router: CSIS, Botnets and Canada's Connected Devices",
+ "description":"Source-led ClearGlass analysis of Federal Court File C-6-24.",
+ "datePublished":"2026-09-18",
+ "dateModified":"2026-09-18",
+ "author":{"@type":"Person","name":"Desmond Otieno Odhiambo"},
+ "publisher":{"@type":"Organization","name":"ClearGlass Inc.","url":"https://www.clearglassinc.com/"},
+ "mainEntityOfPage":{"@type":"WebPage","@id":"https://www.clearglassinc.com/blog/csis-threat-reduction-botnets-canadian-iot-federal-court-2026.html"},
+ "keywords":["CSIS","Federal Court","C-6-24","botnet","IoT security","SOHO routers","critical infrastructure","Ontario","threat reduction","agent governance"],
+ "about":[
+  {"@type":"Thing","name":"Canadian Security Intelligence Service"},
+  {"@type":"Thing","name":"Federal Court of Canada"},
+  {"@type":"Thing","name":"Botnet"},
+  {"@type":"Thing","name":"Internet of Things"}
+ ]
+}
+</script>
+</head>
+<body data-ix-page="article" data-ix-slug="csis-threat-reduction-botnets-canadian-iot-federal-court-2026">
+<nav class="top"><a href="/">CLEARGLASSINC</a> · <a href="/blog/">Insights</a></nav>
+<main class="wrap">
+<p class="eyebrow">ClearGlass Intelligence Desk · UNCLASSIFIED / PUBLIC · 18 September 2026</p>
+<h1>When the Court Lets an Intelligence Service Reach Into a Router</h1>
+<p class="lede"><strong>CSIS, two foreign-operated botnets, Canadian SOHO routers and IoT devices — and the architectural boundary between protecting national infrastructure and touching somebody else's machine.</strong></p>
+<p class="kicker">Burlington, Ontario · Cyber intelligence / critical infrastructure · Evidence-led analysis · No client names · No operational targeting guidance</p>
+
+<div class="notice"><strong>Evidence status:</strong> The factual core of this article is anchored to the Federal Court's public bulletin for File C-6-24, published 15 June 2026. The Court says this was the first application of this kind under the CSIS Act. The warrant was issued 1 May 2024, renewed 29 August 2024, and confidential reasons were issued 26 February 2026. This article separates what the Court publicly established from ClearGlass analytical inference. It is not legal advice.</div>
+
+<section class="grid" aria-label="Case at a glance">
+<div class="card"><strong>CASE</strong>Federal Court File C-6-24</div>
+<div class="card"><strong>AUTHORITY</strong>CSIS Act ss. 12.1 and 21.1</div>
+<div class="card"><strong>PUBLIC RECORD</strong>Public reasons released 15 June 2026</div>
+<div class="card"><strong>DEVICES</strong>Servers · SOHO routers · IoT</div>
+<div class="card"><strong>TARGET</strong>Botnet infrastructure, not named people</div>
+<div class="card"><strong>THREAT</strong>Foreign cyber activity affecting Canadian critical infrastructure</div>
+</section>
+
+<h2>Executive finding</h2>
+<p>The important fact is not simply that Canada's intelligence service received a warrant to interfere with malware. It is that the Federal Court authorized a threat-reduction operation whose <em>technical objects were Canadian devices</em>: servers, small-office/home-office routers and Internet-connected devices such as security cameras, televisions and doorbells.</p>
+
+<p>The Court's public summary says the devices had been infected with malware and were operating together as a botnet. The botnets were associated with two foreign adversaries. The Court found the threat to Canada's security clearly established and imminent and concluded that the specified measures were necessary, reasonable and proportionate. The measures were directed against devices rather than persons, and the Court states that no identifying information, personal information or other content was collected.</p>
+
+<p>That creates a consequential security architecture lesson: a device can be physically owned by a Canadian household or business while, from a national-security perspective, functioning as foreign-controlled relay infrastructure. Ownership, intent and network role can diverge.</p>
+
+<h2>What the Federal Court actually said</h2>
+<p>The public Federal Court bulletin is the primary source for the case. It identifies the application as involving cyber espionage, cyber sabotage, cyber foreign-influenced activities and malicious botnets. The application was filed on 24 April 2024. The Court issued the Cyber Threat Reduction Measures Warrant on 1 May 2024 for 120 days and renewed it on 29 August 2024 for another 120 days. Confidential reasons followed on 26 February 2026; the public version was released on 15 June 2026.</p>
+
+<table>
+<thead><tr><th>Question</th><th>Public record</th><th>Analytical significance</th></tr></thead>
+<tbody>
+<tr><td>Why was a warrant required?</td><td>CSIS said the threat-reduction measures would likely constitute Criminal Code offences without judicial authorization.</td><td>Cyber defence action against third-party devices can cross a legal boundary even when the objective is defensive.</td></tr>
+<tr><td>What was targeted?</td><td>Canada-based servers, SOHO routers and IoT devices infected with malware.</td><td>The technical object was compromised infrastructure, not a named class of people.</td></tr>
+<tr><td>What did the devices do?</td><td>They formed a botnet: a network of infected devices under malicious control.</td><td>Compromised consumer and small-business equipment can become part of strategic relay infrastructure.</td></tr>
+<tr><td>What did the Court find?</td><td>The threat to Canada's security was clearly established and imminent; measures were necessary, reasonable and proportional.</td><td>The authorization was bounded by a judicial proportionality analysis.</td></tr>
+<tr><td>Was personal content collected?</td><td>The Court's public summary says no identifying information, personal information or other content was collected.</td><td>This is materially different from a warrant framed around acquiring a person's communications or identity.</td></tr>
+</tbody>
+</table>
+
+<h2>The relay-infrastructure problem</h2>
+<p>A botnet does not need every infected device to be the final victim. A compromised router, camera or server can be useful because it gives an operator a geographically distributed network of ordinary-looking source addresses.</p>
+
+<div class="chain" aria-label="Defensive botnet relay architecture">
+<div class="node"><b>Foreign controller</b><span>Command infrastructure directs compromised nodes.</span></div>
+<div class="node"><b>Relay layer</b><span>Compromised devices obscure origin and provide distributed paths.</span></div>
+<div class="node"><b>Canadian device</b><span>Router, server or IoT appliance appears to be a normal local endpoint.</span></div>
+<div class="node"><b>Target network</b><span>Government, military or critical-infrastructure systems may see the relay.</span></div>
+<div class="node"><b>Strategic effect</b><span>Reconnaissance, access preparation or disruptive potential.</span></div>
+</div>
+
+<p>The public ruling is especially important because it makes the relay layer part of the national-security picture. A Canadian device does not have to contain classified information to matter. Its network position can itself be strategically valuable.</p>
+
+<h2>The devices named by the Court change the threat model</h2>
+<p>The Court expressly identifies everyday IoT examples including Ring doorbells, security cameras, televisions and other Wi-Fi-enabled appliances. It also highlights end-of-life equipment and devices whose software has not been updated as particular vulnerabilities.</p>
+
+<p>This matters because conventional enterprise security programs often draw a hard boundary around managed laptops, servers and identity systems. The botnet model ignores that boundary. A camera on a residential network, a small-office router behind a business firewall, or an obsolete appliance can become part of an attack path without the owner knowingly doing anything malicious.</p>
+
+<div class="analysis"><strong>ClearGlass analytical distinction:</strong> “endpoint” should not mean “corporate laptop.” For critical-infrastructure threat modelling, the useful unit is the <em>network position</em>: anything that can originate, relay, terminate, authenticate or conceal traffic. Asset inventory therefore has to include unmanaged and semi-managed infrastructure where the organization can reasonably discover it.</div>
+
+<h2>Ontario: important exposure, but do not invent a number</h2>
+<p>Ontario deserves specific attention because it contains a very large concentration of Canada's population, businesses, cloud connectivity, Internet users and critical infrastructure. It is therefore reasonable to expect that a Canada-wide population of compromised devices could include a substantial Ontario component.</p>
+
+<p>But the public Federal Court bulletin does <strong>not</strong> publish a province-by-province device count. ClearGlass is therefore not assigning a percentage, estimating a device total, or claiming that Ontario represented a particular share of the operation.</p>
+
+<p>The defensible conclusion is narrower: <strong>Ontario organizations and households should treat this as directly relevant Canadian cyber-risk intelligence, not as an abstract Ottawa-only event.</strong> Any organization responsible for public-facing infrastructure, managed networks, municipal systems, energy-adjacent services, professional services or connected-device fleets should be able to answer whether obsolete or unmanaged equipment can be used as relay infrastructure.</p>
+
+<h2>The legal boundary is the story</h2>
+<p>There is a common but dangerous assumption that “defensive cyber” automatically means “authorized cyber.” The Court's bulletin demonstrates the opposite. CSIS required a Cyber Threat Reduction Measures Warrant because the measures it sought to take against infected devices would likely constitute Criminal Code offences.</p>
+
+<p>That is a critical distinction for private-sector defenders. A security team may discover a compromised third-party device communicating through its environment. That does not automatically create authority to log into, modify, wipe or otherwise interfere with the third party's equipment.</p>
+
+<p>The architecture should therefore separate <strong>detection</strong>, <strong>containment within your own administrative boundary</strong>, and <strong>external remediation</strong>. The first two may be ordinary defensive operations when properly authorized. The third can raise materially different legal and contractual questions.</p>
+
+<details><summary>What this decision does not establish</summary>
+<ul>
+<li>It does not create a general private-sector licence to access or modify compromised devices.</li>
+<li>It does not mean CSIS can freely alter any Canadian IoT device it considers suspicious.</li>
+<li>It does not establish that device owners were treated as suspects.</li>
+<li>It does not publish a complete technical description of every action performed against every device.</li>
+<li>It does not provide a province-by-province inventory of affected devices.</li>
+<li>It does not establish that every device type named in the bulletin was actually compromised; the Court uses them as examples of IoT devices within the described threat environment.</li>
+</ul>
+</details>
+
+<h2>Why the “devices, not persons” distinction matters</h2>
+<p>The public summary makes an unusually explicit distinction: the measures were directed against devices, not persons, and no identifying information, personal information or other content was collected.</p>
+
+<p>That distinction is central to understanding the proportionality analysis. The operational object was the malicious technical function: the device's participation in a botnet. The Court's public explanation does not describe the operation as an intelligence collection exercise designed to identify the householders or employees behind the devices.</p>
+
+<p>For defenders, this reinforces a useful principle: security telemetry should distinguish <em>asset identity</em> from <em>human identity</em>. A device can be high-risk because of its network behaviour without its owner being a threat actor.</p>
+
+<h2>Why this is bigger than one warrant</h2>
+<p>The case sits inside a broader change in cyber conflict. State-sponsored operators increasingly use infrastructure that is not visibly theirs: compromised routers, virtual servers, edge appliances, consumer devices and other systems that blend into normal Internet traffic.</p>
+
+<p>CSIS's own public reporting describes concern about state-sponsored cyber actors targeting North American critical infrastructure and using Internet-connected devices to maintain network presence while blending with legitimate activity. CSIS also reported participation in a 2024 cyber-disruption operation involving a GRU-controlled botnet of compromised routers, including devices in Canada.</p>
+
+<p>The strategic implication is straightforward: <strong>Canada's attack surface includes infrastructure that Canadians did not build, do not centrally administer, and may not know is compromised.</strong></p>
+
+<h2>Defensive control architecture: what changes Monday morning</h2>
+<div class="grid">
+<div class="card"><strong>1 · INVENTORY</strong>Discover Internet-facing routers, cameras, appliances, remote-management interfaces and end-of-life equipment.</div>
+<div class="card"><strong>2 · SEGMENT</strong>Keep unmanaged IoT and edge equipment away from privileged administrative paths and sensitive systems.</div>
+<div class="card"><strong>3 · UPDATE</strong>Track firmware age, vendor support status and remediation ownership as security controls.</div>
+<div class="card"><strong>4 · OBSERVE</strong>Look for unusual outbound connections, persistent relay behaviour and unexpected management traffic.</div>
+<div class="card"><strong>5 · CONTAIN</strong>Use controls you own: network isolation, access revocation, routing restrictions and replacement.</div>
+<div class="card"><strong>6 · EVIDENCE</strong>Preserve timestamps, device identity, owner, firmware, network role and response decisions.</div>
+</div>
+
+<h2>The evidence ledger a serious organization should maintain</h2>
+<p>A device inventory is not enough. If an incident reaches a regulator, insurer, customer, court or national-security partner, the organization needs to reconstruct what it knew and when.</p>
+
+<table>
+<thead><tr><th>Field</th><th>Minimum question</th></tr></thead>
+<tbody>
+<tr><td>Asset identity</td><td>What device, interface or service was involved?</td></tr>
+<tr><td>Administrative owner</td><td>Who is authorized to manage it?</td></tr>
+<tr><td>Physical/business location</td><td>Where is the asset deployed?</td></tr>
+<tr><td>Network role</td><td>Endpoint, gateway, relay-capable appliance, server, camera, sensor?</td></tr>
+<tr><td>Firmware/support state</td><td>Is it supported and patched?</td></tr>
+<tr><td>Observed behaviour</td><td>What traffic or control behaviour triggered investigation?</td></tr>
+<tr><td>Containment action</td><td>What did the organization change within its own authority?</td></tr>
+<tr><td>Evidence timestamp</td><td>When was each observation and action recorded?</td></tr>
+<tr><td>External coordination</td><td>Was a vendor, ISP, law-enforcement or government cyber authority contacted?</td></tr>
+<tr><td>Decision authority</td><td>Who approved material response actions?</td></tr>
+</tbody>
+</table>
+
+<h2>Threat reduction versus threat collection</h2>
+<p>One of the most useful analytical distinctions in the case is between learning about a threat and reducing it.</p>
+
+<p>Traditional intelligence collection tries to answer questions: who controls the infrastructure, what are they targeting, what capabilities do they have, and what are they likely to do next? Threat reduction asks a different question: what authorized action can reduce the danger now?</p>
+
+<p>The Federal Court record shows a judicially authorized move toward the second category. The purpose described publicly was to neutralize the botnets and protect Canadian critical infrastructure from the threat created by infected Canadian devices.</p>
+
+<p>For enterprise security leaders, the analogue is not “hack back.” It is controlled remediation inside the organization's own authority boundary: isolate the device, remove its route, revoke credentials, replace unsupported equipment, notify the relevant provider, and preserve evidence.</p>
+
+<h2>What the case means for AI-agent security</h2>
+<p>There is also a direct connection to agentic systems. An AI agent that can discover assets, query telemetry, open tickets, change network policy or initiate remediation is itself an operational identity.</p>
+
+<p>The Federal Court case makes the boundary especially clear: technical capability is not the same thing as authority. An agent may be technically capable of reaching a device without being legally or organizationally authorized to modify it.</p>
+
+<div class="callout"><strong>Agent control rule:</strong> discovery can be automated broadly; consequential external modification should require an explicit authority boundary, authenticated identity, policy decision, human or pre-authorized approval where appropriate, and durable evidence of what action occurred.</div>
+
+<p>That principle applies whether the operator is a human administrator, a SOAR platform, an autonomous agent or a scripted remediation system.</p>
+
+<h2>Questions for Ontario security leaders</h2>
+<details><summary>Can an old router become part of a national-security problem?</summary><p>Yes. The Federal Court expressly describes end-of-life and unpatched SOHO routers and IoT devices as vulnerable to becoming part of botnets. The device's strategic relevance can arise from its network position rather than the owner's intent.</p></details>
+<details><summary>Does Canadian ownership make a device trustworthy?</summary><p>No. Ownership and network control are different properties. A Canadian-owned device can be compromised and controlled remotely.</p></details>
+<details><summary>Should every IoT device be treated as hostile?</summary><p>No. The useful model is risk-based: identify exposure, support status, network position, management paths and observed behaviour, then apply proportionate controls.</p></details>
+<details><summary>Can a company “clean” a third party's infected device?</summary><p>Do not infer authority from this case. The Court record specifically describes why CSIS sought a warrant. Private organizations should obtain appropriate legal and contractual authority before interfering with equipment they do not own or administer.</p></details>
+<details><summary>Does this ruling mean Ontario households were individually targeted?</summary><p>The public record does not support that conclusion. The Court says the measures were directed at devices rather than persons and that no identifying information, personal information or other content was collected.</p></details>
+
+<h2>ClearGlass assessment model</h2>
+<p>For a Canadian organization, the practical assessment is not “are we likely to be hacked by a foreign intelligence service?” It is more measurable:</p>
+<ol>
+<li>Can we enumerate the Internet-facing equipment that can originate or relay traffic?</li>
+<li>Can we identify equipment that is end-of-life or no longer receiving security updates?</li>
+<li>Can we isolate unmanaged IoT without taking the business offline?</li>
+<li>Can our telemetry distinguish normal remote administration from anomalous control?</li>
+<li>Can we reconstruct who authorized each material containment action?</li>
+<li>Can we preserve evidence without unnecessarily collecting personal content?</li>
+<li>Can an automated agent perform only the remediation actions it is actually authorized to perform?</li>
+</ol>
+
+<p>If the answer to several of these is “no,” the gap is not merely an IoT problem. It is an <strong>evidence-and-authority problem</strong>.</p>
+
+<h2>Bottom line</h2>
+<p>Federal Court File C-6-24 is significant because it makes a previously abstract cyber-defence boundary concrete. Foreign-controlled botnets can turn ordinary Canadian-connected equipment into relay infrastructure. The Canadian state sought judicial authority to alter that infrastructure. The Court found the legal threshold met and authorized specified threat-reduction measures.</p>
+
+<p>The lesson for Canadian organizations is not to imitate an intelligence operation. It is to make the ordinary defensive layer stronger: know what is connected, retire what cannot be secured, segment what cannot be trusted, monitor the network role of edge devices, preserve evidence, and make authority explicit before an automated system takes a consequential action.</p>
+
+<p>Ontario is part of that picture. But precision matters: the public ruling does not quantify affected devices by province. ClearGlass therefore treats Ontario exposure as a <strong>material risk-assessment question</strong>, not a published device-count claim.</p>
+
+<div class="source">
+<strong>Primary source</strong><br>
+Federal Court of Canada, <em>File C-6-24</em>, “In the Matter of an Application by XXXX for Warrants Pursuant to Sections 12.1 and 21.1 of the Canadian Security Intelligence Service Act” — public bulletin dated 15 June 2026.<br>
+<a href="https://www.fct-cf.gc.ca/en/pages/media/news-bulletins/file-c-6-24" rel="noopener noreferrer">Read the Federal Court bulletin →</a>
+</div>
+
+<div class="source">
+<strong>Related official context</strong><br>
+CSIS public reporting on intelligence operations and state-sponsored cyber activity, including discussion of botnets and compromised routers in Canada.<br>
+<a href="https://www.canada.ca/en/security-intelligence-service/corporate/publications/csis-public-report-2024/intelligence-operations.html" rel="noopener noreferrer">Read the CSIS public report →</a>
+</div>
+
+<p class="small"><strong>Editorial method:</strong> Public sources only. Facts attributed to the Federal Court or CSIS are distinguished from ClearGlass analysis. No classified access is implied. No device targeting instructions, exploit procedures or unauthorized-access methods are provided. This publication is informational and is not legal advice.</p>
+
+<p><span class="tag">CSIS</span><span class="tag">Federal Court</span><span class="tag">botnets</span><span class="tag">IoT security</span><span class="tag">SOHO routers</span><span class="tag">critical infrastructure</span><span class="tag">Ontario cyber risk</span><span class="tag">agent governance</span></p>
+
+  <!-- cg-insights-related:start -->
+  <section class="ix-related" id="ixRelated" aria-label="Related from the desk">
+    <b>Related from the desk</b>
+    <div class="ix-related-grid">
+      <a class="ix-related-card" href="canada-strategic-resilience-command-brief-2026.html"><span class="k">Strategic Resilience</span><h4>Canada Strategic Resilience Command Brief — 18 September 2026</h4><p>Evidence-led Canadian strategic resilience brief covering economic capacity, housing supply, foreign interference, cyber risk, infrastructure dependencies and operational resilience.</p><span class="m">6 min read · ClearGlass Strategic Intelligence</span></a>
+      <a class="ix-related-card" href="canada-multipolar-sovereignty-resilience-strategy.html"><span class="k">Strategic Resilience</span><h4>Canada in a Multipolar World: Turning Strategic Uncertainty Into Resilience</h4><p>A ClearGlass strategic brief on Canada&#x27;s changing geopolitical environment and the business case for cybersecurity, AI governance, digital sovereignty and operational resilience.</p><span class="m">5 min read · ClearGlass Strategic Intelligence</span></a>
+    </div>
+  </section>
+  <!-- cg-insights-related:end -->
+<div class="endbar"></div>
+<section class="ix-related" id="ixRelated" aria-label="Related from the desk"></section>
+</main>
+<script defer src="article-enhance.js"></script>
+<script defer src="insights.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+<script defer src="/logo-badge.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › <a href="index.html">ClearGlass Intelligence · Insights</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="canada-strategic-resilience-command-brief-2026.html"><span><b>Previous</b>Canada Strategic Resilience Command Brief</span></a>
+      <a href="index.html"><span><b>Topic hub</b>ClearGlass Intelligence</span></a>
+      <a href="index.html"><span><b>Next in journey</b>ClearGlass Intelligence</span></a>
+    </div>
+    <ul>
+      <li><a href="autonomous-threat-modeling-2026.html"><b>Autonomous Threat Modeling in 2026</b> — continuous architecture-grounded security for agentic and cyber-physical systems</a></li>
+      <li><a href="ai-agent-governance-governed-autonomy.html"><b>AI Agent Governance</b> — the governed-autonomy playbook</a></li>
+      <li><a href="clearglass-platform-audit-2026.html"><b>The ClearGlass Platform Audit</b> — keep, simplify, gate, build — the platform upgrade doctrine</a></li>
+      <li><a href="ai-agents-insider-threat.html"><b>AI Agents Are the New Insider Threat</b> — why agent identity is a security boundary</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+</body>
+</html>
