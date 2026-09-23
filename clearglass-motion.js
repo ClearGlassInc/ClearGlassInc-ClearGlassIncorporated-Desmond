@@ -342,6 +342,12 @@
 
     render();
     startAmbient(stage, nodes, state);
+    // Lets the motion control bring the live field back without a reload. The
+    // node buttons are built once above, so only the renderer is re-created.
+    stage.cgRestart = function () {
+      if (stage.querySelector('canvas')) return;
+      startAmbient(stage, nodes, state);
+    };
   }
 
   /* ─────────────────────────────────────────────────────────────────────
@@ -370,8 +376,14 @@
 
     var running = false, rafId = 0, last = 0;
     var minFrame = 1000 / CONFIG.FPS_CAP;
+    // Both gates must be open before a frame is drawn. Tracking them as state
+    // (rather than reacting to each event in isolation) is what stops a tab
+    // switch from restarting a loop the observer had already parked, or from
+    // resurrecting one after teardown.
+    var onscreen = true, disposed = false;
 
     function resize() {
+      if (disposed) return;
       var rect = stage.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
       canvas.width = Math.round(rect.width * dpr);
@@ -388,7 +400,7 @@
     }
 
     function start() {
-      if (running) return;
+      if (running || disposed || !onscreen || document.hidden) return;
       running = true;
       last = 0;
       rafId = requestAnimationFrame(frame);
@@ -400,16 +412,18 @@
     }
 
     // Pause offscreen.
+    var io = null;
     if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function (entries) {
-        entries[0].isIntersecting ? start() : stop();
-      }, { threshold: 0.01 }).observe(stage);
+      io = new IntersectionObserver(function (entries) {
+        onscreen = entries[0].isIntersecting;
+        onscreen ? start() : stop();
+      }, { threshold: 0.01 });
+      io.observe(stage);
     } else { start(); }
 
-    // Pause when the tab is hidden.
-    document.addEventListener('visibilitychange', function () {
-      document.hidden ? stop() : start();
-    });
+    // Pause when the tab is hidden; on return, only resume if still onscreen.
+    function onVisibility() { document.hidden ? stop() : start(); }
+    document.addEventListener('visibilitychange', onVisibility);
 
     var ro = ('ResizeObserver' in window) ? new ResizeObserver(resize) : null;
     if (ro) { ro.observe(stage); } else { window.addEventListener('resize', resize); }
@@ -417,8 +431,13 @@
 
     // Release GPU/context resources on teardown.
     function dispose() {
+      if (disposed) return;
+      disposed = true;
       stop();
-      if (ro) ro.disconnect();
+      if (io) io.disconnect();
+      if (ro) ro.disconnect(); else window.removeEventListener('resize', resize);
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('pagehide', dispose);
       renderer.dispose();
       canvas.width = canvas.height = 0;   // frees the backing store
       canvas.remove();
@@ -635,21 +654,39 @@
     }
     paint();
 
-    btn.addEventListener('click', function () {
-      stored = motionReduced() ? 'full' : 'reduced';
-      try { window.localStorage.setItem(CONFIG.STORAGE_KEY, stored); } catch (e) { /* ignore */ }
-      paint();
-      // Tear down live renderers immediately rather than waiting for a reload.
+    // Tear down live renderers immediately rather than waiting for a reload —
+    // and bring them back the same way, so the preference works in both
+    // directions. Asking for reduced motion has to stop the full-viewport
+    // particle field too, not just the constellation. Runs for the on-page
+    // control and for an OS-level change made while the page is open.
+    function syncRenderers() {
       if (motionReduced()) {
         Array.prototype.forEach.call(
           document.querySelectorAll('.cgm-constellation__stage'),
           function (stage) { if (typeof stage.cgDispose === 'function') stage.cgDispose(); }
         );
+        Array.prototype.forEach.call(
+          document.querySelectorAll('.cgm-atmos'),
+          function (atmos) { if (typeof atmos.cgmDispose === 'function') atmos.cgmDispose(); }
+        );
+      } else {
+        Array.prototype.forEach.call(
+          document.querySelectorAll('.cgm-constellation__stage'),
+          function (stage) { if (typeof stage.cgRestart === 'function') stage.cgRestart(); }
+        );
+        try { initAtmosphereField(); } catch (e) { /* stays on the CSS-only look */ }
       }
+    }
+
+    btn.addEventListener('click', function () {
+      stored = motionReduced() ? 'full' : 'reduced';
+      try { window.localStorage.setItem(CONFIG.STORAGE_KEY, stored); } catch (e) { /* ignore */ }
+      paint();
+      syncRenderers();
     });
 
     if (reduceQuery.addEventListener) {
-      reduceQuery.addEventListener('change', paint);
+      reduceQuery.addEventListener('change', function () { paint(); syncRenderers(); });
     }
   }
 
@@ -684,6 +721,7 @@
   function initAtmosphereField() {
     var atmos = document.querySelector('.cgm-atmos');
     if (!atmos || !advancedAllowed()) return;
+    if (atmos.querySelector('canvas')) return;   // already live — re-entry safe
 
     var dpr = Math.min(window.devicePixelRatio || 1, CONFIG.DPR_CAP);
     var canvas = document.createElement('canvas');
@@ -697,11 +735,21 @@
 
     var running = false, rafId = 0, last = 0;
     var minFrame = 1000 / CONFIG.FPS_CAP;
+    var disposed = false;
+    var lastW = 0, lastH = 0;
 
     function resize() {
-      canvas.width = Math.round(window.innerWidth * dpr);
-      canvas.height = Math.round(window.innerHeight * dpr);
-      renderer.resize(canvas.width, canvas.height, dpr);
+      if (disposed) return;
+      var w = Math.round(window.innerWidth * dpr);
+      var h = Math.round(window.innerHeight * dpr);
+      // Mobile browsers fire `resize` on every address-bar collapse, and each
+      // assignment to canvas.width reallocates the backing store. Only pay that
+      // cost when the size genuinely changed.
+      if (w === lastW && h === lastH) return;
+      lastW = w; lastH = h;
+      canvas.width = w;
+      canvas.height = h;
+      renderer.resize(w, h, dpr);
     }
     function frame(now) {
       if (!running) return;
@@ -710,18 +758,25 @@
       last = now;
       renderer.draw(now);
     }
-    function start() { if (running) return; running = true; last = 0; rafId = requestAnimationFrame(frame); }
+    function start() {
+      if (running || disposed || document.hidden) return;
+      running = true; last = 0; rafId = requestAnimationFrame(frame);
+    }
     function stop() { running = false; if (rafId) cancelAnimationFrame(rafId); rafId = 0; }
 
-    document.addEventListener('visibilitychange', function () {
-      document.hidden ? stop() : start();
-    });
+    function onVisibility() { document.hidden ? stop() : start(); }
+    document.addEventListener('visibilitychange', onVisibility);
     window.addEventListener('resize', resize);
     resize();
     start();
 
     function dispose() {
+      if (disposed) return;
+      disposed = true;
       stop();
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('resize', resize);
+      window.removeEventListener('pagehide', dispose);
       renderer.dispose();
       canvas.width = canvas.height = 0;
       canvas.remove();
