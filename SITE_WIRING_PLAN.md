@@ -16,14 +16,14 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 - **CTA bridge:** Each cluster ends in two relevant, non-coercive next steps such as offers, pricing, readiness, or booking.
 - **Responsive behavior:** Three route cards collapse to one column below 620px; related cards use an adaptive grid; motion is disabled when reduced motion is requested.
 - **SEO and accessibility:** Links are static HTML, labels are descriptive, navigation landmarks are named, focus states are visible, and all routes remain unchanged.
-- **Audit coverage:** 163 public pages are connected and 13 utility, completion, prototype, or private pages are explicitly excluded.
+- **Audit coverage:** 167 public pages are connected and 23 utility, completion, prototype, or private pages are explicitly excluded.
 
 ## Page-by-page flow map
 
 | Page | Role | Previous | Topic hub | Next | Conversion bridge |
 |---|---|---|---|---|---|
 | **Cyber Defense & Security Operations** | **Topic cluster** |  |  |  |  |
-| `cyber-defense-console.html` — Cyber Defense Console | the ClearGlass command center for defensive operations | BLUEDESK Mobile | Cyber Defense Console | SENTINEL | Book a security engagement / Start with the $249 Security Quick-Audit |
+| `cyber-defense-console.html` — Cyber Defense Console | the ClearGlass command center for defensive operations | ClearGlass Shield | Cyber Defense Console | SENTINEL | Book a security engagement / Start with the $249 Security Quick-Audit |
 | `sentinel.html` — SENTINEL | live geospatial security command center | Cyber Defense Console | Cyber Defense Console | BLUEDESK | Book a security engagement / Start with the $249 Security Quick-Audit |
 | `bluedesk.html` — BLUEDESK | CISO risk and blue-team console | SENTINEL | Cyber Defense Console | GUARDIAN | Book a security engagement / Start with the $249 Security Quick-Audit |
 | `guardian.html` — GUARDIAN | intelligence command interface | BLUEDESK | Cyber Defense Console | Artemis Blue Team | Book a security engagement / Start with the $249 Security Quick-Audit |
@@ -31,7 +31,8 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 | `stegoforge.html` — STEGOFORGE | steganography and covert-channel analysis terminal | Artemis Blue Team | Cyber Defense Console | ATT&CK Prompt Integrator | Book a security engagement / Start with the $249 Security Quick-Audit |
 | `attack-prompt-core.html` — ATT&CK Prompt Integrator | MITRE ATT&CK-aligned analysis prompts | STEGOFORGE | Cyber Defense Console | Environmental Cyber-Risk | Book a security engagement / Start with the $249 Security Quick-Audit |
 | `environmental-cyber-risk.html` — Environmental Cyber-Risk | OT and environmental threat monitoring | ATT&CK Prompt Integrator | Cyber Defense Console | BLUEDESK Mobile | Book a security engagement / Start with the $249 Security Quick-Audit |
-| `bluedesk-mobile.html` — BLUEDESK Mobile | the CISO risk console on a phone-first canvas | Environmental Cyber-Risk | Cyber Defense Console | Cyber Defense Console | Book a security engagement / Start with the $249 Security Quick-Audit |
+| `bluedesk-mobile.html` — BLUEDESK Mobile | the CISO risk console on a phone-first canvas | Environmental Cyber-Risk | Cyber Defense Console | ClearGlass Shield | Book a security engagement / Start with the $249 Security Quick-Audit |
+| `shield.html` — ClearGlass Shield | privacy-first secure connectivity you can verify | BLUEDESK Mobile | Cyber Defense Console | Cyber Defense Console | Book a security engagement / Start with the $249 Security Quick-Audit |
 | **Intelligence & OSINT** | **Topic cluster** |  |  |  |  |
 | `intelligence.html` — Intelligence | the ClearGlass intelligence practice | Critical Minerals Intelligence | Intelligence | Flowsint | Book a security engagement / See pricing & plans |
 | `flowsint.html` — Flowsint | OSINT investigation graph for domains, IPs and transforms | Intelligence | Intelligence | ClearGlass NEXUS | Book a security engagement / See pricing & plans |
@@ -120,8 +121,9 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 | `offers/autonomous-threat-modeling.html` — Autonomous Threat Modeling | continuous threat-modeling assessment and implementation services | Security Quick-Audit | Services & Engagements | Hardening Sprint | Book a security engagement / See pricing & plans |
 | `offers/hardening-sprint.html` — Hardening Sprint | Microsoft 365 + Windows hardening engagement | Autonomous Threat Modeling | Services & Engagements | Guardian Command Nexus Blueprint | Book a security engagement / See pricing & plans |
 | `offers/guardian-command-nexus-blueprint.html` — Guardian Command Nexus Blueprint | the full SPEC-1 architecture blueprint, sold as a digital deliverable | Hardening Sprint | Services & Engagements | Revenue Engine | Book a security engagement / See pricing & plans |
-| `revenue-engine.html` — Revenue Engine | AI-driven business growth system | Guardian Command Nexus Blueprint | Services & Engagements | Canada–US Control Assessment | Book a security engagement / See pricing & plans |
-| `offers/canada-us-control-assessment.html` — Canada–US Control Assessment | fixed-scope mapping of cross-border transfers, agent surfaces and dual incident clocks | Revenue Engine | Services & Engagements | Side Store | Book a security engagement / See pricing & plans |
+| `revenue-engine.html` — Revenue Engine | AI-driven business growth system | Guardian Command Nexus Blueprint | Services & Engagements | Revenue Command | Book a security engagement / See pricing & plans |
+| `revenue-command.html` — Revenue Command | diagnostic services and qualification | Revenue Engine | Services & Engagements | Canada–US Control Assessment | Book a security engagement / See pricing & plans |
+| `offers/canada-us-control-assessment.html` — Canada–US Control Assessment | fixed-scope mapping of cross-border transfers, agent surfaces and dual incident clocks | Revenue Command | Services & Engagements | Side Store | Book a security engagement / See pricing & plans |
 | `side-store.html` — Side Store | electronics, cables and components | Canada–US Control Assessment | Services & Engagements | ClearGlass Products | Book a security engagement / See pricing & plans |
 | `products.html` — ClearGlass Products | the unified ClearGlass product catalog | Side Store | Services & Engagements | Business Productivity Suite | Book a security engagement / See pricing & plans |
 | `business-productivity-suite.html` — Business Productivity Suite | Canadian-first business productivity planning | ClearGlass Products | Services & Engagements | Global Growth Engine | Book a security engagement / See pricing & plans |
@@ -145,7 +147,7 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 | `products/opal-koboi/revenue-engine.html` — Revenue Engine · Asset | product sheet | Guardian · Asset | Opal-Koboi | SMB Suite · Asset | Book a security engagement / See pricing & plans |
 | `products/opal-koboi/smb-suite.html` — SMB Suite · Asset | product sheet | Revenue Engine · Asset | Opal-Koboi | Opal-Koboi | Book a security engagement / See pricing & plans |
 | **ClearGlass Intelligence · Insights** | **Topic cluster** |  |  |  |  |
-| `blog/index.html` — ClearGlass Intelligence | essays on governed AI, cyber defense and OSINT | Strategic Chokepoint Sitrep | ClearGlass Intelligence | Autonomous Threat Modeling in 2026 | Book a security engagement / See pricing & plans |
+| `blog/index.html` — ClearGlass Intelligence | essays on governed AI, cyber defense and OSINT | CSIS, Botnets and Canada's Connected Devices | ClearGlass Intelligence | Autonomous Threat Modeling in 2026 | Book a security engagement / See pricing & plans |
 | `blog/autonomous-threat-modeling-2026.html` — Autonomous Threat Modeling in 2026 | continuous architecture-grounded security for agentic and cyber-physical systems | ClearGlass Intelligence | ClearGlass Intelligence | AI Agent Governance | Book a security engagement / See pricing & plans |
 | `blog/ai-agent-governance-governed-autonomy.html` — AI Agent Governance | the governed-autonomy playbook | Autonomous Threat Modeling in 2026 | ClearGlass Intelligence | The ClearGlass Platform Audit | Book a security engagement / See pricing & plans |
 | `blog/clearglass-platform-audit-2026.html` — The ClearGlass Platform Audit | keep, simplify, gate, build — the platform upgrade doctrine | AI Agent Governance | ClearGlass Intelligence | AI Agents Are the New Insider Threat | Book a security engagement / See pricing & plans |
@@ -188,7 +190,9 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 | `blog/network-orchestration-ai-automation-cybersecurity.html` — AI-Driven Network Orchestration | a field guide to safe, governed network automation | Artemis Full-Stack AI Blueprint | ClearGlass Intelligence | Ontario Influence Environment | Book a security engagement / See pricing & plans |
 | `blog/ontario-influence-environment-august-2026.html` — Ontario Influence Environment | verification-first Ontario public-interest intelligence | AI-Driven Network Orchestration | ClearGlass Intelligence | Shadow AI Incident Response | Book a security engagement / See pricing & plans |
 | `blog/shadow-ai-incident-response-logs-gone.html` — Shadow AI Incident Response | forensic readiness before security evidence disappears | Ontario Influence Environment | ClearGlass Intelligence | Strategic Chokepoint Sitrep | Book a security engagement / See pricing & plans |
-| `blog/2026-09-15-strategic-chokepoint-sitrep.html` — Strategic Chokepoint Sitrep | a verification-first open-source assessment of Hormuz, the Red Sea and Ukraine | Shadow AI Incident Response | ClearGlass Intelligence | ClearGlass Intelligence | Book a security engagement / See pricing & plans |
+| `blog/2026-09-15-strategic-chokepoint-sitrep.html` — Strategic Chokepoint Sitrep | a verification-first open-source assessment of Hormuz, the Red Sea and Ukraine | Shadow AI Incident Response | ClearGlass Intelligence | Canada Strategic Resilience Command Brief | Book a security engagement / See pricing & plans |
+| `blog/canada-strategic-resilience-command-brief-2026.html` — Canada Strategic Resilience Command Brief | an evidence-led brief on economic capacity, foreign interference, cyber risk and infrastructure dependencies | Strategic Chokepoint Sitrep | ClearGlass Intelligence | CSIS, Botnets and Canada's Connected Devices | Book a security engagement / See pricing & plans |
+| `blog/csis-threat-reduction-botnets-canadian-iot-federal-court-2026.html` — CSIS, Botnets and Canada's Connected Devices | Federal Court File C-6-24 and threat-reduction warrants reaching into routers and IoT | Canada Strategic Resilience Command Brief | ClearGlass Intelligence | ClearGlass Intelligence | Book a security engagement / See pricing & plans |
 | **Company & Operations** | **Topic cluster** |  |  |  |  |
 | `index.html` — ClearGlass Inc. | governed intelligent systems — home | Stripe Handoff | ClearGlass Inc. | Investor Data Room | Book a security engagement / See pricing & plans |
 | `investors/index.html` — Investor Data Room | corporate documents and diligence materials | ClearGlass Inc. | ClearGlass Inc. | Authority Network | Book a security engagement / See pricing & plans |
@@ -217,6 +221,16 @@ These pages remain intact but are not eligible for generated journey updates. Ex
 | `sentinel/PHOENIX_DASHBOARD.html` | Private operations | noindex, nofollow recovery console |
 | `seo-dashboard.html` | Private operations | noindex, nofollow SEO console |
 | `threads.html` | Campaign review | noindex, nofollow draft review surface |
+| `Clearglass-Animation-Repair-Ultracode.html` | Uploaded prototype | noindex upload awaiting owner classification |
+| `Fantasy-Pool-Dashboard.html` | Uploaded prototype | noindex upload awaiting owner classification |
+| `HoloSurg-surgical-visualization-blueprint.html` | Uploaded prototype | noindex upload awaiting owner classification; contains the FANTASY COMMAND page, not HoloSurg |
+| `Orelogic-Final-Dashboard-Production.html` | Uploaded prototype | noindex upload awaiting owner classification |
+| `Orelogic-V4-Ultra-Beyond.html` | Uploaded prototype | noindex upload awaiting owner classification |
+| `artemis-nonprofit-os.html` | Uploaded prototype | noindex upload awaiting owner classification |
+| `clearglass-sat-mission-deploy.html` | Uploaded prototype | noindex upload awaiting owner classification |
+| `clearglass_x5f_pricing_x5f_preview.html` | Uploaded prototype | noindex pricing preview upload |
+| `clearglass_x5f_rescue_x5f_draft_x5f_landing.html` | Uploaded prototype | noindex draft landing upload |
+| `fantasy-command-live.html` | Uploaded prototype | noindex upload awaiting owner classification |
 
 ## Implementation and verification strategy
 
