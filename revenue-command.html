@@ -30,7 +30,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px;bord
 <section class="grid" aria-label="Entry offer and qualification">
 <article class="panel"><span class="tag">ENTRY OFFER</span><h2 id="offer-name">Rapid Website &amp; Deployment Diagnostic</h2><div id="offer-price" class="price">CAD $125</div><p id="offer-description" class="muted">Fixed-scope diagnosis for website, GitHub deployment, workflow, performance, or broken conversion-path problems.</p><ul id="offer-scope" class="muted"></ul><p id="offer-status" class="status" aria-live="polite">Loading verified offer state...</p></article>
 
-<article class="panel"><h2>Qualification</h2><form id="lead-form">
+<article class="panel"><h2>Qualification</h2><form id="lead-form" method="post">
 <label>Full name<input name="full_name" autocomplete="name" required maxlength="160"></label>
 <label>Work email<input name="work_email" type="email" autocomplete="email" required maxlength="254"></label>
 <label>Company<input name="company" autocomplete="organization" maxlength="240"></label>
@@ -59,7 +59,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px;bord
 </main>
 <script>
 var API_BASE=(document.querySelector('meta[name="cg-revenue-api"]')||{}).content||window.CG_REVENUE_API_BASE||'';
-API_BASE=API_BASE.replace(//$/,'');
+API_BASE=API_BASE.replace(/\/$/,'');
 function api(path){return API_BASE+path}
 function qs(s){return document.querySelector(s)}
 function params(){return new URLSearchParams(location.search)}
