@@ -12,7 +12,7 @@ import uuid
 import time
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from enum import Enum
 from collections import defaultdict
 
@@ -63,7 +63,7 @@ class Blackboard:
             for cb in self._subscribers:
                 try:
                     await cb(ev)
-                except:
+                except Exception:
                     pass
         print(f"[BLACKBOARD] {ev.agent} -> {ev.title} ({ev.confidence:.2f}) | {ev.darpa_technique}")
 
