@@ -396,14 +396,8 @@
     var running = false, rafId = 0, last = 0;
     var disposed = false, onScreen = true;
     var minFrame = 1000 / CONFIG.FPS_CAP;
-    // Both gates must be open before a frame is drawn. Tracking them as state
-    // (rather than reacting to each event in isolation) is what stops a tab
-    // switch from restarting a loop the observer had already parked, or from
-    // resurrecting one after teardown.
-    var onscreen = true, disposed = false;
 
     function resize() {
-      if (disposed) return;
       var rect = stage.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
       canvas.width = Math.round(rect.width * dpr);
@@ -680,14 +674,26 @@
     }
     paint();
 
+    // Tear down every live renderer immediately rather than waiting for a
+    // reload. Going through the registry instead of looking up disposer
+    // properties by name is what stops a loop being missed. Leaving reduced
+    // motion brings them back the same way, so the preference works in both
+    // directions — for the on-page control and for an OS-level change made
+    // while the page is open.
+    function syncRenderers() {
+      if (motionReduced()) { disposeAll(); return; }
+      Array.prototype.forEach.call(
+        document.querySelectorAll('.cgm-constellation__stage'),
+        function (stage) { if (typeof stage.cgRestart === 'function') stage.cgRestart(); }
+      );
+      try { initAtmosphereField(); } catch (e) { /* stays on the CSS-only look */ }
+    }
+
     btn.addEventListener('click', function () {
       stored = motionReduced() ? 'full' : 'reduced';
       try { window.localStorage.setItem(CONFIG.STORAGE_KEY, stored); } catch (e) { /* ignore */ }
       paint();
-      // Tear down every live renderer immediately rather than waiting for a
-      // reload. Going through the registry instead of looking up disposer
-      // properties by name is what stops a loop being missed.
-      if (motionReduced()) disposeAll();
+      syncRenderers();
     });
 
     if (reduceQuery.addEventListener) {
@@ -740,11 +746,9 @@
 
     var running = false, rafId = 0, last = 0, disposed = false;
     var minFrame = 1000 / CONFIG.FPS_CAP;
-    var disposed = false;
     var lastW = 0, lastH = 0;
 
     function resize() {
-      if (disposed) return;
       var w = Math.round(window.innerWidth * dpr);
       var h = Math.round(window.innerHeight * dpr);
       // Mobile browsers fire `resize` on every address-bar collapse, and each

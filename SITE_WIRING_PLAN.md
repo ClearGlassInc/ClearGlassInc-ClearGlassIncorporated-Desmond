@@ -16,7 +16,7 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 - **CTA bridge:** Each cluster ends in two relevant, non-coercive next steps such as offers, pricing, readiness, or booking.
 - **Responsive behavior:** Three route cards collapse to one column below 620px; related cards use an adaptive grid; motion is disabled when reduced motion is requested.
 - **SEO and accessibility:** Links are static HTML, labels are descriptive, navigation landmarks are named, focus states are visible, and all routes remain unchanged.
-- **Audit coverage:** 167 public pages are connected and 23 utility, completion, prototype, or private pages are explicitly excluded.
+- **Audit coverage:** 167 public pages are connected and 24 utility, completion, prototype, or private pages are explicitly excluded.
 
 ## Page-by-page flow map
 
