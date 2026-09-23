@@ -7,15 +7,26 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-  .glass { background: rgba(255,255,255,0.04); backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%); border: 1px solid rgba(255,255,255,0.10); }
+  .glass { position: relative; isolation: isolate; background: rgba(255,255,255,0.04); backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%); border: 1px solid rgba(255,255,255,0.10); }
   table { border-collapse: collapse; width: 100%; }
   th, td { border: 1px solid rgba(255,255,255,0.12); padding: 0.75rem; vertical-align: top; text-align: left; }
   thead th { color: #99f6e4; font-weight: 600; }
   .glow { text-shadow: 0 0 24px rgba(45,212,191,0.35); }
   pre { white-space: pre-wrap; word-break: break-word; }
+  .glass::before, .glass::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: -1; }
+  .glass::after { background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(153,246,228,0.10), transparent 45%); opacity: var(--glare, 0); transition: opacity .3s ease; }
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1); }
+    .reveal.in { opacity: 1; transform: none; }
+    .glass::before { background: linear-gradient(180deg, transparent 0%, rgba(56,189,248,0.10) 45%, rgba(167,139,250,0.12) 55%, transparent 100%) 0 0 / 100% 300% no-repeat; }
+    .reveal.in::before { animation: spd-sweep .9s ease-out 1 both; }
+    @keyframes spd-sweep { 0% { background-position: 0 100%; } 100% { background-position: 0 0; } }
+  }
+  @media print { .reveal { opacity: 1 !important; transform: none !important; } #lattice { display: none; } }
 </style>
 </head>
 <body class="min-h-screen bg-slate-950 text-slate-100 selection:bg-teal-400/30" style="background: radial-gradient(1200px 600px at 20% -10%, rgba(56,189,248,0.10), transparent), radial-gradient(1000px 500px at 100% 10%, rgba(167,139,250,0.10), transparent), #020617;">
+<canvas id="lattice" aria-hidden="true" class="fixed inset-0 w-full h-full -z-10 pointer-events-none opacity-80"></canvas>
 <main class="max-w-5xl mx-auto px-6 py-14 space-y-12">
 
 <p class="text-base md:text-lg text-teal-200/90 glass rounded-2xl p-5 leading-relaxed">Every capability described below is grounded exclusively in documented 2026 real-world technology — SPD-SmartGlass (Research Frontiers/Gauzy), commercial 3G PDLC films, IBM-class quantum-centric supercomputing, Neuralink's N1 brain-computer interface, and AI-driven glass-furnace sustainability — with no extrapolation beyond those verified milestones.</p>
@@ -77,5 +88,119 @@
 </section>
 
 </main>
+<script>
+(() => {
+  "use strict";
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Scroll reveal + one-shot SPD tint sweep (<1 s, matching the SPD spec).
+  const blocks = document.querySelectorAll("main > p, main > section");
+  if (!reduce && "IntersectionObserver" in window) {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      }
+    }, { threshold: 0.12 });
+    blocks.forEach((el) => { el.classList.add("reveal"); io.observe(el); });
+  }
+
+  // Pointer-tracked glare on glass panels.
+  document.querySelectorAll(".glass").forEach((el) => {
+    el.addEventListener("pointermove", (ev) => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--mx", `${ev.clientX - r.left}px`);
+      el.style.setProperty("--my", `${ev.clientY - r.top}px`);
+      el.style.setProperty("--glare", "1");
+    });
+    el.addEventListener("pointerleave", () => el.style.setProperty("--glare", "0"));
+  });
+
+  // Rotating 4x4x4 qubit lattice with signal pulses walking its edges.
+  const cv = document.getElementById("lattice");
+  const ctx = cv && cv.getContext("2d");
+  if (!ctx) return;
+
+  const N = 4;
+  const nodes = [];
+  for (let x = 0; x < N; x++) for (let y = 0; y < N; y++) for (let z = 0; z < N; z++) {
+    nodes.push([x - (N - 1) / 2, y - (N - 1) / 2, z - (N - 1) / 2]);
+  }
+  const id = (x, y, z) => (x * N + y) * N + z;
+  const edges = [];
+  const adj = nodes.map(() => []);
+  const link = (a, b) => { edges.push([a, b]); adj[a].push(b); adj[b].push(a); };
+  for (let x = 0; x < N; x++) for (let y = 0; y < N; y++) for (let z = 0; z < N; z++) {
+    if (x + 1 < N) link(id(x, y, z), id(x + 1, y, z));
+    if (y + 1 < N) link(id(x, y, z), id(x, y + 1, z));
+    if (z + 1 < N) link(id(x, y, z), id(x, y, z + 1));
+  }
+  const pick = (arr) => arr[(Math.random() * arr.length) | 0];
+  const pulses = Array.from({ length: 12 }, () => {
+    const a = (Math.random() * nodes.length) | 0;
+    return { a, b: pick(adj[a]), t: Math.random(), v: 0.35 + Math.random() * 0.5 };
+  });
+
+  let W = 0, H = 0;
+  const resize = () => {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = cv.clientWidth; H = cv.clientHeight;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  };
+
+  const project = ([x, y, z], ay, ax) => {
+    const cy = Math.cos(ay), sy = Math.sin(ay);
+    const x1 = x * cy - z * sy, z1 = x * sy + z * cy;
+    const cx = Math.cos(ax), sx = Math.sin(ax);
+    const y1 = y * cx - z1 * sx, z2 = y * sx + z1 * cx;
+    const f = 6 / (6 + z2);
+    const s = Math.min(W, H) * 0.16 * f;
+    return [W * 0.5 + x1 * s, H * 0.42 + y1 * s, f];
+  };
+
+  const start = performance.now();
+  let last = start, raf = 0;
+  const draw = (now) => {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    const t = (now - start) / 1000;
+    const P = nodes.map((n) => project(n, t * 0.12, 0.45 + Math.sin(t * 0.07) * 0.15));
+    ctx.clearRect(0, 0, W, H);
+
+    ctx.lineWidth = 1;
+    for (const [a, b] of edges) {
+      const f = (P[a][2] + P[b][2]) / 2;
+      ctx.strokeStyle = `rgba(45,212,191,${Math.min(0.22, 0.12 * f).toFixed(3)})`;
+      ctx.beginPath(); ctx.moveTo(P[a][0], P[a][1]); ctx.lineTo(P[b][0], P[b][1]); ctx.stroke();
+    }
+    for (const [x, y, f] of P) {
+      ctx.fillStyle = `rgba(167,139,250,${Math.min(0.55, 0.28 * f).toFixed(3)})`;
+      ctx.beginPath(); ctx.arc(x, y, 1.6 * f, 0, Math.PI * 2); ctx.fill();
+    }
+    for (const q of pulses) {
+      if (!reduce) {
+        q.t += q.v * dt;
+        if (q.t >= 1) { const prev = q.a; q.a = q.b; q.b = pick(adj[q.a].filter((n) => n !== prev)); q.t = 0; }
+      }
+      const x = P[q.a][0] + (P[q.b][0] - P[q.a][0]) * q.t;
+      const y = P[q.a][1] + (P[q.b][1] - P[q.a][1]) * q.t;
+      const g = ctx.createRadialGradient(x, y, 0, x, y, 8);
+      g.addColorStop(0, "rgba(153,246,228,0.85)");
+      g.addColorStop(1, "rgba(153,246,228,0)");
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI * 2); ctx.fill();
+    }
+    if (!reduce && !document.hidden) raf = requestAnimationFrame(draw);
+  };
+
+  document.addEventListener("visibilitychange", () => {
+    cancelAnimationFrame(raf);
+    if (!document.hidden && !reduce) { last = performance.now(); raf = requestAnimationFrame(draw); }
+  });
+  window.addEventListener("resize", () => { resize(); if (reduce) draw(performance.now()); });
+  resize();
+  raf = requestAnimationFrame(draw);
+})();
+</script>
 </body>
 </html>
