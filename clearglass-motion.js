@@ -79,6 +79,21 @@
     });
   }
 
+  /* ── live renderer registry ───────────────────────────────────────────
+     Every animation loop registers its teardown here, so one call stops all
+     of them. The motion toggle used to hunt for disposer properties by name
+     and only knew about the constellation's, which left the atmosphere field
+     rendering after the visitor had asked for reduced motion. */
+  var disposers = [];
+  function registerDisposer(fn) { disposers.push(fn); }
+  function disposeAll() {
+    var list = disposers.slice();
+    disposers.length = 0;
+    for (var i = 0; i < list.length; i++) {
+      try { list[i](); } catch (e) { /* one bad teardown must not block the rest */ }
+    }
+  }
+
   /* ─────────────────────────────────────────────────────────────────────
      LAYER 2 — reveal on approach, once
      ───────────────────────────────────────────────────────────────────── */
@@ -160,6 +175,7 @@
     var cards = document.querySelectorAll('.cgm-glass');
     Array.prototype.forEach.call(cards, function (card) {
       card.addEventListener('pointermove', function (ev) {
+        if (motionReduced()) return;   // preference is read per event, not at bind time
         var rect = card.getBoundingClientRect();          // read
         var x = ((ev.clientX - rect.left) / rect.width) * 100;
         var y = ((ev.clientY - rect.top) / rect.height) * 100;
@@ -190,6 +206,7 @@
     var magnets = document.querySelectorAll('.cgm-btn[data-cgm-magnetic]');
     Array.prototype.forEach.call(magnets, function (btn) {
       btn.addEventListener('pointermove', function (ev) {
+        if (motionReduced()) return;
         var rect = btn.getBoundingClientRect();
         var dx = (ev.clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
         var dy = (ev.clientY - (rect.top + rect.height / 2)) / (rect.height / 2);
@@ -214,6 +231,7 @@
     var atmos = document.querySelector('.cgm-atmos');
     if (!atmos || !finePointer.matches || motionReduced()) return;
     window.addEventListener('pointermove', function (ev) {
+      if (motionReduced()) return;
       var x = ev.clientX, y = ev.clientY;
       queueWrite(function () {
         atmos.style.setProperty('--cgm-mx', x + 'px');
@@ -232,6 +250,7 @@
     html.classList.add('cgm-cursor-on');
 
     window.addEventListener('pointermove', function (ev) {
+      if (motionReduced()) return;
       var x = ev.clientX, y = ev.clientY;
       queueWrite(function () {
         ring.style.setProperty('--cgm-cx', x + 'px');
@@ -375,6 +394,7 @@
     drawStaticSvg(stage, nodes);
 
     var running = false, rafId = 0, last = 0;
+    var disposed = false, onScreen = true;
     var minFrame = 1000 / CONFIG.FPS_CAP;
     // Both gates must be open before a frame is drawn. Tracking them as state
     // (rather than reacting to each event in isolation) is what stops a tab
@@ -399,8 +419,11 @@
       renderer.draw(now);
     }
 
+    // Every reason this loop must not run is checked in one place, so no
+    // caller can resurrect a torn-down, offscreen or opted-out renderer just
+    // by calling start().
     function start() {
-      if (running || disposed || !onscreen || document.hidden) return;
+      if (running || disposed || !onScreen || motionReduced()) return;
       running = true;
       last = 0;
       rafId = requestAnimationFrame(frame);
@@ -412,16 +435,17 @@
     }
 
     // Pause offscreen.
-    var io = null;
+    var pauseObserver = null;
     if ('IntersectionObserver' in window) {
-      io = new IntersectionObserver(function (entries) {
-        onscreen = entries[0].isIntersecting;
-        onscreen ? start() : stop();
+      pauseObserver = new IntersectionObserver(function (entries) {
+        onScreen = entries[0].isIntersecting;
+        onScreen ? start() : stop();
       }, { threshold: 0.01 });
-      io.observe(stage);
+      pauseObserver.observe(stage);
     } else { start(); }
 
-    // Pause when the tab is hidden; on return, only resume if still onscreen.
+    // Pause when the tab is hidden. Returning to the tab asks to resume; it is
+    // start() that decides whether resuming is actually allowed.
     function onVisibility() { document.hidden ? stop() : start(); }
     document.addEventListener('visibilitychange', onVisibility);
 
@@ -429,13 +453,14 @@
     if (ro) { ro.observe(stage); } else { window.addEventListener('resize', resize); }
     resize();
 
-    // Release GPU/context resources on teardown.
+    // Release GPU/context resources on teardown, and detach everything that
+    // could otherwise call start() again after the renderer is gone.
     function dispose() {
       if (disposed) return;
       disposed = true;
       stop();
-      if (io) io.disconnect();
-      if (ro) ro.disconnect(); else window.removeEventListener('resize', resize);
+      if (pauseObserver) pauseObserver.disconnect();
+      if (ro) { ro.disconnect(); } else { window.removeEventListener('resize', resize); }
       document.removeEventListener('visibilitychange', onVisibility);
       window.removeEventListener('pagehide', dispose);
       renderer.dispose();
@@ -443,6 +468,7 @@
       canvas.remove();
     }
     window.addEventListener('pagehide', dispose);
+    registerDisposer(dispose);
     stage.cgDispose = dispose;            // exposed for tests / SPA unmount
   }
 
@@ -654,35 +680,14 @@
     }
     paint();
 
-    // Tear down live renderers immediately rather than waiting for a reload —
-    // and bring them back the same way, so the preference works in both
-    // directions. Asking for reduced motion has to stop the full-viewport
-    // particle field too, not just the constellation. Runs for the on-page
-    // control and for an OS-level change made while the page is open.
-    function syncRenderers() {
-      if (motionReduced()) {
-        Array.prototype.forEach.call(
-          document.querySelectorAll('.cgm-constellation__stage'),
-          function (stage) { if (typeof stage.cgDispose === 'function') stage.cgDispose(); }
-        );
-        Array.prototype.forEach.call(
-          document.querySelectorAll('.cgm-atmos'),
-          function (atmos) { if (typeof atmos.cgmDispose === 'function') atmos.cgmDispose(); }
-        );
-      } else {
-        Array.prototype.forEach.call(
-          document.querySelectorAll('.cgm-constellation__stage'),
-          function (stage) { if (typeof stage.cgRestart === 'function') stage.cgRestart(); }
-        );
-        try { initAtmosphereField(); } catch (e) { /* stays on the CSS-only look */ }
-      }
-    }
-
     btn.addEventListener('click', function () {
       stored = motionReduced() ? 'full' : 'reduced';
       try { window.localStorage.setItem(CONFIG.STORAGE_KEY, stored); } catch (e) { /* ignore */ }
       paint();
-      syncRenderers();
+      // Tear down every live renderer immediately rather than waiting for a
+      // reload. Going through the registry instead of looking up disposer
+      // properties by name is what stops a loop being missed.
+      if (motionReduced()) disposeAll();
     });
 
     if (reduceQuery.addEventListener) {
@@ -733,7 +738,7 @@
     if (!renderer) { canvas.remove(); return; }
     atmos.setAttribute('data-cgm-renderer', renderer.kind);
 
-    var running = false, rafId = 0, last = 0;
+    var running = false, rafId = 0, last = 0, disposed = false;
     var minFrame = 1000 / CONFIG.FPS_CAP;
     var disposed = false;
     var lastW = 0, lastH = 0;
@@ -758,8 +763,10 @@
       last = now;
       renderer.draw(now);
     }
+    // Same single gate as the constellation loop: a disposed or opted-out
+    // field can never be restarted by a tab switch.
     function start() {
-      if (running || disposed || document.hidden) return;
+      if (running || disposed || motionReduced()) return;
       running = true; last = 0; rafId = requestAnimationFrame(frame);
     }
     function stop() { running = false; if (rafId) cancelAnimationFrame(rafId); rafId = 0; }
@@ -783,6 +790,7 @@
       atmos.removeAttribute('data-cgm-renderer');
     }
     window.addEventListener('pagehide', dispose);
+    registerDisposer(dispose);
     atmos.cgmDispose = dispose;
   }
 

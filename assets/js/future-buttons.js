@@ -7,8 +7,15 @@
     "input[type='submit']", "input[type='button']", "input[type='reset']",
     "a.button", "a.btn", "a.cta"
   ].join(",");
-  const PRIMARY_HINT = /(^|[-_])(primary|purchase|checkout|buy|order|subscribe|deploy|submit|cta)([-_]|$)/i;
-  const DANGER_HINT = /(^|[-_])(danger|delete|remove|revoke|destructive)([-_]|$)/i;
+  // The boundary class has to include whitespace. isPrimary/isDanger match
+  // against `${className} ${id} ${name}`, which is space-joined and normally
+  // ends in a space, so with a [-_]-only boundary the `$` branch never applied
+  // and no space-separated class token could match: "cta", "btn primary" and
+  // "btn-primary" all failed, and only shapes like "primary-btn" got through.
+  // That left future-glass-primary — the gate for the magnetic pointer
+  // physics below — effectively unreachable across the site.
+  const PRIMARY_HINT = /(^|[\s\-_])(primary|purchase|checkout|buy|order|subscribe|deploy|submit|cta)([\s\-_]|$)/i;
+  const DANGER_HINT = /(^|[\s\-_])(danger|delete|remove|revoke|destructive)([\s\-_]|$)/i;
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
   const finePointer = matchMedia("(hover: hover) and (pointer: fine)");
   const observed = new WeakSet();
@@ -26,7 +33,12 @@
 
   function render(control) {
     const state = states.get(control);
-    if (!state || !control.classList.contains("is-future-active")) return;
+    if (!state) return;
+    // Bailing out still ends this frame's loop, so the handle has to be
+    // cleared. Leaving a spent handle in place makes the `!state.frame` guard
+    // in onPointerMove/resetPointer permanently false and the control's magnet
+    // never animates again.
+    if (!control.classList.contains("is-future-active")) { state.frame = 0; return; }
     const ease = .16;
     state.x += (state.targetX - state.x) * ease;
     state.y += (state.targetY - state.y) * ease;

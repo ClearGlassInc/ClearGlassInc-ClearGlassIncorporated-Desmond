@@ -364,17 +364,27 @@
     function nudgeFixedWidgets() {
       var barH = bar.offsetHeight || 64;
       var cands = document.querySelectorAll('body > *, body > * > *');
+      var pending = [];
+      // Read pass. Measuring and moving in the same loop means every
+      // getComputedStyle/getBoundingClientRect after the first write forces a
+      // fresh layout, so collect the moves first and apply them together.
+      // (The nav ids are the ones nav.js creates; #cg-nav never existed.)
       for (var j = 0; j < cands.length && j < 600; j++) {
         var item = cands[j];
-        if (item === bar || bar.contains(item) || item.id === 'cg-nav') continue;
+        if (item === bar || bar.contains(item)) continue;
+        if (item.id === 'cg-global-nav' || item.id === 'cg-mobile-nav') continue;
         if (item.hasAttribute('data-cg-tb-nudged')) continue;
         var cs = getComputedStyle(item);
         if (cs.position !== 'fixed' && cs.position !== 'sticky') continue;
         var r = item.getBoundingClientRect();
         if (r.height < 18 || r.height > 170 || r.width < 1) continue;
         if (r.top >= barH || r.bottom <= 0) continue;
-        item.setAttribute('data-cg-tb-nudged', '1');
-        item.style.top = (r.top + barH) + 'px';
+        pending.push([item, r.top + barH]);
+      }
+      // Write pass.
+      for (var k = 0; k < pending.length; k++) {
+        pending[k][0].setAttribute('data-cg-tb-nudged', '1');
+        pending[k][0].style.top = pending[k][1] + 'px';
       }
     }
     nudgeFixedWidgets();

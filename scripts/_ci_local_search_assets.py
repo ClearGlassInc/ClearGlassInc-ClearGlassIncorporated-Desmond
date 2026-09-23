@@ -55,6 +55,10 @@ def main() -> int:
         "generated search assets are stale; the generator produced different "
         "output than what is committed:\n" + stat.stdout +
         "\nRe-run tools/generate_search_assets.py and commit the result.\n"
+        "\nThe working tree now holds that regenerated output. Until it is "
+        "committed or restored (git checkout -- " + " ".join(GENERATED) + "),\n"
+        "later test runs read it instead of what is committed, and can pass "
+        "checks that main fails (BASELINE R12).\n"
     )
     return 1
 

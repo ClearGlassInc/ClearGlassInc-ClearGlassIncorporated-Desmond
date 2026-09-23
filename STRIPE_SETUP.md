@@ -124,11 +124,11 @@ Each of these is a human step; none can be done from code.
 | `CHECKOUT_SUCCESS_URL` / `CHECKOUT_CANCEL_URL` | yes in production | `{CHECKOUT_SESSION_ID}` is appended automatically if absent |
 | `PAYOUT_EXTERNAL_ACCOUNT_ID` | for payout reconciliation | Stripe `ba_…` token |
 
-`STRIPE_WEBHOOK_SECRET` being unset is the dangerous one: `verify_webhook` returns
-`verified: false` rather than rejecting, and the route only enforces verification
-when a secret is configured. An unset secret in production means anyone who can
-reach `/webhooks/stripe` can post a forged `checkout.session.completed` and book a
-fake paid order.
+`STRIPE_WEBHOOK_SECRET` being unset is a hard production blocker: `verify_webhook` returns
+`verified: false`, and the webhook route rejects that event whenever a Stripe key is configured
+or `APP_ENV` is production. In development mock mode (no Stripe key and non-production), the
+route retains the offline fixture behavior. Production must therefore have
+`STRIPE_WEBHOOK_SECRET` configured before signed webhook processing can succeed.
 
 ## 5. Webhooks to configure
 

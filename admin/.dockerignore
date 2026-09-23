@@ -1,0 +1,8 @@
+# Docker does not read .gitignore. Without this file, `COPY . .` sends a local
+# node_modules (host-platform sharp binaries) over the one `npm ci` just
+# installed, and bakes any .env.local into an image layer.
+node_modules
+.next
+.env
+.env.*
+*.log
