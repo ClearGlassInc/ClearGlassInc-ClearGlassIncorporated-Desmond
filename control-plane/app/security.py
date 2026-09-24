@@ -67,6 +67,13 @@ def verify_startup_posture(settings: Settings | None = None) -> None:
             "address range your proxy connects from.",
             settings.trusted_proxy_hops,
         )
+    if settings.app_env.lower() in {"production", "prod"} and not settings.crcs_audit_hash_key.strip():
+        logger.warning(
+            "CRCS_AUDIT_HASH_KEY is not set, so the buyer references written to the audit "
+            "ledger are keyed with a development constant published in this repository: "
+            "anyone can recompute one from a guessed email address. Set a long random value "
+            "and keep it stable."
+        )
     if auth_enabled(settings):
         return
     if settings.app_env.lower() in {"production", "prod"}:
