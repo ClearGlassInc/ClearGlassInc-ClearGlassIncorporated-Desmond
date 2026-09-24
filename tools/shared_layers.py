@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """Ensure every deployable page loads the site's shared front-end layers.
 
-Two layers ship on every page and are asserted site-wide by the test suite:
+Three layers ship on every page and are asserted site-wide by the test suite:
 
 * the future-glass button enhancement — ``/assets/css/future-buttons.css`` and
   ``/assets/js/future-buttons.js``, each referenced exactly once
   (``tests/test_future_buttons.py``);
+* the neon pulse command-centre layer — ``/assets/css/neon-pulse.css`` and
+  ``/assets/js/neon-pulse.js``, each referenced exactly once
+  (``tests/test_neon_pulse.py``);
 * the ClearGlass corner badge — ``/logo-badge.js``, the shared proof that a
   page carries the brand mark (``tests/test_site_health_bot.py``).
 
@@ -65,6 +68,18 @@ LAYERS: tuple[tuple[str, tuple[str, ...], str, re.Pattern[str]], ...] = (
         BODY_CLOSE_RE,
     ),
     (
+        "neon-pulse.css",
+        ("/assets/css/neon-pulse.css",),
+        '<link rel="stylesheet" href="/assets/css/neon-pulse.css">',
+        HEAD_CLOSE_RE,
+    ),
+    (
+        "neon-pulse.js",
+        ("/assets/js/neon-pulse.js",),
+        '<script defer src="/assets/js/neon-pulse.js"></script>',
+        BODY_CLOSE_RE,
+    ),
+    (
         "logo-badge.js",
         ("logo-badge.js", "clearglass-logo"),
         '<script defer src="/logo-badge.js"></script>',
@@ -75,7 +90,9 @@ LAYERS: tuple[tuple[str, tuple[str, ...], str, re.Pattern[str]], ...] = (
 # Layers whose reference must appear exactly once, so a duplicate is a defect
 # in its own right. The badge is exempt: `clearglass-logo` legitimately recurs
 # on pages that show the mark in both a nav and a footer.
-SINGLETON_LAYERS = {"future-buttons.css", "future-buttons.js"}
+SINGLETON_LAYERS = {
+    "future-buttons.css", "future-buttons.js", "neon-pulse.css", "neon-pulse.js",
+}
 
 
 def iter_pages(root: pathlib.Path):
