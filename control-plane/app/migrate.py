@@ -108,9 +108,16 @@ def apply_migrations(engine: Engine, directory: Path = MIGRATIONS_DIR) -> list[s
         for path in discover(directory):
             if path.name in done:
                 continue
-            # No bound parameters, so psycopg sends the file as one simple
-            # query: multiple statements and $$-quoted function bodies work.
-            conn.exec_driver_sql(path.read_text(encoding="utf-8"))
+            # The raw cursor, called with no parameters argument at all:
+            # psycopg then parses no placeholders, so a literal '%' (LIKE 'a%')
+            # is safe, and multiple statements and $$-quoted function bodies
+            # run as written. exec_driver_sql passes an empty tuple, which
+            # makes psycopg reject '%'. Same connection, same transaction.
+            cursor = conn.connection.cursor()
+            try:
+                cursor.execute(path.read_text(encoding="utf-8"))
+            finally:
+                cursor.close()
             conn.execute(
                 text("INSERT INTO schema_migrations (filename, sha256) VALUES (:f, :s)"),
                 {"f": path.name, "s": _digest(path)},

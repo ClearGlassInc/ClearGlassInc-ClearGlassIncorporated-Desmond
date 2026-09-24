@@ -156,6 +156,20 @@ def test_events_ledger_is_append_only_after_migration(pg_engine) -> None:
 
 
 @needs_postgres
+def test_a_literal_percent_sign_is_sql_not_a_placeholder(pg_engine, tmp_path) -> None:
+    # exec_driver_sql passes an empty parameter tuple and psycopg then rejects
+    # '%' as a malformed placeholder; the runner must send the file untouched.
+    (tmp_path / "001_pct.sql").write_text(
+        "CREATE TABLE IF NOT EXISTS pct_probe (v TEXT);\n"
+        "INSERT INTO pct_probe SELECT 'a%b' WHERE NOT EXISTS"
+        " (SELECT 1 FROM pct_probe WHERE v LIKE 'a%');\n"
+    )
+    assert migrate.apply_migrations(pg_engine, tmp_path) == ["001_pct.sql"]
+    with pg_engine.connect() as conn:
+        assert conn.execute(text("SELECT v FROM pct_probe")).scalar_one() == "a%b"
+
+
+@needs_postgres
 def test_a_failing_migration_changes_nothing(pg_engine, tmp_path) -> None:
     (tmp_path / "001_good.sql").write_text("CREATE TABLE IF NOT EXISTS probe_ok (id INT);")
     (tmp_path / "002_bad.sql").write_text("ALTER TABLE no_such_table ADD COLUMN IF NOT EXISTS x INT;")
