@@ -136,6 +136,10 @@ class Settings(BaseSettings):
     crcs_rapid_diagnostic_enabled: bool = False
     crcs_rapid_diagnostic_payment_link: str = ""
     crcs_calendar_booking_url: str = ""
+    # HMAC key for the pseudonymous buyer reference written to the audit ledger
+    # when a checkout has no lead. The ledger holds IDs, not email addresses
+    # (docs/crcs/DATA_MODEL.md rule 1). Empty uses a fixed development key.
+    crcs_audit_hash_key: str = ""
 
 
 @lru_cache

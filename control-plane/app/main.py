@@ -117,8 +117,10 @@ def create_app() -> FastAPI:
         }
 
     # Administrative surfaces (governed actions + the approval gate itself) require an
-    # admin credential. Customer flows (checkout), the Stripe webhook (signature-verified),
-    # and read-only telemetry (metrics/events) stay open by design.
+    # admin credential. Customer flows (checkout) and the Stripe webhook
+    # (signature-verified) stay open. Metrics and the audit ledger are admin-only:
+    # the ledger carries lead ids, order ids and revenue for every governed action,
+    # so an open GET /events let anyone count leads and read sales as they happened.
     admin = [Depends(require_admin)]
     app.include_router(store.router, dependencies=admin)
     app.include_router(payments.router)  # per-endpoint: only the refund is gated (see router)
@@ -131,8 +133,8 @@ def create_app() -> FastAPI:
     app.include_router(sidestore.router)  # customer cart: public, rate limited, server-priced
     app.include_router(orders.router, dependencies=admin)
     app.include_router(inventory.router, dependencies=admin)
-    app.include_router(metrics.router)
-    app.include_router(events.router)
+    app.include_router(metrics.router, dependencies=admin)
+    app.include_router(events.router, dependencies=admin)
     app.include_router(approvals.router, dependencies=admin)
     # Etsy is an operator surface end to end: connection state and verification read
     # credential-backed shop identity, and the write endpoints propose live-shop changes.

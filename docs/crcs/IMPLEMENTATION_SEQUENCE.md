@@ -30,6 +30,33 @@ Each work item answers the five questions the specification requires:
 | 0.7 | If `cg-revenue-api` is empty, the form is replaced by the owner-confirmed contact route instead of a form that errors | No visitor submits into a dead form | Page with empty meta shows the fallback, not the form | Form cannot submit today (S3) | Leads reach the owner through the fallback | Silent lead loss (current state) |
 | 0.8 | Privacy notice: name the form relay or retire it (text change) | Consent collected on current forms is informed | Updated §4 published | Undisclosed processor (S6) | Current lead channel stays lawful to use | **Owner approval required** (public publishing). Until then, S6 remains open |
 
+### Phase 0 status
+
+Built and verified 2026-09-24. Nothing was deployed; merging publishes the static page
+changes (approval A1).
+
+| ID | Status | Evidence |
+|---|---|---|
+| 0.1 | Done | `admin/lib/login-guard.ts`; `admin/tests/login-guard.test.mjs` (7 cases). Against the built app: `next=/\evil.example` and `//evil.example` → 303 to `/`; 6th attempt after 5 bad tokens → `/login?error=locked`, `Retry-After: 900`, no cookie, other clients unaffected |
+| 0.2 | Done | Public page has no cockpit, key field or bearer header (`tests/test_crcs_public_page.py`). Replaced by the read-only `admin/app/revenue/page.tsx`, fetched server-side |
+| 0.3 | Done | `POST /revenue/leads` → 201 `{status, reference, next_step, booking_url}`; checkout takes `reference`, and `lead_id` is gone. Migration `008_lead_public_ref.sql` applied to PostgreSQL 16 with existing rows (backfilled, unique, re-runnable) |
+| 0.4 | Done | Honeypot → same 201 shape, no lead row, no ledger event. The trap is `aria-hidden`, `tabindex=-1`, off-screen: Chromium check confirms it is absent from the accessibility tree and the tab order |
+| 0.5 | Done | `checkout_started` target is the lead id or `buyer:<HMAC>`; Stripe `client_reference_id` carries no email. Both checkout branches tested |
+| 0.6 | Done | First touch in `sessionStorage`; no `localStorage` in the page |
+| 0.7 | Done | Form stays hidden until `cg-revenue-api` is set; `cg-revenue-fallback` (default `/index.html#contact`) shown instead. No API call is made in that state |
+| 0.8 | **Open, owner** | D13 decides whether the form relay is disclosed or replaced; publishing privacy text is approval A4 |
+
+Found while building Phase 0 and fixed in the same change:
+
+| ID | Finding | Fix |
+|---|---|---|
+| 0.9 | `GET /events` and `GET /metrics/overview` were unauthenticated. The ledger has a row for every lead, stage change and order, so anyone could count leads and read sales as they happened. That also made 0.3 pointless | Both routers behind `require_admin`; tested |
+| 0.10 | The admin app sent no credential to the control plane, so every admin page showed an empty list once `ADMIN_API_KEY` was set, which production requires | `lib/api.ts` (now `server-only`) and the approval actions send the bearer from the server |
+| 0.11 | `/revenue/cockpit` answered 500 on SQLite once one lead existed (naive vs aware datetime). The only cockpit test used an empty database | `_utc()` normalisation; regression test fails without it |
+| 0.12 | `/api/auth/login` rejected `//` but not `/\host` or `/\t/host`; both login routes redirected with 307, replaying the token POST to the target; `/api/login` accepted the `dev-admin-token` in production when no token was set | Shared guard, 303, fail closed |
+| 0.13 | Middleware protected new pages only if listed; `/playbooks` relied on its in-page check alone | Default deny (`lib/route-policy.ts`) |
+| 0.14 | The admin skip link pointed at `#main-content`, which did not exist | `id` added to `<main>` |
+
 ---
 
 ## Phase 1 — Minimum sellable path

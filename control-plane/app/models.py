@@ -4,6 +4,7 @@ The append-only ``events`` table is the audit ledger; ``approvals`` is the human
 """
 from __future__ import annotations
 
+import uuid
 from datetime import UTC, datetime
 from decimal import Decimal
 
@@ -16,6 +17,7 @@ from sqlalchemy import (
     Numeric,
     String,
     Text,
+    Uuid,
     text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
@@ -257,6 +259,8 @@ class Lead(Base):
     __tablename__ = "leads"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    # What the browser sees instead of the sequential id (migration 008).
+    public_ref: Mapped[uuid.UUID] = mapped_column(Uuid, default=uuid.uuid4, unique=True, index=True)
     full_name: Mapped[str] = mapped_column(String(160))
     email: Mapped[str] = mapped_column(String(254), index=True)
     company: Mapped[str | None] = mapped_column(String(240), nullable=True)

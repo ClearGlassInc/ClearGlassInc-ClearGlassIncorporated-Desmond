@@ -22,9 +22,11 @@ the policy does not cover are staging defaults, **BLOCKED on Q7**.
 Three design rules follow from this table:
 
 1. **Audit payloads carry IDs, not people.** `events.payload` and `events.target` hold
-   record IDs and enums only. v1 breaks this once: `checkout_started` writes the buyer's
-   email as `target` when there is no lead (`routers/revenue.py`). Fixed in Phase 0 by
-   writing a keyed hash instead.
+   record IDs and enums only. v1 broke this once: `checkout_started` wrote the buyer's
+   email as `target` when there was no lead. Fixed in Phase 0: the target is the lead id,
+   or `buyer:` plus an HMAC of the address keyed by `CRCS_AUDIT_HASH_KEY`
+   (`routers/revenue.py::_buyer_ref`). The ledger is also admin-only now; it was served
+   unauthenticated at `GET /events`.
 2. **Free text lives in one table.** Qualification free text moves from `leads` to
    `qualification_responses`, so it can have its own access rule and a shorter retention
    period without touching pipeline metadata.
@@ -106,7 +108,10 @@ Access column = lowest role that can **read**; writes are in §5.
 
 ---
 
-## 4. Phase 1 schema (proposed migration `008_crcs_phase1.sql`)
+## 4. Phase 1 schema (proposed migration `009_crcs_phase1.sql`)
+
+`008_lead_public_ref.sql` shipped in Phase 0 and added `leads.public_ref` (UUID, backfilled,
+unique, defaulted). The Phase 1 migration below starts at 009.
 
 Additive only: no existing row is removed or rewritten except the free-text move, which
 copies before it nulls. Money follows the existing convention (`NUMERIC(12,2)`, CAD).
@@ -145,11 +150,9 @@ CREATE TABLE IF NOT EXISTS sessions (
 );
 CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
 
--- Leads: opaque public reference, anonymisation marker -----------------------
-ALTER TABLE leads ADD COLUMN IF NOT EXISTS public_ref UUID;       -- returned to the browser instead of id
+-- Leads: anonymisation marker (public_ref already added by 008) -------------
 ALTER TABLE leads ADD COLUMN IF NOT EXISTS last_activity_at TIMESTAMPTZ;
 ALTER TABLE leads ADD COLUMN IF NOT EXISTS anonymised_at TIMESTAMPTZ;
-CREATE UNIQUE INDEX IF NOT EXISTS idx_leads_public_ref ON leads(public_ref);
 
 CREATE TABLE IF NOT EXISTS qualification_responses (
     id SERIAL PRIMARY KEY,

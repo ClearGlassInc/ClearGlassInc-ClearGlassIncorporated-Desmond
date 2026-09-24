@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from uuid import UUID
 
 from pydantic import BaseModel, Field
 
@@ -321,7 +322,19 @@ class RevenueControlLogRequest(BaseModel):
 
 class RevenueCheckoutRequest(BaseModel):
     customer_email: str = Field(min_length=5, max_length=254)
-    lead_id: int | None = Field(default=None, ge=1)
+    # The opaque reference from the lead receipt, never the sequential lead id.
+    reference: UUID | None = None
+
+
+class RevenueLeadReceipt(BaseModel):
+    """What a visitor gets back after qualifying: no score, stage, owner or id.
+
+    A honeypot hit gets the same shape with a reference that matches nothing.
+    """
+    status: str = "received"
+    reference: UUID
+    next_step: str
+    booking_url: str | None = None
 
 
 class RevenueOfferOut(BaseModel):
@@ -362,7 +375,9 @@ class RevenueCockpitOut(BaseModel):
 
 
 class RevenueLeadOut(BaseModel):
+    """Admin-only view of a lead. Never returned by a public route."""
     id: int
+    public_ref: UUID
     full_name: str
     email: str
     company: str | None

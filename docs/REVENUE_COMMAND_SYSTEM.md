@@ -46,6 +46,16 @@ flowchart TB
 
 The browser never supplies price, Stripe Price ID, arbitrary redirect URL, card data, or admin authorization.
 
+### Phase 0 contract (2026-09-24)
+
+- `POST /revenue/leads` answers **201** with `{status, reference, next_step, booking_url}`. The
+  reference is an opaque UUID; the lead id, stage, score and owner stay internal. A honeypot
+  hit gets the same answer and stores nothing.
+- `POST /revenue/checkout` takes `{customer_email, reference}`. `lead_id` is no longer accepted.
+- The owner cockpit is the admin app's `/revenue` page, rendered server-side. The public
+  page no longer has a cockpit or an admin-key field.
+- `GET /events` and `GET /metrics/*` require the admin credential.
+
 ## Commercial model
 
 | Offer | Purpose | Payment |

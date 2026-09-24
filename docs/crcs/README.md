@@ -1,8 +1,9 @@
 # ClearGlass Revenue Command System (CRCS) — Phase 1 design package
 
-**Status: DESIGN ONLY.** Nothing in this directory is deployed, live, or able to take a
-payment. No money has moved, no customer record exists in a live system, and no outbound
-contact has been made. Evidence date: **2026-09-24**.
+**Status: DESIGN + PHASE 0 CODE.** Phase 0 (make what exists safe and truthful) is built
+and tested; nothing is deployed, live, or able to take a payment. No money has moved, no
+customer record exists in a live system, and no outbound contact has been made. Evidence
+date: **2026-09-24**.
 
 | Document | Contents |
 |---|---|
@@ -37,6 +38,13 @@ supersedes its roadmap sections; its revenue definitions are carried forward unc
 | S12 | `revenue-command.html` stores first-touch UTM in `localStorage` with no expiry; the privacy policy says technical cookies are session-scoped and does not disclose persistent browser storage | `revenue-command.html:79-80`; `legal/privacy.html` §10 |
 | S13 | This session could not reach `www.clearglassinc.com` or `*.onrender.com` (network policy). Production behaviour is **not observed** | proxy 403, 2026-09-24 |
 
+**Phase 0 update.** S7, S8 and S12 are fixed, and S3 now fails safe: with no API host the
+form is hidden and a contact route is shown. Phase 0 also found and fixed an unauthenticated
+audit ledger and metrics endpoint, an admin app that could not authenticate to the control
+plane, and a cockpit that crashed on SQLite. Evidence per item:
+[IMPLEMENTATION_SEQUENCE.md § Phase 0 status](IMPLEMENTATION_SEQUENCE.md#phase-0-status).
+S2, S4, S5, S6, S9, S10 and S11 are unchanged: none of them is code.
+
 ---
 
 ## 2. Executive summary
@@ -68,7 +76,8 @@ this as `revenue_action_required`; Phase 1 surfaces it as the cockpit's first el
 2. No control-plane host or database (S2) — owner approval to create them.
 3. Four entry prices (S5) — one owner decision.
 4. No named admin, support address, or booking event type (S10, S11) — owner decisions.
-5. The admin surface is unsafe to expose (S7, S8) — code, Phase 0.
+5. ~~The admin surface is unsafe to expose (S7, S8) — code, Phase 0.~~ Fixed in Phase 0;
+   live once merged and deployed.
 
 **The honest call.** CRCS v1 is more software than the business can currently use: a
 lead pipeline with no host, a checkout with no chargeable account. Building the full spec
@@ -192,9 +201,10 @@ production claim.
 
 ---
 
-## 4. What this change does and does not do
+## 4. What has and has not been done
 
-- **Does:** add design documents and an ADR on a feature branch.
-- **Does not:** change application code, publish a page, deploy anything, create a Stripe
-  object, send an email, or create a live record. Merging to `main` publishes these files
-  on GitHub Pages as static documents; that merge is an owner decision.
+- **Done:** design documents, ADR 0002 (proposed), and Phase 0 code with tests, each through
+  a pull request.
+- **Not done:** no deployment, no Stripe object, no email, no live record, no outbound
+  contact. Merging to `main` publishes the static pages on GitHub Pages (approval A1).
+  The control-plane and admin changes take effect only when the owner deploys them (A2).

@@ -89,6 +89,13 @@ services:
     envVars:
       - key: NEXT_PUBLIC_API_BASE
         value: https://clearglass-commerce-api.onrender.com
+      # The admin server sends this to the control plane (admin/lib/api.ts); it never
+      # reaches a browser. Without it every admin page reads 401 as an empty list.
+      - key: ADMIN_API_KEY
+        fromService:
+          name: clearglass-commerce-api
+          type: web
+          envVarKey: ADMIN_API_KEY
 
 databases:
   - name: clearglass-commerce-db

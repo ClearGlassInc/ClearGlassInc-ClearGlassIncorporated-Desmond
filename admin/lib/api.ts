@@ -1,10 +1,21 @@
-// Admin client for the commerce control plane.
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
+// Admin client for the commerce control plane. Server-only: it carries the
+// control-plane admin key, which must never reach a browser (ADR 0002 rule 2).
+import "server-only";
+
+export const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
+
+// The control plane gates approvals, the audit ledger, metrics and the revenue
+// pipeline behind ADMIN_API_KEY. Without this header every admin page read an
+// empty list (401) as soon as a key was set, which production requires.
+export function controlPlaneHeaders(): Record<string, string> {
+  const key = process.env.ADMIN_API_KEY;
+  return key ? { Authorization: `Bearer ${key}` } : {};
+}
 
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
     ...init,
-    headers: { "Content-Type": "application/json", ...(init?.headers || {}) },
+    headers: { "Content-Type": "application/json", ...controlPlaneHeaders(), ...(init?.headers || {}) },
     cache: "no-store",
   });
   if (!res.ok) {
@@ -69,5 +80,88 @@ export async function listEvents(limit = 100): Promise<AuditEvent[]> {
     return await api<AuditEvent[]>(`/events?limit=${limit}`);
   } catch {
     return [];
+  }
+}
+
+// ── ClearGlass Revenue Command System (control-plane /revenue/*) ─────────────
+// Field names mirror control-plane/app/schemas.py. Money is CAD.
+
+export interface RevenueCockpit {
+  generated_at: string;
+  confirmed_revenue_cad: number;
+  test_revenue_cad: number;
+  pipeline_estimate_cad: number;
+  mrr_cad: number;
+  gross_margin_cad: number | null;
+  qualified_leads: number;
+  new_leads: number;
+  meetings_booked: number;
+  proposals: number;
+  won: number;
+  lost: number;
+  close_rate: number | null;
+  open_service_orders: number;
+  due_actions: number;
+  webhook_health: string;
+  booking_health: string;
+  crm_health: string;
+  revenue_action_required: boolean;
+}
+
+export interface RevenueLead {
+  id: number;
+  public_ref: string;
+  full_name: string;
+  email: string;
+  company: string | null;
+  service_interest: string;
+  source: string;
+  stage: string;
+  owner: string;
+  next_action: string;
+  next_action_at: string | null;
+  lead_score: number;
+  score_explanation: string;
+  consent_marketing: boolean;
+  created_at: string;
+}
+
+export interface RevenueControlLogRow {
+  id: number;
+  action_date: string;
+  action: string;
+  target: string;
+  expected_outcome: string;
+  evidence: string;
+  result: string;
+  next_action: string;
+  due_date: string | null;
+  owner: string;
+  status: string;
+}
+
+// These return null when the control plane cannot be read, so the page can say
+// "no data" instead of showing zeros that look like real figures.
+export async function getRevenueCockpit(): Promise<RevenueCockpit | null> {
+  try {
+    return await api<RevenueCockpit>("/revenue/cockpit");
+  } catch {
+    return null;
+  }
+}
+
+export async function listRevenueLeads(limit = 50): Promise<RevenueLead[] | null> {
+  try {
+    return await api<RevenueLead[]>(`/revenue/leads?limit=${limit}`);
+  } catch {
+    return null;
+  }
+}
+
+export async function listRevenueControlLog(limit = 14): Promise<RevenueControlLogRow[] | null> {
+  try {
+    return await api<RevenueControlLogRow[]>(`/revenue/control-log?limit=${limit}`);
+  } catch {
+    return null;
   }
 }
