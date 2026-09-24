@@ -48,8 +48,12 @@ def test_dock_is_the_single_floating_control_surface() -> None:
 
 
 def test_console_class_names_escape_site_wide_substring_selectors() -> None:
+    # glass.css repaints [class*="-pill"], "-badge" and "-chip" (and their
+    # prefix forms) on the homepage, so the Intel Desk's flags and topic links
+    # must not wear those words either.
     nets = ("-panel", "panel-", "-card", "card-", "-tile", "tile-", "kicker", "eyebrow",
-            "footer", "btn", "button", "status-dot", "signal-dot", "icon", "scanline", "scan-line")
+            "footer", "btn", "button", "status-dot", "signal-dot", "icon", "scanline", "scan-line",
+            "-pill", "pill-", "-badge", "badge-", "-chip", "chip-")
     names = set(re.findall(r"\bcgst-[a-z0-9-]+", DOCK))
     assert names, "no cgst- classes found"
     caught = sorted(n for n in names if any(net in n for net in nets))
@@ -128,6 +132,104 @@ def test_voice_is_dictation_that_the_visitor_sends() -> None:
     for hook in ('data-sentinel-mode="text"', 'data-sentinel-mode="voice"', 'data-sentinel-mode="query"',
                  "data-sentinel-voice ", "data-sentinel-voice-note", "data-sentinel-link"):
         assert hook in HOMEPAGE, hook
+
+
+HUB = (ROOT / "blog" / "index.html").read_text(encoding="utf-8")
+HUB_JS = (ROOT / "blog" / "insights.js").read_text(encoding="utf-8")
+FEED = json.loads((ROOT / "blog" / "posts.json").read_text(encoding="utf-8"))
+
+
+def _intel_paths() -> dict[str, str]:
+    block = re.search(r"var INTEL = \{(.*?)\};", DOCK, re.S)
+    assert block, "INTEL settings missing from station-chat.js"
+    return dict(re.findall(r'(\w+): "([^"]+)"', block.group(1)))
+
+
+def test_intel_desk_reads_the_generated_brief_index() -> None:
+    paths = _intel_paths()
+    assert paths["feed"] == "blog/posts.json"
+    assert (ROOT / paths["feed"]).is_file()
+    assert (ROOT / paths["hub"] / "index.html").is_file()
+    assert (ROOT / paths["rss"]).is_file()
+    # every field the desk reads is one tools/insights_index.py writes
+    assert FEED["posts"], "brief index is empty"
+    for field in ("slug", "url", "title", "category", "quote", "description", "readMinutes",
+                  "deskRank", "featured", "publishedAt", "topics", "tags", "status"):
+        assert f"p.{field}" in DOCK, field
+        assert any(field in post for post in FEED["posts"]), field
+    assert isinstance(FEED["topics"], dict) and FEED["updated"]
+
+
+def test_intel_desk_topic_links_land_on_real_hub_filters() -> None:
+    chips = set(re.findall(r'data-topic="([^"]+)"', HUB))
+    feed_topics = {t for post in FEED["posts"] for t in post.get("topics", [])}
+    assert feed_topics <= chips, f"topics with no hub filter: {sorted(feed_topics - chips)}"
+    assert "saved" in chips                         # the /saved command's target
+    # the hub reads exactly the parameters the desk writes, and #latest holds the grid
+    assert "params.get('topic')" in HUB_JS and "get('q')" in HUB_JS
+    assert 'id="latest"' in HUB and 'id="postGrid"' in HUB
+    assert 'params.push("topic=" + encodeURIComponent(topic))' in DOCK
+    assert 'params.push("q=" + encodeURIComponent(query))' in DOCK
+    # the saved list the desk counts is the one the hub writes
+    assert "var SAVED_KEY = 'ix-saved-posts';" in HUB_JS
+    assert 'var SAVED_KEY = "ix-saved-posts";' in DOCK
+
+
+def test_intel_desk_is_one_same_origin_read_painted_as_text() -> None:
+    assert DOCK.count("fetch(") == 1
+    assert 'fetch(BASE + INTEL.feed, { cache: "no-cache", credentials: "same-origin" })' in DOCK
+    # feed data never reaches the HTML parser
+    for name in ("renderIntel", "showBrief", "paintCounts", "paintSuggest", "ingest"):
+        body = re.search(r"\n  function " + name + r"\([^)]*\) \{\n(.*?)\n  \}\n", DOCK, re.S)
+        assert body, name
+        assert "innerHTML" not in body.group(1), name
+    # it always has somewhere to go, feed or no feed
+    assert "function intelFallback()" in DOCK and ".catch(intelFallback)" in DOCK
+    # counts claim nothing the page cannot know
+    assert "localStorage.setItem(SEEN_KEY" in DOCK
+
+
+INTEL_PROBE = r"""
+const fs = require("fs"), vm = require("vm");
+const src = fs.readFileSync(process.argv[1], "utf8");
+function grab(name) {
+  const m = src.match(new RegExp("\\n  function " + name + "\\([^)]*\\) \\{\\n[\\s\\S]*?\\n  \\}\\n"));
+  if (!m) throw new Error("missing " + name);
+  return m[0];
+}
+const ctx = { BASE: "https://www.clearglassinc.com/", INTEL: { hub: "blog/" } };
+vm.createContext(ctx);
+["decode", "briefUrl", "hubUrl"].forEach(n => vm.runInContext(grab(n), ctx));
+const input = JSON.parse(fs.readFileSync(0, "utf8"));
+process.stdout.write(JSON.stringify({
+  decoded: input.decode.map(s => ctx.decode(s)),
+  urls: input.urls.map(u => ctx.briefUrl(u)),
+  feed: input.feed.map(u => ctx.briefUrl(u)),
+  hub: [ctx.hubUrl(), ctx.hubUrl("cyber"), ctx.hubUrl(null, "botnet & iot")]
+}));
+"""
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node is required to run station-chat.js's helpers")
+def test_intel_desk_only_follows_same_site_brief_links() -> None:
+    probes = {
+        "decode": ["Cyber Intelligence &amp; Critical Infrastructure", "&lt;img src=x&gt;", "Canada&#x2013;US"],
+        "urls": ["/blog/x.html", "blog/y.html", "javascript:alert(1)", "https://evil.example/blog/x.html",
+                 "//evil.example/blog/x.html", "/blog/../admin.html", "/blog/x.html\"onmouseover=\"1"],
+        "feed": [post["url"] for post in FEED["posts"]],
+    }
+    result = subprocess.run(
+        ["node", "-e", INTEL_PROBE, str(ROOT / "station-chat.js")],
+        input=json.dumps(probes), capture_output=True, text=True, check=True, timeout=60,
+    )
+    out = json.loads(result.stdout)
+    base = "https://www.clearglassinc.com/"
+    assert out["decoded"] == ["Cyber Intelligence & Critical Infrastructure", "<img src=x>", "Canada–US"]
+    assert out["urls"] == [base + "blog/x.html", base + "blog/y.html", "", "", "", "", ""]
+    # no published brief is silently dropped from the desk
+    assert all(out["feed"]), [u for u, r in zip(probes["feed"], out["feed"]) if not r]
+    assert out["hub"] == [base + "blog/", base + "blog/?topic=cyber#latest",
+                          base + "blog/?q=botnet%20%26%20iot#latest"]
 
 
 ROUTER = r"""
