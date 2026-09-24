@@ -1,5 +1,7 @@
 # ClearGlass Live Revenue Command System
 
+> **Superseded roadmap.** The Phase 1 design package is in [`docs/crcs/`](crcs/README.md). It keeps the revenue definitions below and replaces the launch gate and seven-day loop.
+
 ## Purpose
 
 CRCS is an additive commercial operating layer for the existing ClearGlass commerce control plane. It preserves the current site, pricebook, payment adapters, order ledger, governance gate, fulfillment logic, and existing content.
