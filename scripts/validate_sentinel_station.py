@@ -50,14 +50,28 @@ if not errors:
         if marker not in js:
             errors.append(f"sentinel.js missing marker: {marker}")
 
-    if js.count("ClearGlass Station") != 1:
-        errors.append("unexpected ClearGlass Station marker count")
+    # The directory header must be rendered exactly once; a second copy means
+    # the Station layer was pasted in twice.
+    if js.count("CLEARGLASS STATION") != 1:
+        errors.append("unexpected CLEARGLASS STATION header count")
     if "originalPanelHTML=panel.innerHTML" not in js:
         errors.append("original Sentinel panel preservation hook missing")
     if "panel.innerHTML=originalPanelHTML" not in js:
         errors.append("ASK SENTINEL restoration hook missing")
-    if "launcher.addEventListener(\"click\"" not in js:
+    # [data-sentinel-open] and the launcher route to the Station directory.
+    if "el.addEventListener(\"click\",queueStation)" not in js:
         errors.append("launcher-to-Station routing hook missing")
+    # The Sentinel Core dock opens the conversation directly, never the directory.
+    if "window.__cgSentinel=" not in js:
+        errors.append("Sentinel Core hand-off API (window.__cgSentinel) missing")
+    dock = ROOT / "station-chat.js"
+    if not dock.is_file():
+        errors.append("missing station-chat.js")
+    else:
+        dock_js = dock.read_text(encoding="utf-8")
+        for marker in ("SENTINEL CORE", "__cgSentinel", "data-no-future-glass", "cgst-absorb-stack"):
+            if marker not in dock_js:
+                errors.append(f"station-chat.js missing marker: {marker}")
 
     # Lightweight structural sanity: balanced braces/parens is only a heuristic,
     # but catches common truncation/corruption without requiring Node.js.
@@ -78,4 +92,5 @@ print("- ClearGlass Station routing layer present")
 print("- 13 navigation destinations present")
 print("- Original Sentinel panel preservation/restoration hooks present")
 print("- Launcher routing hook present")
+print("- Sentinel Core dock and direct-chat hand-off present")
 print("- Basic JavaScript delimiter sanity passed")

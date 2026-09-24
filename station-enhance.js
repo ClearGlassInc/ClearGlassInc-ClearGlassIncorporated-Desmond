@@ -62,7 +62,7 @@
        the child, so the dock panel kept floating over the modal and swallowing
        clicks (visibility is overridable by descendants; opacity:0 alone still
        hit-tests). Re-hide the subtree explicitly. */
-    "body.sentinel-open #cg-station,body.sentinel-open #cg-station .cgst-panel,"+
+    "body.sentinel-open #cg-station,body.sentinel-open #cg-station .cgst-panel,body.sentinel-open #cg-station .cgst-sheet,"+
     "body.sentinel-open #cg-station .cgst-dock{visibility:hidden!important;pointer-events:none!important}",
     ".cg-se-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}"
   ].join("");
