@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 import datetime as dt
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -164,7 +165,29 @@ def write_intent_map(pages: list[tuple[Path, seo_audit.PageParser]]) -> None:
     target.write_text(json.dumps(output, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
+def shallow_clone() -> bool:
+    result = subprocess.run(
+        ["git", "rev-parse", "--is-shallow-repository"],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    return result.stdout.strip() == "true"
+
+
 def main() -> int:
+    # git_date() reads each page's last commit. A shallow clone truncates that
+    # history, so every page older than the cut-off gets the boundary commit's
+    # date: ~125 wrong <lastmod> values that look like a real content change.
+    # CI checks out with fetch-depth: 0; a local or agent clone often does not.
+    if shallow_clone():
+        sys.stderr.write(
+            "Refusing to generate: this is a shallow clone, so Git history cannot "
+            "date the pages and every <lastmod> would be wrong.\n"
+            "Run `git fetch --unshallow` and try again.\n"
+        )
+        return 2
     pages = indexable_pages()
     write_sitemap(pages)
     write_feed(pages)

@@ -23,6 +23,16 @@ services:
         generateValue: true
       - key: AUTO_CREATE_TABLES
         value: "true"   # first boot creates tables; switch to migrations for prod hardening
+      # create_all never adds a column to an existing table, so without this the
+      # database drifts behind every additive migration (008 made POST /revenue/leads
+      # answer 500). Applies migrations/*.sql once each, seeds excluded, and installs
+      # the events append-only trigger create_all never did. See app/migrate.py.
+      - key: RUN_MIGRATIONS
+        value: "true"
+      # Keys the pseudonymous buyer reference the audit ledger stores instead of an
+      # email. Unset falls back to a constant published in this repo. Keep it stable.
+      - key: CRCS_AUDIT_HASH_KEY
+        generateValue: true
       # Per-IP throttling behind Render's router.
       #
       # Render terminates TLS at a proxy in front of the container, so request.client

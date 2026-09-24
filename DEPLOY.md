@@ -18,9 +18,23 @@ admin are Next.js apps. Below are three paths — pick one.
 
 The blueprint deploys **all three services** — API, storefront, admin — plus the database.
 
-`AUTO_CREATE_TABLES=true` creates the schema on first boot. For production hardening, switch it
-off and apply the numbered files in `control-plane/migrations/` in order — `001_init.sql` adds the
-append-only ledger trigger; `004_order_external_ref.sql` adds the webhook idempotency key on `orders`.
+`AUTO_CREATE_TABLES=true` creates the schema on first boot. It creates missing **tables** only,
+never a missing column or a trigger, so on its own a database drifts behind every additive
+migration (after `008_lead_public_ref.sql`, `POST /revenue/leads` answered 500 on an older
+database). The blueprint therefore also sets `RUN_MIGRATIONS=true`: at startup the API applies
+each pending file in `control-plane/migrations/` once, in order, in one transaction, and records
+it in `schema_migrations`. Seed files are never applied. That also installs the append-only
+ledger trigger from `001_init.sql`, which `create_all` never did.
+
+```bash
+python -m app.migrate --status   # applied / pending, changes nothing
+python -m app.migrate            # apply pending (what RUN_MIGRATIONS does at boot)
+python -m app.migrate --check    # exit 1 if a mapped column is missing
+```
+
+The SQL files alone produce every column the ORM maps (verified on Postgres 16), so
+`AUTO_CREATE_TABLES=false` with `RUN_MIGRATIONS=true` is the hardened setting ADR 0002 asks for.
+The blueprint keeps both on until an owner flips it.
 
 ### Continuous deploy (GitHub Actions)
 
