@@ -61,14 +61,21 @@ Documented in `STRIPE_SETUP.md` and `STRIPE_LIVE_READINESS.md`. Key behaviours:
 
 Built in `control-plane/app/paypal.py` and `control-plane/app/routers/paypal.py`.
 
-**Flow:** `POST /paypal/order` creates a CAPTURE-intent order priced from the
-price book → buyer approves at PayPal → capture → `PAYMENT.CAPTURE.COMPLETED`
-webhook books the order.
+**Flow:** `POST /paypal/order` (cart) or `POST /commerce/orders/{ref}/checkout`
+with `provider: paypal` (a ClearGlass order, see `docs/GROWTH_REVENUE_OS.md`)
+creates a CAPTURE-intent order priced from the price book → buyer approves at
+PayPal → `CHECKOUT.ORDER.APPROVED` moves the ClearGlass order to
+`PAYMENT_PENDING` and queues a `paypal_capture_order` approval → a human
+approves it → `POST /paypal/capture` claims that approval once and captures →
+`PAYMENT.CAPTURE.COMPLETED` webhook books the order.
+
+Before 2026-09-24 the capture step was a dead end: `POST /paypal/capture` only
+queued an approval, and nothing ever ran an approved one.
 
 **What is deliberately not fulfillment:**
 
 - `CHECKOUT.ORDER.APPROVED` — the buyer clicked pay. The money has not moved.
-  Logged, never booked.
+  Logged and the capture approval queued; never booked.
 - `PAYMENT.CAPTURE.PENDING` — PayPal is holding the capture for review. Booked
   as `pending`; treating a held capture as revenue reports money that may never
   land.
@@ -100,10 +107,12 @@ first payment and silently never take another.
       manager. Never in source control.
 - [ ] Create a webhook subscription pointing at `POST /webhooks/paypal`,
       subscribed to `PAYMENT.CAPTURE.COMPLETED`, `PENDING`, `DENIED`,
-      `REFUNDED`, `REVERSED`, and `CHECKOUT.ORDER.APPROVED`.
+      `DECLINED`, `REFUNDED`, `REVERSED`, `CUSTOMER.DISPUTE.CREATED`,
+      `UPDATED`, `RESOLVED`, and `CHECKOUT.ORDER.APPROVED`.
 - [ ] Set `PAYPAL_WEBHOOK_ID` to that subscription's id. Until this is set, every
       notification is refused and no PayPal payment will ever be booked.
-- [ ] Set `PAYPAL_RETURN_URL` and `PAYPAL_CANCEL_URL` to real storefront pages.
+- [ ] Set `PAYPAL_RETURN_URL` to the storefront's `/paypal/return` and
+      `PAYPAL_CANCEL_URL` to its `/cancel` (both pages exist).
 - [ ] Run a full sandbox purchase against `PAYPAL_API_BASE` =
       `https://api-m.sandbox.paypal.com`; confirm one order row, `paid`, with the
       catalogue amount, and confirm a redelivered webhook adds nothing.

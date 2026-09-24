@@ -131,6 +131,7 @@ def provision_paid_service(
     *,
     sku: str | None,
     lead_id: int | None,
+    actor: str = "stripe",
 ) -> ServiceOrder | None:
     if not sku:
         log_event(
@@ -171,7 +172,7 @@ def provision_paid_service(
             session.add(LeadActivity(
                 lead_id=lead.id,
                 activity_type="payment_verified",
-                actor="stripe",
+                actor=actor,
                 detail=f"Paid order {order.id} verified for {sku}",
             ))
     session.flush()

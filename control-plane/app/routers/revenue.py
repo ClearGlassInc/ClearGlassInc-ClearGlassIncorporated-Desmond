@@ -12,16 +12,25 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func, inspect, select, text
 from sqlalchemy.orm import Session
 
-from .. import attribution, payments, pricebook
+from .. import attribution, commerce_orders, payments, pricebook
 from ..audit import log_event
 from ..config import get_settings
 from ..db import get_session
-from ..models import Event, Lead, LeadActivity, Order, RevenueControlLog, ServiceOrder
+from ..models import (
+    CommercialOrder,
+    Event,
+    Lead,
+    LeadActivity,
+    Order,
+    RevenueControlLog,
+    ServiceOrder,
+)
 from ..order_ledger import SETTLED_STATUSES, revenue_breakdown
 from ..revenue_service import STAGES, confirm_delivery, create_lead, is_spam_trap
 from ..schemas import (
     RevenueActivityOut,
     RevenueByCampaign,
+    RevenueByProvider,
     RevenueCheckoutRequest,
     RevenueCockpitOut,
     RevenueControlLogRequest,
@@ -187,6 +196,10 @@ def start_checkout(req: RevenueCheckoutRequest, session: Session = Depends(get_s
         }
 
     line_items, checkout_mode = pricebook.resolve_line_items([{"sku": offer.sku, "quantity": 1}])
+    # A ClearGlass order, so this sale carries a CG-ORD reference, is linked to
+    # its lead and campaign server-side, and is protected against being paid
+    # twice like any other (app/commerce_orders.py).
+    commercial = commerce_orders.create_order(session, sku=offer.sku, lead=lead)
     result = payments.create_checkout_session(
         line_items,
         customer_email=email,
@@ -198,10 +211,15 @@ def start_checkout(req: RevenueCheckoutRequest, session: Session = Depends(get_s
             "crcs_sku": offer.sku,
             "crcs_lead_id": str(lead.id) if lead else "",
             "crcs_revenue_system": "v1",
+            "cg_order_ref": commercial.order_ref,
             # Copied from the lead server-side, so the paid order carries the
             # campaign that produced the lead without trusting the browser.
             **attribution.to_metadata(_lead_attribution(lead)),
         },
+    )
+    commerce_orders.mark_checkout_started(
+        session, commercial, provider="stripe", checkout_ref=result["id"], mode=result["mode"],
+        record_event=False,
     )
     # The payment-link branch logged this and the server-checkout branch did
     # not, so checkout_started undercounted whenever Stripe Checkout was used.
@@ -210,7 +228,7 @@ def start_checkout(req: RevenueCheckoutRequest, session: Session = Depends(get_s
         actor="revenue_system",
         action="checkout_started",
         target=audit_target,
-        payload={"sku": offer.sku, "mode": result["mode"]},
+        payload={"sku": offer.sku, "mode": result["mode"], "order_ref": commercial.order_ref},
         result="executed",
     )
     return {
@@ -219,6 +237,7 @@ def start_checkout(req: RevenueCheckoutRequest, session: Session = Depends(get_s
         "url": result["url"],
         "checkout_mode": result["checkout_mode"],
         "id": result["id"],
+        "order_ref": commercial.order_ref,
         "sku": offer.sku,
         "amount_cad": result["amount_total"] / 100,
         "currency": result["currency"],
@@ -317,6 +336,25 @@ def _revenue_by_campaign(orders: list[Order]) -> list[RevenueByCampaign]:
     return sorted(rows, key=lambda r: r.confirmed_revenue_cad, reverse=True)[:20]
 
 
+def _revenue_by_provider(orders: list[Order]) -> list[RevenueByProvider]:
+    """Live verified money per processor. Stripe and PayPal stay separate here;
+    their sum is ``confirmed_revenue_cad`` because both use revenue_breakdown."""
+    groups: dict[str, list[Order]] = {"stripe": [], "paypal": []}
+    for order in orders:
+        groups.setdefault(commerce_orders.provider_for_source(order.source), []).append(order)
+    rows = []
+    for provider, members in groups.items():
+        money = revenue_breakdown(members)
+        rows.append(RevenueByProvider(
+            provider=provider,
+            orders=len(members),
+            gross_cad=float(money["gross"]),
+            refunded_cad=float(money["refunded"]),
+            confirmed_revenue_cad=float(money["confirmed"]),
+        ))
+    return rows
+
+
 @router.get("/cockpit", response_model=RevenueCockpitOut, dependencies=[Depends(require_admin)])
 def cockpit(session: Session = Depends(get_session)) -> RevenueCockpitOut:
     now = datetime.now(UTC)
@@ -330,6 +368,15 @@ def cockpit(session: Session = Depends(get_session)) -> RevenueCockpitOut:
         select(LeadActivity).where(LeadActivity.created_at >= window)
     ).all())
     recent_stripe = _latest_stripe_event(session)
+    commercial = list(session.scalars(select(CommercialOrder)).all())
+    commercial_by_state: dict[str, int] = {}
+    for co in commercial:
+        commercial_by_state[co.payment_state] = commercial_by_state.get(co.payment_state, 0) + 1
+    checkout_started_30d = session.scalar(
+        select(func.count()).select_from(Event).where(
+            Event.action == "checkout_started", Event.ts >= window
+        )
+    ) or 0
 
     # Orders that received money in live mode; revenue_breakdown then takes out
     # refunds and disputes, so a refunded or charged-back sale is not revenue.
@@ -403,6 +450,10 @@ def cockpit(session: Session = Depends(get_session)) -> RevenueCockpitOut:
         booking_health="CONFIGURED" if get_settings().crcs_calendar_booking_url.strip() else "MANUAL_FALLBACK",
         crm_health="READY",
         revenue_action_required=revenue_action_required,
+        revenue_by_provider=_revenue_by_provider(live_settled),
+        commercial_orders_by_state=commercial_by_state,
+        reconciliation_required=sum(1 for co in commercial if co.reconciliation_required),
+        checkout_started_30d=checkout_started_30d,
     )
 
 

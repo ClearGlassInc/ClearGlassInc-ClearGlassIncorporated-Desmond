@@ -277,6 +277,7 @@ def create_order(
     return_url: str | None = None,
     cancel_url: str | None = None,
     request_id: str | None = None,
+    invoice_id: str | None = None,
     settings: Settings | None = None,
     request: Requester | None = None,
 ) -> dict[str, Any]:
@@ -286,6 +287,11 @@ def create_order(
     ``amount`` (cents), ``currency``, ``name`` and ``quantity``. The intent is
     ``CAPTURE``, so approval and capture are two distinct steps and neither is
     implied by the buyer returning to the site.
+
+    ``invoice_id`` carries the ClearGlass order reference. PayPal echoes it on
+    the capture, which is how the capture webhook finds the order it pays, and
+    by default a PayPal account refuses a second payment with the same invoice
+    id, which is one more barrier against paying one order twice.
     """
     settings = settings or get_settings()
     if not line_items:
@@ -301,7 +307,7 @@ def create_order(
 
     if _missing_credentials(settings):
         return {
-            "id": f"PAYPAL-MOCK-{abs(hash((spec, amount_total))) % 10**10:010d}",
+            "id": f"PAYPAL-MOCK-{abs(hash((spec, amount_total, invoice_id))) % 10**10:010d}",
             "approve_url": f"{return_url or settings.paypal_return_url}?mock=1",
             "mode": "mock",
             "status": "CREATED",
@@ -326,6 +332,7 @@ def create_order(
         "purchase_units": [
             {
                 "custom_id": spec,
+                **({"invoice_id": invoice_id[:127]} if invoice_id else {}),
                 "amount": {
                     "currency_code": currency,
                     "value": _major_units(amount_total),
@@ -598,6 +605,21 @@ def environment(settings: Settings | None = None) -> str:
     """
     base = (settings or get_settings()).paypal_api_base
     return "test" if "sandbox" in base else "live"
+
+
+def order_ref_from_capture(resource: dict[str, Any]) -> str | None:
+    """The ClearGlass order reference a capture carries in ``invoice_id``."""
+    value = str(resource.get("invoice_id") or "").strip()
+    return value or None
+
+
+def order_ref_from_order(resource: dict[str, Any]) -> str | None:
+    """The ClearGlass order reference on an Orders v2 order resource."""
+    for unit in resource.get("purchase_units") or []:
+        value = str(unit.get("invoice_id") or "").strip()
+        if value:
+            return value
+    return None
 
 
 def capture_ref(capture_id: str) -> str:
