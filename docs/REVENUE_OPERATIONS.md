@@ -151,6 +151,45 @@ These conditions each need a human and are visible in the `events` ledger:
 | Payment failed | `payment_failed`, `subscription_payment_failed` |
 | Capture with no identifier | `paypal_capture_unidentified` |
 
+## Slack revenue channel
+
+`control-plane/app/revenue_notify.py` posts one message per revenue step to the
+Slack incoming webhook in `SLACK_WEBHOOK_URL`. It is off when that is empty, and it
+also stays off when the value doesn't start with `https://hooks.slack.com/`. The
+steps come from audit-ledger rows that are already written, so this adds no second
+record:
+
+| Ledger row | Slack stage |
+|---|---|
+| `lead_created` | NEW LEAD |
+| `lead_stage_changed` to `QUALIFIED` / `BOOKED` / `PROPOSAL_SENT` | QUALIFIED / MEETING BOOKED / PROPOSAL SENT |
+| `order_paid` (verified) | PAYMENT RECEIVED |
+| `service_order_provisioned` | DELIVERY STARTED |
+| `delivery_confirmed` | REVENUE CONFIRMED (paid and delivered; net of refunds) |
+| `subscription_active` from not-active / `subscription_canceled` from active | MRR CREATED / MRR CANCELLED |
+| `order_refunded`, `order_partially_refunded`, `order_dispute_*` | REFUNDED, PARTIALLY REFUNDED, DISPUTE |
+
+The notifier follows these rules. `tests/test_revenue_notify.py` pins each one, and
+each is mutation-tested:
+
+- **Only after commit.** A rolled-back step is never announced.
+- **Once.** A redelivered webhook is skipped by the ledger before a row exists.
+- **Test-mode money is labelled `TEST DATA`**, never called revenue.
+- **No name, email or company.** A message carries the offer, amount, mode,
+  source or campaign, and opaque references.
+- **Form text is escaped and put on one line.** A lead source can't ping
+  `@channel` or forge a `Stage:` line.
+- **A Slack failure is logged by exception type and dropped.** The URL is a
+  credential and is never logged. A Slack outage can't fail a webhook or lose
+  a payment.
+
+Stage changes other than the three above, such as `NURTURE` and `LOST`, stay in
+the ledger only, so the channel doesn't fill up with minor updates.
+
+Live Stripe Payment Links on the static site send no events to the control
+plane. Slack sees a Payment Link sale only after the control plane is deployed
+and a Stripe webhook endpoint points at `/webhooks/stripe`.
+
 ## Daily reconciliation
 
 `python -m app.daily_loop --json` runs the governance self-check and the

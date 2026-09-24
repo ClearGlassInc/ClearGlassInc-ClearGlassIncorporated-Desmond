@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
+from . import revenue_notify
 from .governance import RiskAssessment
 from .models import Event
 
@@ -33,6 +34,8 @@ def log_event(
     )
     session.add(event)
     session.flush()
+    # Revenue steps are announced in Slack after this transaction commits, never before.
+    revenue_notify.observe(session, event)
     return event
 
 
