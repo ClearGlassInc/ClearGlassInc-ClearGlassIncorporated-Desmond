@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg://commerce:commerce@localhost:5432/commerce"
     # Create tables from ORM metadata on startup (handy for SQLite/dev/demo; prod uses migrations).
     auto_create_tables: bool = False
+    # Apply pending migrations/*.sql at startup (Postgres only; see app/migrate.py).
+    # create_all never adds a column to an existing table, so without this a deployed
+    # database drifts behind the ORM with every additive migration.
+    run_migrations: bool = False
     # Comma-separated browser origins allowed to call the API (storefront/admin).
     cors_allow_origins: str = (
         "https://www.clearglassinc.com,"
