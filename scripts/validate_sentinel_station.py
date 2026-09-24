@@ -69,7 +69,8 @@ if not errors:
         errors.append("missing station-chat.js")
     else:
         dock_js = dock.read_text(encoding="utf-8")
-        for marker in ("SENTINEL CORE", "__cgSentinel", "data-no-future-glass", "cgst-absorb-stack"):
+        for marker in ("SENTINEL CORE", "__cgSentinel", "data-no-future-glass", "cgst-absorb-stack",
+                       "Intel Desk", "blog/posts.json", "function intelFallback()"):
             if marker not in dock_js:
                 errors.append(f"station-chat.js missing marker: {marker}")
 
@@ -93,4 +94,5 @@ print("- 13 navigation destinations present")
 print("- Original Sentinel panel preservation/restoration hooks present")
 print("- Launcher routing hook present")
 print("- Sentinel Core dock and direct-chat hand-off present")
+print("- Intel Desk wired to the brief index, with its offline fallback")
 print("- Basic JavaScript delimiter sanity passed")
