@@ -221,7 +221,14 @@
       "#cg-logo-badge img{width:100%;height:100%;object-fit:cover;display:block}",
       "#cg-logo-badge:focus-visible{outline:2px solid #ee637a;outline-offset:3px}",
       "@media(max-width:640px){#cg-dock{right:12px;bottom:12px;gap:6px}#cg-logo-badge{width:46px;height:46px}#cg-sales-button{min-height:44px;padding:0 13px;font-size:10.5px}#cg-sales-panel{position:fixed;right:12px;bottom:68px;width:calc(100vw - 24px);max-height:72vh}.cg-sales-foot{grid-template-columns:1fr}}",
-      "@media (prefers-reduced-motion:reduce){#cg-dock::before{animation:none;opacity:.7}#cg-sales-button,#cg-sales-offer,#cg-logo-badge{transition:none}}"
+      "@media (prefers-reduced-motion:reduce){#cg-dock::before{animation:none;opacity:.7}#cg-sales-button,#cg-sales-offer,#cg-logo-badge{transition:none}}",
+      /* The Stealth Glass stack (stealth-glass.js) is anchored to the same
+         bottom-right corner, so the logo badge ended up half-hidden behind it.
+         Stack it directly above this dock, on the same right edge, so the two
+         read as one column. Nothing is hidden or resized. */
+      "body.cg-dock-mounted.cg-security-dock-mounted #cg-security-stack{right:max(18px,env(safe-area-inset-right))!important;bottom:calc(max(18px,env(safe-area-inset-bottom)) + 64px)!important}",
+      "body.cg-dock-mounted.cg-security-dock-mounted{padding-bottom:calc(140px + env(safe-area-inset-bottom))}",
+      "@media(max-width:640px){body.cg-dock-mounted.cg-security-dock-mounted #cg-security-stack{right:max(12px,env(safe-area-inset-right))!important;bottom:calc(max(12px,env(safe-area-inset-bottom)) + 56px)!important}body.cg-dock-mounted.cg-security-dock-mounted{padding-bottom:calc(124px + env(safe-area-inset-bottom))}}"
     ].join("");
 
     var style = document.createElement("style");
@@ -231,6 +238,7 @@
     var dock = document.createElement("div");
     dock.id = "cg-dock";
     document.body.appendChild(dock);
+    document.body.classList.add("cg-dock-mounted");
 
     buildSalesPanel(dock);
 
