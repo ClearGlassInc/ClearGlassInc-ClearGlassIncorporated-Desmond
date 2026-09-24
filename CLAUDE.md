@@ -143,6 +143,12 @@ webhook is idempotent on redelivery via `orders.external_ref` (migration 004).
 `GET /payouts` and `GET /payments/payout-account` are admin-only (settlement amounts and
 masked bank details); they were open until 2026-09-24.
 
+Slack revenue events (`app/revenue_notify.py`, `SLACK_WEBHOOK_URL`) are derived from
+`log_event` rows and posted only after commit. To announce a new step, map its ledger
+action in `describe()`; don't post from a router. Keep names, emails and companies out
+of messages, and keep test-mode money labelled `TEST DATA`. The rules are in
+`docs/REVENUE_OPERATIONS.md` § Slack revenue channel.
+
 ## Running & testing the commerce control plane
 
 ```bash
