@@ -87,7 +87,7 @@
     rss: "blog/feed.xml",
     freshDays: 14,             // "new" = published inside this window and not yet opened here
     picks: 5,                  // briefs in the rotation
-    topics: 6,                 // topic links shown
+    topics: 4,                 // topic links shown
     rotateMs: 7000
   };
   var SEEN_KEY = "cg-intel-seen";      // slugs opened from this console, this browser only
@@ -228,9 +228,6 @@
     "#cg-station [hidden]{display:none!important}",
 
     /* ── command bar: slash commands + brief matches under the Ask field ── */
-    "#cg-station .cgst-hint{margin:-6px 3px 0;font-family:var(--cgst-mono);font-size:7.5px;font-weight:600;letter-spacing:.16em;",
-    "text-transform:uppercase;color:#8e6c6e}",
-    "#cg-station .cgst-hint b{color:#e7b9ba;font-weight:700}",
     "#cg-station .cgst-suggest{margin:-6px 0 0;padding:5px;list-style:none;border-radius:13px;border:1px solid rgba(238,99,101,.36);",
     "background:linear-gradient(170deg,rgba(26,13,16,.98),rgba(9,7,9,.98));box-shadow:0 16px 34px -18px rgba(0,0,0,.95),inset 0 1px 0 rgba(255,255,255,.05)}",
     "#cg-station .cgst-opt{display:flex;align-items:baseline;gap:9px;min-width:0;padding:8px 9px;border-radius:9px;cursor:pointer;color:var(--cgst-ink)}",
@@ -255,21 +252,18 @@
     "radial-gradient(110% 80% at 100% 0,rgba(76,195,255,.17),transparent 60%),",
     "radial-gradient(80% 60% at 0 100%,rgba(120,224,200,.09),transparent 70%),linear-gradient(165deg,#10121a,#07070b)}",
     "#cg-station .cgst-intel-top{display:flex;align-items:center;gap:8px}",
-    "#cg-station .cgst-intel-id{flex:1 1 auto;min-width:0}",
-    "#cg-station .cgst-intel-title{display:flex;align-items:center;gap:8px;margin:0;font-family:var(--cgst-mono);font-size:11px;font-weight:700;",
+    "#cg-station .cgst-intel-title{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:8px;margin:0;font-family:var(--cgst-mono);font-size:11px;font-weight:700;",
     "line-height:1.2;letter-spacing:.26em;text-transform:uppercase;color:#fff}",
     "#cg-station .cgst-intel-title::before{content:'';flex:0 0 auto;width:7px;height:7px;border-radius:1px;background:var(--cgst-blue);",
     "box-shadow:0 0 10px var(--cgst-blue);transform:rotate(45deg);animation:cgstBeacon 2.4s ease-in-out infinite}",
     "@keyframes cgstBeacon{50%{box-shadow:0 0 2px var(--cgst-blue);opacity:.55}}",
-    "#cg-station .cgst-intel-sub{display:block;margin-top:4px;font-family:var(--cgst-mono);font-size:8px;font-weight:600;letter-spacing:.16em;",
-    "text-transform:uppercase;color:#8fb7cc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
     "#cg-station .cgst-flag{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:3px 8px;border-radius:999px;",
     "font-family:var(--cgst-mono);font-size:8.5px;font-weight:700;line-height:1.2;letter-spacing:.14em;color:#fff;white-space:nowrap;",
     "background:linear-gradient(135deg,#ee6365,#b8324a);box-shadow:0 0 14px -2px rgba(238,99,101,.85)}",
     "#cg-station .cgst-flag[data-quiet]{background:rgba(76,195,255,.1);color:#bfe9ff;box-shadow:inset 0 0 0 1px rgba(76,195,255,.4)}",
 
     /* featured brief */
-    "#cg-station .cgst-brief{position:relative;display:flex;flex-direction:column;gap:7px;min-height:150px;padding:11px 12px 14px;border-radius:13px;",
+    "#cg-station .cgst-brief{position:relative;display:flex;flex-direction:column;gap:7px;min-height:136px;padding:11px 12px 14px;border-radius:13px;",
     "border:1px solid rgba(76,195,255,.3);background:linear-gradient(160deg,rgba(24,31,46,.86),rgba(11,10,16,.92));color:var(--cgst-ink);",
     "text-decoration:none;overflow:hidden;touch-action:pan-y;-webkit-tap-highlight-color:transparent;",
     "transition:border-color .2s ease,box-shadow .2s ease,transform .2s cubic-bezier(.16,1,.3,1)}",
@@ -281,7 +275,7 @@
     "font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}",
     "#cg-station .cgst-rank{flex:0 0 auto;color:var(--cgst-teal)}",
     "#cg-station .cgst-cat{min-width:0;overflow:hidden;text-overflow:ellipsis;color:#8fc4de}",
-    "#cg-station .cgst-rank:not(:empty)+.cgst-cat::before{content:'· ';color:#5d7c8c}",
+    "#cg-station .cgst-rank:not(:empty)+.cgst-cat{display:none}",
     "#cg-station .cgst-brief-title{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;",
     "font-size:15.5px;font-weight:750;line-height:1.25;letter-spacing:-.01em;color:#fff}",
     "#cg-station .cgst-brief-quote{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;padding-left:9px;",
@@ -323,7 +317,7 @@
     "#cg-station .cgst-topic i{font-style:normal;font-weight:700;color:var(--cgst-teal)}",
     "#cg-station .cgst-topic:hover{border-color:rgba(120,224,200,.75);background:rgba(120,224,200,.1);color:#fff}",
     "#cg-station .cgst-intel-links{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}",
-    "#cg-station .cgst-go{flex:1 1 100%;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:38px;padding:0 12px;",
+    "#cg-station .cgst-go{flex:1 1 auto;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:38px;padding:0 12px;",
     "border-radius:11px;border:1px solid rgba(76,195,255,.6);background:linear-gradient(100deg,rgba(76,195,255,.24),rgba(120,224,200,.12));",
     "color:#fff;text-decoration:none;font-family:var(--cgst-mono);font-size:9.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;",
     "box-shadow:inset 0 1px 0 rgba(255,255,255,.09);transition:box-shadow .2s ease,border-color .2s ease}",
@@ -790,7 +784,7 @@
     picks.forEach(function (p) {
       var parts = [];
       if (p === latest) parts.push("Latest");
-      if (p.rank) parts.push("Desk pick #" + p.rank);
+      if (p.rank) parts.push("Pick #" + p.rank);
       else if (p.featured) parts.push("Featured");
       p.label = parts.join(" · ");
     });
@@ -821,7 +815,8 @@
     if (!intelEl) return;
     intelEl.setAttribute("data-state", "static");
     setText(q("[data-cgst-b-cat]"), "Open the hub");
-    setText(q("[data-cgst-sync]"), "Brief index unavailable here · the hub has every brief");
+    var sync = q("[data-cgst-sync]");
+    if (sync) { setText(sync, "Brief index unavailable here · the hub has every brief"); sync.hidden = false; }
     paintCounts();
   }
 
@@ -861,9 +856,6 @@
       box.appendChild(a);
     });
     box.hidden = !intel.topics.length;
-
-    setText(q("[data-cgst-sync]"), [intel.updated ? "Index " + intel.updated : "Index",
-      intel.all.length + " briefs", intel.topics.length + " topics"].join(" · "));
 
     showBrief(intel.at, 0, false);
     paintCounts();
@@ -917,9 +909,6 @@
       flag.hidden = false;
       if (n) { flag.removeAttribute("data-quiet"); setText(flag, n + " NEW"); }
       else { flag.setAttribute("data-quiet", ""); setText(flag, total + " BRIEFS"); }
-      setText(q("[data-cgst-intel-sub]"), n
-        ? n + " unread · last " + INTEL.freshDays + " days"
-        : "ClearGlass Insights · no unread");
     }
     var seenBtn = q('[data-cgst="intel-seen"]');
     if (seenBtn) seenBtn.hidden = !n;
@@ -1102,7 +1091,7 @@
     if (query.length < 3 || intel.state !== "ready") return [];
     var hits = findBriefs(query);
     if (!hits.length) return [];
-    var opts = [{ key: "Ask", text: "Ask Sentinel: “" + query + "”", run: function () { openSentinel(query); } }];
+    var opts = [{ key: "Ask", ask: true, text: "Ask Sentinel: “" + query + "”", run: function () { openSentinel(query); } }];
     hits.forEach(function (p) { opts.push({ key: "Brief", text: p.title, run: function () { openBrief(p); } }); });
     opts.push({ key: "Hub", text: "Search every brief for “" + query + "”", run: function () { go(hubUrl(null, query)); } });
     return opts;
@@ -1148,9 +1137,11 @@
   }
 
   function runOption(o) {
-    askInput.value = "";
+    // the same hand-off as a plain question (see the submit handler)
+    var send = askForm && askForm.querySelector(".cgst-send");
+    if (send) { try { send.focus({ preventScroll: true }); } catch (e) { send.focus(); } }
+    if (!o.ask || window.__cgSentinel) askInput.value = "";
     closeSuggest();
-    askInput.blur();
     o.run();
   }
 
@@ -1283,10 +1274,7 @@
     var intelHTML =
       '<section class="cgst-intel" data-state="loading" data-run="0" aria-labelledby="cgstIntel" aria-roledescription="carousel">' +
         '<div class="cgst-intel-top">' +
-          '<div class="cgst-intel-id">' +
-            '<p class="cgst-intel-title" id="cgstIntel">Intel Desk</p>' +
-            '<span class="cgst-intel-sub" data-cgst-intel-sub>ClearGlass Insights · field briefs</span>' +
-          '</div>' +
+          '<p class="cgst-intel-title" id="cgstIntel">Intel Desk</p>' +
           '<span class="cgst-flag" data-cgst-intel-flag hidden></span>' +
         '</div>' +
         '<a class="cgst-brief" href="' + esc(hub) + '" data-cgst-item data-cgst-brief>' +
@@ -1294,7 +1282,7 @@
             '<span class="cgst-cat" data-cgst-b-cat>Syncing brief index</span></span>' +
           '<span class="cgst-brief-title" data-cgst-b-title>ClearGlass Insights</span>' +
           '<span class="cgst-brief-quote" data-cgst-b-quote>Research-led briefs on governed AI, cyber architecture, OSINT and Canadian resilience.</span>' +
-          '<span class="cgst-brief-foot"><span data-cgst-b-when>Intel briefs</span><span class="cgst-open" aria-hidden="true">Open brief &#8599;</span></span>' +
+          '<span class="cgst-brief-foot"><span data-cgst-b-when>Intel briefs</span><span class="cgst-open" aria-hidden="true">Read &#8599;</span></span>' +
           '<span class="cgst-flag" data-cgst-b-new aria-hidden="true" hidden>NEW</span>' +
           '<span class="cgst-timer" aria-hidden="true"></span>' +
         '</a>' +
@@ -1310,10 +1298,10 @@
         '<div class="cgst-intel-links">' +
           '<a class="cgst-go" href="' + esc(hub) + '" data-cgst-item>Open Insights Desk &#8599;</a>' +
           '<a class="cgst-aux" href="' + esc(hubUrl("saved")) + '" data-cgst-item data-cgst-saved hidden>Saved</a>' +
-          '<a class="cgst-aux" href="' + esc(BASE + INTEL.rss) + '" data-cgst-item>RSS feed</a>' +
-          '<button type="button" class="cgst-aux" data-cgst="intel-seen" data-cgst-item hidden>Mark all seen</button>' +
+          '<a class="cgst-aux" href="' + esc(BASE + INTEL.rss) + '" data-cgst-item>RSS</a>' +
+          '<button type="button" class="cgst-aux" data-cgst="intel-seen" data-cgst-item hidden>Mark seen</button>' +
         '</div>' +
-        '<p class="cgst-sync" data-cgst-sync>Index · syncing</p>' +
+        '<p class="cgst-sync" data-cgst-sync hidden></p>' +
       '</section>';
 
     root.innerHTML =
@@ -1327,6 +1315,8 @@
               '<span class="cgst-sr" data-cgst-status-sr></span><span aria-hidden="true" data-cgst-type></span></p>' +
           '</div>' + TRACE +
         '</div>' +
+
+        intelHTML +
 
         '<div>' +
           '<p class="cgst-label" id="cgstReadiness">Readiness</p>' +
@@ -1345,14 +1335,11 @@
           '<label class="cgst-sr" for="cgstAskInput">Ask Sentinel</label>' +
           '<input id="cgstAskInput" type="text" maxlength="800" autocomplete="off" spellcheck="false" enterkeyhint="send" ' +
             'role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="cgstSuggest" aria-describedby="cgstAskHint" ' +
-            'placeholder="Ask Sentinel anything…">' +
+            'placeholder="Ask Sentinel, or / for commands…">' +
           '<button type="submit" class="cgst-send" aria-label="Send to Sentinel">' + IC_SEND + '</button>' +
         '</form>' +
         '<ul class="cgst-suggest" id="cgstSuggest" role="listbox" aria-label="Commands and brief matches" hidden></ul>' +
-        '<p class="cgst-hint" id="cgstAskHint"><b>/</b> commands · 3+ letters finds briefs' +
-          '<span class="cgst-keys"> · Alt+Shift+I intel</span></p>' +
-
-        intelHTML +
+        '<p class="cgst-sr" id="cgstAskHint">Type / for commands. Three or more letters also match briefs.</p>' +
 
         '<div role="group" aria-labelledby="cgstMissions">' +
           '<p class="cgst-label" id="cgstMissions">Missions</p>' +
@@ -1463,7 +1450,8 @@
         setOpen(root.getAttribute("data-open") !== "true", true, true);
         return;
       }
-      if (event.altKey && event.shiftKey && (event.key === "I" || event.key === "i" || event.code === "KeyI")) {
+      if (event.altKey && event.shiftKey && !event.ctrlKey && !event.metaKey &&
+          (event.key === "I" || event.key === "i" || (!editable && event.code === "KeyI"))) {
         event.preventDefault();
         focusIntel();
         return;

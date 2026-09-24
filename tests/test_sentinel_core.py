@@ -189,6 +189,17 @@ def test_intel_desk_is_one_same_origin_read_painted_as_text() -> None:
     assert "localStorage.setItem(SEEN_KEY" in DOCK
 
 
+def test_intel_desk_leads_the_console() -> None:
+    # the briefs sit first under the header, ahead of readiness and the Ask field
+    sheet = DOCK[DOCK.index("root.innerHTML ="):]
+    assert sheet.index("intelHTML +") < sheet.index('id="cgstReadiness"') < sheet.index('class="cgst-ask"')
+    # Alt+Shift+I, like Alt+Shift+S, never swallows Option/AltGr text typed into a field
+    assert '(!editable && event.code === "KeyI")' in DOCK
+    # a command option hands off focus like a plain question does, never to <body>
+    run = re.search(r"\n  function runOption\(o\) \{\n(.*?)\n  \}\n", DOCK, re.S)
+    assert run and "blur()" not in run.group(1) and "send.focus" in run.group(1)
+
+
 INTEL_PROBE = r"""
 const fs = require("fs"), vm = require("vm");
 const src = fs.readFileSync(process.argv[1], "utf8");
