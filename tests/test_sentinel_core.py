@@ -86,12 +86,33 @@ def test_dock_opens_the_conversation_not_the_directory() -> None:
     assert "api.ask(prompt)" in DOCK and "api.open()" in DOCK
 
 
+def test_console_state_and_shortcuts_respect_the_visitor() -> None:
+    # Only a visitor's own toggle is saved, under a key the old dock never auto-wrote.
+    assert 'var STORE_OPEN = "cg-core-open";' in DOCK
+    assert "if (persist) writeOpen(open);" in DOCK
+    assert "setOpen(readOpen(), false, false);" in DOCK
+    # Touch devices of any size start collapsed; the site menu is never covered.
+    assert "(hover: none) and (pointer: coarse)" in DOCK
+    assert "body.mobile-nav-open #cg-station" in DOCK
+    # Alt+Shift+S never swallows Option/AltGr characters typed into a field.
+    assert '(!editable && event.code === "KeyS")' in DOCK
+    # The mode group ships hidden and is revealed only by the sentinel.js that wires it.
+    assert 'aria-label="Input mode" hidden>' in HOMEPAGE
+    assert 'var modes=scope.querySelector(".sentinel-modes");if(modes)modes.hidden=false;' in SENTINEL
+    # A moved console is clamped with its sheet, and the collapsed pill is draggable.
+    enhance = (ROOT / "station-enhance.js").read_text(encoding="utf-8")
+    assert "function sheetAbove()" in enhance and 'addEventListener("cg-station:toggle", reclamp)' in enhance
+    assert "grips.indexOf(control) < 0" in enhance
+
+
 def test_readouts_are_real_and_claim_no_monitoring() -> None:
     for text in (DOCK, SENTINEL, HOMEPAGE):
         assert not re.search(r"threat level", text, re.I)
         assert not re.search(r"ONLINE\s*·\s*ACTIVE\s*·\s*MONITORING", text)
         assert not re.search(r"systems:\s*\d+\s*online", text, re.I)
         assert not re.search(r"confidence:\s*9\d(\.\d)?%", text, re.I)
+    # a keyword match is labelled as what it is, not as a confidence level
+    assert '"Confidence: "' not in SENTINEL and "Pre-written answer" in SENTINEL
     # every readiness value is derived locally
     assert "navigator.onLine" in DOCK
     assert "new Date().toISOString()" in DOCK
@@ -104,8 +125,10 @@ def test_voice_is_dictation_that_the_visitor_sends() -> None:
     assert body, "toggleVoice not found"
     assert "handleMessage" not in body.group(1)
     assert "requestSubmit" not in body.group(1)
-    assert "browser provider may process" in SENTINEL
-    assert "Optional voice input uses your browser’s own speech service." in HOMEPAGE
+    # say where the audio goes; the typed chat is what stays on the device
+    assert "In Chrome and Edge the audio is sent to Google or Microsoft" in SENTINEL
+    assert "does not send or store typed conversation content" in HOMEPAGE
+    assert "ClearGlass has not received or stored this conversation" in SENTINEL
     for hook in ('data-sentinel-mode="text"', 'data-sentinel-mode="voice"', 'data-sentinel-mode="query"',
                  "data-sentinel-voice ", "data-sentinel-voice-note", "data-sentinel-link"):
         assert hook in HOMEPAGE, hook
@@ -231,7 +254,7 @@ process.stdout.write(JSON.stringify(out));
 
 EXPECTED = {
     # the six missions
-    "Mission briefing": "ClearGlass Inc. is an Ontario practice",
+    "Mission briefing": "ClearGlass Inc. is an Ontario advisory",
     "Risk assessment": "A ClearGlass risk assessment starts",
     "Threat analysis": "Sentinel has no access to your logs",
     "Infrastructure monitoring": "Sentinel is not connected to your infras",
@@ -249,14 +272,19 @@ EXPECTED = {
     "I need cybersecurity guidance.": "ClearGlass provides blue-team-aligned cy",
     "I need cloud deployment help.": "A cloud deployment pathway covers worklo",
     "I want a full digital growth system.": "For qualified growth, ClearGlass can con",
+    # mission terms are the mission phrases, not bare words that catch other questions
+    "What does the quick audit cost?": "I will not invent pricing or availabilit",
 }
+
+# prompts that must NOT land on a mission answer
+UNMATCHED = ["Is my business at risk right now?", "Tell me about your governance", "Any insights?"]
 
 
 @pytest.mark.skipif(shutil.which("node") is None, reason="node is required to run sentinel.js's matcher")
 def test_sentinel_routes_each_prompt_to_its_pathway() -> None:
     result = subprocess.run(
         ["node", "-e", ROUTER, str(ROOT / "sentinel.js")],
-        input=json.dumps(list(EXPECTED)), capture_output=True, text=True, check=True, timeout=60,
+        input=json.dumps(list(EXPECTED) + UNMATCHED), capture_output=True, text=True, check=True, timeout=60,
     )
     routed = json.loads(result.stdout)
     for missions_probe in routed.pop("__missions"):
@@ -264,3 +292,5 @@ def test_sentinel_routes_each_prompt_to_its_pathway() -> None:
     wrong = {probe: routed[probe] for probe, want in EXPECTED.items()
              if not (routed[probe] or "").startswith(want)}
     assert not wrong, f"misrouted prompts: {wrong}"
+    captured = {probe: routed[probe] for probe in UNMATCHED if routed[probe] is not None}
+    assert not captured, f"prompts captured by a mission answer: {captured}"

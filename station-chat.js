@@ -37,7 +37,9 @@
   if (window.__cgStationChat) return;
   window.__cgStationChat = true;
 
-  var STORE_OPEN = "cg-station-open";
+  // New key on purpose: the previous dock auto-saved "1" on every load, so the
+  // old value records no one's choice and would keep phones expanded.
+  var STORE_OPEN = "cg-core-open";
   var STEALTH_KEY = "cg-stealth";
   var DOCK_H = 56;          // dock pill height, kept in sync with the CSS below
   var reduce = false;
@@ -57,8 +59,8 @@
   var CONTROLS = [
     { act: "stealth", title: "Stealth Glass", sub: "Privacy dim" },
     { act: "tactical", title: "Tactical View", sub: "Reduce effects" },
-    { title: "Cyber Monitor", sub: "Defence console", href: "cyber-defense-console.html" },
-    { title: "OSINT Fusion", sub: "Ontario deck", href: "Ontario-osint.html" },
+    { title: "Cyber Monitor", sub: "Demo console", href: "cyber-defense-console.html" },
+    { title: "OSINT Fusion", sub: "Demo deck", href: "Ontario-osint.html" },
     { title: "Sentinel Core", sub: "Geospatial", href: "sentinel.html" },
     { title: "Mission Feed", sub: "Intel briefs", href: "blog/", feed: true },
     { title: "Aegis Defence", sub: "Legal shield", href: "aegis.html" },
@@ -130,8 +132,10 @@
        named "*-panel": clearglass-crimson.css repaints every [class*="-panel"]
        with !important, which flattened this into a see-through card. ── */
     "#cg-station .cgst-sheet{position:absolute;left:0;right:0;bottom:calc(100% + 10px);",
-    /* capped so an open console clears the site header on desktop and phones */
-    "max-height:min(600px,calc(100vh - var(--cgst-lift) - 40px));max-height:min(600px,calc(100dvh - var(--cgst-lift) - 40px));",
+    /* capped so an open console stops below the site header (--cgst-top-clear
+       is measured from #navbar in syncTopClear) */
+    "max-height:min(600px,calc(100vh - var(--cgst-lift) - var(--cgst-top-clear,40px)));",
+    "max-height:min(600px,calc(100dvh - var(--cgst-lift) - var(--cgst-top-clear,40px)));",
     "overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(238,99,101,.4) transparent;",
     "display:flex;flex-direction:column;gap:12px;padding:14px 13px 12px;border-radius:20px;",
     "border:1px solid rgba(238,99,101,.42);color:var(--cgst-ink);isolation:isolate;",
@@ -210,7 +214,11 @@
     "#cg-station .cgst-ask:focus-within{border-color:rgba(238,99,101,.95);box-shadow:0 0 0 3px rgba(238,99,101,.2),0 0 22px -6px rgba(238,99,101,.6)}",
     "#cg-station .cgst-ask-mark{flex:0 0 auto;font-family:var(--cgst-mono);font-size:11px;font-weight:700;color:var(--cgst-red)}",
     /* 16px stops iOS Safari zooming the page when the field takes focus */
-    "#cg-station .cgst-ask input{flex:1 1 auto;min-width:0;height:38px;border:0;outline:0;background:none;color:#fff;font:600 16px/1.2 var(--cgst-sans)}",
+    "#cg-station .cgst-ask input{flex:1 1 auto;min-width:0;height:38px;border:0;outline:0;color:#fff;font:600 16px/1.2 var(--cgst-sans);",
+    /* clearglass-crimson.css and glass.css set html input backgrounds and focus
+       rings with !important; the id selector plus !important outranks them */
+    "background:transparent!important;border-radius:0;box-shadow:none!important}",
+    "#cg-station .cgst-ask input::placeholder{color:#9d7678!important;opacity:1}",
     "#cg-station .cgst-ask input::placeholder{color:#9d7678}",
     "#cg-station .cgst-send{flex:0 0 auto;display:grid;place-items:center;width:40px;height:40px;border-radius:11px;cursor:pointer;",
     "border:1px solid rgba(238,99,101,.6);background:linear-gradient(135deg,rgba(238,99,101,.34),rgba(238,99,122,.16));color:#fff;",
@@ -413,7 +421,8 @@
     /* ── yield entirely while the Sentinel conversation is open ── */
     /* descendants re-assert visibility and pointer-events, so hide the whole
        subtree or an invisible sheet keeps catching taps over the modal */
-    "body.sentinel-open #cg-station,body.sentinel-open #cg-station *{opacity:0;visibility:hidden!important;pointer-events:none!important}",
+    "body.sentinel-open #cg-station,body.sentinel-open #cg-station *,",
+    "body.mobile-nav-open #cg-station,body.mobile-nav-open #cg-station *{opacity:0;visibility:hidden!important;pointer-events:none!important}",
 
     /* ── one control surface: absorb the widgets this dock replaces ──
        Hidden, never removed: each original stays the source of truth for its
@@ -439,13 +448,16 @@
     "#cg-station .cgst-sheet{padding:12px 11px 11px;gap:11px}",
     "#cg-station .cgst-title{font-size:14px;letter-spacing:.17em}",
     "#cg-station .cgst-mission strong{font-size:12.5px}}",
-    "@media(max-width:340px){#cg-station .cgst-controls,#cg-station .cgst-missions{grid-template-columns:1fr}}",
+    "@media(max-width:372px){#cg-station .cgst-controls{grid-template-columns:1fr}}",
+    "@media(max-width:340px){#cg-station .cgst-missions{grid-template-columns:1fr}",
+    "#cg-station .cgst-cell{padding:7px 6px}#cg-station .cgst-cell dd{letter-spacing:0}}",
 
     /* motion: the OS preference and the site's own Tactical View both quiet it */
     "@media(prefers-reduced-motion:reduce){#cg-station *,#cg-station *::before,#cg-station *::after{transition:none!important;animation:none!important}",
     "#cg-station[data-open='false'] .cgst-sheet{transform:none}}",
     "html[data-cgm-motion='reduced'] #cg-station *,html[data-cgm-motion='reduced'] #cg-station *::before,",
-    "html[data-cgm-motion='reduced'] #cg-station *::after{animation:none!important}",
+    "html[data-cgm-motion='reduced'] #cg-station *::after{animation:none!important;transition:none!important}",
+    "html[data-cgm-motion='reduced'] #cg-station[data-open='false'] .cgst-sheet{transform:none}",
     "@media print{#cg-station{display:none!important}}",
     "@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){",
     "#cg-station .cgst-sheet{background-color:#0c080a}",
@@ -464,7 +476,9 @@
   // First visit: open on wide screens, collapsed on phones, where an open
   // console would cover the page the visitor came to read.
   function narrow() {
-    try { return window.matchMedia("(max-width: 720px)").matches; } catch (e) { return false; }
+    try {
+      return window.matchMedia("(max-width: 720px), (max-height: 500px), (hover: none) and (pointer: coarse)").matches;
+    } catch (e) { return false; }
   }
   function readOpen() {
     try {
@@ -1196,12 +1210,13 @@
   }
 
   // ── open / close ─────────────────────────────────────────────────────────
-  function setOpen(open, moveFocus) {
+  function setOpen(open, moveFocus, persist) {
     root.setAttribute("data-open", String(open));
     dock.setAttribute("aria-expanded", String(open));
     labelDock();
     panel.setAttribute("aria-hidden", String(!open));
-    writeOpen(open);
+    if (persist) writeOpen(open);
+    try { window.dispatchEvent(new CustomEvent("cg-station:toggle", { detail: { open: open } })); } catch (e) {}
     syncClock();
     syncRun();
     if (!open) closeSuggest();
@@ -1213,6 +1228,13 @@
       var first = narrow() ? items()[0] : askInput;
       if (first) { try { first.focus({ preventScroll: true }); } catch (e) { first.focus(); } }
     } else if (dock.focus) dock.focus();
+  }
+
+  function syncTopClear() {
+    var header = document.getElementById("navbar");
+    var bottom = header ? header.getBoundingClientRect().bottom : 0;
+    var clear = Math.max(40, Math.min(240, Math.round(bottom + 12)));
+    document.documentElement.style.setProperty("--cgst-top-clear", clear + "px");
   }
 
   // ── build ────────────────────────────────────────────────────────────────
@@ -1382,7 +1404,7 @@
     jumpBottom = root.querySelector('[data-cgst="bottom"]');
 
     // wiring
-    dock.addEventListener("click", function () { setOpen(root.getAttribute("data-open") !== "true", true); });
+    dock.addEventListener("click", function () { setOpen(root.getAttribute("data-open") !== "true", true, true); });
     magnetize(dock);
     wireIntel();
     wireBar();
@@ -1395,9 +1417,12 @@
       if (!pick && askInput.value.trim().charAt(0) === "/") pick = optionsFor(askInput.value)[0] || null;
       if (pick) { runOption(pick); return; }
       var prompt = askInput.value.trim();
-      askInput.value = "";
-      closeSuggest();
-      askInput.blur();
+      // Moving focus to the send button still drops the phone keyboard, and the
+      // chat restores focus here when it closes (blur() left it on <body>).
+      var send = askForm.querySelector(".cgst-send");
+      if (send) { try { send.focus({ preventScroll: true }); } catch (e) { send.focus(); } }
+      // An older cached sentinel.js cannot take the question, so keep it.
+      if (window.__cgSentinel) askInput.value = "";
       openSentinel(prompt);
     });
 
@@ -1430,9 +1455,12 @@
     panel.addEventListener("keydown", panelKeys);
 
     document.addEventListener("keydown", function (event) {
-      if (event.altKey && event.shiftKey && (event.key === "S" || event.key === "s" || event.code === "KeyS")) {
+      var t = event.target;
+      var editable = t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName || ""));
+      if (event.altKey && event.shiftKey && !event.ctrlKey && !event.metaKey &&
+          (event.key === "S" || event.key === "s" || (!editable && event.code === "KeyS"))) {
         event.preventDefault();
-        setOpen(root.getAttribute("data-open") !== "true", true);
+        setOpen(root.getAttribute("data-open") !== "true", true, true);
         return;
       }
       if (event.altKey && event.shiftKey && (event.key === "I" || event.key === "i" || event.code === "KeyI")) {
@@ -1448,7 +1476,7 @@
       if (!root.contains(event.target)) return;
       if (document.body.classList.contains("sentinel-open")) return;
       event.preventDefault();
-      setOpen(false, true);
+      setOpen(false, true, true);
       if (lastFocus && lastFocus.focus && lastFocus !== document.body) { try { lastFocus.focus(); } catch (e) {} }
     });
 
@@ -1457,12 +1485,24 @@
     document.addEventListener("pointerdown", function (event) {
       if (root.getAttribute("data-open") !== "true" || !narrow()) return;
       if (root.contains(event.target) || document.body.classList.contains("sentinel-open")) return;
-      setOpen(false, false);
+      setOpen(false, false, true);
     }, true);
+
+    // Keyboard focus moving into the page folds the console away, so it never
+    // hides the element that has focus (WCAG 2.4.11). Not persisted: it is not
+    // the visitor's choice to close it.
+    document.addEventListener("focusin", function (event) {
+      if (root.getAttribute("data-open") !== "true") return;
+      if (root.contains(event.target) || document.body.classList.contains("sentinel-open")) return;
+      var shell = document.getElementById("sentinelShell");
+      if (shell && shell.contains(event.target)) return;
+      setOpen(false, false, false);
+    });
 
     window.addEventListener("scroll", queueScroll, { passive: true });
     window.addEventListener("resize", queueScroll, { passive: true });
     window.addEventListener("resize", syncStack, { passive: true });
+    window.addEventListener("resize", syncTopClear, { passive: true });
     window.addEventListener("clearglass:stealth", paintToggles);
     window.addEventListener("online", paintLink);
     window.addEventListener("offline", paintLink);
@@ -1516,7 +1556,8 @@
     paintToggles();
     syncScroll();
     syncStack();
-    setOpen(readOpen(), false);
+    syncTopClear();
+    setOpen(readOpen(), false, false);
     // geometry settles a frame later, once the other docks have mounted
     requestAnimationFrame(syncStack);
     setTimeout(function () { syncStack(); paintToggles(); }, 800);
@@ -1528,10 +1569,9 @@
 
   // public, read-only-ish control surface for other ClearGlass layers
   window.__cgStation = {
-    open: function () { if (root) setOpen(true, true); },
-    close: function () { if (root) setOpen(false, false); },
-    toggle: function () { if (root) setOpen(root.getAttribute("data-open") !== "true", true); },
-    intel: function () { focusIntel(); }
+    open: function () { if (root) setOpen(true, true, false); },
+    close: function () { if (root) setOpen(false, false, false); },
+    toggle: function () { if (root) setOpen(root.getAttribute("data-open") !== "true", true); }
   };
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", build, { once: true });

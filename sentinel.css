@@ -57,6 +57,7 @@ html body .sentinel-shell .sentinel-panel{border-color:rgba(238,99,101,.35)!impo
 
 /* input modes: Text · Voice · Query */
 .sentinel-modes{display:flex;gap:4px;margin:0 18px 8px;padding:3px;border:1px solid rgba(238,99,101,.2);border-radius:11px;background:rgba(10,7,9,.7)}
+.sentinel-modes[hidden]{display:none}
 .sentinel-modes button{flex:1;min-height:32px;border:0;border-radius:8px;background:transparent;color:#b89092;font:700 9px var(--mono,"IBM Plex Mono",monospace);letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .18s,color .18s,box-shadow .18s}
 .sentinel-modes button:hover{color:#fff}
 .sentinel-modes button[aria-pressed=true]{background:linear-gradient(135deg,rgba(238,99,101,.26),rgba(76,195,255,.1));color:#fff;box-shadow:inset 0 0 0 1px rgba(238,99,101,.45)}
@@ -94,4 +95,4 @@ body.sentinel-open #cg-security-stack,body.sentinel-open #cg-top,body.sentinel-o
 
 @media(max-width:720px){.sentinel-modes{margin-inline:14px}.cg-station-body{padding:16px 14px}}
 @media(prefers-reduced-motion:reduce){.sentinel-panel-header:after,.sentinel-mark:before,.sentinel-live-dot,.sentinel-mic.is-listening,.sentinel-message--assistant .sentinel-message-body{animation:none!important}.cg-station-item,.sentinel-modes button{transition:none}}
-html[data-cgm-motion=reduced] .sentinel-panel-header:after,html[data-cgm-motion=reduced] .sentinel-mark:before,html[data-cgm-motion=reduced] .sentinel-live-dot,html[data-cgm-motion=reduced] .sentinel-message--assistant .sentinel-message-body{animation:none!important}
+html[data-cgm-motion=reduced] .sentinel-panel-header:after,html[data-cgm-motion=reduced] .sentinel-mark:before,html[data-cgm-motion=reduced] .sentinel-live-dot,html[data-cgm-motion=reduced] .sentinel-mic.is-listening,html[data-cgm-motion=reduced] .sentinel-message--assistant .sentinel-message-body{animation:none!important}

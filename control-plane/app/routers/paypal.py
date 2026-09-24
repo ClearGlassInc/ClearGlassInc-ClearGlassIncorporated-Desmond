@@ -7,7 +7,11 @@ The surface mirrors the Stripe router's split of responsibilities:
 * ``POST /webhooks/paypal`` is authenticated by PayPal's signature and books
   revenue idempotently. It is the *only* thing that books a PayPal payment.
 * ``POST /paypal/capture`` is an **operator** action that moves money, so it goes
-  through the approval gate like every other money-movement action.
+  through the approval gate like every other money-movement action. It is
+  two-phase, like Printful confirmation: the first call queues the approval;
+  once a human approves it, the next call claims that approval (single use)
+  and captures. Before this, an approved capture had no executor at all, so a
+  buyer could approve a PayPal payment the system could never collect.
 
 What this router deliberately does not do is fulfill on approval. PayPal returns
 the buyer to the site the moment they approve, and ``CHECKOUT.ORDER.APPROVED``
@@ -23,15 +27,15 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from .. import paypal, pricebook
+from .. import commerce_orders, order_states, paypal, pricebook
 from ..audit import log_event
 from ..config import get_settings
 from ..db import get_session
-from ..models import Order
+from ..models import Approval, CommercialOrder, Order
 from ..order_ledger import record_dispute, record_payment_order, record_refund
 from ..schemas import ActionResult, CheckoutRequest, PayPalCaptureRequest, PayPalOrderOut
 from ..security import rate_limit, require_admin
-from ..service import run_governed_action
+from ..service import claim_approval, run_governed_action
 
 router = APIRouter(tags=["paypal"])
 
@@ -178,6 +182,8 @@ async def paypal_webhook(request: Request, session: Session = Depends(get_sessio
             result="flagged",
         )
         _apply_adjustment(session, etype, resource)
+        if etype == "CHECKOUT.ORDER.APPROVED":
+            commerce_orders.on_paypal_order_approved(session, resource, event=etype)
         return {"received": True, "type": etype, "verified": True}
 
     log_event(
@@ -259,6 +265,7 @@ def _settle_capture(session: Session, etype: str, resource: dict) -> dict:
 
     settings = get_settings()
     status = paypal.SETTLED_EVENTS[etype]
+    order_ref = paypal.order_ref_from_capture(resource)
     order = record_payment_order(
         session,
         actor="paypal",
@@ -272,6 +279,7 @@ def _settle_capture(session: Session, etype: str, resource: dict) -> dict:
         verified=True,
         event=etype,
         environment=paypal.environment(settings),
+        order_ref=order_ref if order_states.is_order_ref(order_ref) else None,
         shipping=(
             paypal.shipping_from_capture(resource) if settings.paypal_collect_shipping else None
         ),
@@ -330,21 +338,130 @@ def _settle_capture(session: Session, etype: str, resource: dict) -> dict:
     return {"received": True, "type": etype, "verified": True, "order_id": order.id}
 
 
+def _paid_order_for(session: Session, paypal_order_id: str) -> str | None:
+    """The ClearGlass order behind this PayPal order, if it is already paid."""
+    refs = {
+        co.order_ref
+        for co in session.scalars(
+            select(CommercialOrder).where(CommercialOrder.provider_checkout_ref == paypal_order_id)
+        ).all()
+    }
+    # The approval queued on CHECKOUT.ORDER.APPROVED names the order even after
+    # the buyer switched processor and provider_checkout_ref moved on.
+    for payload in session.scalars(
+        select(Approval.payload).where(
+            Approval.action == "paypal_capture_order", Approval.target == paypal_order_id
+        )
+    ).all():
+        if isinstance(payload, dict) and payload.get("order_ref"):
+            refs.add(str(payload["order_ref"]))
+    for ref in sorted(refs):
+        co = commerce_orders.get_by_ref(session, ref)
+        if co is not None and co.payment_state in order_states.MONEY_RECEIVED:
+            return ref
+    return None
+
+
 @router.post(
     "/paypal/capture", response_model=ActionResult, dependencies=[Depends(require_admin)]
 )
 def capture(req: PayPalCaptureRequest, session: Session = Depends(get_session)) -> ActionResult:
-    """Capture an approved PayPal order — always routed to the human approval gate.
+    """Capture an approved PayPal order. Two-phase; never captures unapproved.
 
-    Taking a customer's money is not something automation does unwatched, so this
-    endpoint queues the action and never calls PayPal inline. The capture itself
-    runs once the approval is approved downstream.
+    1. No approved approval for this PayPal order: queue one (or return the one
+       already pending) and call PayPal for nothing.
+    2. An approved approval exists: claim it, single use, then capture. The
+       claim is committed before PayPal is called, so one human decision can
+       never become two captures; PayPal-Request-Id makes a retried call
+       return the first result rather than charging again.
+
+    The order is still booked by the verified ``PAYMENT.CAPTURE.COMPLETED``
+    webhook, not by this response.
     """
-    return run_governed_action(
+    target = req.paypal_order_id
+    paid_ref = _paid_order_for(session, target)
+    if paid_ref is not None:
+        # The buyer paid this ClearGlass order another way (typically a Stripe
+        # tab left open) after approving at PayPal. Capturing now would charge
+        # them twice, whatever a human approved earlier.
+        log_event(
+            session,
+            actor="operations_agent",
+            action="paypal_capture_refused",
+            target=target,
+            payload={"order_ref": paid_ref, "reason": "order already paid"},
+            result="rejected",
+        )
+        session.commit()
+        raise HTTPException(
+            status_code=409,
+            detail=f"ClearGlass order {paid_ref} is already paid; capturing would charge the buyer twice",
+        )
+    approval = claim_approval(session, action="paypal_capture_order", target=target)
+    if approval is None:
+        pending = session.scalar(
+            select(Approval).where(
+                Approval.action == "paypal_capture_order",
+                Approval.target == target,
+                Approval.status == "pending",
+            ).order_by(Approval.id)
+        )
+        if pending is not None:
+            return ActionResult(
+                status="queued_for_approval",
+                action="paypal_capture_order",
+                risk_score=pending.risk_score,
+                risk_tier=pending.risk_tier,
+                requires_approval=True,
+                approval_id=pending.id,
+                reasons=["an approval for this capture is already pending"],
+                data={"escalation": "human approval required before execution"},
+            )
+        return run_governed_action(
+            session,
+            actor="operations_agent",
+            action="paypal_capture_order",
+            target=target,
+            payload=req.model_dump(),
+            # No executor: an unapproved capture must not reach PayPal even if
+            # the scoring were ever loosened.
+            execute=None,
+        )
+
+    try:
+        result = paypal.capture_order(target, request_id=f"capture-{target}")
+    except paypal.PayPalError as exc:
+        log_event(
+            session,
+            actor=approval.decided_by or "operator",
+            action="paypal_capture_failed",
+            target=target,
+            payload={"approval_id": approval.id, "error": str(exc)},
+            result="error",
+        )
+        session.commit()
+        raise HTTPException(status_code=502, detail=f"PayPal could not capture the order: {exc}") from exc
+
+    log_event(
         session,
-        actor="operations_agent",
+        actor=approval.decided_by or "operator",
+        action="paypal_capture_executed",
+        target=target,
+        payload={
+            "approval_id": approval.id,
+            "status": result.get("status"),
+            "mode": result.get("mode"),
+            "capture_ids": [c.get("id") for c in result.get("captures", []) if isinstance(c, dict)],
+        },
+        result="executed",
+    )
+    return ActionResult(
+        status="executed",
         action="paypal_capture_order",
-        target=req.paypal_order_id,
-        payload=req.model_dump(),
-        execute=None,
+        risk_score=approval.risk_score,
+        risk_tier=approval.risk_tier,
+        requires_approval=True,
+        approval_id=approval.id,
+        reasons=[f"approval {approval.id} granted by {approval.decided_by or 'operator'}"],
+        data={"paypal_status": result.get("status"), "mode": result.get("mode")},
     )

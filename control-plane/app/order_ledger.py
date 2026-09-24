@@ -33,6 +33,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from . import commerce_orders
 from .audit import log_event
 from .models import Order
 
@@ -85,6 +86,7 @@ def record_payment_order(
     environment: str = "unknown",
     payment_intent: str | None = None,
     attribution: Mapping[str, str] | None = None,
+    order_ref: str | None = None,
 ) -> Order | None:
     """Book (or promote) an order idempotently, keyed on the processor's own id.
 
@@ -97,6 +99,11 @@ def record_payment_order(
     a duplicate and nothing changed. A caller that starts fulfillment must treat
     ``None`` as "already handled" and do nothing, or a redelivered capture ships a
     second parcel for one payment.
+
+    ``order_ref`` names the ClearGlass order the checkout started from (Stripe
+    metadata, PayPal ``invoice_id``). The booking is then applied to that order
+    by :func:`app.commerce_orders.on_payment_booked`, which is where a second
+    payment for one order is caught.
     """
     existing = (
         session.scalar(select(Order).where(Order.external_ref == external_ref))
@@ -139,6 +146,7 @@ def record_payment_order(
         existing.payment_intent = existing.payment_intent or payment_intent
         if attribution and not existing.utm_campaign:
             _apply_attribution(existing, attribution)
+        existing.order_ref = existing.order_ref or order_ref
         session.flush()
         log_event(
             session,
@@ -153,6 +161,7 @@ def record_payment_order(
             },
             result="executed",
         )
+        commerce_orders.on_payment_booked(session, existing, verified=verified, actor=actor, event=event)
         return existing
 
     order = Order(
@@ -164,6 +173,7 @@ def record_payment_order(
         environment=environment,
         payment_intent=payment_intent,
         amount_refunded=Decimal(0),
+        order_ref=order_ref,
     )
     if shipping is not None:
         apply_shipping(order, shipping)
@@ -179,6 +189,7 @@ def record_payment_order(
         payload={"verified": verified, "event": event, "amount_total": str(total)},
         result="executed",
     )
+    commerce_orders.on_payment_booked(session, order, verified=verified, actor=actor, event=event)
     return order
 
 
@@ -271,6 +282,7 @@ def record_refund(
         },
         result="executed",
     )
+    commerce_orders.on_payment_adjusted(session, order, actor=actor, event=event)
     return order
 
 
@@ -335,6 +347,7 @@ def record_dispute(
         # An open or lost dispute needs a human; anything else is informational.
         result="flagged" if dispute_status in OPEN_DISPUTE_STATUSES | LOST_DISPUTE_STATUSES else "executed",
     )
+    commerce_orders.on_payment_adjusted(session, order, actor=actor, event=event)
     return order
 
 

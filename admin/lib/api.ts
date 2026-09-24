@@ -115,6 +115,36 @@ export interface RevenueCockpit {
   booking_health: string;
   crm_health: string;
   revenue_action_required: boolean;
+  // Migration 010. Optional so this page still renders against an older control plane.
+  revenue_by_provider?: {
+    provider: string;
+    orders: number;
+    gross_cad: number;
+    refunded_cad: number;
+    confirmed_revenue_cad: number;
+  }[];
+  commercial_orders_by_state?: Record<string, number>;
+  reconciliation_required?: number;
+  checkout_started_30d?: number;
+}
+
+// A ClearGlass order (control-plane/app/commerce_orders.py admin_view).
+export interface ClearGlassOrder {
+  order_ref: string;
+  offer: string;
+  amount: number;
+  currency: string;
+  provider: string | null;
+  payment_state: string;
+  payment_verified: boolean;
+  fulfillment_state: string;
+  state: string;
+  environment: string;
+  utm_campaign: string | null;
+  reconciliation_required: boolean;
+  reconciliation_reason: string | null;
+  created_at: string | null;
+  payments: { id: number; provider: string; status: string; total: number; currency: string; environment: string }[];
 }
 
 export interface RevenueLead {
@@ -170,6 +200,14 @@ export async function listRevenueLeads(limit = 50): Promise<RevenueLead[] | null
 export async function listRevenueControlLog(limit = 14): Promise<RevenueControlLogRow[] | null> {
   try {
     return await api<RevenueControlLogRow[]>(`/revenue/control-log?limit=${limit}`);
+  } catch {
+    return null;
+  }
+}
+
+export async function listClearGlassOrders(limit = 25): Promise<ClearGlassOrder[] | null> {
+  try {
+    return await api<ClearGlassOrder[]>(`/commerce/orders?limit=${limit}`);
   } catch {
     return null;
   }

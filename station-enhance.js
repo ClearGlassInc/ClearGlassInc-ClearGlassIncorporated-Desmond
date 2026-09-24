@@ -252,10 +252,17 @@
     grips.forEach(function (g) { g.classList.add("cg-se-grip"); });
     var grip = grips[0];                       // the one that takes keyboard focus
 
+    // The open console's sheet sits above the dock and outside its box, so
+    // reserve its height too or a moved console opens off the top.
+    function sheetAbove() {
+      var sheet = dock.querySelector(".cgst-sheet");
+      return sheet && dock.getAttribute("data-open") === "true" ? sheet.offsetHeight + 10 : 0;
+    }
+
     function place(x, y) {
-      var w = dock.offsetWidth, h = dock.offsetHeight;
+      var w = dock.offsetWidth, h = dock.offsetHeight, above = sheetAbove();
       x = clamp(x, EDGE, Math.max(EDGE, window.innerWidth - w - EDGE));
-      y = clamp(y, EDGE, Math.max(EDGE, window.innerHeight - h - EDGE));
+      y = clamp(y, EDGE + above, Math.max(EDGE + above, window.innerHeight - h - EDGE));
       dock.dataset.cgMoved = "1";
       dock.style.left = x + "px";
       dock.style.top = y + "px";
@@ -297,8 +304,10 @@
 
     grips.forEach(function (g) { g.addEventListener("pointerdown", function (e) {
       if (e.button !== 0 && e.pointerType === "mouse") return;
-      // never hijack a press that belongs to a control inside the bar
-      if (e.target.closest("a,button,input,textarea,select") && e.target !== grip) return;
+      // never hijack a press that belongs to a control inside the bar; the
+      // collapsed dock is itself a <button> grip, so grips are exempt
+      var control = e.target.closest("a,button,input,textarea,select");
+      if (control && grips.indexOf(control) < 0) return;
       var box = dock.getBoundingClientRect();
       dragging = true; moved = false; pid = e.pointerId;
       sx = e.clientX; sy = e.clientY; ox = box.left; oy = box.top;
@@ -351,12 +360,15 @@
       save(place(nx, ny));
     });
 
-    // keep it on screen when the viewport changes
-    window.addEventListener("resize", function () {
+    // keep it on screen when the viewport changes, and when the console opens
+    // (a position saved while collapsed can leave no room for the sheet)
+    function reclamp() {
       if (dock.dataset.cgMoved !== "1") return;
       var box = dock.getBoundingClientRect();
       save(place(box.left, box.top));
-    });
+    }
+    window.addEventListener("resize", reclamp);
+    window.addEventListener("cg-station:toggle", reclamp);
   }
 
   // ── wiring ───────────────────────────────────────────────────────────────

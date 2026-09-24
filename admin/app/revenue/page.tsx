@@ -11,7 +11,7 @@
 // no shared login can alter the pipeline from here.
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
-import { getRevenueCockpit, listRevenueControlLog, listRevenueLeads } from "@/lib/api";
+import { getRevenueCockpit, listClearGlassOrders, listRevenueControlLog, listRevenueLeads } from "@/lib/api";
 import { formatTs } from "@/lib/format";
 import { requireSession } from "@/lib/session";
 
@@ -41,12 +41,19 @@ function money(value: number | null): string {
   return value === null ? "No data" : cad.format(value);
 }
 
+const PROCESSOR_NAMES: Record<string, string> = { stripe: "Stripe", paypal: "PayPal", other: "Other" };
+
+function processorName(provider: string | null): string {
+  return provider === null ? "Not chosen" : (PROCESSOR_NAMES[provider] ?? provider);
+}
+
 export default async function RevenuePage() {
   await requireSession("/revenue");
-  const [cockpit, leads, log] = await Promise.all([
+  const [cockpit, leads, log, orders] = await Promise.all([
     getRevenueCockpit(),
     listRevenueLeads(50),
     listRevenueControlLog(14),
+    listClearGlassOrders(25),
   ]);
 
   if (!cockpit) {
@@ -125,7 +132,14 @@ export default async function RevenuePage() {
     { label: "Proposals", value: String(cockpit.proposals), definition: "Leads from PROPOSAL_PENDING to WON." },
     { label: "Open service orders", value: String(cockpit.open_service_orders), definition: "Paid work not yet delivered." },
     { label: "Next actions due", value: String(cockpit.due_actions), definition: "Open leads whose next action date has passed." },
+    {
+      label: "Checkouts started (30 days)",
+      value: cockpit.checkout_started_30d === undefined ? "No data" : String(cockpit.checkout_started_30d),
+      definition: "A buyer reached Stripe or PayPal. Not a payment: only a verified webhook is.",
+    },
   ];
+  const flagged = cockpit.reconciliation_required ?? 0;
+  const byProvider = cockpit.revenue_by_provider ?? [];
 
   return (
     <section aria-labelledby="revenue-title" style={{ display: "grid", gap: 20 }}>
@@ -144,6 +158,15 @@ export default async function RevenuePage() {
       ) : (
         <p style={{ ...panel, margin: 0 }}>Today&apos;s Revenue Control Log has a commercial action in progress or done.</p>
       )}
+
+      {flagged > 0 ? (
+        <p role="alert" style={{ ...panel, borderColor: "#ff8a80", color: "#ffb4ae", margin: 0 }}>
+          <strong>Reconciliation required: </strong>
+          {flagged} ClearGlass {flagged === 1 ? "order disagrees" : "orders disagree"} with the payments recorded against them (a
+          second payment, an amount or currency mismatch, or money after a cancel). Delivery is held. Nothing is
+          corrected automatically: resolve it at Stripe or PayPal, then review the order below.
+        </p>
+      ) : null}
 
       <section aria-labelledby="figures-title" style={panel}>
         <h2 id="figures-title" style={{ marginTop: 0 }}>
@@ -172,6 +195,97 @@ export default async function RevenuePage() {
             ))}
           </tbody>
         </table>
+      </section>
+
+      <section aria-labelledby="provider-title" style={{ ...panel, overflowX: "auto" }}>
+        <h2 id="provider-title" style={{ marginTop: 0 }}>
+          Verified revenue by processor
+        </h2>
+        {byProvider.length === 0 ? (
+          <p style={{ color: MUTED, margin: 0 }}>This control plane does not report a processor split yet.</p>
+        ) : (
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+            <caption style={{ textAlign: "left", color: MUTED, paddingBottom: 8 }}>
+              Live payments only, by the same rule as confirmed revenue. The rows add up to confirmed revenue.
+            </caption>
+            <thead>
+              <tr style={{ color: MUTED }}>
+                <th scope="col" style={cell}>Processor</th>
+                <th scope="col" style={cell}>Paid orders</th>
+                <th scope="col" style={cell}>Gross</th>
+                <th scope="col" style={cell}>Refunded</th>
+                <th scope="col" style={cell}>Confirmed</th>
+              </tr>
+            </thead>
+            <tbody>
+              {byProvider.map((row) => (
+                <tr key={row.provider} style={{ borderTop: "1px solid rgba(124,150,255,.1)" }}>
+                  <th scope="row" style={{ ...cell, fontWeight: 600 }}>{processorName(row.provider)}</th>
+                  <td style={cell}>{row.orders}</td>
+                  <td style={cell}>{money(row.gross_cad)}</td>
+                  <td style={cell}>{money(row.refunded_cad)}</td>
+                  <td style={cell}>{money(row.confirmed_revenue_cad)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </section>
+
+      <section aria-labelledby="orders-title" style={{ ...panel, overflowX: "auto" }}>
+        <h2 id="orders-title" style={{ marginTop: 0 }}>
+          ClearGlass orders
+        </h2>
+        {orders === null ? (
+          <p role="alert">Orders could not be read from the control plane.</p>
+        ) : orders.length === 0 ? (
+          <p style={{ color: MUTED, margin: 0 }}>No ClearGlass orders yet.</p>
+        ) : (
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+            <caption style={{ textAlign: "left", color: MUTED, paddingBottom: 8 }}>
+              Newest 25. &ldquo;Verified&rdquo; means a signed Stripe or PayPal event settled it; a buyer returning from
+              checkout is not enough.
+            </caption>
+            <thead>
+              <tr style={{ color: MUTED }}>
+                <th scope="col" style={cell}>Order</th>
+                <th scope="col" style={cell}>Amount</th>
+                <th scope="col" style={cell}>Processor</th>
+                <th scope="col" style={cell}>State</th>
+                <th scope="col" style={cell}>Campaign</th>
+                <th scope="col" style={cell}>Reconciliation</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map((order) => (
+                <tr key={order.order_ref} style={{ borderTop: "1px solid rgba(124,150,255,.1)" }}>
+                  <td style={cell}>
+                    <code>{order.order_ref}</code>
+                    <br />
+                    <span style={{ color: MUTED }}>{order.offer}</span>
+                  </td>
+                  <td style={{ ...cell, whiteSpace: "nowrap" }}>
+                    {order.amount.toFixed(2)} {order.currency}
+                  </td>
+                  <td style={cell}>
+                    {processorName(order.provider)}
+                    {order.environment === "test" ? <span style={{ color: MUTED }}> · test mode</span> : null}
+                  </td>
+                  <td style={cell}>
+                    {order.payment_state}
+                    {order.payment_verified ? " (verified)" : ""}
+                    <br />
+                    <span style={{ color: MUTED }}>Fulfillment: {order.fulfillment_state}</span>
+                  </td>
+                  <td style={cell}>{order.utm_campaign ?? "Unattributed"}</td>
+                  <td style={{ ...cell, color: order.reconciliation_required ? "#ffb4ae" : MUTED, whiteSpace: "pre-line" }}>
+                    {order.reconciliation_required ? order.reconciliation_reason : "None"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </section>
 
       <section aria-labelledby="campaign-title" style={{ ...panel, overflowX: "auto" }}>
