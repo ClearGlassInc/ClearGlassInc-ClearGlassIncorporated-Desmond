@@ -66,8 +66,28 @@ export default async function RevenuePage() {
     {
       label: "Confirmed revenue",
       value: money(cockpit.confirmed_revenue_cad),
-      definition: "Live-mode payments verified by the Stripe webhook. Test mode is excluded.",
+      definition: "Live payments verified by the Stripe or PayPal webhook, less refunds, open disputes and lost disputes.",
       verified: cockpit.confirmed_revenue_cad > 0,
+    },
+    {
+      label: "Gross received",
+      value: money(cockpit.gross_revenue_cad),
+      definition: "Every verified live payment before refunds and disputes.",
+    },
+    {
+      label: "Refunded",
+      value: money(cockpit.refunded_cad),
+      definition: "Refunds and reversals the processor has settled.",
+    },
+    {
+      label: "In open disputes",
+      value: money(cockpit.disputed_open_cad),
+      definition: "Held by a chargeback that is not yet decided. Counts again if the dispute is won.",
+    },
+    {
+      label: "Lost to disputes",
+      value: money(cockpit.dispute_lost_cad),
+      definition: "Returned to the cardholder by a lost chargeback.",
     },
     {
       label: "Pipeline (estimate)",
@@ -75,9 +95,18 @@ export default async function RevenuePage() {
       definition: "Unverified expected value on open leads, entered by hand. Not revenue.",
     },
     {
-      label: "MRR",
+      label: "MRR (verified)",
+      value: money(cockpit.verified_mrr_cad),
+      definition:
+        cockpit.verified_mrr_cad === null
+          ? "No subscriptions table: migration 006 is not applied."
+          : `Active Stripe subscriptions on price-book Prices: ${cockpit.active_subscriptions} active, ` +
+            `${cockpit.past_due_subscriptions} past due, ${cockpit.unpriced_subscriptions} on unknown Prices (excluded).`,
+    },
+    {
+      label: "Contracted MRR (entered by hand)",
       value: money(cockpit.mrr_cad),
-      definition: "Recurring monthly value on won and active customers, as recorded on each lead.",
+      definition: "Recurring value typed onto won and active leads. A contract figure, not Stripe data.",
     },
     {
       label: "Gross margin",
@@ -143,6 +172,38 @@ export default async function RevenuePage() {
             ))}
           </tbody>
         </table>
+      </section>
+
+      <section aria-labelledby="campaign-title" style={{ ...panel, overflowX: "auto" }}>
+        <h2 id="campaign-title" style={{ marginTop: 0 }}>
+          Confirmed revenue by campaign
+        </h2>
+        {cockpit.revenue_by_campaign.length === 0 ? (
+          <p style={{ color: MUTED, margin: 0 }}>No verified live payments yet, so no campaign has produced revenue.</p>
+        ) : (
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+            <caption style={{ textAlign: "left", color: MUTED, paddingBottom: 8 }}>
+              From the utm_campaign carried through checkout to the paid order. Payment Links carry none, so
+              their sales show as unattributed.
+            </caption>
+            <thead>
+              <tr style={{ color: MUTED }}>
+                <th scope="col" style={cell}>Campaign</th>
+                <th scope="col" style={cell}>Paid orders</th>
+                <th scope="col" style={cell}>Confirmed revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cockpit.revenue_by_campaign.map((row) => (
+                <tr key={row.campaign} style={{ borderTop: "1px solid rgba(124,150,255,.1)" }}>
+                  <th scope="row" style={{ ...cell, fontWeight: 600 }}>{row.campaign}</th>
+                  <td style={cell}>{row.orders}</td>
+                  <td style={cell}>{money(row.confirmed_revenue_cad)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </section>
 
       <section aria-labelledby="health-title" style={panel}>

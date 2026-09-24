@@ -102,6 +102,12 @@ return a lead's id, stage or score from a public route (`POST /revenue/leads` re
 opaque `reference`). The admin app calls these routes from its server with
 `ADMIN_API_KEY`; no browser page may hold that key.
 
+Confirmed revenue is net: `order_ledger.revenue_breakdown` subtracts settled refunds,
+open disputes and lost disputes, and both Stripe and PayPal webhooks apply refunds and
+disputes to the order they reverse (migration 009). Don't compute revenue from
+`status == "paid"` anywhere else, and don't let a settlement event promote a
+`refunded` order back to `paid`.
+
 Prices are resolved server-side. `POST /checkout/session` takes **SKUs and quantities
 only**; amounts come from the price book (`app/pricebook.py`, `app/data/pricebook.json`)
 and never from the request body, because a checkout line item's `amount` goes straight

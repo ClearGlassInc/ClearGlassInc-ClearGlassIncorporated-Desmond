@@ -143,13 +143,19 @@ Endpoint: `https://<control-plane-host>/webhooks/stripe`
 | `invoice.payment_failed` | Failed renewal, needs dunning |
 | `customer.subscription.created` / `.updated` / `.deleted` | Lifecycle visibility, scheduled changes, and cancellation |
 | `customer.subscription.paused` / `.resumed` | Pause/resume lifecycle visibility |
-| `charge.refunded` | Audit trail for settled refunds |
-| `charge.dispute.created` / `charge.dispute.closed` | Chargebacks |
+| `charge.refunded` | Sets the order's cumulative `amount_refunded`; a full refund marks it `refunded`. Confirmed revenue drops by the refund |
+| `charge.dispute.created` / `.updated` / `.closed` | Records the dispute status on the order. Open and lost disputes are held out of confirmed revenue; a won dispute counts again |
 | `payment_intent.payment_failed` | Failed payment visibility |
 | `payout.created` / `.updated` / `.paid` / `.failed` / `.canceled` | Settlement to the bank account |
 
 Handling is idempotent on redelivery: orders key on `orders.external_ref`, payouts on
-`stripe_payout_id`.
+`stripe_payout_id`. Refunds and disputes find their order by `orders.payment_intent`
+(migration 009) and set cumulative values, so a redelivered event changes nothing; one
+that matches no order is flagged (`refund_unmatched`, `dispute_unmatched`), never dropped.
+A refunded order is never promoted back to `paid` by a late settlement event.
+
+Subscription lifecycle events go to a **second** endpoint, `/subscriptions/webhook`,
+which de-duplicates on the Stripe event id (`stripe_events`). Register both.
 
 Local testing:
 

@@ -95,6 +95,15 @@ class Order(Base):
     ship_to_email: Mapped[str | None] = mapped_column(String(255), nullable=True)
     # pending → drafted → confirmed → shipped, or unfulfillable (see fulfillment.py)
     fulfillment_status: Mapped[str] = mapped_column(String(32), default="pending")
+    # Migration 009. Refunds and disputes name a PaymentIntent, not a Checkout
+    # Session, so this is how a charge.refunded event finds the order it reverses.
+    payment_intent: Mapped[str | None] = mapped_column(String(120), nullable=True, index=True)
+    # Cumulative (Stripe's charge.amount_refunded), so redelivery cannot subtract twice.
+    amount_refunded: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal(0))
+    dispute_status: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    utm_source: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    utm_medium: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    utm_campaign: Mapped[str | None] = mapped_column(String(160), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
 

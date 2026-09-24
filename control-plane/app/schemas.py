@@ -41,6 +41,18 @@ class CheckoutLineItem(BaseModel):
     quantity: int = Field(default=1, ge=1)
 
 
+class CheckoutAttribution(BaseModel):
+    """Campaign tags carried to Stripe metadata and onto the paid order.
+
+    Invalid values are dropped by ``app.attribution``, never rejected: marketing
+    context must not block a purchase.
+    """
+
+    utm_source: str | None = Field(default=None, max_length=200)
+    utm_medium: str | None = Field(default=None, max_length=200)
+    utm_campaign: str | None = Field(default=None, max_length=200)
+
+
 class CheckoutRequest(BaseModel):
     """A cart, and who to email. Deliberately not where to return to.
 
@@ -57,6 +69,7 @@ class CheckoutRequest(BaseModel):
     # double-click or a retried request reuses the first session instead of opening
     # a second one for the same cart.
     client_reference_id: str | None = Field(default=None, max_length=200)
+    attribution: CheckoutAttribution | None = None
 
 
 class CheckoutSessionOut(BaseModel):
@@ -352,11 +365,29 @@ class RevenueOfferOut(BaseModel):
     calendar_url: str | None = None
 
 
+class RevenueByCampaign(BaseModel):
+    campaign: str
+    orders: int
+    confirmed_revenue_cad: float
+
+
 class RevenueCockpitOut(BaseModel):
     generated_at: datetime
+    # Live, provider-verified money still held: gross − refunded − disputed_open − dispute_lost.
     confirmed_revenue_cad: float
+    gross_revenue_cad: float
+    refunded_cad: float
+    disputed_open_cad: float
+    dispute_lost_cad: float
+    # From Stripe-verified subscriptions on price-book Prices; None = no subscriptions table.
+    verified_mrr_cad: float | None
+    active_subscriptions: int | None
+    past_due_subscriptions: int | None
+    unpriced_subscriptions: int | None
+    revenue_by_campaign: list[RevenueByCampaign]
     test_revenue_cad: float
     pipeline_estimate_cad: float
+    # Entered by hand on leads; a contract figure, not Stripe data.
     mrr_cad: float
     gross_margin_cad: float | None
     qualified_leads: int

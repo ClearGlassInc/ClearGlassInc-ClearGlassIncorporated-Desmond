@@ -108,10 +108,11 @@ Access column = lowest role that can **read**; writes are in §5.
 
 ---
 
-## 4. Phase 1 schema (proposed migration `009_crcs_phase1.sql`)
+## 4. Phase 1 schema (proposed migration `010_crcs_phase1.sql`)
 
 `008_lead_public_ref.sql` shipped in Phase 0 and added `leads.public_ref` (UUID, backfilled,
-unique, defaulted). The Phase 1 migration below starts at 009.
+unique, defaulted). `009_revenue_integrity.sql` added refunds, disputes, the PaymentIntent
+and UTM attribution to `orders`. The Phase 1 migration below starts at 010.
 
 Additive only: no existing row is removed or rewritten except the free-text move, which
 copies before it nulls. Money follows the existing convention (`NUMERIC(12,2)`, CAD).

@@ -587,3 +587,68 @@ def check_against_catalog(
     if expected != paid:
         return False, f"amount mismatch: catalogue total {expected} {expected_currency}, captured {paid}"
     return True, f"matches catalogue total {expected} {expected_currency}"
+
+
+def environment(settings: Settings | None = None) -> str:
+    """``live`` or ``test`` for orders booked from verified PayPal webhooks.
+
+    Webhooks are verified against ``PAYPAL_API_BASE``, so a verified event comes
+    from the environment that base points at. Without this every PayPal order was
+    booked ``unknown`` and never reached confirmed revenue.
+    """
+    base = (settings or get_settings()).paypal_api_base
+    return "test" if "sandbox" in base else "live"
+
+
+def capture_ref(capture_id: str) -> str:
+    """The ``orders.external_ref`` a PayPal capture is booked under."""
+    return f"paypal_capture_{capture_id}"
+
+
+def refunded_capture_id(resource: dict[str, Any]) -> str | None:
+    """The capture a refund or reversal belongs to, from its ``rel: up`` link."""
+    for link in resource.get("links") or []:
+        href = str(link.get("href") or "")
+        if link.get("rel") == "up" and "/captures/" in href:
+            return href.rstrip("/").rsplit("/", 1)[-1] or None
+    return None
+
+
+def refund_total(resource: dict[str, Any]) -> Decimal | None:
+    """Cumulative amount refunded on the capture, or this refund's amount.
+
+    ``seller_payable_breakdown.total_refunded_amount`` is cumulative across
+    partial refunds, which is what makes a redelivered event idempotent. When
+    PayPal omits it, this refund's own amount is used.
+    """
+    breakdown = resource.get("seller_payable_breakdown") or {}
+    for amount in (breakdown.get("total_refunded_amount"), resource.get("amount")):
+        if amount and amount.get("value") is not None:
+            try:
+                return Decimal(str(amount["value"]))
+            except (InvalidOperation, TypeError):
+                return None
+    return None
+
+
+#: PayPal dispute states mapped onto the vocabulary ``order_ledger`` understands,
+#: so one definition of confirmed revenue covers both processors.
+_OPEN_DISPUTE = {"OPEN": "needs_response", "WAITING_FOR_SELLER_RESPONSE": "needs_response",
+                 "WAITING_FOR_BUYER_RESPONSE": "under_review", "UNDER_REVIEW": "under_review"}
+_DISPUTE_OUTCOME = {"RESOLVED_BUYER_FAVOUR": "lost", "RESOLVED_SELLER_FAVOUR": "won",
+                    "CANCELED_BY_BUYER": "won", "RESOLVED_WITH_PAYOUT": "lost"}
+
+
+def dispute_state(resource: dict[str, Any]) -> tuple[str | None, str]:
+    """``(capture_id, status)`` for a dispute resource.
+
+    A resolved dispute with an outcome this map does not know stays
+    ``under_review``: unresolved money is held out of revenue, never assumed kept.
+    """
+    transactions = resource.get("disputed_transactions") or []
+    capture_id = (transactions[0].get("seller_transaction_id") if transactions else None) or None
+    status = str(resource.get("status") or "").upper()
+    if status in _OPEN_DISPUTE:
+        return capture_id, _OPEN_DISPUTE[status]
+    outcome = str((resource.get("dispute_outcome") or {}).get("outcome_code") or "").upper()
+    return capture_id, _DISPUTE_OUTCOME.get(outcome, "under_review")
