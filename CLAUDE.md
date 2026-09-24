@@ -90,9 +90,13 @@ without approval; log every action.
 The gate is also access-controlled: mutating admin endpoints (approvals, pricing,
 refunds, catalog/order/inventory writes) require an `Authorization: Bearer <key>`
 credential (`ADMIN_API_KEY`, see `app/security.py`). Unset = open dev/mock mode;
-`APP_ENV=production` with no key **fails closed at startup**. Customer checkout, the
-signature-verified Stripe webhook, and read-only telemetry stay open. Don't add a
-mutating admin route without gating it behind `require_admin`.
+`APP_ENV=production` with no key **fails closed at startup**. Customer checkout and the
+signature-verified Stripe webhook stay open. Metrics and the audit ledger (`/metrics`,
+`/events`) are admin-only: the ledger has a row for every lead, order and stage change.
+Don't add a mutating admin route without gating it behind `require_admin`, and don't
+return a lead's id, stage or score from a public route (`POST /revenue/leads` returns an
+opaque `reference`). The admin app calls these routes from its server with
+`ADMIN_API_KEY`; no browser page may hold that key.
 
 Prices are resolved server-side. `POST /checkout/session` takes **SKUs and quantities
 only**; amounts come from the price book (`app/pricebook.py`, `app/data/pricebook.json`)

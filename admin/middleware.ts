@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SESSION_COOKIE } from "@/lib/constants";
+import { isProtected } from "@/lib/route-policy";
 
-const PROTECTED_PREFIXES = ["/", "/approvals", "/audit", "/premium", "/api/premium", "/api/assets"];
-const PUBLIC_PREFIXES = ["/login", "/api/login", "/_next", "/favicon.ico"];
 const WINDOW_MS = 60_000;
 const BURST_THRESHOLD = Number(process.env.ROUTE_BURST_THRESHOLD || 60);
 const burstBuckets = new Map<string, number[]>();
-
-function isProtected(pathname: string): boolean {
-  if (PUBLIC_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))) return false;
-  return PROTECTED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
-}
 
 async function hmac(value: string): Promise<string> {
   const key = await crypto.subtle.importKey(

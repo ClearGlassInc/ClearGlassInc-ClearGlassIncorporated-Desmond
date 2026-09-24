@@ -37,7 +37,7 @@ could check, not a statement that it was done.
 |---|---|---|---|---|
 | H1 | Complete Stripe onboarding: product description, support phone, business URL, terms acceptance; attach and verify a Canadian bank account | Stripe Dashboard → Account onboarding, Bank accounts | `charges_enabled: true`, `payouts_enabled: true` on the account object | Track 1B |
 | H2 | Create the control-plane web service and Postgres from `render.yaml` (or the D7 host) | Hosting dashboard | Service and database listed; `/ready` returns 200 | 1.1 |
-| H3 | Put secrets in the host secret store: `ADMIN_API_KEY`, session secret, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, calendar webhook secret | Hosting dashboard, never the repo | `crcs_launch_gate.py` reports each as present (never its value) | 1.1, 1.11, 1.15 |
+| H3 | Put secrets in the host secret store: `ADMIN_API_KEY` (control plane **and** admin app, which now sends it server-side), `ADMIN_LOGIN_TOKEN` (admin app; at least 24 random characters), `ADMIN_SESSION_SECRET`, `CRCS_AUDIT_HASH_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, calendar webhook secret | Hosting dashboard, never the repo | `crcs_launch_gate.py` reports each as present (never its value) | 1.1, 1.11, 1.15 |
 | H4 | Register the Stripe webhook endpoint for the events in `STRIPE_SETUP.md` §5 | Stripe Dashboard → Webhooks | Endpoint listed; test delivery 2xx | 1.11 |
 | H5 | Create the Stripe Price for the D1 offer and give its id | Stripe Dashboard → Products | Price id in `pricebook.json` | 1.11 |
 | H6 | Decide Stripe Tax fields (`tax_behavior` is effectively one-way once set) | Stripe Dashboard → Tax | Recorded; `STRIPE_AUTOMATIC_TAX` set to match | 1.11 |
@@ -54,7 +54,7 @@ Each approval covers **one** action at **one** time. Approval of one does not im
 | ID | Action | What happens when approved | Reversible? |
 |---|---|---|---|
 | A1 | Merge Phase 0 to `main` | GitHub Pages publishes the changed pages | Yes: revert commit |
-| A2 | Create the production host and database (H2) and run migration 008 | A public API exists; tables created | Service yes; data retained per policy |
+| A2 | Create the production host and database (H2) and run migrations 001–008 in order (009 when Phase 1 lands) | A public API exists; tables created | Service yes; data retained per policy |
 | A3 | Set `CRCS_RAPID_DIAGNOSTIC_ENABLED=true` in production | Real buyers can pay | Yes: flag off; paid orders remain |
 | A4 | Publish privacy, terms, cookie and disclosure page changes | Public legal text changes | Yes, but versions must be kept |
 | A5 | Send each outbound message or batch (DRAFT FOR APPROVAL) | People are contacted | **No** |

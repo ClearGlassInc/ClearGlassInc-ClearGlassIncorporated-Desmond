@@ -50,9 +50,15 @@ def score_qualification(data: dict[str, Any]) -> tuple[int, str]:
     return score, explanation
 
 
+def is_spam_trap(data: dict[str, Any]) -> bool:
+    """True when the hidden honeypot field was filled in: a bot, not a person."""
+    return bool(str(data.get("website_honeypot") or "").strip())
+
+
 def create_lead(session: Session, data: dict[str, Any]) -> Lead:
-    if data.get("website_honeypot"):
-        raise ValueError("spam challenge failed")
+    if is_spam_trap(data):
+        # Callers discard these before this point; storing one would be a bug.
+        raise ValueError("spam-trap submissions must be discarded, not stored")
     email = str(data["work_email"]).strip().lower()
     score, explanation = score_qualification(data)
     stage = "QUALIFIED" if score >= 60 else "REVIEW_REQUIRED"

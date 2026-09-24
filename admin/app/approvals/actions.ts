@@ -6,8 +6,7 @@
 // state immediately. The cockpit never executes the gated side effect itself —
 // it only records the human decision; execution happens downstream.
 import { revalidatePath } from "next/cache";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
+import { API_BASE, controlPlaneHeaders } from "@/lib/api";
 
 export interface DecisionResult {
   ok: boolean;
@@ -22,7 +21,7 @@ async function decide(
   try {
     const res = await fetch(`${API_BASE}/approvals/${id}/${decision}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...controlPlaneHeaders() },
       body: JSON.stringify({ decided_by: "admin-cockpit", note }),
       cache: "no-store",
     });

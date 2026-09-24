@@ -42,6 +42,8 @@ services:
     build: ./admin
     environment:
       NEXT_PUBLIC_API_BASE: http://control-plane:8000
+      # Same key as the control plane's .env; the admin server sends it as a bearer.
+      ADMIN_API_KEY: ${ADMIN_API_KEY:-}
     ports:
       - "127.0.0.1:3001:3000"
     depends_on:

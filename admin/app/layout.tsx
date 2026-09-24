@@ -68,6 +68,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <a href="/approvals" style={{ color: "#9fc4ff" }}>
             Approvals
           </a>
+          <a href="/revenue" style={{ color: "#9fc4ff" }}>
+            Revenue
+          </a>
           <a href="/audit" style={{ color: "#9fc4ff" }}>
             Audit
           </a>
@@ -91,7 +94,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             </button>
           </form>
         </nav>
-        <main style={{ maxWidth: 1080, margin: "0 auto", padding: 24 }}>{children}</main>
+        <main id="main-content" tabIndex={-1} style={{ maxWidth: 1080, margin: "0 auto", padding: 24 }}>
+          {children}
+        </main>
         <footer aria-label="Copyright notice" style={{ maxWidth: 1080, margin: "0 auto", padding: "0 24px 24px", color: "#aab6d3" }}>
           <small>© {new Date().getFullYear()} ClearGlass Inc. All rights reserved.</small>
         </footer>

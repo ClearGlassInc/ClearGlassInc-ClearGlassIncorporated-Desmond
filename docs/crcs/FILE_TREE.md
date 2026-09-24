@@ -6,13 +6,16 @@ Only CRCS-relevant paths are shown. Markers:
 - **CHANGE Pn** — existing file modified in phase *n*
 - **NEW Pn** — created in phase *n*
 - **DEFERRED** — not created until the stated trigger
+- **DONE P0** — Phase 0 change made; evidence in
+  [IMPLEMENTATION_SEQUENCE.md](IMPLEMENTATION_SEQUENCE.md#phase-0-status)
 
 Phase numbers match [IMPLEMENTATION_SEQUENCE.md](IMPLEMENTATION_SEQUENCE.md).
 
 ```text
 .
 ├── index.html                                   CHANGE P0  lead form target: owner decision on the form relay (S6)
-├── revenue-command.html                         CHANGE P0  remove cockpit and admin-key field; opaque lead reference
+├── revenue-command.html                         DONE P0    cockpit and admin-key field removed; opaque reference; session-scoped
+│                                                           UTM; form hidden until an API host is set; honeypot hidden from AT
 │                                                CHANGE P1  becomes a redirect to /start/
 ├── start/
 │   └── index.html                               NEW P1     multi-step qualification, error summary, consent
@@ -44,12 +47,17 @@ Phase numbers match [IMPLEMENTATION_SEQUENCE.md](IMPLEMENTATION_SEQUENCE.md).
 ├── sw.js                                        CHANGE P1  bump VERSION when pages change
 │
 ├── control-plane/
-│   ├── .env.example                             CHANGE P1  every new setting, with safe defaults
+│   ├── .env.example                             DONE P0    CRCS_AUDIT_HASH_KEY
+│   │                                            CHANGE P1  every new setting, with safe defaults
 │   ├── app/
-│   │   ├── config.py                            CHANGE P1  new settings (test_settings_references.py enforces)
-│   │   ├── models.py                            CHANGE P1  Phase 1 tables (DATA_MODEL.md §4)
-│   │   ├── schemas.py                           CHANGE P1  tightened enums, opaque refs, allow-listed analytics
-│   │   ├── revenue_service.py                   CHANGE P0  honeypot silent-accept, hashed audit target
+│   │   ├── main.py                              DONE P0    /metrics and /events behind require_admin
+│   │   ├── config.py                            DONE P0    crcs_audit_hash_key
+│   │   │                                        CHANGE P1  new settings (test_settings_references.py enforces)
+│   │   ├── models.py                            DONE P0    leads.public_ref
+│   │   │                                        CHANGE P1  Phase 1 tables (DATA_MODEL.md §4)
+│   │   ├── schemas.py                           DONE P0    RevenueLeadReceipt; checkout takes `reference`
+│   │   │                                        CHANGE P1  tightened enums, allow-listed analytics
+│   │   ├── revenue_service.py                   DONE P0    is_spam_trap
 │   │   │                                        CHANGE P1  consent rows, free-text split, delivery tasks
 │   │   ├── rbac.py                              NEW P1     users, scrypt, TOTP (stdlib), sessions, require_role
 │   │   ├── consent.py                           NEW P1     signed unsubscribe and withdrawal tokens
@@ -71,7 +79,8 @@ Phase numbers match [IMPLEMENTATION_SEQUENCE.md](IMPLEMENTATION_SEQUENCE.md).
 │   │   │   ├── bot_turnstile.py                 NEW P1     verifier present, disabled by default
 │   │   │   └── storage_links.py                 NEW P1     link references only; uploads DEFERRED
 │   │   ├── routers/
-│   │   │   ├── revenue.py                       CHANGE P0  opaque reference in responses
+│   │   │   ├── revenue.py                       DONE P0    receipt with opaque reference; silent honeypot; keyed-hash
+│   │   │   │                                               audit target; cockpit no longer 500s on SQLite
 │   │   │   │                                    CHANGE P1  require_role, offers, consent, checkout-status
 │   │   │   ├── auth.py                          NEW P1     login, TOTP verify, logout, session list
 │   │   │   ├── calendar_webhook.py              NEW P1     /webhooks/calendar
@@ -80,7 +89,8 @@ Phase numbers match [IMPLEMENTATION_SEQUENCE.md](IMPLEMENTATION_SEQUENCE.md).
 │   │       ├── pricebook.json                   CHANGE P1  Stripe Price id for the chosen offer (owner creates it)
 │   │       └── offers.seed.json                 NEW P1     four offers; prices marked PLACEHOLDER until Q3
 │   ├── migrations/
-│   │   └── 008_crcs_phase1.sql                  NEW P1     DATA_MODEL.md §4
+│   │   ├── 008_lead_public_ref.sql              DONE P0    leads.public_ref UUID, backfilled, unique
+│   │   └── 009_crcs_phase1.sql                  NEW P1     DATA_MODEL.md §4
 │   └── tests/
 │       ├── test_rbac.py                         NEW P1     role matrix, lockout, MFA, session expiry
 │       ├── test_consent.py                      NEW P1     grant, withdraw, unsubscribe token tamper
@@ -92,20 +102,32 @@ Phase numbers match [IMPLEMENTATION_SEQUENCE.md](IMPLEMENTATION_SEQUENCE.md).
 │       │                                                   and unverified events never provision a service order
 │       ├── test_crm_failure.py                  NEW P1     adapter failure keeps the lead and raises a notification
 │       ├── test_migration_parity.py             NEW P1     models match numbered migrations
-│       ├── test_revenue_routes.py               CHANGE P0  honeypot, opaque reference, hashed audit target
+│       ├── test_revenue_routes.py               DONE P0    receipt shape, silent honeypot, reference-only checkout,
+│       │                                                   no email in the ledger, admin-only ledger and metrics
 │       └── test_route_auth_coverage.py          CHANGE P1  recognise require_role
 │
 ├── admin/
-│   ├── app/api/login/route.ts                   CHANGE P0  same-origin redirect only, constant-time compare, lockout
+│   ├── app/api/login/route.ts                   DONE P0    same-origin redirect only, constant-time compare, lockout,
+│   │                                                       303, fails closed in production with no token
 │   │                                            CHANGE P1  delegates to control-plane /auth (per-user, TOTP)
-│   ├── app/revenue/page.tsx                     NEW P1     cockpit: warning banner, due actions, definitions
+│   ├── app/api/auth/login/route.ts              DONE P0    same guard; its own `next` check was bypassable
+│   ├── app/login/page.tsx                       DONE P0    reads the async searchParams; accessible error message
+│   ├── middleware.ts                            DONE P0    default deny via lib/route-policy.ts
+│   ├── lib/login-guard.ts                       DONE P0    safeNextPath, constantTimeEqual, LoginThrottle
+│   ├── lib/route-policy.ts                      DONE P0    which paths are public
+│   ├── lib/api.ts                               DONE P0    server-only; sends ADMIN_API_KEY to the control plane
+│   ├── tests/login-guard.test.mjs               DONE P0    node --test; run by tests/test_admin_login_guard.py
+│   ├── app/revenue/page.tsx                     DONE P0    read-only cockpit: warning, figures with definitions,
+│   │                                                       health, leads, control log
+│   │                                            CHANGE P1  due-action focus, links to lead records
 │   ├── app/revenue/leads/page.tsx               NEW P1     pipeline list, filters, stage change
 │   ├── app/revenue/leads/[ref]/page.tsx         NEW P1     lead record, timeline, consent, free text (audited)
 │   ├── app/revenue/control-log/page.tsx         NEW P1     Revenue Control Log
 │   ├── app/revenue/delivery/page.tsx            NEW P1     delivery workspace
-│   ├── app/revenue/drafts/page.tsx              NEW P1     draft queue; send requires approval
-│   └── lib/crcs-api.ts                          NEW P1     server-only client; credential never sent to the browser
+│   └── app/revenue/drafts/page.tsx              NEW P1     draft queue; send requires approval
 │
+├── tests/test_crcs_public_page.py              DONE P0    no admin credential on any public page; storage; fallback
+├── tests/test_admin_login_guard.py              DONE P0    runs the admin Node suite inside the root pytest gate
 ├── e2e/crcs/                                    NEW P1     Playwright: lead persisted, checkout created, webhook
 │                                                           idempotent, role access, consent withdrawal, CRM failure,
 │                                                           keyboard-only qualification, error states

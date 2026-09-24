@@ -1,6 +1,10 @@
 """ClearGlass Revenue Command System — public qualification + authenticated revenue cockpit."""
 from __future__ import annotations
 
+import hashlib
+import hmac
+import logging
+import uuid
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
@@ -13,13 +17,14 @@ from ..audit import log_event
 from ..config import get_settings
 from ..db import get_session
 from ..models import Event, Lead, LeadActivity, Order, RevenueControlLog, ServiceOrder
-from ..revenue_service import STAGES, confirm_delivery, create_lead
+from ..revenue_service import STAGES, confirm_delivery, create_lead, is_spam_trap
 from ..schemas import (
     RevenueActivityOut,
     RevenueCheckoutRequest,
     RevenueCockpitOut,
     RevenueControlLogRequest,
     RevenueLeadOut,
+    RevenueLeadReceipt,
     RevenueLeadRequest,
     RevenueLeadStageUpdate,
     RevenueOfferOut,
@@ -27,6 +32,7 @@ from ..schemas import (
 )
 from ..security import rate_limit, require_admin
 
+logger = logging.getLogger("clearglass.revenue")
 router = APIRouter(prefix="/revenue", tags=["revenue"])
 _lead_throttle = rate_limit("revenue_lead", "revenue_lead_rate_limit_per_minute")
 _checkout_throttle = rate_limit("revenue_checkout", "rate_limit_checkout_per_minute")
@@ -80,12 +86,43 @@ def public_offer() -> RevenueOfferOut:
     )
 
 
-@router.post("/leads", response_model=RevenueLeadOut, dependencies=[Depends(_lead_throttle)])
-def submit_lead(req: RevenueLeadRequest, session: Session = Depends(get_session)) -> Lead:
-    try:
-        return create_lead(session, req.model_dump())
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
+def _receipt(reference: uuid.UUID) -> RevenueLeadReceipt:
+    # Every submitter is offered the same next step. The fit score orders the
+    # owner's review queue; it never decides who may book a call.
+    booking_url = get_settings().crcs_calendar_booking_url.strip() or None
+    return RevenueLeadReceipt(
+        reference=reference,
+        next_step="book_discovery_call" if booking_url else "owner_review",
+        booking_url=booking_url,
+    )
+
+
+@router.post(
+    "/leads",
+    response_model=RevenueLeadReceipt,
+    status_code=201,
+    dependencies=[Depends(_lead_throttle)],
+)
+def submit_lead(req: RevenueLeadRequest, session: Session = Depends(get_session)) -> RevenueLeadReceipt:
+    data = req.model_dump()
+    if is_spam_trap(data):
+        # Same status and shape as a real receipt, and nothing stored. A bot that
+        # can see it was caught learns which field to leave empty.
+        logger.info("crcs honeypot submission discarded")
+        return _receipt(uuid.uuid4())
+    lead = create_lead(session, data)
+    return _receipt(lead.public_ref)
+
+
+def _buyer_ref(email: str) -> str:
+    """A stable pseudonym for a buyer with no lead.
+
+    The audit ledger is kept for years and cannot be edited, so it holds IDs,
+    never email addresses (docs/crcs/DATA_MODEL.md rule 1). A keyed hash still
+    lets the owner see repeated attempts by the same buyer.
+    """
+    key = (get_settings().crcs_audit_hash_key or "clearglass-dev-audit-key").encode()
+    return "buyer:" + hmac.new(key, email.encode(), hashlib.sha256).hexdigest()[:24]
 
 
 @router.post("/checkout", dependencies=[Depends(_checkout_throttle)])
@@ -103,19 +140,22 @@ def start_checkout(req: RevenueCheckoutRequest, session: Session = Depends(get_s
         )
 
     email = req.customer_email.strip().lower()
-    lead = session.get(Lead, req.lead_id) if req.lead_id else None
-    # One answer for "no such lead" and "not your lead": lead ids are
-    # sequential, so distinct answers would let anyone count leads or confirm
-    # that a given address submitted the qualification form.
-    if req.lead_id and (lead is None or lead.email != email):
+    lead = (
+        session.scalar(select(Lead).where(Lead.public_ref == req.reference))
+        if req.reference else None
+    )
+    # One answer for "no such lead" and "not your lead", so a reference cannot
+    # be used to confirm that a given address submitted the qualification form.
+    if req.reference and (lead is None or lead.email != email):
         raise HTTPException(status_code=403, detail="checkout email does not match lead")
+    audit_target = str(lead.id) if lead else _buyer_ref(email)
 
     if settings.crcs_rapid_diagnostic_payment_link.strip():
         log_event(
             session,
             actor="revenue_system",
             action="checkout_started",
-            target=str(lead.id) if lead else email,
+            target=audit_target,
             payload={"sku": offer.sku, "mode": "payment_link"},
             result="executed",
         )
@@ -132,12 +172,24 @@ def start_checkout(req: RevenueCheckoutRequest, session: Session = Depends(get_s
         line_items,
         customer_email=email,
         checkout_mode=checkout_mode,
-        client_reference_id=f"crcs-{lead.id if lead else 'public'}-{email}",
+        # No email here: Stripe already has it as customer_email, and this id
+        # is echoed into dashboards and exports.
+        client_reference_id=f"crcs-{lead.public_ref if lead else 'public'}",
         extra_metadata={
             "crcs_sku": offer.sku,
             "crcs_lead_id": str(lead.id) if lead else "",
             "crcs_revenue_system": "v1",
         },
+    )
+    # The payment-link branch logged this and the server-checkout branch did
+    # not, so checkout_started undercounted whenever Stripe Checkout was used.
+    log_event(
+        session,
+        actor="revenue_system",
+        action="checkout_started",
+        target=audit_target,
+        payload={"sku": offer.sku, "mode": result["mode"]},
+        result="executed",
     )
     return {
         "status": "ready",
@@ -149,6 +201,15 @@ def start_checkout(req: RevenueCheckoutRequest, session: Session = Depends(get_s
         "amount_cad": result["amount_total"] / 100,
         "currency": result["currency"],
     }
+
+
+def _utc(dt: datetime) -> datetime:
+    """SQLite hands back naive datetimes; Postgres TIMESTAMPTZ hands back aware ones.
+
+    Comparing a naive value with ``now`` raised TypeError, so the cockpit
+    answered 500 on SQLite as soon as one lead existed.
+    """
+    return dt if dt.tzinfo else dt.replace(tzinfo=UTC)
 
 
 def _latest_stripe_event(session: Session) -> Event | None:
@@ -225,7 +286,7 @@ def cockpit(session: Session = Depends(get_session)) -> RevenueCockpitOut:
     close_rate = won / (won + lost) if won + lost else None
     due_actions = sum(
         1 for lead in leads
-        if lead.next_action_at and lead.next_action_at <= now and lead.stage not in {"LOST", "CLOSED"}
+        if lead.next_action_at and _utc(lead.next_action_at) <= now and lead.stage not in {"LOST", "CLOSED"}
     )
     today = now.date().isoformat()
     today_logs = list(session.scalars(
@@ -243,7 +304,7 @@ def cockpit(session: Session = Depends(get_session)) -> RevenueCockpitOut:
         mrr_cad=float(mrr),
         gross_margin_cad=float(gross_margin) if gross_margin is not None else None,
         qualified_leads=sum(1 for lead in leads if lead.stage == "QUALIFIED"),
-        new_leads=sum(1 for lead in leads if lead.created_at >= week),
+        new_leads=sum(1 for lead in leads if _utc(lead.created_at) >= week),
         meetings_booked=sum(1 for a in activities if a.activity_type == "meeting_booked"),
         proposals=sum(
             1 for lead in leads
