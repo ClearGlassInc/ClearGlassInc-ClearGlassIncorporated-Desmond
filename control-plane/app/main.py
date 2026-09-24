@@ -10,6 +10,7 @@ from . import __version__
 from .config import get_settings
 from .routers import (
     approvals,
+    commerce,
     etsy,
     events,
     fulfillment,
@@ -153,6 +154,10 @@ def create_app() -> FastAPI:
     # money) is admin-gated and queued for approval inside the router.
     app.include_router(paypal.router)
     app.include_router(revenue.router)
+    # ClearGlass orders mix surfaces too: opening an order, starting checkout and
+    # reading its public status are customer flows (server-priced, rate limited);
+    # listing, cancelling and reconciliation are admin-gated per endpoint.
+    app.include_router(commerce.router)
     app.include_router(subscriptions.router)  # durable subscription lifecycle + billing portal
     app.include_router(sidestore.router)  # customer cart: public, rate limited, server-priced
     app.include_router(orders.router, dependencies=admin)

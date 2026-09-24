@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from .. import attribution, payments, pricebook
+from .. import attribution, order_states, payments, pricebook
 from ..audit import log_event
 from ..db import get_session
 from ..fulfillment import shipping_from_stripe_session
@@ -208,6 +208,10 @@ async def stripe_webhook(request: Request, session: Session = Depends(get_sessio
             or obj.get("customer_email")
         )
         metadata = obj.get("metadata") or {}
+        # Written server-side by commerce_orders.start_checkout; re-validated,
+        # because Stripe echoes metadata back verbatim.
+        order_ref = str(metadata.get("cg_order_ref") or "").strip()
+        order_ref = order_ref if order_states.is_order_ref(order_ref) else None
         order = _record_order(
             session,
             # Stripe redelivers webhooks; key the order on the checkout-session id so a
@@ -224,7 +228,13 @@ async def stripe_webhook(request: Request, session: Session = Depends(get_sessio
             # What a later charge.refunded or charge.dispute.* names.
             payment_intent=obj.get("payment_intent"),
             attribution=attribution.from_metadata(metadata),
+            order_ref=order_ref,
         )
+        if order is not None and order_ref and status == "paid" and check["verified"] and environment == "live":
+            # The ClearGlass order already opened its delivery work through the
+            # ledger (commerce_orders); this only records who paid. Live only,
+            # as for CRCS below: a test buyer is not a customer.
+            upsert_customer_for_order(session, order, customer_email)
         # CRCS starts fulfillment only from a verified live payment. A test event can
         # exercise the webhook and ledger without creating a customer delivery commitment.
         # Only CRCS-originated checkouts may enter the CRCS service-delivery queue.
@@ -232,6 +242,7 @@ async def stripe_webhook(request: Request, session: Session = Depends(get_sessio
         # an unrelated CRCS delivery record.
         if (
             order is not None
+            and not order_ref
             and status == "paid"
             and check["verified"]
             and environment == "live"
@@ -356,6 +367,7 @@ def _record_order(
     environment: str = "unknown",
     payment_intent: str | None = None,
     attribution: dict[str, str] | None = None,
+    order_ref: str | None = None,
 ) -> Order | None:
     """Book a Stripe payment through the shared order ledger.
 
@@ -378,6 +390,7 @@ def _record_order(
         environment=environment,
         payment_intent=payment_intent,
         attribution=attribution,
+        order_ref=order_ref,
         shipping=(
             shipping_from_stripe_session(shipping_source)
             if shipping_source is not None
@@ -414,17 +427,23 @@ def _upsert_payout(session: Session, obj: dict, *, tenant_id: str | None) -> Pay
     return existing
 
 
-@router.get("/payments/payout-account", response_model=PayoutBankInfoOut)
+@router.get(
+    "/payments/payout-account",
+    response_model=PayoutBankInfoOut,
+    dependencies=[Depends(require_admin)],
+)
 def payout_account() -> PayoutBankInfoOut:
     """Return masked bank/payout routing metadata for earned revenue settlement.
 
     This endpoint never accepts or returns raw bank account/routing numbers. Stripe remains the
     system of record for the actual external bank account and performs the money movement.
+    Admin-only: even masked, the bank name, last four digits, routing hint and Stripe
+    external-account token are for the operator, and this route was open to anyone.
     """
     return PayoutBankInfoOut(**payments.payout_bank_info())
 
 
-@router.get("/payouts", response_model=list[PayoutOut])
+@router.get("/payouts", response_model=list[PayoutOut], dependencies=[Depends(require_admin)])
 def list_payouts(
     tenant_id: str | None = None,
     limit: int = 100,
@@ -433,6 +452,8 @@ def list_payouts(
     """Return recorded Stripe payouts, newest first. Optionally filter by ``tenant_id``.
 
     Read-only: payouts are written solely by the verified Stripe webhook, never via this API.
+    Admin-only: every payout amount, status and arrival date is the business's settlement
+    record, and like ``/metrics`` and ``/events`` it was readable without a credential.
     """
     stmt = select(Payout).order_by(Payout.created_at.desc()).limit(max(1, min(limit, 500)))
     if tenant_id:

@@ -114,6 +114,19 @@ EXEMPT: dict[str, str] = {
         "with 409 until the owner enables CRCS_RAPID_DIAGNOSTIC_ENABLED. Rate "
         "limited per IP."
     ),
+    "/commerce/orders": (
+        "Opens a ClearGlass order for one offer. The request names a SKU and a "
+        "quantity; the amount is resolved from the price book, and a lead link "
+        "needs that lead's own email. Writes the order row and an audit event: no "
+        "payment, capture, refund or outbound message. Rate limited per IP."
+    ),
+    "/commerce/orders/{order_ref}/checkout": (
+        "Starts Stripe or PayPal checkout for an existing ClearGlass order, at the "
+        "price the order was created with, re-checked against the price book. "
+        "Refused for paid, in-flight, canceled or flagged orders, so it cannot open "
+        "a second payment. Moves no money: the buyer pays on the processor's page "
+        "and only a signed webhook marks the order paid. Rate limited per IP."
+    ),
 }
 
 # Stand-ins for path parameters. The value is irrelevant — an unauthenticated

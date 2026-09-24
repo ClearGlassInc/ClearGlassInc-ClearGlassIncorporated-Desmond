@@ -75,3 +75,66 @@ export function newAttemptId(): string {
   if (globalCrypto?.randomUUID) return `cg_${globalCrypto.randomUUID()}`;
   return `cg_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 }
+
+// ── ClearGlass orders (control-plane /commerce/*) ──────────────────────────────
+// One order, priced by the control plane, payable through Stripe or PayPal. The
+// buyer's choice of processor never changes the price, and the order is only
+// ever "verified" after a signed Stripe or PayPal webhook, never on a redirect.
+
+export type PaymentProvider = "stripe" | "paypal";
+
+export interface ClearGlassOrder {
+  order_ref: string;
+  sku: string;
+  offer: string;
+  quantity: number;
+  amount: number;
+  currency: string;
+  checkout_mode: string;
+  payment_state: string;
+  providers: PaymentProvider[];
+}
+
+export interface OrderCheckout {
+  order_ref: string;
+  provider: PaymentProvider;
+  url: string;
+  mode: string; // "live" | "mock"
+  amount: number;
+  currency: string;
+}
+
+export interface OrderStatus {
+  order_ref: string;
+  offer: string;
+  amount: number;
+  currency: string;
+  provider: PaymentProvider | null;
+  payment_state: string;
+  payment_verified: boolean;
+  fulfillment_state: string;
+  state: string;
+}
+
+export async function createOrder(sku: string, quantity = 1): Promise<ClearGlassOrder> {
+  return api<ClearGlassOrder>("/commerce/orders", {
+    method: "POST",
+    body: JSON.stringify({ sku, quantity }),
+  });
+}
+
+export async function startOrderCheckout(
+  orderRef: string,
+  provider: PaymentProvider,
+  customerEmail?: string,
+): Promise<OrderCheckout> {
+  return api<OrderCheckout>(`/commerce/orders/${encodeURIComponent(orderRef)}/checkout`, {
+    method: "POST",
+    body: JSON.stringify({ provider, customer_email: customerEmail || null }),
+  });
+}
+
+export async function getOrderStatus(orderRef: string): Promise<OrderStatus> {
+  return api<OrderStatus>(`/commerce/orders/${encodeURIComponent(orderRef)}/status`);
+}
+

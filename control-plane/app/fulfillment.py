@@ -21,16 +21,16 @@ from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from . import printful
 from .audit import log_event
 from .config import Settings, get_settings
 from .governance import score_action
-from .models import Approval, Order, Shipment
+from .models import Order, Shipment
 from .order_ledger import apply_shipping
-from .service import run_governed_action
+from .service import claim_approval, run_governed_action
 
 #: Terminal-ish states that a re-run must not disturb.
 SETTLED_STATUSES = frozenset({"confirmed", "shipped"})
@@ -240,44 +240,6 @@ def _as_decimal(value: Any) -> Decimal | None:
         return Decimal(str(value))
     except (ValueError, ArithmeticError):
         return None
-
-
-def claim_approval(session: Session, *, action: str, target: str) -> Approval | None:
-    """Atomically claim one approved approval for this action and target.
-
-    The gate only works if an approval is spent exactly once. The claim is a
-    conditional ``UPDATE ... WHERE status = 'approved'`` whose row count is the
-    proof: two concurrent confirmations race on the same row and exactly one
-    wins, so a single human decision cannot be replayed into two supplier
-    charges. An approval is bound to its target, so approving one shipment can
-    never confirm a different one.
-    """
-    candidate = session.scalar(
-        select(Approval)
-        .where(Approval.action == action, Approval.target == target, Approval.status == "approved")
-        .order_by(Approval.id)
-        .limit(1)
-    )
-    if candidate is None:
-        return None
-
-    claimed = session.execute(
-        update(Approval)
-        .where(Approval.id == candidate.id, Approval.status == "approved")
-        .values(status="executed")
-    )
-    if claimed.rowcount != 1:
-        return None  # another worker claimed it first
-
-    # Commit the claim *before* the caller spends money. A flush alone lives
-    # inside the request transaction, so a crash between the supplier accepting
-    # the confirmation and the request committing would roll the row back to
-    # `approved` and let the same decision authorise a second charge.
-    # Committing here trades that for the opposite failure: a claim that is
-    # spent without the call having demonstrably happened, which needs a fresh
-    # human decision rather than silently paying twice.
-    session.commit()
-    return candidate
 
 
 def confirm_shipment(
