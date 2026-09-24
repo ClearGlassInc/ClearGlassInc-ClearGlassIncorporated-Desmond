@@ -228,7 +228,25 @@
          read as one column. Nothing is hidden or resized. */
       "body.cg-dock-mounted.cg-security-dock-mounted #cg-security-stack{right:max(18px,env(safe-area-inset-right))!important;bottom:calc(max(18px,env(safe-area-inset-bottom)) + 64px)!important}",
       "body.cg-dock-mounted.cg-security-dock-mounted{padding-bottom:calc(140px + env(safe-area-inset-bottom))}",
-      "@media(max-width:640px){body.cg-dock-mounted.cg-security-dock-mounted #cg-security-stack{right:max(12px,env(safe-area-inset-right))!important;bottom:calc(max(12px,env(safe-area-inset-bottom)) + 56px)!important}body.cg-dock-mounted.cg-security-dock-mounted{padding-bottom:calc(124px + env(safe-area-inset-bottom))}}"
+      "@media(max-width:640px){body.cg-dock-mounted.cg-security-dock-mounted #cg-security-stack{right:max(12px,env(safe-area-inset-right))!important;bottom:calc(max(12px,env(safe-area-inset-bottom)) + 56px)!important}body.cg-dock-mounted.cg-security-dock-mounted{padding-bottom:calc(124px + env(safe-area-inset-bottom))}}",
+      /* ── ClearGlass material: see-through, not frosted ──
+         One material for the whole corner column (Stealth Glass frame, BUY /
+         BOOK, coin). Light blur + saturation so the page reads through it,
+         a refracted hairline edge, and a specular highlight driven by
+         --cg-lx/--cg-ly: pointer-tracked on hover devices, a slow ambient
+         sweep on touch. Registered with @property so the sweep interpolates. */
+      "@property --cg-lx{syntax:'<percentage>';inherits:true;initial-value:28%}",
+      "@property --cg-ly{syntax:'<percentage>';inherits:true;initial-value:0%}",
+      "@keyframes cgGlassSweep{0%,100%{--cg-lx:12%;--cg-ly:0%}50%{--cg-lx:88%;--cg-ly:100%}}",
+      "#cg-sales-button{background:radial-gradient(120% 160% at var(--cg-lx) var(--cg-ly),rgba(255,255,255,.20),transparent 46%),linear-gradient(135deg,rgba(88,31,41,.26),rgba(32,22,23,.16));-webkit-backdrop-filter:blur(9px) saturate(185%) brightness(1.06);backdrop-filter:blur(9px) saturate(185%) brightness(1.06);text-shadow:0 1px 2px rgba(0,0,0,.65);box-shadow:0 8px 26px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.30),inset 0 -1px 0 rgba(0,0,0,.18)}",
+      "#cg-logo-badge::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(70% 70% at var(--cg-lx) var(--cg-ly),rgba(255,255,255,.34),transparent 60%);mix-blend-mode:screen}",
+      "body.cg-dock-mounted.cg-security-dock-mounted #cg-security-stack{border-color:rgba(255,255,255,.20)!important;background:radial-gradient(90% 140% at var(--cg-lx) var(--cg-ly),rgba(255,255,255,.16),transparent 52%),linear-gradient(145deg,rgba(58,24,26,.20),rgba(21,13,14,.12))!important;-webkit-backdrop-filter:blur(10px) saturate(190%) brightness(1.05)!important;backdrop-filter:blur(10px) saturate(190%) brightness(1.05)!important}",
+      "body.cg-dock-mounted.cg-security-dock-mounted #cg-security-stack::before{background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,.04) 38%,rgba(238,99,101,.10) 64%,rgba(120,224,200,.30));padding:1px;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;opacity:.9;mix-blend-mode:normal}",
+      "body.cg-dock-mounted.cg-security-dock-mounted #cg-security-stack #cg-stealth-btn:not(.is-on){background:radial-gradient(90% 180% at var(--cg-lx) var(--cg-ly),rgba(255,255,255,.18),transparent 50%),linear-gradient(155deg,rgba(88,42,45,.24),rgba(28,19,20,.14))!important;-webkit-backdrop-filter:blur(6px) saturate(175%)!important;backdrop-filter:blur(6px) saturate(175%)!important;text-shadow:0 1px 2px rgba(0,0,0,.7)}",
+      "@media (hover:none) and (prefers-reduced-motion:no-preference){#cg-dock,body.cg-dock-mounted.cg-security-dock-mounted #cg-security-stack{animation:cgGlassSweep 9s ease-in-out infinite}}",
+      /* Accessibility + capability fallbacks: opaque where transparency is unwanted or unsupported. */
+      "@media (prefers-reduced-transparency:reduce){#cg-sales-button{background:linear-gradient(135deg,rgba(32,22,23,.96),rgba(88,31,41,.96))}body.cg-dock-mounted.cg-security-dock-mounted #cg-security-stack,body.cg-dock-mounted.cg-security-dock-mounted #cg-security-stack #cg-stealth-btn:not(.is-on){background:linear-gradient(145deg,rgba(43,24,26,.96),rgba(21,13,14,.96))!important}#cg-logo-badge::after{display:none}}",
+      "@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){#cg-sales-button{background:linear-gradient(135deg,rgba(32,22,23,.96),rgba(88,31,41,.96))}body.cg-dock-mounted.cg-security-dock-mounted #cg-security-stack,body.cg-dock-mounted.cg-security-dock-mounted #cg-security-stack #cg-stealth-btn:not(.is-on){background:linear-gradient(145deg,rgba(43,24,26,.96),rgba(21,13,14,.96))!important}}"
     ].join("");
 
     var style = document.createElement("style");
@@ -256,7 +274,38 @@
 
     a.appendChild(img);
     dock.appendChild(a);
+    trackGlassLight(dock);
     loadEditorialVisuals();
+  }
+
+  // Specular highlight follows the pointer across each glass surface.
+  // Hover-capable pointers only; touch gets the CSS ambient sweep instead.
+  function trackGlassLight(dock) {
+    if (!window.matchMedia) return;
+    if (!matchMedia("(hover:hover)").matches) return;
+    if (matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+    var raf = 0, px = 0, py = 0;
+    function place(el) {
+      if (!el) return;
+      var r = el.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      var x = Math.max(-50, Math.min(150, ((px - r.left) / r.width) * 100));
+      var y = Math.max(-50, Math.min(150, ((py - r.top) / r.height) * 100));
+      el.style.setProperty("--cg-lx", x.toFixed(1) + "%");
+      el.style.setProperty("--cg-ly", y.toFixed(1) + "%");
+    }
+    function flush() {
+      raf = 0;
+      place(dock.querySelector("#cg-sales-button"));
+      place(dock.querySelector("#cg-logo-badge"));
+      place(document.getElementById("cg-security-stack"));
+    }
+    document.addEventListener("pointermove", function (event) {
+      if (event.pointerType && event.pointerType !== "mouse") return;
+      px = event.clientX;
+      py = event.clientY;
+      if (!raf) raf = requestAnimationFrame(flush);
+    }, { passive: true });
   }
 
   if (document.readyState === "loading") {
