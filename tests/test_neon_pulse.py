@@ -57,26 +57,75 @@ def test_motion_and_accessibility_safety_contracts() -> None:
         assert contract in css
     assert 'setAttribute("aria-hidden", "true")' in script
     # Discovery never overrides page-owned pseudo-elements or positioning.
-    assert 'freePseudo(el, "::after")' in script
-    assert 'style.position === "static"' in script
+    assert 'free(el, "::after")' in script
+    assert 'free(el, "::before")' in script
+    assert 'style.position !== "static"' in script
     assert "data-no-neon" in script
     assert "IntersectionObserver" in script
-    assert "MAX_ENHANCED" in script
+    assert "MAX_FRAMES" in script and "MAX_BEACONS" in script
+    # Status dots that already animate keep their own animation.
+    assert 'style.animationName !== "none"' in script
     # Decoration only: no event handling that could swallow clicks.
     assert "preventDefault" not in script
     assert "stopPropagation" not in script
 
 
+# Pseudo-elements this layer may style without discovery having claimed them:
+# the future-glass ring (same shared-layer family) and the opt-in authored
+# indicators, whose pseudo-element exists only because an author opted in.
+UNCLAIMED_PSEUDO_ALLOWED = (
+    ".future-glass-control.future-glass-layers",
+    ".cg-np-status",
+    ".cg-np-mission-ready",
+)
+
+
+def _selectors(css: str) -> list[str]:
+    css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+    css = re.sub(r"@keyframes[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}", "", css)
+    out = []
+    for prelude in re.findall(r"([^{}]+)\{", css):
+        prelude = prelude.strip()
+        if prelude.startswith("@") or prelude.startswith(":root"):
+            continue
+        out.extend(part.strip() for part in prelude.split(","))
+    return out
+
+
+def test_pseudo_elements_are_only_styled_once_claimed() -> None:
+    """A page's own ::before/::after (and their animations) are never touched."""
+    for selector in _selectors(CSS_PATH.read_text(encoding="utf-8")):
+        if selector.startswith(UNCLAIMED_PSEUDO_ALLOWED):
+            continue
+        if selector.endswith("::after"):
+            assert ".cg-np-own-a" in selector, selector
+        if selector.endswith("::before"):
+            assert ".cg-np-own-b" in selector, selector
+
+
+def test_classes_do_not_collide_with_existing_site_layers() -> None:
+    """ui.css ships .cg-neon-card and clearglass-nexus.html ships .cg-status."""
+    css = CSS_PATH.read_text(encoding="utf-8")
+    script = JS_PATH.read_text(encoding="utf-8")
+    classes = set(re.findall(r"\.(-?[_a-zA-Z][\w-]*)", re.sub(r"/\*.*?\*/", "", css, flags=re.S)))
+    own = {c for c in classes if not c.startswith("future-glass")}
+    assert own and all(c.startswith("cg-np-") for c in own), sorted(own)
+    for foreign in ("cg-neon-card", "cg-status", "cg-sentinel-module", "cg-mission-ready"):
+        assert f'"{foreign}"' not in script
+
+
 def test_status_and_opt_in_classes_are_available() -> None:
     css = CSS_PATH.read_text(encoding="utf-8")
     for selector in (
-        ".cg-status--online",
-        ".cg-status--monitoring",
-        ".cg-status--alert",
-        ".cg-status--intel",
-        ".cg-neon-card",
-        ".cg-neon-panel",
-        ".cg-sentinel-module",
-        ".cg-mission-ready",
+        ".cg-np-status--online",
+        ".cg-np-status--monitoring",
+        ".cg-np-status--alert",
+        ".cg-np-status--intel",
+        ".cg-np-beacon--online",
+        ".cg-np-beacon--monitoring",
+        ".cg-np-beacon--alert",
+        ".cg-np-beacon--intel",
+        ".cg-np-mission-ready",
+        ".cg-np-scanbar",
     ):
         assert selector in css
