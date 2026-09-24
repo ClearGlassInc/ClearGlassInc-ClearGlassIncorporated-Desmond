@@ -657,6 +657,34 @@ body.cg-neon-ready :is(.card,.panel,.mini,.product-card,.tech-card,.connect-card
   body.cg-neon-ready :is(.card,.panel,.mini,.product-card,.tech-card,.connect-card,.value-card,.offer-card,.cg-glass-card,.tile,.module){animation:none!important;translate:none!important}
 }
 
+/* ── 9b. TOUCH & SMALL-SCREEN COMPOSITING BUDGET ──
+   iOS kills a tab's web process when it runs out of memory, reloads it, and
+   after the second kill shows "A problem repeatedly occurred on <url>". /blog/
+   crossed that line: ~240 elements carried backdrop-filter and ~115 animations
+   ran forever, several on fixed layers sitting *behind* the blurred cards, so
+   every frame re-blurred every card on screen. Phones and tablets get the
+   static version: same colours, no backdrop blur (the cards are 72-95% opaque,
+   so the blur barely showed), no ambient drift.
+
+   The backdrop rule lives in a cascade layer on purpose: an !important
+   declaration inside a layer beats every unlayered !important one whatever its
+   specificity, and glass.css, brand-system.css and the JS-injected styles all
+   set backdrop-filter with !important on selectors this file cannot outrank. */
+@layer cg-touch-budget {
+  @media (hover: none) and (pointer: coarse), (max-width: 768px) {
+    *, *::before, *::after {
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+    }
+  }
+}
+@media (hover: none) and (pointer: coarse), (max-width: 768px) {
+  .cg-fx-aurora, .cg-fx-orb, .cg-fx-neon-grid, .cg-fx-neon-thread { animation: none !important; will-change: auto !important; }
+  .cg-fx-scan { display: none !important; }
+  :is(.card,.panel,.prompt,.mini,.product-card,.tech-card,.connect-card,.value-card,.offer-card,.cg-glass-card,.glass,.tile,.module,.console,.terminal,.metric,.feature,.service-card,.case-card)::before{animation:none!important}
+  body.cg-neon-ready :is(.card,.panel,.mini,.product-card,.tech-card,.connect-card,.value-card,.offer-card,.cg-glass-card,.tile,.module){animation:none!important;translate:none!important}
+}
+
 
 /* ── 10. HOMEPAGE-MATCHED PAGE STRUCTURE — global unification layer ──
    Applies the homepage rhythm to legacy pages without removing their content. */
