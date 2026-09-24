@@ -137,7 +137,8 @@ These conditions each need a human and are visible in the `events` ledger:
 | Capture does not match the catalogue | `paypal_capture_catalog_mismatch` |
 | Webhook signature failure | `paypal_webhook_rejected`, or a 400 from the Stripe route |
 | Duplicate settlement event | `order_event_duplicate_skipped` |
-| Refund, dispute or reversal | `refund_settled`, `dispute_opened`, `capture_reversed` |
+| Refund, dispute or reversal | `refund_settled`, `dispute_opened`, `capture_reversed`, plus the order change: `order_refunded`, `order_partially_refunded`, `order_dispute_<status>` |
+| Refund or dispute matching no order | `refund_unmatched`, `dispute_unmatched` |
 | Payment failed | `payment_failed`, `subscription_payment_failed` |
 | Capture with no identifier | `paypal_capture_unidentified` |
 

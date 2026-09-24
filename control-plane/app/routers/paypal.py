@@ -17,14 +17,18 @@ produces a shippable order.
 """
 from __future__ import annotations
 
+from decimal import Decimal
+
 from fastapi import APIRouter, Depends, HTTPException, Request
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from .. import paypal, pricebook
 from ..audit import log_event
 from ..config import get_settings
 from ..db import get_session
-from ..order_ledger import record_payment_order
+from ..models import Order
+from ..order_ledger import record_dispute, record_payment_order, record_refund
 from ..schemas import ActionResult, CheckoutRequest, PayPalCaptureRequest, PayPalOrderOut
 from ..security import rate_limit, require_admin
 from ..service import run_governed_action
@@ -155,9 +159,10 @@ async def paypal_webhook(request: Request, session: Session = Depends(get_sessio
         return _settle_capture(session, etype, resource)
 
     if etype in paypal.ATTENTION_EVENTS:
-        # Refunds, reversals and disputes do not move this ledger — a refund runs
-        # through the approval gate — but they must be visible in the audit trail
-        # rather than only in the PayPal dashboard.
+        # Recorded in the audit trail as before. Refunds, reversals and disputes
+        # also change the order they concern, so money that left is not reported
+        # as revenue. Issuing a refund still runs through the approval gate; this
+        # only records one PayPal has already settled.
         log_event(
             session,
             actor="paypal",
@@ -172,6 +177,7 @@ async def paypal_webhook(request: Request, session: Session = Depends(get_sessio
             },
             result="flagged",
         )
+        _apply_adjustment(session, etype, resource)
         return {"received": True, "type": etype, "verified": True}
 
     log_event(
@@ -183,6 +189,44 @@ async def paypal_webhook(request: Request, session: Session = Depends(get_sessio
         result="ok",
     )
     return {"received": True, "type": etype, "verified": True}
+
+
+def _apply_adjustment(session: Session, etype: str, resource: dict) -> None:
+    """Apply a settled refund, reversal or dispute to the order it concerns."""
+    if etype in {"PAYMENT.CAPTURE.REFUNDED", "PAYMENT.CAPTURE.REVERSED"}:
+        capture_id = paypal.refunded_capture_id(resource)
+        total = paypal.refund_total(resource)
+        ref = paypal.capture_ref(capture_id) if capture_id else None
+        order = session.scalar(select(Order).where(Order.external_ref == ref)) if ref else None
+        if total is None:
+            log_event(
+                session, actor="paypal", action="refund_unreadable",
+                target=str(resource.get("id") or ""), payload={"event": etype}, result="flagged",
+            )
+            return
+        record_refund(
+            session,
+            actor="paypal",
+            external_ref=ref,
+            amount_refunded=total,
+            # A reversal pulls the money back; a refund is full once it covers the capture.
+            fully_refunded=etype == "PAYMENT.CAPTURE.REVERSED"
+            or (order is not None and total >= Decimal(order.total)),
+            verified=True,
+            event=etype,
+            reference=str(resource.get("id") or ""),
+        )
+    elif etype.startswith("CUSTOMER.DISPUTE."):
+        capture_id, dispute_status = paypal.dispute_state(resource)
+        record_dispute(
+            session,
+            actor="paypal",
+            external_ref=paypal.capture_ref(capture_id) if capture_id else None,
+            dispute_status=dispute_status,
+            verified=True,
+            event=etype,
+            reference=str(resource.get("dispute_id") or resource.get("id") or ""),
+        )
 
 
 def _settle_capture(session: Session, etype: str, resource: dict) -> dict:
@@ -220,13 +264,14 @@ def _settle_capture(session: Session, etype: str, resource: dict) -> dict:
         actor="paypal",
         # Key on the capture id, not the order id: one PayPal order can produce
         # several captures, and each is its own money movement.
-        external_ref=f"paypal_capture_{capture_id}",
+        external_ref=paypal.capture_ref(capture_id),
         total=amount,
         currency=currency,
         source="paypal_orders",
         status=status,
         verified=True,
         event=etype,
+        environment=paypal.environment(settings),
         shipping=(
             paypal.shipping_from_capture(resource) if settings.paypal_collect_shipping else None
         ),

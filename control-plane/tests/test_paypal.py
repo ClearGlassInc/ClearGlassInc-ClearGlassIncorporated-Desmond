@@ -574,3 +574,93 @@ def test_capturing_an_order_is_queued_for_approval_not_executed(client) -> None:
     body = response.json()
     assert body["requires_approval"] is True
     assert body["status"] == "queued_for_approval"
+
+
+# ── Refunds, reversals and disputes change the order, not just the audit log ──
+#
+# Before migration 009 these PayPal events were audit-only, so a refunded or
+# reversed capture stayed `paid`. PayPal orders were also booked with
+# environment `unknown`, so a real PayPal sale never reached confirmed revenue.
+
+CAPTURE = "3C679366HH908993F"
+
+
+def refund_event(*, total_refunded: str, event_type: str = "PAYMENT.CAPTURE.REFUNDED") -> dict:
+    return {
+        "id": f"WH-REFUND-{total_refunded}",
+        "event_type": event_type,
+        "resource": {
+            "id": "1JU08902781691411",
+            "status": "COMPLETED",
+            "amount": {"currency_code": "CAD", "value": total_refunded},
+            "seller_payable_breakdown": {"total_refunded_amount": {"currency_code": "CAD", "value": total_refunded}},
+            "links": [
+                {"rel": "self", "href": "https://api.paypal.com/v2/payments/refunds/1JU08902781691411"},
+                {"rel": "up", "href": f"https://api.paypal.com/v2/payments/captures/{CAPTURE}"},
+            ],
+        },
+    }
+
+
+def dispute_event(status: str, outcome: str | None = None) -> dict:
+    resource = {
+        "dispute_id": "PP-D-1",
+        "status": status,
+        "disputed_transactions": [{"seller_transaction_id": CAPTURE}],
+    }
+    if outcome:
+        resource["dispute_outcome"] = {"outcome_code": outcome}
+    return {"id": f"WH-DISPUTE-{status}", "event_type": "CUSTOMER.DISPUTE.UPDATED", "resource": resource}
+
+
+def test_paypal_orders_record_their_environment(client, monkeypatch) -> None:
+    post_event(client, capture_event())
+    assert orders(client.db)[0].environment == "test", "the default API base is the sandbox"
+
+    monkeypatch.setenv("PAYPAL_API_BASE", "https://api-m.paypal.com")
+    config_module.get_settings.cache_clear()
+    post_event(client, capture_event(capture_id="LIVECAPTURE1"))
+    live = [o for o in orders(client.db) if o.external_ref == "paypal_capture_LIVECAPTURE1"]
+    assert live[0].environment == "live"
+
+
+def test_a_paypal_refund_is_applied_to_its_capture(client) -> None:
+    post_event(client, capture_event())
+    post_event(client, refund_event(total_refunded="97.00"))
+    post_event(client, refund_event(total_refunded="97.00"))   # redelivery
+    [order] = orders(client.db)
+    assert order.status == "paid" and order.amount_refunded == Decimal("97.00")
+    assert "refund_duplicate_skipped" in actions(client.db)
+
+    post_event(client, refund_event(total_refunded="297.00"))
+    assert order.status == "refunded" and order.amount_refunded == Decimal("297.00")
+    assert "refund_settled" in actions(client.db), "the existing audit action is still written"
+
+
+def test_a_paypal_reversal_counts_as_money_returned(client) -> None:
+    post_event(client, capture_event())
+    post_event(client, refund_event(total_refunded="297.00", event_type="PAYMENT.CAPTURE.REVERSED"))
+    [order] = orders(client.db)
+    assert order.status == "refunded"
+
+
+@pytest.mark.parametrize(
+    ("status", "outcome", "expected"),
+    [
+        ("WAITING_FOR_SELLER_RESPONSE", None, "needs_response"),
+        ("UNDER_REVIEW", None, "under_review"),
+        ("RESOLVED", "RESOLVED_SELLER_FAVOUR", "won"),
+        ("RESOLVED", "RESOLVED_BUYER_FAVOUR", "lost"),
+        ("RESOLVED", "SOMETHING_NEW", "under_review"),   # unknown outcome: held, not assumed kept
+    ],
+)
+def test_paypal_dispute_states_map_onto_the_shared_ledger(client, status, outcome, expected) -> None:
+    post_event(client, capture_event())
+    post_event(client, dispute_event(status, outcome))
+    assert orders(client.db)[0].dispute_status == expected
+
+
+def test_a_paypal_refund_for_an_unknown_capture_is_flagged(client) -> None:
+    post_event(client, refund_event(total_refunded="10.00"))
+    assert orders(client.db) == []
+    assert "refund_unmatched" in actions(client.db)

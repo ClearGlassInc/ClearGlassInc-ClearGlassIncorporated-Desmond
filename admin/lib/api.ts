@@ -89,6 +89,15 @@ export async function listEvents(limit = 100): Promise<AuditEvent[]> {
 export interface RevenueCockpit {
   generated_at: string;
   confirmed_revenue_cad: number;
+  gross_revenue_cad: number;
+  refunded_cad: number;
+  disputed_open_cad: number;
+  dispute_lost_cad: number;
+  verified_mrr_cad: number | null;
+  active_subscriptions: number | null;
+  past_due_subscriptions: number | null;
+  unpriced_subscriptions: number | null;
+  revenue_by_campaign: { campaign: string; orders: number; confirmed_revenue_cad: number }[];
   test_revenue_cad: number;
   pipeline_estimate_cad: number;
   mrr_cad: number;
