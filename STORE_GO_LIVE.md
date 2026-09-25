@@ -26,15 +26,14 @@ var CHECKOUT = {
 These require the ClearGlass Stripe account and cannot be automated from CI —
 do them yourself, then let the validator check your work.
 
-1. **Activate the Stripe account.** As of this writing `store.html` notes the
-   dashboard shows *"Multiple capabilities paused."* Live charging will not work
-   until those capabilities are active. Resolve this in the Stripe Dashboard
-   first.
-2. **Create one Payment Link per SKU.** Stripe Dashboard → **Products → Payment
-   links**. Each produces a URL like `https://buy.stripe.com/<id>`. Payment
-   Links carry **no secret keys** — they inherit your account's payment-method
-   configuration — so the URL is safe to commit.
-3. **Paste each URL into the `CHECKOUT` map in *both* files** (`store.html` and
+1. **Confirm live account readiness.** The 2026-09-25 read-only reconciliation found
+   `charges_enabled: true` and `payouts_enabled: true`. No activation change is required by this audit.
+2. **Do not create new Products or Prices as part of this audit.** Live Payment Links already exist
+   for the currently configured offers. A Payment Link URL contains no secret API key and may be
+   committed only when it is intentionally approved for public use.
+3. **Reconcile each existing URL before changing repository wiring.** Compare the URL and its Stripe
+   Price against the live account; do not overwrite a working link with a newly created object.
+   Paste each verified URL into the appropriate `CHECKOUT` map in *both* files (`store.html` and
    `pricing.html`), keyed by the same SKU. Keep the SKU set identical across the
    two pages.
 4. **Open a PR.** The storefront smoke test runs automatically and will block
