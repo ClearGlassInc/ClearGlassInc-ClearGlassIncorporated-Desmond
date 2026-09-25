@@ -24,10 +24,10 @@ jobs:
         run: python -m pytest -q shield/tests
       - name: Build and validate disposable tunnel
         run: |
-          sudo ./shield/scripts/bootstrap-test-env.sh
+          sudo bash shield/scripts/bootstrap-test-env.sh
           sudo ip netns exec cgshield-client ping -c 3 -W 2 10.77.0.1
           sudo ip netns exec cgshield-client wg show
-          sudo ./shield/scripts/destroy-test-env.sh
+          sudo bash shield/scripts/destroy-test-env.sh
       - name: Verify teardown
         run: '! ip netns list | grep -E "^cgshield-(client|gateway)"'
       - name: Record evidence
