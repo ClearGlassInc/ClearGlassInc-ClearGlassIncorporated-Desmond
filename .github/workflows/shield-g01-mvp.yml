@@ -1,44 +1,64 @@
 name: Shield G01 Isolated MVP
 on:
   pull_request:
-    paths: ["shield/**",".github/workflows/shield-g01-mvp.yml"]
-  push:
-    branches: ["main","shield/g01-isolated-mvp"]
-    paths: ["shield/**",".github/workflows/shield-g01-mvp.yml"]
+    paths:
+      - "shield/**"
+      - ".github/workflows/shield-g01-mvp.yml"
   workflow_dispatch:
+
 permissions:
   contents: read
+
+concurrency:
+  group: shield-g01-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   g01:
+    name: G01 isolated disposable validation
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    env:
+      G01_BASELINE_SHA: b2349d00cd543132522ac36ae70938268cf2a935
+      SHIELD_ARTIFACT_DIR: artifacts/shield-g01
+      SHIELD_RUN_ID: ${{ github.run_id }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with: {persist-credentials: false}
+      - name: Checkout without persisted credentials
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
       - name: Install isolated test dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends wireguard-tools iproute2
+          sudo apt-get install -y --no-install-recommends wireguard-tools iproute2 iptables
           python -m pip install --disable-pip-version-check --no-input pytest
-      - name: Configuration and security tests
+
+      - name: Static boundary tests
         run: python -m pytest -q shield/tests
-      - name: Build and validate disposable tunnel
+
+      - name: Verify repository boundary
         run: |
-          sudo bash shield/scripts/bootstrap-test-env.sh
-          sudo ip netns exec cgshield-client ping -c 3 -W 2 10.77.0.1
-          sudo ip netns exec cgshield-client wg show
-          sudo bash shield/scripts/destroy-test-env.sh
-      - name: Verify teardown
-        run: '! ip netns list | grep -E "^cgshield-(client|gateway)"'
-      - name: Record evidence
+          ! grep -RInE 'sk_live_|STRIPE_SECRET|api\.stripe\.com|https?://[^ ]*(production|prod)[^ ]*' shield
+          ! find shield -type f \( -name '*.key' -o -name '.env' \) -print
+
+      - name: Execute two clean G01 cycles
+        run: sudo -E bash shield/scripts/run-g01.sh
+
+      - name: Generate non-sensitive runtime evidence
         if: always()
         run: |
-          mkdir -p artifacts/shield-g01
-          printf '%s\n' "commit=$GITHUB_SHA" "environment=isolated-disposable-test" "production=NOT_PRODUCTION" > artifacts/shield-g01/run.txt
-      - name: Upload evidence
+          python3 shield/scripts/generate-evidence.py
+          ! grep -RInE 'sk_live_|-----BEGIN .*PRIVATE KEY-----|STRIPE_SECRET' artifacts/shield-g01
+
+      - name: Verify clean teardown
+        if: always()
+        run: sudo bash shield/scripts/verify-clean.sh
+
+      - name: Upload non-sensitive evidence
         if: always()
         uses: actions/upload-artifact@65c4c4a1ddee5b72f698f4b7297cfb7b0e5f7f6d
         with:
-          name: shield-g01-evidence-$GITHUB_SHA
+          name: shield-g01-evidence-${{ github.sha }}-${{ github.run_id }}
           path: artifacts/shield-g01/
           if-no-files-found: error

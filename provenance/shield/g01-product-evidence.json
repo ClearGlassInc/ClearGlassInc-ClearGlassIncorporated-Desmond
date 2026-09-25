@@ -1,60 +1,51 @@
 {
   "schema_version": "1.0",
-  "gate": "G01_PRODUCT_IMPLEMENTATION",
-  "status": "FAIL",
   "product": "ClearGlass Shield",
-  "source_commit": "f71d93b076769886e6ec993bcdbd308d0cc6bc30",
-  "assessment_timestamp_utc": "2026-09-25T15:28:00Z",
-  "repository": {
-    "full_name": "ClearGlassInc/ClearGlassInc-ClearGlassIncorporated-Desmond",
-    "branch": "shield/g01-isolated-mvp",
-    "entry_point": "shield.html"
-  },
-  "environment": {
-    "identifier": "isolated-disposable-test",
-    "customer_traffic": false,
-    "test_gateway": "IMPLEMENTED_NOT_YET_CI_VERIFIED",
-    "test_dns": "NOT_YET_VERIFIED",
-    "test_identity": "EPHEMERAL_KEYS_IMPLEMENTED",
-    "disposable_credentials": true
-  },
-  "components_assessed": [
-    "shield/README.md",
-    "shield/client/config.py",
-    "shield/gateway/health.py",
-    "shield/scripts/bootstrap-test-env.sh",
-    "shield/scripts/destroy-test-env.sh",
-    "shield/tests/test_shield_mvp.py",
+  "gate": "G01",
+  "status": "FAIL",
+  "environment": "isolated-disposable-test",
+  "repository": "ClearGlassInc/ClearGlassInc-ClearGlassIncorporated-Desmond",
+  "branch": "shield/g01-isolated-mvp-20260925",
+  "before_commit": "b2349d00cd543132522ac36ae70938268cf2a935",
+  "commit": null,
+  "created_at": null,
+  "test_run_id": null,
+  "components": [
+    "shield/client",
+    "shield/gateway",
+    "shield/scripts",
+    "shield/tests",
     ".github/workflows/shield-g01-mvp.yml"
   ],
-  "required_capabilities": {
-    "shield_client": "FOUNDATION",
-    "secure_tunnel_establishment": "IMPLEMENTED_TEST_HARNESS",
-    "wireguard_transport": "IMPLEMENTED_TEST_HARNESS",
-    "gateway_identity": "EPHEMERAL_TEST_KEYS",
-    "key_generation_and_rotation": "KEY_GENERATION_IMPLEMENTED; ROTATION_NOT_YET_TESTED",
-    "dns_handling": "TEST_POLICY_FIXTURE_ONLY",
-    "network_lock": "CONFIGURATION_GUARD_ONLY",
-    "connection_lifecycle": "TEST_HARNESS",
-    "configuration_management": "IMPLEMENTED",
-    "health_checks": "LOCAL_HEALTH_ENDPOINT",
-    "failure_handling": "NOT_YET_VALIDATED",
-    "secure_update_mechanism": "NOT_IMPLEMENTED"
+  "controls": [
+    "isolated Linux network namespaces",
+    "standard WireGuard",
+    "synthetic HTTP/DNS",
+    "test-scope network lock",
+    "secret scan",
+    "deterministic teardown"
+  ],
+  "tests": [],
+  "artifacts": [],
+  "artifact_hashes": [],
+  "limitations": [
+    "Linux/container test scope only",
+    "No production validation",
+    "No independent audit",
+    "No customer traffic",
+    "No billing testing"
+  ],
+  "teardown": {
+    "attempted": false,
+    "completed": false,
+    "evidence": null
   },
-  "acceptance_tests": {
-    "client_starts": "NOT_RUN",
-    "keys_generated_securely": "CI_PENDING",
-    "tunnel_establishes": "CI_PENDING",
-    "traffic_traverses_tunnel": "CI_PENDING",
-    "dns_policy_verified": "NOT_IMPLEMENTED",
-    "tunnel_failure_detected": "NOT_RUN",
-    "network_lock_verified": "NOT_RUN",
-    "credentials_rotated": "NOT_RUN",
-    "client_disconnects_cleanly": "NOT_RUN",
-    "gateway_revoked": "NOT_RUN",
-    "logs_secret_free": "STATIC_SCAN_PENDING",
-    "environment_recreated_deterministically": "CI_PENDING"
-  },
-  "conclusion": "An isolated disposable MVP foundation and CI harness have been added on branch shield/g01-isolated-mvp. G01 remains FAIL because the required end-to-end acceptance evidence has not yet been produced and several mandatory controls are still unimplemented.",
-  "next_required_action": "Run and inspect the Shield G01 CI job, then add only evidence-backed results. Do not activate Stripe, expose customer traffic, or promote G01 without all mandatory criteria."
+  "stripe_interactions": 0,
+  "production_interactions": 0,
+  "customer_traffic": false,
+  "production_status": "NOT_PRODUCTION",
+  "commercial_status": "BILLING_LOCKED",
+  "gate_decision": "FAIL",
+  "conclusion": "Implementation and CI harness are prepared, but runtime acceptance evidence has not yet been produced by GitHub Actions. G01 remains FAIL.",
+  "next_required_action": "Run the G01 pull-request workflow, inspect all mandatory results and update only with measured evidence. Do not activate Stripe or production."
 }
