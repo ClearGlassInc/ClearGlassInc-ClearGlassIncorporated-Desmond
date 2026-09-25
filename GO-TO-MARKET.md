@@ -14,7 +14,7 @@ bot.
 | Checkout-link safety validation | **Running** (CI) | Automated |
 | Analytics wiring (site-wide loader) | **Built, OFF by default** | You flip it on (Step 1) |
 | Search discoverability (sitemap, robots, meta) | **In place** | You submit to Search Console (Step 2) |
-| Taking card payments | **Off** (no links, Stripe paused) | **You** (Step 3) |
+| Taking card payments | **Live Payment Links exist; buyer completion not independently verified** | **You / audit** (Step 3) |
 | Traffic & outreach | **Drafts ready** | **You** send (Step 4) |
 
 ## The five steps, in order
@@ -30,11 +30,16 @@ The remaining step is yours:
 - [ ] Verify the site in [Google Search Console](https://search.google.com/search-console) and submit `https://www.clearglassinc.com/sitemap.xml`
 - [ ] Verify in [Bing Webmaster Tools](https://www.bing.com/webmasters) (the repo already ships a `BingSiteAuth.xml`)
 
-### 3. Be able to charge — turn payments on
-Right now every "Buy" button falls back to a manual email/e-Transfer request.
-→ Follow `docs/STORE_GO_LIVE.md` (un-pause Stripe → create Payment Links → paste).
-CI verifies your links are safe before they ship.
-- [ ] At least the $249 Quick-Audit takes live card payment
+### 3. Verify the buyer path — do not confuse configuration with a sale
+The live Stripe account is enabled for charges and payouts, and the repository contains live hosted
+Payment Links. The remaining evidence gap is end-to-end buyer-path completion: this audit did not
+submit a payment, and Stripe currently reports zero live charges and zero registered webhook endpoints.
+→ Use `docs/STORE_GO_LIVE.md` for the human verification sequence. Do not create products or prices
+just to satisfy this checklist.
+- [x] Live Stripe Payment Links exist for the currently configured offers
+- [ ] Public offer → hosted Stripe checkout → non-payment abandonment path independently verified
+- [ ] Signed webhook endpoint registered and verified for any fulfillment path that depends on it
+- [ ] First real customer payment recorded by Stripe before revenue is counted
 
 ### 4. Reach out — send the drafts (human, CASL-compliant)
 Traffic doesn't appear on its own. Send a *small, targeted, relevant* batch.
