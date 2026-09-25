@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "product": "ClearGlass Shield",
+  "release_state": "LOCKED",
+  "billing_state": "LOCKED",
+  "authorization": {
+    "human_launch_authorized": false,
+    "evidence_ref": null
+  },
+  "gates": {
+    "G01_PRODUCT_IMPLEMENTATION": {"status": "FAIL", "evidence": "shield-architecture.md and shield.html identify an architecture-stage concept; no operating VPN implementation is evidenced"},
+    "G02_SECURITY_CONTROLS": {"status": "BLOCKED", "evidence_required": "Implemented gateway/client security controls and automated leak/security-test evidence"},
+    "G03_PRIVACY_CONTROLS": {"status": "BLOCKED", "evidence_required": "Completed data-flow, processing, retention and privacy-control review"},
+    "G04_INFRASTRUCTURE_READINESS": {"status": "BLOCKED", "evidence_required": "Operating infrastructure, deployment, monitoring, signed releases and rollback evidence"},
+    "G05_BILLING_CONFIGURATION": {"status": "FAIL", "evidence": "Live Stripe reconciliation found no Shield product, price, Payment Link or active Shield subscription"},
+    "G06_LEGAL_CUSTOMER_DISCLOSURES": {"status": "BLOCKED", "evidence_required": "Approved terms, privacy, refund/cancellation disclosures and applicable legal review"},
+    "G07_INDEPENDENT_VERIFICATION": {"status": "FAIL", "evidence": "No completed independent Shield security/no-logs audit is evidenced"},
+    "G08_PRODUCTION_VALIDATION": {"status": "BLOCKED", "evidence_required": "Deployed service plus end-to-end production validation"},
+    "G09_HUMAN_LAUNCH_AUTHORIZATION": {"status": "BLOCKED", "evidence_required": "Explicit human authorization for Shield commercial activation"},
+    "G10_ROLLBACK_READINESS": {"status": "EVIDENCE_REQUIRED", "evidence_required": "Release-specific rollback target and tested recovery evidence"}
+  },
+  "stripe": {
+    "mode_checked": "live",
+    "shield_products": 0,
+    "shield_prices": 0,
+    "shield_payment_links": 0,
+    "shield_active_subscriptions": 0,
+    "objects_created_or_modified": false
+  },
+  "unlock_policy": {
+    "fail_closed": true,
+    "required_all_gates_pass": true,
+    "required_human_authorization": true,
+    "never_infer_authorization_from_stripe_objects": true,
+    "deployment_must_not_activate_billing": true
+  }
+}
