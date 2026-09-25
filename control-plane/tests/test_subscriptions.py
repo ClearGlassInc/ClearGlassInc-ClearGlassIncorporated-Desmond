@@ -300,6 +300,18 @@ def test_subscription_lifecycle_writes_an_audit_row(webhook_client) -> None:
     assert rows[0].payload["from_status"] is None
 
 
+def test_subscription_row_records_live_or_test_mode(webhook_client) -> None:
+    """Without the mode, test-mode MRR could be announced as real recurring revenue."""
+    client, SessionFactory = webhook_client
+    _post_event(client, {**_subscription_event("evt_live", "active"), "livemode": True})
+    _post_event(client, _subscription_event("evt_test", "canceled"))
+
+    [live] = _ledger(SessionFactory, "subscription_active")
+    [test] = _ledger(SessionFactory, "subscription_canceled")
+    assert live.payload["livemode"] is True
+    assert test.payload["livemode"] is False
+
+
 def test_status_transition_records_where_it_came_from(webhook_client) -> None:
     """A cancellation is only auditable if the row says what it replaced."""
     client, SessionFactory = webhook_client

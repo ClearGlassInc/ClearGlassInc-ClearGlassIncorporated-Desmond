@@ -1,0 +1,99 @@
+# Install if needed in Jupyter/Colab
+# !pip install gradio transformers torch sentencepiece -q
+
+import gradio as gr
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
+
+# ------------------------------------------------------------
+# Task 2: Integrate a lightweight LLM
+# ------------------------------------------------------------
+model_name = "google/flan-t5-small"   # You may use "facebook/bart-base"
+
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+
+nlp_pipeline = pipeline(
+    "text2text-generation",
+    model=model,
+    tokenizer=tokenizer
+)
+
+# Quick model test
+test_prompt = "question: What is the diagnosis? context: The patient shows signs of pneumonia."
+test_result = nlp_pipeline(test_prompt, max_new_tokens=64, do_sample=False)
+print("Model test output:", test_result[0]["generated_text"])
+
+# ------------------------------------------------------------
+# Task 3: Implement the answering function
+# ------------------------------------------------------------
+def generate_answer(report, question):
+    if not report or not question:
+        return "Please enter both a medical report and a question."
+
+    prompt = f"question: {question} context: {report}"
+
+    result = nlp_pipeline(
+        prompt,
+        max_new_tokens=128,
+        do_sample=False
+    )
+
+    return result[0]["generated_text"]
+
+# ------------------------------------------------------------
+# Task 4: Test the answering function
+# ------------------------------------------------------------
+sample_report = """
+The patient presents with persistent cough and fever.
+Chest X-ray shows signs of pneumonia.
+Antibiotics have been prescribed.
+"""
+
+sample_question = "What is the diagnosis?"
+
+print("Sample answer:", generate_answer(sample_report, sample_question))
+
+# ------------------------------------------------------------
+# Task 1: Develop the Gradio web application interface
+# ------------------------------------------------------------
+with gr.Blocks(title="Medical Chatbot") as iface:
+    gr.Markdown("# Generative AI-based Medical Chatbot")
+    gr.Markdown("Enter a clinical report and ask a natural-language question about it.")
+
+    with gr.Row():
+        with gr.Column():
+            report_input = gr.Textbox(
+                lines=12,
+                label="Enter Medical Report",
+                placeholder="Paste discharge summary, lab results, radiology note, etc."
+            )
+
+            question_input = gr.Textbox(
+                lines=2,
+                label="Enter Your Question",
+                placeholder="e.g., What is the diagnosis?"
+            )
+
+            with gr.Row():
+                answer_btn = gr.Button("Get the Answer", variant="primary")
+                clear_btn = gr.Button("Clear")
+
+        with gr.Column():
+            answer_output = gr.Textbox(
+                lines=8,
+                label="AI Answer"
+            )
+
+    answer_btn.click(
+        fn=generate_answer,
+        inputs=[report_input, question_input],
+        outputs=answer_output
+    )
+
+    clear_btn.click(
+        fn=lambda: ("", "", ""),
+        inputs=[],
+        outputs=[report_input, question_input, answer_output]
+    )
+
+iface.launch(share=True)   # Use share=False if running locally only

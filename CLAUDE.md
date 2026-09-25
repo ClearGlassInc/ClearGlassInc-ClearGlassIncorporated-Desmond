@@ -26,6 +26,10 @@ Guidance for agents working in this repository.
 > Re-verified 2026-09-23: still true. Job `107260634855` (Health Monitor)
 > reported `runner_id: 0` and finished in 2 seconds; Pages run #177 deployed
 > `main` normally. See `docs/AUDIT-2026-09-23.md`.
+>
+> Re-verified 2026-09-24: still true. Job `107658897347` (Auto Heal, on
+> `4725787`) reported `runner_id: 0` and finished in 5 seconds. See
+> `docs/AUDIT-2026-09-24.md`.
 
 ## What this repo is
 
@@ -61,10 +65,11 @@ non‑negotiable when changing it.
 | `agents/` | Per‑agent definitions (`agent.json`, `system_prompt.md`, tool schemas) |
 | `bots/` | Standalone Python automation bots invoked by workflows (e.g. `store_smoke_bot.py`) |
 | `deployment/` | Per-product deployment layers: n8n workflow exports, ledger SQL, runbooks (`cashpulse/`, `rfed/`) |
+| `tools/growth_registry.py`, `data/growth/` | Market opportunities and experiments held to their evidence: a hypothesis carries low confidence only, and no experiment winner without the minimum evidence set in advance (`--check`). Both registries are empty: no demand or result is claimed |
 | `data/` | Committed JSON feeds: `data/store/catalog.json` (5 ClearGlass **service** engagements with live Stripe URLs), `data/side-store/catalog.json` (57 impulse SKUs — a *different* catalog; do not conflate them), `data/control-surface/*` |
 | `operations/` | Generated reports + handoff pages (priority matrix, SEO, health, defender) |
 | `sentinel/` | Named-agent index (PERCIVAL, SENTINEL, AEGIS, PFAS, Agent Mesh) — keyless, stdlib-only, fail-closed Python agents; see `sentinel/PERCIVAL_AGENTS.md`. Includes the real PERCIVAL governor/identity/capability/mission-memory stack plus target-state v9 distributed-architecture docs (nothing in those docs is provisioned — see their own status banners) |
-| `.github/workflows/` | 74 workflows: CI, Pages deploy, commerce gates, scheduled bot loops |
+| `.github/workflows/` | 81 workflows (36 scheduled, 16 with `contents: write`): CI, Pages deploy, commerce gates, scheduled bot loops |
 | `workflows/` (top level) | The intact 72-file archive the upload left behind. **Copy into `.github/workflows/`, never move** — it is the rollback source |
 | `clearglass_marketing_os_v2/pipelines/` | Marketing-OS pipeline playbooks. Same `.yml` suffix, different DSL — **not** Actions workflows |
 
@@ -98,6 +103,31 @@ return a lead's id, stage or score from a public route (`POST /revenue/leads` re
 opaque `reference`). The admin app calls these routes from its server with
 `ADMIN_API_KEY`; no browser page may hold that key.
 
+Confirmed revenue is net: `order_ledger.revenue_breakdown` subtracts settled refunds,
+open disputes and lost disputes, and both Stripe and PayPal webhooks apply refunds and
+disputes to the order they reverse (migration 009). Don't compute revenue from
+`status == "paid"` anywhere else, and don't let a settlement event promote a
+`refunded` order back to `paid`.
+
+ClearGlass orders (`app/commerce_orders.py`, `app/order_states.py`, migration 010) tie
+one offer to either processor: `POST /commerce/orders` opens `CG-ORD-YYYY-XXXXXXXX`,
+`POST /commerce/orders/{ref}/checkout` starts Stripe (`metadata.cg_order_ref`) or PayPal
+(`invoice_id`), and the ledger applies each verified settlement back to the order.
+Don't let anything but verified processor evidence move an order into a money state
+(`PROVIDER_STATES`), don't store fulfillment on the order (it is derived from the service
+order), and don't "fix" a second payment for one order by deleting a row: it is kept and
+flagged `reconciliation_required`, and `app/reconciliation.py` reports it without writing.
+Delivery work opens only from verified **live** money on an unflagged order. See
+`docs/GROWTH_REVENUE_OS.md`.
+
+Gated money actions that need a side effect after approval are two-phase: the first call
+queues the approval, and the next call `claim_approval`s it (single use, committed before
+the processor is called) and executes. `POST /paypal/capture` and Printful confirmation
+work this way; before 2026-09-24 an approved PayPal capture never executed. Advertising
+spend (`create/fund/activate/scale_ad_campaign`), mass outreach, live-payment activation,
+contracts and manual payments are in `ALWAYS_ESCALATE` in both `app/governance.py` and
+`agent_os/governance.py`.
+
 Prices are resolved server-side. `POST /checkout/session` takes **SKUs and quantities
 only**; amounts come from the price book (`app/pricebook.py`, `app/data/pricebook.json`)
 and never from the request body, because a checkout line item's `amount` goes straight
@@ -110,6 +140,14 @@ Abuse/resilience controls (also in `app/security.py`): checkout, the Stripe webh
 and approval decisions carry per-IP rate limits (`RATE_LIMIT_*_PER_MINUTE`), and the
 webhook is idempotent on redelivery via `orders.external_ref` (migration 004).
 `GET /ready` reports database reachability. Don't weaken these when editing routers.
+`GET /payouts` and `GET /payments/payout-account` are admin-only (settlement amounts and
+masked bank details); they were open until 2026-09-24.
+
+Slack revenue events (`app/revenue_notify.py`, `SLACK_WEBHOOK_URL`) are derived from
+`log_event` rows and posted only after commit. To announce a new step, map its ledger
+action in `describe()`; don't post from a router. Keep names, emails and companies out
+of messages, and keep test-mode money labelled `TEST DATA`. The rules are in
+`docs/REVENUE_OPERATIONS.md` § Slack revenue channel.
 
 ## Running & testing the commerce control plane
 
@@ -120,6 +158,7 @@ ruff check .                           # lint (must pass)
 python -m pytest tests/ -q             # full suite; payout/resilience tests need the full web stack (httpx)
 uvicorn app.main:app --reload          # http://localhost:8000/docs
 python -m app.daily_loop --json        # governance self-check + executive report (stdlib only)
+python -m app.migrate --status         # Postgres: which migrations/*.sql are applied (RUN_MIGRATIONS applies them at boot)
 python -m app.etsy_connect --status    # Etsy connection state; omit --status for the OAuth flow
 ```
 
@@ -159,6 +198,7 @@ are documented in `DEPLOY.md` (Render blueprint recommended).
 >
 > ```bash
 > pip install pytest pytest-cov pyyaml "ruff==0.15.8"   # CI's pinned versions
+> git fetch --unshallow                  # if shallow: sitemap dates come from history
 > python3 scripts/ci_local.py            # every ci.yml gate, offline
 > python3 scripts/ci_local.py --list     # what it covers
 > ```

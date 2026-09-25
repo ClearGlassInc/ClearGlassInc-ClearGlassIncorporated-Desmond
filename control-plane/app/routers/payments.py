@@ -7,12 +7,12 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from .. import payments, pricebook
+from .. import attribution, order_states, payments, pricebook
 from ..audit import log_event
 from ..db import get_session
 from ..fulfillment import shipping_from_stripe_session
 from ..models import Order, Payout
-from ..order_ledger import record_payment_order
+from ..order_ledger import record_dispute, record_payment_order, record_refund
 from ..schemas import (
     ActionResult,
     BillingPortalOut,
@@ -42,11 +42,13 @@ CHECKOUT_SETTLEMENT_EVENTS = frozenset(
     }
 )
 
-#: Events that need a human eye but move no money on our side — mapped to the audit
-#: action they are recorded under.
+#: Events that need a human eye — mapped to the audit action they are recorded
+#: under. Refunds and disputes also change the order they reverse (see
+#: ``order_ledger.record_refund`` / ``record_dispute``); the rest are audit-only.
 ATTENTION_EVENTS = {
     "charge.refunded": "refund_settled",
     "charge.dispute.created": "dispute_opened",
+    "charge.dispute.updated": "dispute_updated",
     "charge.dispute.closed": "dispute_closed",
     "payment_intent.payment_failed": "payment_failed",
     "invoice.payment_failed": "subscription_payment_failed",
@@ -121,6 +123,10 @@ def create_checkout(req: CheckoutRequest, session: Session = Depends(get_session
         checkout_mode=checkout_mode,
         client_reference_id=req.client_reference_id,
         idempotency_key=req.client_reference_id,
+        # Marketing context only: validated tags, never a price or a return URL.
+        extra_metadata=attribution.to_metadata(
+            req.attribution.model_dump() if req.attribution else None
+        ),
     )
     log_event(
         session,
@@ -201,6 +207,11 @@ async def stripe_webhook(request: Request, session: Session = Depends(get_sessio
             ((obj.get("customer_details") or {}).get("email"))
             or obj.get("customer_email")
         )
+        metadata = obj.get("metadata") or {}
+        # Written server-side by commerce_orders.start_checkout; re-validated,
+        # because Stripe echoes metadata back verbatim.
+        order_ref = str(metadata.get("cg_order_ref") or "").strip()
+        order_ref = order_ref if order_states.is_order_ref(order_ref) else None
         order = _record_order(
             session,
             # Stripe redelivers webhooks; key the order on the checkout-session id so a
@@ -214,15 +225,24 @@ async def stripe_webhook(request: Request, session: Session = Depends(get_sessio
             event=etype,
             shipping_source=obj,
             environment=environment,
+            # What a later charge.refunded or charge.dispute.* names.
+            payment_intent=obj.get("payment_intent"),
+            attribution=attribution.from_metadata(metadata),
+            order_ref=order_ref,
         )
+        if order is not None and order_ref and status == "paid" and check["verified"] and environment == "live":
+            # The ClearGlass order already opened its delivery work through the
+            # ledger (commerce_orders); this only records who paid. Live only,
+            # as for CRCS below: a test buyer is not a customer.
+            upsert_customer_for_order(session, order, customer_email)
         # CRCS starts fulfillment only from a verified live payment. A test event can
         # exercise the webhook and ledger without creating a customer delivery commitment.
-        metadata = obj.get("metadata") or {}
         # Only CRCS-originated checkouts may enter the CRCS service-delivery queue.
         # Existing commerce offers continue to be booked normally without creating
         # an unrelated CRCS delivery record.
         if (
             order is not None
+            and not order_ref
             and status == "paid"
             and check["verified"]
             and environment == "live"
@@ -250,6 +270,8 @@ async def stripe_webhook(request: Request, session: Session = Depends(get_sessio
                 status="paid",
                 verified=check["verified"],
                 event=etype,
+                environment="live" if bool(event.get("livemode")) else "test",
+                payment_intent=obj.get("payment_intent"),
             )
         else:
             # The first invoice of a subscription is already booked from its checkout
@@ -280,6 +302,28 @@ async def stripe_webhook(request: Request, session: Session = Depends(get_sessio
             },
             result="flagged",
         )
+        if etype == "charge.refunded":
+            record_refund(
+                session,
+                actor="stripe",
+                payment_intent=obj.get("payment_intent"),
+                # Cumulative across partial refunds, so redelivery sets, not adds.
+                amount_refunded=Decimal(str((obj.get("amount_refunded") or 0) / 100)),
+                fully_refunded=bool(obj.get("refunded")),
+                verified=check["verified"],
+                event=etype,
+                reference=obj.get("id"),
+            )
+        elif etype.startswith("charge.dispute."):
+            record_dispute(
+                session,
+                actor="stripe",
+                payment_intent=obj.get("payment_intent"),
+                dispute_status=str(obj.get("status") or "unknown"),
+                verified=check["verified"],
+                event=etype,
+                reference=obj.get("id"),
+            )
     elif etype in payments.PAYOUT_EVENT_TYPES:
         payout = _upsert_payout(session, obj, tenant_id=event.get("account"))
         log_event(
@@ -321,6 +365,9 @@ def _record_order(
     event: str,
     shipping_source: dict | None = None,
     environment: str = "unknown",
+    payment_intent: str | None = None,
+    attribution: dict[str, str] | None = None,
+    order_ref: str | None = None,
 ) -> Order | None:
     """Book a Stripe payment through the shared order ledger.
 
@@ -341,6 +388,9 @@ def _record_order(
         verified=verified,
         event=event,
         environment=environment,
+        payment_intent=payment_intent,
+        attribution=attribution,
+        order_ref=order_ref,
         shipping=(
             shipping_from_stripe_session(shipping_source)
             if shipping_source is not None
@@ -377,17 +427,23 @@ def _upsert_payout(session: Session, obj: dict, *, tenant_id: str | None) -> Pay
     return existing
 
 
-@router.get("/payments/payout-account", response_model=PayoutBankInfoOut)
+@router.get(
+    "/payments/payout-account",
+    response_model=PayoutBankInfoOut,
+    dependencies=[Depends(require_admin)],
+)
 def payout_account() -> PayoutBankInfoOut:
     """Return masked bank/payout routing metadata for earned revenue settlement.
 
     This endpoint never accepts or returns raw bank account/routing numbers. Stripe remains the
     system of record for the actual external bank account and performs the money movement.
+    Admin-only: even masked, the bank name, last four digits, routing hint and Stripe
+    external-account token are for the operator, and this route was open to anyone.
     """
     return PayoutBankInfoOut(**payments.payout_bank_info())
 
 
-@router.get("/payouts", response_model=list[PayoutOut])
+@router.get("/payouts", response_model=list[PayoutOut], dependencies=[Depends(require_admin)])
 def list_payouts(
     tenant_id: str | None = None,
     limit: int = 100,
@@ -396,6 +452,8 @@ def list_payouts(
     """Return recorded Stripe payouts, newest first. Optionally filter by ``tenant_id``.
 
     Read-only: payouts are written solely by the verified Stripe webhook, never via this API.
+    Admin-only: every payout amount, status and arrival date is the business's settlement
+    record, and like ``/metrics`` and ``/events`` it was readable without a credential.
     """
     stmt = select(Payout).order_by(Payout.created_at.desc()).limit(max(1, min(limit, 500)))
     if tenant_id:

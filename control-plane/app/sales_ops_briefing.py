@@ -39,6 +39,7 @@ from sqlalchemy import create_engine, func, select
 from sqlalchemy.orm import Session, sessionmaker
 
 from .models import Approval, Base, Event, Order, Payout
+from .order_ledger import SETTLED_STATUSES, revenue_breakdown
 
 # Order/payout status vocabulary actually written by the control plane (see routers/payments.py,
 # routers/orders.py). Keep these in sync with the app if the status set changes.
@@ -100,13 +101,13 @@ def compute_briefing(session: Session, now: datetime, *, live: bool) -> Briefing
     )
 
     def revenue_between(start: datetime, end: datetime | None) -> tuple[float, int]:
-        q = select(func.coalesce(func.sum(Order.total), 0), func.count()).where(
-            Order.status.in_(REVENUE_STATUSES), Order.created_at >= start
-        )
+        # Net of refunds and disputes, by the same rule as the revenue cockpit.
+        # Summing `paid` totals kept partially refunded and charged-back sales in.
+        q = select(Order).where(Order.status.in_(SETTLED_STATUSES), Order.created_at >= start)
         if end is not None:
             q = q.where(Order.created_at < end)
-        total, count = session.execute(q).one()
-        return _money(total), int(count or 0)
+        orders = list(session.scalars(q).all())
+        return _money(revenue_breakdown(orders)["confirmed"]), len(orders)
 
     # Yesterday + month-to-date revenue
     b.yesterday_revenue, b.yesterday_orders = revenue_between(yest_start, yest_end)

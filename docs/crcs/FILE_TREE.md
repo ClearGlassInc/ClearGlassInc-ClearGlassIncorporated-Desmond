@@ -90,7 +90,8 @@ Phase numbers match [IMPLEMENTATION_SEQUENCE.md](IMPLEMENTATION_SEQUENCE.md).
 │   │       └── offers.seed.json                 NEW P1     four offers; prices marked PLACEHOLDER until Q3
 │   ├── migrations/
 │   │   ├── 008_lead_public_ref.sql              DONE P0    leads.public_ref UUID, backfilled, unique
-│   │   └── 009_crcs_phase1.sql                  NEW P1     DATA_MODEL.md §4
+│   │   ├── 009_revenue_integrity.sql            DONE       orders: payment_intent, amount_refunded, dispute_status, utm_*
+│   │   └── 010_crcs_phase1.sql                  NEW P1     DATA_MODEL.md §4
 │   └── tests/
 │       ├── test_rbac.py                         NEW P1     role matrix, lockout, MFA, session expiry
 │       ├── test_consent.py                      NEW P1     grant, withdraw, unsubscribe token tamper

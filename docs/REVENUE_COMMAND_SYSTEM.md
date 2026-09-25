@@ -67,10 +67,14 @@ The browser never supplies price, Stripe Price ID, arbitrary redirect URL, card 
 
 ## Revenue definitions
 
-- **Confirmed Revenue:** live-environment, verified payment records only, plus explicitly reconciled payments.
+- **Confirmed Revenue:** live-environment, verified payment records (Stripe or PayPal) less settled refunds, money held in open disputes, and money lost to disputes (`order_ledger.revenue_breakdown`). The cockpit also reports gross, refunded, disputed and lost amounts separately.
 - **Test Revenue:** sandbox/test evidence, never commercial revenue.
 - **Pipeline:** owner-entered expected value on open opportunities.
-- **MRR:** owner-entered monthly recurring contracted value on active recurring relationships.
+- **MRR (verified):** active and trialing Stripe subscriptions, as written by the signature-verified subscription webhook, priced from the price-book Stripe Price they are on (annual ÷ 12). Subscriptions on unknown Prices, including every test-mode Price, are excluded and counted separately.
+- **Contracted MRR:** owner-entered monthly recurring value on won and active leads. A contract figure, not Stripe data.
+- **Revenue by processor:** the same confirmed-revenue rule split by Stripe, PayPal and other sources (`revenue_by_provider`). The rows sum to confirmed revenue; a double payment for one order shows in both rows and is flagged, not hidden.
+- **ClearGlass order:** `CG-ORD-YYYY-XXXXXXXX`, one offer payable by either processor. `payment_verified` is true only after a signed processor webhook (`docs/GROWTH_REVENUE_OS.md`).
+- **Revenue by campaign:** confirmed revenue grouped by the `utm_campaign` carried from the lead or checkout request through Stripe metadata onto the order. Payment Links carry none, so their sales are `unattributed`.
 - **Close Rate:** WON divided by WON plus LOST.
 - **Gross Margin:** confirmed live revenue less recorded delivery costs. The cockpit returns no margin figure when cost evidence is absent.
 

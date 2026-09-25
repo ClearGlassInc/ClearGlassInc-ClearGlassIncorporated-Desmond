@@ -10,6 +10,7 @@ from decimal import Decimal
 
 from sqlalchemy import (
     JSON,
+    CheckConstraint,
     DateTime,
     ForeignKey,
     Index,
@@ -95,7 +96,82 @@ class Order(Base):
     ship_to_email: Mapped[str | None] = mapped_column(String(255), nullable=True)
     # pending → drafted → confirmed → shipped, or unfulfillable (see fulfillment.py)
     fulfillment_status: Mapped[str] = mapped_column(String(32), default="pending")
+    # Migration 009. Refunds and disputes name a PaymentIntent, not a Checkout
+    # Session, so this is how a charge.refunded event finds the order it reverses.
+    payment_intent: Mapped[str | None] = mapped_column(String(120), nullable=True, index=True)
+    # Cumulative (Stripe's charge.amount_refunded), so redelivery cannot subtract twice.
+    amount_refunded: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal(0))
+    dispute_status: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    utm_source: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    utm_medium: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    utm_campaign: Mapped[str | None] = mapped_column(String(160), nullable=True, index=True)
+    # Migration 010. The ClearGlass order this payment settles, when checkout
+    # started from one. Deliberately not unique: two payments naming one order
+    # is the double-payment case reconciliation must see, not a row to refuse.
+    order_ref: Mapped[str | None] = mapped_column(String(32), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+
+class CommercialOrder(Base):
+    """A ClearGlass order: one offer, one server-set price, either processor.
+
+    Created before the buyer chooses Stripe or PayPal, so the reference, the
+    price and the campaign exist independently of any processor. Payments
+    settle into ``orders`` (one row per processor settlement) and point back
+    here through ``orders.order_ref``. ``payment_state`` moves only through
+    :mod:`app.order_states`; fulfillment is derived, never stored.
+    """
+
+    __tablename__ = "commercial_orders"
+    # Mirrors migrations/010_commercial_orders.sql, so the SQLite schema the
+    # tests run on refuses an unknown state exactly as Postgres does.
+    __table_args__ = (
+        CheckConstraint(
+            "payment_state IN ('CREATED', 'CHECKOUT_STARTED', 'PAYMENT_PENDING', "
+            "'PAYMENT_PROCESSING', 'PAID', 'PAYMENT_FAILED', 'CANCELED', 'REFUNDED', "
+            "'PARTIALLY_REFUNDED', 'DISPUTED', 'CHARGEBACK')",
+            name="commercial_orders_state_check",
+        ),
+        CheckConstraint(
+            "provider IS NULL OR provider IN ('stripe', 'paypal')",
+            name="commercial_orders_provider_check",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    order_ref: Mapped[str] = mapped_column(String(32), unique=True, index=True)
+    sku: Mapped[str] = mapped_column(String(120))
+    offer_name: Mapped[str] = mapped_column(String(240))
+    quantity: Mapped[int] = mapped_column(Integer, default=1)
+    # Server-priced from the price book, in major units like Order.total.
+    amount: Mapped[Decimal] = mapped_column(Numeric(12, 2))
+    currency: Mapped[str] = mapped_column(String(3), default="CAD")
+    checkout_mode: Mapped[str] = mapped_column(String(16), default="payment")
+    payment_state: Mapped[str] = mapped_column(String(32), default="CREATED", index=True)
+    # stripe | paypal, once the buyer chooses; the latest choice wins.
+    provider: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    # Stripe Checkout Session id or PayPal order id of the latest checkout.
+    provider_checkout_ref: Mapped[str | None] = mapped_column(String(160), nullable=True, index=True)
+    # The ledger row whose verified settlement made this order PAID.
+    payment_order_id: Mapped[int | None] = mapped_column(
+        ForeignKey("orders.id", ondelete="SET NULL"), nullable=True
+    )
+    # live | test | unknown, from the verifying processor event.
+    environment: Mapped[str] = mapped_column(String(16), default="unknown")
+    lead_id: Mapped[int | None] = mapped_column(
+        ForeignKey("leads.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    utm_source: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    utm_medium: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    utm_campaign: Mapped[str | None] = mapped_column(String(160), nullable=True, index=True)
+    # Set when the ledger and this order disagree (a second payment, an amount
+    # or currency mismatch, money after a cancel). Never cleared automatically.
+    reconciliation_required: Mapped[bool] = mapped_column(default=False, index=True)
+    reconciliation_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_utcnow, onupdate=_utcnow
+    )
 
 
 class Shipment(Base):

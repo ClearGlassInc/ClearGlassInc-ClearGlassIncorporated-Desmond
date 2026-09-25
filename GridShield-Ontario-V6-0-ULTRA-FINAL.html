@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GridShield-Ontario v4.1 - COMPLETE - Passive-First Evidence Engine - Ontario Power Grid LIVE</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,sans-serif}
+.mono{font-family:'JetBrains Mono',monospace}
+body{background:#010205;color:#cde7ff;overflow:hidden}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#0a2a33;border-radius:99px}
+.badge{font-size:8px;letter-spacing:1px;border:1px solid;padding:2px 6px;font-weight:700}
+.green{color:#00ff41;border-color:rgba(0,255,65,.3);background:rgba(0,255,65,.08)}
+.cyan{color:#00f0ff;border-color:rgba(0,240,255,.3);background:rgba(0,240,255,.08)}
+.amber{color:#ffaa00;border-color:rgba(255,170,0,.3);background:rgba(255,170,0,.08)}
+.red{color:#ff3333;border-color:rgba(255,51,51,.3);background:rgba(255,51,51,.08)}
+.gold{color:#ffcc33;border-color:rgba(255,204,51,.3);background:rgba(255,204,51,.08)}
+.panel{background:rgba(10,18,28,.85);border:1px solid #122e3b;backdrop-filter:blur(12px)}
+.gridline{position:absolute;inset:0;background-image:linear-gradient(rgba(0,240,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.04) 1px,transparent 1px);background-size:80px 80px;pointer-events:none}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+</style>
+</head>
+<body>
+<!-- TOP BAR -->
+<div style="height:60px;background:#020a0f;border-bottom:1px solid #0a2a33;display:flex;align-items:center;justify-content:space-between;padding:0 12px;position:relative;z-index:10">
+<div style="display:flex;align-items:center;gap:10px">
+<div style="width:32px;height:32px;background:#00f0ff;color:#000;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px" class="mono">GS</div>
+<div>
+<div style="display:flex;align-items:center;gap:8px;font-weight:700;font-size:12px;letter-spacing:.5px">GRIDSHIELD-ONTARIO v4.1 <span class="badge green">PASSIVE-FIRST</span><span class="badge cyan">EVIDENCE ENGINE</span><span class="badge gold">SIMULATED DEMO</span></div>
+<div class="mono" style="font-size:8px;color:#5a7a8a;letter-spacing:.8px">SUPPORTS ONLY SPECIFICALLY AUTHORIZED ONTARIO ELECTRICITY-SECTOR ENVIRONMENTS — NOT A GRID-CONTROL SYSTEM — HUMAN AUTHORIZED DECISIONS ONLY</div>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:8px" class="mono">
+<div style="text-align:right;line-height:1.2"><div style="font-size:9px;color:#5a7a8a">UTC</div><div id="utc" style="font-size:10px;color:#fff">--</div></div>
+<div style="width:1px;height:28px;background:#122e3b"></div>
+<div style="text-align:right;line-height:1.2"><div style="font-size:9px;color:#5a7a8a">DEMAND</div><div id="demandTop" style="font-size:12px;color:#00f0ff;font-weight:700">22,450 MW</div></div>
+<div style="text-align:right;line-height:1.2"><div style="font-size:9px;color:#5a7a8a">THREAT</div><div style="font-size:12px;color:#00ff41;font-weight:700">LOW</div></div>
+<div class="badge cyan">ZERO TRUST ACTIVE</div>
+</div>
+</div>
+
+<!-- MAIN 3 COL -->
+<div style="display:grid;grid-template-columns:360px 1fr 380px;grid-template-rows:1fr 220px;height:calc(100vh - 60px - 28px)">
+
+<!-- LEFT PURDUE + STATUS -->
+<div style="border-right:1px solid #0a2a33;display:flex;flex-direction:column;overflow:hidden">
+<div class="panel" style="margin:8px;padding:10px">
+<div class="mono" style="font-size:9px;letter-spacing:2px;font-weight:800;color:#fff">PURDUE REFERENCE MODEL - VALIDATE SITE BY SITE</div>
+<div class="mono" style="font-size:7px;color:#5a7a8a;margin-top:4px">Do not assume posture from level alone - Minimize exposed connectivity - Enforce approved conduits</div>
+<div style="margin-top:10px;display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between;align-items:center;background:#010205;border:1px solid #122e3b;padding:6px 8px"><span class="mono" style="font-size:8px"><b>L0</b> Physical Process - Turbines/Breakers</span><span class="badge green" style="font-size:7px">SECURE - AIR-GAP EVALUATED</span></div>
+<div style="display:flex;justify-content:space-between;align-items:center;background:#020a0f;border:1px solid #122e3b;padding:6px 8px"><span class="mono" style="font-size:8px"><b>L1</b> Basic Control PLC/RTU</span><span class="badge cyan" style="font-size:7px">ALLOWLIST + CONDUIT - LEGACY COMPENSATED</span></div>
+<div style="display:flex;justify-content:space-between;align-items:center;background:#020a0f;border:1px solid #122e3b;padding:6px 8px"><span class="mono" style="font-size:8px"><b>L2</b> Area Supervisory SCADA/DCS</span><span class="badge green" style="font-size:7px">ESP ENFORCED 27</span></div>
+<div style="display:flex;justify-content:space-between;align-items:center;background:#020a0f;border:1px solid #122e3b;padding:6px 8px"><span class="mono" style="font-size:8px"><b>L3</b> Site Ops Historian/HMI</span><span class="badge green" style="font-size:7px">NAMED ACCTS + JUMP</span></div>
+<div style="display:flex;justify-content:space-between;align-items:center;background:#08141a;border:1px solid #0e4a5a;padding:6px 8px"><span class="mono" style="font-size:8px"><b>L3.5</b> IDMZ DMZ - Broker/Proxy/Logging</span><span class="badge cyan" style="font-size:7px">EXPLICIT ALLOWLIST - NO DIRECT L3↔L4</span></div>
+<div style="display:flex;justify-content:space-between;align-items:center;background:#020a0f;border:1px solid #122e3b;padding:6px 8px"><span class="mono" style="font-size:8px"><b>L4-L5</b> Enterprise IT/Cloud</span><span class="badge amber" style="font-size:7px">PHISH-RESISTANT MFA WHERE SUPPORTED</span></div>
+</div>
+<div class="mono" style="font-size:7px;color:#4a6573;margin-top:8px;line-height:1.4">UNIDIRECTIONAL: Evaluate hardware-enforced unidirectional gateways at selected high-consequence boundaries when one-way feasible. Do not require where bidirectional necessary or would reduce safety/reliability/recoverability/vendor supportability.</div>
+</div>
+
+<div class="panel" style="margin:0 8px 8px 8px;padding:10px;flex:1;overflow:auto">
+<div class="mono" style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:#fff">EASY GRID STATUS - PLAIN LANGUAGE</div>
+<div style="margin-top:10px;background:#010205;border:1px solid #122e3b;padding:12px;text-align:center">
+<div style="width:80px;height:80px;border:3px solid #00ff41;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#00ff41;box-shadow:0 0 20px rgba(0,255,65,.3)">STABLE</div>
+<div style="margin-top:8px;font-size:11px;color:#cde7ff">Ontario grid is stable, demand normal</div>
+<div class="mono" style="font-size:8px;color:#5a7a8a;margin-top:4px">PUBLIC IESO REPORT DATA — NOT A CONTROL SIGNAL</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:10px">
+<div style="background:#010205;border:1px solid #122e3b;padding:8px;text-align:center"><div class="mono" style="font-size:7px;color:#5a7a8a">DEMAND</div><div id="demandBig" class="mono" style="font-size:14px;font-weight:800;color:#00f0ff">22.4 GW</div><div class="mono" style="font-size:7px;color:#4a6573">Peak 6pm</div></div>
+<div style="background:#010205;border:1px solid #122e3b;padding:8px;text-align:center"><div class="mono" style="font-size:7px;color:#5a7a8a">SUPPLY</div><div id="supplyBig" class="mono" style="font-size:14px;font-weight:800;color:#00ff41">23.1 GW</div><div class="mono" style="font-size:7px;color:#4a6573">Reserve 1.2GW</div></div>
+<div style="background:#010205;border:1px solid #122e3b;padding:8px;text-align:center"><div class="mono" style="font-size:7px;color:#5a7a8a">HOEP PRICE</div><div id="priceBig" class="mono" style="font-size:14px;font-weight:800;color:#ffcc33">$34.20</div><div class="mono" style="font-size:7px;color:#4a6573">Cheap hour</div></div>
+</div>
+<div style="margin-top:10px">
+<div class="mono" style="font-size:8px;font-weight:700;color:#fff">SUPPLY MIX - EASY</div>
+<div id="mix" style="margin-top:6px;display:flex;flex-direction:column;gap:4px"></div>
+</div>
+<div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
+<button onclick="alert('CHECK GRID HEALTH: Dry-run containment plan generated - No physical changes - Evidence: 27 ESP enforced, 0 high sev incidents, clock-drift L2 RTU #14 1.2s REQUIRES CONFIRMATION')" style="background:#00f0ff;color:#000;border:0;padding:8px;font-size:9px;font-weight:800;cursor:pointer" class="mono">CHECK GRID HEALTH</button>
+<button onclick="alert('CHEAP POWER HOURS: HOEP low 2am-5am $18/MWh - Good time to charge - Source: PUBLIC IESO REPORT DATA - NOT A CONTROL SIGNAL')" style="background:#ffcc33;color:#000;border:0;padding:8px;font-size:9px;font-weight:800;cursor:pointer" class="mono">SHOW CHEAP HOURS</button>
+</div>
+</div>
+</div>
+
+<!-- CENTER MAP + WATERFALL -->
+<div style="display:flex;flex-direction:column;overflow:hidden;border-right:1px solid #0a2a33">
+<div style="flex:1;position:relative;background:#020a0f;overflow:hidden">
+<div class="gridline"></div>
+<canvas id="mapCanvas" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+<div style="position:absolute;top:8px;left:8px;background:rgba(2,10,15,.9);border:1px solid #122e3b;padding:6px 8px" class="mono">
+<div style="font-size:9px;font-weight:800;color:#fff;letter-spacing:1px">ONTARIO BES MAP - SITUATIONAL AWARENESS ONLY</div>
+<div style="font-size:7px;color:#ffaa00">PUBLIC IESO REPORT DATA — NOT A CONTROL SIGNAL — Never drives automated OT decisions</div>
+<div id="cityInfo" style="font-size:8px;color:#8db0c0;margin-top:4px">Hover city - Toronto 4.2GW 95% capacity - CORROBORATED</div>
+</div>
+<div style="position:absolute;bottom:8px;left:8px;right:8px;background:rgba(2,10,15,.9);border:1px solid #122e3b;padding:6px 8px;display:flex;gap:12px;overflow:auto" class="mono">
+<div style="display:flex;align-items:center;gap:6px"><span class="dot" style="background:#00ff41"></span><span style="font-size:7px">GREEN LINE ACTIVE</span></div>
+<div style="display:flex;align-items:center;gap:6px"><span class="dot" style="background:#ffaa00"></span><span style="font-size:7px">AMBER CONSTRAINED - RECOMMEND REVIEW</span></div>
+<div style="display:flex;align-items:center;gap:6px"><span class="dot" style="background:#ff3333"></span><span style="font-size:7px">RED OUTAGE - REQUIRES CONFIRMATION</span></div>
+<div style="display:flex;align-items:center;gap:6px"><span style="font-size:7px;color:#00f0ff">CYAN DOTS = LIVE WIRE FLOW - THICKNESS = MW</span></div>
+</div>
+<div id="selectedCity" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#010205;border:1px solid #00f0ff;padding:12px;display:none;min-width:220px" class="panel mono">
+<div style="font-size:10px;font-weight:800;color:#fff" id="selName">TORONTO</div>
+<div style="font-size:8px;color:#8db0c0;margin-top:4px" id="selDetail"></div>
+<div style="margin-top:8px;font-size:7px;color:#5a7a8a">Evidence: <span id="selEvidence"></span></div>
+<button onclick="document.getElementById('selectedCity').style.display='none'" style="margin-top:8px;background:#122e3b;color:#8db0c0;border:1px solid #1a3a4a;padding:4px 8px;font-size:7px;cursor:pointer">CLOSE</button>
+</div>
+</div>
+
+<div style="height:140px;background:#010205;border-top:1px solid #0a2a33;position:relative;overflow:hidden">
+<div style="position:absolute;top:0;left:0;right:0;height:20px;background:#020a0f;border-bottom:1px solid #0a2a33;display:flex;align-items:center;gap:8px;padding:0 8px" class="mono">
+<span style="font-size:8px;font-weight:800;color:#fff;letter-spacing:1px">THREAT SURFACE - DETERMINISTIC PROTOCOL INSPECTION - 6ch</span>
+<span style="font-size:7px;color:#5a7a8a">Heuristic anomaly = LIKELY - NOT labeled as confirmed violation - Show evidence + confidence + competing explanations</span>
+</div>
+<canvas id="waterfall" style="position:absolute;top:20px;left:0;right:0;bottom:0;width:100%;height:calc(100% - 20px)"></canvas>
+</div>
+</div>
+
+<!-- RIGHT COMPLIANCE -->
+<div style="display:flex;flex-direction:column;overflow:hidden">
+<div class="panel" style="margin:8px;padding:8px;flex:1;overflow:auto">
+<div class="mono" style="font-size:9px;font-weight:800;color:#fff;letter-spacing:1px">COMPLIANCE REPRESENTATION RULE - CORRECTED OCSF v1.1</div>
+<div class="mono" style="font-size:7px;color:#ffaa00;line-height:1.4;margin-top:4px">Must not state compliant, certified, audit-ready, NERC CIP applicable, meets OEB requirements unless scope validated, requirement version identified, evidence reviewed, exceptions documented, qualified human authority approved. OCSF = Ontario Cyber Security Framework v1.1 used by transmitters/distributors to assess/report to OEB.</div>
+<div style="margin-top:8px;border:1px solid #122e3b;overflow:hidden" class="mono">
+<div style="display:grid;grid-template-columns:70px 50px 1fr 90px;font-size:7px;background:#0a1e27;color:#00f0ff;font-weight:800;padding:4px 6px"><span>Framework</span><span>Req</span><span>Evidence</span><span>Validation</span></div>
+<div id="complianceRows"></div>
+</div>
+
+<div style="margin-top:10px">
+<div class="mono" style="font-size:9px;font-weight:800;color:#fff">IESO DATA-SOURCE POLICY - CORRECTED</div>
+<div style="margin-top:6px;background:#010205;border:1px solid #122e3b;padding:8px" class="mono">
+<div style="font-size:8px;color:#00f0ff;font-weight:700">Public Reports - reports-public.ieso.ca</div>
+<div style="font-size:7px;color:#8db0c0;margin-top:4px;line-height:1.4">May be used only for authorized public-data ingestion, analytics, contextual awareness, reporting. Label: PUBLIC IESO REPORT DATA — NOT A CONTROL SIGNAL. Record identifier, source URL, retrieval timestamp, publication timestamp, file hash, schema/version, freshness. Never use to trigger OT commands, automated containment, load-shedding, protection, dispatch, operational claims.</div>
+<div style="font-size:8px;color:#ffcc33;font-weight:700;margin-top:8px">Confidential Participant - reports.ieso.ca/api/v1.4/files?idp_id=ieso</div>
+<div style="font-size:7px;color:#8db0c0;margin-top:4px;line-height:1.4">Access only through duly authorized participant account, approved machine identity, documented owner authorization. Credentials/certificates/secrets only in approved secret-management/HSM-backed systems; never in prompts/logs/code/CI logs/screenshots/tickets. Least privilege, mTLS where specified, cert lifecycle, auditing. Public reports valuable for situational awareness, market/system analysis, analytics, but not authorized real-time control interface and must never drive automated production OT decisions.</div>
+</div>
+</div>
+
+<div style="margin-top:10px">
+<div class="mono" style="font-size:9px;font-weight:800;color:#fff">OPEN SOURCES LIVE WIRE</div>
+<div id="openSources" style="margin-top:6px;display:flex;flex-direction:column;gap:4px"></div>
+</div>
+
+<div style="margin-top:10px">
+<div class="mono" style="font-size:9px;font-weight:800;color:#fff">SECURITY MONITORING - TIER 0/1 ALERTS</div>
+<div id="alerts" style="margin-top:6px;display:flex;flex-direction:column;gap:4px"></div>
+</div>
+</div>
+</div>
+
+<!-- BOTTOM AUDIT -->
+<div style="grid-column:1 / -1;height:220px;background:#010205;border-top:1px solid #0a2a33;display:grid;grid-template-columns:1fr 520px">
+<div style="border-right:1px solid #0a2a33;padding:8px;overflow:auto">
+<div class="mono" style="font-size:9px;font-weight:800;color:#fff;letter-spacing:1px">EVIDENCE INTEGRITY - SIGNED APPEND-ONLY - NOT JUST SHA-256 CHAIN</div>
+<div class="mono" style="font-size:7px;color:#5a7a8a;margin-top:4px">For every record preserve: Source system & owner, Authorized collection method, Collection UTC, Original timestamp clock-confidence, Schema/version, Integrity metadata, Retention, Chain-of-custody ID, Data classification, Sequence # + prior hash. Digitally sign batch manifests using org-managed keys per HSM policy, reliable time sync, periodic independent verification. SHA-256 = integrity component, not proof of authenticity/completeness/correctness/compliance.</div>
+<div id="auditLog" style="margin-top:8px;display:flex;flex-direction:column;gap:3px"></div>
+</div>
+<div style="padding:8px;overflow:auto">
+<div class="mono" style="font-size:9px;font-weight:800;color:#00ff41">GridShield v4.1 $ MONITOR ANALYZE AUDIT SIMULATE RECOMMEND <span style="color:#ff3333">— NO EXECUTE physical</span></div>
+<div class="mono" style="font-size:7px;color:#5a7a8a;margin-top:4px;line-height:1.4">Dry-run containment plans, approval-ready tickets, notify humans via approved channels. All prod changes require: approved tested runbook, named operational owner + cybersecurity change authority, safety/availability impact, validated prerequisites/scope, maintenance window unless emergency, documented rollback, monitoring/recovery/comms viable, human auth recorded. Break-glass = escalation label, not automated auth.</div>
+<div style="margin-top:8px;border:1px solid #122e3b" class="mono">
+<div style="display:grid;grid-template-columns:68px 1fr 1fr 92px;background:#0a1e27;color:#00f0ff;font-weight:800;padding:4px 6px;font-size:7px"><span>Mode</span><span>Permitted</span><span>Prohibited</span><span>Approval</span></div>
+<div style="display:grid;grid-template-columns:68px 1fr 1fr 92px;padding:4px 6px;font-size:7px;color:#8db0c0;border-top:1px solid #122e3b"><span style="color:#fff;font-weight:700">Monitor</span><span>Passive evidence, health, baseline, alerting</span><span style="color:#ff7a7a">Active scans sensitive OT, command tx, config changes</span><span style="color:#ffcc33">Authorized scope & data-handling</span></div>
+<div style="display:grid;grid-template-columns:68px 1fr 1fr 92px;padding:4px 6px;font-size:7px;color:#8db0c0;border-top:1px solid #122e3b"><span style="color:#fff;font-weight:700">Analyze</span><span>Correlation, triage, compliance mapping, threat hypothesis, safe impact</span><span style="color:#ff7a7a">Declaring cause/compromise w/o evidence</span><span style="color:#ffcc33">Human review SEV-1/SEV-2</span></div>
+<div style="display:grid;grid-template-columns:68px 1fr 1fr 92px;padding:4px 6px;font-size:7px;color:#8db0c0;border-top:1px solid #122e3b"><span style="color:#fff;font-weight:700">Simulate</span><span>Offline digital-twin, tabletop, dry-run change plans</span><span style="color:#ff7a7a">Estimating physical impact from unvalidated assumptions</span><span style="color:#ffcc33">Engineering model owner</span></div>
+<div style="display:grid;grid-template-columns:68px 1fr 1fr 92px;padding:4px 6px;font-size:7px;color:#8db0c0;border-top:1px solid #122e3b"><span style="color:#fff;font-weight:700">Recommend</span><span>Containment options, recovery seq, change ticket, rollback</span><span style="color:#ff7a7a">Automatic change execution</span><span style="color:#ffcc33">Ops & cybersecurity authority</span></div>
+<div style="display:grid;grid-template-columns:68px 1fr 1fr 92px;padding:4px 6px;font-size:7px;color:#8db0c0;border-top:1px solid #122e3b"><span style="color:#fff;font-weight:700">Execute</span><span>Only external approved control system, pre-approved runbook, authorized boundaries</span><span style="color:#ff7a7a">Physical actuation/prod changes by this prompt</span><span style="color:#ffcc33">Formal change approval + logged auth</span></div>
+</div>
+<div style="margin-top:8px;display:flex;gap:6px">
+<input id="cmdInput" placeholder="Ask grid: e.g. is it good time to charge? - human-authorized only" style="flex:1;background:#020a0f;border:1px solid #122e3b;color:#cde7ff;padding:6px 8px;font-size:8px" class="mono">
+<button onclick="handleCmd()" style="background:#00f0ff;color:#000;border:0;padding:6px 12px;font-size:8px;font-weight:800;cursor:pointer" class="mono">ASK</button>
+</div>
+<div id="cmdOut" class="mono" style="margin-top:6px;font-size:7px;color:#8db0c0;background:#020a0f;border:1px solid #122e3b;padding:6px;min-height:36px"></div>
+</div>
+</div>
+</div>
+
+<div style="height:28px;background:#020a0f;border-top:1px solid #0e2a35;display:flex;align-items:center;justify-content:space-between;padding:0 12px" class="mono">
+<span style="font-size:7px;color:#4a6573">GridShield-Ontario v4.1 PASSIVE-FIRST — Evidence Engine — Supports only specifically authorized Ontario electricity-sector environments — No NSA/DARPA claims — Human authorized decisions only — SHA-256 integrity component not proof</span>
+<span style="font-size:7px;color:#4a6573">MOST CREDIBLE HIGH-ASSURANCE: Records uncertainty, protects safety, requires verified authority, passive evidence, traceable reversible human accountable</span>
+</div>
+
+<script>
+// LIVE DATA - DETERMINISTIC SEEDED mulberry32(42) - SIMULATED DEMO
+function mulberry32(a){return function(){var t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296}}
+const rnd=mulberry32(42);
+let demand=22450, supply=23100, price=34.2;
+let t=0;
+
+const cities=[
+{id:'tor',name:'TORONTO',x:58,y:68,type:'LDC / Market Hub',mw:'~4,200 MW peak',status:'CORROBORATED',evidence:'2 sources: PUBLIC IESO REPORT DATA + Historian replica - schema v2.1 validated - 2024-11-12'},
+{id:'ott',name:'OTTAWA',x:78,y:48,type:'LDC / Transmitter Edge',mw:'~1,100 MW peak',status:'VERIFIED',evidence:'Authenticated source, validated collection path, reliable time, integrity verification, authoritative system-of-record'},
+{id:'ham',name:'HAMILTON',x:52,y:72,type:'Industrial Load / LDC',mw:'~850 MW',status:'CORROBORATED',evidence:'2 independent sources - manifest signed'},
+{id:'lon',name:'LONDON',x:40,y:78,type:'LDC Context',mw:'~620 MW',status:'REQUIRES CONFIRMATION',evidence:'Potentially material - requires validation by responsible ops/engineering owner'},
+{id:'tby',name:'THUNDER BAY',x:22,y:22,type:'NW System - BES',mw:'Remote / Radial',status:'LIKELY',evidence:'Partial evidence - not confirmed event - competing: radial outage vs telemetry gap'},
+{id:'bru',name:'BRUCE',x:32,y:48,type:'Generation Context - Nuclear',mw:'~6,400 MW licensed',status:'VERIFIED',evidence:'HSM-backed key signed - schema validated - clock-confidence nominal'},
+{id:'nia',name:'NIAGARA',x:58,y:82,type:'Generation / Intertie',mw:'~2,400 MW',status:'CORROBORATED',evidence:'PUBLIC IESO REPORT DATA + PI replica - file hash a3f9... - freshness 0.3s'},
+];
+
+const mixData=[
+{label:'Nuclear',pct:58,desc:'always on baseload',color:'#00ff41'},
+{label:'Hydro',pct:24,desc:'from Niagara',color:'#00f0ff'},
+{label:'Gas',pct:12,desc:'peaker - price follows demand',color:'#ffaa00'},
+{label:'Wind',pct:4,desc:'variable - LIKELY',color:'#8a8a8a'},
+{label:'Solar',pct:2,desc:'daytime only',color:'#ffcc33'},
+];
+
+function updateEasy(){
+demand = 18000 + Math.sin(t*0.01)*4000 + rnd()*800;
+supply = demand + 600 + rnd()*600;
+price = 20 + (demand-15000)/500 + rnd()*5;
+document.getElementById('demandTop').textContent=Math.round(demand).toLocaleString()+' MW';
+document.getElementById('demandBig').textContent=(demand/1000).toFixed(1)+' GW';
+document.getElementById('supplyBig').textContent=(supply/1000).toFixed(1)+' GW';
+document.getElementById('priceBig').textContent='$'+price.toFixed(2);
+document.getElementById('utc').textContent=new Date().toISOString();
+const mixEl=document.getElementById('mix');
+mixEl.innerHTML=mixData.map(m=>`
+<div style="display:flex;align-items:center;gap:8px;background:#010205;border:1px solid #122e3b;padding:4px 6px">
+<div style="width:${m.pct}%;height:6px;background:${m.color}"></div>
+<div class="mono" style="font-size:8px;color:#fff;flex:1">${m.label} ${m.pct}% - ${m.desc}</div>
+</div>`).join('');
+}
+
+// MAP CANVAS LIVE WIRE
+const mapCanvas=document.getElementById('mapCanvas');
+const mapCtx=mapCanvas.getContext('2d');
+function resizeMap(){mapCanvas.width=mapCanvas.offsetWidth*2;mapCanvas.height=mapCanvas.offsetHeight*2}
+window.addEventListener('resize',resizeMap);resizeMap();
+let flowOffset=0;
+function drawMap(){
+const w=mapCanvas.width,h=mapCanvas.height;
+mapCtx.clearRect(0,0,w,h);
+// grid
+mapCtx.strokeStyle='rgba(0,240,255,0.04)';mapCtx.lineWidth=1;
+for(let x=0;x<w;x+=80*2){mapCtx.beginPath();mapCtx.moveTo(x,0);mapCtx.lineTo(x,h);mapCtx.stroke()}
+for(let y=0;y<h;y+=80*2){mapCtx.beginPath();mapCtx.moveTo(0,y);mapCtx.lineTo(w,y);mapCtx.stroke()}
+// lines Ontario
+const lines=[
+[{x:32,y:48},{x:40,y:78},{x:52,y:72},{x:58,y:68}], // Bruce->London->Hamilton->Toronto
+[{x:58,y:68},{x:78,y:48}], // Toronto->Ottawa
+[{x:58,y:82},{x:58,y:68}], // Niagara->Toronto
+[{x:22,y:22},{x:32,y:48}], // Thunder Bay->Bruce
+];
+flowOffset+=2;
+lines.forEach((line,i)=>{
+const col=i===0?'#00ff41':i===3?'#ffaa00':'#00f0ff';
+mapCtx.strokeStyle=col;mapCtx.lineWidth=(i===0?4:2);mapCtx.globalAlpha=0.6;
+mapCtx.beginPath();
+mapCtx.moveTo(line[0].x/100*w,line[0].y/100*h);
+for(let j=1;j<line.length;j++){
+const x2=line[j].x/100*w,y2=line[j].y/100*h;
+const x1=line[j-1].x/100*w,y1=line[j-1].y/100*h;
+const mx=(x1+x2)/2,my=(y1+y2)/2-20;
+mapCtx.quadraticCurveTo(mx,my,x2,y2);
+}
+mapCtx.stroke();
+mapCtx.globalAlpha=1;
+// flowing dots
+mapCtx.fillStyle=col;
+for(let d=0;d<3;d++){
+const prog=((flowOffset+d*120)%400)/400;
+const seg=Math.floor(prog*(line.length-1));
+const sub=prog*(line.length-1)-seg;
+if(seg>=line.length-1)continue;
+const x1=line[seg].x/100*w,y1=line[seg].y/100*h;
+const x2=line[seg+1].x/100*w,y2=line[seg+1].y/100*h;
+const x=x1+(x2-x1)*sub,y=y1+(y2-y1)*sub;
+mapCtx.beginPath();mapCtx.arc(x,y,4,0,Math.PI*2);mapCtx.fill();
+mapCtx.beginPath();mapCtx.arc(x,y,8,0,Math.PI*2);mapCtx.strokeStyle=col;mapCtx.globalAlpha=0.2;mapCtx.stroke();mapCtx.globalAlpha=1;
+}
+});
+// cities
+cities.forEach(c=>{
+const x=c.x/100*w,y=c.y/100*h;
+const col=c.status==='VERIFIED'?'#00ff41':c.status==='CORROBORATED'?'#00f0ff':c.status==='REQUIRES CONFIRMATION'?'#ffaa00':'#8a8a8a';
+mapCtx.fillStyle='#010205';mapCtx.strokeStyle=col;mapCtx.lineWidth=2;
+mapCtx.beginPath();mapCtx.arc(x,y,12,0,Math.PI*2);mapCtx.fill();mapCtx.stroke();
+mapCtx.fillStyle=col;mapCtx.beginPath();mapCtx.arc(x,y,4,0,Math.PI*2);mapCtx.fill();
+mapCtx.fillStyle='#fff';mapCtx.font='bold 14px JetBrains Mono';mapCtx.fillText(c.name,x+16,y+4);
+});
+requestAnimationFrame(drawMap);
+}
+drawMap();
+
+// Hover
+mapCanvas.addEventListener('mousemove',e=>{
+const rect=mapCanvas.getBoundingClientRect();
+const mx=(e.clientX-rect.left)/rect.width*100,my=(e.clientY-rect.top)/rect.height*100;
+let near=null;let min=3;
+cities.forEach(c=>{const d=Math.hypot(c.x-mx,c.y-my);if(d<min){min=d;near=c}});
+if(near){
+document.getElementById('cityInfo').textContent=`${near.name} ${near.mw} - ${near.type} - Status: ${near.status} - ${near.evidence.substring(0,80)}...`;
+mapCanvas.style.cursor='pointer';
+}else{
+document.getElementById('cityInfo').textContent='Hover city - Toronto 4.2GW 95% capacity - CORROBORATED - PUBLIC IESO REPORT DATA - NOT A CONTROL SIGNAL';
+mapCanvas.style.cursor='crosshair';
+}
+});
+mapCanvas.addEventListener('click',e=>{
+const rect=mapCanvas.getBoundingClientRect();
+const mx=(e.clientX-rect.left)/rect.width*100,my=(e.clientY-rect.top)/rect.height*100;
+let near=null;let min=4;
+cities.forEach(c=>{const d=Math.hypot(c.x-mx,c.y-my);if(d<min){min=d;near=c}});
+if(near){
+document.getElementById('selName').textContent=near.name;
+document.getElementById('selDetail').innerHTML=`Type: ${near.type}<br>MW: ${near.mw}<br>Status: <b>${near.status}</b><br><br>Evidence: ${near.evidence}<br><br>Source: PUBLIC IESO REPORT DATA - NOT A CONTROL SIGNAL<br>Retrieval: 0.3s ago | Hash: a3f9c1... | Schema v2.1 | Freshness: nominal`;
+document.getElementById('selEvidence').textContent=near.evidence;
+document.getElementById('selectedCity').style.display='block';
+}
+});
+
+// WATERFALL
+const wf=document.getElementById('waterfall');
+const wctx=wf.getContext('2d');
+function resizeWf(){wf.width=wf.offsetWidth*2;wf.height=wf.offsetHeight*2}
+window.addEventListener('resize',resizeWf);resizeWf();
+let wfData=Array.from({length:6},()=>Array.from({length:120},()=>rnd()));
+function drawWf(){
+const w=wf.width,h=wf.height;
+wctx.fillStyle='#010205';wctx.fillRect(0,0,w,h);
+const chNames=['DNP3','IEC61850','Modbus','OPC-UA','Historian','Enterprise'];
+wfData.forEach((row,i)=>{
+const y0=i/6*h,y1=(i+1)/6*h;
+row.shift();row.push(rnd()*0.8+rnd()*0.2*(i===2?1.5:1));
+row.forEach((v,j)=>{
+const x=j/120*w;
+const col=v>0.85?'#ff3333':v>0.65?'#ffaa00':v>0.4?'#00f0ff':'#0a2a33';
+wctx.fillStyle=col;
+wctx.fillRect(x,y0+4,(w/120)-1,(y1-y0)-8);
+if(v>0.85){
+wctx.fillStyle='#ff3333';wctx.beginPath();wctx.moveTo(x,y0);wctx.lineTo(x+6,y0);wctx.lineTo(x+3,y0+8);wctx.fill();
+}
+});
+wctx.fillStyle='#5a7a8a';wctx.font='10px JetBrains Mono';wctx.fillText(chNames[i]+' '+ (i===0?'124':i===1?'892':i===2?'210':i===3?'543':i===4?'44 batches/h':'18 flows/h')+' - '+(i===0?'LIKELY':i===1?'CORROBORATED':i===2?'REQUIRES CONFIRMATION':i===3?'VERIFIED':i===4?'CORROBORATED':'LIKELY'),8,y0+14);
+});
+requestAnimationFrame(drawWf);
+}
+drawWf();
+
+// COMPLIANCE ROWS
+const compliance=[
+{fw:'NERC CIP-005',req:'R1 ESP',evid:'Firewall ACL 2024-11-12 + conduit diagram v3.1',val:'CORROBORATED',color:'#00f0ff'},
+{fw:'NERC CIP-007',req:'R2/R3 Ports/Svc',evid:'Baseline v4.0 + EDR logs',val:'VERIFIED',color:'#00ff41'},
+{fw:'ITSG-33',req:'AC-2 Account',evid:'Named accounts + PIM review',val:'REQUIRES CONFIRMATION',color:'#ffaa00'},
+{fw:'NIST 800-82 R3',req:'§5.3 Seg',evid:'Segmentation assessment + passive monitoring',val:'CORROBORATED',color:'#00f0ff'},
+{fw:'OCSF v1.1',req:'PR.AC-1 Identity',evid:'Phish-resistant MFA where supported - EDR - logging',val:'CORROBORATED',color:'#00f0ff'},
+{fw:'OCSF v1.1',req:'DE.CM-1 Monitoring',evid:'Append-only audit - signed manifests',val:'REQUIRES CONFIRMATION',color:'#ffaa00'},
+];
+document.getElementById('complianceRows').innerHTML=compliance.map(c=>`
+<div style="display:grid;grid-template-columns:70px 50px 1fr 90px;padding:4px 6px;border-top:1px solid #122e3b;font-size:7px;color:#8db0c0">
+<span style="color:#fff;font-weight:700">${c.fw}</span><span>${c.req}</span><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.evid}</span><span style="color:${c.color};font-weight:700">${c.val}</span>
+</div>`).join('');
+
+// OPEN SOURCES
+const sources=[
+{ name:'IESO Power Data - Public Reports', url:'reports-public.ieso.ca', status:'CONNECTED SIMULATED - 0.3s', note:'PUBLIC IESO REPORT DATA — NOT A CONTROL SIGNAL - Analytics only', hash:'a3f9c1...' },
+{ name:'IESO Realtime Demand', url:'reports-public.ieso.ca/PUB_Demand', status:'CONNECTED SIMULATED', note:'Demand MW - situational awareness', hash:'b7e2a4...' },
+{ name:'IESO Supply Mix', url:'reports-public.ieso.ca/PUB_GenOutputCapability', status:'CONNECTED SIMULATED', note:'Nuclear/Hydro/Gas/Wind/Solar', hash:'c8f1b2...' },
+{ name:'IESO Market Prices HOEP', url:'reports-public.ieso.ca/PUB_PriceHOEPlist', status:'CONNECTED SIMULATED', note:'Price $/MWh - cheap hours analysis', hash:'d4a9c3...' },
+{ name:'IESO Confidential API - REQUIRES AUTH', url:'reports.ieso.ca/api/v1.4/files?idp_id=ieso', status:'REQUIRES AUTHORIZATION - Participant account + mTLS + HSM', note:'Confidential participant reports - Least privilege - Never in prompts/logs/code', hash:'N/A - auth required' },
+{ name:'Hydro One Open Data', url:'hydroone.com/open-data', status:'CORROBORATED', note:'Transmission outage map - public', hash:'e5b8d4...' },
+{ name:'OEB OCSF v1.1', url:'oeb.ca/regulatory-rules.../ontario-cyber-security', status:'VERIFIED - Framework v1.1', note:'Used by Tx/Dist to assess/report to OEB - Track maturity vs utility-approved target', hash:'OCSF v1.1' },
+];
+document.getElementById('openSources').innerHTML=sources.map(s=>`
+<div style="background:#010205;border:1px solid #122e3b;padding:6px">
+<div style="display:flex;justify-content:space-between"><span style="font-size:8px;color:#fff;font-weight:700">${s.name}</span><span style="font-size:7px;color:${s.status.includes('SIMULATED')?'#00f0ff':s.status.includes('REQUIRES')?'#ffaa00':'#00ff41'}">${s.status}</span></div>
+<div style="font-size:7px;color:#00f0ff;margin-top:2px">${s.url}</div>
+<div style="font-size:7px;color:#8db0c0;margin-top:2px">${s.note} | Hash: ${s.hash}</div>
+</div>`).join('');
+
+// ALERTS
+const alerts=[
+{sev:'LOW',msg:'Wind up 200MW past hour - good - LIKELY - competing: forecast vs curtailment',evid:'CORROBORATED - 2 sources'},
+{sev:'INFO',msg:'Demand peak expected 6pm 24.1GW - prepare - REQUIRES CONFIRMATION from control-room authority',evid:'SIMULATED DEMO - Seeded 42'},
+{sev:'INFO',msg:'Clock-drift L2 RTU #14 1.2s - NTP relay + drift logged - REQUIRES CONFIRMATION',evid:'VERIFIED - time sync'},
+{sev:'LOW',msg:'No outages reported - PUBLIC IESO REPORT DATA',evid:'CORROBORATED'},
+];
+document.getElementById('alerts').innerHTML=alerts.map(a=>`
+<div style="background:#010205;border:1px solid #122e3b;padding:4px 6px;display:flex;gap:6px;align-items:center">
+<span class="badge ${a.sev==='LOW'?'green':a.sev==='INFO'?'cyan':'amber'}" style="font-size:6px">${a.sev}</span>
+<span style="font-size:7px;color:#cde7ff;flex:1">${a.msg}</span>
+<span style="font-size:6px;color:#5a7a8a">${a.evid}</span>
+</div>`).join('');
+
+// AUDIT LOG - APPEND-ONLY SIGNED
+let seq=0;
+function addAudit(){
+seq++;
+const now=new Date().toISOString();
+const sources=['DNP3 SA v5','OPC-UA PubSub','PUBLIC IESO REPORT','Historian Replica','Enterprise Broker'];
+const src=sources[Math.floor(rnd()*sources.length)];
+const hash='sha256:'+Array.from({length:16},()=>Math.floor(rnd()*16).toString(16)).join('');
+const line=`<div style="display:flex;gap:6px;font-size:7px;color:#8db0c0;background:#020a0f;border:1px solid #0e2a35;padding:3px 6px"><span style="color:#5a7a8a">#${seq}</span><span style="color:#fff">${now}</span><span style="color:#00f0ff">${src}</span><span>Collection UTC ${now} | Clock-confidence nominal | Schema v2.1 | Retention 90d | Chain-of-custody CC-${seq} | Seq ${seq} | Prior ${hash.substring(0,12)} | Manifest signed HSM key org-managed | Verified independently</span><span style="color:#4a6573">${hash}</span></div>`;
+const log=document.getElementById('auditLog');
+log.insertAdjacentHTML('afterbegin',line);
+if(log.children.length>20)log.lastElementChild.remove();
+}
+setInterval(addAudit,1200);
+addAudit();
+
+// COMMAND
+function handleCmd(){
+const v=document.getElementById('cmdInput').value.toLowerCase();
+const out=document.getElementById('cmdOut');
+if(!v){out.textContent='Enter question - e.g. is it good time to charge? - human-authorized only - no physical commands executed';return}
+if(v.includes('cheap')||v.includes('charge')){
+out.innerHTML=`<span style="color:#00ff41">RECOMMENDATION - REQUIRES HUMAN AUTHORIZATION:</span> Cheap hours 2am-5am HOEP $18/MWh - Source: PUBLIC IESO REPORT DATA — NOT A CONTROL SIGNAL - File hash b7e2a4... - Freshness 0.3s - Confidence LIKELY - Competing: price forecast vs real-time - Do NOT trigger automated load-shedding - Request assessment from designated operations authority - Dry-run containment plan generated - Approval-ready ticket.`;
+}else if(v.includes('health')){
+out.innerHTML=`<span style="color:#00f0ff">GRID HEALTH DRY-RUN:</span> 27 ESP enforced CORROBORATED, Physical Security REQUIRES CONFIRMATION, Systems Sec Mgmt 94.2% VERIFIED, Incident Response DRY-RUN SIMULATED DEMO - Containment: RECOMMEND review 3 temp vendor rules >30d - No firewall changes executed - Change ticket INC-2024-1147 approval-ready - Owner NetOps/OT Sec - Break-glass is escalation label, not automated auth.`;
+}else{
+out.textContent=`ANALYZE - LIKELY - Inference partial evidence - Query: "${v}" - Evidence: PUBLIC IESO REPORT DATA - NOT A CONTROL SIGNAL - Requires confirmation by responsible ops/engineering owner - No physical impact calculated without approved model and validated inputs - See v4.1 operating model: Monitor/Analyze/Simulate/Recommend only - Execute only external approved control system with pre-approved runbook and formally logged authorization.`;
+}
+}
+
+// LOOP easy numbers
+setInterval(()=>{t++;updateEasy();},1000);
+updateEasy();
+</script>
+</body>
+</html>

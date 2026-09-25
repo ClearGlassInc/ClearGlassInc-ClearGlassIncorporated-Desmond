@@ -54,7 +54,7 @@ Each approval covers **one** action at **one** time. Approval of one does not im
 | ID | Action | What happens when approved | Reversible? |
 |---|---|---|---|
 | A1 | Merge Phase 0 to `main` | GitHub Pages publishes the changed pages | Yes: revert commit |
-| A2 | Create the production host and database (H2) and run migrations 001–008 in order (009 when Phase 1 lands) | A public API exists; tables created | Service yes; data retained per policy |
+| A2 | Create the production host and database (H2) and run migrations 001–009 in order (`python -m app.migrate`; 010 when Phase 1 lands) | A public API exists; tables created | Service yes; data retained per policy |
 | A3 | Set `CRCS_RAPID_DIAGNOSTIC_ENABLED=true` in production | Real buyers can pay | Yes: flag off; paid orders remain |
 | A4 | Publish privacy, terms, cookie and disclosure page changes | Public legal text changes | Yes, but versions must be kept |
 | A5 | Send each outbound message or batch (DRAFT FOR APPROVAL) | People are contacted | **No** |

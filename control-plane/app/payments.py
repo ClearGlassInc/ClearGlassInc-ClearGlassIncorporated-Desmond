@@ -130,7 +130,7 @@ def create_checkout_session(
 
     if not is_live():
         return {
-            "id": f"cs_mock_{abs(hash((amount_total, customer_email))) % 10**10:010d}",
+            "id": f"cs_mock_{abs(hash((amount_total, customer_email, client_reference_id))) % 10**10:010d}",
             "url": f"{success_url}?mock=1",
             "mode": "mock",
             "checkout_mode": checkout_mode,

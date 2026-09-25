@@ -1,6 +1,8 @@
 """FastAPI application factory for the commerce control plane."""
 from __future__ import annotations
 
+import logging
+
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -8,6 +10,7 @@ from . import __version__
 from .config import get_settings
 from .routers import (
     approvals,
+    commerce,
     etsy,
     events,
     fulfillment,
@@ -28,16 +31,38 @@ from .security import (
     verify_startup_posture,
 )
 
+logger = logging.getLogger("clearglass.main")
+
 
 def create_app() -> FastAPI:
     settings = get_settings()
     # Refuse to boot a production control plane with an unauthenticated admin surface.
     verify_startup_posture(settings)
+    if settings.run_migrations:
+        # Before create_all, so the SQL files (server defaults, the events
+        # append-only trigger) define any table they cover.
+        from .db import engine
+        from .migrate import apply_migrations
+
+        apply_migrations(engine)
     if settings.auto_create_tables:
         from .db import engine
         from .models import Base
 
         Base.metadata.create_all(engine)
+    if settings.run_migrations or settings.auto_create_tables:
+        from .db import engine
+        from .migrate import missing_columns
+
+        # Warn, don't refuse: routes on the other tables still work, and a
+        # restart loop would take them down too. The log names what will 500.
+        gaps = missing_columns(engine)
+        if gaps:
+            logger.error(
+                "database schema is behind the ORM; queries on these tables will fail "
+                "until it is migrated (python -m app.migrate): %s",
+                gaps,
+            )
     app = FastAPI(
         title="ClearGlass Autonomous E-Commerce Operator",
         version=__version__,
@@ -129,6 +154,10 @@ def create_app() -> FastAPI:
     # money) is admin-gated and queued for approval inside the router.
     app.include_router(paypal.router)
     app.include_router(revenue.router)
+    # ClearGlass orders mix surfaces too: opening an order, starting checkout and
+    # reading its public status are customer flows (server-priced, rate limited);
+    # listing, cancelling and reconciliation are admin-gated per endpoint.
+    app.include_router(commerce.router)
     app.include_router(subscriptions.router)  # durable subscription lifecycle + billing portal
     app.include_router(sidestore.router)  # customer cart: public, rate limited, server-priced
     app.include_router(orders.router, dependencies=admin)

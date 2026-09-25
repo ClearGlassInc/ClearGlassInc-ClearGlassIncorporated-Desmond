@@ -29,6 +29,13 @@ ACTION_RISK: dict[str, int] = {
     "inventory_check": 10,
     "draft_message": 15,
     "draft_campaign": 20,
+    # low — growth research and planning. Reads public or first-party data and
+    # produces drafts; nothing is published, funded or sent.
+    "research_market_signals": 5,
+    "analyze_attribution": 5,
+    "estimate_ad_budget": 10,
+    "draft_ad_campaign": 20,
+    "draft_experiment": 15,
     # low — Etsy connection introspection is read-only (detect creds / read shop identity)
     "etsy_connection_check": 0,
     "etsy_verify_connection": 5,
@@ -47,6 +54,8 @@ ACTION_RISK: dict[str, int] = {
     "refresh_products": 35,
     "publish_content": 45,
     "update_catalog": 40,
+    # medium — choosing an experiment's winner changes what visitors see.
+    "declare_experiment_winner": 40,
     # medium — importing the supplier catalogue writes our own database only.
     "printful_import_catalog": 40,
     # medium — a Printful DRAFT order costs nothing, prints nothing, and can be
@@ -60,6 +69,16 @@ ACTION_RISK: dict[str, int] = {
     "inventory_reorder": 75,
     "send_outbound": 78,
     "launch_campaign": 70,
+    # high — advertising is money. CREATE -> FUND -> ACTIVATE -> SCALE, each a
+    # separate human decision: creating a campaign on an ad platform (even
+    # unfunded) makes it one click from spending, and funding, activating or
+    # raising a budget spends real money.
+    "create_ad_campaign": 70,
+    "activate_ad_campaign": 88,
+    "send_mass_outreach": 85,
+    # high — recording money no processor webhook verified (an e-transfer, a
+    # PayPal invoice) is a human assertion that must carry evidence.
+    "record_manual_payment": 88,
     # high — writes to a live external marketplace (customer-visible listings, prices, orders)
     "etsy_publish_listing": 82,
     "etsy_update_listing": 80,
@@ -74,6 +93,11 @@ ACTION_RISK: dict[str, int] = {
     # no automation should initiate unwatched.
     "paypal_capture_order": 88,
     # critical — irreversible or platform-level exposure
+    "fund_ad_campaign": 92,
+    "scale_ad_campaign": 90,
+    "activate_live_payments": 100,
+    "contractual_commitment": 90,
+    "deploy_high_risk_change": 90,
     "paypal_refund_capture": 95,
     "update_payment_settings": 100,
     "update_tax_settings": 95,
@@ -104,6 +128,20 @@ ALWAYS_ESCALATE = {
     # back. Both are human decisions, and neither is ever taken from a webhook.
     "paypal_capture_order",
     "paypal_refund_capture",
+    # Advertising spend and mass outreach: no agent creates, funds, activates or
+    # scales a paid campaign, or mass-messages, on its own.
+    "launch_campaign",
+    "create_ad_campaign",
+    "fund_ad_campaign",
+    "activate_ad_campaign",
+    "scale_ad_campaign",
+    "send_mass_outreach",
+    # Turning on live payment processing, committing the business to a
+    # contract, recording unverified money, and high-risk deploys.
+    "activate_live_payments",
+    "contractual_commitment",
+    "record_manual_payment",
+    "deploy_high_risk_change",
 }
 
 

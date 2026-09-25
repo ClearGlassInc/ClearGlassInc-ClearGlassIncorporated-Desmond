@@ -61,14 +61,21 @@ Documented in `STRIPE_SETUP.md` and `STRIPE_LIVE_READINESS.md`. Key behaviours:
 
 Built in `control-plane/app/paypal.py` and `control-plane/app/routers/paypal.py`.
 
-**Flow:** `POST /paypal/order` creates a CAPTURE-intent order priced from the
-price book → buyer approves at PayPal → capture → `PAYMENT.CAPTURE.COMPLETED`
-webhook books the order.
+**Flow:** `POST /paypal/order` (cart) or `POST /commerce/orders/{ref}/checkout`
+with `provider: paypal` (a ClearGlass order, see `docs/GROWTH_REVENUE_OS.md`)
+creates a CAPTURE-intent order priced from the price book → buyer approves at
+PayPal → `CHECKOUT.ORDER.APPROVED` moves the ClearGlass order to
+`PAYMENT_PENDING` and queues a `paypal_capture_order` approval → a human
+approves it → `POST /paypal/capture` claims that approval once and captures →
+`PAYMENT.CAPTURE.COMPLETED` webhook books the order.
+
+Before 2026-09-24 the capture step was a dead end: `POST /paypal/capture` only
+queued an approval, and nothing ever ran an approved one.
 
 **What is deliberately not fulfillment:**
 
 - `CHECKOUT.ORDER.APPROVED` — the buyer clicked pay. The money has not moved.
-  Logged, never booked.
+  Logged and the capture approval queued; never booked.
 - `PAYMENT.CAPTURE.PENDING` — PayPal is holding the capture for review. Booked
   as `pending`; treating a held capture as revenue reports money that may never
   land.
@@ -100,10 +107,12 @@ first payment and silently never take another.
       manager. Never in source control.
 - [ ] Create a webhook subscription pointing at `POST /webhooks/paypal`,
       subscribed to `PAYMENT.CAPTURE.COMPLETED`, `PENDING`, `DENIED`,
-      `REFUNDED`, `REVERSED`, and `CHECKOUT.ORDER.APPROVED`.
+      `DECLINED`, `REFUNDED`, `REVERSED`, `CUSTOMER.DISPUTE.CREATED`,
+      `UPDATED`, `RESOLVED`, and `CHECKOUT.ORDER.APPROVED`.
 - [ ] Set `PAYPAL_WEBHOOK_ID` to that subscription's id. Until this is set, every
       notification is refused and no PayPal payment will ever be booked.
-- [ ] Set `PAYPAL_RETURN_URL` and `PAYPAL_CANCEL_URL` to real storefront pages.
+- [ ] Set `PAYPAL_RETURN_URL` to the storefront's `/paypal/return` and
+      `PAYPAL_CANCEL_URL` to its `/cancel` (both pages exist).
 - [ ] Run a full sandbox purchase against `PAYPAL_API_BASE` =
       `https://api-m.sandbox.paypal.com`; confirm one order row, `paid`, with the
       catalogue amount, and confirm a redelivered webhook adds nothing.
@@ -137,9 +146,49 @@ These conditions each need a human and are visible in the `events` ledger:
 | Capture does not match the catalogue | `paypal_capture_catalog_mismatch` |
 | Webhook signature failure | `paypal_webhook_rejected`, or a 400 from the Stripe route |
 | Duplicate settlement event | `order_event_duplicate_skipped` |
-| Refund, dispute or reversal | `refund_settled`, `dispute_opened`, `capture_reversed` |
+| Refund, dispute or reversal | `refund_settled`, `dispute_opened`, `capture_reversed`, plus the order change: `order_refunded`, `order_partially_refunded`, `order_dispute_<status>` |
+| Refund or dispute matching no order | `refund_unmatched`, `dispute_unmatched` |
 | Payment failed | `payment_failed`, `subscription_payment_failed` |
 | Capture with no identifier | `paypal_capture_unidentified` |
+
+## Slack revenue channel
+
+`control-plane/app/revenue_notify.py` posts one message per revenue step to the
+Slack incoming webhook in `SLACK_WEBHOOK_URL`. It is off when that is empty, and it
+also stays off when the value doesn't start with `https://hooks.slack.com/`. The
+steps come from audit-ledger rows that are already written, so this adds no second
+record:
+
+| Ledger row | Slack stage |
+|---|---|
+| `lead_created` | NEW LEAD |
+| `lead_stage_changed` to `QUALIFIED` / `BOOKED` / `PROPOSAL_SENT` | QUALIFIED / MEETING BOOKED / PROPOSAL SENT |
+| `order_paid` (verified) | PAYMENT RECEIVED |
+| `service_order_provisioned` | DELIVERY STARTED |
+| `delivery_confirmed` | REVENUE CONFIRMED (paid and delivered; net of refunds) |
+| `subscription_active` from not-active / `subscription_canceled` from active | MRR CREATED / MRR CANCELLED |
+| `order_refunded`, `order_partially_refunded`, `order_dispute_*` | REFUNDED, PARTIALLY REFUNDED, DISPUTE |
+
+The notifier follows these rules. `tests/test_revenue_notify.py` pins each one, and
+each is mutation-tested:
+
+- **Only after commit.** A rolled-back step is never announced.
+- **Once.** A redelivered webhook is skipped by the ledger before a row exists.
+- **Test-mode money is labelled `TEST DATA`**, never called revenue.
+- **No name, email or company.** A message carries the offer, amount, mode,
+  source or campaign, and opaque references.
+- **Form text is escaped and put on one line.** A lead source can't ping
+  `@channel` or forge a `Stage:` line.
+- **A Slack failure is logged by exception type and dropped.** The URL is a
+  credential and is never logged. A Slack outage can't fail a webhook or lose
+  a payment.
+
+Stage changes other than the three above, such as `NURTURE` and `LOST`, stay in
+the ledger only, so the channel doesn't fill up with minor updates.
+
+Live Stripe Payment Links on the static site send no events to the control
+plane. Slack sees a Payment Link sale only after the control plane is deployed
+and a Stripe webhook endpoint points at `/webhooks/stripe`.
 
 ## Daily reconciliation
 

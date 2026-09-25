@@ -9,17 +9,28 @@ from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import func, select
+from sqlalchemy import func, inspect, select, text
 from sqlalchemy.orm import Session
 
-from .. import payments, pricebook
+from .. import attribution, commerce_orders, payments, pricebook
 from ..audit import log_event
 from ..config import get_settings
 from ..db import get_session
-from ..models import Event, Lead, LeadActivity, Order, RevenueControlLog, ServiceOrder
+from ..models import (
+    CommercialOrder,
+    Event,
+    Lead,
+    LeadActivity,
+    Order,
+    RevenueControlLog,
+    ServiceOrder,
+)
+from ..order_ledger import SETTLED_STATUSES, revenue_breakdown
 from ..revenue_service import STAGES, confirm_delivery, create_lead, is_spam_trap
 from ..schemas import (
     RevenueActivityOut,
+    RevenueByCampaign,
+    RevenueByProvider,
     RevenueCheckoutRequest,
     RevenueCockpitOut,
     RevenueControlLogRequest,
@@ -114,6 +125,23 @@ def submit_lead(req: RevenueLeadRequest, session: Session = Depends(get_session)
     return _receipt(lead.public_ref)
 
 
+def _lead_attribution(lead: Lead | None) -> dict[str, str | None]:
+    """Last touch when the lead has one, else first touch."""
+    if lead is None:
+        return {}
+    if lead.utm_last_campaign or lead.utm_last_source:
+        return {
+            "utm_source": lead.utm_last_source,
+            "utm_medium": lead.utm_last_medium,
+            "utm_campaign": lead.utm_last_campaign,
+        }
+    return {
+        "utm_source": lead.utm_first_source,
+        "utm_medium": lead.utm_first_medium,
+        "utm_campaign": lead.utm_first_campaign,
+    }
+
+
 def _buyer_ref(email: str) -> str:
     """A stable pseudonym for a buyer with no lead.
 
@@ -168,6 +196,10 @@ def start_checkout(req: RevenueCheckoutRequest, session: Session = Depends(get_s
         }
 
     line_items, checkout_mode = pricebook.resolve_line_items([{"sku": offer.sku, "quantity": 1}])
+    # A ClearGlass order, so this sale carries a CG-ORD reference, is linked to
+    # its lead and campaign server-side, and is protected against being paid
+    # twice like any other (app/commerce_orders.py).
+    commercial = commerce_orders.create_order(session, sku=offer.sku, lead=lead)
     result = payments.create_checkout_session(
         line_items,
         customer_email=email,
@@ -179,7 +211,15 @@ def start_checkout(req: RevenueCheckoutRequest, session: Session = Depends(get_s
             "crcs_sku": offer.sku,
             "crcs_lead_id": str(lead.id) if lead else "",
             "crcs_revenue_system": "v1",
+            "cg_order_ref": commercial.order_ref,
+            # Copied from the lead server-side, so the paid order carries the
+            # campaign that produced the lead without trusting the browser.
+            **attribution.to_metadata(_lead_attribution(lead)),
         },
+    )
+    commerce_orders.mark_checkout_started(
+        session, commercial, provider="stripe", checkout_ref=result["id"], mode=result["mode"],
+        record_event=False,
     )
     # The payment-link branch logged this and the server-checkout branch did
     # not, so checkout_started undercounted whenever Stripe Checkout was used.
@@ -188,7 +228,7 @@ def start_checkout(req: RevenueCheckoutRequest, session: Session = Depends(get_s
         actor="revenue_system",
         action="checkout_started",
         target=audit_target,
-        payload={"sku": offer.sku, "mode": result["mode"]},
+        payload={"sku": offer.sku, "mode": result["mode"], "order_ref": commercial.order_ref},
         result="executed",
     )
     return {
@@ -197,6 +237,7 @@ def start_checkout(req: RevenueCheckoutRequest, session: Session = Depends(get_s
         "url": result["url"],
         "checkout_mode": result["checkout_mode"],
         "id": result["id"],
+        "order_ref": commercial.order_ref,
         "sku": offer.sku,
         "amount_cad": result["amount_total"] / 100,
         "currency": result["currency"],
@@ -246,6 +287,74 @@ def public_health(session: Session = Depends(get_session)) -> dict:
     }
 
 
+def _verified_mrr(session: Session) -> tuple[Decimal | None, int | None, int | None, int | None]:
+    """MRR from the subscriptions Stripe's verified webhook wrote, not from leads.
+
+    Returns ``(mrr, active, past_due, unpriced)``, all ``None`` when the
+    subscriptions table does not exist (migration 006 not applied): no data is
+    reported as no data, never as zero.
+
+    A subscription counts only when its Stripe Price is one of the price book's
+    live Prices. The table records no livemode, so this is also what keeps
+    test-mode subscriptions (test Price ids) out of MRR; they are reported as
+    ``unpriced`` instead.
+    """
+    if not inspect(session.get_bind()).has_table("subscriptions"):
+        return None, None, None, None
+    offers = {o.stripe_price_id: o for o in pricebook.all_offers(include_inactive=True) if o.stripe_price_id}
+    rows = session.execute(text("SELECT stripe_price_id, status FROM subscriptions")).all()
+    mrr = Decimal(0)
+    active = past_due = unpriced = 0
+    for price_id, status in rows:
+        if status == "past_due":
+            past_due += 1
+        if status not in {"active", "trialing"}:
+            continue
+        offer = offers.get(price_id)
+        if offer is None or offer.interval not in {"month", "year"}:
+            unpriced += 1
+            continue
+        active += 1
+        monthly = Decimal(offer.amount) / Decimal(100)
+        mrr += monthly if offer.interval == "month" else (monthly / Decimal(12)).quantize(Decimal("0.01"))
+    return mrr, active, past_due, unpriced
+
+
+def _revenue_by_campaign(orders: list[Order]) -> list[RevenueByCampaign]:
+    """Confirmed live revenue per utm_campaign; untagged orders are 'unattributed'."""
+    groups: dict[str, list[Order]] = {}
+    for order in orders:
+        groups.setdefault(order.utm_campaign or "unattributed", []).append(order)
+    rows = [
+        RevenueByCampaign(
+            campaign=campaign,
+            orders=len(members),
+            confirmed_revenue_cad=float(revenue_breakdown(members)["confirmed"]),
+        )
+        for campaign, members in groups.items()
+    ]
+    return sorted(rows, key=lambda r: r.confirmed_revenue_cad, reverse=True)[:20]
+
+
+def _revenue_by_provider(orders: list[Order]) -> list[RevenueByProvider]:
+    """Live verified money per processor. Stripe and PayPal stay separate here;
+    their sum is ``confirmed_revenue_cad`` because both use revenue_breakdown."""
+    groups: dict[str, list[Order]] = {"stripe": [], "paypal": []}
+    for order in orders:
+        groups.setdefault(commerce_orders.provider_for_source(order.source), []).append(order)
+    rows = []
+    for provider, members in groups.items():
+        money = revenue_breakdown(members)
+        rows.append(RevenueByProvider(
+            provider=provider,
+            orders=len(members),
+            gross_cad=float(money["gross"]),
+            refunded_cad=float(money["refunded"]),
+            confirmed_revenue_cad=float(money["confirmed"]),
+        ))
+    return rows
+
+
 @router.get("/cockpit", response_model=RevenueCockpitOut, dependencies=[Depends(require_admin)])
 def cockpit(session: Session = Depends(get_session)) -> RevenueCockpitOut:
     now = datetime.now(UTC)
@@ -259,11 +368,24 @@ def cockpit(session: Session = Depends(get_session)) -> RevenueCockpitOut:
         select(LeadActivity).where(LeadActivity.created_at >= window)
     ).all())
     recent_stripe = _latest_stripe_event(session)
+    commercial = list(session.scalars(select(CommercialOrder)).all())
+    commercial_by_state: dict[str, int] = {}
+    for co in commercial:
+        commercial_by_state[co.payment_state] = commercial_by_state.get(co.payment_state, 0) + 1
+    checkout_started_30d = session.scalar(
+        select(func.count()).select_from(Event).where(
+            Event.action == "checkout_started", Event.ts >= window
+        )
+    ) or 0
 
-    live_paid = [o for o in orders if o.status == "paid" and o.environment == "live"]
-    test_paid = [o for o in orders if o.status == "paid" and o.environment == "test"]
-    confirmed_revenue = sum((Decimal(o.total) for o in live_paid), Decimal(0))
-    test_revenue = sum((Decimal(o.total) for o in test_paid), Decimal(0))
+    # Orders that received money in live mode; revenue_breakdown then takes out
+    # refunds and disputes, so a refunded or charged-back sale is not revenue.
+    live_settled = [o for o in orders if o.status in SETTLED_STATUSES and o.environment == "live"]
+    test_settled = [o for o in orders if o.status in SETTLED_STATUSES and o.environment == "test"]
+    live = revenue_breakdown(live_settled)
+    confirmed_revenue = live["confirmed"]
+    test_revenue = revenue_breakdown(test_settled)["confirmed"]
+    verified_mrr, active_subs, past_due_subs, unpriced_subs = _verified_mrr(session)
 
     pipeline = sum(
         (Decimal(lead.expected_value_cad or 0) for lead in leads
@@ -276,7 +398,7 @@ def cockpit(session: Session = Depends(get_session)) -> RevenueCockpitOut:
         Decimal(0),
     )
 
-    live_order_ids = {o.id for o in live_paid}
+    live_order_ids = {o.id for o in live_settled}
     cost_rows = [s for s in services if s.order_id in live_order_ids and s.delivery_cost_cad is not None]
     known_costs = sum((Decimal(s.delivery_cost_cad or 0) for s in cost_rows), Decimal(0))
     gross_margin = confirmed_revenue - known_costs if cost_rows else None
@@ -299,6 +421,15 @@ def cockpit(session: Session = Depends(get_session)) -> RevenueCockpitOut:
     return RevenueCockpitOut(
         generated_at=now,
         confirmed_revenue_cad=float(confirmed_revenue),
+        gross_revenue_cad=float(live["gross"]),
+        refunded_cad=float(live["refunded"]),
+        disputed_open_cad=float(live["disputed_open"]),
+        dispute_lost_cad=float(live["dispute_lost"]),
+        verified_mrr_cad=float(verified_mrr) if verified_mrr is not None else None,
+        active_subscriptions=active_subs,
+        past_due_subscriptions=past_due_subs,
+        unpriced_subscriptions=unpriced_subs,
+        revenue_by_campaign=_revenue_by_campaign(live_settled),
         test_revenue_cad=float(test_revenue),
         pipeline_estimate_cad=float(pipeline),
         mrr_cad=float(mrr),
@@ -319,6 +450,10 @@ def cockpit(session: Session = Depends(get_session)) -> RevenueCockpitOut:
         booking_health="CONFIGURED" if get_settings().crcs_calendar_booking_url.strip() else "MANUAL_FALLBACK",
         crm_health="READY",
         revenue_action_required=revenue_action_required,
+        revenue_by_provider=_revenue_by_provider(live_settled),
+        commercial_orders_by_state=commercial_by_state,
+        reconciliation_required=sum(1 for co in commercial if co.reconciliation_required),
+        checkout_started_30d=checkout_started_30d,
     )
 
 

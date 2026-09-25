@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -41,6 +42,18 @@ class CheckoutLineItem(BaseModel):
     quantity: int = Field(default=1, ge=1)
 
 
+class CheckoutAttribution(BaseModel):
+    """Campaign tags carried to Stripe metadata and onto the paid order.
+
+    Invalid values are dropped by ``app.attribution``, never rejected: marketing
+    context must not block a purchase.
+    """
+
+    utm_source: str | None = Field(default=None, max_length=200)
+    utm_medium: str | None = Field(default=None, max_length=200)
+    utm_campaign: str | None = Field(default=None, max_length=200)
+
+
 class CheckoutRequest(BaseModel):
     """A cart, and who to email. Deliberately not where to return to.
 
@@ -57,6 +70,7 @@ class CheckoutRequest(BaseModel):
     # double-click or a retried request reuses the first session instead of opening
     # a second one for the same cart.
     client_reference_id: str | None = Field(default=None, max_length=200)
+    attribution: CheckoutAttribution | None = None
 
 
 class CheckoutSessionOut(BaseModel):
@@ -352,11 +366,38 @@ class RevenueOfferOut(BaseModel):
     calendar_url: str | None = None
 
 
+class RevenueByCampaign(BaseModel):
+    campaign: str
+    orders: int
+    confirmed_revenue_cad: float
+
+
+class RevenueByProvider(BaseModel):
+    """Live, verified money per processor, by the same rule as confirmed revenue."""
+    provider: str               # stripe | paypal | other
+    orders: int
+    gross_cad: float
+    refunded_cad: float
+    confirmed_revenue_cad: float
+
+
 class RevenueCockpitOut(BaseModel):
     generated_at: datetime
+    # Live, provider-verified money still held: gross − refunded − disputed_open − dispute_lost.
     confirmed_revenue_cad: float
+    gross_revenue_cad: float
+    refunded_cad: float
+    disputed_open_cad: float
+    dispute_lost_cad: float
+    # From Stripe-verified subscriptions on price-book Prices; None = no subscriptions table.
+    verified_mrr_cad: float | None
+    active_subscriptions: int | None
+    past_due_subscriptions: int | None
+    unpriced_subscriptions: int | None
+    revenue_by_campaign: list[RevenueByCampaign]
     test_revenue_cad: float
     pipeline_estimate_cad: float
+    # Entered by hand on leads; a contract figure, not Stripe data.
     mrr_cad: float
     gross_margin_cad: float | None
     qualified_leads: int
@@ -372,6 +413,11 @@ class RevenueCockpitOut(BaseModel):
     booking_health: str
     crm_health: str
     revenue_action_required: bool
+    # Migration 010. Defaults keep older admin builds, which do not read these, working.
+    revenue_by_provider: list[RevenueByProvider] = Field(default_factory=list)
+    commercial_orders_by_state: dict[str, int] = Field(default_factory=dict)
+    reconciliation_required: int = 0
+    checkout_started_30d: int = 0
 
 
 class RevenueLeadOut(BaseModel):
@@ -430,3 +476,83 @@ class RevenueServiceOrderOut(BaseModel):
     updated_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+# --- ClearGlass orders (app/commerce_orders.py) -----------------------------------
+
+_SKU_PATTERN = r"^[a-z0-9][a-z0-9-]{1,119}$"
+# Shape only; the processor is the real check. Refuses what is plainly not an address.
+_EMAIL_PATTERN = r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
+
+
+class CommerceOrderRequest(BaseModel):
+    """An offer and a quantity. Never a price: the price book sets it.
+
+    ``reference`` links the order to a CRCS lead; it then needs the lead's own
+    email, so a reference alone cannot attach an order to someone's record.
+    """
+
+    sku: str = Field(pattern=_SKU_PATTERN)
+    quantity: int = Field(default=1, ge=1, le=100)
+    reference: UUID | None = None
+    customer_email: str | None = Field(default=None, max_length=254, pattern=_EMAIL_PATTERN)
+    attribution: CheckoutAttribution | None = None
+
+
+class CommerceOrderOut(BaseModel):
+    order_ref: str
+    sku: str
+    offer: str
+    quantity: int
+    amount: float
+    currency: str
+    checkout_mode: str
+    payment_state: str
+    # Processors this order may be paid through. PayPal is absent for subscriptions.
+    providers: list[str]
+
+
+class CommerceCheckoutRequest(BaseModel):
+    provider: Literal["stripe", "paypal"]
+    customer_email: str | None = Field(default=None, max_length=254, pattern=_EMAIL_PATTERN)
+
+
+class CommerceCheckoutOut(BaseModel):
+    order_ref: str
+    provider: str
+    url: str
+    mode: str                   # live | mock
+    amount: float
+    currency: str
+
+
+class CommerceOrderStatusOut(BaseModel):
+    """Public order status. No email, processor id or internal note."""
+    order_ref: str
+    offer: str
+    amount: float
+    currency: str
+    provider: str | None
+    payment_state: str
+    # True only after a signed processor event; a checkout redirect alone is False.
+    payment_verified: bool
+    fulfillment_state: str
+    state: str
+
+
+class ProviderRecord(BaseModel):
+    """One processor payment for reconciliation (see app.reconciliation)."""
+    provider: Literal["stripe", "paypal"]
+    reference: str = Field(min_length=3, max_length=160)
+    amount: str = Field(max_length=32)
+    currency: str = Field(min_length=3, max_length=3)
+    status: str = Field(max_length=32)
+    amount_refunded: str = Field(default="0", max_length=32)
+    livemode: bool = True
+    order_ref: str | None = Field(default=None, max_length=32)
+    disputed: bool = False
+
+
+class ReconciliationRequest(BaseModel):
+    provider_records: list[ProviderRecord] = Field(default_factory=list, max_length=5000)
+
