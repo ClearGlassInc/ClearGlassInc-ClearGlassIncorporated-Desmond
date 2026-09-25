@@ -15,7 +15,7 @@ them are zero today.
 | Leads (outbound) | 10 listed, 0 contacted | VERIFIED | `offers/outreach/lead-list-oakville-burlington.csv` | Every row `Status: New` |
 | Qualified | 0 | VERIFIED | Same file (would become `Qualified` after a reply) | — |
 | Conversations | 0 | VERIFIED | — | — |
-| Meetings | 0 | UNKNOWN until the Calendly bookings are read | Calendly `30min` event | Event type is active (Calendly, 2026-09-24) |
+| Meetings | 0 | VERIFIED: no Calendly booking ever made, active or canceled (Calendly API, 2026-09-25) | Calendly `30min` event | Event type active since 2026-09-14 |
 | Proposals | 0 | VERIFIED | — | — |
 | Checkout started | 0 | UNKNOWN | Stripe (unreadable in this session) | — |
 | Paid | CAD 0 | VERIFIED for PayPal (0 incoming in 30 days, read 2026-09-24). UNKNOWN for Stripe | Stripe and PayPal dashboards; control-plane ledger once deployed | — |
