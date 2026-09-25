@@ -67,7 +67,7 @@ non‑negotiable when changing it.
 | `deployment/` | Per-product deployment layers: n8n workflow exports, ledger SQL, runbooks (`cashpulse/`, `rfed/`) |
 | `tools/growth_registry.py`, `data/growth/` | Market opportunities and experiments held to their evidence: a hypothesis carries low confidence only, and no experiment winner without the minimum evidence set in advance (`--check`). Both registries are empty: no demand or result is claimed |
 | `data/` | Committed JSON feeds: `data/store/catalog.json` (5 ClearGlass **service** engagements with live Stripe URLs), `data/side-store/catalog.json` (57 impulse SKUs — a *different* catalog; do not conflate them), `data/control-surface/*` |
-| `station-chat.js`, `data/site-index.json` | **Sentinel Core**, the command console on every mapped page: Ask, Intel Desk, Site Intelligence (site search, Mission Control, smart actions, Intelligence Graph). It reads `data/site-index.json`, which `tools/internal_links.py` writes — never hand-edit it. Answer style: `prompts/sentinel_core_system_prompt.md` |
+| `station-chat.js`, `data/site-index.json` | **Sentinel Core**, the command console on every mapped page: Ask, Intel Desk, Site Intelligence (site search, Mission Control, smart actions, Intelligence Graph). It reads `data/site-index.json`, which `tools/internal_links.py` writes — never hand-edit it. Answer style: `prompts/sentinel_core_system_prompt.md`. Optional Claude answers via the control plane's `/sentinel/ask` |
 | `operations/` | Generated reports + handoff pages (priority matrix, SEO, health, defender) |
 | `sentinel/` | Named-agent index (PERCIVAL, SENTINEL, AEGIS, PFAS, Agent Mesh) — keyless, stdlib-only, fail-closed Python agents; see `sentinel/PERCIVAL_AGENTS.md`. Includes the real PERCIVAL governor/identity/capability/mission-memory stack plus target-state v9 distributed-architecture docs (nothing in those docs is provisioned — see their own status banners) |
 | `.github/workflows/` | 81 workflows (36 scheduled, 16 with `contents: write`): CI, Pages deploy, commerce gates, scheduled bot loops |
@@ -143,6 +143,19 @@ webhook is idempotent on redelivery via `orders.external_ref` (migration 004).
 `GET /ready` reports database reachability. Don't weaken these when editing routers.
 `GET /payouts` and `GET /payments/payout-account` are admin-only (settlement amounts and
 masked bank details); they were open until 2026-09-24.
+
+Sentinel Core's model endpoint (`app/sentinel_ai.py`, `app/routers/sentinel.py`) lets
+Claude answer the public console's free questions. `POST /sentinel/ask` is public like
+checkout (the console is a static site) and on the route-auth allow-list for that reason.
+Keep it safe to leave open: Claude's tools only read the public site index — never add a
+tool that writes, sends, books or spends; the per-IP throttle, the
+`SENTINEL_DAILY_REQUEST_CAP` and the credential guard run before any model call; the
+ledger row holds a keyed hash of the question, never its words; the key lives only in
+`ANTHROPIC_API_KEY`. It is off until `SENTINEL_AI_ENABLED=true` and the console's
+`AI.api` (or `<meta name="cg-sentinel-api">`) names the service. The system prompt ships
+twice (`prompts/sentinel_core_system_prompt.md` and `app/data/sentinel_system_prompt.md`,
+because the image holds only `control-plane/`); `tests/test_sentinel_ai.py` fails if they
+differ. Status against the v2030 charter: `sentinel/SENTINEL_CORE_2030_SPEC.md`.
 
 ## Running & testing the commerce control plane
 

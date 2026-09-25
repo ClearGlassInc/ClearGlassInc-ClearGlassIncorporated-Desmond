@@ -177,8 +177,9 @@ def test_intel_desk_topic_links_land_on_real_hub_filters() -> None:
 
 def test_intel_desk_is_one_same_origin_read_painted_as_text() -> None:
     # two static indexes, one read each: the briefs here, the pages in the
-    # Site Intelligence test below; both same-origin, neither sends anything
-    assert DOCK.count("fetch(") == 2
+    # Site Intelligence test below; both same-origin, neither sends anything.
+    # The other two reads belong to the optional Claude endpoint (tested below).
+    assert DOCK.count("fetch(") == 4
     assert 'fetch(BASE + INTEL.feed, { cache: "no-cache", credentials: "same-origin" })' in DOCK
     # feed data never reaches the HTML parser
     for name in ("renderIntel", "showBrief", "paintCounts", "paintSuggest", "ingest"):
@@ -468,3 +469,74 @@ def test_site_intelligence_resolves_on_the_real_index() -> None:
     for bad in probe["urls"][3:]:
         assert out["urls"][bad] == "", bad
     assert out["modes"] == ["technical", "analytical", "pitch", "executive"]
+
+
+
+# ── Sentinel v2030 + Claude ───────────────────────────────────────────────────
+# The console talks to a model only when an operator names the control plane
+# and its status says the model is live; until then nothing leaves the page and
+# the readouts say so. Its own decisions go into a hash-chained ledger that
+# stores hashes of what was asked, never the words.
+
+def test_claude_is_off_until_an_operator_turns_it_on() -> None:
+    assert 'var AI = { api: "" };' in DOCK
+    assert 'document.querySelector(\'meta[name="cg-sentinel-api"]\')' in DOCK
+    # https only (plain http on localhost for development), host and port, nothing else
+    assert r"/^https:\/\/[a-z0-9.-]+(:\d+)?$/i" in DOCK
+    # the two model requests: the status check and the question, never with cookies
+    assert 'fetch(base + "/sentinel/status", { credentials: "omit", cache: "no-cache" })' in DOCK
+    assert 'fetch(base + "/sentinel/ask", {' in DOCK and 'method: "POST", credentials: "omit"' in DOCK
+    # the readouts change only once the status says the model is live
+    assert 'ai.state = s && s.enabled === true ? "ready" : "off";' in DOCK
+    assert 'setText(eng, on ? "CLAUDE + RULES" : "RULE-GUIDED");' in DOCK
+    assert 'setText(data, on ? "TO CLAUDE" : "ON DEVICE");' in DOCK
+
+
+def test_the_browser_guard_matches_the_servers() -> None:
+    js = re.search(r"var SENSITIVE_RE = /(.+?)/i;", DOCK).group(1)
+    server = (ROOT / "control-plane" / "app" / "sentinel_ai.py").read_text(encoding="utf-8")
+    py = "".join(re.findall(r'r"([^"]*)"', re.search(r"SENSITIVE = re\.compile\((.*?)re\.IGNORECASE", server, re.S).group(1)))
+    assert sorted(js.split("|")) == sorted(py.split("|")), (js, py)
+    assert "if (SENSITIVE_RE.test(text)) {" in DOCK
+
+
+def test_the_ledger_hashes_what_was_asked_and_chains_every_entry() -> None:
+    assert 'var LEDGER_KEY = "cg-core-ledger";' in DOCK
+    assert "sessionStorage.setItem(LEDGER_KEY" in DOCK
+    canon = re.search(r"function canonical\(e\) \{\n(.*?)\n  \}", DOCK, re.S).group(1)
+    for field in ("seq", "at", "action", "input_sha256", "result", "tier", "approval", "check", "basis", "prev"):
+        assert "e." + field in canon, field
+    assert "input:" not in re.search(r"function record\(spec\) \{\n(.*?)\n  \}\n", DOCK, re.S).group(1).replace("var input", "")
+    assert 'prev: last ? last.hash : "GENESIS"' in DOCK
+    assert 's.digest("SHA-256"' in DOCK
+    # every answer is checked against the charter before it is shown
+    assert "var flags = selfCheck(spec);" in DOCK and "record(spec);" in DOCK
+    for rule in ("answers first", "claims no telemetry", "same-site links only", "states its basis"):
+        assert '"' + rule + '"' in DOCK, rule
+
+
+PROSE_PROBE = r"""
+const fs = require("fs"), vm = require("vm");
+const src = fs.readFileSync(process.argv[1], "utf8");
+const m = src.match(/\n  function proseBlocks\(text\) \{\n[\s\S]*?\n  \}\n/);
+const ctx = {};
+vm.createContext(ctx);
+vm.runInContext(m[0], ctx);
+process.stdout.write(JSON.stringify(ctx.proseBlocks(fs.readFileSync(0, "utf8"))));
+"""
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node is required to run station-chat.js's reader")
+def test_claudes_markdown_is_read_into_safe_blocks() -> None:
+    text = ("**Security Quick-Audit** comes first.\n\n### Why\n- read-only [review](javascript:alert(1))\n- `fixed` fee\n\n"
+            "| Option | Fit |\n|---|---|\n| Audit | first |\n\n1. Open it\n2. Book it\n<img src=x onerror=alert(1)>")
+    out = json.loads(subprocess.run(["node", "-e", PROSE_PROBE, str(ROOT / "station-chat.js")], input=text,
+                                    capture_output=True, text=True, check=True, timeout=60).stdout)
+    kinds = [b["t"] for b in out]
+    assert kinds == ["p", "h", "ul", "table", "ol", "p"], kinds
+    assert out[2]["items"] == ["read-only review", "fixed fee"]          # links and code marks become text
+    assert out[3]["rows"] == [["Option", "Fit"], ["Audit", "first"]]     # the separator row is dropped
+    # raw HTML stays a string; the renderer only ever makes text nodes from it
+    assert out[5]["text"] == "<img src=x onerror=alert(1)>"
+    body = re.search(r"\n  function renderProse\(text\) \{\n(.*?)\n  \}\n", DOCK, re.S).group(1)
+    assert "innerHTML" not in body

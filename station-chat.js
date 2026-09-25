@@ -46,10 +46,21 @@
    on a page without the Sentinel conversation carry over to the home page's
    Sentinel through sessionStorage, never the URL.
 
-   No backend, no tracking, no external command execution. The only network
-   requests are two same-origin GETs of static indexes (briefs, pages), made
-   when the browser is idle. "Opened" briefs and the saved list stay in this
-   browser. Drop in with <script defer src="station-chat.js"></script>; add
+   Sentinel v2030 (sentinel/SENTINEL_CORE_2030_SPEC.md), what a static console
+   can honestly run of it: a self-model (/manifest), a constitutional
+   self-check on every answer, an append-only SHA-256 hash-chained ledger of
+   its own decisions in each tab (/ledger, /why N), and dry runs (/simulate).
+
+   Claude, optionally: when an operator names the control plane in AI.api (or
+   <meta name="cg-sentinel-api">) and its /sentinel/status says the model is
+   live, free questions go to POST /sentinel/ask, where Claude reads the site
+   through read-only tools and answers. The readouts switch to CLAUDE + RULES /
+   TO CLAUDE only then; a question carrying a credential is never sent.
+
+   No tracking, no external command execution. With Claude off, the only
+   network requests are two same-origin GETs of static indexes (briefs,
+   pages), made when the browser is idle. "Opened" briefs and the saved list
+   stay in this browser. Drop in with <script defer src="station-chat.js"></script>; add
    data-fit="fixed" on full-viewport pages for the compact dock. No deps. */
 (function () {
   "use strict";
@@ -100,6 +111,16 @@
   var SENTINEL_HANDOFF = "cg-sentinel-handoff";  // sessionStorage: a question carried to the home page
   var MODE_KEY = "cg-core-mode";
   var MC_KEY = "cg-core-mc";
+  var LEDGER_KEY = "cg-core-ledger";             // sessionStorage: this tab's hash-chained decision log
+
+  // Sentinel answered by Claude, through the ClearGlass control plane
+  // (control-plane/app/sentinel_ai.py). Off until an operator names the
+  // service here or in a page's <meta name="cg-sentinel-api" content="…">,
+  // AND its GET /sentinel/status says the model is live. Until then every
+  // readout stays RULE-GUIDED / ON DEVICE and nothing leaves the browser.
+  var AI = { api: "" };
+  // The same guard as sentinel.js and the control plane: never sent on.
+  var SENSITIVE_RE = /password|passcode|api[ -]?key|secret key|private key|credit card|card number|\bcvv\b|credential|social insurance|health card/i;
 
   // Mission Control sectors. A page is in a sector when it sits in one of its
   // clusters, under one of its paths, or its title or summary uses one of its
@@ -152,7 +173,9 @@
     { id: "products", title: "Explore Products", sub: "Platforms & assets" },
     { id: "report", title: "Generate Report", sub: "Executive brief, this page" },
     { id: "architecture", title: "Analyze Architecture", sub: "This page on the graph" },
-    { id: "intel", title: "Browse Intelligence", sub: "Sector + Intel Desk" }
+    { id: "intel", title: "Browse Intelligence", sub: "Sector + Intel Desk" },
+    { id: "manifest", title: "Self-Model", sub: "Capabilities & blast radius" },
+    { id: "ledger", title: "Audit Ledger", sub: "This tab, hash-chained" }
   ];
 
   // Smart actions about the current page, with the writing mode each one
@@ -1490,6 +1513,10 @@
       { cmd: "/next", hint: "Recommended next step", run: function () { smart("next"); } },
       { cmd: "/similar", hint: "Similar content", run: function () { smart("similar"); } },
       { cmd: "/docs", hint: "Documentation · /docs aegis", run: function (arg) { runIntent({ kind: "docs", arg: arg || "" }, arg || "", "technical"); } },
+      { cmd: "/manifest", hint: "Self-model: capabilities & blast radius", run: function () { runIntent({ kind: "manifest" }, "", "technical"); } },
+      { cmd: "/ledger", hint: "This tab's hash-chained audit ledger", run: function () { runIntent({ kind: "ledger" }, "", "technical"); } },
+      { cmd: "/why", hint: "Replay a decision · /why 3", run: function (arg) { runIntent({ kind: "why", seq: parseInt(arg, 10) || ledgerEntries().length }, "", "technical"); } },
+      { cmd: "/simulate", hint: "Dry-run a command · /simulate take me to pricing", run: function (arg) { runIntent({ kind: "simulate", arg: arg }, "", "technical"); } },
       { cmd: "/topic", hint: "Filter the hub by topic · /topic cyber", run: function (arg) {
         var t = topicFor(arg);
         go(t ? hubUrl(t.key) : hubUrl(null, arg));
@@ -1565,8 +1592,13 @@
     if (!intent && !pages.length && !hits.length) return [];
     var opts = [];
     if (intent) opts.push(intentOption(intent, query));
-    opts.push({ key: "Ask", text: (hasSentinel() ? "Ask Sentinel: “" : "Search the site: “") + query + "”",
-      run: function () { if (hasSentinel()) openSentinel(query); else runIntent({ kind: "search", arg: query }, query); } });
+    var viaAi = ai.state === "ready";
+    opts.push({ key: "Ask", text: (viaAi ? "Ask Claude: “" : hasSentinel() ? "Ask Sentinel: “" : "Search the site: “") + query + "”",
+      run: function () {
+        if (viaAi) askAi(query);
+        else if (hasSentinel()) openSentinel(query);
+        else runIntent({ kind: "search", arg: query }, query);
+      } });
     pages.forEach(function (h) { opts.push({ key: "Page", text: h.e.title + " · " + h.e.group, run: function () { go(h.e.url); } }); });
     hits.forEach(function (p) { opts.push({ key: "Brief", text: p.title, run: function () { openBrief(p); } }); });
     opts.push({ key: "Hub", text: "Search every brief for “" + query + "”", run: function () { go(hubUrl(null, query)); } });
@@ -2020,10 +2052,15 @@
   }
 
   function show(spec, t0) {
+    // Phase 8: every answer is checked against the charter before it is shown
+    var flags = selfCheck(spec);
+    spec.check = flags.length ? "flagged" : "pass";
+    if (flags.length) spec.assumptions = (spec.assumptions || []).concat(["Self-check flagged: " + flags.join(", ") + "."]);
     ans.spec = spec;
     ans.all = false;
     ans.ms = Math.max(0, now() - (t0 || now()));
     paintAnswer(true);
+    record(spec);
   }
 
   function paintAnswer(arrive) {
@@ -2041,10 +2078,10 @@
     rich(ansLede, (s.thesis && (s.thesis[mode] || s.thesis.executive)) || "");
     ansBody.textContent = "";
     var order = {
-      executive: ["lines", "facts", "steps", "rows", "tree", "next"],
-      technical: ["facts", "steps", "table", "tree", "lines", "next"],
-      pitch: ["bullets", "lines", "steps", "facts", "next", "rows"],
-      analytical: ["spread", "gaps", "rows", "facts", "steps", "tree"]
+      executive: ["prose", "lines", "facts", "steps", "rows", "tree", "next"],
+      technical: ["prose", "facts", "steps", "table", "tree", "lines", "next"],
+      pitch: ["prose", "bullets", "lines", "steps", "facts", "next", "rows"],
+      analytical: ["prose", "spread", "gaps", "rows", "facts", "steps", "tree"]
     }[mode];
     order.forEach(function (part) { var el = PARTS[part](s, mode); if (el) ansBody.appendChild(el); });
     if (s.assumptions && s.assumptions.length) {
@@ -2063,7 +2100,8 @@
     });
     ansActs.hidden = !ansActs.children.length;
     var ms = ans.ms < 1 ? "<1 ms" : Math.round(ans.ms) + " ms";
-    setText(ansBasis, "Resolved on this device in " + ms + (s.basis ? " · " + s.basis : ""));
+    setText(ansBasis, (s.ai ? "" : "Resolved on this device in " + ms + " · ") + (s.basis || "") +
+      " · self-check " + (s.check === "flagged" ? "flagged" : "✓ " + CHARTER.length + "/" + CHARTER.length));
     if (ansLive) ansLive.textContent = s.title + ". " + (s.rows ? plural(s.rows.length, "result") : "");
     if (arrive && !quiet()) {
       ansEl.classList.remove("cgst-routing");
@@ -2096,6 +2134,8 @@
 
   // Each part renders one structure, or nothing when the answer has no data for it.
   var PARTS = {
+    // Claude's own answer, read as safe Markdown (renderProse)
+    prose: function (s) { return s.prose ? renderProse(s.prose) : null; },
     // pitch mode leads with three bullets, so its list starts after them
     rows: function (s, mode) {
       var list = (s.rows || []).slice(mode === "pitch" ? 3 : 0);
@@ -2708,10 +2748,12 @@
     services: buildServices, brief: buildBrief, plan: buildPlan, next: buildNext, similar: buildSimilar,
     docs: function (it) { return buildDocs(it.arg); }, sector: function (it) { return buildSector(it.arg); },
     cluster: function (it) { return buildCluster(it.id); }, go: function (it) { return buildGo(it.arg, true); },
-    locate: function (it) { return buildGo(it.arg, false); }, search: function (it) { return buildSearch(it.arg); }
+    locate: function (it) { return buildGo(it.arg, false); }, search: function (it) { return buildSearch(it.arg); },
+    why: function (it) { return buildWhy(it.seq); }, manifest: function () { return buildManifest(); },
+    ledger: function () { return buildLedgerView(); }, simulate: function (it) { return buildSimulation(it.arg); }
   };
   // The page's own text is enough for these when the index cannot load.
-  var OFFLINE_OK = { summarize: 1, explain: 1 };
+  var OFFLINE_OK = { summarize: 1, explain: 1, why: 1, manifest: 1, ledger: 1, simulate: 1 };
 
   function runIntent(it, query, mode) {
     if (!it) return;
@@ -2742,6 +2784,7 @@
     if (!query) return;
     var it = intentOf(query);
     if (it) { runIntent(it, query); return; }
+    if (ai.state === "ready") { askAi(query); return; }
     if (hasSentinel()) { openSentinel(query); return; }
     runIntent({ kind: "search", arg: query }, query);
   }
@@ -2787,7 +2830,347 @@
     }
     if (id === "intel") {
       runIntent({ kind: "sector", arg: "intelligence" }, "", "executive");
+      return;
     }
+    if (id === "manifest") { runIntent({ kind: "manifest" }, "", "technical"); return; }
+    if (id === "ledger") { runIntent({ kind: "ledger" }, "", "technical"); }
+  }
+
+  // ── Sentinel v2030 (sentinel/SENTINEL_CORE_2030_SPEC.md) ─────────────────
+  // What of the charter a public, static console can honestly run: it models
+  // itself (Phase 0), checks every answer against its charter before showing
+  // it (Phase 8), keeps an append-only, hash-chained log of its own decisions
+  // in this tab and can replay any of them (Phases 4 and 10), and can dry-run
+  // any command without acting (Phase 4, simulate).
+
+  // Phase 8, constitutional self-check: the rules an answer must satisfy.
+  var CHARTER = [
+    { id: "answers first", test: function (s) { return !!(s.title && (s.thesis || s.prose || (s.rows && s.rows.length) || s.facts || s.steps)); } },
+    { id: "claims no telemetry", test: function (s) {
+      return !/\b(threat\s+level|live monitoring|actively monitoring|we (?:scanned|detected|monitored|contained)|systems online|guaranteed?)\b/i.test(specText(s));
+    } },
+    { id: "same-site links only", test: function (s) {
+      return linksOf(s).every(function (u) { return !u || u.indexOf(BASE) === 0; });
+    } },
+    { id: "states its basis", test: function (s) { return !!s.basis; } }
+  ];
+  // Sentinel's own words only: rows quote the site's pages, which are theirs.
+  function specText(s) {
+    return [s.title, s.prose].concat(s.thesis ? Object.keys(s.thesis).map(function (k) { return s.thesis[k]; }) : [], s.lines || []).join(" ");
+  }
+  function linksOf(s) {
+    var out = [];
+    (s.rows || []).concat(s.tree || [], s.steps || [], s.next ? [s.next] : []).forEach(function (r) { if (r && r.href) out.push(r.href); });
+    (s.facts || []).forEach(function (f) { if (f && f[2]) out.push(f[2]); });
+    return out;
+  }
+  function selfCheck(spec) {
+    return CHARTER.filter(function (rule) { try { return !rule.test(spec); } catch (e) { return true; } })
+      .map(function (rule) { return rule.id; });
+  }
+
+  // Phase 10, the ledger: {seq, at, action, input_sha256, result, tier,
+  // approval, check, basis, prev, hash}, each hash covering the entry and the
+  // previous hash, so editing any entry breaks every one after it. This tab
+  // only (sessionStorage); inputs are hashed, never stored.
+  var ledger = { entries: null, queue: null, verified: null };
+  function subtle() { try { return window.crypto && window.crypto.subtle ? window.crypto.subtle : null; } catch (e) { return null; } }
+  function sha256(text) {
+    var s = subtle();
+    if (!s || !window.TextEncoder) return Promise.reject(new Error("no Web Crypto"));
+    return s.digest("SHA-256", new TextEncoder().encode(String(text))).then(function (buf) {
+      return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
+    });
+  }
+  function ledgerEntries() {
+    if (ledger.entries) return ledger.entries;
+    var list = [];
+    try { var v = JSON.parse(sessionStorage.getItem(LEDGER_KEY) || "[]"); if (Array.isArray(v)) list = v; } catch (e) {}
+    ledger.entries = list;
+    return list;
+  }
+  // Canonical form: fixed key order, so the same entry always hashes the same.
+  function canonical(e) {
+    return JSON.stringify([e.seq, e.at, e.action, e.input_sha256, e.result, e.tier, e.approval, e.check, e.basis, e.prev]);
+  }
+  function record(spec) {
+    if (!subtle() || spec.noLedger) return;
+    var input = spec.query || spec.kind || "";
+    ledger.queue = (ledger.queue || Promise.resolve()).then(function () {
+      return sha256(input).then(function (inputHash) {
+        var list = ledgerEntries(), last = list[list.length - 1];
+        var e = {
+          seq: list.length + 1, at: new Date().toISOString(), action: spec.kind, input_sha256: inputHash,
+          result: String(spec.title || "").slice(0, 120) + (spec.rows ? " · " + plural(spec.rows.length, "result") : ""),
+          tier: spec.ai ? "read-only · sent to Claude" : "read-only", approval: "not required",
+          check: spec.check || "pass", basis: String(spec.basis || "").slice(0, 200), prev: last ? last.hash : "GENESIS"
+        };
+        return sha256(canonical(e)).then(function (h) {
+          e.hash = h;
+          list.push(e);
+          if (list.length > 200) list.splice(0, list.length - 200);   // the chain restarts at the oldest kept entry
+          ledger.verified = null;
+          try { sessionStorage.setItem(LEDGER_KEY, JSON.stringify(list)); } catch (err) {}
+        });
+      });
+    }).catch(function () {});
+  }
+  // Recompute every hash; the first entry whose hash or link fails is named.
+  function verifyLedger() {
+    var list = ledgerEntries().slice();
+    return list.reduce(function (p, e, i) {
+      return p.then(function (bad) {
+        if (bad) return bad;
+        if (i > 0 && e.prev !== list[i - 1].hash) return { at: e.seq, why: "its link to entry " + list[i - 1].seq + " is broken" };
+        return sha256(canonical(e)).then(function (h) { return h === e.hash ? null : { at: e.seq, why: "its contents were changed" }; });
+      });
+    }, Promise.resolve(null)).then(function (bad) { ledger.verified = !bad; return { count: list.length, bad: bad }; });
+  }
+
+  function buildLedgerView() {
+    var list = ledgerEntries();
+    var rows = list.slice(-12).reverse().map(function (e) {
+      return { title: "#" + e.seq + " · " + e.action, sub: e.result, meta: e.at.slice(11, 19) + "Z · " + e.tier + " · check " + e.check + " · " + e.hash.slice(0, 12),
+        run: function () { runIntent({ kind: "why", seq: e.seq }, ""); } };
+    });
+    return {
+      kind: "Audit ledger", title: list.length ? plural(list.length, "decision") + " this tab" : "No decisions yet", mode: "technical",
+      thesis: {
+        executive: list.length ? "Every answer Sentinel gave in this tab, newest first, **hash-chained**: changing any entry breaks every one after it." : "Ask anything; each answer is logged here.",
+        technical: "Append-only, SHA-256 over a canonical form of each entry plus the previous hash (Web Crypto). Inputs are hashed, never stored. sessionStorage: this tab only."
+      },
+      rows: rows, noLedger: true,
+      basis: "sessionStorage · " + LEDGER_KEY,
+      acts: list.length ? [{ label: "Verify chain", run: function () {
+        verifyLedger().then(function (r) {
+          if (ansLive) ansLive.textContent = r.bad ? "Chain broken at entry " + r.bad.at + ": " + r.bad.why : r.count + " entries verified";
+          var s = ans.spec;
+          if (s && s.kind === "Audit ledger") {
+            s.assumptions = [r.bad ? "Chain broken at entry " + r.bad.at + ": " + r.bad.why + "." : "Chain verified: " + plural(r.count, "entry", "entries") + ", every hash recomputed."];
+            paintAnswer(false);
+          }
+        });
+      } }] : []
+    };
+  }
+
+  // Phase 4, explain(action_id): replay one logged decision.
+  function buildWhy(seq) {
+    var e = ledgerEntries().filter(function (x) { return x.seq === seq; })[0];
+    if (!e) return { kind: "Explain decision", title: "No entry #" + seq, noLedger: true, basis: "sessionStorage · " + LEDGER_KEY,
+      thesis: { executive: "This tab's ledger has no decision numbered " + seq + ". Open the ledger to see what it holds." } };
+    return {
+      kind: "Explain decision", title: "#" + e.seq + " · " + e.action, mode: "technical", noLedger: true,
+      thesis: { executive: "**" + e.result + "**, resolved " + e.at.replace("T", " ").slice(0, 19) + " UTC. Basis: " + (e.basis || "not recorded") + "." },
+      facts: [["Action", e.action], ["Result", e.result], ["Tier", e.tier], ["Approval", e.approval], ["Self-check", e.check],
+        ["Basis", e.basis], ["Input", "SHA-256 " + e.input_sha256.slice(0, 16) + "… (the words are not kept)"],
+        ["Hash", e.hash.slice(0, 24) + "…"], ["Previous", e.prev === "GENESIS" ? "GENESIS (first entry)" : e.prev.slice(0, 24) + "…"]],
+      basis: "ledger entry " + e.seq,
+      acts: [{ label: "Audit ledger", run: function () { runCommand("ledger"); } }]
+    };
+  }
+
+  // Phase 0, self-model: what this console holds, and the worst each can do.
+  function buildManifest() {
+    var ready = site.state === "ready", aiOn = ai.state === "ready";
+    var caps = [
+      ["Read the site index", "data/site-index.json · " + (ready ? "loaded" : site.state), "read-only", "none"],
+      ["Read the brief index", "blog/posts.json · " + intel.state, "read-only", "none"],
+      ["Navigate this tab", "links and “take me to”", "reversible", "this tab"],
+      ["Remember preferences", "localStorage: open, mode, Mission Control, seen briefs", "reversible write", "this browser"],
+      ["Carry a question home", "sessionStorage to the home page's Sentinel", "reversible write", "this tab"],
+      ["Keep the decision ledger", subtle() ? "sessionStorage, SHA-256 chained" : "unavailable (no Web Crypto)", "append-only", "this tab"],
+      ["Copy a brief", navigator.clipboard ? "clipboard" : "unavailable", "reversible write", "clipboard"],
+      ["Ask Claude", aiOn ? "live · " + (ai.model || "model") + " via the control plane" : "off (no endpoint configured, or its model is not enabled)",
+        "read-only · leaves the device", aiOn ? "the question" : "none"],
+      ["Deploy, change config, write, send, spend", "none held", "needs an approval token", "—"],
+      ["Delete, disable monitoring, edit its own rules", "refused by design", "never permitted", "—"]
+    ];
+    var list = ledgerEntries(), passed = list.filter(function (e) { return e.check === "pass"; }).length;
+    return {
+      kind: "Self-model", title: "Sentinel Core · capability manifest", mode: "technical", noLedger: true,
+      thesis: {
+        executive: "Sentinel holds **" + caps.filter(function (c) { return c[2] !== "needs an approval token" && c[2] !== "never permitted"; }).length +
+          " capabilities**, all read-only or reversible; it holds **no credentials** and no tool that deploys, writes to ClearGlass systems, sends or spends.",
+        technical: "Phase 0 of the charter: capability manifest, blast-radius table and a confidence ledger from this tab's history."
+      },
+      facts: caps.map(function (c) { return [c[0], c[1] + " — " + c[2] + " · blast radius: " + c[3]]; }),
+      lines: list.length ? ["Confidence ledger: " + passed + " of " + plural(list.length, "answer") + " passed the charter self-check in this tab."] : [],
+      basis: "computed from this console's own state",
+      acts: [{ label: "Audit ledger", run: function () { runCommand("ledger"); } }]
+    };
+  }
+
+  // Phase 4, simulate(action): what a command would do, doing none of it.
+  function buildSimulation(text) {
+    var query = String(text || "").trim();
+    var it = intentOf(query), would, rows = [];
+    if (!query) would = "Nothing to simulate. Try /simulate take me to pricing.";
+    else if (it && it.kind === "go") {
+      var top = site.state === "ready" ? rank(it.arg)[0] : null;
+      would = top ? "Would open **" + top.e.title + "** (" + top.e.path + ") in this tab." : "Would search the site for “" + it.arg + "”; no page clearly wins.";
+      if (top) rows.push(rowOf(top.e, "Destination"));
+    } else if (it && it.kind === "map") would = "Would open the Intelligence Graph over this page.";
+    else if (it) would = "Would answer here from the site index (" + it.kind + "); a read-only lookup, nothing sent.";
+    else if (ai.state === "ready") would = "Would send the question to Claude through ClearGlass's control plane. Not sent.";
+    else if (hasSentinel()) would = "Would open the Sentinel conversation on this page with the question.";
+    else would = "Would carry the question to the home page's Sentinel conversation (sessionStorage, this tab).";
+    return {
+      kind: "Simulation · nothing executed", title: query ? "“" + query + "”" : "Simulate", mode: "technical", noLedger: true,
+      thesis: { executive: would }, rows: rows, basis: "dry run · intent " + (it ? it.kind : "none"),
+      acts: query ? [{ label: "Run it", run: function () { runQuery(query); } }] : []
+    };
+  }
+
+  // ── Sentinel answered by Claude ──────────────────────────────────────────
+  var ai = { state: "off", model: "", history: [], seq: 0 };
+  function aiBase() {
+    var meta = document.querySelector('meta[name="cg-sentinel-api"]');
+    var raw = String((meta && meta.getAttribute("content")) || AI.api || "").trim().replace(/\/+$/, "");
+    // https only, host and optional port; plain http is allowed on localhost for development
+    return /^https:\/\/[a-z0-9.-]+(:\d+)?$/i.test(raw) || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(raw) ? raw : "";
+  }
+  function checkAi() {
+    var base = aiBase();
+    if (!base || !window.fetch || ai.state !== "off") return;
+    ai.state = "checking";
+    fetch(base + "/sentinel/status", { credentials: "omit", cache: "no-cache" })
+      .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.json(); })
+      .then(function (s) {
+        ai.state = s && s.enabled === true ? "ready" : "off";
+        ai.model = s && typeof s.model === "string" ? s.model.slice(0, 60) : "";
+        paintEngine();
+      })
+      .catch(function () { ai.state = "down"; paintEngine(); });
+  }
+  // The readouts change only once the model is actually live.
+  function paintEngine() {
+    var on = ai.state === "ready";
+    var eng = q("[data-cgst-engine]"), data = q("[data-cgst-chatdata]");
+    if (eng) {
+      setText(eng, on ? "CLAUDE + RULES" : "RULE-GUIDED");
+      eng.title = on ? "Free questions are answered by " + (ai.model || "Claude") + " through ClearGlass's control plane; site lookups stay rule-guided"
+        : "Deterministic, rule-guided answers — not a live language model";
+    }
+    if (data) {
+      setText(data, on ? "TO CLAUDE" : "ON DEVICE");
+      data.title = on ? "Questions you ask Claude go to ClearGlass's control plane and Anthropic's API. ClearGlass keeps a keyed hash, never the words. The Sentinel conversation itself stays in this tab."
+        : "Sentinel conversations stay in this browser tab. Nothing is sent to ClearGlass.";
+    }
+  }
+
+  // A small, safe reading of Claude's Markdown: paragraphs, bullets, numbered
+  // steps, ### headings, pipe tables and **bold**. Built from text nodes;
+  // links in the text stay text (sources are listed as checked rows).
+  function proseBlocks(text) {
+    var lines = String(text || "").replace(/\r/g, "").split("\n"), out = [], i = 0, m;
+    function strip(s) { return s.replace(/\[([^\]]+)\]\((?:[^()]|\([^()]*\))*\)/g, "$1").replace(/`([^`]*)`/g, "$1").trim(); }
+    while (i < lines.length) {
+      var l = lines[i];
+      if (!l.trim()) { i++; continue; }
+      if ((m = /^\s*#{1,6}\s+(.*)$/.exec(l))) { out.push({ t: "h", text: strip(m[1]) }); i++; continue; }
+      if (/^\s*\|/.test(l)) {
+        var rows = [];
+        while (i < lines.length && /^\s*\|/.test(lines[i])) {
+          var cells = lines[i].trim().replace(/^\||\|$/g, "").split("|").map(function (c) { return strip(c); });
+          if (!cells.every(function (c) { return /^:?-{2,}:?$/.test(c); })) rows.push(cells);
+          i++;
+        }
+        if (rows.length) out.push({ t: "table", rows: rows });
+        continue;
+      }
+      var list = /^\s*\d+[.)]\s+/.test(l) ? "ol" : /^\s*[-*•]\s+/.test(l) ? "ul" : "";
+      if (list) {
+        var items = [], re = list === "ol" ? /^\s*\d+[.)]\s+/ : /^\s*[-*•]\s+/;
+        while (i < lines.length && re.test(lines[i])) { items.push(strip(lines[i].replace(re, ""))); i++; }
+        out.push({ t: list, items: items });
+        continue;
+      }
+      var para = [strip(l)];
+      i++;
+      while (i < lines.length && lines[i].trim() && !/^\s*([-*•]\s|\d+[.)]\s|\||#)/.test(lines[i])) { para.push(strip(lines[i])); i++; }
+      out.push({ t: "p", text: para.join(" ") });
+    }
+    return out;
+  }
+  function renderProse(text) {
+    var wrap = make("div", "cgst-ans-body");
+    proseBlocks(text).forEach(function (b) {
+      var el;
+      if (b.t === "h") el = heading(b.text);
+      else if (b.t === "p") { el = make("p", "cgst-ans-lede"); rich(el, b.text); }
+      else if (b.t === "ul" || b.t === "ol") {
+        el = make(b.t, b.t === "ol" ? "cgst-steps" : "cgst-bullets");
+        b.items.forEach(function (it) { var li = make("li"); rich(li, it); el.appendChild(li); });
+      } else if (b.t === "table") {
+        el = make("table", "cgst-table");
+        var head = make("thead"), tr = make("tr");
+        b.rows[0].forEach(function (c) { var th = make("th"); th.scope = "col"; rich(th, c); tr.appendChild(th); });
+        head.appendChild(tr); el.appendChild(head);
+        var body = make("tbody");
+        b.rows.slice(1).forEach(function (r) { var row = make("tr"); r.forEach(function (c) { var td = make("td"); rich(td, c); row.appendChild(td); }); body.appendChild(row); });
+        el.appendChild(body);
+      }
+      if (el) wrap.appendChild(el);
+    });
+    return wrap;
+  }
+
+  function askAi(query, mode) {
+    var base = aiBase(), text = String(query || "").trim().slice(0, 800);
+    if (!text) return;
+    if (!base || ai.state !== "ready") { runIntent({ kind: "search", arg: text }, text); return; }
+    var chosen = mode || (ans.pick !== "auto" && modeById(ans.pick) ? ans.pick : modeFor(text));
+    if (SENSITIVE_RE.test(text)) {
+      show({ kind: "Sentinel · guard", title: "Not sent", mode: chosen, query: text, noLedger: true, basis: "the console's sensitive-data guard",
+        thesis: { executive: "Please don't share **passwords, keys, card numbers or other credentials** here. Nothing was sent. Ask again without them." } }, now());
+      presentAnswer();
+      return;
+    }
+    var mine = ++ai.seq, t0 = now();
+    show({ kind: "Sentinel · Claude", title: "“" + text + "”", mode: chosen, query: text, ai: true, noLedger: true,
+      thesis: { executive: "Claude is reading the site index…" },
+      basis: "sent to ClearGlass's control plane and Anthropic's API · ClearGlass keeps a keyed hash, not your words" }, t0);
+    presentAnswer();
+    fetch(base + "/sentinel/ask", {
+      method: "POST", credentials: "omit", cache: "no-store", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: text, mode: chosen, page: site.here ? site.here.path : null, history: ai.history.slice(-6) })
+    }).then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.json(); })
+      .then(function (data) {
+        if (mine !== ai.seq) return;                   // a newer question owns the card
+        var answer = String(data && data.answer || "").slice(0, 8000);
+        if (!answer) throw new Error("empty");
+        var rows = (Array.isArray(data.sources) ? data.sources : []).map(function (s) {
+          var path = String(s && s.path || ""), url = siteUrl(path);
+          if (!url) return null;
+          var e = site.byPath[path];
+          return e ? rowOf(e, "Source · " + e.group) : { title: String(s.title || path).slice(0, 120), meta: "Source", href: url };
+        }).filter(Boolean);
+        ai.history.push({ role: "user", content: text.slice(0, 2000) }, { role: "assistant", content: answer.slice(0, 2000) });
+        if (ai.history.length > 12) ai.history.splice(0, ai.history.length - 12);
+        show({
+          kind: data.engine === "guard" ? "Sentinel · guard" : "Sentinel · Claude", title: "“" + text + "”", mode: String(data.mode || chosen),
+          query: text, ai: true, prose: answer, rows: rows,
+          assumptions: data.refused && data.engine !== "guard" ? ["Claude declined this one; the rule-guided search may still help."] : [],
+          basis: (data.engine === "guard" ? "declined before sending" : "answered by " + String(data.served_by || data.model || "Claude").slice(0, 40) +
+            " via the ClearGlass control plane in " + Math.round(Number(data.latency_ms) || 0) + " ms · " +
+            plural(Number(data.lookups) || 0, "site lookup")) + " · ref " + String(data.reference || "").slice(0, 16) +
+            " · ClearGlass keeps a keyed hash, not your words",
+          acts: [{ label: "Ask a follow-up", run: function () { try { askInput.focus({ preventScroll: true }); } catch (e) { askInput.focus(); } } },
+            rows.length ? graphAct({ paths: rows.filter(function (r) { return r.e; }).map(function (r) { return r.e.path; }), label: "sources" }) : null,
+            { label: "Rule-guided view", run: function () { runIntent({ kind: "search", arg: text }, text); } }]
+        }, t0);
+      })
+      .catch(function () {
+        if (mine !== ai.seq) return;
+        var t1 = now();
+        var spec = site.state === "ready" ? buildSearch(text) : null;
+        if (!spec) { answerOffline(); return; }
+        spec.mode = chosen;
+        spec.query = text;
+        spec.assumptions = ["Claude was unavailable, so this is the rule-guided site search."].concat(spec.assumptions || []);
+        show(spec, t1);
+      });
   }
 
   // ── Intelligence Graph ───────────────────────────────────────────────────
@@ -3430,8 +3813,8 @@
           '<dl class="cgst-telemetry" aria-labelledby="cgstReadiness">' +
             '<div class="cgst-cell"><dt>LINK</dt><dd data-cgst-link>ONLINE</dd></div>' +
             '<div class="cgst-cell"><dt>MODE</dt><dd>PUBLIC</dd></div>' +
-            '<div class="cgst-cell"><dt>ENGINE</dt><dd title="Deterministic, rule-guided answers — not a live language model">RULE-GUIDED</dd></div>' +
-            '<div class="cgst-cell"><dt>CHAT DATA</dt><dd title="Sentinel conversations stay in this browser tab. Nothing is sent to ClearGlass.">ON DEVICE</dd></div>' +
+            '<div class="cgst-cell"><dt>ENGINE</dt><dd data-cgst-engine title="Deterministic, rule-guided answers — not a live language model">RULE-GUIDED</dd></div>' +
+            '<div class="cgst-cell"><dt>CHAT DATA</dt><dd data-cgst-chatdata title="Sentinel conversations stay in this browser tab. Nothing is sent to ClearGlass.">ON DEVICE</dd></div>' +
             '<div class="cgst-cell"><dt>SESSION</dt><dd>' + esc(sid.replace(/^CG-SNT-/, "SNT-")) + '</dd></div>' +
             '<div class="cgst-cell"><dt>UTC</dt><dd data-cgst-clock>--:--:--Z</dd></div>' +
           '</dl>' +
@@ -3554,6 +3937,12 @@
       // without the Sentinel conversation answers everything here
       if (!prompt && !hasSentinel()) { runCommand("search"); return; }
       var intent = intentOf(prompt);
+      if (prompt && !intent && ai.state === "ready") {
+        askInput.value = "";
+        closeSuggest();
+        askAi(prompt);
+        return;
+      }
       if (intent || !hasSentinel()) {
         askInput.value = "";
         closeSuggest();
@@ -3608,7 +3997,9 @@
       if (act === "ans-mode") {
         ans.pick = target.getAttribute("data-mode");
         try { localStorage.setItem(MODE_KEY, ans.pick); } catch (e) {}
-        paintAnswer(true);
+        // a Claude answer is rewritten by Claude in the new mode; the rest repaint
+        if (ans.spec && ans.spec.ai && ans.spec.prose) askAi(ans.spec.query, ans.pick === "auto" ? modeFor(ans.spec.query) : ans.pick);
+        else paintAnswer(true);
         var again = q('.cgst-mode[data-mode="' + ans.pick + '"]');
         if (again) { try { again.focus({ preventScroll: true }); } catch (e) {} }
         return;
@@ -3742,7 +4133,7 @@
     // The collapsed dock badges unread briefs, so the index is read once the
     // page has settled rather than waiting for the console to open. The site
     // index follows it, so the readout and sector counts are ready on open.
-    var settle = function () { loadFeed(); loadSite(); };
+    var settle = function () { loadFeed(); loadSite(); checkAi(); };
     if (window.requestIdleCallback) window.requestIdleCallback(settle, { timeout: 4000 });
     else setTimeout(settle, 1500);
     pickupHandoff();
