@@ -58,6 +58,13 @@ EXEMPT: dict[str, str] = {
         "credential cannot substitute for. Idempotent on redelivery via "
         "orders.external_ref. Rate limited per IP."
     ),
+    "/sentinel/ask": (
+        "Sentinel Core's model endpoint for the public console, which runs on a static "
+        "site and cannot hold a credential. Read-only: Claude's only tools read the public "
+        "site index, and nothing is written but one audit row holding a keyed hash of the "
+        "question. Rate limited per IP, hard-capped per day, and questions carrying "
+        "credentials are declined without being sent."
+    ),
     "/sidestore/quote": (
         "Side Store cart quote. Read-only pricing of a proposed cart; server-priced "
         "from the catalog and persists nothing."

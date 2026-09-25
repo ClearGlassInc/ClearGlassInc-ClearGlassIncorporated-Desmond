@@ -20,6 +20,7 @@ from .routers import (
     paypal,
     revenue,
     payments,
+    sentinel,
     sidestore,
     store,
     subscriptions,
@@ -160,6 +161,9 @@ def create_app() -> FastAPI:
     app.include_router(commerce.router)
     app.include_router(subscriptions.router)  # durable subscription lifecycle + billing portal
     app.include_router(sidestore.router)  # customer cart: public, rate limited, server-priced
+    # Sentinel Core's model endpoint: public (the console is a static site), rate
+    # limited, capped per day, read-only tools, one audit row per answer.
+    app.include_router(sentinel.router)
     app.include_router(orders.router, dependencies=admin)
     app.include_router(inventory.router, dependencies=admin)
     app.include_router(metrics.router, dependencies=admin)

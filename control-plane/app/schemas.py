@@ -556,3 +556,41 @@ class ProviderRecord(BaseModel):
 class ReconciliationRequest(BaseModel):
     provider_records: list[ProviderRecord] = Field(default_factory=list, max_length=5000)
 
+
+
+# ── Sentinel Core answered by Claude (routers/sentinel.py) ──────────────────
+class SentinelTurn(BaseModel):
+    """One earlier turn of the visitor's conversation, text only."""
+    role: Literal["user", "assistant"]
+    content: str = Field(min_length=1, max_length=2000)
+
+
+class SentinelAskIn(BaseModel):
+    """A visitor's question. Everything the model sees arrives through here."""
+    question: str = Field(min_length=1, max_length=800)
+    mode: Literal["auto", "executive", "technical", "pitch", "analytical"] = "auto"
+    # The page the visitor is reading, as a same-site path (checked in the router).
+    page: str | None = Field(default=None, max_length=200)
+    history: list[SentinelTurn] = Field(default_factory=list, max_length=6)
+
+
+class SentinelSource(BaseModel):
+    path: str
+    title: str
+
+
+class SentinelAnswerOut(BaseModel):
+    """What the console renders. No ledger id, no question echo."""
+    answer: str
+    mode: str
+    # "claude" when the model answered; "guard" when the router declined to send.
+    engine: Literal["claude", "guard"]
+    model: str
+    served_by: str
+    sources: list[SentinelSource]
+    lookups: int
+    rounds: int
+    refused: bool
+    latency_ms: int
+    # Opaque; the audit row carries the same value.
+    reference: str

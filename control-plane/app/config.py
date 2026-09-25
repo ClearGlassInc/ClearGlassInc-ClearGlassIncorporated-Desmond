@@ -145,6 +145,31 @@ class Settings(BaseSettings):
     # (docs/crcs/DATA_MODEL.md rule 1). Empty uses a fixed development key.
     crcs_audit_hash_key: str = ""
 
+    # ── Sentinel Core answered by Claude (app/sentinel_ai.py) ──────────────────
+    # Off unless enabled here AND ANTHROPIC_API_KEY is set in the environment, the
+    # one place the key lives. The public console (station-chat.js) stays
+    # rule-guided until an operator also points it at this service.
+    sentinel_ai_enabled: bool = False
+    sentinel_model: str = "claude-opus-5"
+    # Chat answers over a small site index; "medium" is the step down from the
+    # API default that the Claude docs suggest for Q&A. Raise it if answers thin out.
+    sentinel_effort: str = "medium"
+    sentinel_max_tokens: int = 16000
+    # Tool rounds before Claude must answer from what it has read.
+    sentinel_max_tool_rounds: int = 4
+    # Spend is the operator's decision (SENTINEL_CORE_2030_SPEC.md, Phase 8): a
+    # hard daily cap on model calls across all visitors; 0 refuses every call.
+    sentinel_daily_request_cap: int = 500
+    rate_limit_sentinel_per_minute: int = 10
+    # The site index Claude reads. The image holds only control-plane/, so it is
+    # fetched from the published site; a local path (a repo checkout) wins.
+    sentinel_site_index_url: str = "https://www.clearglassinc.com/data/site-index.json"
+    sentinel_site_index_path: str = ""
+    sentinel_index_ttl_seconds: int = 600
+    # HMAC key for the question fingerprint in the audit ledger, which stores a
+    # keyed hash and never the question. Empty uses a fixed development key.
+    sentinel_audit_hash_key: str = ""
+
 
 @lru_cache
 def get_settings() -> Settings:

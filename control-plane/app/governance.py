@@ -50,6 +50,10 @@ ACTION_RISK: dict[str, int] = {
     # ledger. Neither changes anything at PayPal.
     "paypal_connection_check": 0,
     "paypal_reconcile_captures": 10,
+    # low — Sentinel Core's public answers (sentinel_ai.py): Claude reads the
+    # public site index through read-only tools and writes an answer. Nothing is
+    # changed, sent or spent beyond the operator's own daily request cap.
+    "sentinel_answer": 5,
     # medium — content/catalog changes that are reversible but customer-visible
     "refresh_products": 35,
     "publish_content": 45,

@@ -176,7 +176,10 @@ def test_intel_desk_topic_links_land_on_real_hub_filters() -> None:
 
 
 def test_intel_desk_is_one_same_origin_read_painted_as_text() -> None:
-    assert DOCK.count("fetch(") == 1
+    # two static indexes, one read each: the briefs here, the pages in the
+    # Site Intelligence test below; both same-origin, neither sends anything.
+    # The other two reads belong to the optional Claude endpoint (tested below).
+    assert DOCK.count("fetch(") == 4
     assert 'fetch(BASE + INTEL.feed, { cache: "no-cache", credentials: "same-origin" })' in DOCK
     # feed data never reaches the HTML parser
     for name in ("renderIntel", "showBrief", "paintCounts", "paintSuggest", "ingest"):
@@ -305,3 +308,246 @@ def test_sentinel_routes_each_prompt_to_its_pathway() -> None:
     assert not wrong, f"misrouted prompts: {wrong}"
     captured = {probe: routed[probe] for probe in UNMATCHED if routed[probe] is not None}
     assert not captured, f"prompts captured by a mission answer: {captured}"
+
+
+# ── Site Intelligence ─────────────────────────────────────────────────────────
+# The console reads data/site-index.json, which tools/internal_links.py writes
+# from the same graph that builds every page's "Continue exploring" block. These
+# tests run the console's own matcher on the real index, so a phrasing that
+# stops resolving, or a sector that empties, fails here rather than on the site.
+
+INDEX = json.loads((ROOT / "data" / "site-index.json").read_text(encoding="utf-8"))
+
+
+def test_site_index_is_the_generated_graph() -> None:
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("internal_links", ROOT / "tools" / "internal_links.py")
+    assert spec and spec.loader
+    links = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(links)
+    assert (ROOT / "data" / "site-index.json").read_text(encoding="utf-8") == links.build_site_index()
+    assert INDEX["counts"]["pages"] == len(INDEX["pages"]) == len(links.PAGES)
+    assert INDEX["counts"]["clusters"] == len(INDEX["clusters"]) == len(links.CLUSTERS)
+    for page in INDEX["pages"]:
+        for field in ("path", "title", "summary", "cluster", "role", "related", "prev", "next"):
+            assert field in page, (page["path"], field)
+        assert (ROOT / page["path"]).is_file(), page["path"]
+    # every field the console reads is one the generator writes
+    for field in ("p.path", "p.title", "p.summary", "p.about", "p.cluster", "p.role", "p.related", "p.prev", "p.next",
+                  "c.id", "c.name", "c.pillar", "c.members", "c.cta"):
+        assert field in DOCK, field
+
+
+def test_console_rides_on_every_mapped_page() -> None:
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("internal_links", ROOT / "tools" / "internal_links.py")
+    assert spec and spec.loader
+    links = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(links)
+    for page in links.PAGES:
+        text = (ROOT / page).read_text(encoding="utf-8", errors="surrogateescape")
+        assert len(re.findall(r'src="[^"]*station-chat\.js"', text)) == 1, page
+        tag = re.search(r'<script defer src="[^"]*station-chat\.js"[^>]*>', text).group(0)
+        assert ('data-fit="fixed"' in tag) == (page in links.FIXED_VIEWPORT and page not in links.CONSOLE_SELF_HOSTED), page
+
+
+def test_site_index_is_one_same_origin_read_painted_as_text() -> None:
+    assert 'fetch(BASE + SITE.index, { cache: "no-cache", credentials: "same-origin" })' in DOCK
+    assert "function siteFallback()" in DOCK and ".catch(siteFallback)" in DOCK
+    # index data and answers never reach the HTML parser: the only innerHTML
+    # writes are the static build template and the pause/play icon constants
+    writes = re.findall(r"[\w.]+\.innerHTML\s*=[^;\n]*", DOCK)
+    assert writes == ["b.innerHTML = intel.hold ? IC_PLAY : IC_HOLD", "root.innerHTML ="], writes
+    for name in ("ingestSite", "paintIndex", "paintAnswer", "listRows", "rich", "paintSide", "buildGraph", "showLinks"):
+        assert re.search(r"\n  function " + name + r"\(", DOCK), name
+    # page paths are the only URLs the index can hand the console
+    assert "function siteUrl(raw)" in DOCK
+
+
+def test_questions_reach_the_home_sentinel_without_touching_the_url() -> None:
+    assert 'sessionStorage.setItem(SENTINEL_HANDOFF, String(prompt || "").slice(0, 800))' in DOCK
+    assert 'go(BASE + "index.html#sentinel");' in DOCK
+    assert 'if (location.hash !== "#sentinel") return;' in DOCK
+    # the pickup never forwards a question onward (no bounce loop)
+    assert "if (!hasSentinel()) return;                 // never bounce the question onward" in DOCK
+    assert "sessionStorage.removeItem(SENTINEL_HANDOFF)" in DOCK
+
+
+def test_site_readouts_count_what_the_index_holds() -> None:
+    for claim in ("Pages Synced: Live", "Knowledge Nodes: Live", "Intelligence Graph: Active", "Site Indexed ✓"):
+        assert claim not in DOCK, claim
+    assert 'ready ? String(site.pages.length) : "--"' in DOCK
+    assert 'ready ? String(site.links) : "--"' in DOCK
+    # every answer says how it was resolved, measured on the device
+    assert '"Resolved on this device in "' in DOCK
+    assert "Assembled from the site index, not written by a language model." in DOCK
+    assert (ROOT / "prompts" / "sentinel_core_system_prompt.md").is_file()
+
+
+SITE_PROBE = r"""
+const fs = require("fs"), vm = require("vm");
+const src = fs.readFileSync(process.argv[1], "utf8");
+function fn(name) {
+  const head = "\\n  function " + name + "\\([^)]*\\) \\{";
+  const m = src.match(new RegExp(head + "[^\\n]*\\}\\n")) || src.match(new RegExp(head + "\\n[\\s\\S]*?\\n  \\}\\n"));
+  if (!m) throw new Error("missing " + name);
+  return m[0];
+}
+function block(start, end) {
+  const i = src.indexOf(start), j = src.indexOf(end, i);
+  if (i < 0 || j < 0) throw new Error("missing " + start);
+  return src.slice(i, j + end.length);
+}
+const BASE = "https://www.clearglassinc.com/";
+const ctx = { BASE, location: { href: BASE + "cyber-defense-console.html" }, MISSIONS: [1, 2, 3, 4, 5, 6] };
+vm.createContext(ctx);
+vm.runInContext(block("  var SECTORS = [", "\n  ];"), ctx);
+vm.runInContext(block("  var SECTOR_ALIAS = [", "\n  ];"), ctx);
+vm.runInContext(block("  var ALIKE = {", "\n  };"), ctx);
+vm.runInContext(block("  var STOPS = {};", "STOPS[w] = 1; });"), ctx);
+vm.runInContext(block("  var site = {", "};"), ctx);
+vm.runInContext("function paintIndex() {} function flushSite() {} function siteFallback() { site.state = 'static'; }", ctx);
+["siteUrl", "strList", "herePath", "ingestSite", "norm", "stem", "words", "hit", "queryTerms", "rank", "unknownTerms",
+ "inSector", "sectorKey", "orderSector", "sectorById", "sectorsIn", "sectorPages", "intentOf", "modeFor"].forEach(n => vm.runInContext(fn(n), ctx));
+const input = JSON.parse(fs.readFileSync(0, "utf8"));
+vm.runInContext("ingestSite(" + JSON.stringify(input.index) + ")", ctx);
+const out = { state: ctx.site.state, here: ctx.site.here && ctx.site.here.path, intents: {}, top: {}, sectors: {}, urls: {} };
+for (const q of input.intents) out.intents[q] = ctx.intentOf(q);
+for (const q of input.top) { const r = ctx.rank(q); out.top[q] = r.length ? r[0].e.path : null; }
+for (const s of ctx.SECTORS) out.sectors[s.id] = s.missions ? -1 : s.pages.length;
+const sel = ctx.sectorsIn("cybersecurity services");
+out.cyberServices = { ids: sel.ids, pages: ctx.sectorPages(sel).pages.map(e => e.path) };
+for (const u of input.urls) out.urls[u] = ctx.siteUrl(u);
+out.modes = input.modes.map(q => ctx.modeFor(q));
+process.stdout.write(JSON.stringify(out));
+"""
+
+INTENTS = {
+    "Where is the pricing page?": {"kind": "locate", "arg": "pricing"},
+    "Show all cybersecurity services": {"kind": "sector", "arg": "cybersecurity services"},
+    "What AI governance capabilities exist?": {"kind": "sector", "arg": "ai governance"},
+    "Show every ClearGlass solution": {"kind": "sector", "arg": "solution"},
+    "What are the Artemis features?": {"kind": "sector", "arg": "artemis"},
+    "What pages discuss autonomous agents?": {"kind": "search", "arg": "autonomous agents"},
+    "Take me to OSINT workflows": {"kind": "go", "arg": "osint workflows"},
+    "Map the entire platform.": {"kind": "map"},
+    "What pages exist?": {"kind": "pages"},
+    "What's related to Artemis?": {"kind": "related", "arg": "artemis"},
+    "Explain this page": {"kind": "explain"},
+    "Summarize this section": {"kind": "summarize"},
+    "Generate executive brief": {"kind": "brief"},
+}
+# Sentinel's own prompts keep going to the Sentinel conversation.
+UNCLAIMED = list(EXPECTED) + UNMATCHED + ["Talk to a human", "Start a project brief"]
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node is required to run station-chat.js's matcher")
+def test_site_intelligence_resolves_on_the_real_index() -> None:
+    probe = {
+        "index": INDEX,
+        "intents": list(INTENTS) + UNCLAIMED,
+        "top": ["pricing", "osint workflows", "the store", "zero trust", "phipa"],
+        "urls": ["pricing.html", "blog/", "offers/security-quick-audit.html", "javascript:alert(1)", "//evil.example/x.html",
+                 "https://evil.example/x.html", "../etc/passwd.html", "blog/../../x.html", "x.html\"onload=\"1"],
+        "modes": ["Analyze the architecture", "compare cyber pages", "why choose ClearGlass", "Where is the pricing page?"],
+    }
+    result = subprocess.run(["node", "-e", SITE_PROBE, str(ROOT / "station-chat.js")], input=json.dumps(probe),
+                            capture_output=True, text=True, check=True, timeout=60)
+    out = json.loads(result.stdout)
+    assert out["state"] == "ready"
+    assert out["here"] == "cyber-defense-console.html"
+    for query, want in INTENTS.items():
+        assert out["intents"][query] == want, (query, out["intents"][query])
+    claimed = {q: out["intents"][q] for q in UNCLAIMED if out["intents"][q] is not None}
+    assert not claimed, f"Sentinel prompts captured by a site intent: {claimed}"
+    assert out["top"]["pricing"] == "pricing.html"
+    assert out["top"]["osint workflows"] == "blog/osint-workflow-that-survives-contact-with-reality.html"
+    assert out["top"]["phipa"] in {"offers/phipa-readiness.html", "offers/phipa-readiness-checklist.html"}
+    # every Mission Control sector holds pages; the counts are memberships
+    empty = [sid for sid, n in out["sectors"].items() if n == 0]
+    assert not empty, f"empty sectors: {empty}"
+    # "cybersecurity services" is the overlap of two sectors, in the order named
+    assert out["cyberServices"]["ids"] == ["cybersecurity", "services"]
+    assert "offers/security-quick-audit.html" in out["cyberServices"]["pages"]
+    assert "offers/hardening-sprint.html" in out["cyberServices"]["pages"]
+    # only same-site page paths become links
+    base = "https://www.clearglassinc.com/"
+    assert out["urls"]["pricing.html"] == base + "pricing.html"
+    assert out["urls"]["blog/"] == base + "blog/"
+    assert out["urls"]["offers/security-quick-audit.html"] == base + "offers/security-quick-audit.html"
+    for bad in probe["urls"][3:]:
+        assert out["urls"][bad] == "", bad
+    assert out["modes"] == ["technical", "analytical", "pitch", "executive"]
+
+
+
+# ── Sentinel v2030 + Claude ───────────────────────────────────────────────────
+# The console talks to a model only when an operator names the control plane
+# and its status says the model is live; until then nothing leaves the page and
+# the readouts say so. Its own decisions go into a hash-chained ledger that
+# stores hashes of what was asked, never the words.
+
+def test_claude_is_off_until_an_operator_turns_it_on() -> None:
+    assert 'var AI = { api: "" };' in DOCK
+    assert 'document.querySelector(\'meta[name="cg-sentinel-api"]\')' in DOCK
+    # https only (plain http on localhost for development), host and port, nothing else
+    assert r"/^https:\/\/[a-z0-9.-]+(:\d+)?$/i" in DOCK
+    # the two model requests: the status check and the question, never with cookies
+    assert 'fetch(base + "/sentinel/status", { credentials: "omit", cache: "no-cache" })' in DOCK
+    assert 'fetch(base + "/sentinel/ask", {' in DOCK and 'method: "POST", credentials: "omit"' in DOCK
+    # the readouts change only once the status says the model is live
+    assert 'ai.state = s && s.enabled === true ? "ready" : "off";' in DOCK
+    assert 'setText(eng, on ? "CLAUDE + RULES" : "RULE-GUIDED");' in DOCK
+    assert 'setText(data, on ? "TO CLAUDE" : "ON DEVICE");' in DOCK
+
+
+def test_the_browser_guard_matches_the_servers() -> None:
+    js = re.search(r"var SENSITIVE_RE = /(.+?)/i;", DOCK).group(1)
+    server = (ROOT / "control-plane" / "app" / "sentinel_ai.py").read_text(encoding="utf-8")
+    py = "".join(re.findall(r'r"([^"]*)"', re.search(r"SENSITIVE = re\.compile\((.*?)re\.IGNORECASE", server, re.S).group(1)))
+    assert sorted(js.split("|")) == sorted(py.split("|")), (js, py)
+    assert "if (SENSITIVE_RE.test(text)) {" in DOCK
+
+
+def test_the_ledger_hashes_what_was_asked_and_chains_every_entry() -> None:
+    assert 'var LEDGER_KEY = "cg-core-ledger";' in DOCK
+    assert "sessionStorage.setItem(LEDGER_KEY" in DOCK
+    canon = re.search(r"function canonical\(e\) \{\n(.*?)\n  \}", DOCK, re.S).group(1)
+    for field in ("seq", "at", "action", "input_sha256", "result", "tier", "approval", "check", "basis", "prev"):
+        assert "e." + field in canon, field
+    assert "input:" not in re.search(r"function record\(spec\) \{\n(.*?)\n  \}\n", DOCK, re.S).group(1).replace("var input", "")
+    assert 'prev: last ? last.hash : "GENESIS"' in DOCK
+    assert 's.digest("SHA-256"' in DOCK
+    # every answer is checked against the charter before it is shown
+    assert "var flags = selfCheck(spec);" in DOCK and "record(spec);" in DOCK
+    for rule in ("answers first", "claims no telemetry", "same-site links only", "states its basis"):
+        assert '"' + rule + '"' in DOCK, rule
+
+
+PROSE_PROBE = r"""
+const fs = require("fs"), vm = require("vm");
+const src = fs.readFileSync(process.argv[1], "utf8");
+const m = src.match(/\n  function proseBlocks\(text\) \{\n[\s\S]*?\n  \}\n/);
+const ctx = {};
+vm.createContext(ctx);
+vm.runInContext(m[0], ctx);
+process.stdout.write(JSON.stringify(ctx.proseBlocks(fs.readFileSync(0, "utf8"))));
+"""
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node is required to run station-chat.js's reader")
+def test_claudes_markdown_is_read_into_safe_blocks() -> None:
+    text = ("**Security Quick-Audit** comes first.\n\n### Why\n- read-only [review](javascript:alert(1))\n- `fixed` fee\n\n"
+            "| Option | Fit |\n|---|---|\n| Audit | first |\n\n1. Open it\n2. Book it\n<img src=x onerror=alert(1)>")
+    out = json.loads(subprocess.run(["node", "-e", PROSE_PROBE, str(ROOT / "station-chat.js")], input=text,
+                                    capture_output=True, text=True, check=True, timeout=60).stdout)
+    kinds = [b["t"] for b in out]
+    assert kinds == ["p", "h", "ul", "table", "ol", "p"], kinds
+    assert out[2]["items"] == ["read-only review", "fixed fee"]          # links and code marks become text
+    assert out[3]["rows"] == [["Option", "Fit"], ["Audit", "first"]]     # the separator row is dropped
+    # raw HTML stays a string; the renderer only ever makes text nodes from it
+    assert out[5]["text"] == "<img src=x onerror=alert(1)>"
+    body = re.search(r"\n  function renderProse\(text\) \{\n(.*?)\n  \}\n", DOCK, re.S).group(1)
+    assert "innerHTML" not in body

@@ -71,3 +71,17 @@ def test_every_html_page_is_mapped_or_explicitly_excluded() -> None:
 
     assert not mapped & excluded
     assert discovered == mapped | excluded
+
+
+def test_site_index_is_current() -> None:
+    # data/site-index.json is Sentinel Core's copy of this graph; a page added
+    # to PAGES is searchable from the console once the generator has run.
+    assert internal_links.SITE_INDEX_PATH.read_text(encoding="utf-8") == internal_links.build_site_index()
+
+
+def test_every_mapped_page_loads_the_console_once() -> None:
+    for page in internal_links.PAGES:
+        document = (ROOT / page).read_text(encoding="utf-8", errors="surrogateescape")
+        assert document.count(internal_links.CONSOLE_SCRIPT) == 1, page
+        block = internal_links.build_block(page)
+        assert (internal_links.CONSOLE_SCRIPT in block) == (page not in internal_links.CONSOLE_SELF_HOSTED), page

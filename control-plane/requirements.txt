@@ -6,3 +6,4 @@ SQLAlchemy>=2.0.54
 psycopg[binary]>=3.3.5
 stripe>=10.0   # only required for live payments; mock mode needs no key
 httpx>=0.28.1    # required by fastapi.testclient.TestClient (webhook/payout integration tests)
+anthropic>=1.8,<2   # Sentinel Core answers (app/sentinel_ai.py); unused unless SENTINEL_AI_ENABLED
