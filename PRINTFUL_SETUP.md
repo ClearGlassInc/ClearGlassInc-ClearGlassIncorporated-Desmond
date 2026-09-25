@@ -51,9 +51,10 @@ hands-off confirmation; it does **not** open the gate, and
    `https://<control-plane-host>/fulfillment/webhooks/printful/<PRINTFUL_WEBHOOK_SECRET>`
    for the `package_shipped` event. Generate the secret yourself
    (`openssl rand -hex 32`) and set it as `PRINTFUL_WEBHOOK_SECRET`.
-6. **Activate Stripe.** Still the hard blocker — see `STRIPE_SETUP.md`. The
-   account cannot accept a payment today, so no order can reach fulfillment at
-   all until `charges_enabled: true`.
+6. **Stripe status:** the live account is now enabled for charges and payouts as of the
+   2026-09-25 read-only reconciliation. Stripe is therefore no longer the account-level blocker.
+   Do not treat that status as proof of a completed buyer transaction; payment and fulfillment remain
+   unverified until a legitimate order is recorded by Stripe and the required webhook path is configured.
 There is no eighth step you can do from a dashboard: shipping-address collection
 is **code**, and it is not written yet — see below.
 
