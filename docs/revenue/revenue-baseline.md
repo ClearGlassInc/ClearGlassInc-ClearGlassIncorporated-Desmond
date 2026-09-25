@@ -69,6 +69,14 @@ owner_gate:
   paying_commitments_recorded: 0
   gross_margin_floor_pct: 70
   delivery_hours_per_week_max: 10
+addendum_2026_09_24_late:
+  measured_at: 627b2ab62da75b5dd719bb6355584f8208549496
+  repository_visibility: public
+  booking_link: https://calendly.com/desmondodhiambo/30min
+  linkedin_week_2026_09_15_to_21: {followers: 3313, impressions: 2029, members_reached: 1059, engagements: 38, audience_gta_pct: 32, audience_hamilton_burlington_pct: 4}
+  outreach_leads: {listed: 10, contacted: 0}
+  automation_kit: {runtime_checks: pass, saleable: false, reason: content public}
+  stripe_account_can_charge: unknown
 ---
 
 # ClearGlass Revenue Baseline
@@ -76,8 +84,8 @@ owner_gate:
 **What this document is:** a read-only snapshot of the repository's revenue
 capability at one commit. It sells nothing, changes no system, and claims no
 revenue. Evidence date **2026-09-24**. It extends
-[`AUDIT-2026-09-24.md`](AUDIT-2026-09-24.md), [`GROWTH_REVENUE_OS.md`](GROWTH_REVENUE_OS.md)
-and [`crcs/README.md`](crcs/README.md), and re-checks their revenue facts at `e4234c9`.
+[`AUDIT-2026-09-24.md`](../AUDIT-2026-09-24.md), [`GROWTH_REVENUE_OS.md`](../GROWTH_REVENUE_OS.md)
+and [`crcs/README.md`](../crcs/README.md), and re-checks their revenue facts at `e4234c9`.
 
 **Labels.** **VERIFIED** means observed in this session with the command or API
 named. **CARRIED** means verified by an earlier dated document and not re-checked
@@ -403,3 +411,26 @@ python3 tools/growth_registry.py --check                    # opportunities, exp
 python3 scripts/secret_scan.py                              # no secrets
 grep -rhoE 'https://(buy|book)\.stripe\.com/[A-Za-z0-9]+' --include='*.html' --include='*.js' . | sort -u   # 9 links
 ```
+
+---
+
+## 13. Addendum: facts found later on 2026-09-24 (`main` at `627b2ab`)
+
+The sections above describe `e4234c9` and are left as they were. At 16:52 the
+owner uploaded 33 files straight to `main` (`b1a72f4`). These facts were
+checked afterwards.
+
+| Fact | Label and evidence | Effect on revenue |
+|---|---|---|
+| The repository is **public** | VERIFIED, GitHub API `visibility: public` | Every file here is readable by anyone, whatever the website shows |
+| A booking link exists: "30 Minute Meeting" on Zoom, active, not secret | VERIFIED, Calendly API | Closes the "no booking link" gap. Now the Quick-Audit page's second button |
+| LinkedIn, 15–21 Sep 2026: 3,313 followers; 2,029 impressions; 1,059 members reached; 38 engagements, 37 of them on 18 Sep; audience 32% Greater Toronto, 4% Hamilton/Burlington | VERIFIED from the owner's uploaded export | The only measured distribution channel. It shows reach, not demand |
+| Outreach: 10 Oakville/Burlington businesses listed, 0 contacted | VERIFIED, `offers/outreach/lead-list-oakville-burlington.csv`, every row `New` | The sales kit and the CASL playbook exist and have never been used |
+| Automation kit: 8 of 8 tests pass; validator PASS, 0 findings | VERIFIED, commands in `product/automation-kit/validation/VALIDATION_REPORT.md` | Deliverable, but **not saleable**: the whole kit is free in this public repository |
+| A 12 MB Windows executable (`updater.exe`, version info "Google Updater (x86)") was published at the site root | VERIFIED, PE header read without executing | Removed in this change. A binary on a security firm's domain puts the domain's safe-browsing standing at risk |
+| A record marked "Do not publish" (Ontario company key order: billing, contact and payment details) was in `internal/` | VERIFIED | Removed from `main` in this change. It **remains in public git history** |
+| The lead list, with internal fit notes about named firms, is public | VERIFIED, repository public | Owner decision: keep the list somewhere private |
+| Stripe account state | UNKNOWN: this session has no Stripe tools | Still the first blocker |
+
+Unchanged: verified revenue CAD 0, customers 0, conversations 0.
+
