@@ -1,7 +1,7 @@
 # Stripe setup — connection state and what it takes to go live
 
-Status of the live Stripe account as verified against the Stripe API on **2026-08-05**.
-Re-run the checks below before trusting this page; it is a snapshot, not a live view.
+Status of the live Stripe account as verified against the Stripe API on **2026-09-25**.
+This section is a point-in-time reconciliation; re-run the read-only Stripe audit before relying on it for a later commercial decision.
 
 ## 1. Connection check (verified, not assumed)
 
@@ -10,35 +10,28 @@ Re-run the checks below before trusting this page; it is a snapshot, not a live 
 | Account reachable | ✅ `acct_1RlYxRL8uR92FksU` | `GET /v1/account` |
 | Mode | **live** (`livemode: true`) | `GET /v1/balance` |
 | Country / default currency | CA / CAD | account object |
-| **Can accept charges** | ❌ `charges_enabled: false` | account object |
-| **Can pay out** | ❌ `payouts_enabled: false` | account object |
-| Onboarding submitted | ❌ `details_submitted: false` | account object |
-| Capabilities | ❌ none granted (`capabilities: {}`) | account object |
-| Bank account attached | ❌ `external_accounts.total_count: 0` | account object |
+| **Can accept charges** | ✅ `charges_enabled: true` | account object |
+| **Can pay out** | ✅ `payouts_enabled: true` | account object |
+| Onboarding submitted | ✅ `details_submitted: true` | account object |
+| Capabilities | ✅ card payments and multiple additional payment methods active/pending | account object |
+| Bank account attached | ✅ one payout account configured | account object |
 | Webhook endpoints | ❌ **0 registered** | `GET /v1/webhook_endpoints` |
-| Checkout Sessions ever created | 0 | `GET /v1/checkout/sessions` |
-| Balance | 0 CAD | `GET /v1/balance` |
+| Checkout Sessions ever created | Not used as a revenue-proof source in this audit | Stripe API |
+| Live charges | **0 returned** | `GET /v1/charges` |
 
-**Bottom line: the account cannot accept a single payment today.** Stripe reports
-`requirements.disabled_reason: "requirements.past_due"`. The code in this repo is not
-the blocker — the account was created (2025-07-16) and never activated.
+**Bottom line: Stripe live mode is enabled and the account can accept charges and pay out.**
+No live charge was returned by the read-only audit, so verified revenue remains **CAD $0**.
+The absence of a charge does not prove that a buyer path has never been used outside the queried
+window; it is simply the current Stripe charge-list evidence available to this audit.
 
-Outstanding `requirements.past_due`:
-
-- `business_profile.product_description`
-- `business_profile.support_phone`
-- `business_profile.url`
-- `tos_acceptance.date`
-- `tos_acceptance.ip`
-
-None of these can be set from this repo. They are completed by a human at
-<https://dashboard.stripe.com/account/onboarding>.
+The account currently reports no past-due or currently-due requirements. No onboarding action is
+being requested from this repository.
 
 ## 1a. The catalogue: Stripe is the source of truth
 
-The price book names the three **live, active** Stripe Prices in the account. Live
-checkout passes `line_items[].price` — Stripe owns the amount, currency, recurrence
-and tax treatment, so no number in this repo can contradict what is charged:
+The control-plane price book names three **live, active** Stripe Prices. The storefront also
+has separate live Payment Links for additional offers. Live checkout passes `line_items[].price`
+where the control plane is used; hosted Payment Links are governed by their Stripe Price objects.
 
 | SKU | Stripe Price | Amount |
 |---|---|---|
@@ -51,14 +44,13 @@ and tax treatment, so no number in this repo can contradict what is charged:
 offer is added without a Price, because an inline amount reintroduces a second place
 a price can live.
 
-**Superseded:** the repo previously priced a different set of services —
-`quick-audit` CAD $249, `hardening` CAD $2,500, `phipa` CAD $3,000, `monitoring`
-CAD $600/month — from `data/store/catalog.json` (generated 2026-06-21,
-`live_checkout_enabled: false`, empty `checkout_url`s). Those have no Stripe Price
-and were never sellable. They remain advertised on `store.html` and `offers/*.html`
-as quote-driven engagements, which is a reasonable thing for them to be — but they
-are **not** purchasable through this control plane. If you want them sellable,
-create a Stripe Price for each and add it to the price book.
+**Current storefront reconciliation:** the live Stripe account now contains active Prices and
+Payment Links for the storefront offers, including Quick-Audit, Hardening, PHIPA, Monitoring,
+Guardian Command Nexus, Critical Minerals Compliance Strategy, and the two Business Protection
+billing intervals. These hosted Payment Links are distinct from the three-SKU control-plane
+price book. Do not infer that every storefront offer is routed through `POST /checkout/session`.
+The repository's historical statements that these offers had no live Stripe Price or empty
+checkout URLs are stale and are superseded by this reconciliation.
 
 ### Two follow-ups that need a human
 
@@ -93,11 +85,8 @@ and a cart containing either produces a `subscription`-mode session.
 
 Each of these is a human step; none can be done from code.
 
-1. **Activate the account** — complete the `requirements.past_due` list above.
-   Until `charges_enabled: true`, every checkout attempt fails.
-2. **Attach a payout bank account** — Settings → Bank accounts. Then set
-   `PAYOUT_EXTERNAL_ACCOUNT_ID` to the resulting `ba_…` token (never raw digits;
-   `app/payments.py::payout_bank_info` rejects those).
+1. **Account activation:** currently complete according to the live account object; no repository action is required.
+2. **Payout configuration:** currently present according to the live account object; keep payout-account details out of the repository.
 3. **Enable payment methods** — Settings → Payment methods. Cards + Link at minimum;
    Apple Pay and Google Pay require domain verification for one-click.
 4. **Register the webhook endpoint** (see §5) and copy its signing secret into
@@ -195,8 +184,8 @@ risk and stay behind the approval gate.
 
 Run in order. Do not skip 1 — everything after it fails while the account is inactive.
 
-- [ ] `charges_enabled: true` and `payouts_enabled: true` on the account
-- [ ] Payout bank account attached; `GET /payments/payout-account` returns `configured: true` with no warnings
+- [x] `charges_enabled: true` and `payouts_enabled: true` on the live account as of 2026-09-25
+- [x] A payout account is configured on the live account as of 2026-09-25
 - [ ] `STRIPE_SECRET_KEY` set; `POST /checkout/session` returns `"mode": "live"` and a `checkout.stripe.com` URL
 - [ ] Tampered cart refused: `{"items":[{"sku":"risk-audit-90","quantity":1,"amount":1}]}` still totals `29700`
 - [ ] Unknown SKU returns 400 and leaves a `rejected` row in `/events`
