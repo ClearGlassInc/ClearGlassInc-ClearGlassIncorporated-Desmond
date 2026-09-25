@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["environment","gateway_endpoint","gateway_identity","public_key","tunnel_address","dns_policy","network_lock","configuration_version"],
+  "properties": {
+    "environment": {"const": "isolated-disposable-test"},
+    "gateway_endpoint": {"type": "string", "pattern": "^192\\.0\\.2\\.[0-9]+:51820$"},
+    "gateway_identity": {"type": "string", "minLength": 1},
+    "public_key": {"type": "string", "minLength": 1},
+    "tunnel_address": {"type": "string", "pattern": "^10\\.77\\.0\\.[0-9]+/24$"},
+    "dns_policy": {"const": "test-only"},
+    "network_lock": {"const": true},
+    "configuration_version": {"const": "1"}
+  },
+  "additionalProperties": false
+}
