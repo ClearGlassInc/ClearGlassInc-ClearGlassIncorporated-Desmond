@@ -1,0 +1,44 @@
+name: Shield G01 Isolated MVP
+on:
+  pull_request:
+    paths: ["shield/**",".github/workflows/shield-g01-mvp.yml"]
+  push:
+    branches: ["main","shield/g01-isolated-mvp"]
+    paths: ["shield/**",".github/workflows/shield-g01-mvp.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  g01:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with: {persist-credentials: false}
+      - name: Install isolated test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends wireguard-tools iproute2
+          python -m pip install --disable-pip-version-check --no-input pytest
+      - name: Configuration and security tests
+        run: python -m pytest -q shield/tests
+      - name: Build and validate disposable tunnel
+        run: |
+          sudo ./shield/scripts/bootstrap-test-env.sh
+          sudo ip netns exec cgshield-client ping -c 3 -W 2 10.77.0.1
+          sudo ip netns exec cgshield-client wg show
+          sudo ./shield/scripts/destroy-test-env.sh
+      - name: Verify teardown
+        run: '! ip netns list | grep -E "^cgshield-(client|gateway)"'
+      - name: Record evidence
+        if: always()
+        run: |
+          mkdir -p artifacts/shield-g01
+          printf '%s\n' "commit=$GITHUB_SHA" "environment=isolated-disposable-test" "production=NOT_PRODUCTION" > artifacts/shield-g01/run.txt
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698f4b7297cfb7b0e5f7f6d
+        with:
+          name: shield-g01-evidence-$GITHUB_SHA
+          path: artifacts/shield-g01/
+          if-no-files-found: error
