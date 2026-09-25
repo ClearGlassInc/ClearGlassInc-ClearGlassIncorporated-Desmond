@@ -64,6 +64,8 @@ services:
         sync: false
       - key: STRIPE_WEBHOOK_SECRET
         sync: false
+      - key: SLACK_WEBHOOK_URL   # revenue events; optional, empty = off
+        sync: false
       - key: STRIPE_PUBLISHABLE_KEY
         sync: false
       # Stripe Tax. Keep false until Settings → Tax has an origin address, a

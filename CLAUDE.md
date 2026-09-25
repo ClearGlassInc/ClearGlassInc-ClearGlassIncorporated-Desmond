@@ -144,18 +144,11 @@ webhook is idempotent on redelivery via `orders.external_ref` (migration 004).
 `GET /payouts` and `GET /payments/payout-account` are admin-only (settlement amounts and
 masked bank details); they were open until 2026-09-24.
 
-Sentinel Core's model endpoint (`app/sentinel_ai.py`, `app/routers/sentinel.py`) lets
-Claude answer the public console's free questions. `POST /sentinel/ask` is public like
-checkout (the console is a static site) and on the route-auth allow-list for that reason.
-Keep it safe to leave open: Claude's tools only read the public site index — never add a
-tool that writes, sends, books or spends; the per-IP throttle, the
-`SENTINEL_DAILY_REQUEST_CAP` and the credential guard run before any model call; the
-ledger row holds a keyed hash of the question, never its words; the key lives only in
-`ANTHROPIC_API_KEY`. It is off until `SENTINEL_AI_ENABLED=true` and the console's
-`AI.api` (or `<meta name="cg-sentinel-api">`) names the service. The system prompt ships
-twice (`prompts/sentinel_core_system_prompt.md` and `app/data/sentinel_system_prompt.md`,
-because the image holds only `control-plane/`); `tests/test_sentinel_ai.py` fails if they
-differ. Status against the v2030 charter: `sentinel/SENTINEL_CORE_2030_SPEC.md`.
+Slack revenue events (`app/revenue_notify.py`, `SLACK_WEBHOOK_URL`) are derived from
+`log_event` rows and posted only after commit. To announce a new step, map its ledger
+action in `describe()`; don't post from a router. Keep names, emails and companies out
+of messages, and keep test-mode money labelled `TEST DATA`. The rules are in
+`docs/REVENUE_OPERATIONS.md` § Slack revenue channel.
 
 ## Running & testing the commerce control plane
 

@@ -1,0 +1,66 @@
+{
+  "schema": "clearglass.qics-baseline/v2",
+  "repository": "ClearGlassInc/ClearGlassInc-ClearGlassIncorporated-Desmond",
+  "repository_url": "https://github.com/ClearGlassInc/ClearGlassInc-ClearGlassIncorporated-Desmond",
+  "owner": "ClearGlassInc",
+  "branch": "main",
+  "target_branch": "feat/qics-v2-evidence-layer",
+  "head_sha": "627b2ab62da75b5dd719bb6355584f8208549496",
+  "timestamp": "2026-09-24T23:40:00Z",
+  "working_tree": "no local checkout in authoring session; baseline SHA taken from GitHub default branch",
+  "runtime": "Python 3 stdlib for qics/; control-plane remains FastAPI + SQLAlchemy + Pydantic 2",
+  "deployment": {
+    "static_site": "GitHub Pages www.clearglassinc.com from main",
+    "control_plane": "render.yaml present; NOT deployed as of 2026-09-24 audits",
+    "qics": "library + CLI only; not wired into FastAPI; not on the live homepage"
+  },
+  "existing_integrations": [
+    "Stripe (code + Payment Links)",
+    "PayPal (code)",
+    "Printful (code)",
+    "Etsy OAuth (code)",
+    "Slack incoming webhook (revenue_notify, undeployed)",
+    "formsubmit.co (live leads)"
+  ],
+  "existing_security_controls": [
+    "require_admin on control-plane admin routers",
+    "append-only events ledger (control-plane)",
+    "approval gate /approvals",
+    "secret_scan.py",
+    "webhook signature verification (Stripe/PayPal) in control-plane tests"
+  ],
+  "existing_tests": [
+    "control-plane pytest suite (author-claimed 717 passed on 2026-09-24, not re-run here)",
+    "root pytest suite (author-claimed 1644 passed, not re-run here)",
+    "qics tests/test_qics.py — 17 passed locally 2026-09-24"
+  ],
+  "qics_components_found": [],
+  "qics_components_missing_at_baseline": [
+    "Intelligence Engine",
+    "Quantum Readiness Scanner",
+    "Post-Quantum Security Advisor",
+    "Opportunity Predictor",
+    "Quantum Commander",
+    "Event Bus Integration",
+    "Evidence Store",
+    "Tenant Risk Register",
+    "Cryptographic Asset Registry",
+    "Opportunity Scoring Matrix",
+    "QICS-specific Approval Gate",
+    "QICS-specific Immutable Audit Log",
+    "QICS Dashboard",
+    "External Intelligence Connectors (live)",
+    "QICS Test Framework"
+  ],
+  "reusable_clearGlass_components": [
+    "control-plane/app/audit.py log_event",
+    "control-plane/app/routers/approvals.py",
+    "control-plane/app/models.py Event append-only trigger",
+    "control-plane/app/governance.py risk scoring"
+  ],
+  "labels": {
+    "head_sha": "VERIFIED GitHub list_commits",
+    "qics_absent_before_this_change": "VERIFIED GitHub code search for quantum/QICS/PQC/ML-KEM returned 0 hits",
+    "control_plane_undeployed": "CARRIED docs/AUDIT-2026-09-24.md"
+  }
+}

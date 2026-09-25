@@ -1,0 +1,56 @@
+ai_risk_scoring_app.py
+import gradio as gr
+import joblib
+import pandas as pd
+
+# 1. Load the saved Random Forest model
+try:
+    model = joblib.load('risk_model.joblib')
+    print("Model loaded successfully.")
+except FileNotFoundError:
+    print("Error: 'risk_model.joblib' not found. Please run your training notebook first to generate it.")
+
+# 2. Define the prediction function
+def predict_maternal_risk(age, systolic_bp, diastolic_bp, bs, body_temp, heart_rate):
+    # Create a dataframe from inputs to match the model's expected feature names
+    input_data = pd.DataFrame([{
+        'Age': age,
+        'SystolicBP': systolic_bp,
+        'DiastolicBP': diastolic_bp,
+        'BS': bs,
+        'BodyTemp': body_temp,
+        'HeartRate': heart_rate
+    }])
+    
+    # Predict
+    prediction = model.predict(input_data)[0]
+    
+    # Return result
+    if prediction == 1:
+        return "⚠️ High Risk"
+    else:
+        return "✅ Low Risk"
+
+# 3. Build the Gradio Interface
+inputs = [
+    gr.Number(label="Age (years)", value=25),
+    gr.Number(label="Systolic Blood Pressure (mmHg)", value=120),
+    gr.Number(label="Diastolic Blood Pressure (mmHg)", value=80),
+    gr.Number(label="Blood Sugar (mmol/L)", value=7.0),
+    gr.Number(label="Body Temperature (°F)", value=98.6),
+    gr.Number(label="Heart Rate (bpm)", value=80)
+]
+
+outputs = gr.Textbox(label="Predicted Maternal Risk Level")
+
+iface = gr.Interface(
+    fn=predict_maternal_risk,
+    inputs=inputs,
+    outputs=outputs,
+    title="Maternal Health Risk Predictor",
+    description="Enter patient clinical parameters to predict maternal health risk level (Low or High)."
+)
+
+# 4. Launch the app
+if __name__ == "__main__":
+    iface.launch(share=True) # Set share=False if running locally without a public link

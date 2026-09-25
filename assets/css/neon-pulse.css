@@ -5,11 +5,14 @@
      clicks, focus order and the accessibility tree are untouched.
    - Only transform and opacity animate. Glows are painted once and then
      composited; no box-shadow, filter or background-position keyframes.
-   - Auto-discovered components (.cg-np-*) are classed by
-     /assets/js/neon-pulse.js only when their ::before/::after are free and
-     they are already positioned, so no page-owned pseudo-element, stacking
-     context or containing block changes. Authors can opt in explicitly with
-     the .cg-neon-* classes, or out with data-no-neon on any ancestor.
+   - Every class is in the cg-np- namespace. The site already ships
+     .cg-neon-card (ui.css) and .cg-status (clearglass-nexus.html); this layer
+     must never restyle them.
+   - A pseudo-element is painted only once discovery (/assets/js/neon-pulse.js)
+     has claimed it: .cg-np-own-a owns ::after, .cg-np-own-b owns ::before,
+     and neither is set unless that pseudo-element was free. Every rule that
+     touches a pseudo-element below is keyed to one of them, so a page's own
+     ::before/::after, and their animations, are never overridden.
    - Continuous animation runs only while an element is on screen
      (.cg-np-live), and never under prefers-reduced-motion. */
 
@@ -32,10 +35,10 @@
 }
 
 /* ---------------------------------------------------------------------------
-   6 + 1. Background atmosphere and global breathing pulse.
-   One fixed layer at z-index -1: it sits above the canvas background and
-   below all in-flow content. Pages that paint their own body background
-   simply cover it, which is the intended graceful degradation.
+   1 + 6. Global breathing pulse and background atmosphere.
+   One fixed layer at z-index -1: above the canvas background, below all
+   in-flow content. Pages that paint their own body background cover it, and
+   pages carrying ui.js's #cg-command-atmosphere do not get it at all.
    ------------------------------------------------------------------------ */
 .cg-np-ambient {
   position: fixed;
@@ -78,10 +81,10 @@
 }
 
 /* ---------------------------------------------------------------------------
-   2. Buttons. future-buttons.css owns button pseudo-elements; this only adds a
-   breathing pulse to its existing neon ring and a hotter pulse on hover.
-   Its own :active compression and reduced-motion/forced-colors rules remain
-   in charge (both already strip these animations).
+   2. Buttons. future-buttons.css (same shared-layer family) owns button
+   pseudo-elements; this only adds a breathing pulse to its neon ring and a
+   hotter pulse on hover. Its :active compression and its reduced-motion /
+   forced-colors rules stay in charge and already strip these animations.
    ------------------------------------------------------------------------ */
 .future-glass-control.future-glass-layers::before {
   animation: cg-np-ring-idle var(--cg-np-breath) var(--cg-np-ease) infinite;
@@ -94,29 +97,45 @@
 
 /* ---------------------------------------------------------------------------
    3 / 4 / 5. Cards, glass panels and Sentinel command modules.
-   ::after is an edge-only ring (masked to the border box), so it never tints
-   the content it sits over. ::before, when free, adds corner glow, a moving
-   reflection (panels) or a scan line (modules).
+   The rim is edge-only (masked to the border box), so it never tints the
+   content it sits over. It lives on whichever pseudo-element was free.
    ------------------------------------------------------------------------ */
-.cg-neon-card, .cg-neon-panel, .cg-sentinel-module { position: relative; }
 /* Set by discovery only when inert: static, no offsets, no absolute descendants. */
 .cg-np-anchor { position: relative; }
-.cg-sentinel-module, .cg-neon-panel { overflow: hidden; }
 
-.cg-np-card::after, .cg-neon-card::after,
-.cg-np-panel::after, .cg-neon-panel::after,
-.cg-np-module::after, .cg-sentinel-module::after {
+.cg-np-card {
+  --cg-np-rim: linear-gradient(135deg,
+    rgba(var(--cg-np-red), var(--cg-np-edge-alpha)),
+    rgba(var(--cg-np-red), .06) 32%,
+    rgba(var(--cg-np-blue), .06) 68%,
+    rgba(var(--cg-np-blue), var(--cg-np-edge-alpha)));
+}
+.cg-np-panel {
+  --cg-np-rim: linear-gradient(160deg,
+    rgba(255, 255, 255, .22),
+    rgba(var(--cg-np-blue), .08) 40%,
+    rgba(var(--cg-np-red), .08) 70%,
+    rgba(var(--cg-np-red), .3));
+}
+.cg-np-module {
+  --cg-np-rim: linear-gradient(135deg,
+    rgba(var(--cg-np-blue), .6),
+    rgba(var(--cg-np-blue), .08) 40%,
+    rgba(var(--cg-np-red), .08) 60%,
+    rgba(var(--cg-np-red), .55));
+  --cg-np-rim-anim: cg-np-process;
+  --cg-np-rim-dur: 2.4s;
+}
+
+.cg-np-rim-a.cg-np-own-a::after,
+.cg-np-rim-b.cg-np-own-b::before {
   content: "";
   position: absolute;
   inset: 0;
   padding: 1px;
   border-radius: inherit;
   pointer-events: none;
-  background: linear-gradient(135deg,
-    rgba(var(--cg-np-red), var(--cg-np-edge-alpha)),
-    rgba(var(--cg-np-red), .06) 32%,
-    rgba(var(--cg-np-blue), .06) 68%,
-    rgba(var(--cg-np-blue), var(--cg-np-edge-alpha)));
+  background: var(--cg-np-rim);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
@@ -124,7 +143,7 @@
   opacity: .45;
 }
 
-.cg-np-card.cg-np-corners::before, .cg-neon-card::before {
+.cg-np-corners.cg-np-own-b::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -136,7 +155,8 @@
   opacity: .5;
 }
 
-.cg-np-panel.cg-np-reflect::before, .cg-neon-panel::before {
+/* Panels: moving light reflection (only on panels that already clip). */
+.cg-np-reflect.cg-np-own-b::before {
   content: "";
   position: absolute;
   top: 0;
@@ -147,22 +167,9 @@
   background: linear-gradient(105deg, transparent 20%, rgba(255, 255, 255, .06) 46%, rgba(var(--cg-np-blue), .05) 54%, transparent 80%);
   transform: translate3d(-120%, 0, 0);
 }
-.cg-np-panel::after, .cg-neon-panel::after {
-  background: linear-gradient(160deg,
-    rgba(255, 255, 255, .22),
-    rgba(var(--cg-np-blue), .08) 40%,
-    rgba(var(--cg-np-red), .08) 70%,
-    rgba(var(--cg-np-red), .3));
-}
 
-.cg-np-module::after, .cg-sentinel-module::after {
-  background: linear-gradient(135deg,
-    rgba(var(--cg-np-blue), .6),
-    rgba(var(--cg-np-blue), .08) 40%,
-    rgba(var(--cg-np-red), .08) 60%,
-    rgba(var(--cg-np-red), .55));
-}
-.cg-np-module.cg-np-scan::before, .cg-sentinel-module::before {
+/* Modules: vertical scan (only on modules that already clip). */
+.cg-np-scan.cg-np-own-b::before {
   content: "";
   position: absolute;
   left: 0;
@@ -175,8 +182,104 @@
   opacity: 0;
 }
 
-/* Mission-ready indicator for authored modules: <span class="cg-mission-ready">Mission ready</span> */
-.cg-mission-ready {
+/* Modules whose own pseudo-elements are taken: a scanning edge along the
+   header bar, clipped by the module (discovery requires overflow clipping). */
+.cg-np-scanbar.cg-np-own-a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 40%;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(var(--cg-np-blue), .9) 55%, rgba(var(--cg-np-red), .7), transparent);
+  transform: translate3d(-100%, 0, 0);
+  opacity: 0;
+}
+
+/* Continuous motion only while on screen. */
+.cg-np-live.cg-np-rim-a.cg-np-own-a::after,
+.cg-np-live.cg-np-rim-b.cg-np-own-b::before {
+  will-change: opacity;
+  animation: var(--cg-np-rim-anim, cg-np-edge) var(--cg-np-rim-dur, var(--cg-np-breath)) var(--cg-np-ease) infinite;
+}
+.cg-np-live.cg-np-corners.cg-np-own-b::before {
+  will-change: opacity;
+  animation: cg-np-corner calc(var(--cg-np-breath) * 1.2) var(--cg-np-ease) infinite;
+}
+.cg-np-live.cg-np-reflect.cg-np-own-b::before {
+  will-change: transform;
+  animation: cg-np-reflect 9s var(--cg-np-ease) infinite;
+}
+.cg-np-live.cg-np-scan.cg-np-own-b::before {
+  will-change: transform, opacity;
+  animation: cg-np-scan var(--cg-np-scan) linear infinite;
+}
+.cg-np-live.cg-np-scanbar.cg-np-own-a::after {
+  will-change: transform, opacity;
+  animation: cg-np-scanbar 4.2s linear infinite;
+}
+
+/* Four staggered phases so a grid of cards does not pulse in lock-step.
+   Keyed to owned pseudo-elements only: a page's own animation delays stand. */
+.cg-np-d1.cg-np-own-a::after, .cg-np-d1.cg-np-own-b::before { animation-delay: -1.2s; }
+.cg-np-d2.cg-np-own-a::after, .cg-np-d2.cg-np-own-b::before { animation-delay: -2.4s; }
+.cg-np-d3.cg-np-own-a::after, .cg-np-d3.cg-np-own-b::before { animation-delay: -3.6s; }
+
+/* ---------------------------------------------------------------------------
+   7. Status indicators.
+   Existing status dots (discovered): a soft halo in the dot's own colour,
+   so an online dot pulses green and an alert dot pulses red. Tone only
+   sets the tempo; the dot's meaning and colour are the page's.
+   ------------------------------------------------------------------------ */
+.cg-np-beacon.cg-np-own-a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-color: inherit;
+  filter: blur(3px);
+  opacity: .25;
+}
+.cg-np-beacon { --cg-np-beacon-dur: 2.6s; }
+.cg-np-beacon--online { --cg-np-beacon-dur: 2.2s; }
+.cg-np-beacon--monitoring { --cg-np-beacon-dur: 2.6s; }
+.cg-np-beacon--alert { --cg-np-beacon-dur: 1.2s; }
+.cg-np-beacon--intel { --cg-np-beacon-dur: 3s; }
+.cg-np-live.cg-np-beacon.cg-np-own-a::after {
+  will-change: opacity;
+  animation: cg-np-beacon var(--cg-np-beacon-dur) var(--cg-np-ease) infinite;
+}
+
+/* Authored indicators (opt-in):
+   <span class="cg-np-status cg-np-status--online">Online</span>
+   The label text carries the meaning; colour is reinforcement only. */
+.cg-np-status {
+  --cg-np-status-rgb: var(--cg-np-blue);
+  display: inline-flex;
+  align-items: center;
+  gap: .5em;
+}
+.cg-np-status::before {
+  content: "";
+  flex: none;
+  width: .6em;
+  height: .6em;
+  border-radius: 50%;
+  background: rgb(var(--cg-np-status-rgb));
+  box-shadow: 0 0 0 .18em rgba(var(--cg-np-status-rgb), .22), 0 0 10px rgba(var(--cg-np-status-rgb), .7);
+  animation: cg-np-status 2.2s var(--cg-np-ease) infinite;
+}
+.cg-np-status--online, .cg-np-status[data-state="online"] { --cg-np-status-rgb: var(--cg-np-green); }
+.cg-np-status--monitoring, .cg-np-status[data-state="monitoring"] { --cg-np-status-rgb: var(--cg-np-amber); }
+.cg-np-status--alert, .cg-np-status[data-state="alert"] { --cg-np-status-rgb: var(--cg-np-red); }
+.cg-np-status--alert::before, .cg-np-status[data-state="alert"]::before { animation-duration: 1.1s; }
+.cg-np-status--intel, .cg-np-status[data-state="intel"] { --cg-np-status-rgb: var(--cg-np-blue); }
+
+/* Mission-ready badge (opt-in; only where the page genuinely knows it):
+   <span class="cg-np-mission-ready">Mission ready</span> */
+.cg-np-mission-ready {
   display: inline-flex;
   align-items: center;
   gap: .45em;
@@ -185,105 +288,49 @@
   text-transform: uppercase;
   color: rgb(var(--cg-np-green));
 }
-.cg-mission-ready::before {
+.cg-np-mission-ready::before {
   content: "";
   width: .5em;
   height: .5em;
   border-radius: 50%;
   background: rgb(var(--cg-np-green));
   box-shadow: 0 0 8px rgba(var(--cg-np-green), .8);
-}
-
-/* Continuous motion only while on screen. Four staggered phases stop a grid
-   of cards from pulsing in lock-step. */
-.cg-np-live::after, .cg-neon-card::after, .cg-neon-panel::after, .cg-sentinel-module::after {
-  will-change: opacity;
-  animation: cg-np-edge var(--cg-np-breath) var(--cg-np-ease) infinite;
-}
-.cg-np-live.cg-np-corners::before, .cg-neon-card::before {
-  will-change: opacity;
-  animation: cg-np-corner calc(var(--cg-np-breath) * 1.2) var(--cg-np-ease) infinite;
-}
-.cg-np-live.cg-np-reflect::before, .cg-neon-panel::before {
-  will-change: transform;
-  animation: cg-np-reflect 9s var(--cg-np-ease) infinite;
-}
-.cg-np-live.cg-np-scan::before, .cg-sentinel-module::before {
-  will-change: transform, opacity;
-  animation: cg-np-scan var(--cg-np-scan) linear infinite;
-}
-.cg-np-live.cg-np-module::after, .cg-sentinel-module::after {
-  animation-name: cg-np-process;
-  animation-duration: 2.4s;
-}
-.cg-np-d1::after, .cg-np-d1::before { animation-delay: -1.2s; }
-.cg-np-d2::after, .cg-np-d2::before { animation-delay: -2.4s; }
-.cg-np-d3::after, .cg-np-d3::before { animation-delay: -3.6s; }
-
-/* ---------------------------------------------------------------------------
-   7. Status indicators (opt-in):
-   <span class="cg-status cg-status--online" role="status">Online</span>
-   The label text carries the meaning; colour is reinforcement only.
-   ------------------------------------------------------------------------ */
-.cg-status {
-  --cg-status-rgb: var(--cg-np-blue);
-  display: inline-flex;
-  align-items: center;
-  gap: .5em;
-}
-.cg-status::before {
-  content: "";
-  flex: none;
-  width: .6em;
-  height: .6em;
-  border-radius: 50%;
-  background: rgb(var(--cg-status-rgb));
-  box-shadow: 0 0 0 .18em rgba(var(--cg-status-rgb), .22), 0 0 10px rgba(var(--cg-status-rgb), .7);
   animation: cg-np-status 2.2s var(--cg-np-ease) infinite;
 }
-.cg-status--online, .cg-status[data-state="online"] { --cg-status-rgb: var(--cg-np-green); }
-.cg-status--monitoring, .cg-status[data-state="monitoring"] { --cg-status-rgb: var(--cg-np-amber); }
-.cg-status--alert, .cg-status[data-state="alert"] { --cg-status-rgb: var(--cg-np-red); }
-.cg-status--alert::before, .cg-status[data-state="alert"]::before { animation-duration: 1.1s; }
-.cg-status--intel, .cg-status[data-state="intel"] { --cg-status-rgb: var(--cg-np-blue); }
 
 /* ---------------------------------------------------------------------------
-   Mobile: lighter atmosphere, no sweep, slower pulses.
+   Mobile: lighter atmosphere, no sweep or drift, no panel reflections.
    ------------------------------------------------------------------------ */
 @media (max-width: 720px), (pointer: coarse) {
   :root { --cg-np-grid-alpha: .03; --cg-np-breath: 6s; }
   .cg-np-sweep { display: none; }
   .cg-np-grid { animation: none; }
-  .cg-np-live.cg-np-reflect::before, .cg-neon-panel::before { animation: none; }
+  .cg-np-live.cg-np-reflect.cg-np-own-b::before { animation: none; }
 }
 
 /* ---------------------------------------------------------------------------
-   Reduced motion: every glow stays as a static, legible accent; nothing moves.
+   Reduced motion: every glow stays as a static accent; nothing moves.
    ------------------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
   .cg-np-ambient > span,
-  .cg-np-card::before, .cg-np-card::after,
-  .cg-np-panel::before, .cg-np-panel::after,
-  .cg-np-module::before, .cg-np-module::after,
-  .cg-neon-card::before, .cg-neon-card::after,
-  .cg-neon-panel::before, .cg-neon-panel::after,
-  .cg-sentinel-module::before, .cg-sentinel-module::after,
-  .cg-status::before,
+  .cg-np-own-a::after,
+  .cg-np-own-b::before,
+  .cg-np-status::before,
+  .cg-np-mission-ready::before,
   .future-glass-control.future-glass-layers::before {
     animation: none !important;
     will-change: auto !important;
   }
-  .cg-np-sweep, .cg-np-scan::before, .cg-sentinel-module::before { display: none; }
+  .cg-np-sweep,
+  .cg-np-scan.cg-np-own-b::before,
+  .cg-np-reflect.cg-np-own-b::before,
+  .cg-np-scanbar.cg-np-own-a::after { display: none; }
 }
 
 @media (forced-colors: active) {
   .cg-np-ambient,
-  .cg-np-card::before, .cg-np-card::after,
-  .cg-np-panel::before, .cg-np-panel::after,
-  .cg-np-module::before, .cg-np-module::after,
-  .cg-neon-card::before, .cg-neon-card::after,
-  .cg-neon-panel::before, .cg-neon-panel::after,
-  .cg-sentinel-module::before, .cg-sentinel-module::after { display: none; }
+  .cg-np-own-a::after,
+  .cg-np-own-b::before { display: none; }
 }
 
 @media print {
@@ -299,5 +346,7 @@
 @keyframes cg-np-corner { 0%, 100% { opacity: .3; } 50% { opacity: .85; } }
 @keyframes cg-np-reflect { 0%, 55% { transform: translate3d(-120%, 0, 0); } 100% { transform: translate3d(240%, 0, 0); } }
 @keyframes cg-np-scan { 0% { transform: translate3d(0, -50%, 0); opacity: 0; } 10%, 85% { opacity: .9; } 100% { transform: translate3d(0, 50%, 0); opacity: 0; } }
+@keyframes cg-np-scanbar { 0% { transform: translate3d(-100%, 0, 0); opacity: 0; } 12%, 82% { opacity: .9; } 100% { transform: translate3d(250%, 0, 0); opacity: 0; } }
 @keyframes cg-np-process { 0%, 100% { opacity: .4; } 40% { opacity: .95; } 55% { opacity: .55; } 70% { opacity: .9; } }
+@keyframes cg-np-beacon { 0%, 100% { opacity: .15; } 50% { opacity: .9; } }
 @keyframes cg-np-status { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .55; transform: scale(.82); } }

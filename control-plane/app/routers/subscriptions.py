@@ -270,6 +270,7 @@ async def subscription_webhook(
                 "plan": change["plan"],
                 "from_status": change["from_status"],
                 "cancel_at_period_end": change["cancel_at_period_end"],
+                "livemode": bool(event.get("livemode")),
             },
             result="executed",
         )
