@@ -48,6 +48,12 @@ def test_no_shield_payment_configuration_in_static_runtime_assets():
     for path in ROOT.rglob("*"):
         if not path.is_file() or ".git" in path.parts or path.name == "package-lock.json":
             continue
+        # Scan only static runtime assets; tests/docs/workflows may legitimately
+        # contain the very patterns this guard is designed to detect.
+        if path.suffix.lower() not in {".html", ".js", ".css", ".json"}:
+            continue
+        if path.parts[0] in {"tests", "docs", ".github"}:
+            continue
         try:
             content = path.read_text(encoding="utf-8")
         except (UnicodeDecodeError, OSError):
