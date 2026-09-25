@@ -67,6 +67,7 @@ non‑negotiable when changing it.
 | `deployment/` | Per-product deployment layers: n8n workflow exports, ledger SQL, runbooks (`cashpulse/`, `rfed/`) |
 | `tools/growth_registry.py`, `data/growth/` | Market opportunities and experiments held to their evidence: a hypothesis carries low confidence only, and no experiment winner without the minimum evidence set in advance (`--check`). Both registries are empty: no demand or result is claimed |
 | `data/` | Committed JSON feeds: `data/store/catalog.json` (5 ClearGlass **service** engagements with live Stripe URLs), `data/side-store/catalog.json` (57 impulse SKUs — a *different* catalog; do not conflate them), `data/control-surface/*` |
+| `station-chat.js`, `data/site-index.json` | **Sentinel Core**, the command console on every mapped page: Ask, Intel Desk, Site Intelligence (site search, Mission Control, smart actions, Intelligence Graph). It reads `data/site-index.json`, which `tools/internal_links.py` writes — never hand-edit it. Answer style: `prompts/sentinel_core_system_prompt.md` |
 | `operations/` | Generated reports + handoff pages (priority matrix, SEO, health, defender) |
 | `sentinel/` | Named-agent index (PERCIVAL, SENTINEL, AEGIS, PFAS, Agent Mesh) — keyless, stdlib-only, fail-closed Python agents; see `sentinel/PERCIVAL_AGENTS.md`. Includes the real PERCIVAL governor/identity/capability/mission-memory stack plus target-state v9 distributed-architecture docs (nothing in those docs is provisioned — see their own status banners) |
 | `.github/workflows/` | 81 workflows (36 scheduled, 16 with `contents: write`): CI, Pages deploy, commerce gates, scheduled bot loops |
@@ -236,6 +237,13 @@ live in `tools/internal_links.py` (stdlib only).
 - **Adding/renaming a page?** Add it to `PAGES` and a cluster in
   `tools/internal_links.py`, then run `python3 tools/internal_links.py`
   (idempotent; `--check` verifies freshness). Add the URL to `sitemap.xml`.
+- The same run writes `data/site-index.json` (Sentinel Core's copy of the graph)
+  and puts `station-chat.js` in every generated block, so the console is on every
+  mapped page. A page that loads the console itself goes in `CONSOLE_SELF_HOSTED`
+  (validate() rejects a second tag); `FIXED_VIEWPORT` pages get
+  `data-fit="fixed"` and the compact dock. The console isolates its own markup
+  from page CSS with a `:where()` reset, and stacks above the other corner docks
+  (`#cg-dock`, `#cg-security-stack`) rather than hiding them.
 - Don't hand-edit the generated blocks — regenerate them. That includes
   `blog/posts.json` and the `cg-insights-*` blocks in `blog/index.html`:
   editorial copy for a brief (category, quote, CTA, topics, deskRank) goes in

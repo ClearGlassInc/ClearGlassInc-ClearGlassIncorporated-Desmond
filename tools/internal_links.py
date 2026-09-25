@@ -21,20 +21,35 @@ time the map below changes:
 stdlib only. The site graph lives in PAGES / CLUSTERS / EXTRA_LINKS below;
 to add a page, give it a title + description in PAGES and append it to a
 cluster's members.
+
+The same run also writes data/site-index.json, the graph Sentinel Core reads
+to search, explain and map the site (station-chat.js), and gives every mapped
+page the console's script tag inside its block. One generator, so a page added
+here is searchable from the console the moment its block is regenerated.
 """
 from __future__ import annotations
 
 import html
+import json
 import posixpath
 import re
 import sys
+from html.parser import HTMLParser
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 REPORT_PATH = ROOT / "SITE_WIRING_PLAN.md"
+SITE_INDEX_PATH = ROOT / "data" / "site-index.json"
 
 START = "<!-- cg-related:start -->"
 END = "<!-- cg-related:end -->"
+
+# Sentinel Core (station-chat.js) rides in every generated block, so the
+# console is on every mapped page. Pages listed here load it themselves,
+# alongside the scripts it hands off to, and must not get a second tag.
+CONSOLE_SCRIPT = "station-chat.js"
+CONSOLE_SELF_HOSTED = {"index.html"}
+ABOUT_MAX = 240   # characters of each page's meta description kept in the index
 
 # HTML utilities and private/non-indexable operational surfaces are deliberately
 # outside the public journey graph. Keeping this inventory beside PAGES makes
@@ -738,6 +753,12 @@ def build_block(page: str) -> str:
         'aria-label="Show related ClearGlass pages">⌁ Explore ClearGlass</div>\n'
         if docked else ""
     )
+    # Full-viewport pages get the console's compact dock (data-fit="fixed").
+    fit = ' data-fit="fixed"' if docked else ""
+    console = (
+        "" if page in CONSOLE_SELF_HOSTED
+        else f'<script defer src="{html.escape(rel(page, CONSOLE_SCRIPT), quote=True)}"{fit}></script>\n'
+    )
 
     return (
         f"{START}\n"
@@ -752,7 +773,89 @@ def build_block(page: str) -> str:
         f"  </nav>\n"
         f"{tab}"
         f"</aside>\n"
+        f"{console}"
         f"{END}"
+    )
+
+
+# --------------------------------------------------------------------------
+# Site index for Sentinel Core: the same graph as data, one row per page.
+# --------------------------------------------------------------------------
+class _AboutParser(HTMLParser):
+    """Reads a page's <meta name="description">, and nothing else."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.about = ""
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag != "meta" or self.about:
+            return
+        values = dict(attrs)
+        if (values.get("name") or "").lower() == "description":
+            self.about = values.get("content") or ""
+
+
+def page_about(page: str) -> str:
+    """A page's own meta description, collapsed and trimmed at a word."""
+    parser = _AboutParser()
+    parser.feed((ROOT / page).read_text(encoding="utf-8", errors="surrogateescape"))
+    about = " ".join(parser.about.split())
+    if len(about) > ABOUT_MAX:
+        about = about[:ABOUT_MAX].rsplit(" ", 1)[0].rstrip(",;:—-") + "…"
+    return about
+
+
+def _row(value: object) -> str:
+    return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+
+
+def build_site_index() -> str:
+    """data/site-index.json: pages, clusters and the links between them.
+
+    Every value comes from the graph above or from a page's own meta
+    description, so the console can only ever repeat what the site says.
+    One row per page and per cluster keeps the diff of a page edit to a line.
+    """
+    clusters = [
+        {
+            "id": cid,
+            "name": c["name"],
+            "pillar": c["pillar"],
+            "members": list(c["members"]),
+            "cta": [{"path": path, "label": label} for path, label in c["cta"]],
+        }
+        for cid, c in CLUSTERS.items()
+    ]
+    pages = []
+    for page, (title, summary) in PAGES.items():
+        cid = cluster_of(page)
+        targets, _cta, _pillar = related_targets(page)
+        previous, _hub, following = journey_targets(page)
+        entry: dict[str, object] = {
+            "path": page,
+            "title": title,
+            "summary": summary,
+            "cluster": cid,
+            "role": "hub" if page == CLUSTERS[cid]["pillar"] else "page",
+            "related": targets,
+            "prev": previous,
+            "next": following,
+        }
+        about = page_about(page)
+        if about:
+            entry["about"] = about
+        pages.append(entry)
+    counts = {
+        "pages": len(pages),
+        "clusters": len(clusters),
+        "links": sum(len(p["related"]) for p in pages),  # type: ignore[arg-type]
+    }
+    return (
+        '{"schema":1,"generator":"tools/internal_links.py",'
+        f'"counts":{_row(counts)},\n'
+        '"clusters":[\n' + ",\n".join(_row(c) for c in clusters) + "\n],\n"
+        '"pages":[\n' + ",\n".join(_row(p) for p in pages) + "\n]}\n"
     )
 
 
@@ -813,6 +916,21 @@ def validate() -> list[str]:
         errors.append(f"{page}: HTML page is not classified")
     for page in sorted(set(EXCLUDED_PAGES) - discovered):
         errors.append(f"{page}: excluded HTML page not found")
+    # The console must load exactly once: from the block, or from a page that
+    # hosts it itself.
+    if not (ROOT / CONSOLE_SCRIPT).is_file():
+        errors.append(f"{CONSOLE_SCRIPT}: file not found")
+    for page in PAGES:
+        if not (ROOT / page).is_file():
+            continue
+        text = (ROOT / page).read_text(encoding="utf-8", errors="surrogateescape")
+        own = CONSOLE_SCRIPT in BLOCK_RE.sub("", text)
+        if page in CONSOLE_SELF_HOSTED and not own:
+            errors.append(f"{page}: in CONSOLE_SELF_HOSTED but does not load {CONSOLE_SCRIPT}")
+        if page not in CONSOLE_SELF_HOSTED and own:
+            errors.append(f"{page}: loads {CONSOLE_SCRIPT} itself; add it to CONSOLE_SELF_HOSTED")
+    for page in sorted(CONSOLE_SELF_HOSTED - set(PAGES)):
+        errors.append(f"CONSOLE_SELF_HOSTED: unknown page {page}")
     return errors
 
 
@@ -907,6 +1025,16 @@ def main() -> int:
     elif current_report != report:
         REPORT_PATH.write_text(report, encoding="utf-8")
         print(f"generated: {REPORT_PATH.name}")
+
+    index = build_site_index()
+    current_index = SITE_INDEX_PATH.read_text(encoding="utf-8") if SITE_INDEX_PATH.exists() else ""
+    if check:
+        if current_index != index:
+            print(f"stale: {SITE_INDEX_PATH.relative_to(ROOT).as_posix()}")
+            changed += 1
+    elif current_index != index:
+        SITE_INDEX_PATH.write_text(index, encoding="utf-8")
+        print(f"generated: {SITE_INDEX_PATH.relative_to(ROOT).as_posix()}")
 
     if check:
         print(f"{changed} page(s) stale" if changed else f"all {len(PAGES)} pages current")
