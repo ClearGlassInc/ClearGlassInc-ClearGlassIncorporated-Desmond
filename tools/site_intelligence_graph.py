@@ -764,6 +764,12 @@ def compute_graph_analytics(nodes: list[dict[str, Any]], edges: list[dict[str, A
             "hub_node_id": hub,
             "modularity_score": round(float(modularity), 12),
             "cohesion_index": round(float(cohesion), 12),
+            "provenance": {
+                "source": "computed",
+                "algorithm": "networkx.community.louvain_communities",
+                "library": f"networkx {nx.__version__}",
+                "input": "observed node/edge graph in this snapshot",
+            },
         }
         cluster["record_hash"] = record_hash(cluster, "record_hash")
         cluster_rows.append(cluster)
@@ -1028,6 +1034,8 @@ def append_audit(
         "timestamp": snapshot["generated_at"],
         "snapshot_id": snapshot["snapshot_id"],
         "source_status": snapshot["sources"],
+        "snapshot_hash": snapshot["integrity"]["snapshot_hash"],
+        "previous_snapshot_hash": snapshot["integrity"]["previous_snapshot_hash"],
         "node_delta": {
             "added": sorted(current_nodes - prior_nodes),
             "removed": sorted(prior_nodes - current_nodes),
@@ -1132,9 +1140,10 @@ def verify_snapshot(obj: dict[str, Any], expected_previous: str | None = None) -
     return errors
 
 
-def verify_audit() -> list[str]:
+def verify_audit(snapshot_hashes: dict[str, str] | None = None) -> list[str]:
     if not AUDIT_PATH.is_file():
         return []
+    snapshot_hashes = snapshot_hashes or {}
     errors: list[str] = []
     previous = ""
     for line_no, line in enumerate(AUDIT_PATH.read_text(encoding="utf-8").splitlines(), start=1):
@@ -1147,6 +1156,9 @@ def verify_audit() -> list[str]:
             continue
         if obj.get("previous_audit_hash", "") != previous:
             errors.append(f"audit line {line_no}: previous hash mismatch")
+        snapshot_id = str(obj.get("snapshot_id", ""))
+        if snapshot_hashes and snapshot_hashes.get(snapshot_id) != str(obj.get("snapshot_hash", "")):
+            errors.append(f"audit line {line_no}: snapshot hash does not match stored snapshot {snapshot_id}")
         expected = record_hash(obj, "audit_hash")
         if obj.get("audit_hash") != expected:
             errors.append(f"audit line {line_no}: audit hash mismatch")
@@ -1161,6 +1173,7 @@ def verify_chain() -> int:
     )
     errors: list[str] = []
     previous = ""
+    snapshot_hashes: dict[str, str] = {}
     for path in files:
         try:
             obj = json.loads(path.read_text(encoding="utf-8"))
@@ -1168,8 +1181,9 @@ def verify_chain() -> int:
             errors.append(f"{path.name}: invalid JSON: {exc}")
             continue
         errors.extend(verify_snapshot(obj, expected_previous=previous))
+        snapshot_hashes[str(obj.get("snapshot_id", ""))] = str(obj.get("integrity", {}).get("snapshot_hash", ""))
         previous = str(obj.get("integrity", {}).get("snapshot_hash", ""))
-    errors.extend(verify_audit())
+    errors.extend(verify_audit(snapshot_hashes))
     if errors:
         for error in errors:
             print(f"FAIL: {error}")
@@ -1290,6 +1304,12 @@ def run_crawl() -> int:
             "hub_node_id": hub,
             "modularity_score": round(float(submod), 12),
             "cohesion_index": round(float(cohesion), 12),
+            "provenance": {
+                "source": "computed",
+                "algorithm": "networkx.community.louvain_communities",
+                "library": f"networkx {nx.__version__}",
+                "input": "observed node/edge graph in this snapshot",
+            },
         }
         cluster["record_hash"] = record_hash(cluster, "record_hash")
         clusters.append(cluster)
