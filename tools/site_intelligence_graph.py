@@ -88,7 +88,7 @@ LOUVAIN_SEED = int(os.getenv("CG_GRAPH_LOUVAIN_SEED", "42"))
 
 
 def utc_now() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    return datetime.now(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z")
 
 
 def canonical_hash_view(value: Any) -> Any:
@@ -337,6 +337,8 @@ def github_snapshot(session: requests.Session, retrieved_at: str) -> tuple[str, 
             obj = github_api_json(local, f"git/blobs/{blob_sha}")
             if obj.get("encoding") != "base64":
                 raise CrawlError(f"unexpected GitHub blob encoding: {obj.get('encoding')}")
+            if RATE_DELAY:
+                time.sleep(RATE_DELAY)
             body = base64.b64decode(obj.get("content", ""), validate=False)
             page_url = normalize_url(f"{SITE_ROOT}/{path}")
             if not page_url:
@@ -345,7 +347,7 @@ def github_snapshot(session: requests.Session, retrieved_at: str) -> tuple[str, 
         except Exception as exc:  # recorded as source failure, never hidden
             return path, None, str(exc)
 
-    with ThreadPoolExecutor(max_workers=min(8, max(1, len(html_entries)))) as pool:
+    with ThreadPoolExecutor(max_workers=min(4, max(1, len(html_entries)))) as pool:
         futures = [pool.submit(fetch_entry, item) for item in html_entries]
         for future in as_completed(futures):
             path, parsed, error = future.result()
@@ -775,9 +777,9 @@ def compute_graph_analytics(nodes: list[dict[str, Any]], edges: list[dict[str, A
             round(float(pagerank.get(node["id"], 0.0) / max_pr), 12) if max_pr else 0.0
         )
         node["record_hash"] = record_hash(node, "record_hash")
-    for edge in edges:
-        edge["record_hash"] = record_hash(edge, "record_hash")
-        edge["edge_hash"] = edge["record_hash"]
+    # Edge hashes are emitted once during observation merge and remain the
+    # single integrity field for the final record. Re-adding a second hash
+    # field would make browser verification ambiguous.
 
     analytics = {
         "libraries": {
