@@ -1203,6 +1203,13 @@ def diff_snapshots(date_a: str, date_b: str) -> dict[str, Any]:
 
     a = json.loads(resolve(date_a).read_text(encoding="utf-8"))
     b = json.loads(resolve(date_b).read_text(encoding="utf-8"))
+    errors_a = verify_snapshot(a)
+    errors_b = verify_snapshot(b)
+    if errors_a or errors_b:
+        raise ValueError(
+            "diff refused because a snapshot failed integrity verification: "
+            + "; ".join(errors_a + errors_b)
+        )
     nodes_a = {n["id"]: n for n in a.get("nodes", [])}
     nodes_b = {n["id"]: n for n in b.get("nodes", [])}
     edges_a = {(e["source"], e["target"]): e for e in a.get("edges", [])}
