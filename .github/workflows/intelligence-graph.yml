@@ -1,0 +1,57 @@
+name: Intelligence Graph
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 5 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: intelligence-graph
+  cancel-in-progress: true
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout immutable baseline
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12"
+      - name: Install graph runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r tools/intelligence_graph_requirements.txt
+          python -m playwright install chromium
+      - name: Run multi-source collector
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CG_GRAPH_GITHUB_REF: main
+          CG_GRAPH_RENDERED_DOM: "1"
+        run: python3 tools/site_intelligence_graph.py crawl
+      - name: Verify tamper detection and chain
+        run: |
+          python3 tools/site_intelligence_graph.py self-test
+          python3 tools/verify_site_graph_chain.py
+      - name: Commit verified graph artifacts
+        run: |
+          git config user.name "ClearGlass Intelligence Graph"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/intelligence-graph
+          if [ "${{ github.ref }}" != "refs/heads/main" ]; then
+            echo "Non-main dispatch: artifact generation verified; not pushing to main."
+            exit 0
+          fi
+          if git diff --cached --quiet; then
+            echo "No graph artifact delta."
+          else
+            git commit -m "Update verified ClearGlass intelligence graph"
+            git push origin HEAD:main
+          fi

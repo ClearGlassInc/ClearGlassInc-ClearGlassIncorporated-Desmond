@@ -58,6 +58,7 @@ ABOUT_MAX = 240   # characters of each page's meta description kept in the index
 # path -> (journey role, reason it must not receive the generated module)
 EXCLUDED_PAGES: dict[str, tuple[str, str]] = {
     "404.html": ("Error recovery", "noindex redirect and route-recovery page"),
+    "intelligence-graph.html": ("Interactive graph utility", "public utility surface with independently verified graph snapshots"),
     "artemis-vi.html": (
         "Standalone spec page", "noindex vision page whose spec forbids extra body content"
     ),
