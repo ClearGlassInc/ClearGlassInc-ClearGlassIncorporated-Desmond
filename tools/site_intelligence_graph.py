@@ -84,7 +84,7 @@ MAX_PAGES = int(os.getenv("CG_GRAPH_MAX_PAGES", "400"))
 MAX_LINKS_PER_PAGE = int(os.getenv("CG_GRAPH_MAX_LINKS_PER_PAGE", "800"))
 RATE_DELAY = float(os.getenv("CG_GRAPH_MIN_DELAY_SECONDS", "0.20"))
 PLAYWRIGHT_ENABLED = os.getenv("CG_GRAPH_RENDERED_DOM", "1").lower() in {"1", "true", "yes"}
-LOUVain_SEED = int(os.getenv("CG_GRAPH_LOUVAIN_SEED", "42"))
+LOUVAIN_SEED = int(os.getenv("CG_GRAPH_LOUVAIN_SEED", "42"))
 
 
 def utc_now() -> str:
@@ -713,7 +713,7 @@ def compute_graph_analytics(nodes: list[dict[str, Any]], edges: list[dict[str, A
             undirected,
             weight="weight",
             resolution=1.0,
-            seed=LOUVain_SEED,
+            seed=LOUVAIN_SEED,
         )
         modularity = nx.community.modularity(undirected, communities, weight="weight")
     else:
@@ -727,9 +727,6 @@ def compute_graph_analytics(nodes: list[dict[str, Any]], edges: list[dict[str, A
     node_to_cluster: dict[str, str] = {}
     cluster_rows: list[dict[str, Any]] = []
 
-    declared_name_by_id = {
-        str(n["id"]): str(n.get("title") or n["id"]) for n in nodes
-    }
     # Build a clean declared-sector name table from observed node sector labels.
     sector_names: dict[str, str] = {}
     for n in nodes:
@@ -1001,19 +998,43 @@ def latest_previous_hash() -> str:
 
 
 def append_audit(snapshot: dict[str, Any]) -> dict[str, Any]:
-    previous = ""
+    previous_audit_hash = ""
     if AUDIT_PATH.is_file():
         try:
-            last = [line for line in AUDIT_PATH.read_text(encoding="utf-8").splitlines() if line.strip()][-1]
-            previous = str(json.loads(last).get("audit_hash", ""))
+            lines = [line for line in AUDIT_PATH.read_text(encoding="utf-8").splitlines() if line.strip()]
+            if lines:
+                previous_audit_hash = str(json.loads(lines[-1]).get("audit_hash", ""))
         except Exception:
-            previous = ""
+            previous_audit_hash = ""
+
+    previous_snapshot: dict[str, Any] = {}
+    if LATEST_PATH.is_file():
+        try:
+            previous_snapshot = json.loads(LATEST_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            previous_snapshot = {}
+
+    current_nodes = {str(n["id"]) for n in snapshot.get("nodes", [])}
+    current_edges = {(str(e["source"]), str(e["target"])) for e in snapshot.get("edges", [])}
+    prior_nodes = {str(n["id"]) for n in previous_snapshot.get("nodes", [])}
+    prior_edges = {(str(e["source"]), str(e["target"])) for e in previous_snapshot.get("edges", [])}
+
     entry = {
         "timestamp": snapshot["generated_at"],
         "snapshot_id": snapshot["snapshot_id"],
         "source_status": snapshot["sources"],
-        "node_delta": snapshot["diagnostics"]["summary"]["orphan_count"],  # diagnostic count, not fabricated delta
-        "edge_delta": snapshot["diagnostics"]["summary"]["low_confidence_edge_count"],
+        "node_delta": {
+            "added": sorted(current_nodes - prior_nodes),
+            "removed": sorted(prior_nodes - current_nodes),
+            "added_count": len(current_nodes - prior_nodes),
+            "removed_count": len(prior_nodes - current_nodes),
+        },
+        "edge_delta": {
+            "added": [list(pair) for pair in sorted(current_edges - prior_edges)],
+            "removed": [list(pair) for pair in sorted(prior_edges - current_edges)],
+            "added_count": len(current_edges - prior_edges),
+            "removed_count": len(prior_edges - current_edges),
+        },
         "anomaly_flags": {
             "orphaned_pages": snapshot["diagnostics"]["summary"]["orphan_count"],
             "low_confidence_nodes": snapshot["diagnostics"]["summary"]["low_confidence_node_count"],
@@ -1021,7 +1042,7 @@ def append_audit(snapshot: dict[str, Any]) -> dict[str, Any]:
             "cluster_divergence": snapshot["diagnostics"]["summary"]["cluster_divergence_count"],
             "bridge_deficit": snapshot["diagnostics"]["summary"]["cross_cluster_bridge_deficit_count"],
         },
-        "previous_audit_hash": previous,
+        "previous_audit_hash": previous_audit_hash,
     }
     entry["audit_hash"] = record_hash(entry, "audit_hash")
     with AUDIT_PATH.open("a", encoding="utf-8") as handle:
@@ -1033,7 +1054,7 @@ def write_snapshot(snapshot: dict[str, Any]) -> tuple[Path, Path]:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     SNAPSHOT_DIR.mkdir(parents=True, exist_ok=True)
     stamp = snapshot["snapshot_id"]
-    versioned = OUT_DIR / f"site_graph_v{stamp}.json"
+    versioned = SNAPSHOT_DIR / f"site_graph_v{stamp}.json"
     text = json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n"
     versioned.write_text(text, encoding="utf-8")
     LATEST_PATH.write_text(text, encoding="utf-8")
@@ -1050,7 +1071,7 @@ def write_snapshot(snapshot: dict[str, Any]) -> tuple[Path, Path]:
         {
             "snapshot_id": stamp,
             "generated_at": snapshot["generated_at"],
-            "file": f"../site_graph_v{stamp}.json",
+            "file": f"site_graph_v{stamp}.json",
             "snapshot_hash": snapshot["integrity"]["snapshot_hash"],
             "node_count": len(snapshot["nodes"]),
             "edge_count": len(snapshot["edges"]),
@@ -1241,7 +1262,7 @@ def run_crawl() -> int:
                 node_id,
             ),
         )
-        submod = next((c["modularity_score"] for c in []), analytics["global_modularity"])
+        submod = analytics["global_modularity"]
         cohesion = 1.0 if len(members) <= 1 else nx.density(
             nx.Graph(
                 [
