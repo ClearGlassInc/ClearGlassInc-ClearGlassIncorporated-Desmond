@@ -94,9 +94,14 @@ def utc_now() -> str:
 def canonical_hash_view(value: Any) -> Any:
     """Canonical, deterministic hash view shared with the browser verifier.
 
-    Floats are represented as compact decimal strings to prevent Python/JS
-    numeric formatting differences from invalidating a hash-chain verification.
+    All JSON numbers are represented as compact decimal strings so a browser
+    verifier (which does not preserve Python's int-vs-float distinction) can
+    reproduce the exact same SHA-256 inputs.
     """
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, int):
+        return str(value)
     if isinstance(value, float):
         if value == 0:
             return "0"
@@ -997,7 +1002,10 @@ def latest_previous_hash() -> str:
         return ""
 
 
-def append_audit(snapshot: dict[str, Any]) -> dict[str, Any]:
+def append_audit(
+    snapshot: dict[str, Any],
+    previous_snapshot: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     previous_audit_hash = ""
     if AUDIT_PATH.is_file():
         try:
@@ -1007,13 +1015,7 @@ def append_audit(snapshot: dict[str, Any]) -> dict[str, Any]:
         except Exception:
             previous_audit_hash = ""
 
-    previous_snapshot: dict[str, Any] = {}
-    if LATEST_PATH.is_file():
-        try:
-            previous_snapshot = json.loads(LATEST_PATH.read_text(encoding="utf-8"))
-        except Exception:
-            previous_snapshot = {}
-
+    previous_snapshot = previous_snapshot or {}
     current_nodes = {str(n["id"]) for n in snapshot.get("nodes", [])}
     current_edges = {(str(e["source"]), str(e["target"])) for e in snapshot.get("edges", [])}
     prior_nodes = {str(n["id"]) for n in previous_snapshot.get("nodes", [])}
@@ -1298,7 +1300,13 @@ def run_crawl() -> int:
             n["record_hash"] = record_hash(n, "record_hash")
 
     diag = diagnostics(nodes, edges, clusters, sources)
-    previous = latest_previous_hash()
+    previous_snapshot: dict[str, Any] = {}
+    if LATEST_PATH.is_file():
+        try:
+            previous_snapshot = json.loads(LATEST_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            previous_snapshot = {}
+    previous = str(previous_snapshot.get("integrity", {}).get("snapshot_hash", ""))
     snapshot = make_snapshot(
         nodes,
         edges,
@@ -1312,7 +1320,7 @@ def run_crawl() -> int:
         previous,
     )
     versioned, latest = write_snapshot(snapshot)
-    append_audit(snapshot)
+    append_audit(snapshot, previous_snapshot)
 
     print(
         json.dumps(
