@@ -904,7 +904,7 @@ def diagnostics(
                 "dominant_share": round(purity, 6),
                 "divergence_index": round(1.0 - purity, 6),
                 "detected_community_counts": dict(sorted(counts.items())),
-                "evidence": "NetworkX Louvain partition compared with declared site sector.",
+                "evidence": [s.url for s in source_evidence if s.status in {"ok", "partial"}],
             }
         )
     divergence.sort(key=lambda x: (-x["divergence_index"], x["sector"]))
@@ -923,12 +923,17 @@ def diagnostics(
             if left == right:
                 continue
             if not nx.has_path(sector_graph, left, right):
-                deficits.append({"sector_a": left, "sector_b": right})
+                deficits.append({
+                    "sector_a": left,
+                    "sector_b": right,
+                    "evidence": [s.url for s in source_evidence if s.status in {"ok", "partial"}],
+                })
     source_status = [s.as_dict() for s in source_evidence]
 
     return {
         "authority_gap_report": {
             "orphaned_pages": orphans,
+
             "structural_chokepoints": chokepoints,
             "cluster_divergence": divergence,
             "low_confidence_nodes": low_nodes,
@@ -992,7 +997,7 @@ def make_snapshot(
     snapshot_hash = sha256_text(previous_snapshot_hash + canonical_json(payload))
     payload["integrity"] = {
         "algorithm": "SHA-256",
-        "canonicalization": "deterministic sorted JSON; floats rendered as compact decimal strings in hash view",
+        "canonicalization": "deterministic sorted JSON; all numeric values rendered as compact decimal strings in hash view",
         "previous_snapshot_hash": previous_snapshot_hash,
         "payload_hash": payload_hash,
         "snapshot_hash": snapshot_hash,
