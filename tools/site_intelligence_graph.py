@@ -474,7 +474,8 @@ def rendered_dom_pages(
                 time.sleep(RATE_DELAY + (int(sha256_text(path)[:4], 16) % 10) / 1000)
             dom_url = url + ("&" if "?" in url else "?") + "skipboot=1"
             try:
-                page.goto(dom_url, wait_until="networkidle", timeout=int(REQUEST_TIMEOUT * 1000))
+                page.goto(dom_url, wait_until="domcontentloaded", timeout=int(REQUEST_TIMEOUT * 1000))
+                page.wait_for_timeout(250)
                 body = page.content().encode("utf-8")
                 pages[path] = parse_html(url, body)
             except Exception as exc:
