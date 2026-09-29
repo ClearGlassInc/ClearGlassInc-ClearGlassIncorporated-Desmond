@@ -16,6 +16,7 @@ The system detects recent failed, cancelled, and timed-out Actions runs; retriev
 6. Workflow/configuration failures can invoke the existing `scripts/workflow_doctor.py --fix` when present. Any resulting edits are committed to an `auto-heal/*` branch and proposed through a pull request.
 7. Unsafe, security-sensitive, dependency-major, deployment, or unknown failures are escalated with diagnostic evidence instead of silently patched.
 8. `run-history.json` records handled runs and outcomes. `flaky-tests.json` records recurring failure candidates.
+9. `LEARNING.md` is the human- and agent-written log: failure patterns, workarounds in force (each with an expiry), and whether a fix held. `auto_heal.py` does not write it. The loops that feed it are in `prompts/repair/debug-deploy-master-prompt.md`.
 
 ## Review and merge
 
