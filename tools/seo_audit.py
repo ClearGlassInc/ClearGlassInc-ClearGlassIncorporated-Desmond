@@ -80,6 +80,10 @@ PUBLISHED_PAGES = _published_pages()
 UTILITY_PAGES = {
     "404.html", "offline.html", "loader.html", "cg-loader.html",
     "header-mockup-2040.html",
+    # Classified a site utility surface in 0523f9f and kept out of the link
+    # graph (tools/internal_links.EXCLUDED_PAGES), so it stays out of the
+    # sitemap too: tests/test_authority_network.py requires sitemap == PAGES.
+    "intelligence-graph.html",
 }
 
 # Search-engine ownership-verification files: fixed content dictated by the

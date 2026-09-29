@@ -314,6 +314,20 @@ CURATED: dict[str, dict] = {
         topics="cross-border cyber systems",
         series="ClearGlass Legal Desk",
     ),
+    # Flagship, authored by hand into blog/posts.json on 2026-09-27 (7eefa5e,
+    # e76e341, cb473eb, 4211099). Those edits cut the catalog from 45 posts to
+    # 6. The copy is carried here verbatim except two fields the generator
+    # owns: kind "flagship" (the feed, JSON-LD and related rails index only
+    # "brief") and readMinutes 12, which is derived from the page's words.
+    # Its tags live in the article's JSON-LD keywords.
+    "one-network-two-clocks-canada-us-security-operating-model": dict(
+        category="Cross-Border Controls",
+        quote="The border is a legal fact. It is not a network boundary.",
+        cta="Read the operating model →",
+        topics="cross-border cyber governed-ai systems",
+        series="ClearGlass Legal Desk",
+        deskRank=1,
+    ),
     "chatgpt-prompt-shortcuts-supercharge-ai-results": dict(
         category="Applied AI",
         quote="Prompting is a control surface.",
