@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-import hashlib,json,os,subprocess
+import hashlib
+import json
+import os
+import subprocess
 from datetime import datetime,timezone
 from pathlib import Path
 
@@ -8,7 +11,8 @@ artifact.mkdir(parents=True,exist_ok=True)
 def sha256(p):
     h=hashlib.sha256()
     with p.open("rb") as f:
-        for chunk in iter(lambda:f.read(65536),b""): h.update(chunk)
+        for chunk in iter(lambda:f.read(65536),b""):
+            h.update(chunk)
     return h.hexdigest()
 
 files=sorted(p for p in artifact.rglob("*") if p.is_file())

@@ -16,7 +16,7 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 - **CTA bridge:** Each cluster ends in two relevant, non-coercive next steps such as offers, pricing, readiness, or booking.
 - **Responsive behavior:** Three route cards collapse to one column below 620px; related cards use an adaptive grid; motion is disabled when reduced motion is requested.
 - **SEO and accessibility:** Links are static HTML, labels are descriptive, navigation landmarks are named, focus states are visible, and all routes remain unchanged.
-- **Audit coverage:** 167 public pages are connected and 32 utility, completion, prototype, or private pages are explicitly excluded.
+- **Audit coverage:** 168 public pages are connected and 43 utility, completion, prototype, or private pages are explicitly excluded.
 
 ## Page-by-page flow map
 
@@ -161,8 +161,9 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 | `blog/clearglass-command-center-cyber-defense-console.html` — Inside the Command Center | designing a cyber defense console | The Secure Deployment Agent | ClearGlass Intelligence | ClearGlass AgentOps | Book a security engagement / See pricing & plans |
 | `blog/clearglass-agentops-microsoft-foundry-future-stack.html` — ClearGlass AgentOps | the Microsoft Foundry future stack | Inside the Command Center | ClearGlass Intelligence | AI Safety Beyond the Black Box | Book a security engagement / See pricing & plans |
 | `blog/ai-safety-black-box-activation-analysis-gavel.html` — AI Safety Beyond the Black Box | activation analysis, cognitive elements and model-agnostic GAVEL evaluation | ClearGlass AgentOps | ClearGlass Intelligence | The Canada–US Control Problem | Book a security engagement / See pricing & plans |
-| `blog/canada-us-cross-border-cybersecurity-evidence-controls.html` — The Canada–US Control Problem | why North American operations fail at the cross-border evidence layer | AI Safety Beyond the Black Box | ClearGlass Intelligence | Canada in a Multipolar World | Book a security engagement / See pricing & plans |
-| `blog/canada-multipolar-sovereignty-resilience-strategy.html` — Canada in a Multipolar World | turning strategic uncertainty into sovereign resilience | The Canada–US Control Problem | ClearGlass Intelligence | CPCSC vs CMMC | Book a security engagement / See pricing & plans |
+| `blog/canada-us-cross-border-cybersecurity-evidence-controls.html` — The Canada–US Control Problem | why North American operations fail at the cross-border evidence layer | AI Safety Beyond the Black Box | ClearGlass Intelligence | One Network. Two Clocks. | Book a security engagement / See pricing & plans |
+| `blog/one-network-two-clocks-canada-us-security-operating-model.html` — One Network. Two Clocks. | the North American security operating model for Canada–US companies | The Canada–US Control Problem | ClearGlass Intelligence | Canada in a Multipolar World | Book a security engagement / See pricing & plans |
+| `blog/canada-multipolar-sovereignty-resilience-strategy.html` — Canada in a Multipolar World | turning strategic uncertainty into sovereign resilience | One Network. Two Clocks. | ClearGlass Intelligence | CPCSC vs CMMC | Book a security engagement / See pricing & plans |
 | `blog/cpcsc-vs-cmmc-residency-split.html` — CPCSC vs CMMC | control reuse and the Canadian data-residency split for defence suppliers | Canada in a Multipolar World | ClearGlass Intelligence | Dual-Clock Incident Runbook | Book a security engagement / See pricing & plans |
 | `blog/dual-clock-incident-runbook-ccspa-circia-pipeda.html` — Dual-Clock Incident Runbook | a Canada–US incident ledger for CCSPA, CIRCIA and PIPEDA clocks | CPCSC vs CMMC | ClearGlass Intelligence | The OSINT Workflow That Survives Contact With Reality | Book a security engagement / See pricing & plans |
 | `blog/osint-workflow-that-survives-contact-with-reality.html` — The OSINT Workflow That Survives Contact With Reality | field-tested investigation practice | Dual-Clock Incident Runbook | ClearGlass Intelligence | They Sealed the Evidence | Book a security engagement / See pricing & plans |
@@ -240,6 +241,17 @@ These pages remain intact but are not eligible for generated journey updates. Ex
 | `Clearglass-Shield-Dashboard.html` | Duplicate surface | noindex byte-identical copy of clearglass_x5f_shield_x5f_dashboard.html |
 | `Ontario-Power-Grid-Live.html` | Duplicate surface | noindex byte-identical copy of ontario_x5f_power_x5f_grid_x5f_live.html |
 | `ontario_x5f_power_x5f_grid_x5f_live (1).html` | Duplicate surface | noindex byte-identical copy of ontario_x5f_power_x5f_grid_x5f_live.html |
+| `ClearGlass-Ops-Dashboard.html` | Uploaded prototype | noindex upload awaiting owner classification |
+| `Fantasy-Command-Live (1).html` | Uploaded prototype | noindex re-upload of the FANTASY COMMAND page |
+| `fantasy-command-live (2).html` | Uploaded prototype | noindex re-upload of the FANTASY COMMAND page |
+| `GridShield-Ontario-V6-0-ULTRA-FINAL.html` | Uploaded prototype | noindex upload awaiting owner classification |
+| `Gridshield-Ontario-V3-Ics.html` | Uploaded prototype | noindex upload awaiting owner classification |
+| `Gridshield-V7-Ultra-Formal.html` | Uploaded prototype | noindex upload awaiting owner classification |
+| `Gridshield-V8-Live-Wire.html` | Uploaded prototype | noindex upload awaiting owner classification |
+| `ClearGlass-Revenue-Machine.html` | Private operations | noindex internal revenue-operations console; catalog status 'internal' |
+| `clearglass_x5f_shield_x5f_g01_x5f_verified.html` | Uploaded prototype | noindex simulation; it reads 'G01 VERIFIED' and '32/32 PASS', but provenance/shield/g01-product-evidence.json records G01 as FAIL with no tests |
+| `shield_x5f_nexus_x5f_live_x5f_all.html` | Uploaded prototype | noindex simulation; it reads 'G01 VERIFIED' and '32/32 PASS', but provenance/shield/g01-product-evidence.json records G01 as FAIL with no tests |
+| `docs/qics-dashboard.html` | Private operations | noindex QICS evidence desk |
 
 ## Implementation and verification strategy
 

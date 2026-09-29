@@ -1,7 +1,5 @@
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, auc
@@ -78,10 +76,9 @@ print(feat_imp_df)
 joblib.dump(rf_model, 'risk_model.joblib')
 print("\nModel saved as risk_model.joblib")
 
-from sklearn.preprocessing import StandardScaler
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.optimizers import Adam
+from sklearn.preprocessing import StandardScaler  # noqa: E402
+from tensorflow.keras.models import Sequential  # noqa: E402
+from tensorflow.keras.layers import Dense  # noqa: E402
 
 # 1. Scale the data
 scaler = StandardScaler()

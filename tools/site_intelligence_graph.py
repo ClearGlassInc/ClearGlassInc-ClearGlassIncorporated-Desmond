@@ -565,7 +565,6 @@ def merge_observations(
 
     for path in paths:
         sources: list[str] = []
-        evidence: list[dict[str, Any]] = []
         candidates = []
         if path in github_pages:
             sources.append("github_api")
@@ -678,7 +677,6 @@ def merge_observations(
         edge["edge_hash"] = record_hash(edge, "edge_hash")
         edges.append(edge)
 
-    by_id = {n["id"]: n for n in node_rows}
     outbound = collections.Counter(e["source"] for e in edges)
     inbound = collections.Counter(e["target"] for e in edges)
     for node in node_rows:
@@ -800,7 +798,7 @@ def compute_graph_analytics(nodes: list[dict[str, Any]], edges: list[dict[str, A
         },
         "node_count": len(graph),
         "edge_count": graph.number_of_edges(),
-        "community_count": len(community_rows := cluster_rows),
+        "community_count": len(cluster_rows),
         "global_modularity": round(float(modularity), 12),
         "top_pagerank": sorted(
             (

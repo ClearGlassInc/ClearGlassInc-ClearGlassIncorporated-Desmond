@@ -4,7 +4,9 @@ import json
 class Health(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path != "/health":
-            self.send_response(404); self.end_headers(); return
+            self.send_response(404)
+            self.end_headers()
+            return
         body=json.dumps({
             "gateway_state":"healthy",
             "test_mode":True,
