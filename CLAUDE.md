@@ -30,6 +30,11 @@ Guidance for agents working in this repository.
 > Re-verified 2026-09-24: still true. Job `107658897347` (Auto Heal, on
 > `4725787`) reported `runner_id: 0` and finished in 5 seconds. See
 > `docs/AUDIT-2026-09-24.md`.
+>
+> Re-verified 2026-09-29: still true. Job `109519331157` (ClearGlass GitHub
+> Pages Check, on `1d3c2a0`) reported `runner_id: 0` and finished in 4
+> seconds. Tracked in `.github/auto-heal/LEARNING.md`; the workflow-repair
+> prompt is `prompts/repair/debug-deploy-master-prompt.md`.
 
 ## What this repo is
 
