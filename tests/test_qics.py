@@ -12,15 +12,15 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from qics.advisor import advise
-from qics.audit import AppendOnlyAudit, make_event
-from qics.catalog import bundled_catalog
-from qics.commander import QuantumCommander
-from qics.connectors import fetch_source
-from qics.evidence import detect_conflicts, hypothesis_item
-from qics.predictor import predict
-from qics.scanner import scan_inventory
-from qics.schema import EvidenceItem, Inventory, ValidityStatus
+from qics.advisor import advise  # noqa: E402
+from qics.audit import AppendOnlyAudit, make_event  # noqa: E402
+from qics.catalog import bundled_catalog  # noqa: E402
+from qics.commander import QuantumCommander  # noqa: E402
+from qics.connectors import fetch_source  # noqa: E402
+from qics.evidence import detect_conflicts, hypothesis_item  # noqa: E402
+from qics.predictor import predict  # noqa: E402
+from qics.scanner import scan_inventory  # noqa: E402
+from qics.schema import EvidenceItem, Inventory, ValidityStatus  # noqa: E402
 
 
 def test_empty_inventory_is_insufficient():
