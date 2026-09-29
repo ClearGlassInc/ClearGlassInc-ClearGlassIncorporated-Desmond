@@ -782,90 +782,205 @@
     "#cg-station[data-fit='compact'] .cgst-dock{padding:0 7px}",
     "#cg-station[data-fit='compact'] .cgst-dock-tx,#cg-station[data-fit='compact'] .cgst-chev{display:none}",
 
-    /* ── Intelligence Graph: a full-screen dialog over the page ── */
-    "#cg-station .cgst-graph{position:fixed;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;",
-    "padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));",
-    "background:radial-gradient(80% 60% at 50% 40%,rgba(76,195,255,.12),transparent 70%),rgba(3,4,8,.9);color:var(--cgst-ink);font-family:var(--cgst-sans);",
-    "-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}",
-    "#cg-station .cgst-gframe{position:relative;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:10px;width:min(1180px,100%);height:min(820px,100%);",
-    "padding:14px;border-radius:20px;border:1px solid rgba(76,195,255,.4);overflow:hidden;isolation:isolate;",
-    "background:linear-gradient(170deg,#0a0e17,#050508);box-shadow:0 40px 90px -30px rgba(0,0,0,.95),0 0 0 .5px rgba(76,195,255,.3),0 0 60px -22px rgba(76,195,255,.55);",
-    "animation:cgstHolo .36s cubic-bezier(.16,1,.3,1)}",
-    "#cg-station .cgst-ghead{display:flex;align-items:flex-start;gap:12px;min-width:0}",
+    /* ── Intelligence Graph: a full-screen analysis surface over the page ──
+       Graphite and midnight, hairline vectors, one colour family per domain,
+       red reserved for cut points and high-severity findings. */
+    "#cg-station .cgst-graph{position:fixed;inset:0;z-index:5;display:flex;align-items:stretch;justify-content:center;",
+    "padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));",
+    "background:rgba(2,3,5,.93);color:#d5dde6;font-family:var(--cgst-mono);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);",
+    "--g-panel:rgba(11,14,18,.94);--g-line:rgba(150,170,190,.13);--g-line2:rgba(150,170,190,.26);--g-ink:#e3e9ef;--g-mute:#7f8c99;--g-dim:#56626e;--g-acc:#9fc2e0}",
+    "#cg-station .cgst-gframe{position:relative;display:grid;grid-template-rows:auto auto minmax(0,1fr);gap:8px;width:min(1480px,100%);height:100%;max-height:960px;align-self:center;",
+    "padding:12px;border-radius:4px;border:1px solid var(--g-line2);overflow:hidden;isolation:isolate;",
+    "background:radial-gradient(120% 60% at 50% 0%,rgba(90,120,150,.09),transparent 62%),linear-gradient(180deg,#0a0c10,#050608);",
+    "box-shadow:0 40px 90px -30px rgba(0,0,0,.95),inset 0 1px 0 rgba(255,255,255,.04);animation:cgstHolo .3s cubic-bezier(.16,1,.3,1)}",
+    "#cg-station .cgst-ghead{display:flex;align-items:flex-start;gap:12px;min-width:0;padding-bottom:8px;border-bottom:1px solid var(--g-line)}",
     "#cg-station .cgst-ghead>div:first-child{flex:1 1 auto;min-width:0}",
-    "#cg-station .cgst-gtitle{margin:0;font-family:var(--cgst-mono);font-size:16px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#fff;outline:none}",
-    "#cg-station .cgst-gsub{margin:4px 0 0;font-family:var(--cgst-mono);font-size:8.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#8fb7cc}",
-    "#cg-station .cgst-gtools{flex:0 0 auto;display:flex;gap:5px}",
-    "#cg-station .cgst-gtool{display:grid;place-items:center;min-width:34px;height:34px;padding:0 9px;border-radius:10px;cursor:pointer;",
-    "border:1px solid rgba(76,195,255,.35);background:rgba(10,14,22,.85);color:#d8f1ff;font-family:var(--cgst-mono);font-size:13px;font-weight:700}",
-    "#cg-station .cgst-gtool:hover{border-color:rgba(76,195,255,.9);background:rgba(76,195,255,.14)}",
-    "#cg-station .cgst-gtool svg{width:16px;height:16px;display:block}",
-    "#cg-station .cgst-gbody{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:12px;min-height:0}",
-    "#cg-station .cgst-gview{position:relative;min-height:0;border-radius:16px;border:1px solid rgba(76,195,255,.22);overflow:hidden;isolation:isolate;",
-    "touch-action:none;cursor:grab;outline:none;",
-    "background:radial-gradient(circle at 50% 50%,rgba(238,99,101,.1),transparent 34%),radial-gradient(circle at 50% 50%,rgba(76,195,255,.1),transparent 62%),#05070c}",
-    "#cg-station .cgst-gview:focus-visible{box-shadow:0 0 0 2px #fff}",
+    "#cg-station .cgst-gorg{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 4px;font-size:8.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--g-mute)}",
+    "#cg-station .cgst-gorg i{font-style:normal;color:#7fd1a8;letter-spacing:.16em}",
+    "#cg-station .cgst-gtitle{margin:0;font-size:15px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:var(--g-ink);outline:none}",
+    "#cg-station .cgst-gsub{margin:3px 0 0;font-size:8.5px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--g-mute)}",
+    "#cg-station .cgst-gtools{flex:0 0 auto;display:flex;gap:4px}",
+    "#cg-station .cgst-gtool{display:grid;place-items:center;min-width:32px;height:30px;padding:0 9px;border-radius:2px;cursor:pointer;",
+    "border:1px solid var(--g-line2);background:rgba(14,18,23,.9);color:var(--g-ink);font:600 11px/1 var(--cgst-mono);letter-spacing:.1em}",
+    "#cg-station .cgst-gtool:hover{border-color:rgba(159,194,224,.7);background:rgba(159,194,224,.08)}",
+    "#cg-station .cgst-gtool svg{width:15px;height:15px;display:block}",
+    /* Sentinel Core readout */
+    "#cg-station .cgst-gkpi{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));margin:0;border:1px solid var(--g-line);border-radius:2px;background:rgba(9,12,15,.85)}",
+    "#cg-station .cgst-gkpi>div{min-width:0;padding:7px 10px;border-left:1px solid var(--g-line)}",
+    "#cg-station .cgst-gkpi>div:first-child{border-left:0}",
+    "#cg-station .cgst-gkpi dt{font-size:7.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--g-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
+    "#cg-station .cgst-gkpi dd{margin:3px 0 0;font-size:15px;font-weight:600;color:var(--g-ink);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
+    "#cg-station .cgst-gkpi dd small{display:block;margin-top:1px;font-size:8px;font-weight:500;letter-spacing:.08em;color:var(--g-mute);overflow:hidden;text-overflow:ellipsis}",
+    "#cg-station .cgst-gkpi [data-s='high']{color:#ef6a6e}#cg-station .cgst-gkpi [data-s='med']{color:#e0a040}",
+    /* three columns over a feed; one scrolling column on narrow screens */
+    "#cg-station .cgst-gbody{display:grid;grid-template-columns:252px minmax(0,1fr) 292px;grid-template-rows:minmax(0,1fr) 132px;gap:8px;min-height:0}",
+    "#cg-station .cgst-gl{grid-column:1;grid-row:1/3}#cg-station .cgst-gview{grid-column:2;grid-row:1}",
+    "#cg-station .cgst-gr{grid-column:3;grid-row:1/3}#cg-station .cgst-gfeed{grid-column:2;grid-row:2}",
+    "#cg-station .cgst-gpanel{display:flex;flex-direction:column;gap:13px;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;",
+    "scrollbar-color:rgba(150,170,190,.3) transparent;padding:10px;border:1px solid var(--g-line);border-radius:2px;background:var(--g-panel)}",
+    "#cg-station .cgst-gsec{display:flex;flex-direction:column;gap:6px;min-width:0}",
+    "#cg-station .cgst-gh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:0;padding-bottom:4px;border-bottom:1px solid var(--g-line);",
+    "font-size:8.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--g-acc)}",
+    "#cg-station .cgst-gh span{font-weight:500;letter-spacing:.1em;color:var(--g-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
+    "#cg-station .cgst-gnote{margin:0;font-size:9px;line-height:1.55;color:var(--g-dim)}",
+    "#cg-station .cgst-gstats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;margin:0;background:var(--g-line);border:1px solid var(--g-line)}",
+    "#cg-station .cgst-gstats>div{min-width:0;padding:5px 7px;background:#0a0d11}",
+    "#cg-station .cgst-gstats dt{font-size:7.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--g-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
+    "#cg-station .cgst-gstats dd{margin:2px 0 0;font-size:12px;font-weight:600;color:var(--g-ink);font-variant-numeric:tabular-nums}",
+    "#cg-station .cgst-grows{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}",
+    "#cg-station .cgst-grows li{margin:0}",
+    "#cg-station .cgst-grow{display:grid;grid-template-columns:7px minmax(0,1fr) auto;align-items:center;gap:3px 7px;width:100%;padding:5px 3px;border:0;",
+    "border-bottom:1px solid rgba(150,170,190,.07);background:none;color:var(--g-ink);font:500 10px/1.3 var(--cgst-mono);text-align:left;cursor:pointer}",
+    "#cg-station .cgst-grow:hover,#cg-station .cgst-grow[aria-current='true']{background:rgba(159,194,224,.07)}",
+    "#cg-station .cgst-grow>b{width:7px;height:7px;border-radius:1px;background:var(--h,#9fc2e0)}",
+    "#cg-station .cgst-grow>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+    "#cg-station .cgst-grow>em{font-style:normal;font-size:9px;color:var(--g-mute);font-variant-numeric:tabular-nums;white-space:nowrap}",
+    "#cg-station .cgst-gbar{grid-column:2/4;display:block;height:2px;background:rgba(150,170,190,.1)}",
+    "#cg-station .cgst-gbar>i{display:block;height:100%;background:var(--h,#9fc2e0);opacity:.75}",
+    "#cg-station .cgst-gmodel{grid-template-columns:7px minmax(0,1fr) auto;cursor:default}",
+    "#cg-station .cgst-gmodel>b{border-radius:50%;background:#7fd1a8}",
+    /* the canvas */
+    "#cg-station .cgst-gview{position:relative;min-height:0;border:1px solid var(--g-line2);border-radius:2px;overflow:hidden;isolation:isolate;",
+    "touch-action:none;cursor:grab;outline:none;background:radial-gradient(circle at 50% 50%,rgba(110,140,170,.08),transparent 58%),#05070a}",
+    "#cg-station .cgst-gview:focus-visible{box-shadow:inset 0 0 0 1px #fff}",
     "#cg-station .cgst-gview[data-drag='1']{cursor:grabbing}",
-    /* quantum grid: a receding lattice drifting toward the viewer */
-    "#cg-station .cgst-gview::before{content:'';position:absolute;left:-40%;right:-40%;top:42%;bottom:-70%;z-index:-1;pointer-events:none;opacity:.75;",
-    "background:linear-gradient(rgba(76,195,255,.09) 1px,transparent 1px) 0 0/46px 46px,linear-gradient(90deg,rgba(76,195,255,.09) 1px,transparent 1px) 0 0/46px 46px;",
-    "transform:perspective(520px) rotateX(62deg);transform-origin:50% 0;animation:cgstGrid 14s linear infinite}",
-    "@keyframes cgstGrid{from{transform:perspective(520px) rotateX(62deg) translateY(0)}to{transform:perspective(520px) rotateX(62deg) translateY(46px)}}",
-    "#cg-station .cgst-gview::after{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;",
-    "background:linear-gradient(rgba(76,195,255,.04) 1px,transparent 1px) 0 0/100% 4px}",
+    "#cg-station .cgst-gview::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;",
+    "background:linear-gradient(rgba(150,170,190,.045) 1px,transparent 1px) 0 0/24px 24px,linear-gradient(90deg,rgba(150,170,190,.045) 1px,transparent 1px) 0 0/24px 24px,",
+    "linear-gradient(rgba(150,170,190,.07) 1px,transparent 1px) 0 0/120px 120px,linear-gradient(90deg,rgba(150,170,190,.07) 1px,transparent 1px) 0 0/120px 120px}",
+    "#cg-station .cgst-gview::after{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 50% 50%,transparent 42%,rgba(0,0,0,.6))}",
+    "#cg-station .cgst-ghud{position:absolute;z-index:2;display:flex;flex-wrap:wrap;gap:4px;pointer-events:none}",
+    "#cg-station .cgst-ghud>*{pointer-events:auto}",
+    "#cg-station .cgst-ghud-tl{top:7px;left:7px;right:7px}",
+    "#cg-station .cgst-ghud-bl{left:7px;bottom:7px;flex-direction:column;gap:3px;padding:6px 8px;border:1px solid var(--g-line);border-radius:2px;background:rgba(5,7,10,.84)}",
+    "#cg-station .cgst-ghud-br{right:7px;bottom:7px;align-items:center;gap:7px;padding:4px 7px;border:1px solid var(--g-line);border-radius:2px;background:rgba(5,7,10,.84)}",
+    "#cg-station .cgst-glayer{height:22px;padding:0 7px;border-radius:2px;border:1px solid var(--g-line2);background:rgba(5,7,10,.84);color:var(--g-dim);",
+    "font:600 7.5px/1 var(--cgst-mono);letter-spacing:.16em;text-transform:uppercase;cursor:pointer}",
+    "#cg-station .cgst-glayer[aria-pressed='true']{color:var(--g-ink);border-color:rgba(159,194,224,.5)}",
+    "#cg-station .cgst-glayer[aria-pressed='true']::before{content:'';display:inline-block;width:5px;height:5px;margin-right:5px;border-radius:50%;background:#7fd1a8;vertical-align:1px}",
+    "#cg-station .cgst-gleg{display:flex;align-items:center;gap:6px;font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--g-mute);white-space:nowrap}",
+    "#cg-station .cgst-gleg b{flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:var(--h)}",
+    "#cg-station .cgst-gleg b[data-k='cut']{background:none;border:1px dashed #e5484d}",
+    "#cg-station .cgst-gleg b[data-k='anom']{border-radius:0;width:6px;height:6px;transform:rotate(45deg);background:#e5484d}",
+    "#cg-station .cgst-gleg b[data-k='pred']{height:0;border-radius:0;border-top:1px dotted #e0c070}",
+    "#cg-station .cgst-gplay input{width:104px;margin:0;accent-color:#9fc2e0}",
+    "#cg-station .cgst-gplay output{min-width:74px;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--g-ink);font-variant-numeric:tabular-nums}",
     "#cg-station .cgst-gsvg{position:relative;display:block;width:100%;height:100%;user-select:none;-webkit-user-select:none}",
-    "#cg-station .cgst-gsvg text{font-family:var(--cgst-mono);fill:#dbe9f5;pointer-events:none}",
-    "#cg-station .cgst-gorbit{fill:none;stroke:rgba(76,195,255,.16);stroke-width:1;stroke-dasharray:2 7;vector-effect:non-scaling-stroke}",
-    "#cg-station .cgst-gspoke{stroke:rgba(238,99,101,.32);stroke-width:1.1;vector-effect:non-scaling-stroke}",
-    "#cg-station .cgst-gspoke.cgst-gon{stroke:var(--h);stroke-width:1.8;stroke-dasharray:7 9;animation:cgstFlow 1s linear infinite}",
-    "#cg-station .cgst-gedge{stroke:rgba(76,195,255,.15);stroke-width:.8;vector-effect:non-scaling-stroke}",
-    "#cg-station .cgst-gedge.cgst-gon{stroke:var(--h);stroke-opacity:.55}",
-    "#cg-station .cgst-glink{fill:none;stroke:var(--cgst-teal);stroke-width:1.4;stroke-dasharray:6 8;vector-effect:non-scaling-stroke;animation:cgstFlow 1.2s linear infinite}",
-    "@keyframes cgstFlow{to{stroke-dashoffset:-32}}",
+    "#cg-station .cgst-gsvg text{font-family:var(--cgst-mono);fill:#d3dbe4;pointer-events:none}",
+    "#cg-station .cgst-gring{fill:none;stroke:rgba(150,170,190,.13);stroke-width:1;vector-effect:non-scaling-stroke}",
+    "#cg-station .cgst-gring.cgst-gmajor{stroke-dasharray:1 5}",
+    "#cg-station .cgst-gtickl{stroke:rgba(150,170,190,.3);stroke-width:1;vector-effect:non-scaling-stroke}",
+    "#cg-station .cgst-gtick{font-size:calc(6.5px * var(--gs,1));letter-spacing:.12em;fill:#56626e!important}",
+    "#cg-station .cgst-gradar{transform-box:view-box;transform-origin:500px 500px;animation:cgstSweep 10s linear infinite;pointer-events:none}",
+    "#cg-station .cgst-gradar path:first-child{fill:rgba(159,194,224,.045)}",
+    "#cg-station .cgst-gradar path+path{fill:none;stroke:rgba(159,194,224,.3);stroke-width:1;vector-effect:non-scaling-stroke}",
+    "#cg-station .cgst-gorbiter{transform-box:view-box;transform-origin:500px 500px;animation:cgstSweep 90s linear infinite;pointer-events:none}",
+    "#cg-station .cgst-gorbiter circle{fill:#9fc2e0;opacity:.55}",
+    "#cg-station .cgst-gorbiter text{font-size:calc(6px * var(--gs,1));letter-spacing:.14em;fill:#7f8c99!important}",
     "#cg-station .cgst-gcluster{cursor:pointer;outline:none}",
-    "#cg-station .cgst-gcluster .cgst-gdisc{fill:#0b0e16;stroke:var(--h);stroke-width:1.6;vector-effect:non-scaling-stroke}",
-    "#cg-station .cgst-gcluster .cgst-ghalo{fill:var(--h);opacity:0;transform-box:fill-box;transform-origin:center;transition:opacity .2s ease}",
-    "#cg-station .cgst-gcluster:hover .cgst-ghalo,#cg-station .cgst-gcluster:focus-visible .cgst-ghalo{opacity:.2}",
-    "#cg-station .cgst-gcluster:focus-visible .cgst-gdisc{stroke:#fff;stroke-width:2.6}",
-    "#cg-station .cgst-gcluster.cgst-gon .cgst-ghalo{opacity:.28;animation:cgstNode 2.4s ease-in-out infinite}",
-    "@keyframes cgstNode{50%{transform:scale(1.35);opacity:.1}}",
-    "#cg-station .cgst-gcl{font-size:calc(9.5px * var(--gs,1));font-weight:700;letter-spacing:.1em;fill:#fff}",
-    "#cg-station .cgst-gcn{font-size:calc(8px * var(--gs,1));font-weight:700;fill:var(--h)}",
+    "#cg-station .cgst-gbound{fill:var(--h);fill-opacity:.03;stroke:var(--h);stroke-opacity:.32;stroke-width:1;stroke-dasharray:3 4;vector-effect:non-scaling-stroke;transition:fill-opacity .2s ease}",
+    "#cg-station .cgst-gcluster:hover .cgst-gbound{fill-opacity:.06}",
+    "#cg-station .cgst-gbound.cgst-gon{fill-opacity:.075;stroke-opacity:.85}",
+    "#cg-station .cgst-gcluster:focus-visible .cgst-gbound{stroke:#fff;stroke-opacity:1}",
+    "#cg-station .cgst-gblabel{font-size:calc(7.5px * var(--gs,1));font-weight:700;letter-spacing:.2em;fill:var(--h)!important;opacity:.9}",
+    "#cg-station .cgst-gheat circle{mix-blend-mode:screen}",
+    "#cg-station .cgst-gspoke{stroke:rgba(159,194,224,.2);stroke-width:1;stroke-dasharray:2 5;vector-effect:non-scaling-stroke}",
+    "#cg-station .cgst-gedge{fill:none;stroke:var(--h);stroke-opacity:.15;stroke-width:.6;vector-effect:non-scaling-stroke;transition:stroke-opacity .2s ease}",
+    "#cg-station .cgst-gedge[data-w='2']{stroke-opacity:.3;stroke-width:1.05}",
+    "#cg-station .cgst-gedge[data-x]{stroke:#8fa3b8;stroke-opacity:.1;stroke-dasharray:2 3}",
+    "#cg-station .cgst-gsvg[data-dim='1'] .cgst-gedge{stroke-opacity:.035}",
+    "#cg-station .cgst-gsvg[data-dim='1'] .cgst-gedge.cgst-gon{stroke:var(--h);stroke-opacity:.6;stroke-dasharray:none}",
+    "#cg-station .cgst-gpred{fill:none;stroke:#e0c070;stroke-width:1.1;stroke-dasharray:1 4;stroke-linecap:round;opacity:.75;vector-effect:non-scaling-stroke}",
+    "#cg-station .cgst-glink{fill:none;stroke:#e9eef3;stroke-width:1.2;stroke-opacity:.85;stroke-dasharray:5 6;vector-effect:non-scaling-stroke;animation:cgstFlow 1.4s linear infinite}",
+    "#cg-station .cgst-glink[data-in]{stroke:#9fc2e0;stroke-opacity:.55;animation-direction:reverse}",
+    "@keyframes cgstFlow{to{stroke-dashoffset:-22}}",
     "#cg-station .cgst-gnode{cursor:pointer;outline:none;transition:opacity .2s ease}",
-    "#cg-station .cgst-gnode circle{fill:var(--h);opacity:.85}",
-    "#cg-station .cgst-gnode[data-hub] circle{stroke:#fff;stroke-width:1;vector-effect:non-scaling-stroke}",
-    "#cg-station .cgst-gnode:focus-visible circle{stroke:#fff;stroke-width:2.4;opacity:1}",
-    "#cg-station .cgst-glabel{font-size:calc(9px * var(--gs,1));opacity:0;transition:opacity .18s ease}",
-    "#cg-station .cgst-gnode:hover .cgst-glabel,#cg-station .cgst-gnode:focus .cgst-glabel,#cg-station .cgst-gnode.cgst-gon .cgst-glabel,",
-    "#cg-station .cgst-gnode.cgst-ghit .cgst-glabel,#cg-station .cgst-gnode.cgst-ghere .cgst-glabel{opacity:1}",
-    "#cg-station .cgst-gnode.cgst-gon[data-dense]:not(:hover):not(:focus):not(.cgst-ghit) .cgst-glabel{opacity:0}",
-    "#cg-station .cgst-gsvg[data-dim='1'] .cgst-gnode:not(.cgst-gon):not(.cgst-ghit):not(.cgst-ghere){opacity:.16}",
-    "#cg-station .cgst-gsvg[data-dim='1'] .cgst-gedge:not(.cgst-gon){opacity:.25}",
-    "#cg-station .cgst-gnode.cgst-ghit circle{fill:#fff}",
-    "#cg-station .cgst-gping{fill:none;stroke:#fff;stroke-width:1.2;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;",
-    "animation:cgstPing 2.2s ease-out infinite}",
-    "@keyframes cgstPing{0%{transform:scale(.6);opacity:.95}100%{transform:scale(2.8);opacity:0}}",
+    "#cg-station .cgst-gdot{fill:#090c10;stroke:var(--h);stroke-width:1.3;vector-effect:non-scaling-stroke}",
+    "#cg-station .cgst-gpip{fill:var(--h);opacity:.9}",
+    "#cg-station .cgst-gconf0{fill:none;stroke:rgba(150,170,190,.13);stroke-width:1.3;vector-effect:non-scaling-stroke}",
+    "#cg-station .cgst-gconf{fill:none;stroke:var(--h);stroke-opacity:.75;stroke-width:1.3;vector-effect:non-scaling-stroke}",
+    "#cg-station .cgst-gcrit{fill:none;stroke:#e5484d;stroke-width:1;stroke-dasharray:2 2;vector-effect:non-scaling-stroke}",
+    "#cg-station .cgst-ganom{fill:#e5484d}",
+    "#cg-station .cgst-gnode[data-anom='med'] .cgst-ganom{fill:#e0a040}",
+    "#cg-station .cgst-glabel{font-size:calc(8.5px * var(--gs,1));opacity:0;transition:opacity .18s ease;paint-order:stroke;stroke:#05070a;stroke-width:calc(3px * var(--gs,1));stroke-linejoin:round}",
+    "#cg-station .cgst-gmeta{font-size:calc(6.8px * var(--gs,1));letter-spacing:.06em;fill:#8795a3!important;opacity:0;transition:opacity .18s ease;paint-order:stroke;stroke:#05070a;stroke-width:calc(3px * var(--gs,1))}",
+    "#cg-station .cgst-gsvg[data-labels='1'] .cgst-gnode[data-key] .cgst-glabel,",
+    "#cg-station .cgst-gnode:hover .cgst-glabel,#cg-station .cgst-gnode:focus .cgst-glabel,#cg-station .cgst-gnode.cgst-gon:not([data-dense]) .cgst-glabel,",
+    "#cg-station .cgst-gnode.cgst-ghit .cgst-glabel,#cg-station .cgst-gnode.cgst-gsel .cgst-glabel,#cg-station .cgst-gnode.cgst-gh1 .cgst-glabel,",
+    "#cg-station .cgst-gnode.cgst-ghere .cgst-glabel{opacity:1}",
+    "#cg-station .cgst-gnode:hover .cgst-gmeta,#cg-station .cgst-gnode:focus .cgst-gmeta,#cg-station .cgst-gnode.cgst-gsel .cgst-gmeta{opacity:1}",
+    "#cg-station .cgst-gsvg[data-dim='1'] .cgst-gnode:not(.cgst-gon):not(.cgst-ghit):not(.cgst-gsel):not(.cgst-gh1):not(.cgst-gh2):not(.cgst-ghere){opacity:.13}",
+    "#cg-station .cgst-gsvg[data-dim='1'] .cgst-gnode.cgst-gh2:not(.cgst-gon):not(.cgst-ghit){opacity:.5}",
+    "#cg-station .cgst-gnode.cgst-ghit .cgst-gdot,#cg-station .cgst-gnode.cgst-gsel .cgst-gdot{stroke:#fff;stroke-width:2}",
+    "#cg-station .cgst-gnode:focus-visible .cgst-gdot{stroke:#fff;stroke-width:2.4}",
+    "#cg-station .cgst-gsvg .cgst-gnode[data-out]{opacity:.07!important}",
+    "#cg-station .cgst-gping{fill:none;stroke:#fff;stroke-width:1;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;animation:cgstPing 2.4s ease-out infinite}",
+    "@keyframes cgstPing{0%{transform:scale(.6);opacity:.9}100%{transform:scale(2.6);opacity:0}}",
+    "#cg-station .cgst-gsvg:not([data-edges='1']) .cgst-gedges,#cg-station .cgst-gsvg:not([data-bounds='1']) .cgst-gbound,",
+    "#cg-station .cgst-gsvg:not([data-bounds='1']) .cgst-gblabel,#cg-station .cgst-gsvg:not([data-heat='1']) .cgst-gheat,",
+    "#cg-station .cgst-gsvg:not([data-predict='1']) .cgst-gpreds,#cg-station .cgst-gsvg:not([data-anomaly='1']) .cgst-ganom,",
+    "#cg-station .cgst-gsvg:not([data-anomaly='1']) .cgst-gcrit{display:none}",
     "#cg-station .cgst-gcore{cursor:pointer;outline:none}",
-    "#cg-station .cgst-gcore .cgst-gpulse{fill:none;stroke:rgba(76,195,255,.55);stroke-width:1.2;vector-effect:non-scaling-stroke;",
-    "transform-box:fill-box;transform-origin:center;animation:cgstPing 3.2s ease-out infinite}",
-    "#cg-station .cgst-gcore .cgst-gpulse+.cgst-gpulse{animation-delay:1.6s}",
-    "#cg-station .cgst-gsweep{transform-box:view-box;transform-origin:500px 500px;animation:cgstSweep 4.5s linear infinite}",
-    "#cg-station .cgst-gcore:focus-visible .cgst-gdisc{stroke:#fff;stroke-width:2.6}",
-    "#cg-station .cgst-gside{display:flex;flex-direction:column;gap:9px;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;",
-    "scrollbar-color:rgba(76,195,255,.4) transparent;padding:1px 3px 2px 1px}",
-    "#cg-station .cgst-gfind{display:flex;align-items:center;gap:8px;padding:4px 5px 4px 11px;border-radius:12px;border:1px solid rgba(76,195,255,.4);",
-    "background:rgba(8,12,20,.9)}",
-    "#cg-station .cgst-gfind:focus-within{border-color:rgba(76,195,255,.95);box-shadow:0 0 0 3px rgba(76,195,255,.18)}",
-    "#cg-station .cgst-gfind input{flex:1 1 auto;min-width:0;height:34px;border:0;outline:0;color:#fff;font:600 16px/1.2 var(--cgst-sans);",
+    "#cg-station .cgst-gcdisc{fill:#07090c;stroke:rgba(159,194,224,.6);stroke-width:1.1;vector-effect:non-scaling-stroke}",
+    "#cg-station .cgst-garc0{fill:none;stroke:rgba(150,170,190,.12);stroke-width:2.4;vector-effect:non-scaling-stroke}",
+    "#cg-station .cgst-garc{fill:none;stroke:var(--h);stroke-width:2.4;vector-effect:non-scaling-stroke}",
+    "#cg-station .cgst-gct{font-size:calc(7.5px * var(--gs,1));font-weight:700;letter-spacing:.14em;fill:#e3e9ef!important}",
+    "#cg-station .cgst-gcs{font-size:calc(6px * var(--gs,1));letter-spacing:.12em;fill:#8795a3!important}",
+    "#cg-station .cgst-gcore:focus-visible .cgst-gcdisc{stroke:#fff;stroke-width:2.4}",
+    /* entity profile */
+    "#cg-station .cgst-gprof{display:flex;flex-direction:column;gap:7px;min-width:0}",
+    "#cg-station .cgst-gprof-c{display:flex;align-items:center;gap:6px;margin:0;font-size:7.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--h)}",
+    "#cg-station .cgst-gprof-c::before{content:'';width:7px;height:7px;border-radius:1px;background:var(--h)}",
+    "#cg-station .cgst-gprof-t{margin:0;font-size:12.5px;font-weight:700;letter-spacing:.03em;color:var(--g-ink)}",
+    "#cg-station .cgst-gprof-s{margin:0;font-size:9.5px;line-height:1.5;color:var(--g-mute)}",
+    "#cg-station .cgst-gmeter{display:grid;grid-template-columns:84px minmax(0,1fr) 26px;align-items:center;gap:7px;font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--g-mute)}",
+    "#cg-station .cgst-gmeter>b{position:relative;height:4px;background:rgba(150,170,190,.1)}",
+    "#cg-station .cgst-gmeter>b>i{position:absolute;left:0;top:0;bottom:0;background:var(--m,#9fc2e0)}",
+    "#cg-station .cgst-gmeter>em{font-style:normal;font-size:10px;text-align:right;color:var(--g-ink);font-variant-numeric:tabular-nums}",
+    "#cg-station .cgst-gacts{display:flex;flex-wrap:wrap;gap:5px}",
+    "#cg-station .cgst-gcmd{display:inline-flex;align-items:center;height:26px;padding:0 9px;border-radius:2px;border:1px solid var(--g-line2);background:rgba(14,18,23,.9);",
+    "color:var(--g-ink);font:600 8px/1 var(--cgst-mono);letter-spacing:.16em;text-transform:uppercase;text-decoration:none;cursor:pointer}",
+    "#cg-station .cgst-gcmd:hover{border-color:rgba(159,194,224,.7);color:#fff}",
+    "#cg-station .cgst-gmx{display:block;width:100%;height:auto}",
+    "#cg-station .cgst-gmx rect{cursor:pointer;stroke:#05070a;stroke-width:1}",
+    "#cg-station .cgst-gmx rect:hover{stroke:#fff}",
+    "#cg-station .cgst-gmx text{font-family:var(--cgst-mono);font-size:6.5px;letter-spacing:.04em;fill:#7f8c99}",
+    /* observation feed */
+    "#cg-station .cgst-gfeed{display:flex;flex-direction:column;gap:4px;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;",
+    "scrollbar-color:rgba(150,170,190,.3) transparent;padding:7px 10px;border:1px solid var(--g-line);border-radius:2px;background:var(--g-panel)}",
+    "#cg-station .cgst-gfeed ol{list-style:none;margin:0;padding:0}",
+    "#cg-station .cgst-gfeed li{display:grid;grid-template-columns:56px 34px 88px minmax(0,1fr);gap:8px;padding:3px 0;border-bottom:1px solid rgba(150,170,190,.06);",
+    "font-size:9.5px;line-height:1.4;color:#b8c3ce}",
+    "#cg-station .cgst-gfeed time,#cg-station .cgst-gfeed li>i{font-style:normal;color:var(--g-dim);font-variant-numeric:tabular-nums}",
+    "#cg-station .cgst-gsev{font-weight:700;letter-spacing:.1em}",
+    "#cg-station [data-s='high'].cgst-gsev{color:#ef6a6e}#cg-station [data-s='med'].cgst-gsev{color:#e0a040}",
+    "#cg-station [data-s='low'].cgst-gsev{color:#9fc2e0}#cg-station [data-s='info'].cgst-gsev{color:#7f8c99}",
+    "#cg-station .cgst-gfeed button{min-width:0;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}",
+    "#cg-station .cgst-gfeed button:hover{color:#fff;text-decoration:underline}",
+    "#cg-station .cgst-gfind{display:flex;align-items:center;gap:8px;padding:2px 5px 2px 9px;border-radius:2px;border:1px solid var(--g-line2);background:rgba(6,8,11,.9)}",
+    "#cg-station .cgst-gfind:focus-within{border-color:rgba(159,194,224,.8)}",
+    "#cg-station .cgst-gfind input{flex:1 1 auto;min-width:0;height:30px;border:0;outline:0;color:#fff;font:500 16px/1.2 var(--cgst-mono);",
     "background:transparent!important;box-shadow:none!important;-webkit-appearance:none;appearance:none}",
-    "#cg-station .cgst-gfind input::placeholder{color:#6f8fa3;opacity:1}",
-    "#cg-station .cgst-gpath{margin:0;font-family:var(--cgst-mono);font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#8fb7cc}",
-    "#cg-station .cgst-gpath b{color:#fff}",
-    "#cg-station .cgst-gfoot{margin:0;font-family:var(--cgst-mono);font-size:8px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#6d8797}",
-    "@media(max-width:760px){#cg-station .cgst-gframe{height:100%;padding:11px;border-radius:16px}",
-    "#cg-station .cgst-gbody{grid-template-columns:1fr;grid-template-rows:minmax(0,1.2fr) minmax(0,1fr)}",
-    "#cg-station .cgst-gtitle{font-size:13px;letter-spacing:.16em}#cg-station .cgst-gtool{min-width:32px;height:32px;padding:0 7px}",
-    "#cg-station .cgst-ghead .cgst-org,#cg-station .cgst-gfoot{display:none}#cg-station .cgst-gsub{font-size:7.5px;letter-spacing:.1em}}",
+    "#cg-station .cgst-gfind input::placeholder{color:var(--g-dim);opacity:1}",
+    "#cg-station .cgst-gpath{margin:0;font-size:8px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--g-mute)}",
+    "#cg-station .cgst-gpath b{color:var(--g-ink)}",
+    "#cg-station .cgst-gl .cgst-tree{font-size:9.5px;color:#b8c3ce}",
+    "#cg-station .cgst-gl .cgst-tree a,#cg-station .cgst-gl .cgst-tree button{color:#d3dbe4}",
+    "#cg-station .cgst-gl .cgst-tree i,#cg-station .cgst-gl .cgst-tree [data-here]::after{color:var(--g-acc)}",
+    "@media(prefers-reduced-motion:reduce){#cg-station .cgst-gradar,#cg-station .cgst-gorbiter,#cg-station .cgst-glink,#cg-station .cgst-gping{animation:none}}",
+    "html[data-cgm-motion='reduced'] #cg-station .cgst-gradar,html[data-cgm-motion='reduced'] #cg-station .cgst-gorbiter,",
+    "html[data-cgm-motion='reduced'] #cg-station .cgst-glink,html[data-cgm-motion='reduced'] #cg-station .cgst-gping{animation:none}",
+    "@media(max-width:1100px){#cg-station .cgst-gbody{display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}",
+    "#cg-station .cgst-gview{order:1;flex:0 0 auto;height:min(66vh,640px);min-height:300px}#cg-station .cgst-gr{order:2}",
+    "#cg-station .cgst-gfeed{order:3;flex:0 0 auto;max-height:240px}#cg-station .cgst-gl{order:4}",
+    "#cg-station .cgst-gpanel{flex:0 0 auto;overflow:visible}",
+    "#cg-station .cgst-gkpi{grid-template-columns:repeat(3,minmax(0,1fr))}#cg-station .cgst-gkpi>div:nth-child(4){border-left:0}",
+    "#cg-station .cgst-gkpi>div:nth-child(n+4){border-top:1px solid var(--g-line)}}",
+    "@media(max-width:760px){#cg-station .cgst-graph{padding:0}",
+    "#cg-station .cgst-gframe{max-height:none;padding:max(8px,env(safe-area-inset-top)) 8px max(8px,env(safe-area-inset-bottom));border-radius:0;border:0;gap:6px}",
+    "#cg-station .cgst-gtitle{font-size:12px;letter-spacing:.2em}#cg-station .cgst-gtool{min-width:30px;height:28px;padding:0 7px}",
+    "#cg-station .cgst-gkpi>div{padding:5px 7px}#cg-station .cgst-gkpi dd{font-size:12.5px}#cg-station .cgst-gkpi dd small{font-size:7px}",
+    "#cg-station .cgst-gview{height:58vh}#cg-station .cgst-ghud-bl{display:none}#cg-station .cgst-gplay input{width:72px}",
+    "#cg-station .cgst-gfeed li{grid-template-columns:30px 76px minmax(0,1fr)}#cg-station .cgst-gfeed time{display:none}}",
     "html.cgst-graph-open{overflow:hidden}",
     "@media(max-width:372px){#cg-station .cgst-sectors{grid-template-columns:repeat(2,minmax(0,1fr))}#cg-station .cgst-cmds{grid-template-columns:1fr}}",
 
@@ -3357,14 +3472,25 @@
   }
 
   // ── Intelligence Graph ───────────────────────────────────────────────────
-  // Every page as a node around its cluster, every cluster around Sentinel
-  // Core. Zoom with the wheel, pinch, +/− or the keyboard; drag to pan. The
-  // list beside it holds the same graph as a tree, for any input.
+  // A structural analysis of the site graph: every page is an entity, every
+  // related link a relationship. Layout, centrality, bridges, exposure,
+  // corroboration and link forecasts are computed on this device from
+  // data/site-index.json. None of it is observed threat data, and no panel is
+  // filled with anything the index does not hold. Zoom with the wheel, pinch,
+  // +/− or the keyboard; drag to pan; select a node to profile it. The
+  // directory holds the same graph as a tree, for any input.
   var SVGNS = "http://www.w3.org/2000/svg";
-  var HUES = ["#4cc3ff", "#ee6365", "#78e0c8", "#f2b04b", "#a99bff", "#ff8fb1", "#5ef0a8", "#7fb2ff", "#e7b9ba", "#64d2ff", "#ffd166", "#b5f5e0"];
+  // One colour family per domain. Red is kept for cut points and findings.
+  var FAMILY = {
+    security: ["Cyber operations", "#e0a040"], intelligence: ["Intelligence", "#5b9dff"], blog: ["Intelligence", "#7fa6d9"],
+    government: ["Government", "#5fbf7f"], healthcare: ["Government", "#7fc9a2"], legal: ["Legal & compliance", "#a48bf0"],
+    artemis: ["Platform systems", "#4fd1d9"], command: ["Platform systems", "#38b6c4"], opal: ["Platform systems", "#6fc3c9"],
+    design: ["Platform systems", "#5aa9b6"], company: ["Executive", "#d4b25a"], services: ["Executive", "#c9a24a"]
+  };
+  var SEV = { high: 0, med: 1, low: 2, info: 3 };
   var graph = { built: false, open: false, vb: { x: 0, y: 0, w: 1000 }, focus: "", hits: [], hitLabel: "", lastFocus: null, anim: 0,
-    node: {}, pts: {}, drag: null, pinch: null, suppress: false };
-  var graphEl, gSvg, gView, gSide, gTree, gPath, gFind, gSub, gLinks;
+    node: {}, pts: {}, drag: null, pinch: null, suppress: false, an: null, sel: "", eb: [], hop: -1, play: 0 };
+  var graphEl, gSvg, gView, gSide, gTree, gPath, gFind, gSub, gLinks, gHop, gHopOut, gPlay;
 
   function sv(tag, attrs, parent) {
     var el = document.createElementNS(SVGNS, tag);
@@ -3377,69 +3503,598 @@
     t.textContent = text;
     return t;
   }
+  function hueOf(id) { return (FAMILY[id] || ["", "#8fa3b8"])[1]; }
+  function zeros(n, v) { var a = []; for (var i = 0; i < n; i++) a.push(v || 0); return a; }
+  function clip(s, n) { return s.length > n ? s.slice(0, n - 1) + "…" : s; }
+  function pct(x) { return Math.round(x * 100) + "%"; }
+
+  // Breadth-first reach along directed links: hops from s, -1 when unreachable.
+  function reachFrom(out, s) {
+    var d = zeros(out.length, -1), q = [s], h = 0;
+    d[s] = 0;
+    while (h < q.length) {
+      var v = q[h++];
+      for (var j = 0; j < out[v].length; j++) if (d[out[v][j]] < 0) { d[out[v][j]] = d[v] + 1; q.push(out[v][j]); }
+    }
+    return d;
+  }
+
+  // Every number the graph shows comes from here, computed once per load.
+  function analyseGraph() {
+    if (graph.an) return graph.an;
+    var t0 = now(), P = site.pages, n = P.length, idx = {}, out = [], inn = [], nb = [], i, j, k;
+    for (i = 0; i < n; i++) { idx[P[i].path] = i; out.push([]); inn.push([]); nb.push({}); }
+    P.forEach(function (e, a) {
+      e.related.forEach(function (p) {
+        var b = idx[p];
+        if (b == null || b === a || out[a].indexOf(b) > -1) return;
+        out[a].push(b); inn[b].push(a); nb[a][b] = 1; nb[b][a] = 1;
+      });
+    });
+    var adj = nb.map(function (m) { return Object.keys(m).map(Number); });
+    // undirected relationships, weight 2 when both pages link each other
+    var edges = [], recip = 0;
+    adj.forEach(function (list, a) {
+      list.forEach(function (b) {
+        if (b < a) return;
+        var w = (out[a].indexOf(b) > -1 ? 1 : 0) + (out[b].indexOf(a) > -1 ? 1 : 0);
+        if (w === 2) recip++;
+        edges.push({ a: a, b: b, w: w, x: P[a].cluster !== P[b].cluster });
+      });
+    });
+    var m = edges.length || 1;
+    // PageRank, damping 0.85; dangling pages spread their rank evenly
+    var pr = zeros(n, 1 / n);
+    for (k = 0; k < 60; k++) {
+      var nx = zeros(n, 0.15 / n), sink = 0;
+      for (i = 0; i < n; i++) {
+        if (!out[i].length) { sink += pr[i]; continue; }
+        for (j = 0; j < out[i].length; j++) nx[out[i][j]] += 0.85 * pr[i] / out[i].length;
+      }
+      for (i = 0; i < n; i++) nx[i] += 0.85 * sink / n;
+      pr = nx;
+    }
+    // Brandes betweenness on the undirected graph; the same pass sums path lengths
+    var bc = zeros(n), sumD = 0, pairs = 0, diam = 0;
+    for (var s = 0; s < n; s++) {
+      var stack = [], pred = [], sig = zeros(n), d = zeros(n, -1), dl = zeros(n), q = [s], h = 0;
+      for (i = 0; i < n; i++) pred.push([]);
+      sig[s] = 1; d[s] = 0;
+      while (h < q.length) {
+        var v = q[h++];
+        stack.push(v);
+        for (j = 0; j < adj[v].length; j++) {
+          var w = adj[v][j];
+          if (d[w] < 0) { d[w] = d[v] + 1; q.push(w); sumD += d[w]; pairs++; if (d[w] > diam) diam = d[w]; }
+          if (d[w] === d[v] + 1) { sig[w] += sig[v]; pred[w].push(v); }
+        }
+      }
+      while (stack.length) {
+        var x = stack.pop();
+        for (j = 0; j < pred[x].length; j++) dl[pred[x][j]] += sig[pred[x][j]] / sig[x] * (1 + dl[x]);
+        if (x !== s) bc[x] += dl[x];
+      }
+    }
+    // Tarjan: cut points, the pages whose removal splits the graph
+    var disc = zeros(n, -1), low = zeros(n), cut = zeros(n), clock = 0, comps = 0;
+    function dfs(u, parent) {
+      disc[u] = low[u] = clock++;
+      var kids = 0;
+      adj[u].forEach(function (w) {
+        if (disc[w] < 0) {
+          kids++; dfs(w, u);
+          low[u] = Math.min(low[u], low[w]);
+          if (parent >= 0 && low[w] >= disc[u]) cut[u] = 1;
+        } else if (w !== parent) low[u] = Math.min(low[u], disc[w]);
+      });
+      if (parent < 0 && kids > 1) cut[u] = 1;
+    }
+    for (i = 0; i < n; i++) if (disc[i] < 0) { comps++; dfs(i, -1); }
+    var home = idx["index.html"] != null ? idx["index.html"] : 0, depth = reachFrom(out, home);
+    // the declared clusters, measured: density, cross links, modularity
+    var cix = {}, cs = site.clusters.map(function (c, ci) {
+      cix[c.id] = ci;
+      return { c: c, n: c.members.length + 1, inE: 0, deg: 0, xOut: 0, dens: 0 };
+    });
+    var mx = site.clusters.map(function () { return zeros(site.clusters.length); });
+    for (i = 0; i < n; i++) {
+      var ci = cix[P[i].cluster];
+      if (ci == null) continue;
+      cs[ci].deg += adj[i].length;
+      for (j = 0; j < out[i].length; j++) {
+        var cj = cix[P[out[i][j]].cluster];
+        if (cj == null) continue;
+        mx[ci][cj]++;
+        if (cj !== ci) cs[ci].xOut++;
+      }
+    }
+    edges.forEach(function (e) { if (!e.x && cix[P[e.a].cluster] != null) cs[cix[P[e.a].cluster]].inE++; });
+    var Q = 0;
+    cs.forEach(function (c) {
+      c.dens = c.n > 1 ? 2 * c.inE / (c.n * (c.n - 1)) : 0;
+      Q += c.inE / m - Math.pow(c.deg / (2 * m), 2);
+    });
+    // link forecast: unlinked pairs that share at least three neighbours (Adamic–Adar)
+    var fore = [];
+    for (i = 0; i < n; i++) for (j = i + 1; j < n; j++) {
+      if (nb[i][j]) continue;
+      var sc = 0, common = 0;
+      for (k = 0; k < adj[i].length; k++) {
+        var z = adj[i][k];
+        if (nb[j][z]) { common++; sc += 1 / Math.log(Math.max(2, adj[z].length)); }
+      }
+      if (common >= 3) fore.push({ a: i, b: j, s: sc, c: common });
+    }
+    fore.sort(function (p, r) { return r.s - p.s; });
+    fore = fore.slice(0, 10);
+    // per-entity scores, 0-100
+    var maxPr = Math.max.apply(null, pr) || 1, maxBc = Math.max.apply(null, bc) || 1, maxDeg = 0;
+    var ent = P.map(function (e, a) {
+      var deg = adj[a].length, both = 0;
+      adj[a].forEach(function (b) { if (out[a].indexOf(b) > -1 && out[b].indexOf(a) > -1) both++; });
+      if (deg > maxDeg) maxDeg = deg;
+      var imp = Math.round(100 * pr[a] / maxPr), bri = Math.round(100 * bc[a] / maxBc), inD = inn[a].length;
+      var exp = a === home ? 0 : Math.round(100 / (1 + inD * inD / 2));
+      return { i: a, e: e, imp: imp, bri: bri, exp: exp, conf: deg ? Math.round(100 * both / deg) : 0, inD: inD, outD: out[a].length,
+        deg: deg, depth: depth[a], cut: !!cut[a], pri: Math.round(0.45 * imp + 0.35 * bri + 0.2 * exp), sev: "" };
+    });
+    var cent = 0;
+    ent.forEach(function (x) { cent += maxDeg - x.deg; });
+    cent = n > 2 ? cent / ((n - 1) * (n - 2)) : 0;
+    // findings: each one names the page and the measurement behind it
+    var find = [];
+    function flag(sev, code, x, text) {
+      find.push({ s: sev, code: code, x: x, text: text });
+      if (x && (!x.sev || SEV[sev] < SEV[x.sev])) x.sev = sev;
+    }
+    ent.forEach(function (x) {
+      if (x.i === home) return;
+      if (!x.inD) flag("high", "UNLINKED", x, x.e.title + ": no page links here; it is reachable only by URL or the sitemap");
+      else if (x.inD === 1) flag("med", "SINGLE-PATH", x, x.e.title + ": one inbound link, from " + P[inn[x.i][0]].title);
+      if (x.depth < 0) flag("high", "UNREACHABLE", x, x.e.title + ": no chain of related links leads here from the home page");
+      else if (x.depth > 3) flag("low", "DEEP", x, x.e.title + ": " + x.depth + " links from the home page");
+      if (!x.outD) flag("low", "DEAD-END", x, x.e.title + ": links to no other page");
+    });
+    ent.filter(function (x) { return x.cut; }).forEach(function (x) {
+      flag("med", "CUT-POINT", x, x.e.title + ": removing it would disconnect part of the graph");
+    });
+    cs.forEach(function (c) {
+      if (!c.xOut) flag("med", "ISOLATED", null, c.c.name + ": no related link leaves this cluster");
+      else if (c.n > 3 && c.dens < 0.15) flag("low", "THIN-CLUSTER", null, c.c.name + ": internal density " + pct(c.dens) + " across " + c.n + " pages");
+    });
+    ent.slice().sort(function (p, r) { return r.bri - p.bri; }).slice(0, 3).forEach(function (x) {
+      flag("info", "BRIDGE", x, x.e.title + ": bridge score " + x.bri + ", the most shortest paths between clusters run through it");
+    });
+    fore.slice(0, 4).forEach(function (f) {
+      flag("info", "FORECAST", ent[f.a], P[f.a].title + " ↔ " + P[f.b].title + ": " + f.c + " shared neighbours, no link yet");
+    });
+    find.sort(function (p, r) { return SEV[p.s] - SEV[r.s]; });
+    var reached = depth.filter(function (x) { return x >= 0; }).length;
+    graph.an = { P: P, n: n, idx: idx, out: out, inn: inn, adj: adj, edges: edges, ent: ent, find: find, fore: fore, cs: cs, mx: mx,
+      home: home, m: m, recip: recip, links: site.links, comps: comps, diam: diam, avg: pairs ? sumD / pairs : 0, Q: Q, cent: cent,
+      dens: n > 1 ? 2 * m / (n * (n - 1)) : 0, reach: reached / n, ms: 0, at: new Date() };
+    graph.an.ms = Math.round(now() - t0);
+    return graph.an;
+  }
+
+  // Layout: each cluster gets an arc of the ring in proportion to its size,
+  // and its pages sit on a sunflower spiral, most important at the centre,
+  // so distance from a cluster's heart reads as influence. Same index, same
+  // picture; nothing is random.
+  function layoutGraph(an) {
+    var C = 500, R = 318, SP = 13.5, pos = [], total = 0;
+    var sizes = site.clusters.map(function (c) { var r = SP * Math.sqrt(c.members.length + 1) + 12; total += 2 * r; return r; });
+    var gap = Math.max(0, (2 * Math.PI * R - total) / site.clusters.length), at = -Math.PI / 2;
+    an.P.forEach(function () { pos.push({ x: C, y: C }); });
+    site.clusters.forEach(function (c, k) {
+      var half = (sizes[k] + gap / 2) / R, a = at + half;
+      at += 2 * half;
+      var cx = C + R * Math.cos(a), cy = C + R * Math.sin(a);
+      [c.pillar].concat(c.members).map(function (p) { return an.ent[an.idx[p]]; })
+        .sort(function (p, q) { return q.imp - p.imp || p.i - q.i; })
+        .forEach(function (x, j) {
+          x.key = !j;                                   // the one label a cluster always shows
+          var r = j ? SP * Math.sqrt(j + 0.4) : 0, t = j * 2.399963 + a;
+          pos[x.i] = { x: cx + r * Math.cos(t), y: cy + r * Math.sin(t) };
+        });
+    });
+    return pos;
+  }
 
   function buildGraph() {
     if (graph.built || site.state !== "ready" || !gSvg) return;
     graph.built = true;
-    var C = 500, R = 215, n = site.clusters.length;
-    var orbit = sv("g", {}, gSvg), spokes = sv("g", {}, gSvg), edges = sv("g", {}, gSvg);
-    gLinks = sv("g", {}, gSvg);
-    var nodes = sv("g", {}, gSvg), hubs = sv("g", {}, gSvg);
-    [R, 330, 430].forEach(function (r) { sv("circle", { cx: C, cy: C, r: r, "class": "cgst-gorbit" }, orbit); });
+    var an = analyseGraph(), t0 = now(), pos = layoutGraph(an), C = 500;
+    an.ms += Math.round(now() - t0);
+    var defs = sv("defs", {}, gSvg), heatG = sv("radialGradient", { id: "cgstHeat" }, defs);
+    sv("stop", { offset: "0%", "stop-color": "#e0a040", "stop-opacity": ".5" }, heatG);
+    sv("stop", { offset: "100%", "stop-color": "#e0a040", "stop-opacity": "0" }, heatG);
 
-    site.clusters.forEach(function (c, i) {
-      var a = -Math.PI / 2 + (i / n) * Math.PI * 2, hue = HUES[i % HUES.length];
-      var cx = C + R * Math.cos(a), cy = C + R * Math.sin(a);
-      c.gx = cx; c.gy = cy; c.hue = hue;
-      sv("line", { x1: C, y1: C, x2: cx.toFixed(1), y2: cy.toFixed(1), "class": "cgst-gspoke", "data-cluster": c.id, style: "--h:" + hue }, spokes);
-      var list = [c.pillar].concat(c.members), per = 14, span = (Math.PI * 2 / n) * 0.82, dense = list.length > 14;
-      c.box = { x0: cx, y0: cy, x1: cx, y1: cy };
-      list.forEach(function (path, j) {
-        var e = site.byPath[path], row = Math.floor(j / per), inRow = Math.min(per, list.length - row * per), k = j - row * per;
-        var ang = a + span * ((k + 0.5) / inRow - 0.5), r = 318 + row * 44;
-        var x = C + r * Math.cos(ang), y = C + r * Math.sin(ang);
-        sv("line", { x1: cx.toFixed(1), y1: cy.toFixed(1), x2: x.toFixed(1), y2: y.toFixed(1), "class": "cgst-gedge", "data-cluster": c.id, style: "--h:" + hue }, edges);
-        var link = sv("a", { href: e.url, "class": "cgst-gnode", "data-cluster": c.id, "data-path": path, tabindex: "-1",
-          "aria-label": e.title + " — " + e.summary, style: "--h:" + hue }, nodes);
-        if (e.hub) link.setAttribute("data-hub", "");
-        if (e === site.here) {
-          link.classList.add("cgst-ghere");
-          sv("circle", { cx: x.toFixed(1), cy: y.toFixed(1), r: 9, "class": "cgst-gping" }, link);
-        }
-        sv("circle", { cx: x.toFixed(1), cy: y.toFixed(1), r: e.hub ? 7 : 4.6 }, link);
-        // labels run outward along the node's own ray, so neighbours never collide
-        var right = Math.cos(ang) >= 0, lx = x + Math.cos(ang) * 9, ly = y + Math.sin(ang) * 9;
-        var deg = ang * 180 / Math.PI + (right ? 0 : 180);
-        var lab = svText(link, lx, ly, e.title.length > 30 ? e.title.slice(0, 29) + "…" : e.title, "cgst-glabel", right ? "start" : "end");
-        lab.setAttribute("dominant-baseline", "central");
-        lab.setAttribute("transform", "rotate(" + deg.toFixed(1) + " " + lx.toFixed(1) + " " + ly.toFixed(1) + ")");
-        if (dense) link.setAttribute("data-dense", "");
-        graph.node[path] = { el: link, x: x, y: y };
-        // the fit keeps room for the label's reach, not just the node
-        var reach = dense ? 12 : 120, ex = x + Math.cos(ang) * reach, ey = y + Math.sin(ang) * reach;
-        c.box.x0 = Math.min(c.box.x0, x, ex); c.box.x1 = Math.max(c.box.x1, x, ex);
-        c.box.y0 = Math.min(c.box.y0, y, ey); c.box.y1 = Math.max(c.box.y1, y, ey);
-      });
-      var size = 13 + Math.sqrt(list.length) * 2.6;
-      var g = sv("g", { "class": "cgst-gcluster", tabindex: "0", role: "button", "data-cluster": c.id, style: "--h:" + hue,
-        "aria-label": c.name + ": " + plural(list.length, "page") + ". Focus the graph on it" }, hubs);
-      sv("circle", { cx: cx.toFixed(1), cy: cy.toFixed(1), r: (size + 9).toFixed(1), "class": "cgst-ghalo" }, g);
-      sv("circle", { cx: cx.toFixed(1), cy: cy.toFixed(1), r: size.toFixed(1), "class": "cgst-gdisc" }, g);
-      svText(g, cx, cy + 3, String(list.length), "cgst-gcn");
-      var label = c.name.split(/ [&·] /)[0].toUpperCase();
-      svText(g, cx, cy + size + 13, label.length > 22 ? label.slice(0, 21) + "…" : label, "cgst-gcl");
+    // range rings, bearings and a slow sweep: orientation, not decoration
+    var field = sv("g", {}, gSvg);
+    [120, 240, 360, 470].forEach(function (r, k) { sv("circle", { cx: C, cy: C, r: r, "class": "cgst-gring" + (k % 2 ? "" : " cgst-gmajor") }, field); });
+    for (var b = 0; b < 360; b += 30) {
+      var ba = (b - 90) * Math.PI / 180;
+      sv("line", { x1: (C + 470 * Math.cos(ba)).toFixed(1), y1: (C + 470 * Math.sin(ba)).toFixed(1),
+        x2: (C + 478 * Math.cos(ba)).toFixed(1), y2: (C + 478 * Math.sin(ba)).toFixed(1), "class": "cgst-gtickl" }, field);
+      svText(field, C + 488 * Math.cos(ba), C + 488 * Math.sin(ba) + 2, ("00" + b).slice(-3), "cgst-gtick");
+    }
+    var radar = sv("g", { "class": "cgst-gradar" }, field), rs = Math.sin(0.42) * 470, rc = Math.cos(0.42) * 470;
+    sv("path", { d: "M500 500 L500 30 A470 470 0 0 1 " + (C + rs).toFixed(1) + " " + (C - rc).toFixed(1) + " Z" }, radar);
+    sv("path", { d: "M500 500 L" + (C + rs).toFixed(1) + " " + (C - rc).toFixed(1) }, radar);
+    var orb = sv("g", { "class": "cgst-gorbiter" }, field);
+    [["PAGERANK", 0], ["BETWEENNESS", 2.1], ["MODULARITY", 4.2]].forEach(function (o) {
+      var ox = C + 240 * Math.cos(o[1]), oy = C + 240 * Math.sin(o[1]);
+      sv("circle", { cx: ox.toFixed(1), cy: oy.toFixed(1), r: 2.2 }, orb);
+      svText(orb, ox + 6, oy + 2, o[0], "", "start");
     });
 
+    var bounds = sv("g", {}, gSvg), heat = sv("g", { "class": "cgst-gheat" }, gSvg);
+    var edgeG = sv("g", { "class": "cgst-gedges" }, gSvg), preds = sv("g", { "class": "cgst-gpreds" }, gSvg);
+    gLinks = sv("g", {}, gSvg);
+    var nodes = sv("g", {}, gSvg);
+
+    // cluster boundaries: 1.5 standard deviations of the members' spread
+    site.clusters.forEach(function (c) {
+      var list = [c.pillar].concat(c.members).map(function (p) { return an.idx[p]; }), cx = 0, cy = 0, v = 0, hue = hueOf(c.id);
+      list.forEach(function (i) { cx += pos[i].x; cy += pos[i].y; });
+      cx /= list.length; cy /= list.length;
+      list.forEach(function (i) { v += Math.pow(pos[i].x - cx, 2) + Math.pow(pos[i].y - cy, 2); });
+      var r = Math.max(24, Math.sqrt(v / list.length) * 1.5 + 12);
+      c.gx = cx; c.gy = cy; c.hue = hue;
+      var oa = Math.atan2(cy - 500, cx - 500), lx = cx + Math.cos(oa) * (r + 8), ly = cy + Math.sin(oa) * (r + 8);
+      c.box = { x0: Math.min(cx - r, lx), y0: Math.min(cy - r, ly - 10), x1: Math.max(cx + r, lx), y1: Math.max(cy + r, ly + 10) };
+      var g = sv("g", { "class": "cgst-gcluster", tabindex: "0", role: "button", "data-cluster": c.id, style: "--h:" + hue,
+        "aria-label": c.name + ": " + plural(list.length, "page") + ". Focus the graph on it" }, bounds);
+      sv("circle", { cx: cx.toFixed(1), cy: cy.toFixed(1), r: r.toFixed(1), "class": "cgst-gbound", "data-cluster": c.id }, g);
+      // the label sits outside the boundary, on the ray away from the core
+      var cos = Math.cos(oa), bl = svText(g, lx, ly, c.id.toUpperCase() + " · " + list.length, "cgst-gblabel",
+        cos > 0.08 ? "start" : cos < -0.08 ? "end" : "middle");
+      bl.setAttribute("dominant-baseline", Math.sin(oa) > 0.35 ? "hanging" : Math.sin(oa) < -0.35 ? "auto" : "central");
+    });
+
+    // influence: PageRank as heat
+    an.ent.forEach(function (x) {
+      if (x.imp < 22) return;
+      sv("circle", { cx: pos[x.i].x.toFixed(1), cy: pos[x.i].y.toFixed(1), r: (16 + x.imp * 0.5).toFixed(1), fill: "url(#cgstHeat)",
+        opacity: (0.05 + x.imp / 420).toFixed(2) }, heat);
+    });
+
+    // the core's reach to every cluster hub, then every relationship
+    site.clusters.forEach(function (c) {
+      var p = pos[an.idx[c.pillar]];
+      sv("line", { x1: C, y1: C, x2: p.x.toFixed(1), y2: p.y.toFixed(1), "class": "cgst-gspoke" }, edgeG);
+    });
+    graph.eb = an.P.map(function () { return []; });
+    an.edges.forEach(function (e) {
+      var p = pos[e.a], q = pos[e.b], d;
+      if (e.x) {
+        var mx2 = (p.x + q.x) / 2, my2 = (p.y + q.y) / 2;
+        d = "M" + p.x.toFixed(1) + " " + p.y.toFixed(1) + " Q" + (mx2 + (C - mx2) * 0.4).toFixed(1) + " " + (my2 + (C - my2) * 0.4).toFixed(1) +
+          " " + q.x.toFixed(1) + " " + q.y.toFixed(1);
+      } else d = "M" + p.x.toFixed(1) + " " + p.y.toFixed(1) + " L" + q.x.toFixed(1) + " " + q.y.toFixed(1);
+      var el = sv("path", { d: d, "class": "cgst-gedge", "data-w": e.w, style: "--h:" + hueOf(an.P[e.a].cluster) }, edgeG);
+      if (e.x) el.setAttribute("data-x", "");
+      graph.eb[e.a].push(el); graph.eb[e.b].push(el);
+    });
+    an.fore.forEach(function (f) {
+      var p = pos[f.a], q = pos[f.b];
+      sv("path", { d: "M" + p.x.toFixed(1) + " " + p.y.toFixed(1) + " L" + q.x.toFixed(1) + " " + q.y.toFixed(1), "class": "cgst-gpred" }, preds);
+    });
+
+    // entities: size is importance, the ring is corroboration, red marks cut points and findings
+    an.ent.forEach(function (x) {
+      var e = x.e, p = pos[x.i], r = 2.6 + x.imp * 0.075, px = p.x.toFixed(1), py = p.y.toFixed(1);
+      var link = sv("a", { href: e.url, "class": "cgst-gnode", "data-cluster": e.cluster, "data-path": e.path, tabindex: "-1", style: "--h:" + hueOf(e.cluster),
+        "aria-label": e.title + ". Importance " + x.imp + ", bridge " + x.bri + ", exposure " + x.exp + ", corroboration " + x.conf + " percent" }, nodes);
+      if (e.hub) link.setAttribute("data-hub", "");
+      if (x.key) link.setAttribute("data-key", "");
+      if (x.sev === "high" || x.sev === "med") link.setAttribute("data-anom", x.sev);
+      if (e === site.here) {
+        link.classList.add("cgst-ghere");
+        sv("circle", { cx: px, cy: py, r: (r + 5).toFixed(1), "class": "cgst-gping" }, link);
+      }
+      sv("circle", { cx: px, cy: py, r: (r + 3.2).toFixed(1), "class": "cgst-gconf0" }, link);
+      if (x.conf) sv("circle", { cx: px, cy: py, r: (r + 3.2).toFixed(1), "class": "cgst-gconf", pathLength: 100, "stroke-dasharray": x.conf + " 100",
+        transform: "rotate(-90 " + px + " " + py + ")" }, link);
+      sv("circle", { cx: px, cy: py, r: r.toFixed(1), "class": "cgst-gdot" }, link);
+      sv("circle", { cx: px, cy: py, r: Math.max(1.1, r * 0.42).toFixed(1), "class": "cgst-gpip" }, link);
+      if (x.cut) sv("circle", { cx: px, cy: py, r: (r + 6.5).toFixed(1), "class": "cgst-gcrit" }, link);
+      if (x.sev === "high" || x.sev === "med") {
+        var ax = p.x + r + 3.5, ay = p.y - r - 3.5;
+        sv("path", { d: "M" + ax.toFixed(1) + " " + (ay - 2.6).toFixed(1) + " l2.6 2.6 l-2.6 2.6 l-2.6 -2.6 Z", "class": "cgst-ganom" }, link);
+      }
+      // labels read horizontally, on the side away from the core
+      var right = p.x >= C, lx = p.x + (right ? r + 6 : -(r + 6));
+      var lab = svText(link, lx, p.y, clip(e.title, 30), "cgst-glabel", right ? "start" : "end");
+      lab.setAttribute("dominant-baseline", "central");
+      var meta = svText(link, lx, p.y, "IMP " + x.imp + " · EXP " + x.exp + " · CNF " + x.conf + "%", "cgst-gmeta", right ? "start" : "end");
+      meta.setAttribute("dy", "1.6em");
+      meta.setAttribute("dominant-baseline", "central");
+      if (site.byId[e.cluster] && site.byId[e.cluster].members.length > 14) link.setAttribute("data-dense", "");
+      graph.node[e.path] = { el: link, x: p.x, y: p.y, i: x.i };
+    });
+
+    // Sentinel Core: corroboration, cohesion and reach as three arcs
     var core = sv("g", { "class": "cgst-gcore", tabindex: "0", role: "button", "aria-label": "Sentinel Core: show the whole graph" }, gSvg);
-    sv("circle", { cx: C, cy: C, r: 60, "class": "cgst-gpulse" }, core);
-    sv("circle", { cx: C, cy: C, r: 60, "class": "cgst-gpulse" }, core);
-    var grad = sv("radialGradient", { id: "cgstCoreGrad" }, sv("defs", {}, gSvg));
-    sv("stop", { offset: "0%", "stop-color": "#ee6365", "stop-opacity": ".55" }, grad);
-    sv("stop", { offset: "100%", "stop-color": "#0b080b", "stop-opacity": "1" }, grad);
-    sv("circle", { cx: C, cy: C, r: 46, fill: "url(#cgstCoreGrad)", stroke: "#ee6365", "stroke-width": "1.6", "class": "cgst-gdisc" }, core);
-    sv("path", { d: "M500 500 L500 456 A44 44 0 0 1 538 478 Z", fill: "rgba(76,195,255,.35)", "class": "cgst-gsweep" }, core);
-    sv("circle", { cx: C, cy: C, r: 5, fill: "#ee6365" }, core);
-    svText(core, C, C + 64, "SENTINEL CORE", "cgst-gcl");
+    sv("circle", { cx: C, cy: C, r: 86, "class": "cgst-gcdisc" }, core);
+    [[80, an.recip / an.m, "#9fc2e0"], [74, Math.max(0, an.Q), "#a48bf0"], [68, an.reach, "#7fd1a8"]].forEach(function (a) {
+      sv("circle", { cx: C, cy: C, r: a[0], "class": "cgst-garc0" }, core);
+      sv("circle", { cx: C, cy: C, r: a[0], "class": "cgst-garc", pathLength: 100, "stroke-dasharray": Math.round(a[1] * 100) + " 100",
+        transform: "rotate(-90 500 500)", style: "--h:" + a[2] }, core);
+    });
+    // spaced in ems so the two lines keep their gap at any zoom
+    var ct = svText(core, C, C, "", "cgst-gct");
+    ct.setAttribute("dominant-baseline", "central");
+    [["SENTINEL", "-0.6em"], ["CORE", "1.2em"]].forEach(function (l) { sv("tspan", { x: C, dy: l[1] }, ct).textContent = l[0]; });
+    paintPanels();
+  }
+
+  // ── the panels around the canvas: every figure is from analyseGraph() ──
+  function kpi(dl, label, value, note, sev) {
+    var d = make("div"), dt = make("dt", "", label), dd = make("dd", "", value);
+    if (sev) dd.setAttribute("data-s", sev);
+    if (note) dd.appendChild(make("small", "", note));
+    d.appendChild(dt); d.appendChild(dd); dl.appendChild(d);
+  }
+  function rowBtn(ul, hue, text, em, run, bar) {
+    var li = make("li"), b = make("button", "cgst-grow");
+    b.type = "button";
+    if (hue) b.style.setProperty("--h", hue);
+    b.appendChild(make("b"));
+    b.appendChild(make("span", "", text));
+    b.appendChild(make("em", "", em));
+    if (bar != null) { var s = make("span", "cgst-gbar"), i = make("i"); i.style.width = Math.max(2, Math.min(100, bar)) + "%"; s.appendChild(i); b.appendChild(s); }
+    if (run) b.addEventListener("click", run); else b.classList.add("cgst-gmodel");
+    li.appendChild(b); ul.appendChild(li);
+    return b;
+  }
+  function clock(d) { return ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2); }
+
+  function paintPanels() {
+    var an = graph.an, P = an.P, counts = { high: 0, med: 0, low: 0, info: 0 };
+    an.find.forEach(function (f) { counts[f.s]++; });
+    var top = an.ent.slice().sort(function (p, r) { return r.pri - p.pri; }), worst = counts.high ? "high" : counts.med ? "med" : "";
+    var dl = graphEl.querySelector("[data-cgst-gkpi]");
+    dl.textContent = "";
+    kpi(dl, "Network centrality", an.cent.toFixed(2), "degree centralisation");
+    kpi(dl, "Intelligence confidence", pct(an.recip / an.m), "links corroborated both ways");
+    kpi(dl, "Active analytic models", "7", "run on this device in " + an.ms + " ms");
+    kpi(dl, "Priority index", String(top[0].pri), clip(top[0].e.title, 26));
+    kpi(dl, "Alert severity", worst ? worst.toUpperCase() : "NONE", counts.high + " high · " + counts.med + " med · " + counts.low + " low", worst);
+    kpi(dl, "Relationship density", (an.dens * 100).toFixed(1) + "%", (2 * an.m / an.n).toFixed(1) + " relationships per entity");
+
+    var cov = graphEl.querySelector("[data-cgst-gcov]");
+    cov.textContent = "";
+    [["Entities", an.n], ["Relationships", an.m], ["Directed links", an.links], ["Reciprocal", an.recip], ["Components", an.comps],
+      ["Reach from home", pct(an.reach)], ["Mean path", an.avg.toFixed(2) + " hops"], ["Diameter", an.diam + " hops"],
+      ["Modularity", an.Q.toFixed(3)], ["Cut points", an.ent.filter(function (x) { return x.cut; }).length]].forEach(function (s) { kpi(cov, s[0], String(s[1])); });
+
+    var st = graphEl.querySelector("[data-cgst-gstreams]"), maxD = 0;
+    st.textContent = "";
+    an.cs.forEach(function (c) { if (c.dens > maxD) maxD = c.dens; });
+    an.cs.slice().sort(function (p, r) { return r.n - p.n; }).forEach(function (c) {
+      var b = rowBtn(st, hueOf(c.c.id), c.c.name, c.n + " · " + pct(c.dens), function () { focusCluster(c.c.id === graph.focus ? "" : c.c.id); }, maxD ? 100 * c.dens / maxD : 0);
+      b.setAttribute("data-cluster-row", c.c.id);
+      b.setAttribute("aria-label", c.c.name + ": " + plural(c.n, "page") + ", internal density " + pct(c.dens) + ", " + plural(c.xOut, "outbound cross link"));
+    });
+
+    var pr = graphEl.querySelector("[data-cgst-gprio]");
+    pr.textContent = "";
+    top.slice(0, 8).forEach(function (x) {
+      rowBtn(pr, hueOf(x.e.cluster), x.e.title, "PI " + x.pri, function () { selectNode(x.e.path, true); }, x.pri);
+    });
+
+    var mxEl = graphEl.querySelector("[data-cgst-gmx]"), cl = site.clusters, L = 26, cell = 16, W = L + cl.length * cell, maxM = 1;
+    mxEl.textContent = "";
+    an.mx.forEach(function (row) { row.forEach(function (v) { if (v > maxM) maxM = v; }); });
+    var svg = sv("svg", { viewBox: "0 0 " + W + " " + W, "class": "cgst-gmx", role: "img", "aria-label": "Links between clusters, row to column" }, mxEl);
+    cl.forEach(function (c, i) {
+      var code = c.id.slice(0, 3).toUpperCase();
+      svText(svg, L - 3, L + i * cell + cell / 2 + 2, code, "", "end");
+      var t = svText(svg, L + i * cell + cell / 2, L - 4, code, "", "middle");
+      t.setAttribute("transform", "rotate(-90 " + (L + i * cell + cell / 2) + " " + (L - 4) + ")");
+      t.setAttribute("text-anchor", "start");
+      cl.forEach(function (d, j) {
+        var v = an.mx[i][j], rect = sv("rect", { x: L + j * cell, y: L + i * cell, width: cell, height: cell,
+          fill: v ? hueOf(c.id) : "#0c1014", "fill-opacity": v ? (0.12 + 0.88 * Math.sqrt(v / maxM)).toFixed(2) : "1" }, svg);
+        sv("title", {}, rect).textContent = c.name + " → " + d.name + ": " + plural(v, "link");
+        if (v) rect.addEventListener("click", function () {
+          var set = [];
+          [c.pillar].concat(c.members).forEach(function (p) {
+            if (site.byPath[p].related.some(function (r) { return site.byPath[r] && site.byPath[r].cluster === d.id; })) set.push(p);
+          });
+          setHits(set, c.id.toUpperCase() + " → " + d.id.toUpperCase());
+        });
+      });
+    });
+
+    var fo = graphEl.querySelector("[data-cgst-gpred]");
+    fo.textContent = "";
+    if (!an.fore.length) fo.appendChild(make("li", "cgst-gnote", "No unlinked pair shares three or more neighbours."));
+    an.fore.slice(0, 7).forEach(function (f) {
+      rowBtn(fo, "#e0c070", clip(P[f.a].title, 18) + " ↔ " + clip(P[f.b].title, 18), f.s.toFixed(1), function () {
+        setLayer("predict", true);
+        setHits([P[f.a].path, P[f.b].path], "forecast link");
+      });
+    });
+
+    var mo = graphEl.querySelector("[data-cgst-gmodels]");
+    mo.textContent = "";
+    setText(graphEl.querySelector("[data-cgst-gms]"), "run " + clock(an.at));
+    [["PageRank · d 0.85 · 60 iterations", "importance"], ["Brandes betweenness", "bridge"], ["Tarjan cut points", "critical"],
+      ["Reciprocity", "corroboration"], ["Modularity, declared clusters", "Q " + an.Q.toFixed(2)], ["Adamic–Adar link forecast", an.fore.length + " pairs"],
+      ["Radial cluster layout · phyllotaxis", "seeded"]].forEach(function (x) { rowBtn(mo, "", x[0], x[1], null); });
+
+    var feed = graphEl.querySelector("[data-cgst-gfeed]"), at = clock(an.at);
+    feed.textContent = "";
+    setText(graphEl.querySelector("[data-cgst-gfeedn]"), plural(an.find.length, "observation"));
+    an.find.forEach(function (f) {
+      var li = make("li");
+      li.appendChild(make("time", "", at));
+      var sv2 = make("span", "cgst-gsev", f.s.toUpperCase());
+      sv2.setAttribute("data-s", f.s);
+      li.appendChild(sv2);
+      li.appendChild(make("i", "", f.code));
+      if (f.x) {
+        var b = make("button", "", f.text);
+        b.type = "button";
+        b.addEventListener("click", function () { selectNode(f.x.e.path, true); });
+        li.appendChild(b);
+      } else li.appendChild(make("span", "", f.text));
+      feed.appendChild(li);
+    });
+
+    var leg = graphEl.querySelector("[data-cgst-glegend]"), seen = {};
+    leg.textContent = "";
+    site.clusters.forEach(function (c) {
+      var fam = FAMILY[c.id];
+      if (!fam || seen[fam[0]]) return;
+      seen[fam[0]] = 1;
+      var s = make("span", "cgst-gleg"), b = make("b");
+      b.style.setProperty("--h", fam[1]);
+      s.appendChild(b); s.appendChild(document.createTextNode(fam[0]));
+      leg.appendChild(s);
+    });
+    [["cut", "Cut point"], ["anom", "Finding"], ["pred", "Forecast link"]].forEach(function (k) {
+      var s = make("span", "cgst-gleg"), b = make("b");
+      b.setAttribute("data-k", k[0]);
+      s.appendChild(b); s.appendChild(document.createTextNode(k[1]));
+      leg.appendChild(s);
+    });
+    var maxH = 0;
+    an.ent.forEach(function (x) { if (x.depth > maxH) maxH = x.depth; });
+    gHop.max = String(Math.max(1, maxH));
+    gHop.value = gHop.max;
+    paintProfile();
+  }
+
+  function meter(box, label, v, hue) {
+    var d = make("div", "cgst-gmeter"), b = make("b"), i = make("i");
+    i.style.width = Math.max(0, Math.min(100, v)) + "%";
+    if (hue) d.style.setProperty("--m", hue);
+    b.appendChild(i);
+    d.appendChild(make("span", "", label)); d.appendChild(b); d.appendChild(make("em", "", String(v)));
+    box.appendChild(d);
+  }
+
+  function paintProfile() {
+    var box = graphEl && graphEl.querySelector("[data-cgst-gprof]"), an = graph.an;
+    if (!box || !an) return;
+    box.textContent = "";
+    var x = graph.sel ? an.ent[an.idx[graph.sel]] : null;
+    setText(graphEl.querySelector("[data-cgst-gprof-id]"), x ? "ENT-" + ("00" + x.i).slice(-3) : "no selection");
+    if (!x) {
+      box.appendChild(make("p", "cgst-gnote", "Select a node, a priority target or a feed line. Importance is PageRank, bridge is betweenness, " +
+        "exposure falls as inbound links rise, corroboration is the share of links returned. All are scaled 0–100 against this graph."));
+      if (site.here && graph.node[site.here.path]) {
+        var acts = make("div", "cgst-gacts"), b = make("button", "cgst-gcmd", "Profile this page");
+        b.type = "button";
+        b.addEventListener("click", function () { selectNode(site.here.path, true); });
+        acts.appendChild(b); box.appendChild(acts);
+      }
+      return;
+    }
+    var e = x.e, hue = hueOf(e.cluster), c = site.byId[e.cluster];
+    box.style.setProperty("--h", hue);
+    box.appendChild(make("p", "cgst-gprof-c", (FAMILY[e.cluster] || ["Other"])[0] + " · " + (c ? c.name : e.cluster)));
+    box.appendChild(make("p", "cgst-gprof-t", e.title));
+    if (e.summary) box.appendChild(make("p", "cgst-gprof-s", e.summary));
+    meter(box, "Importance", x.imp, hue);
+    meter(box, "Bridge", x.bri, "#9fc2e0");
+    meter(box, "Exposure", x.exp, x.exp >= 60 ? "#e5484d" : x.exp >= 30 ? "#e0a040" : "#7fd1a8");
+    meter(box, "Corroboration", x.conf, "#a48bf0");
+    meter(box, "Priority", x.pri, "#d4b25a");
+    var dl = make("dl", "cgst-gstats");
+    [["Inbound", x.inD], ["Outbound", x.outD], ["Depth from home", x.depth < 0 ? "unreached" : x.depth + " hops"], ["Cut point", x.cut ? "yes" : "no"]]
+      .forEach(function (s) { kpi(dl, s[0], String(s[1])); });
+    box.appendChild(dl);
+    var ties = graph.an.adj[x.i].map(function (j) { return an.ent[j]; }).sort(function (p, r) { return r.imp - p.imp; }).slice(0, 5);
+    if (ties.length) {
+      box.appendChild(make("p", "cgst-gpath", "Strongest ties"));
+      var ul = make("ul", "cgst-grows");
+      ties.forEach(function (t) {
+        var o = an.out[x.i].indexOf(t.i) > -1, n2 = an.out[t.i].indexOf(x.i) > -1;
+        rowBtn(ul, hueOf(t.e.cluster), (o && n2 ? "↔ " : o ? "→ " : "← ") + t.e.title, "IMP " + t.imp, function () { selectNode(t.e.path, true); });
+      });
+      box.appendChild(ul);
+    }
+    an.find.filter(function (f) { return f.x === x; }).forEach(function (f) {
+      var p = make("p", "cgst-gnote");
+      var s = make("span", "cgst-gsev", f.s.toUpperCase() + " " + f.code + " ");
+      s.setAttribute("data-s", f.s);
+      p.appendChild(s); p.appendChild(document.createTextNode(f.text));
+      box.appendChild(p);
+    });
+    var acts2 = make("div", "cgst-gacts"), open = make("a", "cgst-gcmd", "Open page"), tr = make("button", "cgst-gcmd", "Trace reach"), clr = make("button", "cgst-gcmd", "Clear");
+    open.href = e.url;
+    tr.type = clr.type = "button";
+    tr.addEventListener("click", function () { playTrace(true); });
+    clr.addEventListener("click", function () { selectNode(""); });
+    acts2.appendChild(open); acts2.appendChild(tr); acts2.appendChild(clr);
+    box.appendChild(acts2);
+  }
+
+  // Selecting a node lights its relationships and the two hops around it.
+  function selectNode(path, zoom) {
+    var an = graph.an;
+    if (!an) return;
+    graph.sel = path && an.idx[path] != null ? path : "";
+    Object.keys(graph.node).forEach(function (p) { graph.node[p].el.classList.remove("cgst-gsel", "cgst-gh1", "cgst-gh2"); });
+    Array.prototype.forEach.call(gSvg.querySelectorAll(".cgst-gedge.cgst-gon"), function (el) { el.classList.remove("cgst-gon"); });
+    stopTrace();
+    if (graph.sel) {
+      var i = an.idx[graph.sel], h1 = an.adj[i], seen = {};
+      graph.node[graph.sel].el.classList.add("cgst-gsel");
+      h1.forEach(function (j) {
+        graph.node[an.P[j].path].el.classList.add("cgst-gh1");
+        an.adj[j].forEach(function (k) { if (k !== i && h1.indexOf(k) < 0 && !seen[k]) { seen[k] = 1; graph.node[an.P[k].path].el.classList.add("cgst-gh2"); } });
+      });
+      graph.eb[i].forEach(function (el) { el.classList.add("cgst-gon"); });
+      showLinks(graph.sel);
+      if (zoom) { var nd = graph.node[graph.sel]; setVB({ x: nd.x - 170, y: nd.y - 170, w: 340 }, true); }
+    } else clearLinks();
+    Array.prototype.forEach.call(graphEl.querySelectorAll("[data-cgst-gprio] .cgst-grow"), function (b) { b.removeAttribute("aria-current"); });
+    paintDim();
+    paintProfile();
+  }
+
+  // Propagation: how far a change on the traced page reaches, link by link.
+  function setHop(h) {
+    var an = graph.an;
+    if (!an) return;
+    var src = graph.sel ? an.idx[graph.sel] : an.home, max = +gHop.max, d = reachFrom(an.out, src), hit = 0;
+    graph.hop = h < 0 || h > max ? -1 : h;
+    an.P.forEach(function (e, i) {
+      var off = graph.hop >= 0 && (d[i] < 0 || d[i] > graph.hop);
+      if (!off) hit++;
+      if (off) graph.node[e.path].el.setAttribute("data-out", ""); else graph.node[e.path].el.removeAttribute("data-out");
+    });
+    gHop.value = String(graph.hop < 0 ? max : graph.hop);
+    setText(gHopOut, graph.hop < 0 ? "All hops" : "Hop " + graph.hop + " · " + hit + " reached");
+  }
+  function stopTrace() {
+    clearInterval(graph.play);
+    graph.play = 0;
+    if (gPlay) gPlay.setAttribute("aria-pressed", "false");
+    if (gHop) setHop(-1);
+  }
+  function playTrace(start) {
+    if (graph.play || !start) { stopTrace(); return; }
+    var h = 0;
+    gPlay.setAttribute("aria-pressed", "true");
+    setHop(0);
+    graph.play = setInterval(function () {
+      h++;
+      if (h > +gHop.max) { clearInterval(graph.play); graph.play = 0; gPlay.setAttribute("aria-pressed", "false"); return; }
+      setHop(h);
+    }, 900);
+  }
+
+  function setLayer(name, on) {
+    gSvg.setAttribute("data-" + name, on ? "1" : "0");
+    var b = graphEl.querySelector("[data-glayer='" + name + "']");
+    if (b) b.setAttribute("aria-pressed", on ? "true" : "false");
   }
 
   // The label scale keeps text the same size on screen at any zoom.
@@ -3477,8 +4132,9 @@
     setVB({ x: p.x - (p.x - v.x) * s, y: p.y - (p.y - v.y) * s, w: w }, animate);
   }
   function fitCluster(c) {
-    if (!c) { setVB({ x: 0, y: 0, w: 1000 }, true); return; }
-    var b = c.box, x0 = Math.min(b.x0, c.gx) - 40, x1 = Math.max(b.x1, c.gx) + 40, y0 = Math.min(b.y0, c.gy) - 50, y1 = Math.max(b.y1, c.gy) + 50;
+    // a portrait canvas gets extra width so the outward labels stay on screen
+    if (!c) { var r = gView.getBoundingClientRect(), w0 = r.height > r.width * 1.1 ? (r.width < 520 ? 1220 : 1120) : 1000; setVB({ x: 500 - w0 / 2, y: 500 - w0 / 2, w: w0 }, true); return; }
+    var b = c.box, x0 = b.x0 - 90, x1 = b.x1 + 90, y0 = b.y0 - 30, y1 = b.y1 + 40;
     var w = Math.max(x1 - x0, y1 - y0, 260);
     setVB({ x: (x0 + x1) / 2 - w / 2, y: (y0 + y1) / 2 - w / 2, w: w }, true);
   }
@@ -3490,11 +4146,14 @@
       el.classList.toggle("cgst-gon", on);
       if (el.classList.contains("cgst-gnode")) el.setAttribute("tabindex", on ? "0" : "-1");
     });
+    Array.prototype.forEach.call(graphEl.querySelectorAll("[data-cluster-row]"), function (b) {
+      if (b.getAttribute("data-cluster-row") === graph.focus) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current");
+    });
     paintDim();
     fitCluster(site.byId[graph.focus]);
     paintSide();
   }
-  function paintDim() { gSvg.setAttribute("data-dim", graph.focus || graph.hits.length ? "1" : "0"); }
+  function paintDim() { gSvg.setAttribute("data-dim", graph.focus || graph.hits.length || graph.sel ? "1" : "0"); }
 
   function setHits(paths, label) {
     graph.hits = (paths || []).filter(function (p) { return graph.node[p]; });
@@ -3509,25 +4168,31 @@
     paintSide();
   }
 
-  // Data routing: a page's related links light up as flowing curves.
+  // Data routing: a page's links out flow bright, its links in flow back.
   function showLinks(path) {
     if (!gLinks) return;
     gLinks.textContent = "";
-    var e = site.byPath[path], from = graph.node[path];
-    if (!e || !from) return;
-    e.related.forEach(function (p) {
-      var to = graph.node[p];
-      if (!to) return;
-      var mx = (from.x + to.x) / 2, my = (from.y + to.y) / 2, cx = mx + (500 - mx) * 0.55, cy = my + (500 - my) * 0.55;
-      sv("path", { d: "M" + from.x.toFixed(1) + " " + from.y.toFixed(1) + " Q" + cx.toFixed(1) + " " + cy.toFixed(1) + " " + to.x.toFixed(1) + " " + to.y.toFixed(1),
+    var e = site.byPath[path], from = graph.node[path], an = graph.an;
+    if (!e || !from || !an) return;
+    function route(to, inbound) {
+      var mx = (from.x + to.x) / 2, my = (from.y + to.y) / 2, cx = mx + (500 - mx) * 0.3, cy = my + (500 - my) * 0.3;
+      var el = sv("path", { d: "M" + from.x.toFixed(1) + " " + from.y.toFixed(1) + " Q" + cx.toFixed(1) + " " + cy.toFixed(1) + " " + to.x.toFixed(1) + " " + to.y.toFixed(1),
         "class": "cgst-glink" }, gLinks);
-    });
+      if (inbound) el.setAttribute("data-in", "");
+    }
+    var i = an.idx[path];
+    an.out[i].forEach(function (j) { route(graph.node[an.P[j].path], false); });
+    an.inn[i].forEach(function (j) { if (an.out[i].indexOf(j) < 0) route(graph.node[an.P[j].path], true); });
     gPath.textContent = "";
     gPath.appendChild(document.createTextNode("Sentinel Core › " + e.group + " › "));
     gPath.appendChild(make("b", "", e.title));
-    gPath.appendChild(document.createTextNode(" · " + plural(e.related.length, "link")));
+    gPath.appendChild(document.createTextNode(" · " + an.out[i].length + " out · " + an.inn[i].length + " in"));
   }
-  function clearLinks() { if (gLinks) gLinks.textContent = ""; paintPath(); }
+  function clearLinks() {
+    if (graph.sel) { showLinks(graph.sel); return; }
+    if (gLinks) gLinks.textContent = "";
+    paintPath();
+  }
   function paintPath() {
     if (!gPath) return;
     gPath.textContent = "";
@@ -3603,7 +4268,9 @@
         return;
       }
       buildGraph();
-      setText(gSub, plural(site.pages.length, "page") + " · " + plural(site.clusters.length, "cluster") + " · " + plural(site.links, "link") + " · built from the site index");
+      setText(gSub, plural(site.pages.length, "entity", "entities") + " · " + plural(graph.an.m, "relationship") + " · " +
+        plural(site.clusters.length, "cluster") + " · " + plural(graph.an.find.length, "observation") + " · built from the site index");
+      selectNode("");
       graph.hits = [];
       Object.keys(graph.node).forEach(function (p) { graph.node[p].el.classList.remove("cgst-ghit"); });
       if (gFind) gFind.value = "";
@@ -3634,6 +4301,14 @@
     gFind = graphEl.querySelector("#cgstGFind");
     gSub = graphEl.querySelector("[data-cgst-gsub]");
     gSide = graphEl.querySelector(".cgst-gside");
+    gHop = graphEl.querySelector("#cgstGHop");
+    gHopOut = graphEl.querySelector("[data-cgst-ghop]");
+    gPlay = graphEl.querySelector("[data-cgst-gplay]");
+    gHop.addEventListener("input", function () {
+      clearInterval(graph.play); graph.play = 0; gPlay.setAttribute("aria-pressed", "false");
+      var v = +gHop.value;
+      setHop(v >= +gHop.max ? -1 : v);
+    });
 
     graphEl.addEventListener("keydown", function (event) {
       if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); closeGraph(); return; }
@@ -3651,7 +4326,17 @@
       if (event.target === graphEl) { closeGraph(); return; }
       var cl = event.target.closest ? event.target.closest(".cgst-gcluster") : null;
       if (cl) { focusCluster(cl.getAttribute("data-cluster") === graph.focus ? "" : cl.getAttribute("data-cluster")); return; }
-      if (event.target.closest && event.target.closest(".cgst-gcore")) { setHits([], ""); if (gFind) gFind.value = ""; focusCluster(""); }
+      if (event.target.closest && event.target.closest(".cgst-gcore")) { setHits([], ""); if (gFind) gFind.value = ""; selectNode(""); focusCluster(""); return; }
+      var ly = event.target.closest ? event.target.closest("[data-glayer]") : null;
+      if (ly) { var name = ly.getAttribute("data-glayer"); setLayer(name, gSvg.getAttribute("data-" + name) !== "1"); return; }
+      if (event.target.closest && event.target.closest("[data-cgst-gplay]")) { playTrace(!graph.play); return; }
+      // a node selects and profiles; a modified click still opens the page
+      var nd = event.target.closest ? event.target.closest(".cgst-gnode") : null;
+      if (nd && !(event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)) {
+        event.preventDefault();
+        var p = nd.getAttribute("data-path");
+        selectNode(p === graph.sel ? "" : p, false);
+      }
     });
     graphEl.addEventListener("keydown", function (event) {
       var t = event.target;
@@ -3912,11 +4597,15 @@
           '<div class="cgst-smart">' + smartHTML + '</div></div>' +
       '</section>';
 
+    var layerHTML = [["edges", "Links", 1], ["bounds", "Clusters", 1], ["heat", "Influence", 1], ["anomaly", "Anomalies", 1],
+      ["predict", "Forecast", 0], ["labels", "Labels", 0]].map(function (l) {
+      return '<button type="button" class="cgst-glayer" data-glayer="' + l[0] + '" aria-pressed="' + (l[2] ? "true" : "false") + '">' + l[1] + '</button>';
+    }).join("");
     var graphHTML =
       '<div class="cgst-graph" data-cgst-graph role="dialog" aria-modal="true" aria-labelledby="cgstGraphTitle" hidden>' +
         '<div class="cgst-gframe">' +
           '<div class="cgst-ghead">' +
-            '<div><span class="cgst-org" aria-hidden="true">CLEARGLASS KNOWLEDGE GRAPH</span>' +
+            '<div><p class="cgst-gorg" aria-hidden="true">ClearGlass · Sentinel Core <i>● Computed on this device</i></p>' +
               '<h2 class="cgst-gtitle" id="cgstGraphTitle" tabindex="-1">Intelligence Graph</h2>' +
               '<p class="cgst-gsub" data-cgst-gsub>Reading the site index…</p></div>' +
             '<div class="cgst-gtools">' +
@@ -3926,20 +4615,43 @@
               '<button type="button" class="cgst-gtool" data-cgst="g-close" aria-label="Close the Intelligence Graph">' + IC_X + '</button>' +
             '</div>' +
           '</div>' +
+          '<dl class="cgst-gkpi" data-cgst-gkpi aria-label="Sentinel Core readout"></dl>' +
           '<div class="cgst-gbody">' +
+            '<aside class="cgst-gpanel cgst-gl" aria-label="Collection">' +
+              '<section class="cgst-gsec"><h3 class="cgst-gh">Collection coverage <span>site index</span></h3><dl class="cgst-gstats" data-cgst-gcov></dl></section>' +
+              '<section class="cgst-gsec"><h3 class="cgst-gh">Active streams <span>clusters · density</span></h3><ul class="cgst-grows" data-cgst-gstreams></ul></section>' +
+              '<section class="cgst-gsec"><h3 class="cgst-gh">Priority targets <span>priority index</span></h3><ul class="cgst-grows" data-cgst-gprio></ul></section>' +
+              '<section class="cgst-gsec cgst-gside"><h3 class="cgst-gh">Directory <span>every node</span></h3>' +
+                '<form class="cgst-gfind" role="search"><label class="cgst-sr" for="cgstGFind">Filter the graph</label>' +
+                  '<input id="cgstGFind" type="search" autocomplete="off" spellcheck="false" maxlength="120" placeholder="Filter: osint, pricing…"></form>' +
+                '<p class="cgst-gpath" data-cgst-gpath>Sentinel Core</p>' +
+                '<div data-cgst-gtree></div></section>' +
+            '</aside>' +
             '<div class="cgst-gview" data-cgst-gview tabindex="0" role="group" ' +
-              'aria-label="Graph canvas. Arrow keys pan, plus and minus zoom, 0 resets. The list beside it holds the same pages.">' +
-              '<svg class="cgst-gsvg" viewBox="0 0 1000 1000" aria-hidden="false"></svg>' +
+              'aria-label="Graph canvas. Arrow keys pan, plus and minus zoom, 0 resets. Select a node to profile it; the directory holds the same pages.">' +
+              '<div class="cgst-ghud cgst-ghud-tl" role="toolbar" aria-label="Graph layers">' + layerHTML + '</div>' +
+              '<svg class="cgst-gsvg" viewBox="0 0 1000 1000" aria-hidden="false" data-edges="1" data-bounds="1" data-heat="1" data-anomaly="1" data-predict="0" data-labels="0"></svg>' +
+              '<div class="cgst-ghud cgst-ghud-bl" aria-hidden="true" data-cgst-glegend></div>' +
+              '<div class="cgst-ghud cgst-ghud-br cgst-gplay">' +
+                '<button type="button" class="cgst-glayer" data-cgst-gplay aria-pressed="false">Trace</button>' +
+                '<label class="cgst-sr" for="cgstGHop">Propagation depth, in links from the traced page</label>' +
+                '<input id="cgstGHop" type="range" min="0" max="1" step="1" value="1">' +
+                '<output for="cgstGHop" data-cgst-ghop>All hops</output>' +
+              '</div>' +
             '</div>' +
-            '<div class="cgst-gside">' +
-              '<form class="cgst-gfind" role="search"><label class="cgst-sr" for="cgstGFind">Filter the graph</label>' +
-                '<input id="cgstGFind" type="search" autocomplete="off" spellcheck="false" maxlength="120" placeholder="Filter nodes: osint, pricing…"></form>' +
-              '<p class="cgst-gpath" data-cgst-gpath>Sentinel Core</p>' +
-              '<div data-cgst-gtree></div>' +
-            '</div>' +
+            '<aside class="cgst-gpanel cgst-gr" aria-label="Analysis">' +
+              '<section class="cgst-gsec"><h3 class="cgst-gh">Entity profile <span data-cgst-gprof-id>no selection</span></h3>' +
+                '<div class="cgst-gprof" data-cgst-gprof aria-live="polite"></div></section>' +
+              '<section class="cgst-gsec"><h3 class="cgst-gh">Correlation matrix <span>links, row → column</span></h3><div data-cgst-gmx></div></section>' +
+              '<section class="cgst-gsec"><h3 class="cgst-gh">Link forecast <span>Adamic–Adar</span></h3><ul class="cgst-grows" data-cgst-gpred></ul></section>' +
+              '<section class="cgst-gsec"><h3 class="cgst-gh">Analytic models <span data-cgst-gms></span></h3><ul class="cgst-grows" data-cgst-gmodels></ul>' +
+                '<p class="cgst-gnote">Structural signals only: every score describes how a page sits in the site’s own link graph. ' +
+                'No threat, geospatial or telemetry feed is connected, so none is drawn. ' +
+                'Drag to pan · wheel, pinch or +/− to zoom · select a node to profile it · Esc closes.</p></section>' +
+            '</aside>' +
+            '<section class="cgst-gfeed" aria-label="Observation feed"><h3 class="cgst-gh">Observation feed <span data-cgst-gfeedn></span></h3>' +
+              '<ol data-cgst-gfeed></ol></section>' +
           '</div>' +
-          '<p class="cgst-gfoot">Memory layer: clusters around Sentinel Core, pages around their cluster · ' +
-            'drag to pan · wheel, pinch or +/− to zoom · hover a page to trace its links · Esc closes</p>' +
         '</div>' +
       '</div>';
 
@@ -4197,7 +4909,7 @@
       }
       if (act === "g-in") { zoomAt(1 / 1.3, null, true); return; }
       if (act === "g-out") { zoomAt(1.3, null, true); return; }
-      if (act === "g-fit") { setHits([], ""); if (gFind) gFind.value = ""; focusCluster(""); return; }
+      if (act === "g-fit") { setHits([], ""); if (gFind) gFind.value = ""; selectNode(""); focusCluster(""); return; }
       if (act === "g-close") { closeGraph(); return; }
     });
 
