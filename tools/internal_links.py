@@ -101,6 +101,33 @@ EXCLUDED_PAGES: dict[str, tuple[str, str]] = {
     "clearglass_x5f_pricing_x5f_preview.html": ("Uploaded prototype", "noindex pricing preview upload"),
     "clearglass_x5f_rescue_x5f_draft_x5f_landing.html": ("Uploaded prototype", "noindex draft landing upload"),
     "fantasy-command-live.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
+    # "Add files via upload" exports (2026-09-27), resubmitted for the site on
+    # 2026-09-29. Reachable from nav.js and the systems catalog, but noindex:
+    # each carries copy that would need correcting before search should see it.
+    "clearGlass-revenue-os-v2.html": (
+        "Private operations", "noindex internal revenue-operations console; catalog status 'internal'"
+    ),
+    "gridshield_x5f_v6_x5f_ultra_x5f_do.html": (
+        "Uploaded prototype",
+        "noindex simulated demo; its compliance matrix shows dated evidence and VERIFIED "
+        "statuses with no sample-data label",
+    ),
+    "ontario_x5f_power_x5f_grid_x5f_live.html": (
+        "Uploaded prototype",
+        "noindex simulated demo; its go-live copy makes unverified claims about IESO data access",
+    ),
+    "clearglass_x5f_shield_x5f_dashboard.html": (
+        "Uploaded prototype", "noindex concept-stage Shield design; the public Shield page is shield.html"
+    ),
+    "Clearglass-Shield-Dashboard.html": (
+        "Duplicate surface", "noindex byte-identical copy of clearglass_x5f_shield_x5f_dashboard.html"
+    ),
+    "Ontario-Power-Grid-Live.html": (
+        "Duplicate surface", "noindex byte-identical copy of ontario_x5f_power_x5f_grid_x5f_live.html"
+    ),
+    "ontario_x5f_power_x5f_grid_x5f_live (1).html": (
+        "Duplicate surface", "noindex byte-identical copy of ontario_x5f_power_x5f_grid_x5f_live.html"
+    ),
 }
 
 # --------------------------------------------------------------------------
