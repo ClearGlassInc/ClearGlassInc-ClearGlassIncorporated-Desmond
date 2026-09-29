@@ -101,28 +101,58 @@ EXCLUDED_PAGES: dict[str, tuple[str, str]] = {
     "clearglass_x5f_pricing_x5f_preview.html": ("Uploaded prototype", "noindex pricing preview upload"),
     "clearglass_x5f_rescue_x5f_draft_x5f_landing.html": ("Uploaded prototype", "noindex draft landing upload"),
     "fantasy-command-live.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
-    # Second and third upload batches (b1a72f4, 2026-09-24; 49267a7, 2026-09-27).
-    # The six of that batch that PR #134 put in data/products.json and
-    # sitemap.xml are public, in PAGES. The rest are not in the catalog, so
-    # they follow the rule above. Four are byte-identical copies of another
-    # upload; Orelogic-Final-Dashboard-Production.html above was re-uploaded
-    # over its noindex head and has it again.
-    "ClearGlass-Ops-Dashboard.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
-    "Clearglass-Shield-Dashboard.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
-    "clearglass_x5f_shield_x5f_dashboard.html": (
-        "Uploaded prototype", "noindex copy of Clearglass-Shield-Dashboard.html"
+    # "Add files via upload" exports (2026-09-27), resubmitted for the site on
+    # 2026-09-29. Reachable from nav.js and the systems catalog, but noindex:
+    # each carries copy that would need correcting before search should see it.
+    "clearGlass-revenue-os-v2.html": (
+        "Private operations", "noindex internal revenue-operations console; catalog status 'internal'"
     ),
+    "gridshield_x5f_v6_x5f_ultra_x5f_do.html": (
+        "Uploaded prototype",
+        "noindex simulated demo; its compliance matrix shows dated evidence and VERIFIED "
+        "statuses with no sample-data label",
+    ),
+    "ontario_x5f_power_x5f_grid_x5f_live.html": (
+        "Uploaded prototype",
+        "noindex simulated demo; its go-live copy makes unverified claims about IESO data access",
+    ),
+    "clearglass_x5f_shield_x5f_dashboard.html": (
+        "Uploaded prototype", "noindex concept-stage Shield design; the public Shield page is shield.html"
+    ),
+    "Clearglass-Shield-Dashboard.html": (
+        "Duplicate surface", "noindex byte-identical copy of clearglass_x5f_shield_x5f_dashboard.html"
+    ),
+    "Ontario-Power-Grid-Live.html": (
+        "Duplicate surface", "noindex byte-identical copy of ontario_x5f_power_x5f_grid_x5f_live.html"
+    ),
+    "ontario_x5f_power_x5f_grid_x5f_live (1).html": (
+        "Duplicate surface", "noindex byte-identical copy of ontario_x5f_power_x5f_grid_x5f_live.html"
+    ),
+    # Other uploads from b1a72f4 (2026-09-24) and 49267a7 (2026-09-27) that
+    # are not in data/products.json: same rule as the batch above.
+    # Orelogic-Final-Dashboard-Production.html above was re-uploaded over its
+    # noindex head in b1a72f4 and has it again.
+    "ClearGlass-Ops-Dashboard.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
     "Fantasy-Command-Live (1).html": ("Uploaded prototype", "noindex re-upload of the FANTASY COMMAND page"),
     "fantasy-command-live (2).html": ("Uploaded prototype", "noindex re-upload of the FANTASY COMMAND page"),
     "GridShield-Ontario-V6-0-ULTRA-FINAL.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
     "Gridshield-Ontario-V3-Ics.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
     "Gridshield-V7-Ultra-Formal.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
     "Gridshield-V8-Live-Wire.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
-    "Ontario-Power-Grid-Live.html": (
-        "Uploaded prototype", "noindex copy of ontario_x5f_power_x5f_grid_x5f_live.html, which is public"
+    # The rest of PR #134's catalog batch, held to the same standard as the
+    # three above: reachable from nav.js, not indexed.
+    "ClearGlass-Revenue-Machine.html": (
+        "Private operations", "noindex internal revenue-operations console; catalog status 'internal'"
     ),
-    "ontario_x5f_power_x5f_grid_x5f_live (1).html": (
-        "Uploaded prototype", "noindex copy of ontario_x5f_power_x5f_grid_x5f_live.html, which is public"
+    "clearglass_x5f_shield_x5f_g01_x5f_verified.html": (
+        "Uploaded prototype",
+        "noindex simulation; it reads 'G01 VERIFIED' and '32/32 PASS', but "
+        "provenance/shield/g01-product-evidence.json records G01 as FAIL with no tests",
+    ),
+    "shield_x5f_nexus_x5f_live_x5f_all.html": (
+        "Uploaded prototype",
+        "noindex simulation; it reads 'G01 VERIFIED' and '32/32 PASS', but "
+        "provenance/shield/g01-product-evidence.json records G01 as FAIL with no tests",
     ),
     "docs/qics-dashboard.html": ("Private operations", "noindex QICS evidence desk"),
 }
@@ -157,14 +187,10 @@ PAGES: dict[str, tuple[str, str]] = {
     "attack-prompt-core.html": ("ATT&CK Prompt Integrator", "MITRE ATT&CK-aligned analysis prompts"),
     "environmental-cyber-risk.html": ("Environmental Cyber-Risk", "OT and environmental threat monitoring"),
     "shield.html": ("ClearGlass Shield", "privacy-first secure connectivity you can verify"),
-    "clearglass_x5f_shield_x5f_g01_x5f_verified.html": ("Shield G01 Verification Console", "the isolated Shield G01 test-environment evidence console"),
-    "shield_x5f_nexus_x5f_live_x5f_all.html": ("Shield Nexus Simulation", "the Shield test-state connectivity simulation"),
-    "gridshield_x5f_v6_x5f_ultra_x5f_do.html": ("GridShield-Ontario v6.0 ULTRA", "the passive-first GridShield-Ontario simulation"),
 
     # Intelligence & OSINT
     "intelligence.html": ("Intelligence", "the ClearGlass intelligence practice"),
     "minerals.html": ("Critical Minerals Intelligence", "source-transparent mineral profiles and Canadian supply-chain risk"),
-    "ontario_x5f_power_x5f_grid_x5f_live.html": ("Ontario Power Grid Live Demo", "a simulated Ontario power-grid visualization"),
     "flowsint.html": ("Flowsint", "OSINT investigation graph for domains, IPs and transforms"),
     "Ontario-osint.html": ("Ontario OSINT Deck", "regional open-source intelligence control deck"),
     "clearglass.html": ("Network Flow Intelligence", "see network traffic as living structure"),
@@ -204,8 +230,6 @@ PAGES: dict[str, tuple[str, str]] = {
     "project-board.html": ("Project Board", "drag-and-drop sprint board, time sheet and velocity console"),
     "percival-build.html": ("PERCIVAL BUILD", "spatial engineering workspace"),
     "clearsight.html": ("CLEARSIGHT", "edge-AI camera vision & object detection"),
-    "ClearGlass-Revenue-Machine.html": ("ClearGlass Revenue Machine", "the internal revenue-operations console"),
-    "clearGlass-revenue-os-v2.html": ("ClearGlass Revenue OS v2", "the revenue-operations console behind evidence and approval gates"),
 
     # Legal, tax & compliance
     "legal/index.html": ("Legal Infrastructure", "the ClearGlass corporate legal stack"),
@@ -349,9 +373,6 @@ CLUSTERS: dict[str, dict] = {
             "artemis-blue-team.html", "stegoforge.html",
             "attack-prompt-core.html", "environmental-cyber-risk.html",
             "bluedesk-mobile.html", "shield.html",
-            "clearglass_x5f_shield_x5f_g01_x5f_verified.html",
-            "shield_x5f_nexus_x5f_live_x5f_all.html",
-            "gridshield_x5f_v6_x5f_ultra_x5f_do.html",
         ],
         "cta": [CTA_STORE, ("offers/security-quick-audit.html", "Start with the $249 Security Quick-Audit")],
     },
@@ -364,7 +385,6 @@ CLUSTERS: dict[str, dict] = {
             "intelligence-interface.html", "intelligence-platform.html",
             "ClearGlass-NEXUS-v12-FINAL.html", "artemis.html", "xenolith.html",
             "docs/guardian_command_nexus_spec.html", "minerals.html",
-            "ontario_x5f_power_x5f_grid_x5f_live.html",
         ],
         "cta": [CTA_STORE, CTA_PRICING],
     },
@@ -389,7 +409,6 @@ CLUSTERS: dict[str, dict] = {
             "control-surface.html", "systems.html", "saas-platform.html",
             "CG-os.html", "percival-build.html", "clearsight.html",
             "command-center.html", "mission-control.html", "project-board.html",
-            "ClearGlass-Revenue-Machine.html", "clearGlass-revenue-os-v2.html",
         ],
         "cta": [CTA_OFFERS, CTA_PRICING],
     },

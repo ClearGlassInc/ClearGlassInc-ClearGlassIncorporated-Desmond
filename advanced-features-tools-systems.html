@@ -292,6 +292,10 @@
 .afx-st b{width:7px;height:7px;border-radius:50%}
 .afx-st--live{color:var(--afx-term)} .afx-st--live b{background:var(--afx-term);box-shadow:0 0 7px var(--afx-term)}
 .afx-st--gate{color:var(--afx-amber)} .afx-st--gate b{background:var(--afx-amber);box-shadow:0 0 7px var(--afx-amber)}
+.afx-reg a{text-decoration:underline;text-decoration-color:rgba(57,255,182,.4);text-underline-offset:3px}
+.afx-reg a:hover{text-decoration-color:currentColor}
+.afx-reg a:focus-visible{outline:2px solid var(--afx-term);outline-offset:3px;border-radius:2px}
+#surfaces .afx-reg td:nth-child(3){min-width:260px}
 
 /* ══ FINALE ════════════════════════════════════════════════════════════ */
 .afx-finale{text-align:center;padding:clamp(40px,6vw,80px) clamp(20px,4vw,64px);border-radius:var(--afx-r-lg)}
@@ -560,6 +564,27 @@
             <tr><td>PERCIVAL</td><td>sentinel/</td><td>Keyless governor/identity/capability/mission-memory stack</td><td><span class="afx-st afx-st--live"><b></b>live</span></td></tr>
             <tr><td>Agent Mesh</td><td>sentinel/</td><td>Mission routing &amp; shared memory between named agents</td><td><span class="afx-st afx-st--gate"><b></b>target-state</span></td></tr>
             <tr><td>Artemis Intelligence Platform</td><td>architecture blueprint</td><td>Governed Palantir reference stack with ontology, agents, evals, approvals, and rollback</td><td><span class="afx-st afx-st--gate"><b></b>target-state</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══ SIMULATION LAB ══ -->
+    <section class="afx-section afx-wrap" id="surfaces">
+      <div class="afx-shead afx-rise">
+        <div class="afx-shead__top"><span class="afx-idx">05</span><span class="afx-eyebrow">Simulation lab</span></div>
+        <h2 class="afx-title">Demo &amp; prototype <span class="t">surfaces</span></h2>
+        <p class="afx-sub">Interactive builds that run entirely in your browser on sample data. None of them reads a live feed, moves money or controls equipment, and none is listed in search until its copy is verified.</p>
+      </div>
+
+      <div class="afx-glass afx-reg-wrap afx-rise">
+        <table class="afx-reg">
+          <thead><tr><th>Surface</th><th>Domain</th><th>What it shows</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><a href="ontario_x5f_power_x5f_grid_x5f_live.html">Ontario Power Grid</a></td><td>energy · Ontario</td><td>Supply mix, demand and transmission flows on seeded demo values, not a live IESO feed</td><td><span class="afx-st afx-st--gate"><b></b>simulated</span></td></tr>
+            <tr><td><a href="gridshield_x5f_v6_x5f_ultra_x5f_do.html">GridShield-Ontario v6.0</a></td><td>OT security</td><td>Passive-first monitoring, Purdue-model zoning and a sample compliance matrix; no grid control</td><td><span class="afx-st afx-st--gate"><b></b>simulated</span></td></tr>
+            <tr><td><a href="clearglass_x5f_shield_x5f_dashboard.html">Shield dashboard</a></td><td>secure connectivity</td><td>Concept design for Shield; its build, audit and transparency log are not yet published</td><td><span class="afx-st afx-st--gate"><b></b>concept</span></td></tr>
+            <tr><td><a href="clearGlass-revenue-os-v2.html">Revenue OS v2</a></td><td>operations</td><td>Internal revenue-operations console; its payment and lead states are marked TEST or NOT VERIFIED</td><td><span class="afx-st afx-st--gate"><b></b>internal</span></td></tr>
           </tbody>
         </table>
       </div>

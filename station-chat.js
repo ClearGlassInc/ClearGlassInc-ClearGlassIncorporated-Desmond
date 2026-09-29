@@ -112,6 +112,7 @@
   var MODE_KEY = "cg-core-mode";
   var MC_KEY = "cg-core-mc";
   var LEDGER_KEY = "cg-core-ledger";             // sessionStorage: this tab's hash-chained decision log
+  var VOICE_KEY = "cg-core-voice";               // localStorage: "1" = read every answer aloud
 
   // Sentinel answered by Claude, through the ClearGlass control plane
   // (control-plane/app/sentinel_ai.py). Off until an operator names the
@@ -291,6 +292,11 @@
     '<path d="M6.5 7.2 10 10.4M17.4 7.6 14 10.4M16.6 17.3 14 13.8M7 16.8 10 13.8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';
   var IC_X = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
     '<path d="m7 7 10 10M17 7 7 17" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>';
+  // the Listen button carries both; CSS shows the one that matches aria-pressed
+  var IC_SPEAK = '<svg class="cgst-ic-speak" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+    '<path d="M4.5 9.6v4.8h3.3l4.2 3.4V6.2L7.8 9.6z" fill="currentColor"/>' +
+    '<path d="M15.4 9.2a3.9 3.9 0 0 1 0 5.6M17.9 6.7a7.4 7.4 0 0 1 0 10.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>' +
+    '<svg class="cgst-ic-stop" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="7.2" y="7.2" width="9.6" height="9.6" rx="1.6" fill="currentColor"/></svg>';
 
   // ── styles ───────────────────────────────────────────────────────────────
   var CSS = [
@@ -448,6 +454,10 @@
     "radial-gradient(110% 80% at 100% 0,rgba(76,195,255,.17),transparent 60%),",
     "radial-gradient(80% 60% at 0 100%,rgba(120,224,200,.09),transparent 70%),linear-gradient(165deg,#10121a,#07070b)}",
     "#cg-station .cgst-intel-top{display:flex;align-items:center;gap:8px}",
+    /* title + subline pair; the Site Intelligence header uses it */
+    "#cg-station .cgst-intel-id{flex:1 1 auto;min-width:0}",
+    "#cg-station .cgst-intel-sub{display:block;margin-top:4px;font-family:var(--cgst-mono);font-size:8px;font-weight:600;letter-spacing:.16em;",
+    "text-transform:uppercase;color:#8fb7cc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
     "#cg-station .cgst-intel-title{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:8px;margin:0;font-family:var(--cgst-mono);font-size:11px;font-weight:700;",
     "line-height:1.2;letter-spacing:.26em;text-transform:uppercase;color:#fff}",
     "#cg-station .cgst-intel-title::before{content:'';flex:0 0 auto;width:7px;height:7px;border-radius:1px;background:var(--cgst-blue);",
@@ -689,6 +699,14 @@
     "#cg-station .cgst-x{flex:0 0 auto;display:grid;place-items:center;width:26px;height:26px;padding:0;border-radius:8px;cursor:pointer;",
     "border:1px solid rgba(120,224,200,.3);background:rgba(8,16,16,.7);color:#cfeee7}",
     "#cg-station .cgst-x svg{width:14px;height:14px;display:block}",
+    "#cg-station .cgst-listen{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px 0 7px;border-radius:8px;cursor:pointer;",
+    "border:1px solid rgba(120,224,200,.3);background:rgba(8,16,16,.7);color:#cfeee7;font-family:var(--cgst-mono);font-size:8px;font-weight:700;",
+    "letter-spacing:.14em;text-transform:uppercase}",
+    "#cg-station .cgst-listen svg{width:13px;height:13px;display:block}",
+    "#cg-station .cgst-listen .cgst-ic-stop,#cg-station .cgst-listen[aria-pressed='true'] .cgst-ic-speak{display:none}",
+    "#cg-station .cgst-listen[aria-pressed='true'] .cgst-ic-stop{display:block}",
+    "#cg-station .cgst-listen[aria-pressed='true']{border-color:rgba(120,224,200,.75);background:rgba(120,224,200,.16);color:#fff}",
+    "#cg-station .cgst-voice{margin:-4px 0 0;font-family:var(--cgst-mono);font-size:7.5px;font-weight:600;letter-spacing:.1em;color:#8fb7cc}",
     "#cg-station .cgst-modes{display:flex;flex-wrap:wrap;gap:3px}",
     "#cg-station .cgst-mode{padding:3px 7px;border-radius:7px;cursor:pointer;border:1px solid rgba(120,224,200,.2);background:transparent;",
     "color:#9fc9c1;font-family:var(--cgst-mono);font-size:7.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}",
@@ -1506,6 +1524,7 @@
       { cmd: "/ledger", hint: "This tab's hash-chained audit ledger", run: function () { runIntent({ kind: "ledger" }, "", "technical"); } },
       { cmd: "/why", hint: "Replay a decision · /why 3", run: function (arg) { runIntent({ kind: "why", seq: parseInt(arg, 10) || ledgerEntries().length }, "", "technical"); } },
       { cmd: "/simulate", hint: "Dry-run a command · /simulate take me to pricing", run: function (arg) { runIntent({ kind: "simulate", arg: arg }, "", "technical"); } },
+      { cmd: "/voice", hint: "Read answers aloud · /voice off", run: function (arg) { setVoice(arg); } },
       { cmd: "/topic", hint: "Filter the hub by topic · /topic cyber", run: function (arg) {
         var t = topicFor(arg);
         go(t ? hubUrl(t.key) : hubUrl(null, arg));
@@ -1572,10 +1591,25 @@
         .map(function (c) { return { key: c.cmd, text: c.hint, run: function () { c.run(""); } }; });
     }
     var query = raw.trim();
-    if (query.length < 3 || intel.state !== "ready") return [];
-    var hits = findBriefs(query);
-    if (!hits.length) return [];
-    var opts = [{ key: "Ask", ask: true, text: "Ask Sentinel: “" + query + "”", run: function () { openSentinel(query); } }];
+    if (query.length < 3 || (intel.state !== "ready" && site.state !== "ready")) return [];
+    // A phrasing with a site meaning leads; anything else keeps "Ask Sentinel"
+    // first and pre-selected, exactly as before.
+    var intent = intentOf(query);
+    var pages = site.state === "ready" ? rank(query).slice(0, 3) : [];
+    var hits = intel.state === "ready" ? findBriefs(query).slice(0, pages.length ? 3 : 4) : [];
+    if (!intent && !pages.length && !hits.length) return [];
+    var opts = [];
+    if (intent) opts.push(intentOption(intent, query));
+    var viaAi = ai.state === "ready";
+    // "ask" marks the Sentinel hand-off, which keeps the words for an older sentinel.js (see runOption)
+    opts.push({ key: "Ask", ask: !viaAi && hasSentinel(),
+      text: (viaAi ? "Ask Claude: “" : hasSentinel() ? "Ask Sentinel: “" : "Search the site: “") + query + "”",
+      run: function () {
+        if (viaAi) askAi(query);
+        else if (hasSentinel()) openSentinel(query);
+        else runIntent({ kind: "search", arg: query }, query);
+      } });
+    pages.forEach(function (h) { opts.push({ key: "Page", text: h.e.title + " · " + h.e.group, run: function () { go(h.e.url); } }); });
     hits.forEach(function (p) { opts.push({ key: "Brief", text: p.title, run: function () { openBrief(p); } }); });
     opts.push({ key: "Hub", text: "Search every brief for “" + query + "”", run: function () { go(hubUrl(null, query)); } });
     return opts;
@@ -1984,7 +2018,7 @@
   // numbered, and every card says what it assumed and how it was resolved.
   // A mode only reorders those structures; the facts are the same in all four.
   var ans = { spec: null, pick: "auto", all: false, ms: 0, acts: [], runs: [] };
-  var ansEl, ansKind, ansTitle, ansLede, ansBody, ansActs, ansBasis, ansLive;
+  var ansEl, ansKind, ansTitle, ansLede, ansBody, ansActs, ansBasis, ansLive, ansListen, ansVoice;
 
   function readMode() {
     try { var v = localStorage.getItem(MODE_KEY); if (v === "auto" || modeById(v)) return v; } catch (e) {}
@@ -2045,6 +2079,7 @@
     var s = ans.spec;
     if (!s || !ansEl) return;
     var mode = curMode();
+    if (arrive) stopSpeaking();                // a new or re-framed answer ends the old one
     ans.runs = [];
     ans.acts = [];
     ansEl.hidden = false;
@@ -2086,6 +2121,8 @@
       void ansEl.offsetWidth;                 // restart the arrival animation
       ansEl.classList.add("cgst-routing");
     }
+    if (arrive && voice.auto) speakAnswer();
+    paintVoice();
   }
 
   function listRows(rows, limit) {
@@ -2257,6 +2294,7 @@
 
   function hideAnswer() {
     if (!ansEl) return;
+    stopSpeaking();
     ansEl.hidden = true;
     ans.spec = null;
   }
@@ -2266,6 +2304,173 @@
     if (!ansEl || ansEl.hidden) return;
     try { ansTitle.focus({ preventScroll: true }); } catch (e) { ansTitle.focus(); }
     if (panel && ansEl.offsetParent === panel) panel.scrollTop = Math.max(0, ansEl.offsetTop - 8);
+  }
+
+  // ── Voice: Sentinel reads its answers aloud ──────────────────────────────
+  // A British English voice from the browser's own speech engine (Web Speech
+  // API): nothing is fetched or installed. It speaks only when asked, through
+  // an answer's Listen button or /voice for every answer in this browser.
+  // Gender is not an API field, so a female voice is chosen by name. A
+  // natural-sounding voice ranks first, an on-device one breaks the tie, and a
+  // network voice says where the text goes.
+  var VOICE = { lang: "en-GB", rate: 0.96, pitch: 1, max: 40 };
+  var VOICE_FEMALE = /\b(libby|sonia|maisie|hollie|abbi|bella|olivia|mia|hazel|susan|kate|serena|stephanie|martha|female)\b/i;
+  var VOICE_MALE = /\b(daniel|george|ryan|thomas|arthur|oliver|alfie|elliot|ethan|noah|male)\b/i;
+  var VOICE_NATURAL = /\b(natural|neural|premium|enhanced)\b/i;
+  var VOICE_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September",
+    "October", "November", "December"];
+  var voice = { ok: false, pick: null, auto: false, speaking: false, token: 0, queue: [] };
+
+  function pickVoice(list) {
+    var best = null, top = 0;
+    Array.prototype.forEach.call(list || [], function (v) {
+      if (!v || String(v.lang || "").replace("_", "-").toLowerCase() !== "en-gb") return;
+      var name = String(v.name || "");
+      if (VOICE_MALE.test(name)) return;
+      var score = (VOICE_FEMALE.test(name) ? 4 : 1) + (VOICE_NATURAL.test(name) ? 3 : 0) + (v.localService ? 2 : 0);
+      if (score > top) { best = v; top = score; }
+    });
+    return best;
+  }
+  function voiceLabel(v) { return String(v.name || "").replace(/\s*[-–]\s*English\b.*$/i, "").trim() || "a British English voice"; }
+  function voiceWhere(v) {
+    if (v.localService) return "spoken on this device";
+    var who = /google/i.test(v.name) ? "Google" : /microsoft/i.test(v.name) ? "Microsoft" : "its speech service";
+    return "your browser sends the answer text to " + who + " to voice it";
+  }
+
+  // Written text, said the way a person would say it
+  function speakable(text) {
+    return String(text || "")
+      .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+      .replace(/https?:\/\/\S+/g, "")
+      .replace(/\b(\d{4})-(\d{2})-(\d{2})\b/g, function (m, y, mo, d) {
+        return VOICE_MONTHS[+mo - 1] ? +d + " " + VOICE_MONTHS[+mo - 1] + " " + y : m;
+      })
+      .replace(/\b(\d{1,2}:\d{2}):\d{2}\b/g, "$1")
+      .replace(/\be\.g\.\s*/gi, "for example, ").replace(/\bi\.e\.\s*/gi, "that is, ")
+      .replace(/\bvs\.?\s/gi, "versus ")
+      .replace(/(\d)\s*–\s*(\d)/g, "$1 to $2")
+      .replace(/×\s*(\d)/g, "times $1")
+      .replace(/\s*&\s*/g, " and ").replace(/\s*∩\s*/g, " and ").replace(/\s\+\s/g, " or ")
+      .replace(/\s*→\s*/g, " to ")
+      .replace(/\s*[·•|›—–]\s*/g, ", ")
+      .replace(/#(\d)/g, "number $1")
+      .replace(/[*_`#>✓✔↗]+/g, " ")
+      .replace(/\s+([,.;:!?])/g, "$1").replace(/,\s*,/g, ",")
+      .replace(/\s+/g, " ").trim();
+  }
+  // one utterance per sentence: the engine pauses between them, and long
+  // utterances are cut short in some browsers
+  function sentences(text) {
+    var bits = String(text || "").split(/([.!?…]+["”’)]*)\s+/), out = [];
+    for (var i = 0; i < bits.length; i += 2) {
+      var s = (bits[i] + (bits[i + 1] || "")).trim();
+      if (s) out.push(s);
+    }
+    return out;
+  }
+
+  // What Sentinel says: the answer, as a person would give it. Claude's answer
+  // is not read its own question back; tables and link lists stay on screen.
+  function spokenScript(s, mode) {
+    var out = [];
+    if (!s) return out;
+    if (s.ai) {
+      if (!s.prose) return out;                // still waiting on Claude
+      proseBlocks(s.prose).forEach(function (b) {
+        if (b.t === "p" || b.t === "h") out.push(b.text);
+        else if (b.items) out = out.concat(b.items);
+      });
+    } else {
+      var lede = (s.thesis && (s.thesis[mode] || s.thesis.executive)) || "";
+      out.push(lede || s.title);
+      (s.steps || []).forEach(function (st) { out.push(st.title + ": " + st.text + (st.why ? ", " + st.why : "")); });
+    }
+    (s.assumptions || []).forEach(function (a) { out.push(a); });
+    return out;
+  }
+
+  function speak(parts) {
+    if (!voice.pick) return false;
+    var lines = [];
+    (parts || []).forEach(function (p) {
+      var t = speakable(p);
+      if (t && !/[.!?…:]$/.test(t)) t += ".";
+      sentences(t).forEach(function (x) { lines.push(x); });
+    });
+    lines = lines.slice(0, VOICE.max);
+    if (!lines.length) return false;
+    stopSpeaking();
+    var synth = window.speechSynthesis, token = voice.token;
+    if (synth.paused) { try { synth.resume(); } catch (e) {} }
+    voice.speaking = true;
+    lines.forEach(function (line, i) {
+      var u = new window.SpeechSynthesisUtterance(line);
+      voice.queue.push(u);                     // held until spoken: Chrome drops end events of collected utterances
+      u.voice = voice.pick;
+      u.lang = voice.pick.lang || VOICE.lang;
+      u.rate = VOICE.rate;
+      u.pitch = VOICE.pitch;
+      if (i === lines.length - 1) {
+        u.onend = u.onerror = function () { if (token === voice.token) { voice.speaking = false; voice.queue = []; paintVoice(); } };
+      }
+      try { synth.speak(u); } catch (e) {}
+    });
+    paintVoice();
+    return true;
+  }
+  function stopSpeaking() {
+    voice.token++;
+    var was = voice.speaking;
+    voice.speaking = false;
+    voice.queue = [];
+    if (voice.ok) { try { window.speechSynthesis.cancel(); } catch (e) {} }
+    if (was) paintVoice();
+  }
+  function speakAnswer() { return !!ans.spec && speak(spokenScript(ans.spec, curMode())); }
+
+  function paintVoice() {
+    var v = voice.pick, where = v ? voiceLabel(v) + " · " + voiceWhere(v) : "";
+    if (ansListen) {
+      ansListen.hidden = !v;
+      ansListen.setAttribute("aria-pressed", String(voice.speaking));
+      ansListen.setAttribute("aria-label", voice.speaking ? "Stop reading aloud" : "Read this answer aloud");
+      setText(ansListen.querySelector("[data-cgst-listen-label]"), voice.speaking ? "Stop" : "Listen");
+      if (v) ansListen.title = "British English voice: " + where;
+    }
+    if (ansVoice) {
+      ansVoice.hidden = !(v && (voice.speaking || voice.auto));
+      setText(ansVoice, v ? "Voice · " + where : "");
+    }
+  }
+
+  // /voice, /voice on, /voice off: read every answer aloud in this browser
+  function setVoice(arg) {
+    var a = String(arg || "").trim().toLowerCase();
+    var v = voice.pick, on = a === "on" ? true : a === "off" ? false : !voice.auto;
+    voice.auto = !!(on && v);
+    try { localStorage.setItem(VOICE_KEY, voice.auto ? "1" : "0"); } catch (e) {}
+    if (!voice.auto) stopSpeaking();
+    show({ kind: "Voice", mode: "executive", noLedger: true,
+      title: !v ? "No British English voice here" : voice.auto ? "Voice replies on" : "Voice replies off",
+      thesis: { executive: !v
+        ? "This browser has no British English voice installed, so Sentinel answers in text only. Everything else works as before."
+        : voice.auto
+          ? "I'll read each answer aloud in " + voiceLabel(v) + ", a British English voice. Type /voice off to stop."
+          : "Answers stay silent. The Listen button on an answer still reads that one aloud." },
+      basis: "Web Speech API · " + (v ? voiceLabel(v) + " · " + voiceWhere(v) : "no en-GB voice on this device") });
+    presentAnswer();
+  }
+
+  function initVoice() {
+    voice.ok = !!(window.speechSynthesis && window.SpeechSynthesisUtterance);
+    if (!voice.ok) return;
+    try { voice.auto = localStorage.getItem(VOICE_KEY) === "1"; } catch (e) {}
+    var load = function () { voice.pick = pickVoice(window.speechSynthesis.getVoices()); paintVoice(); };
+    load();
+    try { window.speechSynthesis.addEventListener("voiceschanged", load); } catch (e) { window.speechSynthesis.onvoiceschanged = load; }
+    window.addEventListener("pagehide", stopSpeaking);
   }
 
   // ── Site Intelligence: answer builders ───────────────────────────────────
@@ -3576,7 +3781,7 @@
     try { window.dispatchEvent(new CustomEvent("cg-station:toggle", { detail: { open: open } })); } catch (e) {}
     syncClock();
     syncRun();
-    if (!open) closeSuggest();
+    if (!open) { closeSuggest(); stopSpeaking(); }
     if (open) { typeStatus(); loadFeed(); loadSite(); }
     if (!moveFocus) return;
     if (open) {
@@ -3658,6 +3863,8 @@
       '<section class="cgst-answer" data-cgst-answer aria-labelledby="cgstAnsTitle" hidden>' +
         '<div class="cgst-ans-top">' +
           '<span class="cgst-ans-kind" data-cgst-ans-kind>Site intelligence</span>' +
+          '<button type="button" class="cgst-listen" data-cgst="ans-listen" data-cgst-ans-listen aria-pressed="false" ' +
+            'aria-label="Read this answer aloud" hidden>' + IC_SPEAK + '<span data-cgst-listen-label>Listen</span></button>' +
           '<button type="button" class="cgst-x" data-cgst="ans-close" aria-label="Dismiss the answer">' + IC_X + '</button>' +
         '</div>' +
         '<div class="cgst-modes" role="group" aria-label="Writing mode">' + modeHTML + '</div>' +
@@ -3666,6 +3873,7 @@
         '<div class="cgst-ans-body" data-cgst-ans-body></div>' +
         '<div class="cgst-ans-acts" data-cgst-ans-acts></div>' +
         '<p class="cgst-basis" data-cgst-ans-basis></p>' +
+        '<p class="cgst-voice" data-cgst-voice-note hidden></p>' +
         '<span class="cgst-sr" role="status" aria-live="polite" data-cgst-ans-live></span>' +
       '</section>';
 
@@ -3805,8 +4013,10 @@
             'placeholder="Ask Sentinel, or / for commands…">' +
           '<button type="submit" class="cgst-send" aria-label="Send to Sentinel">' + IC_SEND + '</button>' +
         '</form>' +
-        '<ul class="cgst-suggest" id="cgstSuggest" role="listbox" aria-label="Commands and brief matches" hidden></ul>' +
-        '<p class="cgst-sr" id="cgstAskHint">Type / for commands. Three or more letters also match briefs.</p>' +
+        '<ul class="cgst-suggest" id="cgstSuggest" role="listbox" aria-label="Commands, pages and brief matches" hidden></ul>' +
+        '<p class="cgst-sr" id="cgstAskHint">Type / for commands. Three or more letters also match pages and briefs.</p>' +
+
+        answerHTML +
 
         nexusHTML +
 
@@ -3873,6 +4083,9 @@
     ansActs = q("[data-cgst-ans-acts]");
     ansBasis = q("[data-cgst-ans-basis]");
     ansLive = q("[data-cgst-ans-live]");
+    ansListen = q("[data-cgst-ans-listen]");
+    ansVoice = q("[data-cgst-voice-note]");
+    initVoice();
     mcToggle = q('[data-cgst="mc"]');
     mcEl = q("#cgstMc");
     ans.pick = readMode();
@@ -3966,6 +4179,7 @@
       if (act === "smart") { smart(target.getAttribute("data-smart")); return; }
       if (act === "ans-close") { hideAnswer(); try { askInput.focus({ preventScroll: true }); } catch (e) {} return; }
       if (act === "ans-more") { ans.all = true; paintAnswer(false); return; }
+      if (act === "ans-listen") { if (voice.speaking) stopSpeaking(); else speakAnswer(); return; }
       if (act === "ans-mode") {
         ans.pick = target.getAttribute("data-mode");
         try { localStorage.setItem(MODE_KEY, ans.pick); } catch (e) {}
@@ -4123,6 +4337,13 @@
       if (root.getAttribute("data-open") !== "true") setOpen(true, false, false);
       runQuery(text);
     }
+  };
+
+  // the home page conversation (sentinel.js) speaks its replies through this in voice mode
+  window.__cgVoice = {
+    ready: function () { return !!voice.pick; },
+    say: function (text) { return speak([text]); },
+    stop: function () { stopSpeaking(); }
   };
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", build, { once: true });

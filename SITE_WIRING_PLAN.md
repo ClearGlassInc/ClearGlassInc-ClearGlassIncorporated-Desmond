@@ -16,14 +16,14 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 - **CTA bridge:** Each cluster ends in two relevant, non-coercive next steps such as offers, pricing, readiness, or booking.
 - **Responsive behavior:** Three route cards collapse to one column below 620px; related cards use an adaptive grid; motion is disabled when reduced motion is requested.
 - **SEO and accessibility:** Links are static HTML, labels are descriptive, navigation landmarks are named, focus states are visible, and all routes remain unchanged.
-- **Audit coverage:** 174 public pages are connected and 37 utility, completion, prototype, or private pages are explicitly excluded.
+- **Audit coverage:** 168 public pages are connected and 43 utility, completion, prototype, or private pages are explicitly excluded.
 
 ## Page-by-page flow map
 
 | Page | Role | Previous | Topic hub | Next | Conversion bridge |
 |---|---|---|---|---|---|
 | **Cyber Defense & Security Operations** | **Topic cluster** |  |  |  |  |
-| `cyber-defense-console.html` — Cyber Defense Console | the ClearGlass command center for defensive operations | GridShield-Ontario v6.0 ULTRA | Cyber Defense Console | SENTINEL | Book a security engagement / Start with the $249 Security Quick-Audit |
+| `cyber-defense-console.html` — Cyber Defense Console | the ClearGlass command center for defensive operations | ClearGlass Shield | Cyber Defense Console | SENTINEL | Book a security engagement / Start with the $249 Security Quick-Audit |
 | `sentinel.html` — SENTINEL | live geospatial security command center | Cyber Defense Console | Cyber Defense Console | BLUEDESK | Book a security engagement / Start with the $249 Security Quick-Audit |
 | `bluedesk.html` — BLUEDESK | CISO risk and blue-team console | SENTINEL | Cyber Defense Console | GUARDIAN | Book a security engagement / Start with the $249 Security Quick-Audit |
 | `guardian.html` — GUARDIAN | intelligence command interface | BLUEDESK | Cyber Defense Console | Artemis Blue Team | Book a security engagement / Start with the $249 Security Quick-Audit |
@@ -32,12 +32,9 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 | `attack-prompt-core.html` — ATT&CK Prompt Integrator | MITRE ATT&CK-aligned analysis prompts | STEGOFORGE | Cyber Defense Console | Environmental Cyber-Risk | Book a security engagement / Start with the $249 Security Quick-Audit |
 | `environmental-cyber-risk.html` — Environmental Cyber-Risk | OT and environmental threat monitoring | ATT&CK Prompt Integrator | Cyber Defense Console | BLUEDESK Mobile | Book a security engagement / Start with the $249 Security Quick-Audit |
 | `bluedesk-mobile.html` — BLUEDESK Mobile | the CISO risk console on a phone-first canvas | Environmental Cyber-Risk | Cyber Defense Console | ClearGlass Shield | Book a security engagement / Start with the $249 Security Quick-Audit |
-| `shield.html` — ClearGlass Shield | privacy-first secure connectivity you can verify | BLUEDESK Mobile | Cyber Defense Console | Shield G01 Verification Console | Book a security engagement / Start with the $249 Security Quick-Audit |
-| `clearglass_x5f_shield_x5f_g01_x5f_verified.html` — Shield G01 Verification Console | the isolated Shield G01 test-environment evidence console | ClearGlass Shield | Cyber Defense Console | Shield Nexus Simulation | Book a security engagement / Start with the $249 Security Quick-Audit |
-| `shield_x5f_nexus_x5f_live_x5f_all.html` — Shield Nexus Simulation | the Shield test-state connectivity simulation | Shield G01 Verification Console | Cyber Defense Console | GridShield-Ontario v6.0 ULTRA | Book a security engagement / Start with the $249 Security Quick-Audit |
-| `gridshield_x5f_v6_x5f_ultra_x5f_do.html` — GridShield-Ontario v6.0 ULTRA | the passive-first GridShield-Ontario simulation | Shield Nexus Simulation | Cyber Defense Console | Cyber Defense Console | Book a security engagement / Start with the $249 Security Quick-Audit |
+| `shield.html` — ClearGlass Shield | privacy-first secure connectivity you can verify | BLUEDESK Mobile | Cyber Defense Console | Cyber Defense Console | Book a security engagement / Start with the $249 Security Quick-Audit |
 | **Intelligence & OSINT** | **Topic cluster** |  |  |  |  |
-| `intelligence.html` — Intelligence | the ClearGlass intelligence practice | Ontario Power Grid Live Demo | Intelligence | Flowsint | Book a security engagement / See pricing & plans |
+| `intelligence.html` — Intelligence | the ClearGlass intelligence practice | Critical Minerals Intelligence | Intelligence | Flowsint | Book a security engagement / See pricing & plans |
 | `flowsint.html` — Flowsint | OSINT investigation graph for domains, IPs and transforms | Intelligence | Intelligence | ClearGlass NEXUS | Book a security engagement / See pricing & plans |
 | `clearglass-nexus.html` — ClearGlass NEXUS | full-spectrum intelligence platform | Flowsint | Intelligence | Ontario OSINT Deck | Book a security engagement / See pricing & plans |
 | `Ontario-osint.html` — Ontario OSINT Deck | regional open-source intelligence control deck | ClearGlass NEXUS | Intelligence | Network Flow Intelligence | Book a security engagement / See pricing & plans |
@@ -49,8 +46,7 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 | `artemis.html` — NEXUS v12 · Ontario | intelligence platform deployment profile | NEXUS v12 | Intelligence | XENOLITH | Book a security engagement / See pricing & plans |
 | `xenolith.html` — XENOLITH | the sovereign intelligence lattice — governed multi-domain command substrate | NEXUS v12 · Ontario | Intelligence | Guardian Command Nexus Spec | Book a security engagement / See pricing & plans |
 | `docs/guardian_command_nexus_spec.html` — Guardian Command Nexus Spec | the implementation specification for the Guardian command surface | XENOLITH | Intelligence | Critical Minerals Intelligence | Book a security engagement / See pricing & plans |
-| `minerals.html` — Critical Minerals Intelligence | source-transparent mineral profiles and Canadian supply-chain risk | Guardian Command Nexus Spec | Intelligence | Ontario Power Grid Live Demo | Book a security engagement / See pricing & plans |
-| `ontario_x5f_power_x5f_grid_x5f_live.html` — Ontario Power Grid Live Demo | a simulated Ontario power-grid visualization | Critical Minerals Intelligence | Intelligence | Intelligence | Book a security engagement / See pricing & plans |
+| `minerals.html` — Critical Minerals Intelligence | source-transparent mineral profiles and Canadian supply-chain risk | Guardian Command Nexus Spec | Intelligence | Intelligence | Book a security engagement / See pricing & plans |
 | **Artemis Platform** | **Topic cluster** |  |  |  |  |
 | `artemis-os.html` — Artemis OS | the Artemis intelligence operating system | Air Systems Control | Artemis OS | ARTEMIS IV | See pricing & plans / Book a security engagement |
 | `artemis-iv.html` — ARTEMIS IV | tactical intelligence core | Artemis OS | Artemis OS | AI Cyber Intelligence Platform | See pricing & plans / Book a security engagement |
@@ -61,7 +57,7 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 | `air-control.html` — ZEPHYR | air systems control surface | ARTEMIS // FAWL | Artemis OS | Air Systems Control | See pricing & plans / Book a security engagement |
 | `air-systems-control.html` — Air Systems Control | the Artemis airspace control surface | ZEPHYR | Artemis OS | Artemis OS | See pricing & plans / Book a security engagement |
 | **Command & Autonomous Operations** | **Topic cluster** |  |  |  |  |
-| `percival-os.html` — PERCIVAL OS | mission-ready governed command center | ClearGlass Revenue OS v2 | PERCIVAL OS | AVALON | Browse services & engagements / See pricing & plans |
+| `percival-os.html` — PERCIVAL OS | mission-ready governed command center | Project Board | PERCIVAL OS | AVALON | Browse services & engagements / See pricing & plans |
 | `artemis-percival.html` — AVALON | the ARTEMIS ⊕ PERCIVAL unified fusion core | PERCIVAL OS | PERCIVAL OS | Agent Mesh | Browse services & engagements / See pricing & plans |
 | `agentmesh.html` — Agent Mesh | multi-agent OSINT orchestration | AVALON | PERCIVAL OS | AI Operator Workspace | Browse services & engagements / See pricing & plans |
 | `ai-operator.html` — AI Operator Workspace | human-in-the-loop agent operations | Agent Mesh | PERCIVAL OS | Advanced Features, Tools & Systems | Browse services & engagements / See pricing & plans |
@@ -78,9 +74,7 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 | `clearsight.html` — CLEARSIGHT | edge-AI camera vision & object detection | PERCIVAL BUILD | PERCIVAL OS | Command Center | Browse services & engagements / See pricing & plans |
 | `command-center.html` — Command Center | executive security operations deck | CLEARSIGHT | PERCIVAL OS | Mission Control | Browse services & engagements / See pricing & plans |
 | `mission-control.html` — Mission Control | the operational portfolio across automation, defense and deployments | Command Center | PERCIVAL OS | Project Board | Browse services & engagements / See pricing & plans |
-| `project-board.html` — Project Board | drag-and-drop sprint board, time sheet and velocity console | Mission Control | PERCIVAL OS | ClearGlass Revenue Machine | Browse services & engagements / See pricing & plans |
-| `ClearGlass-Revenue-Machine.html` — ClearGlass Revenue Machine | the internal revenue-operations console | Project Board | PERCIVAL OS | ClearGlass Revenue OS v2 | Browse services & engagements / See pricing & plans |
-| `clearGlass-revenue-os-v2.html` — ClearGlass Revenue OS v2 | the revenue-operations console behind evidence and approval gates | ClearGlass Revenue Machine | PERCIVAL OS | PERCIVAL OS | Browse services & engagements / See pricing & plans |
+| `project-board.html` — Project Board | drag-and-drop sprint board, time sheet and velocity console | Mission Control | PERCIVAL OS | PERCIVAL OS | Browse services & engagements / See pricing & plans |
 | **Legal, Tax & Compliance** | **Topic cluster** |  |  |  |  |
 | `legal/index.html` — Legal Infrastructure | the ClearGlass corporate legal stack | Accessibility Statement | Legal Infrastructure | AEGIS | Book a security engagement / Browse services & engagements |
 | `aegis.html` — AEGIS | legal process shield | Legal Infrastructure | Legal Infrastructure | ClearCounsel | Book a security engagement / Browse services & engagements |
@@ -240,17 +234,23 @@ These pages remain intact but are not eligible for generated journey updates. Ex
 | `clearglass_x5f_pricing_x5f_preview.html` | Uploaded prototype | noindex pricing preview upload |
 | `clearglass_x5f_rescue_x5f_draft_x5f_landing.html` | Uploaded prototype | noindex draft landing upload |
 | `fantasy-command-live.html` | Uploaded prototype | noindex upload awaiting owner classification |
+| `clearGlass-revenue-os-v2.html` | Private operations | noindex internal revenue-operations console; catalog status 'internal' |
+| `gridshield_x5f_v6_x5f_ultra_x5f_do.html` | Uploaded prototype | noindex simulated demo; its compliance matrix shows dated evidence and VERIFIED statuses with no sample-data label |
+| `ontario_x5f_power_x5f_grid_x5f_live.html` | Uploaded prototype | noindex simulated demo; its go-live copy makes unverified claims about IESO data access |
+| `clearglass_x5f_shield_x5f_dashboard.html` | Uploaded prototype | noindex concept-stage Shield design; the public Shield page is shield.html |
+| `Clearglass-Shield-Dashboard.html` | Duplicate surface | noindex byte-identical copy of clearglass_x5f_shield_x5f_dashboard.html |
+| `Ontario-Power-Grid-Live.html` | Duplicate surface | noindex byte-identical copy of ontario_x5f_power_x5f_grid_x5f_live.html |
+| `ontario_x5f_power_x5f_grid_x5f_live (1).html` | Duplicate surface | noindex byte-identical copy of ontario_x5f_power_x5f_grid_x5f_live.html |
 | `ClearGlass-Ops-Dashboard.html` | Uploaded prototype | noindex upload awaiting owner classification |
-| `Clearglass-Shield-Dashboard.html` | Uploaded prototype | noindex upload awaiting owner classification |
-| `clearglass_x5f_shield_x5f_dashboard.html` | Uploaded prototype | noindex copy of Clearglass-Shield-Dashboard.html |
 | `Fantasy-Command-Live (1).html` | Uploaded prototype | noindex re-upload of the FANTASY COMMAND page |
 | `fantasy-command-live (2).html` | Uploaded prototype | noindex re-upload of the FANTASY COMMAND page |
 | `GridShield-Ontario-V6-0-ULTRA-FINAL.html` | Uploaded prototype | noindex upload awaiting owner classification |
 | `Gridshield-Ontario-V3-Ics.html` | Uploaded prototype | noindex upload awaiting owner classification |
 | `Gridshield-V7-Ultra-Formal.html` | Uploaded prototype | noindex upload awaiting owner classification |
 | `Gridshield-V8-Live-Wire.html` | Uploaded prototype | noindex upload awaiting owner classification |
-| `Ontario-Power-Grid-Live.html` | Uploaded prototype | noindex copy of ontario_x5f_power_x5f_grid_x5f_live.html, which is public |
-| `ontario_x5f_power_x5f_grid_x5f_live (1).html` | Uploaded prototype | noindex copy of ontario_x5f_power_x5f_grid_x5f_live.html, which is public |
+| `ClearGlass-Revenue-Machine.html` | Private operations | noindex internal revenue-operations console; catalog status 'internal' |
+| `clearglass_x5f_shield_x5f_g01_x5f_verified.html` | Uploaded prototype | noindex simulation; it reads 'G01 VERIFIED' and '32/32 PASS', but provenance/shield/g01-product-evidence.json records G01 as FAIL with no tests |
+| `shield_x5f_nexus_x5f_live_x5f_all.html` | Uploaded prototype | noindex simulation; it reads 'G01 VERIFIED' and '32/32 PASS', but provenance/shield/g01-product-evidence.json records G01 as FAIL with no tests |
 | `docs/qics-dashboard.html` | Private operations | noindex QICS evidence desk |
 
 ## Implementation and verification strategy
