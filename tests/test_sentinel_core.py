@@ -482,6 +482,58 @@ def test_site_intelligence_resolves_on_the_real_index() -> None:
     assert out["modes"] == ["technical", "analytical", "pitch", "executive"]
 
 
+def test_every_console_section_is_mounted() -> None:
+    # A merge once kept the answer card's template but dropped it from the
+    # mount, so every site answer threw on a null card. Each section built in
+    # the template has to reach root.innerHTML.
+    start = DOCK.index("    root.innerHTML =")
+    mount = DOCK[start:DOCK.index(";\n", start)]
+    built = re.findall(r"\n    var (\w+HTML) =\n", DOCK)
+    assert {"answerHTML", "nexusHTML", "graphHTML", "intelHTML"} <= set(built)
+    missing = [name for name in built if name + " +" not in mount]
+    assert not missing, f"built but never mounted: {missing}"
+    for name in re.findall(r"\n    var (\w+HTML) = ", DOCK):
+        assert DOCK.count(name) > 1, f"{name} is built and never used"
+    # the rules the Site Intelligence header wears are still defined
+    assert "#cg-station .cgst-intel-sub{" in DOCK and "#cg-station .cgst-intel-id{" in DOCK
+
+
+# The command bar's typeahead, on the real index: a phrasing with a site
+# meaning offers its answer first, matching pages follow the Ask option.
+SUGGEST_PROBE = SITE_PROBE.split("const input =")[0] + r"""
+vm.runInContext("var intel = { state: 'idle', all: [], topics: [] }; var ai = { state: 'off' };" +
+  "function hasSentinel() { return false; } function findBriefs() { return []; } function commands() { return []; }" +
+  "function hubUrl() { return ''; } function go() {} function openBrief() {} function openSentinel() {}" +
+  "function askAi() {} function runIntent() {}", ctx);
+["plural", "intentOption", "optionsFor"].forEach(n => vm.runInContext(fn(n), ctx));
+const input = JSON.parse(fs.readFileSync(0, "utf8"));
+vm.runInContext("ingestSite(" + JSON.stringify(input.index) + ")", ctx);
+const out = {};
+for (const q of input.queries) out[q] = ctx.optionsFor(q).map(o => ({ key: o.key, text: o.text, ask: !!o.ask }));
+process.stdout.write(JSON.stringify(out));
+"""
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node is required to run station-chat.js's command bar")
+def test_command_bar_suggests_pages_and_site_answers() -> None:
+    queries = ["Where is the pricing page?", "zero trust", "Show all cybersecurity services", "qq"]
+    result = subprocess.run(["node", "-e", SUGGEST_PROBE, str(ROOT / "station-chat.js")],
+                            input=json.dumps({"index": INDEX, "queries": queries}),
+                            capture_output=True, text=True, check=True, timeout=60)
+    out = json.loads(result.stdout)
+    locate = out["Where is the pricing page?"]
+    assert locate[0]["key"] == "Find" and locate[0]["text"].startswith("Pricing & Engagements")
+    assert locate[1]["key"] == "Ask"
+    assert any(o["key"] == "Page" for o in locate)
+    # no Sentinel conversation on this page, so Ask searches the site and the field clears
+    assert locate[1]["text"].startswith("Search the site:") and not locate[1]["ask"]
+    plain = out["zero trust"]
+    assert plain[0]["key"] == "Ask", "a phrasing with no site meaning keeps Ask first"
+    assert [o for o in plain if o["key"] == "Page"], "matching pages are offered"
+    assert out["Show all cybersecurity services"][0]["key"] == "Sector"
+    assert out["qq"] == [], "under three letters, nothing is suggested"
+
+
 
 # ── Sentinel v2030 + Claude ───────────────────────────────────────────────────
 # The console talks to a model only when an operator names the control plane
@@ -551,3 +603,118 @@ def test_claudes_markdown_is_read_into_safe_blocks() -> None:
     assert out[5]["text"] == "<img src=x onerror=alert(1)>"
     body = re.search(r"\n  function renderProse\(text\) \{\n(.*?)\n  \}\n", DOCK, re.S).group(1)
     assert "innerHTML" not in body
+
+
+# ── Voice ─────────────────────────────────────────────────────────────────────
+# Sentinel speaks in a British English female voice from the browser's own
+# speech engine, only when a visitor asks, and says where a network voice
+# sends the text.
+
+VOICE_PROBE = r"""
+const fs = require("fs"), vm = require("vm");
+const src = fs.readFileSync(process.argv[1], "utf8");
+function fn(name) {
+  const m = src.match(new RegExp("\\n  function " + name + "\\([^)]*\\) \\{[^\\n]*\\}\\n")) ||
+            src.match(new RegExp("\\n  function " + name + "\\([^)]*\\) \\{\\n[\\s\\S]*?\\n  \\}\\n"));
+  if (!m) throw new Error("missing " + name);
+  return m[0];
+}
+function line(start) { const i = src.indexOf(start); if (i < 0) throw new Error("missing " + start); return src.slice(i, src.indexOf(";\n", i) + 1); }
+const ctx = {};
+vm.createContext(ctx);
+["  var VOICE_FEMALE =", "  var VOICE_MALE =", "  var VOICE_NATURAL =", "  var VOICE_MONTHS ="].forEach(s => vm.runInContext(line(s), ctx));
+["pickVoice", "voiceLabel", "voiceWhere", "speakable", "sentences", "proseBlocks", "spokenScript"].forEach(n => vm.runInContext(fn(n), ctx));
+const input = JSON.parse(fs.readFileSync(0, "utf8"));
+const out = { picks: {}, said: {}, where: {} };
+for (const [device, list] of Object.entries(input.devices)) { const v = ctx.pickVoice(list); out.picks[device] = v ? v.name : null; }
+for (const t of input.texts) out.said[t] = ctx.speakable(t);
+out.sentences = ctx.sentences(input.sentences);
+for (const [k, v] of Object.entries(input.voices)) out.where[k] = [ctx.voiceLabel(v), ctx.voiceWhere(v)];
+out.scripts = input.specs.map(s => ctx.spokenScript(s, "executive"));
+process.stdout.write(JSON.stringify(out));
+"""
+
+
+def _voice(name: str, lang: str = "en-GB", local: bool = True) -> dict:
+    return {"name": name, "lang": lang, "localService": local}
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node is required to run station-chat.js's voice")
+def test_sentinel_speaks_in_a_british_female_voice() -> None:
+    devices = {
+        "chrome": [_voice("Google US English", "en-US", False), _voice("Google UK English Male", local=False),
+                   _voice("Google UK English Female", local=False)],
+        "edge": [_voice("Microsoft George - English (United Kingdom)"), _voice("Microsoft Hazel - English (United Kingdom)"),
+                 _voice("Microsoft Ryan Online (Natural) - English (United Kingdom)", local=False),
+                 _voice("Microsoft Libby Online (Natural) - English (United Kingdom)", local=False)],
+        "mac": [_voice("Daniel"), _voice("Samantha", "en-US"), _voice("Kate"), _voice("Serena (Premium)")],
+        "android": [_voice("English United Kingdom", "en_GB")],
+        "us_only": [_voice("Samantha", "en-US")],
+        "male_only": [_voice("Daniel"), _voice("Arthur")],
+    }
+    texts = ["**Pricing & Engagements** — plans · pricing", "resolved 2026-09-25 14:49:47 UTC",
+             "Cybersecurity ∩ Services · 6 pages", "title ×6, summary ×3.5", "[Pricing](pricing.html) https://x.example/z",
+             "#1 · Locate"]
+    probe = {
+        "devices": devices, "texts": texts,
+        "sentences": "Pricing leads 7.5 to 6.0. Next, book it. Done!",
+        "voices": {"local": _voice("Kate"), "google": _voice("Google UK English Female", local=False),
+                   "edge": _voice("Microsoft Libby Online (Natural) - English (United Kingdom)", local=False)},
+        "specs": [
+            {"title": "Found: Pricing & Engagements", "thesis": {"executive": "**Pricing & Engagements** — plans."}},
+            {"ai": True, "title": "“what do you offer?”", "thesis": {"executive": "Claude is reading the site index…"}},
+            {"ai": True, "title": "“what do you offer?”", "prose": "**Audits** first.\n\n- Hardening\n- Retainers"},
+        ],
+    }
+    out = json.loads(subprocess.run(["node", "-e", VOICE_PROBE, str(ROOT / "station-chat.js")], input=json.dumps(probe),
+                                    capture_output=True, text=True, check=True, timeout=60).stdout)
+    assert out["picks"] == {
+        "chrome": "Google UK English Female",
+        "edge": "Microsoft Libby Online (Natural) - English (United Kingdom)",  # natural beats robotic
+        "mac": "Serena (Premium)",                                              # natural and on the device
+        "android": "English United Kingdom",                                    # British, gender unknown
+        "us_only": None,                                                        # no British voice: stay silent
+        "male_only": None,
+    }
+    said = out["said"]
+    assert said[texts[0]] == "Pricing and Engagements, plans, pricing"
+    assert said[texts[1]] == "resolved 25 September 2026 14:49 UTC"          # British dates
+    assert said[texts[2]] == "Cybersecurity and Services, 6 pages"
+    assert said[texts[3]] == "title times 6, summary times 3.5"
+    assert said[texts[4]] == "Pricing"
+    assert said[texts[5]] == "number 1, Locate"
+    assert out["sentences"] == ["Pricing leads 7.5 to 6.0.", "Next, book it.", "Done!"]
+    assert out["where"]["local"] == ["Kate", "spoken on this device"]
+    assert out["where"]["google"][1] == "your browser sends the answer text to Google to voice it"
+    assert out["where"]["edge"] == ["Microsoft Libby Online (Natural)", "your browser sends the answer text to Microsoft to voice it"]
+    # the answer is said, not the heading; Claude never reads the question back
+    assert out["scripts"][0] == ["**Pricing & Engagements** — plans."]
+    assert out["scripts"][1] == []
+    assert out["scripts"][2] == ["**Audits** first.", "Hardening", "Retainers"]
+
+
+def test_voice_is_opt_in_and_stops_when_asked() -> None:
+    assert 'var voice = { ok: false, pick: null, auto: false, speaking: false, token: 0, queue: [] };' in DOCK
+    assert 'voice.auto = localStorage.getItem(VOICE_KEY) === "1";' in DOCK     # only a visitor's /voice turns it on
+    assert 'var VOICE = { lang: "en-GB",' in DOCK
+    assert 'window.addEventListener("pagehide", stopSpeaking);' in DOCK
+    assert "if (!open) { closeSuggest(); stopSpeaking(); }" in DOCK            # closing the console ends it
+    assert "if (arrive) stopSpeaking();" in DOCK                               # a new answer ends the old one
+    hide = re.search(r"\n  function hideAnswer\(\) \{\n(.*?)\n  \}\n", DOCK, re.S).group(1)
+    assert "stopSpeaking();" in hide
+    assert '{ cmd: "/voice",' in DOCK
+    # the home-page chat speaks replies only in voice mode, and never while the mic listens
+    assert 'if(actor==="assistant"&&voiceMode()&&window.__cgVoice)window.__cgVoice.say(text)' in SENTINEL
+    assert "function closePanel(){stopVoice();stopSpeech();" in SENTINEL
+    assert "function toggleVoice(){if(recognizer){stopVoice();return}stopSpeech();" in SENTINEL
+    assert 'if(mode!=="voice"){stopVoice();stopSpeech()}' in SENTINEL
+
+
+def test_system_prompt_carries_the_british_persona() -> None:
+    prompt = (ROOT / "prompts" / "sentinel_core_system_prompt.md").read_text(encoding="utf-8")
+    sent = prompt.split("\n---\n", 1)[1]
+    for rule in ("## Persona", "warm, confident, articulate British woman", "never claim or imply that you are human",
+                 "## British English", "28 September 2026", "## Spoken delivery", "## What you will not do"):
+        assert rule in sent, rule
+    # what the model reads is itself in British spelling
+    assert not re.search(r"\b(analyze|summarize|organize|prioritize|center|behavior|color)\b", sent)
