@@ -22,6 +22,13 @@ Lawful, consent-respecting B2B outreach for the four fixed-scope offerings.
 5. **Volume & rate discipline.** Personalize each message. No bulk blasting. Respect any
    opt-out immediately and permanently.
 6. **Written authorization** is required before any hands-on security work — say so.
+7. **Pre-send gate on the exact text.** Before each send, save the message as it will
+   go out and run `python -m bots.outreach_preflight message.txt`. Send only on `READY`.
+   It blocks unfilled template text, a missing mailing address (a postal code; "Burlington,
+   Ontario" alone does not count), a missing opt-out, a missing sender name, and a contact
+   address on `clearglassinc.com`, which has no MX record. Never create a sendable draft,
+   in Gmail or anywhere else, that still holds a placeholder: if a required fact such as
+   the mailing address is not known yet, do not draft.
 
 ## Workflow
 1. Populate `lead-list-template.csv` from permitted public sources (10 to start).
