@@ -49,10 +49,13 @@ def test_no_shield_payment_configuration_in_static_runtime_assets():
         if not path.is_file() or ".git" in path.parts or path.name == "package-lock.json":
             continue
         # Scan only static runtime assets; tests/docs/workflows may legitimately
-        # contain the very patterns this guard is designed to detect.
+        # contain the very patterns this guard is designed to detect, and
+        # provenance/ holds the lock's own evidence (zero Shield products,
+        # prices and payment links), not payment configuration.
         if path.suffix.lower() not in {".html", ".js", ".css", ".json"}:
             continue
-        if path.parts[0] in {"tests", "docs", ".github"}:
+        # rglob yields absolute paths, so the directory test needs the relative form.
+        if path.relative_to(ROOT).parts[0] in {"tests", "docs", ".github", "provenance"}:
             continue
         try:
             content = path.read_text(encoding="utf-8")
