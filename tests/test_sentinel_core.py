@@ -482,6 +482,58 @@ def test_site_intelligence_resolves_on_the_real_index() -> None:
     assert out["modes"] == ["technical", "analytical", "pitch", "executive"]
 
 
+def test_every_console_section_is_mounted() -> None:
+    # A merge once kept the answer card's template but dropped it from the
+    # mount, so every site answer threw on a null card. Each section built in
+    # the template has to reach root.innerHTML.
+    start = DOCK.index("    root.innerHTML =")
+    mount = DOCK[start:DOCK.index(";\n", start)]
+    built = re.findall(r"\n    var (\w+HTML) =\n", DOCK)
+    assert {"answerHTML", "nexusHTML", "graphHTML", "intelHTML"} <= set(built)
+    missing = [name for name in built if name + " +" not in mount]
+    assert not missing, f"built but never mounted: {missing}"
+    for name in re.findall(r"\n    var (\w+HTML) = ", DOCK):
+        assert DOCK.count(name) > 1, f"{name} is built and never used"
+    # the rules the Site Intelligence header wears are still defined
+    assert "#cg-station .cgst-intel-sub{" in DOCK and "#cg-station .cgst-intel-id{" in DOCK
+
+
+# The command bar's typeahead, on the real index: a phrasing with a site
+# meaning offers its answer first, matching pages follow the Ask option.
+SUGGEST_PROBE = SITE_PROBE.split("const input =")[0] + r"""
+vm.runInContext("var intel = { state: 'idle', all: [], topics: [] }; var ai = { state: 'off' };" +
+  "function hasSentinel() { return false; } function findBriefs() { return []; } function commands() { return []; }" +
+  "function hubUrl() { return ''; } function go() {} function openBrief() {} function openSentinel() {}" +
+  "function askAi() {} function runIntent() {}", ctx);
+["plural", "intentOption", "optionsFor"].forEach(n => vm.runInContext(fn(n), ctx));
+const input = JSON.parse(fs.readFileSync(0, "utf8"));
+vm.runInContext("ingestSite(" + JSON.stringify(input.index) + ")", ctx);
+const out = {};
+for (const q of input.queries) out[q] = ctx.optionsFor(q).map(o => ({ key: o.key, text: o.text, ask: !!o.ask }));
+process.stdout.write(JSON.stringify(out));
+"""
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node is required to run station-chat.js's command bar")
+def test_command_bar_suggests_pages_and_site_answers() -> None:
+    queries = ["Where is the pricing page?", "zero trust", "Show all cybersecurity services", "qq"]
+    result = subprocess.run(["node", "-e", SUGGEST_PROBE, str(ROOT / "station-chat.js")],
+                            input=json.dumps({"index": INDEX, "queries": queries}),
+                            capture_output=True, text=True, check=True, timeout=60)
+    out = json.loads(result.stdout)
+    locate = out["Where is the pricing page?"]
+    assert locate[0]["key"] == "Find" and locate[0]["text"].startswith("Pricing & Engagements")
+    assert locate[1]["key"] == "Ask"
+    assert any(o["key"] == "Page" for o in locate)
+    # no Sentinel conversation on this page, so Ask searches the site and the field clears
+    assert locate[1]["text"].startswith("Search the site:") and not locate[1]["ask"]
+    plain = out["zero trust"]
+    assert plain[0]["key"] == "Ask", "a phrasing with no site meaning keeps Ask first"
+    assert [o for o in plain if o["key"] == "Page"], "matching pages are offered"
+    assert out["Show all cybersecurity services"][0]["key"] == "Sector"
+    assert out["qq"] == [], "under three letters, nothing is suggested"
+
+
 
 # ── Sentinel v2030 + Claude ───────────────────────────────────────────────────
 # The console talks to a model only when an operator names the control plane

@@ -448,6 +448,10 @@
     "radial-gradient(110% 80% at 100% 0,rgba(76,195,255,.17),transparent 60%),",
     "radial-gradient(80% 60% at 0 100%,rgba(120,224,200,.09),transparent 70%),linear-gradient(165deg,#10121a,#07070b)}",
     "#cg-station .cgst-intel-top{display:flex;align-items:center;gap:8px}",
+    /* title + subline pair; the Site Intelligence header uses it */
+    "#cg-station .cgst-intel-id{flex:1 1 auto;min-width:0}",
+    "#cg-station .cgst-intel-sub{display:block;margin-top:4px;font-family:var(--cgst-mono);font-size:8px;font-weight:600;letter-spacing:.16em;",
+    "text-transform:uppercase;color:#8fb7cc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
     "#cg-station .cgst-intel-title{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:8px;margin:0;font-family:var(--cgst-mono);font-size:11px;font-weight:700;",
     "line-height:1.2;letter-spacing:.26em;text-transform:uppercase;color:#fff}",
     "#cg-station .cgst-intel-title::before{content:'';flex:0 0 auto;width:7px;height:7px;border-radius:1px;background:var(--cgst-blue);",
@@ -1572,10 +1576,25 @@
         .map(function (c) { return { key: c.cmd, text: c.hint, run: function () { c.run(""); } }; });
     }
     var query = raw.trim();
-    if (query.length < 3 || intel.state !== "ready") return [];
-    var hits = findBriefs(query);
-    if (!hits.length) return [];
-    var opts = [{ key: "Ask", ask: true, text: "Ask Sentinel: “" + query + "”", run: function () { openSentinel(query); } }];
+    if (query.length < 3 || (intel.state !== "ready" && site.state !== "ready")) return [];
+    // A phrasing with a site meaning leads; anything else keeps "Ask Sentinel"
+    // first and pre-selected, exactly as before.
+    var intent = intentOf(query);
+    var pages = site.state === "ready" ? rank(query).slice(0, 3) : [];
+    var hits = intel.state === "ready" ? findBriefs(query).slice(0, pages.length ? 3 : 4) : [];
+    if (!intent && !pages.length && !hits.length) return [];
+    var opts = [];
+    if (intent) opts.push(intentOption(intent, query));
+    var viaAi = ai.state === "ready";
+    // "ask" marks the Sentinel hand-off, which keeps the words for an older sentinel.js (see runOption)
+    opts.push({ key: "Ask", ask: !viaAi && hasSentinel(),
+      text: (viaAi ? "Ask Claude: “" : hasSentinel() ? "Ask Sentinel: “" : "Search the site: “") + query + "”",
+      run: function () {
+        if (viaAi) askAi(query);
+        else if (hasSentinel()) openSentinel(query);
+        else runIntent({ kind: "search", arg: query }, query);
+      } });
+    pages.forEach(function (h) { opts.push({ key: "Page", text: h.e.title + " · " + h.e.group, run: function () { go(h.e.url); } }); });
     hits.forEach(function (p) { opts.push({ key: "Brief", text: p.title, run: function () { openBrief(p); } }); });
     opts.push({ key: "Hub", text: "Search every brief for “" + query + "”", run: function () { go(hubUrl(null, query)); } });
     return opts;
@@ -3805,8 +3824,10 @@
             'placeholder="Ask Sentinel, or / for commands…">' +
           '<button type="submit" class="cgst-send" aria-label="Send to Sentinel">' + IC_SEND + '</button>' +
         '</form>' +
-        '<ul class="cgst-suggest" id="cgstSuggest" role="listbox" aria-label="Commands and brief matches" hidden></ul>' +
-        '<p class="cgst-sr" id="cgstAskHint">Type / for commands. Three or more letters also match briefs.</p>' +
+        '<ul class="cgst-suggest" id="cgstSuggest" role="listbox" aria-label="Commands, pages and brief matches" hidden></ul>' +
+        '<p class="cgst-sr" id="cgstAskHint">Type / for commands. Three or more letters also match pages and briefs.</p>' +
+
+        answerHTML +
 
         nexusHTML +
 
