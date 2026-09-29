@@ -1223,7 +1223,7 @@ if(s){s.textContent='Subscribing…';s.style.color='';}
 var controller=new AbortController();var timeout=window.setTimeout(function(){controller.abort();},10000);
 fetch('https://formsubmit.co/ajax/dezzy.231@gmail.com',{method:'POST',headers:{'Accept':'application/json'},body:new FormData(f),signal:controller.signal})
 .then(function(r){if(!r.ok)throw new Error('Subscription request failed with status '+r.status);return r.json();})
-.then(function(){if(s){s.textContent='Thanks — you are on the list. Check your inbox to confirm.';s.style.color='#34d399';}f.reset();})
+.then(function(d){if(!d||(d.success!==true&&d.success!=='true'))throw new Error((d&&d.message)||'Subscription was not accepted');if(s){s.textContent='Thanks — you are on the list.';s.style.color='#34d399';}f.reset();})
 .catch(function(){if(s){s.textContent='Could not submit just now. Email desmondotieno@icloud.com and we will add you.';s.style.color='#f472b6';}})
 .finally(function(){window.clearTimeout(timeout);if(btn){btn.disabled=false;}});
 });})();

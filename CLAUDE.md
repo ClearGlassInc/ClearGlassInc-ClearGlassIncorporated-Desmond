@@ -303,3 +303,7 @@ confidence, and injection markers in untrusted facts each hard-gate on their own
   **mock mode** with no key.
 - Static site changes deploy via GitHub Pages; keep `.nojekyll` and existing
   redirect/header files intact.
+- Outreach email: never create a sendable draft (Gmail or elsewhere) that still
+  holds a placeholder, and run `python -m bots.outreach_preflight` on the exact
+  text first (`offers/outreach/README.md` rule 7). On 2026-09-29 drafts prepared
+  with `[ADD MAILING ADDRESS BEFORE SENDING]` were sent as-is.
