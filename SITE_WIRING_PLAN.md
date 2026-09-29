@@ -16,7 +16,7 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 - **CTA bridge:** Each cluster ends in two relevant, non-coercive next steps such as offers, pricing, readiness, or booking.
 - **Responsive behavior:** Three route cards collapse to one column below 620px; related cards use an adaptive grid; motion is disabled when reduced motion is requested.
 - **SEO and accessibility:** Links are static HTML, labels are descriptive, navigation landmarks are named, focus states are visible, and all routes remain unchanged.
-- **Audit coverage:** 167 public pages are connected and 24 utility, completion, prototype, or private pages are explicitly excluded.
+- **Audit coverage:** 167 public pages are connected and 32 utility, completion, prototype, or private pages are explicitly excluded.
 
 ## Page-by-page flow map
 
@@ -209,6 +209,7 @@ These pages remain intact but are not eligible for generated journey updates. Ex
 | Page | Role | Exclusion rationale |
 |---|---|---|
 | `404.html` | Error recovery | noindex redirect and route-recovery page |
+| `intelligence-graph.html` | Interactive graph utility | public utility surface with independently verified graph snapshots |
 | `artemis-vi.html` | Standalone spec page | noindex vision page whose spec forbids extra body content |
 | `cg-loader.html` | Application utility | noindex branded loading surface |
 | `google23RWyXWkoxqgArev8achU8IfVxYC5EIUAYBsuTYKLFM.html` | Site verification | Google ownership verification artifact |
@@ -232,6 +233,13 @@ These pages remain intact but are not eligible for generated journey updates. Ex
 | `clearglass_x5f_pricing_x5f_preview.html` | Uploaded prototype | noindex pricing preview upload |
 | `clearglass_x5f_rescue_x5f_draft_x5f_landing.html` | Uploaded prototype | noindex draft landing upload |
 | `fantasy-command-live.html` | Uploaded prototype | noindex upload awaiting owner classification |
+| `clearGlass-revenue-os-v2.html` | Private operations | noindex internal revenue-operations console; catalog status 'internal' |
+| `gridshield_x5f_v6_x5f_ultra_x5f_do.html` | Uploaded prototype | noindex simulated demo; its compliance matrix shows dated evidence and VERIFIED statuses with no sample-data label |
+| `ontario_x5f_power_x5f_grid_x5f_live.html` | Uploaded prototype | noindex simulated demo; its go-live copy makes unverified claims about IESO data access |
+| `clearglass_x5f_shield_x5f_dashboard.html` | Uploaded prototype | noindex concept-stage Shield design; the public Shield page is shield.html |
+| `Clearglass-Shield-Dashboard.html` | Duplicate surface | noindex byte-identical copy of clearglass_x5f_shield_x5f_dashboard.html |
+| `Ontario-Power-Grid-Live.html` | Duplicate surface | noindex byte-identical copy of ontario_x5f_power_x5f_grid_x5f_live.html |
+| `ontario_x5f_power_x5f_grid_x5f_live (1).html` | Duplicate surface | noindex byte-identical copy of ontario_x5f_power_x5f_grid_x5f_live.html |
 
 ## Implementation and verification strategy
 

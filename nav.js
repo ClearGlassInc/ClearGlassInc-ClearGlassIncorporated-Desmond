@@ -60,6 +60,7 @@
     ["ClearGlass Shield", "shield.html", "Architecture-stage secure connectivity", "🛡"],
     ["Shield G01 Verification Console", "clearglass_x5f_shield_x5f_g01_x5f_verified.html", "Isolated verification simulation", "✓"],
     ["Shield Nexus Simulation", "shield_x5f_nexus_x5f_live_x5f_all.html", "Test-state connectivity surface", "◈"],
+    ["Shield Concept Dashboard", "clearglass_x5f_shield_x5f_dashboard.html", "Concept-stage design", "◇"],
     ["GridShield-Ontario v6.0 ULTRA", "gridshield_x5f_v6_x5f_ultra_x5f_do.html", "Passive-first simulated demo", "⌁"],
     ["Ontario Power Grid Live Demo", "ontario_x5f_power_x5f_grid_x5f_live.html", "Simulated grid visualization", "⚡"],
     ["Opal-Koboi Assets", "products/opal-koboi/index.html", "Product asset library", "✧"],

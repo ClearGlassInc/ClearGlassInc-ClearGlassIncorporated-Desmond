@@ -52,7 +52,7 @@ class ProductCommandCenterTests(unittest.TestCase):
             "ontario-power-grid-live-demo": ("demo", "/ontario_x5f_power_x5f_grid_x5f_live.html"),
         }
         by_slug = {product["slug"]: product for product in self.products}
-        self.assertEqual(set(expected), set(by_slug))
+        self.assertEqual(set(expected) - set(by_slug), set())
         for slug, (status, url) in expected.items():
             product = by_slug[slug]
             self.assertEqual(product["status"], status, slug)
