@@ -120,10 +120,9 @@ def decode_samples(data: bytes, info: dict) -> tuple[list[list[int]], str]:
         vals = struct.unpack(f"<{count}f", raw)
         conv = []
         for v in vals:
-            if v != v:  # NaN
-                v = 0.0
-            s = math.floor(v * 32767 + 0.5)
-            conv.append(32767 if s > 32767 else -32768 if s < -32768 else s)
+            # NaN -> silence; out-of-range and infinite samples clip to full scale.
+            v = 0.0 if v != v else 1.0 if v > 1.0 else -1.0 if v < -1.0 else v
+            conv.append(math.floor(v * 32767 + 0.5))
     elif bits == 8:
         conv = [(b - 128) << 8 for b in raw]
     elif bits == 16:
@@ -362,7 +361,8 @@ def analyze_audio(data: bytes, mime: str) -> dict:
     inds.extend(software_indicators("RIFF INFO ISFT", info["info_tags"].get("ISFT", ""), ANALYZER))
     inds.extend(_indicators(metrics))
     created = info["info_tags"].get("ICRD", "")
-    m = re.fullmatch(r"(\d{4}-\d{2}-\d{2})(?:[T ](\d{2}:\d{2}(?::\d{2})?))?", created.strip())
+    m = re.fullmatch(r"(\d{4}-\d{2}-\d{2})(?:[T ](\d{2}:\d{2}(?::\d{2})?))?", created.strip(),
+                     re.ASCII)
     if m:
         value = m.group(1) + ("T" + m.group(2) if m.group(2) else "")
         result["observations"].append({"dimension": "time", "value": value,

@@ -178,7 +178,8 @@ def gps_decimal(exif: dict) -> str:
 
 def exif_time_iso(value: str) -> str:
     """'2026:03:14 21:43:02' -> '2026-03-14T21:43:02' (no zone: EXIF has none)."""
-    m = re.fullmatch(r"(\d{4}):(\d{2}):(\d{2})[ T](\d{2}):(\d{2}):(\d{2})", value or "")
+    m = re.fullmatch(r"(\d{4}):(\d{2}):(\d{2})[ T](\d{2}):(\d{2}):(\d{2})", value or "",
+                     re.ASCII)
     if not m:
         return ""
     y, mo, d, h, mi, s = m.groups()
@@ -784,7 +785,10 @@ def analyze_image(data: bytes, mime: str) -> dict:
         if info["trailing_bytes"] > 0:
             inds.append(trailing_data_indicator(info["trailing_bytes"], "PNG IEND", ANALYZER))
         if not info["parse_error"]:
-            w, h, gray = decode_png_gray(info)
+            try:
+                w, h, gray = decode_png_gray(info)
+            except ParseError as exc:  # an invalid row filter byte
+                w, h, gray = None, None, str(exc)
             if w is None:
                 result["not_performed"].append(f"Copy-move pixel analysis ({gray})")
             else:

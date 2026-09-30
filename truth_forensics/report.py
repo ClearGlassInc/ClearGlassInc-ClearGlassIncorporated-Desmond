@@ -203,9 +203,9 @@ def build_report(result: dict, generated_at: str | None = None) -> dict:
 
     # 11. Human review
     for rec in result["reviews"]["records"]:
-        S["Human Review"].append(_s(OBS, "#{n} {a} on {t} by {r} at {at}: “{note}”",
-                                    n=rec["seq"], a=rec["action"], t=rec["target"],
-                                    r=rec["reviewer"], at=rec["at"], note=rec["note"]))
+        S["Human Review"].append(_s(OBS, "#{n} {action} on {t} by {r_user} at {at}: “{note}”",
+                                    n=rec["seq"], action=rec["action"], t=rec["target"],
+                                    r_user=rec["reviewer"], at=rec["at"], note=rec["note"]))
     if not result["reviews"]["records"]:
         S["Human Review"].append(_s(OBS, "No human review recorded yet. Nothing in this report is "
                                     "final until a reviewer decides it."))

@@ -22,7 +22,7 @@ from . import vocab
 
 ANALYZER = "event@" + vocab.ENGINE_VERSION
 MAX_EVENT_BYTES = 1024 * 1024
-_SHA = re.compile(r"^[0-9a-f]{64}$")
+_SHA = re.compile(r"[0-9a-f]{64}")
 
 
 def analyze_event(data: bytes) -> dict:
@@ -61,7 +61,7 @@ def analyze_event(data: bytes) -> dict:
                                  " (structured record)"})
     elif rtype == "custody-receipt":
         for entry in record.get("entries", [])[:1000]:
-            if isinstance(entry, dict) and _SHA.match(str(entry.get("sha256", ""))):
+            if isinstance(entry, dict) and _SHA.fullmatch(str(entry.get("sha256", ""))):
                 result["custody"].append({
                     "evidence_id": str(entry.get("evidence_id", ""))[:80],
                     "sha256": entry["sha256"],

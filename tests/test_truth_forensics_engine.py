@@ -631,3 +631,20 @@ def test_cli_case_and_report(capsys) -> None:
     out = capsys.readouterr().out
     assert "## 14. Audit Trail" in out and vocab.DEMO_LABEL in out
     assert cli(["demo", "--check"]) == 0
+
+
+def test_report_masks_every_user_supplied_field(demo_case, demo_files) -> None:
+    """Reviewer names, notes and labels are quoted, never guarded as engine text."""
+    spec = json.loads(json.dumps(demo_case))
+    spec["evidence"][0]["label"] = "the video is fake"
+    reviews = [{"action": "COMMENT", "target": "EV-A", "reviewer": "is fake", "at": "t1",
+                "note": "this is 100% accurate and guaranteed"}]
+    res = case.run_case(spec, demo_files, reviews=reviews)
+    md = report.render_markdown(report.build_report(res))
+    assert "by is fake at t1" in md and "the video is fake" in md
+
+
+def test_float_samples_outside_range_clip_instead_of_crashing() -> None:
+    data = _wav([float("inf"), float("-inf"), float("nan"), 2.0], bits=32, fmt_tag=3)
+    chans, _ = audio.decode_samples(data, audio.parse_wav(data))
+    assert chans == [[32767, -32767, 0, 32767]]

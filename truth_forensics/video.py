@@ -198,7 +198,7 @@ def _tag_text(data: bytes, box: dict) -> str:
 
 
 def iso6709(value: str) -> str:
-    m = re.match(r"^([+-]\d{1,3}(?:\.\d+)?)([+-]\d{1,3}(?:\.\d+)?)", value.strip())
+    m = re.match(r"([+-]\d{1,3}(?:\.\d+)?)([+-]\d{1,3}(?:\.\d+)?)", value.strip(), re.ASCII)
     if not m:
         return ""
 

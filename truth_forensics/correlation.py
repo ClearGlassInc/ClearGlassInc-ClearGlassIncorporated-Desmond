@@ -37,8 +37,8 @@ STOPWORDS = frozenset(
     "it its this that shows show showing shown seen near inside outside".split())
 
 _TIME = re.compile(
-    r"^(?:(\d{4}-\d{2}-\d{2}))?(?:[T ]?(\d{2}):(\d{2})(?::(\d{2}))?)?Z?$")
-_COORD = re.compile(r"^\s*(-?\d{1,3}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)\s*$")
+    r"(?:(\d{4}-\d{2}-\d{2}))?(?:[T ]?(\d{2}):(\d{2})(?::(\d{2}))?)?Z?", re.ASCII)
+_COORD = re.compile(r"\s*(-?\d{1,3}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)\s*", re.ASCII)
 
 
 def tokens(text: str) -> list[str]:
@@ -62,7 +62,7 @@ def _identifier_like(tok: str) -> bool:
 
 def parse_time(value: str) -> tuple[str, int | None, int | None] | None:
     """-> (date or '', start_second_of_day, end_second_of_day) at stated precision."""
-    m = _TIME.match((value or "").strip())
+    m = _TIME.fullmatch((value or "").strip())
     if not m or not (m.group(1) or m.group(2)):
         return None
     date, hh, mm, ss = m.groups()
@@ -97,7 +97,7 @@ def compare_time(claim: str, observed: str, tolerance_s: int) -> str:
 
 
 def _coords(value: str) -> tuple[float, float] | None:
-    m = _COORD.match(value or "")
+    m = _COORD.fullmatch(value or "")
     return (float(m.group(1)), float(m.group(2))) if m else None
 
 

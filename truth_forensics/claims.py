@@ -30,26 +30,36 @@ MONTHS = ("january", "february", "march", "april", "may", "june", "july", "augus
           "september", "october", "november", "december")
 _MONTH_ALT = "|".join(m.capitalize() for m in MONTHS)
 
-TIME_RE = re.compile(r"\b([01]?\d|2[0-3]):([0-5]\d)(?::([0-5]\d))?\b")
-ISO_DATE_RE = re.compile(r"\b(\d{4})-(\d{2})-(\d{2})\b")
-DMY_RE = re.compile(r"\b(\d{1,2})\s+(" + _MONTH_ALT + r")\s+(\d{4})\b")
-MDY_RE = re.compile(r"\b(" + _MONTH_ALT + r")\s+(\d{1,2}),?\s+(\d{4})\b")
+# Word characters are spelled out (ASCII plus Latin-1 and Latin Extended-A/B)
+# and every pattern uses re.ASCII, so \b and \s mean exactly what they mean in
+# the browser engine's JavaScript regular expressions.
+_W = r"[A-Za-z0-9_\u00C0-\u024F'-]"
+_CAP = r"[A-Z\u00C0-\u00DE]"
+_CAPNUM = r"[A-Z0-9\u00C0-\u00DE]"
+_A = re.ASCII
+
+TIME_RE = re.compile(r"\b([01]?\d|2[0-3]):([0-5]\d)(?::([0-5]\d))?\b", _A)
+ISO_DATE_RE = re.compile(r"\b(\d{4})-(\d{2})-(\d{2})\b", _A)
+DMY_RE = re.compile(r"\b(\d{1,2})\s+(" + _MONTH_ALT + r")\s+(\d{4})\b", _A)
+MDY_RE = re.compile(r"\b(" + _MONTH_ALT + r")\s+(\d{1,2}),?\s+(\d{4})\b", _A)
 SOURCE_RE = re.compile(
     r"\b(video|footage|clip|recording|photo|photograph|image|picture|screenshot|audio|"
-    r"document|log|timeline|email|post)\s+([A-Za-z0-9][\w-]{0,30})\b", re.I)
-EVID_RE = re.compile(r"\bEV-[A-Z0-9-]+\b")
+    r"document|log|timeline|email|post)\s+([A-Za-z0-9][A-Za-z0-9_-]{0,30})\b", re.I | _A)
+EVID_RE = re.compile(r"\bEV-[A-Z0-9-]+\b", _A)
 LOC_RE = re.compile(
     r"\b(?:[Aa]t|[Ii]n|[Nn]ear|[Oo]utside|[Ii]nside|[Oo]ut of|[Ff]rom|[Ii]nto)\s+"
-    r"((?:the\s+)?[A-Z][\w'-]*(?:\s+(?:[A-Z0-9][\w'-]*|of|and))*)")
-IDENT_RE = re.compile(r"\bshows?\s+((?:the\s+)?[A-Z][\w-]*(?:\s+[A-Z0-9][\w-]*)*)")
-SEEN_RE = re.compile(r"\b([A-Z][\w-]*(?:\s+[A-Z0-9][\w-]*)+)\s+(?:was|is|were|are)\s+"
-                     r"(?:seen|visible|shown|recorded|heard)\b")
-SEQ_RE = re.compile(r"^(.*?)\b(before|after|followed by|prior to|then)\b(.*)$", re.I)
+    r"((?:the\s+)?" + _CAP + _W + r"*(?:\s+(?:" + _CAPNUM + _W + r"*|of|and))*)", _A)
+IDENT_RE = re.compile(
+    r"\bshows?\s+((?:the\s+)?" + _CAP + _W + r"*(?:\s+" + _CAPNUM + _W + r"*)*)", _A)
+SEEN_RE = re.compile(
+    r"\b(" + _CAP + _W + r"*(?:\s+" + _CAPNUM + _W + r"*)+)\s+(?:was|is|were|are)\s+"
+    r"(?:seen|visible|shown|recorded|heard)\b", _A)
+SEQ_RE = re.compile(r"^(.*?)\b(before|after|followed by|prior to|then)\b(.*)$", re.I | _A)
 
 
 def _strip_tail(text: str) -> str:
-    text = re.sub(r"\s+(?:of|and)$", "", text.strip())
-    return re.sub(r"^the\s+", "", text)
+    text = re.sub(r"\s+(?:of|and)$", "", text.strip(), flags=_A)
+    return re.sub(r"^the\s+", "", text, flags=_A)
 
 
 def decompose(claim: str) -> list[dict]:
@@ -64,7 +74,7 @@ def decompose(claim: str) -> list[dict]:
 
     for m in SOURCE_RE.finditer(text):
         ident = m.group(2)
-        if not (ident[0].isupper() or ident[0].isdigit()):
+        if not ("A" <= ident[0] <= "Z" or ident[0].isdigit()):
             continue
         label = f"{m.group(1).capitalize()} {ident}"
         spans.append(m.span())
