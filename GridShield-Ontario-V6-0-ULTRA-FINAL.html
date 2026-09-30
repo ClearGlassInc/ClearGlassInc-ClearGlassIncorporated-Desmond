@@ -13,9 +13,10 @@
 <meta name="msapplication-TileColor" content="#07111f">
 <meta name="msapplication-TileImage" content="/icon-192.png">
 <meta name="msapplication-config" content="/browserconfig.xml">
-  <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GridShield-Ontario v4.1 - COMPLETE - Passive-First Evidence Engine - Ontario Power Grid LIVE</title>
+<title>GridShield-Ontario: IESO Public Grid Data | ClearGlass</title>
+<meta name="description" content="Ontario demand and generation by fuel from IESO public reports, each file logged with source URL, retrieval time and SHA-256. Read-only; sample panels labelled.">
+<link rel="canonical" href="https://www.clearglassinc.com/GridShield-Ontario-V6-0-ULTRA-FINAL.html">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,sans-serif}
@@ -31,36 +32,45 @@ body{background:#010205;color:#cde7ff;overflow:hidden}
 .panel{background:rgba(10,18,28,.85);border:1px solid #122e3b;backdrop-filter:blur(12px)}
 .gridline{position:absolute;inset:0;background-image:linear-gradient(rgba(0,240,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.04) 1px,transparent 1px);background-size:80px 80px;pointer-events:none}
 .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.sample{color:#ffaa00;font-weight:800;letter-spacing:.5px}
+@media (max-width:900px){
+body{overflow:auto}
+.gs-top{height:auto!important;flex-wrap:wrap;gap:8px;padding:8px 12px!important}
+.gs-main{display:block!important;height:auto!important}
+.gs-main>div{border-right:0!important}
+.gs-map{flex:none!important;height:360px}
+.gs-bottom{display:block!important;height:auto!important}
+}
 </style>
 <link rel="stylesheet" href="/assets/css/future-buttons.css">
 <link rel="stylesheet" href="/assets/css/neon-pulse.css">
 </head>
 <body>
 <!-- TOP BAR -->
-<div style="height:60px;background:#020a0f;border-bottom:1px solid #0a2a33;display:flex;align-items:center;justify-content:space-between;padding:0 12px;position:relative;z-index:10">
+<div class="gs-top" style="height:60px;background:#020a0f;border-bottom:1px solid #0a2a33;display:flex;align-items:center;justify-content:space-between;padding:0 12px;position:relative;z-index:10">
 <div style="display:flex;align-items:center;gap:10px">
 <div style="width:32px;height:32px;background:#00f0ff;color:#000;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px" class="mono">GS</div>
 <div>
-<div style="display:flex;align-items:center;gap:8px;font-weight:700;font-size:12px;letter-spacing:.5px">GRIDSHIELD-ONTARIO v4.1 <span class="badge green">PASSIVE-FIRST</span><span class="badge cyan">EVIDENCE ENGINE</span><span class="badge gold">SIMULATED DEMO</span></div>
+<div style="display:flex;align-items:center;gap:8px;font-weight:700;font-size:12px;letter-spacing:.5px;flex-wrap:wrap"><h1 style="font:inherit;letter-spacing:inherit">GRIDSHIELD-ONTARIO v4.1</h1> <span class="badge green">PASSIVE-FIRST</span><span class="badge cyan">EVIDENCE ENGINE</span><span class="badge gold">IESO PUBLIC DATA + LABELLED SAMPLES</span></div>
 <div class="mono" style="font-size:8px;color:#5a7a8a;letter-spacing:.8px">SUPPORTS ONLY SPECIFICALLY AUTHORIZED ONTARIO ELECTRICITY-SECTOR ENVIRONMENTS — NOT A GRID-CONTROL SYSTEM — HUMAN AUTHORIZED DECISIONS ONLY</div>
 </div>
 </div>
 <div style="display:flex;align-items:center;gap:8px" class="mono">
 <div style="text-align:right;line-height:1.2"><div style="font-size:9px;color:#5a7a8a">UTC</div><div id="utc" style="font-size:10px;color:#fff">--</div></div>
 <div style="width:1px;height:28px;background:#122e3b"></div>
-<div style="text-align:right;line-height:1.2"><div style="font-size:9px;color:#5a7a8a">DEMAND</div><div id="demandTop" style="font-size:12px;color:#00f0ff;font-weight:700">22,450 MW</div></div>
-<div style="text-align:right;line-height:1.2"><div style="font-size:9px;color:#5a7a8a">THREAT</div><div style="font-size:12px;color:#00ff41;font-weight:700">LOW</div></div>
-<div class="badge cyan">ZERO TRUST ACTIVE</div>
+<div style="text-align:right;line-height:1.2"><div style="font-size:9px;color:#5a7a8a">DEMAND</div><div id="demandTop" style="font-size:12px;color:#00f0ff;font-weight:700">--</div></div>
+<div style="text-align:right;line-height:1.2"><div style="font-size:9px;color:#5a7a8a">THREAT</div><div style="font-size:12px;color:#5a7a8a;font-weight:700" title="No threat feed is connected to this page">NOT ASSESSED</div></div>
+<div class="badge cyan" title="This page only reads a static JSON file. It sends no commands.">READ-ONLY - NO CONTROL PATH</div>
 </div>
 </div>
 
 <!-- MAIN 3 COL -->
-<div style="display:grid;grid-template-columns:360px 1fr 380px;grid-template-rows:1fr 220px;height:calc(100vh - 60px - 28px)">
+<div class="gs-main" style="display:grid;grid-template-columns:360px 1fr 380px;grid-template-rows:1fr 220px;height:calc(100vh - 60px - 28px)">
 
 <!-- LEFT PURDUE + STATUS -->
 <div style="border-right:1px solid #0a2a33;display:flex;flex-direction:column;overflow:hidden">
 <div class="panel" style="margin:8px;padding:10px">
-<div class="mono" style="font-size:9px;letter-spacing:2px;font-weight:800;color:#fff">PURDUE REFERENCE MODEL - VALIDATE SITE BY SITE</div>
+<div class="mono" style="font-size:9px;letter-spacing:2px;font-weight:800;color:#fff">PURDUE REFERENCE MODEL - VALIDATE SITE BY SITE <span class="sample">SAMPLE POSTURE</span></div>
 <div class="mono" style="font-size:7px;color:#5a7a8a;margin-top:4px">Do not assume posture from level alone - Minimize exposed connectivity - Enforce approved conduits</div>
 <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px">
 <div style="display:flex;justify-content:space-between;align-items:center;background:#010205;border:1px solid #122e3b;padding:6px 8px"><span class="mono" style="font-size:8px"><b>L0</b> Physical Process - Turbines/Breakers</span><span class="badge green" style="font-size:7px">SECURE - AIR-GAP EVALUATED</span></div>
@@ -76,54 +86,54 @@ body{background:#010205;color:#cde7ff;overflow:hidden}
 <div class="panel" style="margin:0 8px 8px 8px;padding:10px;flex:1;overflow:auto">
 <div class="mono" style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:#fff">EASY GRID STATUS - PLAIN LANGUAGE</div>
 <div style="margin-top:10px;background:#010205;border:1px solid #122e3b;padding:12px;text-align:center">
-<div style="width:80px;height:80px;border:3px solid #00ff41;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#00ff41;box-shadow:0 0 20px rgba(0,255,65,.3)">STABLE</div>
-<div style="margin-top:8px;font-size:11px;color:#cde7ff">Ontario grid is stable, demand normal</div>
-<div class="mono" style="font-size:8px;color:#5a7a8a;margin-top:4px">PUBLIC IESO REPORT DATA — NOT A CONTROL SIGNAL</div>
+<div id="feedRing" style="width:80px;height:80px;border:3px solid #5a7a8a;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;color:#5a7a8a;text-align:center">LOADING</div>
+<div id="feedSentence" style="margin-top:8px;font-size:11px;color:#cde7ff">Loading the IESO public data snapshot</div>
+<div class="mono" style="font-size:8px;color:#5a7a8a;margin-top:4px">PUBLIC IESO REPORT DATA — NOT A CONTROL SIGNAL — shows demand and output only, never whether the grid is stable</div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:10px">
-<div style="background:#010205;border:1px solid #122e3b;padding:8px;text-align:center"><div class="mono" style="font-size:7px;color:#5a7a8a">DEMAND</div><div id="demandBig" class="mono" style="font-size:14px;font-weight:800;color:#00f0ff">22.4 GW</div><div class="mono" style="font-size:7px;color:#4a6573">Peak 6pm</div></div>
-<div style="background:#010205;border:1px solid #122e3b;padding:8px;text-align:center"><div class="mono" style="font-size:7px;color:#5a7a8a">SUPPLY</div><div id="supplyBig" class="mono" style="font-size:14px;font-weight:800;color:#00ff41">23.1 GW</div><div class="mono" style="font-size:7px;color:#4a6573">Reserve 1.2GW</div></div>
-<div style="background:#010205;border:1px solid #122e3b;padding:8px;text-align:center"><div class="mono" style="font-size:7px;color:#5a7a8a">HOEP PRICE</div><div id="priceBig" class="mono" style="font-size:14px;font-weight:800;color:#ffcc33">$34.20</div><div class="mono" style="font-size:7px;color:#4a6573">Cheap hour</div></div>
+<div style="background:#010205;border:1px solid #122e3b;padding:8px;text-align:center"><div class="mono" style="font-size:7px;color:#5a7a8a">ONTARIO DEMAND</div><div id="demandBig" class="mono" style="font-size:14px;font-weight:800;color:#00f0ff">--</div><div id="demandSub" class="mono" style="font-size:7px;color:#4a6573">PUB_Demand</div></div>
+<div style="background:#010205;border:1px solid #122e3b;padding:8px;text-align:center"><div class="mono" style="font-size:7px;color:#5a7a8a">GEN OUTPUT</div><div id="supplyBig" class="mono" style="font-size:14px;font-weight:800;color:#00ff41">--</div><div id="supplySub" class="mono" style="font-size:7px;color:#4a6573">Generators 20 MW+</div></div>
+<div style="background:#010205;border:1px solid #122e3b;padding:8px;text-align:center"><div class="mono" style="font-size:7px;color:#5a7a8a">PRICE</div><div id="priceBig" class="mono" style="font-size:14px;font-weight:800;color:#5a7a8a">--</div><div class="mono" style="font-size:7px;color:#4a6573" title="HOEP ended 2025-05-01; the replacement report is not wired">Not wired</div></div>
 </div>
 <div style="margin-top:10px">
-<div class="mono" style="font-size:8px;font-weight:700;color:#fff">SUPPLY MIX - EASY</div>
+<div class="mono" style="font-size:8px;font-weight:700;color:#fff">SUPPLY MIX - EASY <span id="mixWhen" style="color:#5a7a8a;font-weight:400"></span></div>
 <div id="mix" style="margin-top:6px;display:flex;flex-direction:column;gap:4px"></div>
 </div>
 <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
-<button onclick="alert('CHECK GRID HEALTH: Dry-run containment plan generated - No physical changes - Evidence: 27 ESP enforced, 0 high sev incidents, clock-drift L2 RTU #14 1.2s REQUIRES CONFIRMATION')" style="background:#00f0ff;color:#000;border:0;padding:8px;font-size:9px;font-weight:800;cursor:pointer" class="mono">CHECK GRID HEALTH</button>
-<button onclick="alert('CHEAP POWER HOURS: HOEP low 2am-5am $18/MWh - Good time to charge - Source: PUBLIC IESO REPORT DATA - NOT A CONTROL SIGNAL')" style="background:#ffcc33;color:#000;border:0;padding:8px;font-size:9px;font-weight:800;cursor:pointer" class="mono">SHOW CHEAP HOURS</button>
+<button onclick="alert(feedHealthText())" style="background:#00f0ff;color:#000;border:0;padding:8px;font-size:9px;font-weight:800;cursor:pointer" class="mono">CHECK DATA HEALTH</button>
+<button onclick="alert(lowDemandText())" style="background:#ffcc33;color:#000;border:0;padding:8px;font-size:9px;font-weight:800;cursor:pointer" class="mono">LOW-DEMAND HOURS</button>
 </div>
 </div>
 </div>
 
 <!-- CENTER MAP + WATERFALL -->
 <div style="display:flex;flex-direction:column;overflow:hidden;border-right:1px solid #0a2a33">
-<div style="flex:1;position:relative;background:#020a0f;overflow:hidden">
+<div class="gs-map" style="flex:1;position:relative;background:#020a0f;overflow:hidden">
 <div class="gridline"></div>
 <canvas id="mapCanvas" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
 <div style="position:absolute;top:8px;left:8px;background:rgba(2,10,15,.9);border:1px solid #122e3b;padding:6px 8px" class="mono">
 <div style="font-size:9px;font-weight:800;color:#fff;letter-spacing:1px">ONTARIO BES MAP - SITUATIONAL AWARENESS ONLY</div>
-<div style="font-size:7px;color:#ffaa00">PUBLIC IESO REPORT DATA — NOT A CONTROL SIGNAL — Never drives automated OT decisions</div>
-<div id="cityInfo" style="font-size:8px;color:#8db0c0;margin-top:4px">Hover city - Toronto 4.2GW 95% capacity - CORROBORATED</div>
+<div style="font-size:7px;color:#ffaa00">SAMPLE TOPOLOGY — illustrative sites, lines and statuses, not from IESO or any live source</div>
+<div id="cityInfo" style="font-size:8px;color:#8db0c0;margin-top:4px">Hover a site to read its sample record</div>
 </div>
 <div style="position:absolute;bottom:8px;left:8px;right:8px;background:rgba(2,10,15,.9);border:1px solid #122e3b;padding:6px 8px;display:flex;gap:12px;overflow:auto" class="mono">
 <div style="display:flex;align-items:center;gap:6px"><span class="dot" style="background:#00ff41"></span><span style="font-size:7px">GREEN LINE ACTIVE</span></div>
 <div style="display:flex;align-items:center;gap:6px"><span class="dot" style="background:#ffaa00"></span><span style="font-size:7px">AMBER CONSTRAINED - RECOMMEND REVIEW</span></div>
 <div style="display:flex;align-items:center;gap:6px"><span class="dot" style="background:#ff3333"></span><span style="font-size:7px">RED OUTAGE - REQUIRES CONFIRMATION</span></div>
-<div style="display:flex;align-items:center;gap:6px"><span style="font-size:7px;color:#00f0ff">CYAN DOTS = LIVE WIRE FLOW - THICKNESS = MW</span></div>
+<div style="display:flex;align-items:center;gap:6px"><span style="font-size:7px;color:#00f0ff">MOVING DOTS ARE ANIMATION - NOT MEASURED FLOW</span></div>
 </div>
 <div id="selectedCity" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#010205;border:1px solid #00f0ff;padding:12px;display:none;min-width:220px" class="panel mono">
 <div style="font-size:10px;font-weight:800;color:#fff" id="selName">TORONTO</div>
 <div style="font-size:8px;color:#8db0c0;margin-top:4px" id="selDetail"></div>
-<div style="margin-top:8px;font-size:7px;color:#5a7a8a">Evidence: <span id="selEvidence"></span></div>
+<div style="margin-top:8px;font-size:7px;color:#5a7a8a"><span class="sample">SAMPLE</span> evidence text: <span id="selEvidence"></span></div>
 <button onclick="document.getElementById('selectedCity').style.display='none'" style="margin-top:8px;background:#122e3b;color:#8db0c0;border:1px solid #1a3a4a;padding:4px 8px;font-size:7px;cursor:pointer">CLOSE</button>
 </div>
 </div>
 
 <div style="height:140px;background:#010205;border-top:1px solid #0a2a33;position:relative;overflow:hidden">
 <div style="position:absolute;top:0;left:0;right:0;height:20px;background:#020a0f;border-bottom:1px solid #0a2a33;display:flex;align-items:center;gap:8px;padding:0 8px" class="mono">
-<span style="font-size:8px;font-weight:800;color:#fff;letter-spacing:1px">THREAT SURFACE - DETERMINISTIC PROTOCOL INSPECTION - 6ch</span>
-<span style="font-size:7px;color:#5a7a8a">Heuristic anomaly = LIKELY - NOT labeled as confirmed violation - Show evidence + confidence + competing explanations</span>
+<span style="font-size:8px;font-weight:800;color:#fff;letter-spacing:1px;white-space:nowrap">THREAT SURFACE - DETERMINISTIC PROTOCOL INSPECTION - 6ch <span class="sample">SIMULATED</span></span>
+<span style="font-size:7px;color:#5a7a8a;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">Heuristic anomaly = LIKELY - NOT labeled as confirmed violation - Show evidence + confidence + competing explanations</span>
 </div>
 <canvas id="waterfall" style="position:absolute;top:20px;left:0;right:0;bottom:0;width:100%;height:calc(100% - 20px)"></canvas>
 </div>
@@ -132,7 +142,7 @@ body{background:#010205;color:#cde7ff;overflow:hidden}
 <!-- RIGHT COMPLIANCE -->
 <div style="display:flex;flex-direction:column;overflow:hidden">
 <div class="panel" style="margin:8px;padding:8px;flex:1;overflow:auto">
-<div class="mono" style="font-size:9px;font-weight:800;color:#fff;letter-spacing:1px">COMPLIANCE REPRESENTATION RULE - CORRECTED OCSF v1.1</div>
+<div class="mono" style="font-size:9px;font-weight:800;color:#fff;letter-spacing:1px">COMPLIANCE REPRESENTATION RULE - CORRECTED OCSF v1.1 <span class="sample">SAMPLE ROWS - NOT AUDIT EVIDENCE</span></div>
 <div class="mono" style="font-size:7px;color:#ffaa00;line-height:1.4;margin-top:4px">Must not state compliant, certified, audit-ready, NERC CIP applicable, meets OEB requirements unless scope validated, requirement version identified, evidence reviewed, exceptions documented, qualified human authority approved. OCSF = Ontario Cyber Security Framework v1.1 used by transmitters/distributors to assess/report to OEB.</div>
 <div style="margin-top:8px;border:1px solid #122e3b;overflow:hidden" class="mono">
 <div style="display:grid;grid-template-columns:70px 50px 1fr 90px;font-size:7px;background:#0a1e27;color:#00f0ff;font-weight:800;padding:4px 6px"><span>Framework</span><span>Req</span><span>Evidence</span><span>Validation</span></div>
@@ -150,21 +160,21 @@ body{background:#010205;color:#cde7ff;overflow:hidden}
 </div>
 
 <div style="margin-top:10px">
-<div class="mono" style="font-size:9px;font-weight:800;color:#fff">OPEN SOURCES LIVE WIRE</div>
+<div class="mono" style="font-size:9px;font-weight:800;color:#fff">DATA SOURCES - WHAT THIS PAGE ACTUALLY READS</div>
 <div id="openSources" style="margin-top:6px;display:flex;flex-direction:column;gap:4px"></div>
 </div>
 
 <div style="margin-top:10px">
-<div class="mono" style="font-size:9px;font-weight:800;color:#fff">SECURITY MONITORING - TIER 0/1 ALERTS</div>
+<div class="mono" style="font-size:9px;font-weight:800;color:#fff">SECURITY MONITORING - TIER 0/1 ALERTS <span class="sample">SAMPLE - NO SENSOR CONNECTED</span></div>
 <div id="alerts" style="margin-top:6px;display:flex;flex-direction:column;gap:4px"></div>
 </div>
 </div>
 </div>
 
 <!-- BOTTOM AUDIT -->
-<div style="grid-column:1 / -1;height:220px;background:#010205;border-top:1px solid #0a2a33;display:grid;grid-template-columns:1fr 520px">
+<div class="gs-bottom" style="grid-column:1 / -1;height:220px;background:#010205;border-top:1px solid #0a2a33;display:grid;grid-template-columns:1fr 520px">
 <div style="border-right:1px solid #0a2a33;padding:8px;overflow:auto">
-<div class="mono" style="font-size:9px;font-weight:800;color:#fff;letter-spacing:1px">EVIDENCE INTEGRITY - SIGNED APPEND-ONLY - NOT JUST SHA-256 CHAIN</div>
+<div class="mono" style="font-size:9px;font-weight:800;color:#fff;letter-spacing:1px">EVIDENCE INTEGRITY - SESSION PROVENANCE LOG - SHA-256 CHAIN, UNSIGNED</div>
 <div class="mono" style="font-size:7px;color:#5a7a8a;margin-top:4px">For every record preserve: Source system & owner, Authorized collection method, Collection UTC, Original timestamp clock-confidence, Schema/version, Integrity metadata, Retention, Chain-of-custody ID, Data classification, Sequence # + prior hash. Digitally sign batch manifests using org-managed keys per HSM policy, reliable time sync, periodic independent verification. SHA-256 = integrity component, not proof of authenticity/completeness/correctness/compliance.</div>
 <div id="auditLog" style="margin-top:8px;display:flex;flex-direction:column;gap:3px"></div>
 </div>
@@ -180,7 +190,7 @@ body{background:#010205;color:#cde7ff;overflow:hidden}
 <div style="display:grid;grid-template-columns:68px 1fr 1fr 92px;padding:4px 6px;font-size:7px;color:#8db0c0;border-top:1px solid #122e3b"><span style="color:#fff;font-weight:700">Execute</span><span>Only external approved control system, pre-approved runbook, authorized boundaries</span><span style="color:#ff7a7a">Physical actuation/prod changes by this prompt</span><span style="color:#ffcc33">Formal change approval + logged auth</span></div>
 </div>
 <div style="margin-top:8px;display:flex;gap:6px">
-<input id="cmdInput" placeholder="Ask grid: e.g. is it good time to charge? - human-authorized only" style="flex:1;background:#020a0f;border:1px solid #122e3b;color:#cde7ff;padding:6px 8px;font-size:8px" class="mono">
+<input id="cmdInput" placeholder="Ask: low demand hours? data health? - read-only, no commands" style="flex:1;background:#020a0f;border:1px solid #122e3b;color:#cde7ff;padding:6px 8px;font-size:8px" class="mono">
 <button onclick="handleCmd()" style="background:#00f0ff;color:#000;border:0;padding:6px 12px;font-size:8px;font-weight:800;cursor:pointer" class="mono">ASK</button>
 </div>
 <div id="cmdOut" class="mono" style="margin-top:6px;font-size:7px;color:#8db0c0;background:#020a0f;border:1px solid #122e3b;padding:6px;min-height:36px"></div>
@@ -194,11 +204,10 @@ body{background:#010205;color:#cde7ff;overflow:hidden}
 </div>
 
 <script>
-// LIVE DATA - DETERMINISTIC SEEDED mulberry32(42) - SIMULATED DEMO
+// Grid numbers come only from data/grid/ieso-public.json (scripts/ieso_public_feed.py).
+// SAMPLE panels (map, waterfall) still use this seeded generator and are labelled so.
 function mulberry32(a){return function(){var t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296}}
 const rnd=mulberry32(42);
-let demand=22450, supply=23100, price=34.2;
-let t=0;
 
 const cities=[
 {id:'tor',name:'TORONTO',x:58,y:68,type:'LDC / Market Hub',mw:'~4,200 MW peak',status:'CORROBORATED',evidence:'2 sources: PUBLIC IESO REPORT DATA + Historian replica - schema v2.1 validated - 2024-11-12'},
@@ -210,32 +219,89 @@ const cities=[
 {id:'nia',name:'NIAGARA',x:58,y:82,type:'Generation / Intertie',mw:'~2,400 MW',status:'CORROBORATED',evidence:'PUBLIC IESO REPORT DATA + PI replica - file hash a3f9... - freshness 0.3s'},
 ];
 
-const mixData=[
-{label:'Nuclear',pct:58,desc:'always on baseload',color:'#00ff41'},
-{label:'Hydro',pct:24,desc:'from Niagara',color:'#00f0ff'},
-{label:'Gas',pct:12,desc:'peaker - price follows demand',color:'#ffaa00'},
-{label:'Wind',pct:4,desc:'variable - LIKELY',color:'#8a8a8a'},
-{label:'Solar',pct:2,desc:'daytime only',color:'#ffcc33'},
-];
-
-function updateEasy(){
-demand = 18000 + Math.sin(t*0.01)*4000 + rnd()*800;
-supply = demand + 600 + rnd()*600;
-price = 20 + (demand-15000)/500 + rnd()*5;
-document.getElementById('demandTop').textContent=Math.round(demand).toLocaleString()+' MW';
-document.getElementById('demandBig').textContent=(demand/1000).toFixed(1)+' GW';
-document.getElementById('supplyBig').textContent=(supply/1000).toFixed(1)+' GW';
-document.getElementById('priceBig').textContent='$'+price.toFixed(2);
-document.getElementById('utc').textContent=new Date().toISOString();
+// IESO PUBLIC FEED
+const FEED_URL='data/grid/ieso-public.json';
+const FEED_SCHEMA='clearglass.gridshield.ieso-public/1';
+const STALE_MIN=180;
+const FUEL_COLORS={NUCLEAR:'#00ff41',HYDRO:'#00f0ff',GAS:'#ffaa00',WIND:'#8a8a8a',SOLAR:'#ffcc33',BIOFUEL:'#b98cff'};
+let feed=null, feedError=null;
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function setText(id,v){document.getElementById(id).textContent=v}
+function ageMin(iso){const ms=Date.parse(iso||'');return isNaN(ms)?null:Math.max(0,Math.round((Date.now()-ms)/60000))}
+function ageText(iso){const m=ageMin(iso);if(m===null)return 'never';return m<90?m+' min ago':(m/60).toFixed(1)+' h ago'}
+function newestRetrieval(){
+if(!feed)return null;
+const stamps=feed.sources.map(s=>s.retrieved_utc).filter(Boolean).sort();
+return stamps.length?stamps[stamps.length-1]:null;
+}
+function setRing(label,color,sentence){
+const ring=document.getElementById('feedRing');
+ring.textContent=label;ring.style.color=color;ring.style.borderColor=color;
+setText('feedSentence',sentence);
+}
+function renderFeed(){
+const d=feed&&feed.demand, m=feed&&feed.supply_mix;
+if(d){
+setText('demandTop',d.ontario_mw.toLocaleString()+' MW');
+setText('demandBig',(d.ontario_mw/1000).toFixed(1)+' GW');
+setText('demandSub',d.date+' HE'+d.hour_ending);
+}else{setText('demandTop','--');setText('demandBig','--');setText('demandSub','No data')}
 const mixEl=document.getElementById('mix');
-mixEl.innerHTML=mixData.map(m=>`
+if(m){
+setText('supplyBig',(m.total_mw/1000).toFixed(1)+' GW');
+setText('supplySub',m.date+' HE'+m.hour_ending);
+setText('mixWhen','IESO '+m.date+' HE'+m.hour_ending);
+mixEl.innerHTML=m.fuels.map(f=>`
 <div style="display:flex;align-items:center;gap:8px;background:#010205;border:1px solid #122e3b;padding:4px 6px">
-<div style="width:${m.pct}%;height:6px;background:${m.color}"></div>
-<div class="mono" style="font-size:8px;color:#fff;flex:1">${m.label} ${m.pct}% - ${m.desc}</div>
+<div style="width:${Math.max(0,Math.min(100,Number(f.pct)||0))}%;height:6px;background:${FUEL_COLORS[f.fuel]||'#5a7a8a'}"></div>
+<div class="mono" style="font-size:8px;color:#fff;flex:1">${esc(f.fuel)} ${esc(f.pct)}% - ${esc(Number(f.mw).toLocaleString())} MW</div>
 </div>`).join('');
+}else{
+setText('supplyBig','--');setText('supplySub','No data');setText('mixWhen','');
+mixEl.innerHTML='<div class="mono" style="font-size:8px;color:#5a7a8a">No output-by-fuel data published yet.</div>';
+}
+if(feedError){
+setRing('NO FEED','#ff3333','Could not load the data file ('+feedError+'). No grid figures are shown.');
+}else if(feed.status==='no_data'){
+const tried=feed.sources.map(s=>s.attempted_utc).filter(Boolean).sort().pop();
+setRing('NO DATA','#ffaa00','No IESO snapshot has been retrieved yet.'+(tried?' Last attempt '+tried+' failed; see Data Sources.':''));
+}else{
+const newest=newestRetrieval(), age=ageMin(newest);
+if(age!==null&&age>STALE_MIN){
+setRing('STALE','#ffaa00','Newest IESO file was retrieved '+ageText(newest)+'. Figures may be out of date.');
+}else if(feed.status==='degraded'){
+setRing('PARTIAL','#ffaa00','One IESO report failed on the last run; the other is current. See CHECK DATA HEALTH.');
+}else{
+setRing('CURRENT','#00ff41','IESO files retrieved '+ageText(newest)+'. Demand and output only.');
+}
+}
+renderSources();
+}
+function feedHealthText(){
+if(feedError)return 'DATA HEALTH: feed file could not be loaded ('+feedError+'). No grid figures are shown.';
+if(!feed)return 'DATA HEALTH: still loading '+FEED_URL+'.';
+const lines=feed.sources.map(s=>s.id+': '+s.status.toUpperCase()+(s.retrieved_utc?' | data retrieved '+s.retrieved_utc+' ('+ageText(s.retrieved_utc)+') | sha256 '+s.sha256:' | no data retrieved yet')+(s.error?' | last attempt '+s.attempted_utc+' failed: '+s.error:''));
+return 'DATA HEALTH ('+feed.status.toUpperCase()+')\n'+lines.join('\n')+'\nPrice: not wired. '+feed.price.reason+'\n'+feed.label;
+}
+function lowDemandText(){
+const d=feed&&feed.demand;
+if(!d||!Array.isArray(d.series)||!d.series.length)return 'No IESO demand data has been published yet, so there are no low-demand hours to show. Price is not wired: HOEP ended on 2025-05-01 and its replacement report is not connected.';
+const low=[...d.series].sort((a,b)=>a.ontario_mw-b.ontario_mw).slice(0,3);
+return 'Lowest Ontario Demand in the last '+d.series.length+' published hours (IESO PUB_Demand): '+low.map(r=>r.date+' HE'+r.hour+' '+r.ontario_mw.toLocaleString()+' MW').join('; ')+'. Demand is not price, and price is not wired. '+feed.label+'.';
+}
+async function loadFeed(){
+try{
+const r=await fetch(FEED_URL,{cache:'no-store'});
+if(!r.ok)throw new Error('HTTP '+r.status);
+const data=await r.json();
+if(!data||data.schema!==FEED_SCHEMA||!Array.isArray(data.sources))throw new Error('unexpected feed schema');
+feed=data;feedError=null;
+}catch(e){feedError=String(e&&e.message||e)}
+renderFeed();
+await logFeed();
 }
 
-// MAP CANVAS LIVE WIRE
+// MAP CANVAS - SAMPLE TOPOLOGY, ANIMATION ONLY
 const mapCanvas=document.getElementById('mapCanvas');
 const mapCtx=mapCanvas.getContext('2d');
 function resizeMap(){mapCanvas.width=mapCanvas.offsetWidth*2;mapCanvas.height=mapCanvas.offsetHeight*2}
@@ -303,10 +369,10 @@ const mx=(e.clientX-rect.left)/rect.width*100,my=(e.clientY-rect.top)/rect.heigh
 let near=null;let min=3;
 cities.forEach(c=>{const d=Math.hypot(c.x-mx,c.y-my);if(d<min){min=d;near=c}});
 if(near){
-document.getElementById('cityInfo').textContent=`${near.name} ${near.mw} - ${near.type} - Status: ${near.status} - ${near.evidence.substring(0,80)}...`;
+document.getElementById('cityInfo').textContent=`SAMPLE: ${near.name} ${near.mw} - ${near.type} - Status: ${near.status} - ${near.evidence.substring(0,80)}...`;
 mapCanvas.style.cursor='pointer';
 }else{
-document.getElementById('cityInfo').textContent='Hover city - Toronto 4.2GW 95% capacity - CORROBORATED - PUBLIC IESO REPORT DATA - NOT A CONTROL SIGNAL';
+document.getElementById('cityInfo').textContent='Hover a site to read its sample record';
 mapCanvas.style.cursor='crosshair';
 }
 });
@@ -317,7 +383,7 @@ let near=null;let min=4;
 cities.forEach(c=>{const d=Math.hypot(c.x-mx,c.y-my);if(d<min){min=d;near=c}});
 if(near){
 document.getElementById('selName').textContent=near.name;
-document.getElementById('selDetail').innerHTML=`Type: ${near.type}<br>MW: ${near.mw}<br>Status: <b>${near.status}</b><br><br>Evidence: ${near.evidence}<br><br>Source: PUBLIC IESO REPORT DATA - NOT A CONTROL SIGNAL<br>Retrieval: 0.3s ago | Hash: a3f9c1... | Schema v2.1 | Freshness: nominal`;
+document.getElementById('selDetail').innerHTML=`Type: ${near.type}<br>MW: ${near.mw}<br>Status: <b>${near.status}</b><br><br>Evidence: ${near.evidence}<br><br>Source: SAMPLE RECORD - layout only, not from IESO or any live source`;
 document.getElementById('selEvidence').textContent=near.evidence;
 document.getElementById('selectedCity').style.display='block';
 }
@@ -365,29 +431,34 @@ document.getElementById('complianceRows').innerHTML=compliance.map(c=>`
 <span style="color:#fff;font-weight:700">${c.fw}</span><span>${c.req}</span><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.evid}</span><span style="color:${c.color};font-weight:700">${c.val}</span>
 </div>`).join('');
 
-// OPEN SOURCES
-const sources=[
-{ name:'IESO Power Data - Public Reports', url:'reports-public.ieso.ca', status:'CONNECTED SIMULATED - 0.3s', note:'PUBLIC IESO REPORT DATA — NOT A CONTROL SIGNAL - Analytics only', hash:'a3f9c1...' },
-{ name:'IESO Realtime Demand', url:'reports-public.ieso.ca/PUB_Demand', status:'CONNECTED SIMULATED', note:'Demand MW - situational awareness', hash:'b7e2a4...' },
-{ name:'IESO Supply Mix', url:'reports-public.ieso.ca/PUB_GenOutputCapability', status:'CONNECTED SIMULATED', note:'Nuclear/Hydro/Gas/Wind/Solar', hash:'c8f1b2...' },
-{ name:'IESO Market Prices HOEP', url:'reports-public.ieso.ca/PUB_PriceHOEPlist', status:'CONNECTED SIMULATED', note:'Price $/MWh - cheap hours analysis', hash:'d4a9c3...' },
-{ name:'IESO Confidential API - REQUIRES AUTH', url:'reports.ieso.ca/api/v1.4/files?idp_id=ieso', status:'REQUIRES AUTHORIZATION - Participant account + mTLS + HSM', note:'Confidential participant reports - Least privilege - Never in prompts/logs/code', hash:'N/A - auth required' },
-{ name:'Hydro One Open Data', url:'hydroone.com/open-data', status:'CORROBORATED', note:'Transmission outage map - public', hash:'e5b8d4...' },
-{ name:'OEB OCSF v1.1', url:'oeb.ca/regulatory-rules.../ontario-cyber-security', status:'VERIFIED - Framework v1.1', note:'Used by Tx/Dist to assess/report to OEB - Track maturity vs utility-approved target', hash:'OCSF v1.1' },
+// DATA SOURCES - rendered from the feed; nothing here is claimed as connected unless it is
+const REFERENCE_SOURCES=[
+{ name:'Ontario price (OEMP, replaced HOEP 2025-05-01)', url:'IESO public reports', status:'NOT WIRED', note:'Replacement report URL not verified, so no price is shown' },
+{ name:'IESO Confidential API', url:'reports.ieso.ca/api/v1.4/files?idp_id=ieso', status:'NOT USED - REQUIRES AUTHORIZATION', note:'Participant account + mTLS; never read by this page' },
+{ name:'Hydro One Open Data', url:'hydroone.com/open-data', status:'REFERENCE - NOT FETCHED', note:'Transmission outage map - public' },
+{ name:'OEB OCSF v1.1', url:'oeb.ca/regulatory-rules.../ontario-cyber-security', status:'REFERENCE - NOT FETCHED', note:'Used by Tx/Dist to assess/report to OEB' },
 ];
-document.getElementById('openSources').innerHTML=sources.map(s=>`
+function renderSources(){
+const wired=(feed?feed.sources:[]).map(s=>({
+name:'IESO '+s.id+' - '+s.title, url:s.url,
+status:s.status==='ok'?'OK - retrieved '+ageText(s.retrieved_utc):s.status==='error'?'ERROR'+(s.retrieved_utc?' - serving data from '+ageText(s.retrieved_utc):' - no data'):'NEVER FETCHED',
+note:(s.sha256?'sha256 '+s.sha256.slice(0,16)+'... | '+s.bytes+' bytes | created '+(s.created_at||'n/a'):'no file hash')+(s.error?' | '+s.error:''),
+title:s.sha256||''
+}));
+document.getElementById('openSources').innerHTML=wired.concat(REFERENCE_SOURCES).map(s=>`
 <div style="background:#010205;border:1px solid #122e3b;padding:6px">
-<div style="display:flex;justify-content:space-between"><span style="font-size:8px;color:#fff;font-weight:700">${s.name}</span><span style="font-size:7px;color:${s.status.includes('SIMULATED')?'#00f0ff':s.status.includes('REQUIRES')?'#ffaa00':'#00ff41'}">${s.status}</span></div>
-<div style="font-size:7px;color:#00f0ff;margin-top:2px">${s.url}</div>
-<div style="font-size:7px;color:#8db0c0;margin-top:2px">${s.note} | Hash: ${s.hash}</div>
+<div style="display:flex;justify-content:space-between;gap:6px"><span style="font-size:8px;color:#fff;font-weight:700">${esc(s.name)}</span><span style="font-size:7px;color:${s.status.startsWith('OK')?'#00ff41':s.status.startsWith('ERROR')?'#ff3333':'#ffaa00'}">${esc(s.status)}</span></div>
+<div style="font-size:7px;color:#00f0ff;margin-top:2px;word-break:break-all">${esc(s.url)}</div>
+<div style="font-size:7px;color:#8db0c0;margin-top:2px;word-break:break-all" title="${esc(s.title||'')}">${esc(s.note)}</div>
 </div>`).join('');
+}
 
 // ALERTS
 const alerts=[
 {sev:'LOW',msg:'Wind up 200MW past hour - good - LIKELY - competing: forecast vs curtailment',evid:'CORROBORATED - 2 sources'},
 {sev:'INFO',msg:'Demand peak expected 6pm 24.1GW - prepare - REQUIRES CONFIRMATION from control-room authority',evid:'SIMULATED DEMO - Seeded 42'},
 {sev:'INFO',msg:'Clock-drift L2 RTU #14 1.2s - NTP relay + drift logged - REQUIRES CONFIRMATION',evid:'VERIFIED - time sync'},
-{sev:'LOW',msg:'No outages reported - PUBLIC IESO REPORT DATA',evid:'CORROBORATED'},
+{sev:'INFO',msg:'Outage status unknown - no outage feed is connected',evid:'NOT WIRED'},
 ];
 document.getElementById('alerts').innerHTML=alerts.map(a=>`
 <div style="background:#010205;border:1px solid #122e3b;padding:4px 6px;display:flex;gap:6px;align-items:center">
@@ -396,42 +467,78 @@ document.getElementById('alerts').innerHTML=alerts.map(a=>`
 <span style="font-size:6px;color:#5a7a8a">${a.evid}</span>
 </div>`).join('');
 
-// AUDIT LOG - APPEND-ONLY SIGNED
-let seq=0;
-function addAudit(){
+// AUDIT LOG - real events of this browser session, SHA-256 chained here, unsigned
+let seq=0, chainHead='0'.repeat(64);
+const logged=new Set();
+async function sha256Hex(text){
+if(!(window.crypto&&crypto.subtle))return null;
+const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text));
+return Array.from(new Uint8Array(buf),b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function appendAudit(event,detail){
 seq++;
-const now=new Date().toISOString();
-const sources=['DNP3 SA v5','OPC-UA PubSub','PUBLIC IESO REPORT','Historian Replica','Enterprise Broker'];
-const src=sources[Math.floor(rnd()*sources.length)];
-const hash='sha256:'+Array.from({length:16},()=>Math.floor(rnd()*16).toString(16)).join('');
-const line=`<div style="display:flex;gap:6px;font-size:7px;color:#8db0c0;background:#020a0f;border:1px solid #0e2a35;padding:3px 6px"><span style="color:#5a7a8a">#${seq}</span><span style="color:#fff">${now}</span><span style="color:#00f0ff">${src}</span><span>Collection UTC ${now} | Clock-confidence nominal | Schema v2.1 | Retention 90d | Chain-of-custody CC-${seq} | Seq ${seq} | Prior ${hash.substring(0,12)} | Manifest signed HSM key org-managed | Verified independently</span><span style="color:#4a6573">${hash}</span></div>`;
+const rec={seq,at:new Date().toISOString(),event,detail,prior:chainHead};
+const h=await sha256Hex(JSON.stringify(rec));
+if(h)chainHead=h;
+const line=`<div style="display:flex;gap:6px;font-size:7px;color:#8db0c0;background:#020a0f;border:1px solid #0e2a35;padding:3px 6px"><span style="color:#5a7a8a">#${seq}</span><span style="color:#fff">${esc(rec.at)}</span><span style="color:#00f0ff">${esc(event)}</span><span style="flex:1;word-break:break-all">${esc(detail)}</span><span style="color:#4a6573" title="SHA-256 of this record including the prior hash">${h?'chain '+h.slice(0,16):'chain n/a (no WebCrypto)'}</span></div>`;
 const log=document.getElementById('auditLog');
 log.insertAdjacentHTML('afterbegin',line);
-if(log.children.length>20)log.lastElementChild.remove();
+if(log.children.length>40)log.lastElementChild.remove();
 }
-setInterval(addAudit,1200);
-addAudit();
+async function logFeed(){
+if(feedError){await appendAudit('FEED LOAD FAILED',FEED_URL+' - '+feedError);return}
+for(const s of feed.sources){
+const key=s.id+'|'+s.attempted_utc+'|'+s.status;
+if(logged.has(key))continue;
+logged.add(key);
+const detail=s.status==='ok'
+?'retrieved '+s.retrieved_utc+' | created '+(s.created_at||'n/a')+' | '+s.bytes+' bytes | sha256 '+s.sha256+' | '+s.url+' | parser '+s.parser
+:'attempted '+(s.attempted_utc||'never')+' | '+(s.error||s.status)+(s.retrieved_utc?' | serving data retrieved '+s.retrieved_utc+' sha256 '+s.sha256:'');
+await appendAudit(s.id+' '+s.status.toUpperCase(),detail);
+}
+}
 
-// COMMAND
+// COMMAND - read-only answers from the loaded feed; no commands are sent anywhere
 function handleCmd(){
 const v=document.getElementById('cmdInput').value.toLowerCase();
 const out=document.getElementById('cmdOut');
-if(!v){out.textContent='Enter question - e.g. is it good time to charge? - human-authorized only - no physical commands executed';return}
-if(v.includes('cheap')||v.includes('charge')){
-out.innerHTML=`<span style="color:#00ff41">RECOMMENDATION - REQUIRES HUMAN AUTHORIZATION:</span> Cheap hours 2am-5am HOEP $18/MWh - Source: PUBLIC IESO REPORT DATA — NOT A CONTROL SIGNAL - File hash b7e2a4... - Freshness 0.3s - Confidence LIKELY - Competing: price forecast vs real-time - Do NOT trigger automated load-shedding - Request assessment from designated operations authority - Dry-run containment plan generated - Approval-ready ticket.`;
-}else if(v.includes('health')){
-out.innerHTML=`<span style="color:#00f0ff">GRID HEALTH DRY-RUN:</span> 27 ESP enforced CORROBORATED, Physical Security REQUIRES CONFIRMATION, Systems Sec Mgmt 94.2% VERIFIED, Incident Response DRY-RUN SIMULATED DEMO - Containment: RECOMMEND review 3 temp vendor rules >30d - No firewall changes executed - Change ticket INC-2024-1147 approval-ready - Owner NetOps/OT Sec - Break-glass is escalation label, not automated auth.`;
-}else{
-out.textContent=`ANALYZE - LIKELY - Inference partial evidence - Query: "${v}" - Evidence: PUBLIC IESO REPORT DATA - NOT A CONTROL SIGNAL - Requires confirmation by responsible ops/engineering owner - No physical impact calculated without approved model and validated inputs - See v4.1 operating model: Monitor/Analyze/Simulate/Recommend only - Execute only external approved control system with pre-approved runbook and formally logged authorization.`;
-}
+out.style.whiteSpace='pre-wrap';
+if(!v){out.textContent='Ask about low-demand hours or data health. Read-only: this page sends no commands.';return}
+if(/cheap|charge|low|demand|price/.test(v)){out.textContent=lowDemandText()}
+else if(/health|status|fresh|source|hash/.test(v)){out.textContent=feedHealthText()}
+else{out.textContent=`No answer for "${v}". This page reads two IESO public reports (demand, output by fuel) and nothing else. Try "low demand hours" or "data health". Monitor/Analyze/Simulate/Recommend only - execution belongs to an external approved control system with a pre-approved runbook and logged authorization.`}
 }
 
-// LOOP easy numbers
-setInterval(()=>{t++;updateEasy();},1000);
-updateEasy();
+setText('utc',new Date().toISOString());
+setInterval(()=>setText('utc',new Date().toISOString()),1000);
+loadFeed();
+setInterval(loadFeed,5*60*1000);
 </script>
 <script defer src="/assets/js/future-buttons.js"></script>
 <script defer src="/assets/js/neon-pulse.js"></script>
 <script defer src="/logo-badge.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related" class="cgr-dock">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}#cg-related.cgr-dock{position:fixed;left:14px;bottom:14px;margin:0;padding:0;max-width:none;z-index:2147483000}#cg-related.cgr-dock .cgr-tab{display:inline-block;cursor:pointer;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#dbe4ff;padding:8px 12px;border-radius:9px;border:1px solid rgba(124,150,255,.42);background:linear-gradient(180deg,rgba(18,20,42,.92),rgba(11,12,28,.92));box-shadow:0 6px 22px rgba(0,0,0,.4);backdrop-filter:blur(6px);user-select:none}#cg-related.cgr-dock .cgr-tab:hover{color:#fff;border-color:rgba(124,150,255,.85)}#cg-related.cgr-dock .cgr-box{display:none;position:absolute;bottom:calc(100% + 8px);left:0;width:min(400px,92vw);max-height:62vh;overflow-y:auto}#cg-related.cgr-dock:hover .cgr-box,#cg-related.cgr-dock:focus-within .cgr-box{display:block}#cg-related.cgr-dock ul{grid-template-columns:1fr}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="cyber-defense-console.html">Cyber Defense &amp; Security Operations</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="shield.html"><span><b>Previous</b>ClearGlass Shield</span></a>
+      <a href="cyber-defense-console.html"><span><b>Topic hub</b>Cyber Defense Console</span></a>
+      <a href="cyber-defense-console.html"><span><b>Next in journey</b>Cyber Defense Console</span></a>
+    </div>
+    <ul>
+      <li><a href="sentinel.html"><b>SENTINEL</b> — live geospatial security command center</a></li>
+      <li><a href="bluedesk.html"><b>BLUEDESK</b> — CISO risk and blue-team console</a></li>
+      <li><a href="guardian.html"><b>GUARDIAN</b> — intelligence command interface</a></li>
+      <li><a href="artemis-blue-team.html"><b>Artemis Blue Team</b> — OSINT-driven defense command center</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="offers/security-quick-audit.html">Start with the $249 Security Quick-Audit</a></p>
+  </nav>
+  <div class="cgr-tab" tabindex="0" role="button" aria-label="Show related ClearGlass pages">⌁ Explore ClearGlass</div>
+</aside>
+<script defer src="station-chat.js" data-fit="fixed"></script>
+<!-- cg-related:end -->
 </body>
 </html>

@@ -16,14 +16,14 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 - **CTA bridge:** Each cluster ends in two relevant, non-coercive next steps such as offers, pricing, readiness, or booking.
 - **Responsive behavior:** Three route cards collapse to one column below 620px; related cards use an adaptive grid; motion is disabled when reduced motion is requested.
 - **SEO and accessibility:** Links are static HTML, labels are descriptive, navigation landmarks are named, focus states are visible, and all routes remain unchanged.
-- **Audit coverage:** 168 public pages are connected and 43 utility, completion, prototype, or private pages are explicitly excluded.
+- **Audit coverage:** 169 public pages are connected and 42 utility, completion, prototype, or private pages are explicitly excluded.
 
 ## Page-by-page flow map
 
 | Page | Role | Previous | Topic hub | Next | Conversion bridge |
 |---|---|---|---|---|---|
 | **Cyber Defense & Security Operations** | **Topic cluster** |  |  |  |  |
-| `cyber-defense-console.html` — Cyber Defense Console | the ClearGlass command center for defensive operations | ClearGlass Shield | Cyber Defense Console | SENTINEL | Book a security engagement / Start with the $249 Security Quick-Audit |
+| `cyber-defense-console.html` — Cyber Defense Console | the ClearGlass command center for defensive operations | GridShield-Ontario | Cyber Defense Console | SENTINEL | Book a security engagement / Start with the $249 Security Quick-Audit |
 | `sentinel.html` — SENTINEL | live geospatial security command center | Cyber Defense Console | Cyber Defense Console | BLUEDESK | Book a security engagement / Start with the $249 Security Quick-Audit |
 | `bluedesk.html` — BLUEDESK | CISO risk and blue-team console | SENTINEL | Cyber Defense Console | GUARDIAN | Book a security engagement / Start with the $249 Security Quick-Audit |
 | `guardian.html` — GUARDIAN | intelligence command interface | BLUEDESK | Cyber Defense Console | Artemis Blue Team | Book a security engagement / Start with the $249 Security Quick-Audit |
@@ -32,7 +32,8 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 | `attack-prompt-core.html` — ATT&CK Prompt Integrator | MITRE ATT&CK-aligned analysis prompts | STEGOFORGE | Cyber Defense Console | Environmental Cyber-Risk | Book a security engagement / Start with the $249 Security Quick-Audit |
 | `environmental-cyber-risk.html` — Environmental Cyber-Risk | OT and environmental threat monitoring | ATT&CK Prompt Integrator | Cyber Defense Console | BLUEDESK Mobile | Book a security engagement / Start with the $249 Security Quick-Audit |
 | `bluedesk-mobile.html` — BLUEDESK Mobile | the CISO risk console on a phone-first canvas | Environmental Cyber-Risk | Cyber Defense Console | ClearGlass Shield | Book a security engagement / Start with the $249 Security Quick-Audit |
-| `shield.html` — ClearGlass Shield | privacy-first secure connectivity you can verify | BLUEDESK Mobile | Cyber Defense Console | Cyber Defense Console | Book a security engagement / Start with the $249 Security Quick-Audit |
+| `shield.html` — ClearGlass Shield | privacy-first secure connectivity you can verify | BLUEDESK Mobile | Cyber Defense Console | GridShield-Ontario | Book a security engagement / Start with the $249 Security Quick-Audit |
+| `GridShield-Ontario-V6-0-ULTRA-FINAL.html` — GridShield-Ontario | passive-first OT evidence console on IESO public grid data | ClearGlass Shield | Cyber Defense Console | Cyber Defense Console | Book a security engagement / Start with the $249 Security Quick-Audit |
 | **Intelligence & OSINT** | **Topic cluster** |  |  |  |  |
 | `intelligence.html` — Intelligence | the ClearGlass intelligence practice | Critical Minerals Intelligence | Intelligence | Flowsint | Book a security engagement / See pricing & plans |
 | `flowsint.html` — Flowsint | OSINT investigation graph for domains, IPs and transforms | Intelligence | Intelligence | ClearGlass NEXUS | Book a security engagement / See pricing & plans |
@@ -244,7 +245,6 @@ These pages remain intact but are not eligible for generated journey updates. Ex
 | `ClearGlass-Ops-Dashboard.html` | Uploaded prototype | noindex upload awaiting owner classification |
 | `Fantasy-Command-Live (1).html` | Uploaded prototype | noindex re-upload of the FANTASY COMMAND page |
 | `fantasy-command-live (2).html` | Uploaded prototype | noindex re-upload of the FANTASY COMMAND page |
-| `GridShield-Ontario-V6-0-ULTRA-FINAL.html` | Uploaded prototype | noindex upload awaiting owner classification |
 | `Gridshield-Ontario-V3-Ics.html` | Uploaded prototype | noindex upload awaiting owner classification |
 | `Gridshield-V7-Ultra-Formal.html` | Uploaded prototype | noindex upload awaiting owner classification |
 | `Gridshield-V8-Live-Wire.html` | Uploaded prototype | noindex upload awaiting owner classification |

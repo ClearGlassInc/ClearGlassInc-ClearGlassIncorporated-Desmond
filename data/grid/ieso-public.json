@@ -1,0 +1,47 @@
+{
+  "schema": "clearglass.gridshield.ieso-public/1",
+  "label": "PUBLIC IESO REPORT DATA — NOT A CONTROL SIGNAL",
+  "notice": "Informational public reports, published with delay and subject to revision. Never used to trigger OT commands, automated containment, load-shedding, protection or dispatch.",
+  "generated_utc": "2026-09-30T23:44:30Z",
+  "status": "no_data",
+  "sources": [
+    {
+      "id": "PUB_Demand",
+      "title": "Hourly Demand Report",
+      "url": "https://reports-public.ieso.ca/public/Demand/PUB_Demand.csv",
+      "parser": "ieso-demand-csv/1",
+      "status": "error",
+      "method": null,
+      "attempted_utc": "2026-09-30T23:44:30Z",
+      "retrieved_utc": null,
+      "last_success_utc": null,
+      "created_at": null,
+      "last_modified": null,
+      "sha256": null,
+      "bytes": null,
+      "error": "could not reach https://reports-public.ieso.ca/public/Demand/PUB_Demand.csv: Tunnel connection failed: 403 Forbidden"
+    },
+    {
+      "id": "PUB_GenOutputbyFuelHourly",
+      "title": "Generator Output by Fuel Type Hourly Report",
+      "url": "https://reports-public.ieso.ca/public/GenOutputbyFuelHourly/PUB_GenOutputbyFuelHourly.xml",
+      "parser": "ieso-fuel-xml/1",
+      "status": "error",
+      "method": null,
+      "attempted_utc": "2026-09-30T23:44:30Z",
+      "retrieved_utc": null,
+      "last_success_utc": null,
+      "created_at": null,
+      "last_modified": null,
+      "sha256": null,
+      "bytes": null,
+      "error": "could not reach https://reports-public.ieso.ca/public/GenOutputbyFuelHourly/PUB_GenOutputbyFuelHourly.xml: Tunnel connection failed: 403 Forbidden"
+    }
+  ],
+  "demand": null,
+  "supply_mix": null,
+  "price": {
+    "status": "not_wired",
+    "reason": "HOEP ended on 2025-05-01 when the Ontario Electricity Market Price replaced it. The replacement public report's URL has not been verified, so no price is shown."
+  }
+}
