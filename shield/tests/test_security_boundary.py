@@ -2,7 +2,10 @@ from pathlib import Path
 
 REPO=Path(__file__).resolve().parents[2]
 FORBIDDEN_FILES={".env","client.key","gateway.key","client-private.key","gateway-private.key"}
-PRODUCTION_MARKERS=("sk_live_","STRIPE_SECRET","production_endpoint","customer_traffic_endpoint")
+# Assembled at runtime so this file, which is inside shield/, does not contain
+# the markers it scans shield/ for. Written as literals, the test (and the
+# workflow's "Verify repository boundary" grep) flagged this line on every run.
+PRODUCTION_MARKERS=tuple("".join(p) for p in (("sk_","live_"),("STRIPE_","SECRET"),("production_","endpoint"),("customer_traffic_","endpoint")))
 
 def test_no_private_material_in_repo():
     names={p.name for p in REPO.rglob("*") if p.is_file()}
