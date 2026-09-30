@@ -102,10 +102,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -s docs/security/AUTONOMOUS_DEFENSIVE_SECURITY_ORCHESTRATOR.md
-          grep -q 'Final operating rule' docs/security/AUTONOMOUS_DEFENSIVE_SECURITY_ORCHESTRATOR.md
-          grep -q 'NIST SP 800-53' docs/security/AUTONOMOUS_DEFENSIVE_SECURITY_ORCHESTRATOR.md
-          grep -q 'human approval' docs/security/AUTONOMOUS_DEFENSIVE_SECURITY_ORCHESTRATOR.md
+          # The upload flattening stripped the leading docs/ segment; the
+          # policy has lived at security/ since the first commit.
+          policy=security/AUTONOMOUS_DEFENSIVE_SECURITY_ORCHESTRATOR.md
+          test -s "$policy"
+          grep -q 'Final operating rule' "$policy"
+          grep -q 'NIST SP 800-53' "$policy"
+          grep -q 'human approval' "$policy"
 
   report:
     name: Evidence summary
