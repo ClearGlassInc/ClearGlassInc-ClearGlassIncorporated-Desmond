@@ -27,7 +27,12 @@ costs. **Status** changes only when the owner decides.
    is destructive, so it is not done here.
 2. `offers/outreach/lead-list-oakville-burlington.csv` names 10 local firms with
    internal notes such as "likely no formal security review". Move the working
-   copy somewhere private.
+   copy somewhere private. **2026-09-30:** the working copy is now a private
+   sheet in the owner's Drive, with every touch re-read from sent mail. The file,
+   both generated draft files and the top-5 personalised drafts are removed from
+   the site in the draft PR from `percival/determined-noether-87lqbe`, and
+   `tests/test_no_prospect_files_published.py` keeps them out. Closes on merge;
+   the files stay in git history.
 3. The 16:52 upload (`b1a72f4`) put personal and unrelated files on the public
    site: Coursera PDFs, a crossword PDF, analytics exports, notebooks and
    a zip archive. Keep only what belongs on a company website.
