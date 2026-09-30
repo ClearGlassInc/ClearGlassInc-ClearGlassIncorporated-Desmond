@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>When AI Cannot Determine the Truth | ClearGlass Inc.</title>
+<meta name="description" content="What automated media analysis can find, what it cannot know, and the governance that keeps an indicator from becoming a verdict. With a buyer's checklist.">
+<meta name="author" content="Desmond Otieno Odhiambo">
+<link rel="canonical" href="https://www.clearglassinc.com/blog/when-ai-cannot-determine-the-truth.html">
+<meta name="twitter:image" content="https://www.clearglassinc.com/assets/images/clearglass-holographic-seal.png">
+<meta property="og:site_name" content="ClearGlass Inc.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="When AI Cannot Determine the Truth">
+<meta property="og:description" content="An analyzer can find a two-second gap. It cannot tell you whether frames were dropped or deleted. Build for that honesty.">
+<meta property="og:url" content="https://www.clearglassinc.com/blog/when-ai-cannot-determine-the-truth.html">
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-holographic-seal.png">
+<meta property="article:published_time" content="2026-09-30">
+<meta property="article:modified_time" content="2026-09-30">
+<meta property="article:author" content="Desmond Otieno Odhiambo">
+<meta property="article:section" content="AI Governance">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="When AI Cannot Determine the Truth">
+<meta name="twitter:description" content="What automated media analysis can find, what it cannot know, and the governance that stops an indicator becoming a verdict.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"When AI Cannot Determine the Truth","description":"What automated media analysis can find, what it cannot know, and the governance that keeps an indicator from becoming a verdict. With a buyer's checklist.","datePublished":"2026-09-30","dateModified":"2026-09-30","articleSection":"AI Governance","keywords":["ai governance","human review","deepfake detection","media forensics","explainability","false positives"],"author":{"@type":"Person","name":"Desmond Otieno Odhiambo"},"publisher":{"@type":"Organization","name":"ClearGlass Inc."}}</script>
+<link rel="stylesheet" href="insights.css">
+<style>body{margin:0;background:#03070d;color:#eee1e2;font:17px/1.7 Inter,system-ui,sans-serif}a{color:#ee6365}.wrap{width:min(760px,calc(100% - 36px));margin:auto;padding:48px 0 80px}.eyebrow{font:700 11px ui-monospace,monospace;letter-spacing:.18em;color:#63f4b5;text-transform:uppercase}h1{font-size:clamp(34px,6vw,58px);line-height:1;letter-spacing:-.04em;color:#fff}h2{color:#fff;margin-top:42px}h3{color:#fff}.lede{font-size:21px;color:#f0f6fc}.callout,.notice{padding:18px;border-radius:12px;margin:28px 0}.callout{border:1px solid #6b2728;background:#160f0f}.notice{border:1px solid #5a4d2a;background:#171307;color:#e6d9af;font-size:14px}nav{padding:14px 22px;border-bottom:1px solid #481819}nav a{color:#fff;font-weight:800;text-decoration:none}table{width:100%;border-collapse:collapse;font-size:15px}th,td{border:1px solid #3a2a2a;padding:8px 10px;vertical-align:top;overflow-wrap:anywhere}th{background:#160f0f;color:#fff;text-align:left}ol,ul{padding-left:22px}</style>
+<link rel="stylesheet" href="/clearglass-crimson.css">
+<link rel="stylesheet" href="article-enhance.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+<link rel="stylesheet" href="/assets/css/neon-pulse.css">
+</head>
+<body data-ix-page="article" data-ix-slug="when-ai-cannot-determine-the-truth">
+<nav><a href="/">CLEARGLASSINC</a> · <a href="/blog/">Insights</a></nav>
+<main class="wrap">
+<p class="eyebrow">AI Governance // Truth Forensics 03</p>
+<h1>When AI Cannot Determine the Truth</h1>
+<p>Desmond Otieno Odhiambo · ClearGlass Intelligence · Burlington, Ontario · 30 September 2026</p>
+<p class="lede">An analyzer can find a two-second gap in a video's frame timing. It cannot tell you whether those frames were dropped by an overloaded encoder or cut by a person. Any system that pretends otherwise is not being careful. It is being confident.</p>
+
+<h2>What automated analysis is good at</h2>
+<p>Machines are excellent at the tedious, exact parts of media examination:</p>
+<ul>
+<li>reading every metadata field and noticing that a modification time is two days after capture;</li>
+<li>walking a container's timing table and finding the one interval that is fifty times the others;</li>
+<li>finding runs of exact-zero samples in audio, which live microphones almost never produce;</li>
+<li>matching thousands of image blocks to find a region copied from elsewhere in the frame;</li>
+<li>checking that a file's hash still matches the one recorded when it was received;</li>
+<li>comparing what ten sources say about time and place, without getting tired.</li>
+</ul>
+<p>None of that is intelligence in the interesting sense. It is measurement. It is also the part people do badly.</p>
+
+<h2>What it cannot know</h2>
+<table>
+<thead><tr><th>Signal</th><th>What it shows</th><th>What it cannot determine</th></tr></thead>
+<tbody>
+<tr><td>Frame-timing gap</td><td>Intervals are missing from the timeline</td><td>Encoder drop, pause, or deletion</td></tr>
+<tr><td>Exact digital silence</td><td>Samples were zeroed</td><td>Noise gate, codec, mute button, or edit</td></tr>
+<tr><td>Abrupt waveform step</td><td>A sharp discontinuity</td><td>Knock, plosive, cable click, or splice</td></tr>
+<tr><td>Cloned region</td><td>Two areas are identical</td><td>Which is the original; whether the pattern is genuinely repetitive</td></tr>
+<tr><td>Editor in the software tag</td><td>A program wrote the file</td><td>What, if anything, it changed</td></tr>
+<tr><td>No indicators at all</td><td>The available tests found nothing</td><td>That the content is authentic</td></tr>
+</tbody>
+</table>
+<p>The last row is the one vendors skip. The absence of indicators is a statement about the tests, not about the event. The honest sentence is: <em>no manipulation indicators detected by the available analyzers; authenticity cannot be established solely from this analysis.</em></p>
+
+<h2>Language is a control</h2>
+<p>“This video is fake” is a conclusion about the world. “Manipulation indicators detected; human review required” is a statement about analysis. Reports should be written so that the second is the only thing the machine is allowed to say.</p>
+<p>The ClearGlass report generator enforces it. Engine-authored text passes a guard that refuses certainty phrasing (“is fake”, “proves authentic”, “100% accurate”, “guaranteed”). Quoted user text, such as the claim under test or a reviewer's note, is exempt, because a report must be able to quote a claim it does not endorse. Every line of the report is typed as an observation, an interpretation or a conclusion.</p>
+
+<h2>Governance that holds up</h2>
+<ol>
+<li><strong>Record every analyzer run</strong>: which analyzer and version, the input hash, the output hash, when, and for whom. If a model provider is involved, record the model and prompt version too.</li>
+<li><strong>Keep external models opt-in.</strong> Evidence is often sensitive. The ClearGlass console calls no AI service at all; an adapter would have to be switched on deliberately, and every call would be logged the same way.</li>
+<li><strong>Separate duties.</strong> The analyst who produced a finding cannot accept or reject it. A reviewer can request a second opinion, and the requester cannot then decide alone.</li>
+<li><strong>Append decisions; never edit findings.</strong> A reviewer rejecting an item excludes it from the claim assessment, and the report says who did so, when, and why.</li>
+<li><strong>Keep demonstrations labelled.</strong> Synthetic data stays SIMULATED whatever a reviewer does, so a demo can never be mistaken for a case.</li>
+</ol>
+
+<h2>A buyer's checklist</h2>
+<p>Before relying on any media-authenticity tool, ask:</p>
+<ul>
+<li>What does it say when it finds nothing? If the answer is “authentic”, walk away.</li>
+<li>Does it count copies and reposts as independent confirmation?</li>
+<li>Does every finding state its method, its limitation and another explanation?</li>
+<li>Can it show the hash of the file it analysed, and the hash of its output?</li>
+<li>Where does the evidence go? Who else can see it?</li>
+<li>Is a human decision required before anything is called verified, and is that decision recorded?</li>
+</ul>
+<p>See how each of these is handled in the <a href="/blog/truth-forensics.html">Truth Forensics console</a>, on synthetic data or on your own files, without uploading anything. Companion pieces: <a href="/blog/truth-is-an-evidence-graph.html">Truth Is an Evidence Graph</a> and <a href="/blog/deepfake-detection-needs-chain-of-custody.html">Why Deepfake Detection Needs Chain of Custody</a>.</p>
+<div class="notice"><strong>Claim boundary.</strong> The ClearGlass Truth Forensics system provides analytical indicators and provenance analysis. It does not independently establish the truth of real-world events and should not replace qualified forensic, legal, investigative, or evidentiary review. No detection-accuracy figures are claimed.</div>
+  <!-- cg-insights-related:start -->
+  <section class="ix-related" id="ixRelated" aria-label="Related from the desk">
+    <b>Related from the desk</b>
+    <div class="ix-related-grid">
+      <a class="ix-related-card" href="deepfake-detection-needs-chain-of-custody.html"><span class="k">Information Integrity</span><h4>Why Deepfake Detection Needs Chain of Custody</h4><p>Detectors estimate; custody records show. Why synthetic-media detection needs hashes, provenance and Content Credentials, and what Canadian evidence law asks for.</p><span class="m">4 min read · ClearGlass Truth Forensics</span></a>
+      <a class="ix-related-card" href="canada-strategic-resilience-command-brief-2026.html"><span class="k">Strategic Resilience</span><h4>Canada Strategic Resilience Command Brief — 18 September 2026</h4><p>Evidence-led Canadian strategic resilience brief covering economic capacity, housing supply, foreign interference, cyber risk, infrastructure dependencies and operational resilience.</p><span class="m">6 min read · ClearGlass Strategic Intelligence</span></a>
+    </div>
+  </section>
+  <!-- cg-insights-related:end -->
+</main>
+<script defer src="article-enhance.js"></script>
+<script defer src="insights.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+<script defer src="/assets/js/neon-pulse.js"></script>
+<script defer src="/logo-badge.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › <a href="index.html">ClearGlass Intelligence · Insights</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="deepfake-detection-needs-chain-of-custody.html"><span><b>Previous</b>Deepfake Detection Needs Chain of Custody</span></a>
+      <a href="index.html"><span><b>Topic hub</b>ClearGlass Intelligence</span></a>
+      <a href="index.html"><span><b>Next in journey</b>ClearGlass Intelligence</span></a>
+    </div>
+    <ul>
+      <li><a href="truth-forensics.html"><b>Truth Forensics Console</b> — in-browser evidence integrity: hashing, provenance, media indicators and human review</a></li>
+      <li><a href="ai-agent-governance-governed-autonomy.html"><b>AI Agent Governance</b> — the governed-autonomy playbook</a></li>
+      <li><a href="autonomous-threat-modeling-2026.html"><b>Autonomous Threat Modeling in 2026</b> — continuous architecture-grounded security for agentic and cyber-physical systems</a></li>
+      <li><a href="clearglass-platform-audit-2026.html"><b>The ClearGlass Platform Audit</b> — keep, simplify, gate, build — the platform upgrade doctrine</a></li>
+      <li><a href="ai-agents-insider-threat.html"><b>AI Agents Are the New Insider Threat</b> — why agent identity is a security boundary</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<script defer src="../station-chat.js"></script>
+<!-- cg-related:end -->
+</body></html>
