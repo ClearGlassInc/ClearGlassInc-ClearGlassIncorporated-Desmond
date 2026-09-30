@@ -6,6 +6,8 @@ them are zero today.
 
 **Re-read 2026-09-30, 17:04–17:20 UTC: no stage changed.** 0 replies,
 0 bookings, CAD 0 in PayPal. See [`daily/2026-09-30.md`](daily/2026-09-30.md).
+Re-read again 19:41–19:50 UTC: no stage changed. The working pipeline now
+lives in a private sheet in the owner's Drive, not in this repository.
 
 **Correction.** The 2026-09-25 version of this table said 0 outbound leads
 were contacted. That was wrong when it was written: the Quick-Audit emails went
@@ -20,7 +22,7 @@ out on 2026-09-20. The rows below are re-read from the connected systems on
 | Reach (LinkedIn) | 1,059 members reached, 2,029 impressions, week of 15–21 Sep | VERIFIED (owner export) | Owner's LinkedIn analytics | `AggregateAnalytics_…_2026-09-15_2026-09-21.xlsx` |
 | Offer seen | unknown | UNKNOWN | Nowhere | Analytics off |
 | Leads (inbound) | 0 received through the site forms since they were pointed at the owner's mailbox (2026-09-06) | VERIFIED: no email from formsubmit.co in the mailbox, in any folder including spam and trash (mailbox search, 2026-09-29 22:20 UTC). No activation email is in the mailbox either, so the relay has not been activated (**D11**). Until 2026-09-29 the homepage signup also reported "Thanks" for a submission the relay refused (fixed; `tests/test_homepage_subscribe_handler.py`) | The owner's mailbox, through the formsubmit.co relay on 4 pages. The CRCS `leads` table is not deployed. Until 2026-09-29 the homepage's direct-contact address was on `clearglassinc.com`, which has no MX record, so mail to it bounced (see below) | `index.html`, `offers/*.html` form actions |
-| Leads (outbound) | Quick-Audit: 9 contacted on 2026-09-20 (8 firms, 1 business association); 1 follow-up sent 2026-09-22; 7 follow-ups sent 2026-09-29, 21:29–21:31 UTC, without a mailing address (**D4**). The business-association and municipal vendor-intake threads were also followed up 2026-09-29. Other outbound 18–20 Sep: 4 cold emails to enterprise engineering leads | VERIFIED (owner's sent mail, read 2026-09-29 22:18 UTC) | Owner's mailbox. `offers/outreach/lead-list-oakville-burlington.csv` still reads `Status: New` on every row: the sheet is not being updated | Sent messages |
+| Leads (outbound) | Quick-Audit: 9 contacted on 2026-09-20 (8 firms, 1 business association); 1 follow-up sent 2026-09-22; 7 follow-ups sent 2026-09-29, 21:29–21:31 UTC, without a mailing address (**D4**). The business-association and municipal vendor-intake threads were also followed up 2026-09-29. Other outbound 18–20 Sep: 4 cold emails to enterprise engineering leads | VERIFIED (owner's sent mail, read 2026-09-29 22:18 UTC) | Owner's mailbox. Since 2026-09-30 the working pipeline is a private sheet in the owner's Drive; the public lead list, which read `Status: New` on every row, is removed from the site | Sent messages |
 | Replies | 0 of 14 commercial threads; 0 bounces | VERIFIED (mailbox search by recipient domain, 2026-09-29 22:19 UTC, 50 minutes after the follow-ups) | Owner's mailbox | — |
 | Qualified | 0 | VERIFIED | Would follow a reply | — |
 | Conversations | 0 | VERIFIED | — | — |

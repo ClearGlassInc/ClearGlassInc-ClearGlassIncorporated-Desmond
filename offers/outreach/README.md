@@ -31,12 +31,16 @@ Lawful, consent-respecting B2B outreach for the four fixed-scope offerings.
    the mailing address is not known yet, do not draft.
 
 ## Workflow
-1. Populate `lead-list-template.csv` from permitted public sources (10 to start).
+1. Copy `lead-list-template.csv` to `lead-list-<area>.csv` and fill it from permitted
+   public sources (10 to start). That copy, and everything `bots/lead_draft_bot.py`
+   writes to `generated/`, is git-ignored: this site publishes every tracked file, so a
+   committed lead list is served on the company domain to the firms it describes. Keep
+   the live pipeline (touches, replies, call outcomes) in the private sheet, never here.
 2. For each lead, record the `Public_source_URL` and `Consent_basis`.
 3. Pick the best-fit offering and the matching template in `email-templates.md`.
 4. Personalize the **first line** with a specific, *public* observation (e.g., "your site
    lists patient intake forms" → PHIPA relevance). Never reference non-public data.
-5. Send from a ClearGlass domain address. Log `Status` and `Next_action`.
+5. Send from a ClearGlass domain address. Log `Status` and `Next_action` in the private sheet.
 6. Follow up at most twice, spaced out, then stop unless they engage.
 
 ## Suggested target segments (Ontario SMB)

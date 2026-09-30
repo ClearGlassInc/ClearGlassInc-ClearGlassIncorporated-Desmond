@@ -128,3 +128,12 @@ four_d_dominance/output/
 # Assurance engagement working copies (real client evidence; never committed).
 # The directory itself stays tracked via its .gitkeep.
 operations/assurance/engagements/*/
+
+# Named-prospect outreach working files. .nojekyll makes Pages publish every
+# tracked file, so a lead list or a personalised draft committed here is served
+# on the company domain to the firms it describes. Keep them local; the live
+# pipeline belongs in a private sheet (tests/test_no_prospect_files_published.py).
+offers/outreach/lead-list-*.csv
+!offers/outreach/lead-list-template.csv
+offers/outreach/generated/
+offers/outreach/drafts-*.md
