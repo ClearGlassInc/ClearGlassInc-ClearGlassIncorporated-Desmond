@@ -1,0 +1,15 @@
+{
+  "test_id": "FI-08",
+  "cycle": "cycle-1",
+  "timestamp": "2026-10-01T22:13:50+00:00",
+  "environment_id": "shield-g01-6faacd1-local-20261001T221226Z",
+  "run_id": "local-20261001T221226Z",
+  "commit_sha": "6faacd12fb0ff675de2ca894940d8ac37482038c",
+  "expected_result": "gateway restart: client cannot connect during the outage and reconnects only after valid recovery",
+  "actual_result": "{\"check_during_outage\": \"TUNNEL_FAILURE\", \"connect_after_recovery\": \"HEALTHY\", \"connect_during_outage\": \"HANDSHAKE_FAILURE\", \"dns_after_recovery\": true}",
+  "status": "PASS",
+  "artifact_reference": "",
+  "limitations": [
+    "Linux network-namespace G01 topology only"
+  ]
+}

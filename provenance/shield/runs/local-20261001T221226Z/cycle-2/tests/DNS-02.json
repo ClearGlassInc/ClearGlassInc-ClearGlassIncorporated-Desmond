@@ -1,0 +1,15 @@
+{
+  "test_id": "DNS-02",
+  "cycle": "cycle-2",
+  "timestamp": "2026-10-01T22:14:03+00:00",
+  "environment_id": "shield-g01-6faacd1-local-20261001T221226Z",
+  "run_id": "local-20261001T221226Z",
+  "commit_sha": "6faacd12fb0ff675de2ca894940d8ac37482038c",
+  "expected_result": "service and health resolve through the test resolver over the tunnel; blocked.shield.test is NXDOMAIN",
+  "actual_result": "{\"blocked.shield.test\": {\"answer_class\": null, \"rcode\": 3}, \"health.shield.test\": {\"answer_class\": \"test-gateway\", \"rcode\": 0}, \"service.shield.test\": {\"answer_class\": \"test-gateway\", \"rcode\": 0}}",
+  "status": "PASS",
+  "artifact_reference": "cycle-2/detail/DNS-02.json",
+  "limitations": [
+    "Linux network-namespace G01 topology only"
+  ]
+}

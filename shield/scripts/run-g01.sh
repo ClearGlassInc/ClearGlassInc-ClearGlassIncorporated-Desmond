@@ -1,40 +1,18 @@
 #!/usr/bin/env bash
-set -euo pipefail
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+# Shield G01: static checks, then two clean bootstrap -> test -> teardown -> verify-clean
+# cycles. Every step runs even after a failure, so the evidence shows all of them; the
+# exit code is non-zero if any test failed or any teardown left something behind.
+set -uo pipefail
+cd "$(dirname "$0")/../.."
 ARTIFACT_DIR="${SHIELD_ARTIFACT_DIR:-artifacts/shield-g01}"
 RUN_ID="${SHIELD_RUN_ID:-local-$(date -u +%Y%m%dT%H%M%SZ)}"
-ROOT="/tmp/clearglass-shield-test"
+rm -rf "$ARTIFACT_DIR"
 mkdir -p "$ARTIFACT_DIR"
-: > "$ARTIFACT_DIR/cycles.txt"
-
-run_cycle(){
-  local cycle="$1"
-  "$SCRIPT_DIR/bootstrap-test-env.sh"
-  ip netns exec cgshield-client python3 "$SCRIPT_DIR/probe.py" http
-  ip netns exec cgshield-client python3 "$SCRIPT_DIR/probe.py" dns
-  ip netns exec cgshield-client wg show > "$ARTIFACT_DIR/wg-client-$cycle.txt"
-  ip netns exec cgshield-gateway wg show > "$ARTIFACT_DIR/wg-gateway-$cycle.txt"
-
-  CLIENT_PUB="$(cat "$ROOT/client.pub")"
-
-  # FI-03: revoked peer must lose protected access.
-  ip netns exec cgshield-gateway wg set shield0 peer "$CLIENT_PUB" remove
-  ip netns exec cgshield-client python3 "$SCRIPT_DIR/probe.py" blocked
-
-  # Restore peer and verify recovery.
-  ip netns exec cgshield-gateway wg set shield0 peer "$CLIENT_PUB" allowed-ips 10.77.0.2/32
-  sleep 2
-  ip netns exec cgshield-client python3 "$SCRIPT_DIR/probe.py" http
-
-  # FI-06/LOCK: remove the client tunnel and require protected traffic to remain blocked.
-  ip -n cgshield-client link del shield0
-  ip netns exec cgshield-client python3 "$SCRIPT_DIR/probe.py" blocked
-
-  printf '%s\n' "cycle=$cycle status=PASS" >> "$ARTIFACT_DIR/cycles.txt"
-  "$SCRIPT_DIR/destroy-test-env.sh"
-  "$SCRIPT_DIR/verify-clean.sh"
-}
-
-run_cycle 1
-run_cycle 2
-printf '%s\n' "run_id=$RUN_ID" "environment=isolated-disposable-test" "production_status=NOT_PRODUCTION" "commercial_status=BILLING_LOCKED" "stripe_interactions=0" "production_interactions=0" "customer_traffic=false" > "$ARTIFACT_DIR/run.txt"
+printf '%s\n' "$RUN_ID" > "$ARTIFACT_DIR/run_id"
+status=0
+python3 -m shield.g01_suite static --artifacts "$ARTIFACT_DIR" --run-id "$RUN_ID" || status=1
+for cycle in 1 2; do
+  python3 -m shield.g01_suite cycle "$cycle" --artifacts "$ARTIFACT_DIR" --run-id "$RUN_ID" || status=1
+  python3 -m shield.topology verify-clean > "$ARTIFACT_DIR/cycle-$cycle/verify-clean.json" || status=1
+done
+exit "$status"

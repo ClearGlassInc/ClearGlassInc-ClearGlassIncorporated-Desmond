@@ -1,0 +1,24 @@
+{
+  "backend": "userspace",
+  "client_public_fingerprint": "2e84978fc91f5ac06e2a2191ffb6cf827c0944161f9e4b9116f7f786fa224d3d",
+  "environment": "isolated-disposable-test",
+  "gateway_peers": 1,
+  "gateway_public_fingerprint": "33039926c7be92b22fe21bf72e02f97addc0745ec28243c88d85c014090f75e3",
+  "gateway_tunnel": true,
+  "lock_rule_text": [
+    "-A OUTPUT -o lo -j ACCEPT",
+    "-A OUTPUT -d 10.77.0.0/24 -o cgwg-c -j ACCEPT",
+    "-A OUTPUT -d 10.77.0.0/24 -j REJECT --reject-with icmp-port-unreachable",
+    "-A OUTPUT ! -o cgwg-c -p udp -m udp --dport 53 -j REJECT --reject-with icmp-port-unreachable",
+    "-A OUTPUT ! -o cgwg-c -p udp -m udp --dport 5353 -j REJECT --reject-with icmp-port-unreachable",
+    "-A OUTPUT ! -o cgwg-c -p tcp -m tcp --dport 53 -j REJECT --reject-with icmp-port-unreachable"
+  ],
+  "lock_rules": 6,
+  "namespaces": true,
+  "services_bound": [
+    "0.0.0.0:51820",
+    "10.77.0.1:18080",
+    "10.77.0.1:5353",
+    "10.77.0.1:8080"
+  ]
+}
