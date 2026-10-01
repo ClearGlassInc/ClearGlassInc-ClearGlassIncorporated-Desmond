@@ -353,6 +353,10 @@ PAGES: dict[str, tuple[str, str]] = {
     "blog/shadow-ai-incident-response-logs-gone.html": ("Shadow AI Incident Response", "forensic readiness before security evidence disappears"),
     "blog/canada-strategic-resilience-command-brief-2026.html": ("Canada Strategic Resilience Command Brief", "an evidence-led brief on economic capacity, foreign interference, cyber risk and infrastructure dependencies"),
     "blog/csis-threat-reduction-botnets-canadian-iot-federal-court-2026.html": ("CSIS, Botnets and Canada's Connected Devices", "Federal Court File C-6-24 and threat-reduction warrants reaching into routers and IoT"),
+    "blog/truth-forensics.html": ("Truth Forensics Console", "in-browser evidence integrity: hashing, provenance, media indicators and human review"),
+    "blog/truth-is-an-evidence-graph.html": ("Truth Is an Evidence Graph", "why copies are not corroboration and how to label what you know"),
+    "blog/deepfake-detection-needs-chain-of-custody.html": ("Deepfake Detection Needs Chain of Custody", "detectors estimate, custody records show"),
+    "blog/when-ai-cannot-determine-the-truth.html": ("When AI Cannot Determine the Truth", "what media analysis can find, what it cannot know, and the governance between"),
 }
 
 # --------------------------------------------------------------------------
@@ -541,6 +545,10 @@ CLUSTERS: dict[str, dict] = {
             "blog/2026-09-15-strategic-chokepoint-sitrep.html",
             "blog/canada-strategic-resilience-command-brief-2026.html",
             "blog/csis-threat-reduction-botnets-canadian-iot-federal-court-2026.html",
+            "blog/truth-forensics.html",
+            "blog/truth-is-an-evidence-graph.html",
+            "blog/deepfake-detection-needs-chain-of-custody.html",
+            "blog/when-ai-cannot-determine-the-truth.html",
         ],
         "cta": [CTA_STORE, CTA_PRICING],
     },
@@ -628,6 +636,10 @@ EXTRA_LINKS: dict[str, list[str]] = {
     "blog/clearglassinc-artemis-full-stack-ai-intelligence-platform-blueprint.html": ["blog/index.html", "artemis-iv.html"],
     "blog/network-orchestration-ai-automation-cybersecurity.html": ["conduit.html", "agentmesh.html", "cyber-defense-console.html"],
     "apps/command-center/index.html": ["revenue-engine.html", "offers/index.html"],
+    "blog/truth-forensics.html": ["blog/truth-is-an-evidence-graph.html", "blog/deepfake-detection-needs-chain-of-custody.html", "blog/when-ai-cannot-determine-the-truth.html"],
+    "blog/truth-is-an-evidence-graph.html": ["blog/truth-forensics.html", "blog/osint-workflow-that-survives-contact-with-reality.html"],
+    "blog/deepfake-detection-needs-chain-of-custody.html": ["blog/truth-forensics.html", "blog/shadow-ai-incident-response-logs-gone.html"],
+    "blog/when-ai-cannot-determine-the-truth.html": ["blog/truth-forensics.html", "blog/ai-agent-governance-governed-autonomy.html"],
 }
 
 SIBLING_WINDOW = 4     # rotated sibling links per member page

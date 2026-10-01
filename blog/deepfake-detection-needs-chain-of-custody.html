@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Why Deepfake Detection Needs Chain of Custody | ClearGlass Inc.</title>
+<meta name="description" content="Detectors estimate; custody records show. Why synthetic-media detection needs hashes, provenance and Content Credentials, and what Canadian evidence law asks for.">
+<meta name="author" content="Desmond Otieno Odhiambo">
+<link rel="canonical" href="https://www.clearglassinc.com/blog/deepfake-detection-needs-chain-of-custody.html">
+<meta name="twitter:image" content="https://www.clearglassinc.com/assets/images/clearglass-holographic-seal.png">
+<meta property="og:site_name" content="ClearGlass Inc.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why Deepfake Detection Needs Chain of Custody">
+<meta property="og:description" content="A detector gives an estimate that ages. A custody record gives a fact you can show. You need both, and you need to know which is which.">
+<meta property="og:url" content="https://www.clearglassinc.com/blog/deepfake-detection-needs-chain-of-custody.html">
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-holographic-seal.png">
+<meta property="article:published_time" content="2026-09-30">
+<meta property="article:modified_time" content="2026-09-30">
+<meta property="article:author" content="Desmond Otieno Odhiambo">
+<meta property="article:section" content="Information Integrity">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Why Deepfake Detection Needs Chain of Custody">
+<meta name="twitter:description" content="Detectors estimate; custody records show. What synthetic-media work needs, and what Canadian evidence law asks for.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Why Deepfake Detection Needs Chain of Custody","description":"Detectors estimate; custody records show. Why synthetic-media detection needs hashes, provenance and Content Credentials, and what Canadian evidence law asks for.","datePublished":"2026-09-30","dateModified":"2026-09-30","articleSection":"Information Integrity","keywords":["deepfake detection","chain of custody","c2pa","content credentials","canada evidence act","digital forensics","synthetic media"],"author":{"@type":"Person","name":"Desmond Otieno Odhiambo"},"publisher":{"@type":"Organization","name":"ClearGlass Inc."}}</script>
+<link rel="stylesheet" href="insights.css">
+<style>body{margin:0;background:#03070d;color:#eee1e2;font:17px/1.7 Inter,system-ui,sans-serif}a{color:#ee6365}.wrap{width:min(760px,calc(100% - 36px));margin:auto;padding:48px 0 80px}.eyebrow{font:700 11px ui-monospace,monospace;letter-spacing:.18em;color:#63f4b5;text-transform:uppercase}h1{font-size:clamp(34px,6vw,58px);line-height:1;letter-spacing:-.04em;color:#fff}h2{color:#fff;margin-top:42px}h3{color:#fff}.lede{font-size:21px;color:#f0f6fc}.callout,.notice{padding:18px;border-radius:12px;margin:28px 0}.callout{border:1px solid #6b2728;background:#160f0f}.notice{border:1px solid #5a4d2a;background:#171307;color:#e6d9af;font-size:14px}nav{padding:14px 22px;border-bottom:1px solid #481819}nav a{color:#fff;font-weight:800;text-decoration:none}table{width:100%;border-collapse:collapse;font-size:15px}th,td{border:1px solid #3a2a2a;padding:8px 10px;vertical-align:top;overflow-wrap:anywhere}th{background:#160f0f;color:#fff;text-align:left}ol,ul{padding-left:22px}</style>
+<link rel="stylesheet" href="/clearglass-crimson.css">
+<link rel="stylesheet" href="article-enhance.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+<link rel="stylesheet" href="/assets/css/neon-pulse.css">
+</head>
+<body data-ix-page="article" data-ix-slug="deepfake-detection-needs-chain-of-custody">
+<nav><a href="/">CLEARGLASSINC</a> · <a href="/blog/">Insights</a></nav>
+<main class="wrap">
+<p class="eyebrow">Information Integrity // Truth Forensics 02</p>
+<h1>Why Deepfake Detection Needs Chain of Custody</h1>
+<p>Desmond Otieno Odhiambo · ClearGlass Intelligence · Burlington, Ontario · 30 September 2026</p>
+<p class="lede">A detector gives you an estimate, and the estimate ages as generators improve. A custody record gives you a fact you can show. Most synthetic-media programmes buy the first and skip the second.</p>
+
+<h2>Two different questions</h2>
+<p>Detection asks: <em>does this content look generated or altered?</em> Provenance asks: <em>where did this file come from, and has it changed since?</em> They fail in opposite ways.</p>
+<table>
+<thead><tr><th></th><th>Detection</th><th>Provenance and custody</th></tr></thead>
+<tbody>
+<tr><td>Output</td><td>A likelihood or a set of indicators</td><td>A record: hashes, times, hands, transformations</td></tr>
+<tr><td>Main weakness</td><td>Adversarial and time-sensitive; false positives on recompressed or edited-but-honest media</td><td>Says nothing about what happened before the first record; can be missing entirely</td></tr>
+<tr><td>What absence means</td><td>“No indicators found” is not authenticity</td><td>No record is a gap, not proof of tampering</td></tr>
+</tbody>
+</table>
+<p>NIST's <a href="https://doi.org/10.6028/NIST.AI.100-4">AI 100-4, <em>Reducing Risks Posed by Synthetic Content</em></a> (November 2024) surveys provenance tracking, labelling and detection as complementary approaches, not substitutes. That is the right frame. Detection without custody gives you a finding you cannot anchor. Custody without detection gives you a well-documented file you have not examined.</p>
+
+<h2>What a hash proves, and what it does not</h2>
+<p>A SHA-256 taken when a file is received proves that the bytes examined later are the same bytes received. That is all. It does not prove the camera was where the metadata says, that the scene was staged, or that the file was not generated before it reached you. In the ClearGlass console this is stated on every hash comparison: cryptographic verification proves integrity relative to a known hash or signature; it does not prove that the content depicts what it claims to depict.</p>
+<p>The value of the hash is that it makes everything after intake checkable. Without it, “the video we analysed” and “the video in the court bundle” are two claims about two files.</p>
+
+<h2>Content Credentials: useful, strippable, and not a verdict</h2>
+<p>The <a href="https://spec.c2pa.org/specifications/specifications/2.4/specs/C2PA_Specification.html">C2PA specification</a> (Content Credentials) lets a capture device or editor attach a signed manifest to a file. It is stored as a JUMBF box in a JPEG's APP11 segments or a PNG's <code>caBX</code> chunk, and bound to the content by hash. A valid manifest tells you who signed which assertions about the file's history.</p>
+<p>Three limits matter in practice:</p>
+<ul>
+<li><strong>It can be removed.</strong> Re-encoding or a screenshot drops it. Absence proves nothing.</li>
+<li><strong>Presence is not validity.</strong> Until the signature, certificate chain and hash binding are checked, a manifest is bytes. The ClearGlass engine detects manifest presence and says, explicitly, that it has not validated it.</li>
+<li><strong>A valid manifest is the signer's statement.</strong> It is strong provenance for the file, not proof of the scene.</li>
+</ul>
+
+<h2>What Canadian evidence law asks for</h2>
+<p>Canadian courts do not ask whether a file “is real” in the abstract. Under section 31.1 of the <a href="https://laws-lois.justice.gc.ca/eng/acts/C-5/">Canada Evidence Act</a>, the party offering an electronic document must prove it is what it purports to be, a threshold courts have described as low. Under section 31.2, the best evidence rule for electronic documents is met by proof of the integrity of the electronic documents system in which it was recorded or stored. Section 34.1 of Ontario's <a href="https://www.canlii.org/en/on/laws/stat/rso-1990-c-e23/latest/rso-1990-c-e23.html">Evidence Act</a> sets out comparable rules for electronic records.</p>
+<p>The authentication threshold is low. That is exactly why system integrity matters. When a convincing synthetic file can clear a low threshold, the fight moves to integrity: who held it, what touched it, and whether you can show that. A detector score does not answer those questions. A custody record does. This is not legal advice; counsel decides how any record is used.</p>
+
+<h2>A custody chain that survives scrutiny</h2>
+<ol>
+<li><strong>Hash at intake</strong>, before anyone opens, edits or forwards the file. Record who received it, when and how.</li>
+<li><strong>Keep custody receipts.</strong> When a file passes between people or systems, record its hash on the way. A later match to an earlier receipt is what lets integrity be verified rather than merely recorded.</li>
+<li><strong>Never edit the original.</strong> Every crop, trim or export is a new item with its own hash and a recorded parent.</li>
+<li><strong>Append, never overwrite.</strong> Chain the log so each entry carries the hash of the one before it; altering history breaks every link after it.</li>
+<li><strong>Run detection on top.</strong> Indicators attach to a specific hash, with their method, confidence and limits.</li>
+<li><strong>Record the human decision.</strong> The person who ran the analysis should not be the one who accepts it.</li>
+</ol>
+<p>The <a href="/blog/truth-forensics.html">ClearGlass Truth Forensics console</a> implements this chain in your browser, on your own files or on a synthetic demonstration case. Nothing is uploaded. Companion pieces: <a href="/blog/truth-is-an-evidence-graph.html">Truth Is an Evidence Graph</a> and <a href="/blog/when-ai-cannot-determine-the-truth.html">When AI Cannot Determine the Truth</a>.</p>
+<div class="notice"><strong>Claim boundary.</strong> Statutes and standards are summarised, not interpreted; read the linked sources and take legal advice for any real matter. The ClearGlass Truth Forensics system provides analytical indicators and provenance analysis. It does not independently establish the truth of real-world events and should not replace qualified forensic, legal, investigative, or evidentiary review.</div>
+  <!-- cg-insights-related:start -->
+  <section class="ix-related" id="ixRelated" aria-label="Related from the desk">
+    <b>Related from the desk</b>
+    <div class="ix-related-grid">
+      <a class="ix-related-card" href="truth-is-an-evidence-graph.html"><span class="k">Information Integrity</span><h4>Truth Is an Evidence Graph</h4><p>Why “is this real?” has no single answer, why ten reposts are one source, and how to separate what a file shows from what someone infers about it.</p><span class="m">4 min read · ClearGlass Truth Forensics</span></a>
+      <a class="ix-related-card" href="when-ai-cannot-determine-the-truth.html"><span class="k">AI Governance</span><h4>When AI Cannot Determine the Truth</h4><p>What automated media analysis can find, what it cannot know, and the governance that keeps an indicator from becoming a verdict. With a buyer&#x27;s checklist.</p><span class="m">4 min read · ClearGlass Truth Forensics</span></a>
+    </div>
+  </section>
+  <!-- cg-insights-related:end -->
+</main>
+<script defer src="article-enhance.js"></script>
+<script defer src="insights.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+<script defer src="/assets/js/neon-pulse.js"></script>
+<script defer src="/logo-badge.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › <a href="index.html">ClearGlass Intelligence · Insights</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="truth-is-an-evidence-graph.html"><span><b>Previous</b>Truth Is an Evidence Graph</span></a>
+      <a href="index.html"><span><b>Topic hub</b>ClearGlass Intelligence</span></a>
+      <a href="when-ai-cannot-determine-the-truth.html"><span><b>Next in journey</b>When AI Cannot Determine the Truth</span></a>
+    </div>
+    <ul>
+      <li><a href="truth-forensics.html"><b>Truth Forensics Console</b> — in-browser evidence integrity: hashing, provenance, media indicators and human review</a></li>
+      <li><a href="shadow-ai-incident-response-logs-gone.html"><b>Shadow AI Incident Response</b> — forensic readiness before security evidence disappears</a></li>
+      <li><a href="when-ai-cannot-determine-the-truth.html"><b>When AI Cannot Determine the Truth</b> — what media analysis can find, what it cannot know, and the governance between</a></li>
+      <li><a href="autonomous-threat-modeling-2026.html"><b>Autonomous Threat Modeling in 2026</b> — continuous architecture-grounded security for agentic and cyber-physical systems</a></li>
+      <li><a href="ai-agent-governance-governed-autonomy.html"><b>AI Agent Governance</b> — the governed-autonomy playbook</a></li>
+      <li><a href="clearglass-platform-audit-2026.html"><b>The ClearGlass Platform Audit</b> — keep, simplify, gate, build — the platform upgrade doctrine</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<script defer src="../station-chat.js"></script>
+<!-- cg-related:end -->
+</body></html>
