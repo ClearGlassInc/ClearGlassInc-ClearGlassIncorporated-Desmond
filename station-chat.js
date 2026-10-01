@@ -72,6 +72,17 @@
   var STORE_OPEN = "cg-core-open";
   var STEALTH_KEY = "cg-stealth";
   var DOCK_H = 56;          // dock pill height, kept in sync with the CSS below
+
+  // ── console identity ─────────────────────────────────────────────────────
+  // Sentinel Core on every page, unless the page names its console on <html>:
+  // data-cg-console-name (title), data-cg-console-line (one line under it) and
+  // data-cg-console-verify. guardian.html presents it as Artemis. VERIFIED is
+  // never a bare word: it shows only when the browser itself vouches for the
+  // page (a secure context, i.e. served over HTTPS); otherwise READY, as before.
+  var HTML_EL = document.documentElement;
+  var CONSOLE_NAME = (HTML_EL.getAttribute("data-cg-console-name") || "").trim() || "Sentinel Core";
+  var CONSOLE_LINE = (HTML_EL.getAttribute("data-cg-console-line") || "").trim();
+  var CONSOLE_STATE = HTML_EL.hasAttribute("data-cg-console-verify") && window.isSecureContext ? "VERIFIED" : "READY";
   var reduce = false;
   try { reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
 
@@ -373,6 +384,7 @@
     "font-weight:600;letter-spacing:.16em;color:#bfe9ff;min-height:12px}",
     "#cg-station .cgst-status [data-cgst-type]::after{content:'_';margin-left:1px;color:var(--cgst-blue);animation:cgstCaret 1s steps(1) infinite}",
     "@keyframes cgstCaret{50%{opacity:0}}",
+    "#cg-station .cgst-remit{margin:5px 0 0;font-family:var(--cgst-mono);font-size:8.5px;font-weight:600;letter-spacing:.1em;line-height:1.5;color:var(--cgst-mute)}",
     "#cg-station .cgst-live{flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:#5ef0a8;box-shadow:0 0 0 0 rgba(94,240,168,.6);animation:cgstLive 2.2s ease-out infinite}",
     "#cg-station[data-link='offline'] .cgst-live{background:#f2b04b;animation:none}",
     "@keyframes cgstLive{0%{box-shadow:0 0 0 0 rgba(94,240,168,.55)}70%,100%{box-shadow:0 0 0 7px rgba(94,240,168,0)}}",
@@ -1177,7 +1189,7 @@
 
   // ── readiness: every value here is known locally and true ────────────────
   function online() { return navigator.onLine !== false; }
-  function statusText() { return (online() ? "ONLINE" : "OFFLINE") + " · ACTIVE · READY"; }
+  function statusText() { return (online() ? "ONLINE" : "OFFLINE") + " · ACTIVE · " + CONSOLE_STATE; }
 
   function paintLink() {
     var state = online() ? "online" : "offline";
@@ -1185,7 +1197,7 @@
     if (linkCell) linkCell.textContent = state.toUpperCase();
     var text = statusText();
     if (statusSr) statusSr.textContent = "Status: " + text.toLowerCase().replace(/ · /g, ", ");
-    if (dockStatus) dockStatus.textContent = (online() ? "ONLINE" : "OFFLINE") + " · READY";
+    if (dockStatus) dockStatus.textContent = (online() ? "ONLINE" : "OFFLINE") + " · " + CONSOLE_STATE;
     if (statusType && !typeTimer) statusType.textContent = text;
   }
 
@@ -1531,7 +1543,7 @@
     if (!dock) return;
     var open = root.getAttribute("data-open") === "true";
     var n = dockFlag && !dockFlag.hidden ? parseInt(dockFlag.textContent, 10) || 0 : 0;
-    dock.setAttribute("aria-label", (open ? "Collapse Sentinel Core" : "Expand Sentinel Core") +
+    dock.setAttribute("aria-label", (open ? "Collapse " : "Expand ") + CONSOLE_NAME +
       (n ? ", " + n + " new intel " + (n === 1 ? "brief" : "briefs") : ""));
   }
 
@@ -4496,7 +4508,7 @@
     // The console styles its own controls; future-buttons.js would otherwise
     // re-skin every button in it.
     root.setAttribute("data-no-future-glass", "");
-    root.setAttribute("aria-label", "Sentinel Core command console");
+    root.setAttribute("aria-label", CONSOLE_NAME + " command console");
 
     var sid = sessionId();
 
@@ -4697,9 +4709,10 @@
           '<span class="cgst-radar" aria-hidden="true"><i></i><b></b></span>' +
           '<div class="cgst-id">' +
             '<span class="cgst-org" aria-hidden="true">CLEARGLASS INC.</span>' +
-            '<h2 class="cgst-title" id="cgstTitle">SENTINEL CORE</h2>' +
+            '<h2 class="cgst-title" id="cgstTitle">' + esc(CONSOLE_NAME.toUpperCase()) + '</h2>' +
             '<p class="cgst-status"><span class="cgst-live" aria-hidden="true"></span>' +
               '<span class="cgst-sr" data-cgst-status-sr></span><span aria-hidden="true" data-cgst-type></span></p>' +
+            (CONSOLE_LINE ? '<p class="cgst-remit">' + esc(CONSOLE_LINE) + '</p>' : '') +
           '</div>' + TRACE +
         '</div>' +
 
@@ -4763,8 +4776,8 @@
         '<button type="button" class="cgst-dock" id="cgStationDock" aria-expanded="false" aria-controls="cgStationPanel">' +
           '<span class="cgst-radar" aria-hidden="true"><i></i><b></b></span>' +
           '<span class="cgst-flag" data-cgst-dock-flag aria-hidden="true" hidden></span>' +
-          '<span class="cgst-dock-tx"><strong>SENTINEL CORE</strong>' +
-            '<small><span class="cgst-live" aria-hidden="true"></span><span data-cgst-dock-status>ONLINE · READY</span></small></span>' +
+          '<span class="cgst-dock-tx"><strong>' + esc(CONSOLE_NAME.toUpperCase()) + '</strong>' +
+            '<small><span class="cgst-live" aria-hidden="true"></span><span data-cgst-dock-status>ONLINE · ' + CONSOLE_STATE + '</span></small></span>' +
           '<span class="cgst-chev" aria-hidden="true">' + IC_CHEV + '</span>' +
         '</button>' +
       '</div>';
