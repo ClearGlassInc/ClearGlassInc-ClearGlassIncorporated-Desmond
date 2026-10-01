@@ -41,7 +41,11 @@ OBSERVED = {
 
 def test_the_committed_registries_are_valid_and_claim_nothing() -> None:
     assert growth.main(["--check"]) == 0
-    for path, key in ((growth.OPPORTUNITIES, "opportunities"), (growth.EXPERIMENTS, "experiments")):
+    for path, key in (
+        (growth.OPPORTUNITIES, "opportunities"),
+        (growth.EXPERIMENTS, "experiments"),
+        (growth.COMPETITORS, "competitors"),
+    ):
         assert json.loads(path.read_text())[key] == []
 
 
@@ -152,3 +156,44 @@ def test_check_fails_on_an_unsupported_winner(tmp_path, monkeypatch, capsys) -> 
     monkeypatch.setattr(growth, "EXPERIMENTS", registry)
     assert growth.main(["--check"]) == 1
     assert "not supported" in capsys.readouterr().out
+
+
+COMPETITOR = {
+    "id": "comp-1",
+    "competitor": "Example Managed Services Ltd.",
+    "category": "pricing",
+    "observed": "Publishes a fixed starting price for a Microsoft 365 security review",
+    "source": "https://example.com/services/m365-review",
+    "observed_at": "2026-10-01",
+    "evidence": "M365 Security Review from $1,500",
+    "interpretation": "Local buyers can compare a fixed-price M365 review before they call anyone",
+    "opportunity": "Keep the Hardening Sprint's published tier prices visible above the fold",
+}
+
+
+def test_a_sourced_competitor_observation_is_valid() -> None:
+    assert growth.competitor_problems(COMPETITOR) == []
+
+
+@pytest.mark.parametrize(
+    ("change", "fragment"),
+    [
+        ({"source": "http://example.com"}, "public https://"),
+        ({"source": ""}, "missing source"),
+        ({"observed_at": "yesterday"}, "YYYY-MM-DD"),
+        ({"evidence": "x" * 281}, "not a copy"),
+        ({"interpretation": COMPETITOR["observed"]}, "not repeat it"),
+        ({"category": "gossip"}, "category must be one of"),
+        ({"opportunity": ""}, "missing opportunity"),
+    ],
+)
+def test_a_competitor_fact_needs_its_source_and_stays_apart_from_inference(change, fragment) -> None:
+    assert any(fragment in issue for issue in growth.competitor_problems({**COMPETITOR, **change}))
+
+
+def test_check_fails_on_an_unsourced_competitor_claim(tmp_path, monkeypatch, capsys) -> None:
+    path = tmp_path / "competitors.json"
+    path.write_text(json.dumps({"competitors": [{**COMPETITOR, "source": ""}]}))
+    monkeypatch.setattr(growth, "COMPETITORS", path)
+    assert growth.main(["--check"]) == 1
+    assert "missing source" in capsys.readouterr().out

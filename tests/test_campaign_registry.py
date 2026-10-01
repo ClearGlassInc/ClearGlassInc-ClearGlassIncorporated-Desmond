@@ -32,6 +32,7 @@ COMPLETE = {
     "success_criteria": "Set by the owner before approval",
     "shutdown_thresholds": "Set by the owner before approval",
     "approval_status": "approved",
+    "spend_ceiling_cad": 0,
 }
 
 
@@ -65,6 +66,63 @@ def test_a_missing_page_or_anchor_is_reported() -> None:
     assert registry.problems({**COMPLETE, "landing_page": "https://elsewhere.example/"}) == [
         "landing_page must be a path on this site"
     ]
+
+
+def test_an_offer_clearglass_does_not_sell_cannot_be_advertised() -> None:
+    [issue] = registry.problems({**COMPLETE, "offer": "Affordable security workshop"})
+    assert "not a SKU ClearGlass sells" in issue
+    assert registry.problems({**COMPLETE, "offer": "quick-audit"}) == [], "service catalogue ids count"
+
+
+def test_a_landing_page_that_drops_the_tags_is_refused() -> None:
+    """index.html does not load the attribution script: an ad landing there
+    would reach the lead form as "direct"."""
+    assert registry.ATTRIBUTION_SCRIPT not in (ROOT / "index.html").read_text(encoding="utf-8")
+    [issue] = registry.problems({**COMPLETE, "landing_page": "/index.html"})
+    assert "does not load /assets/js/cg-attribution.js" in issue
+
+
+def test_every_offer_page_can_receive_campaign_traffic() -> None:
+    """The pages that sell something keep the tags a campaign link carries."""
+    pages = sorted(p for p in (ROOT / "offers").glob("*.html") if p.name != "thank-you.html")
+    pages += [ROOT / "store.html", ROOT / "pricing.html", ROOT / "revenue-command.html"]
+    missing = [
+        str(p.relative_to(ROOT)) for p in pages
+        if registry.destination_problem("/" + str(p.relative_to(ROOT)))
+    ]
+    assert not missing, f"offer pages that would lose campaign attribution: {missing}"
+
+
+def test_an_approved_campaign_has_an_owner_set_spend_ceiling() -> None:
+    """The playbook: no launch without an approved spend ceiling."""
+    for ceiling in (None, -1, "500", True):
+        [issue] = registry.problems({**COMPLETE, "spend_ceiling_cad": ceiling})
+        assert "spend_ceiling_cad" in issue
+    assert registry.problems({**COMPLETE, "spend_ceiling_cad": 750}) == []
+    draft = {**COMPLETE, "approval_status": "draft", "spend_ceiling_cad": None}
+    assert registry.problems(draft) == [], "the owner sets the ceiling when approving, not before"
+
+
+def test_ad_copy_over_googles_limits_is_caught_before_approval() -> None:
+    long_ads = {**COMPLETE, "google_search_ads": [{"headline": "H" * 31, "description": "D" * 91}]}
+    assert registry.problems(long_ads) == [
+        "google_search_ads[1].headline is over Google's 30-character limit",
+        "google_search_ads[1].description is over Google's 90-character limit",
+    ]
+
+
+def test_the_ready_packages_sell_a_real_offer_and_spend_nothing_yet() -> None:
+    """Two packages are complete enough for an owner to judge. None is approved,
+    and none carries a spend ceiling: approving and funding are the owner's."""
+    campaigns = {c["id"]: c for _, c in registry.load()}
+    ready = {name for name, c in campaigns.items() if not registry.problems(c)}
+    assert ready == {"burlington-cyber-risk-checkup", "m365-account-protection"}
+    for name in ready:
+        assert campaigns[name]["approval_status"] == "draft"
+        assert campaigns[name]["spend_ceiling_cad"] is None
+        assert registry.tracked_url(campaigns[name]).startswith(registry.SITE + campaigns[name]["landing_page"])
+    for name in set(campaigns) - ready:
+        assert campaigns[name].get("blockers"), f"{name} is incomplete and must say why"
 
 
 def test_tracked_links_carry_the_code_as_utm_campaign() -> None:

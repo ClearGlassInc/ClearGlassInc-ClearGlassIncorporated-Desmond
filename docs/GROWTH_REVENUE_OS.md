@@ -21,9 +21,12 @@ It extends, and does not replace, the CRCS design package in
 | Market intelligence | `scripts/market_intelligence_lane.py` (weekly scaffold, every signal marked unverified) | EXISTED |
 | Demand discovery → opportunity | `tools/growth_registry.py` + `data/growth/opportunities.json` | **NEW**. Registry is empty: no demand is claimed |
 | Audience, positioning, content | `clearglass_marketing_os_v2/`, `agents/*`, blog + Insights generators | EXISTED, unchanged |
-| Advertising plan | `tools/campaign_registry.py` + `data/campaigns/` (5 drafts, all incomplete) | EXISTED |
+| Advertising plan | `tools/campaign_registry.py` + `data/campaigns/` (5 drafts) | EXISTED. 2026-10-01: 2 ready for approval, 3 blocked on a missing offer (§6) |
+| Competitive intelligence | `tools/growth_registry.py` + `data/growth/competitors.json` | **NEW 2026-10-01**. Registry is empty: no competitor fact is claimed |
 | Advertising money | `control-plane/app/governance.py`: `create/fund/activate/scale_ad_campaign` always escalate | **NEW** gates |
 | Landing page → offer | static site pages; offers in `control-plane/app/data/pricebook.json` (4 SKUs) | EXISTED |
+| Campaign tags, landing page → lead form | `assets/js/cg-attribution.js` on offer and buying pages | **NEW 2026-10-01** (§6) |
+| Pre-payment funnel events | `analytics.js` (off until the owner sets a provider) | **NEW 2026-10-01** (§6) |
 | Lead | `POST /revenue/leads` (CRCS) | EXISTED |
 | Order | `POST /commerce/orders` → `CG-ORD-YYYY-XXXXXXXX` | **NEW** |
 | Stripe / PayPal | `POST /commerce/orders/{ref}/checkout` `{provider: stripe \| paypal}` | **NEW** (adapters existed) |
@@ -34,6 +37,7 @@ It extends, and does not replace, the CRCS design package in
 | Reconciliation | `control-plane/app/reconciliation.py`, `POST /commerce/reconciliation`, `python -m app.reconciliation` | **NEW** |
 | Revenue intelligence | `/revenue/cockpit`, admin `/revenue` page | EXTENDED |
 | Experiments / optimization | `tools/growth_registry.py` + `data/growth/experiments.json` | **NEW**. Registry is empty |
+| Executive marketing report | `tools/marketing_report.py` (`--json` for the command centre) | **NEW 2026-10-01** (§6) |
 
 ---
 
@@ -355,3 +359,149 @@ next action is the owner's: complete the past-due Stripe onboarding items so
 `charges_enabled` reads `true`, and approve creating the control-plane host
 (CRCS checklist H1, H2). The first check after deploy is
 `python -m app.reconciliation --json` against the production database.
+
+---
+
+## 6. Advertising & market-intelligence layer — 2026-10-01
+
+**Status: BUILT AND TESTED LOCALLY. NOT DEPLOYED. NOTHING PUBLISHED, SPENT OR SENT.**
+Branch `percival/brave-babbage-pq0drb`, from `main` at `b53bfd7`. Baseline
+before any change: `python3 scripts/ci_local.py` 10 passed, 0 failed, 1
+skipped (Lighthouse, network).
+
+The repository already had the advertising architecture the 2026-10-01 master
+prompt asks for: campaign codes and tracked links, attribution from lead to
+paid order, opportunity and experiment registries, ad-spend gates, a revenue
+cockpit and an owner decision log ([`revenue/revenue-decisions.md`](revenue/revenue-decisions.md)).
+This change fixes what stopped it from measuring anything, and adds nothing
+that duplicates it.
+
+### Architecture
+
+```text
+SIGNAL ──> data/growth/opportunities.json      Observed -> Evidence -> Interpretation -> Opportunity
+           data/growth/competitors.json        (tools/growth_registry.py --check)
+             │
+CAMPAIGN ─> data/campaigns/*.json               code CG-<CHANNEL>-<AUDIENCE>-<OFFER>-<YYYY>-Q<n>
+             │  campaign_registry: sellable offer, landing page keeps tags,
+             │  Google ad limits, spend ceiling before approval
+             │  --links -> ?utm_source&utm_medium&utm_campaign
+             v
+LANDING ──> offers/*.html, store, pricing ── cg-attribution.js (sessionStorage first/last touch)
+             │                                └─ analytics.js funnel events (OFF until a provider is set)
+             v
+LEAD ─────> revenue-command.html -> POST /revenue/leads      (utm_first_*, utm_last_*, landing page, referrer host)
+             │          (form hidden while cg-revenue-api is empty)
+             v
+ORDER / PAYMENT -> attribution.py -> Stripe metadata cg_utm_* -> verified webhook -> ledger
+             v
+REPORT ───> /revenue/cockpit (revenue per campaign)   tools/marketing_report.py (what the repo can prove)
+```
+
+Human gates are unchanged and still enforced in code (§3): creating, funding,
+activating or scaling a campaign, mass outreach and live payments always
+escalate. A campaign file can reach **READY FOR APPROVAL**; only the owner
+moves it to `approved`, and `--check` then refuses it without a spend ceiling.
+No new agent was created: the role definitions in `advertising/`,
+`analytics/`, `campaign-strategy/` and `clearglass_marketing_command/` already
+exist and act through those gates.
+
+### What changed, and why
+
+| Change | Evidence for it | Rollback |
+|---|---|---|
+| `assets/js/cg-attribution.js` keeps first and last campaign touch per tab; loaded on the 8 offer pages, `store.html`, `pricing.html`, `revenue-command.html` | Only `revenue-command.html` read UTM tags, and only from its own URL. A visitor from an ad landing on `/offers/hardening-sprint.html` who clicked through to the form was recorded as `direct` | Remove the script tag; the form falls back to its own URL tags, the old behaviour |
+| Lead form sends the stored touches, the true landing page and the external referrer **host** (not the full URL) | Same | Revert `revenue-command.html` |
+| `campaign_registry`: offer must be a sellable SKU; landing page must load the attribution script; Google RSA limits (30 / 90 characters); `approved`/`active` needs `spend_ceiling_cad` | Packages advertised offers no SKU sells; the playbook requires a spend ceiling and nothing checked it | Revert `tools/campaign_registry.py` |
+| Two campaign packages completed as **drafts** (`burlington-cyber-risk-checkup` → `quick-audit`; `m365-account-protection` → `hardening`); three given explicit blockers | See *Campaigns* below | Revert `data/campaigns/burlington-campaign-packages.json` |
+| `analytics.js` funnel events, inert while `CONFIG.provider` is empty | Analytics is off, and even when on it measured page views only | Revert `analytics.js` |
+| Competitor registry in `growth_registry` | The prompt's Observed → Evidence → Interpretation → Opportunity rule had no home for competitors | Delete `data/growth/competitors.json`; revert the tool |
+| `tools/marketing_report.py` | No single report said which stages are measured | Delete the file |
+
+### Campaigns
+
+| Package | Offer | Landing page | State |
+|---|---|---|---|
+| `burlington-cyber-risk-checkup` | `quick-audit` (CAD 249) | `/offers/security-quick-audit.html` | READY FOR APPROVAL, draft, no spend ceiling |
+| `m365-account-protection` | `hardening` | `/offers/hardening-sprint.html` | READY FOR APPROVAL, draft, no spend ceiling |
+| `ransomware-readiness-burlington-smes` | none sold | none | INCOMPLETE: no SKU tests backup restoration |
+| `nonprofit-cyber-resilience` | none sold | none | INCOMPLETE: the workshop is not a SKU |
+| `ai-governance-ontario` | none sold | none | INCOMPLETE: no SKU writes an AI-use policy |
+
+The risk-checkup package used to promise "cyber and AI-risk findings" and send
+people to `/apps/command-center/index.html#campaign-burlington-risk`, an anchor
+that does not exist. It now follows D2's standing recommendation (one entry
+offer, the Quick-Audit, which converts by Calendly or e-Transfer without
+Stripe), and its ad copy claims only what that page sells. If the owner
+decides D2 differently, change `offer` and `landing_page` together. Success
+criteria and shutdown thresholds are marked **PROPOSED**: the owner sets the
+figures at approval.
+
+### Claim governance (the two ready packages)
+
+| Claim in the ad copy | Class | Support |
+|---|---|---|
+| "Read-only security posture review … Top 10 risk-ranked findings in 3 days" | VERIFIED FACT (about the offer) | `/offers/security-quick-audit.html`: read-only, top 10 findings, 3 business days |
+| "Fixed-fee M365 and Windows hardening to CIS-aligned baselines in two weeks or less" | VERIFIED FACT (about the offer) | `/offers/hardening-sprint.html`: fixed fee, 1–2 weeks, CIS-aligned |
+| "One compromised administrator account can expose the entire organization" | SUPPORTED INTERPRETATION | General security principle; no statistic is claimed |
+| "Make cyber risk visible", "evidence, not fear" | MARKETING LANGUAGE | Promises no outcome |
+
+No package claims a guaranteed result, compliance, ROI, client, statistic or certification.
+
+### Funnel events (sent only once a provider is set)
+
+| Event | Fires on | Properties |
+|---|---|---|
+| `offer_view` | an `/offers/*.html` page view | `page`, `campaign` |
+| `cta_click` | a link to an offer, store, pricing, checkout or lead page | `target` path |
+| `booking_start` | a Calendly link | `target` host + path |
+| `checkout_start` | a Stripe or PayPal checkout link | `target` host |
+| `contact_request` | a `mailto:` or `tel:` link | none (never the address or body) |
+| `form_start` / `form_submit` | first field focus / submit of a form | `form` id |
+| `outbound_click`, `download` | another host / a document link | `target` host or path |
+| `lead_recorded` | `POST /revenue/leads` accepted | none |
+
+Every event also carries `page` and, when the tab arrived on a tagged link,
+`campaign`. Payment is never an analytics event: it counts only from the
+ledger.
+
+### VERIFIED (2026-10-01)
+
+- `tests/test_campaign_attribution.py`: a tag on an offer page reaches the lead
+  form after two internal clicks; hostile values are dropped; only the path and
+  referrer host are stored; the browser's tag rule equals `attribution.py`'s.
+- `tests/test_analytics_funnel_events.py`: with no provider, no listener, script
+  or event; with one, each step is reported and no `@` reaches the provider.
+- `tests/test_campaign_registry.py`, `tests/test_growth_registry.py`,
+  `tests/test_marketing_report.py`: the gates above, and the report's
+  `Analytics: OFF` (its first draft misread the header comment's example
+  `provider: "ga4"` as on).
+- `python3 scripts/ci_local.py` after the change: see the PR.
+
+### NOT VERIFIED
+
+- Any traffic, lead, booking, customer or revenue figure. The repository holds
+  none; `python3 tools/marketing_report.py` says where each lives.
+- Whether the control plane is deployed anywhere: the public lead form's
+  `cg-revenue-api` is empty, and §5 records no control-plane host.
+- Market signals. `ontario.ca` and `cyber.gc.ca` were blocked by this
+  environment's egress proxy, so no opportunity could be recorded from a
+  primary source, and none was recorded from memory.
+- Whether Stripe Payment Links accept extra URL parameters that reach the
+  ledger. Payment Link sales stay unattributed until verified.
+
+### BLOCKERS (owner decisions, none of them code)
+
+1. Analytics provider (`analytics.js` `CONFIG`). Until set, no pre-payment stage is measured.
+2. Control-plane host and `cg-revenue-api` (§5 blocker 2). Until set, no lead is attributed server-side.
+3. D11, form relay activation: 4 pages post enquiries to it.
+4. D2, one entry offer; D9, the Calendly event name; D1, Stripe `charges_enabled`.
+5. Offers for the three blocked campaigns: each needs a price-book change, which is governed.
+
+### Operating it
+
+```bash
+python3 tools/marketing_report.py            # executive report (--json for data)
+python3 tools/campaign_registry.py           # readiness; --links for tracked URLs; --check gates approved ones
+python3 tools/growth_registry.py --check     # opportunities, experiments, competitors
+```

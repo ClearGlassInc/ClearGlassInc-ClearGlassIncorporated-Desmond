@@ -17,6 +17,14 @@ This adds the two things attribution needs from a campaign:
 * a **tracked destination** per channel, built from that code, so every ad
   link carries the same tags.
 
+Two more conditions keep a campaign honest about what it can sell and measure:
+
+* its ``offer`` is a SKU ClearGlass sells: one in the control-plane price
+  book or the service catalogue, never an offer that exists only in ad copy;
+* its landing page loads ``/assets/js/cg-attribution.js``. Campaign traffic
+  lands on offer pages, and the lead form is a click away; without that script
+  the tags are gone by the time the visitor submits, and the lead is "direct".
+
 It never publishes, spends, or contacts anyone, and it records no performance:
 a campaign's results come only from the revenue cockpit's verified data.
 
@@ -39,6 +47,10 @@ from urllib.parse import urlencode, urlsplit
 ROOT = Path(__file__).resolve().parent.parent
 CAMPAIGN_DIR = ROOT / "data" / "campaigns"
 SITE = "https://www.clearglassinc.com"
+PRICEBOOK = ROOT / "control-plane" / "app" / "data" / "pricebook.json"
+SERVICE_CATALOG = ROOT / "data" / "store" / "catalog.json"
+#: The script that carries a landing page's campaign tags to the lead form.
+ATTRIBUTION_SCRIPT = "/assets/js/cg-attribution.js"
 
 #: utm_source per channel. Adding a channel is a reviewed change, so reports
 #: never split one channel across two spellings.
@@ -74,6 +86,22 @@ REQUIRED = (
 #: Statuses that let a campaign run. A campaign in one of these must be complete.
 LIVE_STATUSES = {"approved", "active"}
 
+#: Google Ads responsive search ad text limits, in characters. Copy over the
+#: limit is rejected at upload, after approval, so it is caught here instead.
+GOOGLE_AD_LIMITS = {"headline": 30, "description": 90}
+
+
+def sellable_offers() -> set[str]:
+    """SKUs in the control-plane price book plus the service catalogue ids."""
+    offers: set[str] = set()
+    if PRICEBOOK.is_file():
+        offers |= {o["sku"] for o in json.loads(PRICEBOOK.read_text(encoding="utf-8")).get("offers", [])}
+    if SERVICE_CATALOG.is_file():
+        catalog = json.loads(SERVICE_CATALOG.read_text(encoding="utf-8"))
+        items = catalog.get("items") or catalog.get("products") or catalog.get("offers") or []
+        offers |= {str(i.get("id") or i.get("sku")) for i in items if i.get("id") or i.get("sku")}
+    return offers
+
 
 def parse_code(code: str) -> dict[str, str] | None:
     """Split a campaign code into its parts, or ``None`` if it is not one."""
@@ -104,17 +132,28 @@ def destination_problem(landing_page: str) -> str | None:
         path = path / "index.html"
     if not path.is_file():
         return f"landing page {parts.path} does not exist"
+    html = path.read_text(encoding="utf-8", errors="replace")
     if parts.fragment:
         ids = _Ids()
-        ids.feed(path.read_text(encoding="utf-8", errors="replace"))
+        ids.feed(html)
         if parts.fragment not in ids.ids:
             return f"{parts.path} has no element with id '{parts.fragment}'"
+    if ATTRIBUTION_SCRIPT not in html:
+        return f"{parts.path} does not load {ATTRIBUTION_SCRIPT}, so its campaign tags never reach the lead"
     return None
 
 
-def problems(campaign: dict) -> list[str]:
+def problems(campaign: dict, offers: set[str] | None = None) -> list[str]:
     """Everything that stops a campaign being approvable."""
     found = [f"missing {field}" for field in REQUIRED if not campaign.get(field)]
+    ceiling = campaign.get("spend_ceiling_cad")
+    if str(campaign.get("approval_status") or "").lower() in LIVE_STATUSES and (
+        isinstance(ceiling, bool) or not isinstance(ceiling, int | float) or ceiling < 0
+    ):
+        found.append("an approved campaign needs spend_ceiling_cad, set by the owner (0 for organic)")
+    offer = campaign.get("offer")
+    if offer and offer not in (sellable_offers() if offers is None else offers):
+        found.append(f"offer {offer!r} is not a SKU ClearGlass sells (price book or service catalogue)")
     code = campaign.get("campaign_code")
     if code and parse_code(code) is None:
         found.append(f"campaign_code {code!r} does not match CG-<CHANNEL>-<AUDIENCE>-<OFFER>-<YYYY>-Q<n>")
@@ -122,6 +161,10 @@ def problems(campaign: dict) -> list[str]:
         issue = destination_problem(campaign["landing_page"])
         if issue:
             found.append(issue)
+    for n, ad in enumerate(campaign.get("google_search_ads") or [], 1):
+        for field, limit in GOOGLE_AD_LIMITS.items():
+            if len(str(ad.get(field) or "")) > limit:
+                found.append(f"google_search_ads[{n}].{field} is over Google's {limit}-character limit")
     return found
 
 
@@ -153,10 +196,11 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     failures = 0
+    offers = sellable_offers()
     for path, campaign in load(CAMPAIGN_DIR):
         name = campaign.get("id", "?")
         status = str(campaign.get("approval_status") or "draft").lower()
-        issues = problems(campaign)
+        issues = problems(campaign, offers)
         if args.links:
             print(f"{name}: {tracked_url(campaign) or 'NO TRACKED LINK (needs campaign_code and landing_page)'}")
             continue
