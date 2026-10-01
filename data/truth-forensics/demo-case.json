@@ -1,0 +1,220 @@
+{
+  "analysis_at": "2026-03-16T15:00:00Z",
+  "analyst": "demo-analyst",
+  "case_id": "TF-DEMO-0001",
+  "channels": [
+    {
+      "evidence_id": "EV-A",
+      "kind": "PRIMARY_MEDIA",
+      "label": "Video A"
+    },
+    {
+      "evidence_id": "EV-E",
+      "kind": "INDEPENDENT_SENSOR",
+      "label": "Door sensor DS-2"
+    },
+    {
+      "evidence_id": "EV-H",
+      "kind": "TIME_SOURCE",
+      "label": "Depot time server"
+    },
+    {
+      "evidence_id": "EV-K",
+      "kind": "PROVENANCE_RECORD",
+      "label": "Custody receipt K"
+    }
+  ],
+  "claim": "Video A shows Forklift FL-3 moving Pallet 7 out of Dock 2 at Northwind Demo Depot at 21:43 on 14 March 2026.",
+  "demonstration": true,
+  "evidence": [
+    {
+      "acquired_at": "2026-03-16T14:00:00Z",
+      "acquired_by": "demo-intake",
+      "declared_mime": "video/mp4",
+      "evidence_id": "EV-A",
+      "file": "demo/video-a.mp4",
+      "label": "Video A",
+      "observations": [
+        {
+          "basis": "painted dock number visible in frame",
+          "dimension": "location",
+          "value": "Northwind Demo Depot, Dock 2"
+        },
+        {
+          "basis": "fleet number visible on the vehicle",
+          "dimension": "identity",
+          "entity": "object",
+          "value": "Forklift FL-3"
+        },
+        {
+          "basis": "description of 00:19-00:42",
+          "dimension": "event",
+          "value": "Forklift moves Pallet 7 out of Dock 2"
+        },
+        {
+          "basis": "camera id in the frame overlay",
+          "dimension": "device",
+          "value": "cam-dock-02"
+        }
+      ],
+      "upstream_source": "cam-dock-02"
+    },
+    {
+      "acquired_at": "2026-03-16T14:00:00Z",
+      "acquired_by": "demo-intake",
+      "evidence_id": "EV-A1",
+      "file": "demo/video-a-trim.mp4",
+      "label": "Video A (trimmed export)",
+      "object_kind": "DERIVATIVE",
+      "parent_id": "EV-A",
+      "transformation": "trim 00:10-00:30 and re-encode (declared by submitter)"
+    },
+    {
+      "acquired_at": "2026-03-16T14:00:00Z",
+      "acquired_by": "demo-intake",
+      "declared_mime": "image/png",
+      "evidence_id": "EV-B",
+      "file": "demo/photo-b.png",
+      "label": "Photo B",
+      "observations": [
+        {
+          "basis": "fleet number visible on the vehicle",
+          "dimension": "identity",
+          "entity": "object",
+          "value": "Forklift FL-3"
+        },
+        {
+          "basis": "visible in frame",
+          "dimension": "event",
+          "value": "Pallet 7 on the forklift forks"
+        }
+      ],
+      "upstream_source": "still-camera-dc1"
+    },
+    {
+      "acquired_at": "2026-03-16T14:00:00Z",
+      "acquired_by": "demo-intake",
+      "declared_mime": "image/png",
+      "evidence_id": "EV-B2",
+      "file": "demo/photo-b-copy.png",
+      "label": "Photo B (forwarded copy)"
+    },
+    {
+      "acquired_at": "2026-03-16T14:00:00Z",
+      "acquired_by": "demo-intake",
+      "declared_mime": "image/jpeg",
+      "evidence_id": "EV-F",
+      "file": "demo/photo-f.png",
+      "label": "Photo F (social repost)",
+      "observations": [
+        {
+          "basis": "dock sign appears to read 4",
+          "dimension": "location",
+          "value": "Northwind Demo Depot, Dock 4"
+        },
+        {
+          "basis": "fleet number visible on the vehicle",
+          "dimension": "identity",
+          "entity": "object",
+          "value": "Forklift FL-3"
+        }
+      ],
+      "upstream_source": "social-repost-unknown"
+    },
+    {
+      "acquired_at": "2026-03-16T14:00:00Z",
+      "acquired_by": "demo-intake",
+      "evidence_id": "EV-C",
+      "file": "demo/audio-c.wav",
+      "label": "Audio C",
+      "observations": [
+        {
+          "basis": "listening review",
+          "dimension": "event",
+          "value": "reversing alarm audible"
+        }
+      ],
+      "upstream_source": "recorder-r1"
+    },
+    {
+      "acquired_at": "2026-03-16T14:00:00Z",
+      "acquired_by": "demo-intake",
+      "evidence_id": "EV-D",
+      "file": "demo/document-d.txt",
+      "label": "Document D (dispatch log)",
+      "observations": [
+        {
+          "basis": "dispatch log line 4, transcribed",
+          "dimension": "time",
+          "value": "2026-03-14T21:43"
+        },
+        {
+          "basis": "dispatch log header and line 4",
+          "dimension": "location",
+          "value": "Northwind Demo Depot, Dock 2"
+        },
+        {
+          "basis": "dispatch log line 4",
+          "dimension": "identity",
+          "entity": "object",
+          "value": "Forklift FL-3"
+        },
+        {
+          "basis": "dispatch log line 4",
+          "dimension": "event",
+          "value": "Forklift FL-3 moved Pallet 7 out of Dock 2"
+        }
+      ],
+      "upstream_source": "dispatch-desk"
+    },
+    {
+      "acquired_at": "2026-03-16T14:00:00Z",
+      "acquired_by": "demo-intake",
+      "evidence_id": "EV-E",
+      "file": "demo/sensor-e.json",
+      "label": "Timeline E (door-sensor log)",
+      "upstream_source": "door-sensor-ds2"
+    },
+    {
+      "acquired_at": "2026-03-16T14:00:00Z",
+      "acquired_by": "demo-intake",
+      "evidence_id": "EV-H",
+      "file": "demo/clock-h.json",
+      "label": "Clock reference H",
+      "upstream_source": "depot-time-server"
+    },
+    {
+      "acquired_at": "2026-03-16T14:00:00Z",
+      "acquired_by": "demo-intake",
+      "evidence_id": "EV-K",
+      "file": "demo/custody-k.json",
+      "label": "Custody receipt K",
+      "upstream_source": "security-desk"
+    }
+  ],
+  "label": "DEMONSTRATION DATA \u2014 NOT REAL EVIDENCE",
+  "reviews": [],
+  "schema": "clearglass.truth-forensics.case/1",
+  "suggested_reviews": [
+    {
+      "action": "REJECT",
+      "at": "2026-03-16T16:00:00Z",
+      "note": "Cloned region over the dock sign, editor tag and time mismatch. The Dock 4 reading comes from an altered area; exclude this item.",
+      "reviewer": "reviewer-1",
+      "target": "EV-F"
+    },
+    {
+      "action": "ACCEPT",
+      "at": "2026-03-16T16:20:00Z",
+      "note": "Second reviewer: assessment accepted with EV-F excluded. Frame gap at 00:42 remains open and is outside the claimed window.",
+      "reviewer": "reviewer-2",
+      "target": "CLAIM"
+    }
+  ],
+  "title": "Northwind Demo Depot, Dock 2 (fictional demonstration case)",
+  "tolerances": {
+    "clock_seconds": 5,
+    "location_meters": 250,
+    "time_seconds": 120
+  }
+}

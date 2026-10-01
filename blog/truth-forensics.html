@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#03070d">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Truth Forensics: Evidence Integrity Console | ClearGlass Inc.</title>
+<meta name="description" content="Hash, trace and test digital evidence in your browser: provenance chains, media-integrity indicators, claim checks and human review. Nothing is uploaded.">
+<meta name="author" content="Desmond Otieno Odhiambo">
+<link rel="canonical" href="https://www.clearglassinc.com/blog/truth-forensics.html">
+<meta property="og:site_name" content="ClearGlass Inc.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ClearGlass Truth Forensics — Evidence Integrity Console">
+<meta property="og:description" content="Provenance, media-integrity indicators, cross-source corroboration and human review, running entirely in your browser.">
+<meta property="og:url" content="https://www.clearglassinc.com/blog/truth-forensics.html">
+<meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-holographic-seal.png">
+<meta property="article:published_time" content="2026-09-30">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ClearGlass Truth Forensics">
+<meta name="twitter:description" content="An evidence integrity console: hashes, provenance, indicators, claims and human review. Nothing leaves your browser.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"ClearGlass Truth Forensics","url":"https://www.clearglassinc.com/blog/truth-forensics.html","applicationCategory":"SecurityApplication","operatingSystem":"Any modern web browser","isAccessibleForFree":true,"datePublished":"2026-09-30","description":"Browser-based evidence integrity console: SHA-256 acquisition, hash-chained provenance, media-integrity indicators, claim assessment, cross-source corroboration and human review. Files are analysed locally and never uploaded.","author":{"@type":"Person","name":"Desmond Otieno Odhiambo"},"publisher":{"@type":"Organization","name":"ClearGlass Inc.","url":"https://www.clearglassinc.com/"}}</script>
+<link rel="stylesheet" href="/clearglass-crimson.css">
+<link rel="stylesheet" href="/assets/css/truth-forensics.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+<link rel="stylesheet" href="/assets/css/neon-pulse.css">
+</head>
+<body class="tf-page">
+<a class="tf-skip" href="#tf-main">Skip to the console</a>
+<nav class="tf-topnav" aria-label="Breadcrumb"><a href="/">CLEARGLASSINC</a><span aria-hidden="true">/</span><a href="/blog/">Insights</a><span aria-hidden="true">/</span><span aria-current="page">Truth Forensics</span></nav>
+<main id="tf-main" class="tf-wrap">
+
+<section class="tf-hero" aria-labelledby="tf-title">
+  <div>
+    <p class="tf-eyebrow">ClearGlass Truth Forensics · evidence integrity console</p>
+    <h1 id="tf-title">Truth is an <span class="tf-glass">evidence</span> graph.</h1>
+    <p class="tf-lede">Hash it. Trace where it came from. Test what it says against sources that did not share its pipeline. Then let a person decide. This console does all four in your browser, and shows exactly where the analysis stops.</p>
+    <ul class="tf-legend" aria-label="Evidence status vocabulary">
+      <li class="tf-chip tf-s-VERIFIED">VERIFIED</li>
+      <li class="tf-chip tf-s-SUPPORTED">SUPPORTED</li>
+      <li class="tf-chip tf-s-INCONCLUSIVE">INCONCLUSIVE</li>
+      <li class="tf-chip tf-s-UNVERIFIED">UNVERIFIED</li>
+      <li class="tf-chip tf-s-SIMULATED">SIMULATED / DEMONSTRATION</li>
+    </ul>
+    <ul class="tf-legend" aria-label="Finding states">
+      <li class="tf-chip tf-s-NORMAL">NORMAL</li>
+      <li class="tf-chip tf-s-REVIEW_REQUIRED">REVIEW REQUIRED</li>
+      <li class="tf-chip tf-s-ANOMALY_DETECTED">ANOMALY DETECTED</li>
+      <li class="tf-chip tf-s-CORROBORATION_CONFLICT">CORROBORATION CONFLICT</li>
+      <li class="tf-chip tf-s-PROVENANCE_GAP">PROVENANCE GAP</li>
+      <li class="tf-chip tf-s-CRYPTOGRAPHICALLY_VERIFIED">CRYPTOGRAPHICALLY VERIFIED</li>
+    </ul>
+  </div>
+  <aside class="tf-scan" aria-label="What this console does and does not do">
+    <dl>
+      <dt>Engine</dt><dd>clearglass-truth-forensics 1.0.0</dd>
+      <dt>Hash</dt><dd>SHA-256 (FIPS 180-4) at acquisition</dd>
+      <dt>Ledger</dt><dd>append-only, hash-chained</dd>
+      <dt>Network</dt><dd>none: evidence stays in this tab</dd>
+      <dt>AI calls</dt><dd>none: rule-based analyzers only</dd>
+      <dt>Final say</dt><dd>a human reviewer</dd>
+    </dl>
+  </aside>
+</section>
+
+<p class="tf-notice"><strong>What this is not.</strong> The ClearGlass Truth Forensics system provides analytical indicators and provenance analysis. It does not independently establish the truth of real-world events and should not replace qualified forensic, legal, investigative, or evidentiary review.</p>
+<p class="tf-privacy"><strong>Privacy.</strong> Files you add are read into this tab's memory, hashed and analysed here. They are never uploaded, stored, logged or sent to an AI service. Close the tab or press “Clear session” and they are gone. This page's Content-Security-Policy blocks connections to any other origin.</p>
+
+<nav aria-label="On this page">
+  <ol class="tf-toc">
+    <li><a href="#demo">Live demonstration</a></li>
+    <li><a href="#analyze">Analyse your own evidence</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#evidence-vs-inference">Evidence vs inference</a></li>
+    <li><a href="#custody">Chain of custody</a></li>
+    <li><a href="#synthetic-media">Synthetic media</a></li>
+    <li><a href="#bifocal">Bifocal evidence verification</a></li>
+    <li><a href="#governance">AI governance</a></li>
+    <li><a href="#limitations">Limitations</a></li>
+    <li><a href="#sources">Standards and sources</a></li>
+  </ol>
+</nav>
+
+<div id="tf-app">
+<section id="demo" aria-labelledby="demo-h">
+  <h2 id="demo-h">Live demonstration</h2>
+  <p class="tf-demo-banner">DEMONSTRATION DATA — NOT REAL EVIDENCE</p>
+  <p>Ten synthetic items about a fictional depot and a fictional forklift. No people appear and no real event is described. Every file was generated from fixed arithmetic by <code>python -m truth_forensics demo</code>, and each subsystem has something real to find: a two-second frame gap, a cloned image region, exact digital silence in audio, a byte-identical copy that must not count twice, a camera clock seven seconds off, and a reposted photo whose dock sign was edited.</p>
+  <p>Run it, read the claim assessment, then open <em>Human review</em> and apply the demonstration reviews to watch the final status change and the audit trail record why.</p>
+  <div class="tf-actions">
+    <button id="tf-run-demo" type="button" class="tf-btn tf-btn-primary" disabled>Run the demonstration case</button>
+    <p id="tf-demo-status" class="tf-status" role="status" aria-live="polite">Loads about 480 KB of synthetic files from this site. Analysis runs in your browser.</p>
+  </div>
+  <noscript><p class="tf-notice">The console needs JavaScript. The same engine runs offline in Python: <code>python -m truth_forensics case data/truth-forensics/demo-case.json --report</code>.</p></noscript>
+  <div id="tf-demo-out"></div>
+</section>
+
+<section id="analyze" aria-labelledby="analyze-h">
+  <h2 id="analyze-h">Analyse your own evidence</h2>
+  <p>Add files, text, a URL reference or a structured event record. Each item is hashed with SHA-256 and typed from its bytes, never its filename, then analysed in a background worker. Executables and archives are hashed but never parsed, decompressed or run. URLs are recorded as references and never fetched. The limit is 256 MiB per file, and parsers see files up to 64 MiB.</p>
+  <div class="tf-grid tf-grid-2">
+    <div class="tf-panel">
+      <h3>Files</h3>
+      <div id="tf-drop" class="tf-drop">
+        <p>Drop images, audio, video or documents here, or</p>
+        <label for="tf-files" class="tf-small">Choose files:</label>
+        <input id="tf-files" type="file" multiple>
+        <p class="tf-small tf-muted">JPEG, PNG, GIF and WebP · WAV, MP3, AAC, FLAC and Ogg (decoded by your browser) · MP4 and MOV · text and JSON. Anything else is hashed and recorded.</p>
+      </div>
+      <div class="tf-form" style="margin-top:14px">
+        <label for="tf-analyst">Analyst name (recorded in the chain of custody)</label>
+        <input id="tf-analyst" type="text" value="local-analyst" autocomplete="off">
+      </div>
+    </div>
+    <div class="tf-panel">
+      <h3>Text, URL or structured event</h3>
+      <div class="tf-form">
+        <label for="tf-text-label">Text entry label</label><input id="tf-text-label" type="text" value="Text entry">
+        <label for="tf-text">Text (hashed exactly as entered, UTF-8)</label><textarea id="tf-text"></textarea>
+        <div class="tf-actions"><button id="tf-add-text" type="button" class="tf-btn">Add text</button></div>
+        <label for="tf-url">URL reference (recorded, never fetched)</label><input id="tf-url" type="url" placeholder="https://">
+        <div class="tf-actions"><button id="tf-add-url" type="button" class="tf-btn">Add URL reference</button></div>
+        <label for="tf-event-label">Structured event label</label><input id="tf-event-label" type="text" value="Structured event">
+        <label for="tf-event">Structured event (JSON object; see the record types below)</label>
+        <textarea id="tf-event" spellcheck="false">{"record_type": "sensor-window", "sensor": "door sensor DS-1", "location": "Example Site, Door 1", "start": "2026-01-01T10:00:00", "end": "2026-01-01T10:00:30"}</textarea>
+        <div class="tf-actions"><button id="tf-add-event" type="button" class="tf-btn">Add structured event</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="tf-panel" style="margin-top:14px">
+    <h3>Analyst observations</h3>
+    <p class="tf-small tf-muted">What a person reads off the evidence (a sign, a fleet number, a time on a log) is recorded as an analyst assertion. It is always shown as an inference, never as a fact.</p>
+    <div class="tf-grid tf-grid-3">
+      <div class="tf-form"><label for="tf-obs-target">Item</label><select id="tf-obs-target"></select>
+        <label for="tf-obs-dim">Dimension</label>
+        <select id="tf-obs-dim"><option value="time">time (e.g. 2026-01-01T10:00)</option><option value="location">location</option><option value="identity">identity</option><option value="event">event (what happened)</option><option value="device">device</option><option value="sequence">sequence (A &gt; B &gt; C)</option></select></div>
+      <div class="tf-form"><label for="tf-obs-value">Value</label><input id="tf-obs-value" type="text">
+        <label for="tf-obs-entity">If identity: kind</label>
+        <select id="tf-obs-entity"><option value="">object or subject</option><option value="person">person</option><option value="organization">organization</option></select></div>
+      <div class="tf-form"><label for="tf-obs-basis">Basis (how you know)</label><input id="tf-obs-basis" type="text" placeholder="e.g. sign visible at 00:12">
+        <div class="tf-actions"><button id="tf-add-obs" type="button" class="tf-btn">Add observation</button></div></div>
+    </div>
+    <div class="tf-form" style="margin-top:10px">
+      <label for="tf-local-claim">Claim to test (optional)</label>
+      <textarea id="tf-local-claim" placeholder="e.g. Video 1 shows Vehicle AB-12 at Door 1 at 10:00 on 1 January 2026"></textarea>
+    </div>
+    <div class="tf-actions">
+      <button id="tf-local-assess" type="button" class="tf-btn tf-btn-primary" disabled>Assess this session</button>
+      <button id="tf-local-clear" type="button" class="tf-btn tf-btn-quiet">Clear session (delete everything)</button>
+      <p id="tf-local-status" class="tf-status" role="status" aria-live="polite"></p>
+    </div>
+  </div>
+  <div id="tf-local-queue" style="margin-top:14px"></div>
+  <div id="tf-local-out" style="margin-top:14px"></div>
+</section>
+</div>
+
+<section id="how" aria-labelledby="how-h">
+  <h2 id="how-h">How it works</h2>
+  <p>Every item passes through the same thirteen stages. The first twelve are automatic and recorded; the last belongs to a person.</p>
+  <ol class="tf-small">
+    <li><strong>Source</strong> and <strong>acquisition</strong>: who supplied the item, when, and how.</li>
+    <li><strong>Hash</strong>: SHA-256 of the exact bytes, fixed at intake. The original is never modified; any transformation produces a new item with its own hash and a recorded parent.</li>
+    <li><strong>Provenance</strong>: an append-only ledger in which each record includes the hash of the one before it.</li>
+    <li><strong>Metadata</strong>: EXIF, PNG text and time chunks, MP4 movie headers, RIFF INFO tags. Read, reported, and never trusted.</li>
+    <li><strong>Content analysis</strong>: JPEG and PNG structure, quantization tables, CRCs, copy-move block matching; WAV digital silence, splice-like steps and room-tone shifts.</li>
+    <li><strong>Temporal analysis</strong>: the frame-interval table from the container, turned into a NORMAL / REVIEW / ANOMALY / SUPPORTED timeline.</li>
+    <li><strong>Cross-source correlation</strong>: copies, derivatives, shared upstream sources and near-duplicate images collapse into one independence group before anything is counted.</li>
+    <li><strong>Manipulation indicators</strong>: each one states what was found, how, on what evidence, with what confidence, what else could explain it, and what the system cannot determine.</li>
+    <li><strong>Confidence assessment</strong>: rule-based. HIGH needs three independent agreeing groups with no anomalies; one source is never more than PARTIALLY SUPPORTED.</li>
+    <li><strong>Evidence graph</strong>: facts the engine recorded are solid edges; everything read from metadata or an analyst is a dashed inference.</li>
+    <li><strong>Audit record</strong>: every analyzer run records its input and output hashes.</li>
+    <li><strong>Human review</strong>: accept, reject, escalate, mark inconclusive, annotate, comment or request a second review. The analyst cannot decide their own analysis, and nothing becomes VERIFIED without a human ACCEPT.</li>
+  </ol>
+</section>
+
+<section id="evidence-vs-inference" aria-labelledby="evi-h">
+  <h2 id="evi-h">Evidence vs inference</h2>
+  <div class="tf-cols">
+    <div><h3>Observation</h3><p>What the bytes, metadata or records contain. “EXIF DateTime is 2026:03:15 09:12:44.” “All channels are exactly zero from 2400 to 2550 ms.”</p></div>
+    <div><h3>Interpretation</h3><p>What a rule makes of an observation. “The file was written after capture.” “Exact silence inside a recording is typical of muting or editing.”</p></div>
+    <div><h3>Conclusion</h3><p>A status the rules assign, with its review state beside it. “Claim: INCONCLUSIVE (human review pending).”</p></div>
+    <div><h3>Never</h3><p>“This video is fake.” The report generator refuses engine text that asserts certainty, and says instead: <em>Manipulation indicators detected; human review required.</em> Or: <em>No manipulation indicators detected by the available analyzers. Authenticity cannot be established solely from this analysis.</em></p></div>
+  </div>
+</section>
+
+<section id="custody" aria-labelledby="custody-h">
+  <h2 id="custody-h">Chain of custody</h2>
+  <p>A hash proves the bytes have not changed since the hash was taken. It proves nothing about the event the bytes depict. That is why the console separates <strong>CRYPTOGRAPHICALLY VERIFIED</strong> (the hash matches an earlier custody receipt) from <strong>VERIFIED</strong> (integrity verified and accepted by a human reviewer), and why neither is a statement about what happened.</p>
+  <p>Canadian law draws the same line. Under sections 31.1 and 31.2 of the <a href="https://laws-lois.justice.gc.ca/eng/acts/C-5/">Canada Evidence Act</a>, a party must show an electronic document is what it purports to be, and the best evidence rule is met by proof of the integrity of the system that recorded or stored it. Section 34.1 of Ontario's <a href="https://www.canlii.org/en/on/laws/stat/rso-1990-c-e23/latest/rso-1990-c-e23.html">Evidence Act</a> sets out comparable rules for electronic records. The provenance ledger is designed to make system integrity something you can show, not assert.</p>
+</section>
+
+<section id="synthetic-media" aria-labelledby="syn-h">
+  <h2 id="syn-h">Synthetic media: what detection can and cannot do</h2>
+  <p>Generative tools leave some traces: a generator name in a software tag, generation settings in a PNG text chunk, a Content Credentials manifest. They also leave many traces nobody can see without a trained model, and strip or rewrite most of the ones anybody can. NIST's <a href="https://doi.org/10.6028/NIST.AI.100-4">AI 100-4</a> (November 2024) surveys provenance, labelling and detection approaches and treats them as complementary layers, not a single test.</p>
+  <p>This console does not bundle or call a synthetic-media classifier. It reports metadata signals as metadata signals, detects Content Credentials (C2PA) manifest <em>presence</em> without validating the signature, and records the classifier as an adapter boundary that is not implemented. The absence of an indicator is never reported as evidence of authenticity.</p>
+</section>
+
+<section id="bifocal" aria-labelledby="bif-h">
+  <h2 id="bif-h">Bifocal evidence verification</h2>
+  <p>A single media stream is one lens. ClearGlass Bifocal Verification holds it against channels that did not come through the same pipeline: an independent sensor that observed the same place, a reference clock for the capture device, and a custody record that fixed the file's hash earlier. Each applicable check agrees or conflicts, and a channel in the same independence group as the primary is excluded from scoring.</p>
+  <p>The result is a consistency score out of 100, shown only when two or more channels are present, and always with the statement: <strong>This score is an analytical heuristic and is not proof of authenticity.</strong> Camera telemetry, RFC 3161 timestamps, detached signatures, device attestation, live sensor feeds and C2PA validation are listed as adapter boundaries. They are not implemented, and the console says so.</p>
+</section>
+
+<section id="governance" aria-labelledby="gov-h">
+  <h2 id="gov-h">AI governance</h2>
+  <p>Every analyzer run is recorded with its provider, model, version, input hash, output hash, time, analyst, highest indicator confidence, limitations and human-review state. Here the provider is always <code>clearglass-local</code> and the model a deterministic rule set. No external AI provider is configured or called. An adapter would have to be enabled explicitly, and every call would be recorded the same way.</p>
+  <p>Analysis output is never promoted to fact on its own. The final status is always analysis plus human review, and demonstration data stays SIMULATED whatever a reviewer does.</p>
+</section>
+
+<section id="limitations" aria-labelledby="lim-h">
+  <h2 id="lim-h">Limitations</h2>
+  <ul class="tf-small">
+    <li>No lighting, shadow, edge or compositing-boundary analysis; no double-JPEG-compression statistics; no optical-flow, face or object tracking. These are listed as not performed in every result.</li>
+    <li>Copy-move matching finds exact or near-exact duplicated regions. It misses scaled, rotated or recompressed clones, and repetitive textures can produce false positives.</li>
+    <li>The video timeline reads the container's timing table. Remuxing rewrites that table, and fragmented MP4 timing (<code>trun</code>) is not read.</li>
+    <li>Audio tests flag places to listen, not edits. Knocks, plosives, noise gates and codecs produce the same signals.</li>
+    <li>Metadata is unsigned. Every metadata observation describes the file, not the event.</li>
+    <li>Claim decomposition is pattern-based. It is a starting point for an analyst, not language understanding.</li>
+    <li>Content Credentials manifests are detected, not validated.</li>
+    <li>Browser-decoded pixels and audio can differ slightly between browsers and codecs; the offline Python engine is the reference.</li>
+  </ul>
+</section>
+
+<section id="sources" aria-labelledby="src-h">
+  <h2 id="src-h">Standards and sources</h2>
+  <ul class="tf-small">
+    <li>Secure Hash Standard, FIPS 180-4 (SHA-256).</li>
+    <li>ISO/IEC 27037:2012, guidelines for identification, collection, acquisition and preservation of digital evidence.</li>
+    <li>NIST SP 800-86, Guide to Integrating Forensic Techniques into Incident Response.</li>
+    <li>NIST AI 100-4, Reducing Risks Posed by Synthetic Content (2024): <a href="https://doi.org/10.6028/NIST.AI.100-4">doi.org/10.6028/NIST.AI.100-4</a>.</li>
+    <li>C2PA Technical Specification (Content Credentials; JUMBF in JPEG APP11, <code>caBX</code> chunk in PNG): <a href="https://spec.c2pa.org/specifications/specifications/2.4/specs/C2PA_Specification.html">spec.c2pa.org</a>.</li>
+    <li>ITU-T T.81 (JPEG), Annex K quantization tables; W3C PNG specification; ISO/IEC 14496-12 (ISO base media file format); RFC 3161 (time-stamp protocol, listed as an adapter boundary).</li>
+    <li><a href="https://laws-lois.justice.gc.ca/eng/acts/C-5/">Canada Evidence Act</a>, ss. 31.1–31.8; <a href="https://www.canlii.org/en/on/laws/stat/rso-1990-c-e23/latest/rso-1990-c-e23.html">Ontario Evidence Act</a>, s. 34.1.</li>
+  </ul>
+  <p class="tf-small tf-muted">Engine source, tests and methodology: <code>truth_forensics/</code>, <code>assets/js/truth-forensics-engine.js</code> and <code>docs/TRUTH_FORENSICS.md</code> in the ClearGlass repository. The Python and browser engines are held to byte-identical output by a parity test.</p>
+</section>
+
+</main>
+<script defer src="/assets/js/truth-forensics-engine.js"></script>
+<script defer src="/assets/js/truth-forensics-console.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+<script defer src="/assets/js/neon-pulse.js"></script>
+<script defer src="/logo-badge.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › <a href="index.html">ClearGlass Intelligence · Insights</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="csis-threat-reduction-botnets-canadian-iot-federal-court-2026.html"><span><b>Previous</b>CSIS, Botnets and Canada&#x27;s Connected Devices</span></a>
+      <a href="index.html"><span><b>Topic hub</b>ClearGlass Intelligence</span></a>
+      <a href="truth-is-an-evidence-graph.html"><span><b>Next in journey</b>Truth Is an Evidence Graph</span></a>
+    </div>
+    <ul>
+      <li><a href="truth-is-an-evidence-graph.html"><b>Truth Is an Evidence Graph</b> — why copies are not corroboration and how to label what you know</a></li>
+      <li><a href="deepfake-detection-needs-chain-of-custody.html"><b>Deepfake Detection Needs Chain of Custody</b> — detectors estimate, custody records show</a></li>
+      <li><a href="when-ai-cannot-determine-the-truth.html"><b>When AI Cannot Determine the Truth</b> — what media analysis can find, what it cannot know, and the governance between</a></li>
+      <li><a href="autonomous-threat-modeling-2026.html"><b>Autonomous Threat Modeling in 2026</b> — continuous architecture-grounded security for agentic and cyber-physical systems</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="../store.html">Book a security engagement</a> · <a href="../pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<script defer src="../station-chat.js"></script>
+<!-- cg-related:end -->
+</body>
+</html>

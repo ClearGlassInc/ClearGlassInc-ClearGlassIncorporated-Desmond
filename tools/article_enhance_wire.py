@@ -30,8 +30,9 @@ import sys
 
 BLOG = pathlib.Path(__file__).resolve().parent.parent / "blog"
 
-# The hub runs its own layer; the resume builder is a tool shell, not a brief.
-SKIP = {"index.html", "resume-builder.html"}
+# The hub runs its own layer; the resume builder and the Truth Forensics
+# console are tool shells, not briefs.
+SKIP = {"index.html", "resume-builder.html", "truth-forensics.html"}
 
 CSS_LINKS = ('<link rel="stylesheet" href="insights.css"/>',
              '<link rel="stylesheet" href="article-enhance.css"/>')

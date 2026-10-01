@@ -65,7 +65,7 @@ MARKERS = {
 
 # Pages under blog/ that are not editorial briefs. They stay linked from the hub
 # but never enter the RSS feed or the Blog JSON-LD, which describe articles.
-NON_ARTICLE_SLUGS = {"resume-builder"}
+NON_ARTICLE_SLUGS = {"resume-builder", "truth-forensics"}
 
 # Topic vocabulary. The hub previously shipped chips for 8 of these while cards
 # carried 13, so `?topic=frontier` and friends were unreachable from the UI.
@@ -408,6 +408,36 @@ CURATED: dict[str, dict] = {
         quote="Verify the action, not just the actor.",
         cta="Read the case →",
         topics="cyber systems agents",
+    ),
+    # Truth Forensics: the in-browser console (a tool page, kept out of the
+    # feed) and the three briefs that explain its method.
+    "truth-forensics": dict(
+        category="Media Integrity",
+        quote="Indicators, not verdicts.",
+        cta="Open the console →",
+        topics="information-integrity systems cyber governed-ai",
+        series="ClearGlass Truth Forensics",
+    ),
+    "truth-is-an-evidence-graph": dict(
+        category="Information Integrity",
+        quote="Ten reposts are one source.",
+        cta="Read brief 01 →",
+        topics="information-integrity osint systems",
+        series="ClearGlass Truth Forensics",
+    ),
+    "deepfake-detection-needs-chain-of-custody": dict(
+        category="Information Integrity",
+        quote="Detectors estimate. Custody records show.",
+        cta="Read brief 02 →",
+        topics="information-integrity cyber systems",
+        series="ClearGlass Truth Forensics",
+    ),
+    "when-ai-cannot-determine-the-truth": dict(
+        category="AI Governance",
+        quote="No indicators is not authenticity.",
+        cta="Read brief 03 →",
+        topics="information-integrity governed-ai systems",
+        series="ClearGlass Truth Forensics",
     ),
 }
 
