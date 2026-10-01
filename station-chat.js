@@ -819,8 +819,8 @@
     "#cg-station .cgst-ghead>div:first-child{flex:1 1 auto;min-width:0}",
     "#cg-station .cgst-gorg{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 4px;font-size:8.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--g-mute)}",
     "#cg-station .cgst-gorg i{font-style:normal;color:#7fd1a8;letter-spacing:.16em}",
-    "#cg-station .cgst-gorg i b{display:inline-block;font-weight:inherit;text-shadow:0 0 8px rgba(127,209,168,.9);animation:cgstLive 2.4s ease-in-out infinite}",
-    "@keyframes cgstLive{50%{opacity:.4;text-shadow:none}}",
+    "#cg-station .cgst-gorg i b{display:inline-block;font-weight:inherit;text-shadow:0 0 8px rgba(127,209,168,.9);animation:cgstGLive 2.4s ease-in-out infinite}",
+    "@keyframes cgstGLive{50%{opacity:.4;text-shadow:none}}",
     "#cg-station .cgst-gtitle{margin:0;font-size:15px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:var(--g-ink);outline:none}",
     "#cg-station .cgst-gsub{margin:3px 0 0;font-size:8.5px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--g-mute)}",
     "#cg-station .cgst-gtools{flex:0 0 auto;display:flex;gap:4px}",
@@ -900,7 +900,7 @@
     "-webkit-backdrop-filter:blur(10px) saturate(1.3);backdrop-filter:blur(10px) saturate(1.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}",
     "#cg-station .cgst-ghud-bl{left:8px;bottom:8px;flex-direction:column;gap:3px;padding:6px 8px}",
     "#cg-station .cgst-ghud-br{right:8px;bottom:8px;align-items:center;gap:7px;padding:4px 7px}",
-    "#cg-station .cgst-glayer{height:22px;padding:0 8px;border-radius:6px;border:1px solid var(--g-line2);background:rgba(5,7,10,.86);color:var(--g-dim);",
+    "#cg-station .cgst-glayer{height:24px;padding:0 8px;border-radius:6px;border:1px solid var(--g-line2);background:rgba(5,7,10,.86);color:var(--g-dim);",
     "font:600 7.5px/1 var(--cgst-mono);letter-spacing:.16em;text-transform:uppercase;cursor:pointer;",
     "transition:color .18s var(--g-ease),border-color .18s var(--g-ease),box-shadow .18s var(--g-ease),background .18s var(--g-ease)}",
     "#cg-station .cgst-glayer:hover{color:var(--g-ink);border-color:rgba(76,195,255,.45)}",
@@ -913,14 +913,14 @@
     "#cg-station .cgst-gleg b[data-k='cut']{background:none;border:1px dashed #e5484d}",
     "#cg-station .cgst-gleg b[data-k='anom']{border-radius:0;width:6px;height:6px;transform:rotate(45deg);background:#e5484d}",
     "#cg-station .cgst-gleg b[data-k='pred']{height:0;border-radius:0;border-top:1px dotted #e0c070}",
-    "#cg-station .cgst-gplay input{width:104px;margin:0;accent-color:#9fc2e0}",
+    "#cg-station .cgst-gplay input{width:104px;height:24px;margin:0;accent-color:#9fc2e0}",
     "#cg-station .cgst-gplay output{min-width:74px;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--g-ink);font-variant-numeric:tabular-nums}",
     "#cg-station .cgst-gsvg{position:relative;display:block;width:100%;height:100%;user-select:none;-webkit-user-select:none}",
     "#cg-station .cgst-gsvg text{font-family:var(--cgst-mono);fill:#d3dbe4;pointer-events:none}",
     "#cg-station .cgst-gring{fill:none;stroke:rgba(150,170,190,.13);stroke-width:1;vector-effect:non-scaling-stroke}",
     "#cg-station .cgst-gring.cgst-gmajor{stroke-dasharray:1 5}",
     "#cg-station .cgst-gtickl{stroke:rgba(150,170,190,.3);stroke-width:1;vector-effect:non-scaling-stroke}",
-    "#cg-station .cgst-gtick{font-size:calc(6.5px * var(--gs,1));letter-spacing:.12em;fill:#56626e!important}",
+    "#cg-station .cgst-gtick{font-size:calc(6.5px * var(--gs,1));letter-spacing:.12em;fill:#74818e!important}",
     "#cg-station .cgst-gradar{transform-box:view-box;transform-origin:500px 500px;animation:cgstSweep 10s linear infinite;pointer-events:none}",
     "#cg-station .cgst-gradar path:first-child{fill:rgba(159,194,224,.045)}",
     "#cg-station .cgst-gradar path+path{fill:none;stroke:rgba(159,194,224,.3);stroke-width:1;vector-effect:non-scaling-stroke}",
@@ -1081,6 +1081,24 @@
     "#cg-station .cgst-gpanel,#cg-station .cgst-gfeed,#cg-station .cgst-gview{border-radius:10px}",
     "#cg-station .cgst-gview{height:58vh}#cg-station .cgst-ghud-bl{display:none}#cg-station .cgst-gplay input{width:72px}",
     "#cg-station .cgst-gfeed li{grid-template-columns:30px 76px minmax(0,1fr)}#cg-station .cgst-gfeed time{display:none}}",
+    /* every graph control is at least 24px on its short side (WCAG 2.5.8);
+       on coarse pointers, 30px or more */
+    "#cg-station .cgst-gl .cgst-tree a,#cg-station .cgst-gl .cgst-tree button{line-height:24px}",
+    "#cg-station .cgst-gfeed li{align-items:center}#cg-station .cgst-gfeed button{min-height:24px}",
+    "@media(pointer:coarse){#cg-station .cgst-gtool{min-width:36px;height:34px}#cg-station .cgst-glayer{height:30px;padding:0 10px}",
+    "#cg-station .cgst-gcmd{height:34px}#cg-station .cgst-grow{min-height:32px}#cg-station .cgst-gplay input{height:28px}",
+    "#cg-station .cgst-gfind input{height:36px}",
+    "#cg-station .cgst-gl .cgst-tree a,#cg-station .cgst-gl .cgst-tree button{line-height:30px}#cg-station .cgst-gfeed button{min-height:30px}}",
+    /* settled: five seconds after the last touch, key or pointer move the
+       ambient motion pauses and the sweep, pulses and waves fade (WCAG 2.2.2) */
+    "#cg-station .cgst-gradar,#cg-station .cgst-gpulses,#cg-station .cgst-gwaves{transition:opacity .6s var(--g-ease)}",
+    "#cg-station .cgst-graph[data-calm] *,#cg-station .cgst-graph[data-calm] *::before,#cg-station .cgst-graph[data-calm] *::after{animation-play-state:paused!important}",
+    "#cg-station .cgst-graph[data-calm] .cgst-gradar,#cg-station .cgst-graph[data-calm] .cgst-gpulses,#cg-station .cgst-graph[data-calm] .cgst-gwaves{opacity:0}",
+    /* the console's own sheet and rail sit under the open graph's overlay:
+       nobody can see them move, so they hold still until it closes */
+    "html.cgst-graph-open #cg-station>.cgst-sheet,html.cgst-graph-open #cg-station>.cgst-sheet *,html.cgst-graph-open #cg-station>.cgst-sheet *::before,",
+    "html.cgst-graph-open #cg-station>.cgst-sheet *::after,html.cgst-graph-open #cg-station>.cgst-rail,html.cgst-graph-open #cg-station>.cgst-rail *,",
+    "html.cgst-graph-open #cg-station>.cgst-rail *::before,html.cgst-graph-open #cg-station>.cgst-rail *::after{animation-play-state:paused!important}",
     "html.cgst-graph-open{overflow:hidden}",
     "@media(max-width:372px){#cg-station .cgst-sectors{grid-template-columns:repeat(2,minmax(0,1fr))}#cg-station .cgst-cmds{grid-template-columns:1fr}}",
 
@@ -3589,7 +3607,7 @@
   };
   var SEV = { high: 0, med: 1, low: 2, info: 3 };
   var graph = { built: false, open: false, vb: { x: 0, y: 0, w: 1000 }, focus: "", hits: [], hitLabel: "", lastFocus: null, anim: 0,
-    node: {}, pts: {}, drag: null, pinch: null, suppress: false, an: null, sel: "", eb: [], hop: -1, play: 0, dq: 0 };
+    node: {}, pts: {}, drag: null, pinch: null, suppress: false, an: null, sel: "", eb: [], hop: -1, play: 0, dq: 0, calm: false, calmT: 0 };
   var graphEl, gSvg, gView, gSide, gTree, gPath, gFind, gSub, gLinks, gHop, gHopOut, gPlay;
 
   function sv(tag, attrs, parent) {
@@ -3885,7 +3903,7 @@
       var cos = Math.cos(oa), bl = svText(g, lx, ly, c.id.toUpperCase() + " · " + list.length, "cgst-gblabel",
         cos > 0.08 ? "start" : cos < -0.08 ? "end" : "middle");
       bl.setAttribute("dominant-baseline", Math.sin(oa) > 0.35 ? "hanging" : Math.sin(oa) < -0.35 ? "auto" : "central");
-      c.lab = bl;
+      c.lab = bl; c.lx = c.px = lx; c.ly = c.py = ly; c.gr = r;
     });
 
     // influence: PageRank as heat, and a wave off the three most important pages
@@ -3956,7 +3974,7 @@
       meta.setAttribute("dy", "1.6em");
       meta.setAttribute("dominant-baseline", "central");
       if (site.byId[e.cluster] && site.byId[e.cluster].members.length > 14) link.setAttribute("data-dense", "");
-      graph.node[e.path] = { el: link, x: p.x, y: p.y, i: x.i, lab: lab, meta: meta };
+      graph.node[e.path] = { el: link, x: p.x, y: p.y, i: x.i, lab: lab, meta: meta, gap: r + 6, right: right, side: right };
     });
 
     // Sentinel Core: corroboration, cohesion and reach as three arcs
@@ -4240,6 +4258,12 @@
 
   function setLayer(name, on) {
     gSvg.setAttribute("data-" + name, on ? "1" : "0");
+    // with the Clusters layer off the rings are display:none, so a focused
+    // cluster would show no focus at all: take them out of the tab order
+    if (name === "bounds") Array.prototype.forEach.call(gSvg.querySelectorAll(".cgst-gcluster"), function (g) {
+      g.setAttribute("tabindex", on ? "0" : "-1");
+      if (on) g.removeAttribute("aria-hidden"); else g.setAttribute("aria-hidden", "true");
+    });
     var b = graphEl.querySelector("[data-glayer='" + name + "']");
     if (b) b.setAttribute("aria-pressed", on ? "true" : "false");
     queueDeclutter();
@@ -4259,12 +4283,37 @@
   // matched, the cluster names, this page, neighbours, focused cluster,
   // cluster keys; then importance) and hide any that would land on one
   // already placed. Hover, focus or zoom brings a hidden one back.
+  // A label never runs off the canvas: a page label at an edge turns to the
+  // core's side, a cluster name slides back inside, and one that still
+  // cannot fit waits like a collision.
   function queueDeclutter() { if (!graph.dq) graph.dq = setTimeout(declutter, 60); }
+  function labelSide(nd, s) {
+    if (nd.side === s) return;
+    nd.side = s;
+    var x = (nd.x + (s ? nd.gap : -nd.gap)).toFixed(1), a = s ? "start" : "end";
+    [nd.lab, nd.meta].forEach(function (t) { t.setAttribute("x", x); t.setAttribute("text-anchor", a); });
+  }
+  function labelAt(c, x, y) {
+    if (c.px === x && c.py === y) return;
+    c.px = x; c.py = y;
+    c.lab.setAttribute("x", x.toFixed(1)); c.lab.setAttribute("y", y.toFixed(1));
+  }
   function declutter() {
     graph.dq = 0;
     if (!graph.built || !graph.open || !gSvg) return;
     var an = graph.an, keys = gSvg.getAttribute("data-labels") === "1", want = [], placed = [];
     var pad = 2 * (parseFloat(gSvg.style.getPropertyValue("--gs")) || 1);
+    var sr = gSvg.getBoundingClientRect(), tl = toSvg(sr.left, sr.top), br = toSvg(sr.right, sr.bottom);
+    var vis = { x0: tl.x + pad, y0: tl.y + pad, x1: br.x - pad, y1: br.y - pad };
+    function inside(b) { return b.x0 >= vis.x0 && b.x1 <= vis.x1 && b.y0 >= vis.y0 && b.y1 <= vis.y1; }
+    // nothing is written over Sentinel Core (disc r 86 and its arcs), and no
+    // label is placed under a HUD control floating over the canvas
+    placed.push({ x0: 404, y0: 404, x1: 596, y1: 596 });
+    Array.prototype.forEach.call(gView.querySelectorAll(".cgst-ghud-tl>*,.cgst-ghud-bl,.cgst-ghud-br"), function (h) {
+      if (!h.getClientRects().length) return;
+      var r = h.getBoundingClientRect(), a = toSvg(r.left, r.top), z = toSvg(r.right, r.bottom);
+      placed.push({ x0: a.x, y0: a.y, x1: z.x, y1: z.y });
+    });
     Object.keys(graph.node).forEach(function (p) {
       var nd = graph.node[p], cl = nd.el.classList, k = -1;
       if (cl.contains("cgst-gsel")) k = 0;
@@ -4279,18 +4328,45 @@
     var bounds = gSvg.getAttribute("data-bounds") === "1";
     site.clusters.forEach(function (c, ci) {
       if (!c.lab) return;
-      if (bounds) want.push({ el: c.lab, lab: c.lab, k: 1.5, imp: 0, i: ci });
+      if (bounds) want.push({ el: c.lab, lab: c.lab, c: c, k: 1.5, imp: 0, i: ci });
       else c.lab.removeAttribute("data-clash");
     });
     want.sort(function (a, b) { return (a.k - b.k) || (b.imp - a.imp) || (a.i - b.i); });
-    want.forEach(function (w) {
-      var b;
-      try { b = w.lab.getBBox(); } catch (e) { return; }
-      var box = { x0: b.x - pad, y0: b.y - pad, x1: b.x + b.width + pad, y1: b.y + b.height + pad };
+    function boxOf(w) {
+      var b = w.lab.getBBox(), box = { x0: b.x - pad, y0: b.y - pad, x1: b.x + b.width + pad, y1: b.y + b.height + pad };
       if (!w.k) {                                     // the selection also shows its metrics line
-        try { var m = w.nd.meta.getBBox(); box.x0 = Math.min(box.x0, m.x - pad); box.x1 = Math.max(box.x1, m.x + m.width + pad); box.y1 = Math.max(box.y1, m.y + m.height + pad); } catch (e) {}
+        var m = w.nd.meta.getBBox();
+        box.x0 = Math.min(box.x0, m.x - pad); box.x1 = Math.max(box.x1, m.x + m.width + pad); box.y1 = Math.max(box.y1, m.y + m.height + pad);
       }
-      var hit = placed.some(function (o) { return box.x0 < o.x1 && box.x1 > o.x0 && box.y0 < o.y1 && box.y1 > o.y0; });
+      return box;
+    }
+    function clear(b) { return inside(b) && !placed.some(function (o) { return b.x0 < o.x1 && b.x1 > o.x0 && b.y0 < o.y1 && b.y1 > o.y0; }); }
+    want.forEach(function (w) {
+      var box;
+      try {
+        if (w.nd) {
+          labelSide(w.nd, w.nd.right);                // away from the core first,
+          box = boxOf(w);
+          if (!clear(box) && w.nd.x > vis.x0 && w.nd.x < vis.x1) {
+            labelSide(w.nd, !w.nd.right);             // then the other side,
+            var alt = boxOf(w);
+            if (clear(alt)) box = alt;
+            else { labelSide(w.nd, w.nd.right); box = boxOf(w); }   // else it waits
+          }
+        } else {
+          var c = w.c;
+          labelAt(c, c.lx, c.ly);
+          box = boxOf(w);
+          // only a cluster that is itself on screen pulls its name back in
+          if (!inside(box) && c.gx + c.gr > vis.x0 && c.gx - c.gr < vis.x1 && c.gy + c.gr > vis.y0 && c.gy - c.gr < vis.y1) {
+            var dx = box.x0 < vis.x0 ? vis.x0 - box.x0 : box.x1 > vis.x1 ? vis.x1 - box.x1 : 0;
+            var dy = box.y0 < vis.y0 ? vis.y0 - box.y0 : box.y1 > vis.y1 ? vis.y1 - box.y1 : 0;
+            labelAt(c, c.lx + dx, c.ly + dy);
+            box = { x0: box.x0 + dx, y0: box.y0 + dy, x1: box.x1 + dx, y1: box.y1 + dy };
+          }
+        }
+      } catch (e) { return; }
+      var hit = !clear(box);
       if (hit) w.el.setAttribute("data-clash", "");
       else { w.el.removeAttribute("data-clash"); placed.push(box); }
     });
@@ -4443,6 +4519,44 @@
     gTree.appendChild(ul);
   }
 
+  // Ambient motion runs while someone is using the graph and settles
+  // CALM_MS after the last interaction: WCAG 2.2.2 lets motion that starts on
+  // its own run five seconds, and an idle graph should not spend a phone's
+  // battery repainting itself. Any touch, key, wheel or pointer move wakes it.
+  var CALM_MS = 5000;
+  function wake() {
+    if (!graph.open || !graphEl) return;
+    clearTimeout(graph.calmT);
+    if (graph.calm) {
+      graph.calm = false;
+      graphEl.removeAttribute("data-calm");
+      if (gSvg && gSvg.unpauseAnimations) gSvg.unpauseAnimations();
+    }
+    graph.calmT = setTimeout(settle, CALM_MS);
+  }
+  function settle() {
+    graph.calmT = 0;
+    if (!graph.open) return;
+    graph.calm = true;
+    graphEl.setAttribute("data-calm", "");
+    if (gSvg && gSvg.pauseAnimations) gSvg.pauseAnimations();
+  }
+
+  // A fingertip is wider than a node. Once a cluster is focused or the view
+  // is zoomed in, a tap that lands on no node selects the nearest one within
+  // `max` screen pixels instead of falling through to the cluster behind it.
+  function nearestNode(cx, cy, max) {
+    var m = gSvg.getScreenCTM(), best = "", bd = max * max;
+    if (!m) return "";
+    Object.keys(graph.node).forEach(function (p) {
+      var nd = graph.node[p];
+      if (nd.el.hasAttribute("data-out")) return;
+      var dx = m.a * nd.x + m.c * nd.y + m.e - cx, dy = m.b * nd.x + m.d * nd.y + m.f - cy, d = dx * dx + dy * dy;
+      if (d < bd) { bd = d; best = p; }
+    });
+    return best;
+  }
+
   function openGraph(opts) {
     if (!graphEl) return;
     opts = opts || {};
@@ -4450,6 +4564,7 @@
     graphEl.hidden = false;
     graph.open = true;
     if (gSvg && gSvg.unpauseAnimations) gSvg.unpauseAnimations();
+    wake();
     document.documentElement.classList.add("cgst-graph-open");
     syncRun();
     var title = graphEl.querySelector(".cgst-gtitle");
@@ -4485,6 +4600,8 @@
     graph.open = false;
     cancelAnimationFrame(graph.anim);
     clearTimeout(graph.dq); graph.dq = 0;
+    clearTimeout(graph.calmT); graph.calmT = 0; graph.calm = false;
+    graphEl.removeAttribute("data-calm");
     if (gSvg && gSvg.pauseAnimations) gSvg.pauseAnimations();
     document.documentElement.classList.remove("cgst-graph-open");
     syncRun();
@@ -4523,8 +4640,16 @@
         else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
       }
     });
+    ["pointerdown", "pointermove", "wheel", "keydown", "focusin"].forEach(function (ev) { graphEl.addEventListener(ev, wake, { passive: true }); });
     graphEl.addEventListener("click", function (event) {
       if (event.target === graphEl) { closeGraph(); return; }
+      var t = event.target.closest ? event.target : null;
+      // real taps only (detail > 0): a keyboard Enter on a cluster stays a cluster action
+      if (t && event.detail && !t.closest(".cgst-gnode") && !t.closest(".cgst-gcore") && t.closest(".cgst-gsvg") &&
+          (graph.focus || graph.vb.w <= 520) && !(event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)) {
+        var near = nearestNode(event.clientX, event.clientY, 16);
+        if (near) { event.preventDefault(); selectNode(near === graph.sel ? "" : near, false); return; }
+      }
       var cl = event.target.closest ? event.target.closest(".cgst-gcluster") : null;
       if (cl) { focusCluster(cl.getAttribute("data-cluster") === graph.focus ? "" : cl.getAttribute("data-cluster")); return; }
       if (event.target.closest && event.target.closest(".cgst-gcore")) { setHits([], ""); if (gFind) gFind.value = ""; selectNode(""); focusCluster(""); return; }
