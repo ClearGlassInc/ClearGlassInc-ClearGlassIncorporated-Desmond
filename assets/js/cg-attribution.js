@@ -16,10 +16,11 @@
    What it keeps: the three tags, the landing path (no query string), and the
    external referrer's host name. Nothing else, and no cookies. It sends
    nothing anywhere; it only makes sure /analytics.js is loaded, which stays
-   off until the owner sets a provider. sessionStorage ends with the tab, which is what the privacy notice
-   discloses (legal/privacy.html section 10). Values that are not campaign
-   tags are dropped, using the same rule as attribution.py, so free text or
-   personal data cannot ride along into the lead or Stripe metadata. */
+   off until the owner sets a provider. sessionStorage ends with the tab,
+   which is what the privacy notice discloses (legal/privacy.html section 10).
+   Values that are not campaign tags are dropped, using the same rule as
+   attribution.py, so free text or personal data cannot ride along into the
+   lead or Stripe metadata. */
 (function () {
   "use strict";
   if (window.CGAttribution) return;
