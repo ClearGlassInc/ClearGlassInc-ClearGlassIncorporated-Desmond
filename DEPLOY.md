@@ -52,10 +52,19 @@ to merge before you have a Render account.
 ## B. Docker Compose (self-host / VPS)
 
 ```bash
-cp .env.example .env          # fill DATABASE_URL + STRIPE_* (or leave blank for mock mode)
+cp control-plane/.env.example .env             # compose refuses to start without .env; blank STRIPE_* = mock mode
+printf '\nRUN_MIGRATIONS=true\n' >> .env       # apply control-plane/migrations/*.sql at boot
 docker compose up --build     # db + api(:8000) + storefront(:3000) + admin(:3001)
-docker compose exec db psql -U commerce -d commerce -f /migrations/001_init.sql
 ```
+
+Copy `control-plane/.env.example`, not the root `.env.example`: the root file
+holds only the `LIVE_FABRIC_*` group. Compose sets `DATABASE_URL` itself.
+
+Do not skip `RUN_MIGRATIONS=true`. Both schema flags default to `false`, so
+without it nothing creates the tables: `GET /ready` still returns 200 (it only
+runs `SELECT 1`) while `POST /revenue/leads` returns 500. Applying
+`001_init.sql` by hand is not enough either; it is 1 of 9 schema files.
+Verified 2026-10-01 against Postgres 16 (`docs/audit/2026-10-01/VALIDATION_REPORT.md`).
 
 ## C. Fly.io (API only)
 

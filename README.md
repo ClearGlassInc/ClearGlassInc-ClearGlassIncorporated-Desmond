@@ -77,6 +77,8 @@ npm ci && npx tsc --noEmit && npm run build
 **Full stack** (Postgres, control plane :8000, storefront :3000, admin :3001):
 
 ```bash
+cp control-plane/.env.example .env           # first run only; compose exits 1 without .env
+printf '\nRUN_MIGRATIONS=true\n' >> .env     # without it nothing creates the schema
 docker compose up --build
 ```
 

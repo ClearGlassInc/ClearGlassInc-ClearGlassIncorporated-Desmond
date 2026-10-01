@@ -35,6 +35,10 @@ Guidance for agents working in this repository.
 > Pages Check, on `1d3c2a0`) reported `runner_id: 0` and finished in 4
 > seconds. Tracked in `.github/auto-heal/LEARNING.md`; the workflow-repair
 > prompt is `prompts/repair/debug-deploy-master-prompt.md`.
+>
+> Re-verified 2026-10-01: still true. Job `110455407504` (Auto Heal, on
+> `b53bfd7`) reported `runner_id: 0` and finished in 4 seconds; Pages run #253
+> deployed the same commit in 33 seconds. See `docs/audit/2026-10-01/`.
 
 ## What this repo is
 
@@ -76,7 +80,7 @@ non‑negotiable when changing it.
 | `operations/` | Generated reports + handoff pages (priority matrix, SEO, health, defender) |
 | `sentinel/` | Named-agent index (PERCIVAL, SENTINEL, AEGIS, PFAS, Agent Mesh) — keyless, stdlib-only, fail-closed Python agents; see `sentinel/PERCIVAL_AGENTS.md`. Includes the real PERCIVAL governor/identity/capability/mission-memory stack plus target-state v9 distributed-architecture docs (nothing in those docs is provisioned — see their own status banners) |
 | `truth_forensics/`, `assets/js/truth-forensics-*.js`, `blog/truth-forensics.html` | **Truth Forensics**: evidence-integrity engine (stdlib Python) and its byte-identical browser twin, which the Insights console runs with nothing uploaded. Change both implementations together: `tests/test_truth_forensics_parity.py` fails otherwise. Demo corpus in `data/truth-forensics/` (`python -m truth_forensics demo --check`). See `docs/TRUTH_FORENSICS.md`; the older `lib/truth-fabric/` prototype is separate and has documented defects (§12) |
-| `.github/workflows/` | 81 workflows (36 scheduled, 16 with `contents: write`): CI, Pages deploy, commerce gates, scheduled bot loops |
+| `.github/workflows/` | 85 workflows (38 scheduled, 18 with `contents: write`; counted 2026-10-01): CI, Pages deploy, commerce gates, scheduled bot loops |
 | `workflows/` (top level) | The intact 72-file archive the upload left behind. **Copy into `.github/workflows/`, never move** — it is the rollback source |
 | `clearglass_marketing_os_v2/pipelines/` | Marketing-OS pipeline playbooks. Same `.yml` suffix, different DSL — **not** Actions workflows |
 
@@ -189,8 +193,11 @@ npm ci && npm run build             # Commerce Frontend CI runs tsc --noEmit + n
 ```
 
 Full stack via Docker: `docker compose up --build`, from the repository root
-(postgres + control‑plane :8000 + storefront :3000 + admin :3001). Deploy paths
-are documented in `DEPLOY.md` (Render blueprint recommended).
+(postgres + control‑plane :8000 + storefront :3000 + admin :3001). First run
+`cp control-plane/.env.example .env` and append `RUN_MIGRATIONS=true` to it:
+compose exits 1 without `.env`, and without the flag nothing creates the schema,
+so `/ready` is 200 while `POST /revenue/leads` is 500 (`DEPLOY.md` §B). Deploy
+paths are documented in `DEPLOY.md` (Render blueprint recommended).
 
 ## CI gates that must stay green
 

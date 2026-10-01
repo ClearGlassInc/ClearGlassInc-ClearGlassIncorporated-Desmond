@@ -112,8 +112,13 @@ stays red until the output is committed, not merely present. (R12.)
 ## 3. Run the stack locally
 
 ```bash
+cp control-plane/.env.example .env           # first run only; compose exits 1 without .env
+printf '\nRUN_MIGRATIONS=true\n' >> .env     # without it nothing creates the schema
 docker compose up --build
 ```
+
+Without `RUN_MIGRATIONS=true`, `/ready` returns 200 but every write that needs a
+table returns 500 (`POST /revenue/leads` verified 2026-10-01). See `DEPLOY.md` §B.
 
 | Service | Address | Notes |
 |---|---|---|
