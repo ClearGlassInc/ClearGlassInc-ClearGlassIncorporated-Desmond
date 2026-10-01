@@ -7,49 +7,179 @@
       "id": "burlington-cyber-risk-checkup",
       "name": "Burlington Cyber Risk Checkup",
       "audience": "Burlington businesses with 5-100 employees",
-      "offer": "Executive Cyber and AI Risk Checkup",
-      "cta": "Book a confidential risk review",
-      "landing_page": "/apps/command-center/index.html#campaign-burlington-risk",
-      "google_search_ads": [{"headline": "Burlington Cyber Risk Checkup", "description": "Prioritized cyber and AI-risk findings for local SMEs. Human-approved assessment only.", "negative_keywords": ["free", "jobs", "course", "hack"]}],
-      "linkedin_ads": [{"headline": "Make cyber risk visible", "body": "A practical executive assessment for Burlington leaders who need evidence, not fear."}],
-      "linkedin_posts": ["Burlington businesses deserve cyber-risk evidence leaders can act on.", "A security assessment should end with priorities, owners, and next actions.", "AI use at work needs clear rules before sensitive data enters public tools.", "Ransomware planning is an executive resilience issue, not only an IT task.", "ClearGlass translates technical risk into accountable business decisions."],
-      "outreach_emails": ["Initial: share a concise Burlington cyber-risk checklist and invite a confidential review.", "Follow-up: offer a one-page executive risk map template.", "Final: close the loop and offer to stop future messages."],
+      "offer": "quick-audit",
+      "cta": "Book a 30-minute scoping call",
+      "landing_page": "/offers/security-quick-audit.html",
+      "google_search_ads": [
+        {
+          "headline": "Burlington Cyber Risk Checkup",
+          "description": "Read-only security posture review for local SMEs. Top 10 risk-ranked findings in 3 days.",
+          "negative_keywords": [
+            "free",
+            "jobs",
+            "course",
+            "hack"
+          ]
+        }
+      ],
+      "linkedin_ads": [
+        {
+          "headline": "Make cyber risk visible",
+          "body": "A practical executive assessment for Burlington leaders who need evidence, not fear."
+        }
+      ],
+      "linkedin_posts": [
+        "Burlington businesses deserve cyber-risk evidence leaders can act on.",
+        "A security assessment should end with priorities, owners, and next actions.",
+        "AI use at work needs clear rules before sensitive data enters public tools.",
+        "Ransomware planning is an executive resilience issue, not only an IT task.",
+        "ClearGlass translates technical risk into accountable business decisions."
+      ],
+      "outreach_emails": [
+        "Initial: share a concise Burlington cyber-risk checklist and invite a confidential review.",
+        "Follow-up: offer a one-page executive risk map template.",
+        "Final: close the loop and offer to stop future messages."
+      ],
       "lead_magnet": "Burlington SME Cyber and AI Risk Checklist",
-      "conversion_form": ["organization", "business_email", "industry", "employee_range", "primary_concern", "consent_status"],
-      "measurement_plan": ["utm_source", "qualified_lead", "booked_consultation", "assessment_proposed", "won_revenue"]
+      "conversion_form": [
+        "organization",
+        "business_email",
+        "industry",
+        "employee_range",
+        "primary_concern",
+        "consent_status"
+      ],
+      "measurement_plan": [
+        "landing_view: a page view carrying this utm_campaign (analytics.js)",
+        "booking_start: click to the Calendly scoping call (analytics.js event)",
+        "contact_request: click to the e-Transfer confirmation or Stripe-link email (analytics.js event; the email itself is not tracked)",
+        "paid: the e-Transfer or Stripe receipt the owner records against this code. Stripe Payment Links carry no cg_ metadata, so the ledger cannot attribute them on its own"
+      ],
+      "campaign_code": "CG-LINKEDIN-BURLSMB-QUICKAUDIT-2026-Q4",
+      "objective": "Paid Security Quick-Audits from Burlington businesses with 5-100 employees: the single entry offer recommended in D2 (docs/revenue/revenue-decisions.md).",
+      "success_criteria": "PROPOSED, the owner sets the final figures at approval: within 30 days of launch, at least 3 booking starts on this utm_campaign and at least 1 paid Quick-Audit the owner can trace to it.",
+      "shutdown_thresholds": "PROPOSED, the owner sets the final figures at approval: pause when spend reaches the approved ceiling with no booking start; pause at once if the landing page, the Calendly link or the payment route fails, or on any complaint about an ad claim.",
+      "spend_ceiling_cad": null,
+      "approval_status": "draft",
+      "dependencies": [
+        "D2 (one entry offer) is OPEN. This campaign follows its recommendation; if the owner chooses another entry offer, change offer and landing_page together",
+        "D9: rename the generic Calendly event before sending paid traffic to it",
+        "analytics.js has no provider set, so no stage before payment is measured until the owner switches one on"
+      ],
+      "not_built": [
+        "lead_magnet: no 'Burlington SME Cyber and AI Risk Checklist' exists on the site",
+        "conversion_form: the landing page has no form; it converts by Calendly, e-Transfer or email"
+      ]
     },
     {
       "id": "m365-account-protection",
       "name": "Microsoft 365 Account Protection",
       "audience": "Law, accounting, real-estate, and professional-services firms",
       "core_message": "One compromised administrator account can expose the entire organization.",
-      "deliverables": ["industry landing pages", "search ads", "executive checklist", "retargeting copy", "email sequence"],
-      "industry_pages": ["/m365-security-review-law-firms.html", "/m365-security-review-accounting-firms.html", "/m365-security-review-real-estate.html"],
-      "cta": "Request a Microsoft 365 protection review"
+      "deliverables": [
+        "industry landing pages",
+        "search ads",
+        "executive checklist",
+        "retargeting copy",
+        "email sequence"
+      ],
+      "industry_pages": [
+        "/m365-security-review-law-firms.html",
+        "/m365-security-review-accounting-firms.html",
+        "/m365-security-review-real-estate.html"
+      ],
+      "cta": "Book a free scoping call",
+      "campaign_code": "CG-GOOGLE-PROSERV-HARDENING-2026-Q4",
+      "objective": "Scoping calls that convert to a reserved Microsoft 365 + Windows Hardening Sprint start date for law, accounting, real-estate and professional-services firms.",
+      "offer": "hardening",
+      "landing_page": "/offers/hardening-sprint.html",
+      "google_search_ads": [
+        {
+          "headline": "M365 Hardening Sprint",
+          "description": "Fixed-fee M365 and Windows hardening to CIS-aligned baselines in two weeks or less.",
+          "negative_keywords": [
+            "free",
+            "jobs",
+            "course",
+            "certification",
+            "download"
+          ]
+        }
+      ],
+      "measurement_plan": [
+        "landing_view: a page view carrying this utm_campaign (analytics.js)",
+        "contact_request: click on the scoping-call email link (analytics.js event)",
+        "form_submit: the on-page scoping form (posts to formsubmit.co; held, not delivered, until D11)",
+        "paid: the deposit the owner records against this code (e-Transfer or Stripe invoice)"
+      ],
+      "success_criteria": "PROPOSED, the owner sets the final figures at approval: within 30 days of launch, at least 3 scoping-call requests on this utm_campaign and 1 reserved start date with its deposit received.",
+      "shutdown_thresholds": "PROPOSED, the owner sets the final figures at approval: pause when spend reaches the approved ceiling with no scoping request; pause at once if the landing page or its contact route fails, or on any complaint about an ad claim.",
+      "spend_ceiling_cad": null,
+      "approval_status": "draft",
+      "dependencies": [
+        "D11: the page's secondary scoping form posts to the unactivated formsubmit.co relay; the primary CTA (email) works without it",
+        "analytics.js has no provider set, so no stage before payment is measured until the owner switches one on"
+      ],
+      "not_built": [
+        "industry_pages: none of the three listed pages exists; the campaign lands on /offers/hardening-sprint.html until they do"
+      ]
     },
     {
       "id": "ransomware-readiness-burlington-smes",
       "name": "Ransomware Readiness for Burlington SMEs",
       "audience": "Manufacturing, logistics, construction, and property management",
       "core_message": "Backups are not evidence of recovery until restoration has been tested.",
-      "deliverables": ["readiness scorecard", "assessment offer", "campaign article", "webinar outline", "advertisement set", "referral-partner package"],
-      "cta": "Test your recovery readiness"
+      "deliverables": [
+        "readiness scorecard",
+        "assessment offer",
+        "campaign article",
+        "webinar outline",
+        "advertisement set",
+        "referral-partner package"
+      ],
+      "cta": "Test your recovery readiness",
+      "blockers": [
+        "No ClearGlass SKU tests backup restoration. The Quick-Audit and Hardening Sprint pages do not mention backup or recovery testing, so the CTA 'Test your recovery readiness' has nothing to sell. Price a restore-test engagement (a governed price-book change) or re-scope the campaign to an existing offer."
+      ]
     },
     {
       "id": "nonprofit-cyber-resilience",
       "name": "Nonprofit Cyber Resilience",
       "audience": "Burlington and Halton nonprofits",
       "offer": "Affordable security workshop and readiness assessment",
-      "deliverables": ["nonprofit landing page", "partnership email", "workshop deck outline", "registration flow", "sponsorship proposal", "follow-up campaign"],
-      "cta": "Host a nonprofit cyber-resilience workshop"
+      "deliverables": [
+        "nonprofit landing page",
+        "partnership email",
+        "workshop deck outline",
+        "registration flow",
+        "sponsorship proposal",
+        "follow-up campaign"
+      ],
+      "cta": "Host a nonprofit cyber-resilience workshop",
+      "blockers": [
+        "The offer, a workshop plus readiness assessment, is not a price-book or service-catalogue SKU.",
+        "No nonprofit landing page for this offer exists; artemis-nonprofit-os.html is a product page and does not load /assets/js/cg-attribution.js."
+      ]
     },
     {
       "id": "ai-governance-ontario",
       "name": "AI Governance for Ontario Businesses",
       "audience": "Organizations allowing generative AI without formal controls",
       "offer": "AI-use policy, risk register, governance assessment, and executive briefing",
-      "deliverables": ["lead magnet", "landing page", "LinkedIn campaign", "executive email sequence", "assessment questionnaire", "governance-retainer offer"],
-      "cta": "Create an approved AI-use policy"
+      "deliverables": [
+        "lead magnet",
+        "landing page",
+        "LinkedIn campaign",
+        "executive email sequence",
+        "assessment questionnaire",
+        "governance-retainer offer"
+      ],
+      "cta": "Create an approved AI-use policy",
+      "blockers": [
+        "No SKU delivers an AI-use policy or risk register. risk-audit-90 assesses AI risk but does not write a policy, and D2 recommends against promoting it as a separate entry offer. Price the deliverable (a governed price-book change) or change the CTA.",
+        "No AI-governance landing page loads /assets/js/cg-attribution.js."
+      ]
     }
-  ]
+  ],
+  "updated_at": "2026-10-01"
 }

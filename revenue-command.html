@@ -76,6 +76,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 </div>
 </article></section>
 </main>
+<script defer src="/assets/js/cg-attribution.js"></script>
 <script>
 var API_BASE=((document.querySelector('meta[name="cg-revenue-api"]')||{}).content||window.CG_REVENUE_API_BASE||'').trim().replace(/\/$/,'');
 var FALLBACK=(document.querySelector('meta[name="cg-revenue-fallback"]')||{}).content||'/index.html#contact';
@@ -85,15 +86,16 @@ function setStatus(el,text,kind){el.textContent=text;el.className='status'+(kind
 function safeUrl(u){try{var x=new URL(u,location.href);return x.protocol==='https:'||x.protocol==='http:'?x.href:null}catch(e){return null}}
 qs('#fallback-link').href=FALLBACK;
 
-// Attribution. First touch lives in sessionStorage, so it ends with the tab:
-// the privacy notice discloses session-scoped technical storage only.
-function readFirstTouch(){try{var raw=sessionStorage.getItem('cg-utm-first');return raw?JSON.parse(raw):null}catch(e){return null}}
+// Attribution. /assets/js/cg-attribution.js keeps the first and last campaign
+// touch for the tab (sessionStorage only: the privacy notice discloses
+// session-scoped technical storage), including touches on the offer page the
+// visitor landed on before coming here. If it failed to load, this page's own
+// tags are used, which is what the form sent before it existed.
 function captureAttribution(){
- var u=new URLSearchParams(location.search),first=readFirstTouch();
- if(!first){first={source:u.get('utm_source'),medium:u.get('utm_medium'),campaign:u.get('utm_campaign')};try{sessionStorage.setItem('cg-utm-first',JSON.stringify(first))}catch(e){}}
- return {source:u.get('utm_source')||'direct',landing_page:location.origin+location.pathname,referrer:document.referrer||null,utm_first_source:first.source,utm_first_medium:first.medium,utm_first_campaign:first.campaign,utm_last_source:u.get('utm_source'),utm_last_medium:u.get('utm_medium'),utm_last_campaign:u.get('utm_campaign')}
+ if(window.CGAttribution)return window.CGAttribution.leadFields();
+ var u=new URLSearchParams(location.search);
+ return {source:u.get('utm_source')||'direct',landing_page:location.origin+location.pathname,referrer:null,utm_last_source:u.get('utm_source'),utm_last_medium:u.get('utm_medium'),utm_last_campaign:u.get('utm_campaign')}
 }
-captureAttribution();
 
 if(API_BASE){
  qs('#lead-fallback').hidden=true;qs('#lead-capture').hidden=false;
@@ -113,6 +115,7 @@ qs('#lead-form').addEventListener('submit',function(e){
   return r.json().catch(function(){return {}}).then(function(out){if(!r.ok)throw new Error(r.status===429?'Too many submissions from this connection. Try again in a minute.':r.status===422?'Some answers are missing or too long. Check the required fields.':'The request could not be recorded. Nothing was saved; please try again or use the direct contact route.');return out})
  }).then(function(out){
   f.dataset.reference=out.reference;setStatus(st,'Request received. Your reference is '+out.reference+'.','success');
+  try{document.dispatchEvent(new CustomEvent('cg:funnel',{detail:{name:'lead_recorded'}}))}catch(e){}
   var booking=out.booking_url&&safeUrl(out.booking_url);
   var next=document.createElement('p');
   if(booking){var a=document.createElement('a');a.className='button-link';a.href=booking;a.rel='noopener';a.textContent='Book a discovery call';next.appendChild(a)}

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Market opportunities and experiments, held to the evidence they actually have.
 
-Two registries, two rules the growth system kept only by convention:
+Three registries, three rules the growth system kept only by convention:
 
 * **An idea is not demand.** ``data/growth/opportunities.json`` records each
   opportunity as ``Observed -> Evidence -> Interpretation -> Opportunity``.
@@ -15,6 +15,11 @@ Two registries, two rules the growth system kept only by convention:
   are evaluated with a two-sided two-proportion z-test, and only when both
   arms meet the minimum sample and conversions. A ``declared_winner`` the
   evidence does not support fails ``--check``.
+* **A competitor is described by what it publishes, never copied.** Each
+  entry in ``data/growth/competitors.json`` keeps the public fact
+  (``observed``), its dated source and a short quote (``evidence``, at most
+  280 characters), then the ``interpretation`` and the ``opportunity`` in
+  separate fields, so a reader can always tell fact from inference.
 
 It never publishes, spends, or contacts anyone, and it records no results of
 its own: results must name their source, or they are ``NOT VERIFIED``.
@@ -40,8 +45,7 @@ import campaign_registry  # noqa: E402  (sibling tool; shares the campaign-code 
 
 OPPORTUNITIES = ROOT / "data" / "growth" / "opportunities.json"
 EXPERIMENTS = ROOT / "data" / "growth" / "experiments.json"
-PRICEBOOK = ROOT / "control-plane" / "app" / "data" / "pricebook.json"
-SERVICE_CATALOG = ROOT / "data" / "store" / "catalog.json"
+COMPETITORS = ROOT / "data" / "growth" / "competitors.json"
 
 OPPORTUNITY_REQUIRED = (
     "id", "market", "industry", "problem", "buyer", "signal", "offer", "cta",
@@ -62,16 +66,8 @@ NOT_VERIFIED = "NOT VERIFIED"
 NO_DATA = "NO DATA"
 
 
-def sellable_offers() -> set[str]:
-    """SKUs in the control-plane price book plus the service catalogue ids."""
-    offers: set[str] = set()
-    if PRICEBOOK.is_file():
-        offers |= {o["sku"] for o in json.loads(PRICEBOOK.read_text(encoding="utf-8")).get("offers", [])}
-    if SERVICE_CATALOG.is_file():
-        catalog = json.loads(SERVICE_CATALOG.read_text(encoding="utf-8"))
-        items = catalog.get("items") or catalog.get("products") or catalog.get("offers") or []
-        offers |= {str(i.get("id") or i.get("sku")) for i in items if i.get("id") or i.get("sku")}
-    return offers
+#: One definition of "something ClearGlass sells", shared with the campaign gate.
+sellable_offers = campaign_registry.sellable_offers
 
 
 # --- opportunities ------------------------------------------------------------------
@@ -175,6 +171,35 @@ def unsupported_winner(exp: dict[str, Any], verdict: dict[str, Any]) -> str | No
     return None
 
 
+# --- competitors --------------------------------------------------------------------
+
+COMPETITOR_REQUIRED = (
+    "id", "competitor", "category", "observed", "source", "observed_at", "evidence",
+    "interpretation", "opportunity",
+)
+COMPETITOR_CATEGORIES = {
+    "positioning", "services", "pricing", "messaging", "content", "cta",
+    "case_study", "advertising", "technology", "segment",
+}
+#: A quote long enough to support the observation and too short to be a copy.
+EVIDENCE_MAX = 280
+
+
+def competitor_problems(entry: dict[str, Any]) -> list[str]:
+    found = [f"missing {field}" for field in COMPETITOR_REQUIRED if not entry.get(field)]
+    if entry.get("category") and entry["category"] not in COMPETITOR_CATEGORIES:
+        found.append(f"category must be one of {sorted(COMPETITOR_CATEGORIES)}")
+    if entry.get("source") and not str(entry["source"]).startswith("https://"):
+        found.append("source must be the public https:// page the fact was read on")
+    if entry.get("observed_at") and not _DATE.match(str(entry["observed_at"])):
+        found.append("observed_at must be YYYY-MM-DD")
+    if len(str(entry.get("evidence") or "")) > EVIDENCE_MAX:
+        found.append(f"evidence is a quote of at most {EVIDENCE_MAX} characters, not a copy of their content")
+    if entry.get("observed") and entry.get("observed") == entry.get("interpretation"):
+        found.append("interpretation must say what the fact means, not repeat it")
+    return found
+
+
 # --- CLI ------------------------------------------------------------------------------
 
 
@@ -217,8 +242,18 @@ def main(argv: list[str] | None = None) -> int:
             print(f"      - {issue}")
         failures += bool(issues)
 
-    if not opportunities and not experiments:
-        print("Nothing recorded yet. No demand, result or winner is claimed.")
+    competitors = _load(COMPETITORS, "competitors")
+    print(f"Competitor observations: {len(competitors)}")
+    for entry in competitors:
+        issues = competitor_problems(entry)
+        print(f"  {entry.get('id', '?')} [{entry.get('competitor', '?')}/{entry.get('category', '?')}] "
+              f"{'VALID' if not issues else 'INVALID'}")
+        for issue in issues:
+            print(f"      - {issue}")
+        failures += bool(issues)
+
+    if not opportunities and not experiments and not competitors:
+        print("Nothing recorded yet. No demand, result, winner or competitor fact is claimed.")
     return 1 if args.check and failures else 0
 
 
