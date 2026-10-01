@@ -1,0 +1,15 @@
+{
+  "test_id": "LOCK-04",
+  "cycle": "cycle-2",
+  "timestamp": "2026-10-01T22:14:08+00:00",
+  "environment_id": "shield-g01-6faacd1-local-20261001T221226Z",
+  "run_id": "local-20261001T221226Z",
+  "commit_sha": "6faacd12fb0ff675de2ca894940d8ac37482038c",
+  "expected_result": "client data plane stopped: no protected-route access, leak route present",
+  "actual_result": "{\"method\": \"SIGKILL to the client wireguard-go process\", \"protected_reachable_via_leak_route\": false}",
+  "status": "PASS",
+  "artifact_reference": "",
+  "limitations": [
+    "Linux network-namespace G01 topology only"
+  ]
+}

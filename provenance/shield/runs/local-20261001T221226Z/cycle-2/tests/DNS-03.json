@@ -1,0 +1,15 @@
+{
+  "test_id": "DNS-03",
+  "cycle": "cycle-2",
+  "timestamp": "2026-10-01T22:15:28+00:00",
+  "environment_id": "shield-g01-6faacd1-local-20261001T221226Z",
+  "run_id": "local-20261001T221226Z",
+  "commit_sha": "6faacd12fb0ff675de2ca894940d8ac37482038c",
+  "expected_result": "tunnel down: a resolver on the underlay is refused by the lock (control: it answers without the lock rule)",
+  "actual_result": "{\"test_resolver_answered_without_tunnel\": false, \"underlay_resolver_answered_with_lock\": false, \"underlay_resolver_answered_without_lock_control\": true}",
+  "status": "PASS",
+  "artifact_reference": "",
+  "limitations": [
+    "Linux network-namespace G01 topology only"
+  ]
+}

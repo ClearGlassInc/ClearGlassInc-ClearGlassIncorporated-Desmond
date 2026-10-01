@@ -253,8 +253,8 @@ These pages remain intact but are not eligible for generated journey updates. Ex
 | `Gridshield-V7-Ultra-Formal.html` | Uploaded prototype | noindex upload awaiting owner classification |
 | `Gridshield-V8-Live-Wire.html` | Uploaded prototype | noindex upload awaiting owner classification |
 | `ClearGlass-Revenue-Machine.html` | Private operations | noindex internal revenue-operations console; catalog status 'internal' |
-| `clearglass_x5f_shield_x5f_g01_x5f_verified.html` | Uploaded prototype | noindex simulation; it reads 'G01 VERIFIED' and '32/32 PASS', but provenance/shield/g01-product-evidence.json records G01 as FAIL with no tests |
-| `shield_x5f_nexus_x5f_live_x5f_all.html` | Uploaded prototype | noindex simulation; it reads 'G01 VERIFIED' and '32/32 PASS', but provenance/shield/g01-product-evidence.json records G01 as FAIL with no tests |
+| `clearglass_x5f_shield_x5f_g01_x5f_verified.html` | Uploaded prototype | noindex simulation; its 'G01 VERIFIED' and '32/32 PASS' come from no recorded run. The recorded G01 run is provenance/shield/g01-product-evidence.json: 72 passed, 2 skipped, 0 failed |
+| `shield_x5f_nexus_x5f_live_x5f_all.html` | Uploaded prototype | noindex simulation; its 'G01 VERIFIED' and '32/32 PASS' come from no recorded run. The recorded G01 run is provenance/shield/g01-product-evidence.json: 72 passed, 2 skipped, 0 failed |
 | `docs/qics-dashboard.html` | Private operations | noindex QICS evidence desk |
 
 ## Implementation and verification strategy

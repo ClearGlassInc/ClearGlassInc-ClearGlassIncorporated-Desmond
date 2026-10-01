@@ -1,0 +1,15 @@
+{
+  "test_id": "FI-13",
+  "cycle": "cycle-1",
+  "timestamp": "2026-10-01T22:12:28+00:00",
+  "environment_id": "shield-g01-6faacd1-local-20261001T221226Z",
+  "run_id": "local-20261001T221226Z",
+  "commit_sha": "6faacd12fb0ff675de2ca894940d8ac37482038c",
+  "expected_result": "debug and metrics paths are 404; health and service are not reachable on the underlay",
+  "actual_result": "{\"debug_paths\": {\"/config\": 404, \"/debug\": 404, \"/debug/pprof\": 404, \"/metrics\": 404, \"/status\": 404}, \"reachable_on_underlay\": {\"18080\": false, \"8080\": false}}",
+  "status": "PASS",
+  "artifact_reference": "",
+  "limitations": [
+    "Linux network-namespace G01 topology only"
+  ]
+}
