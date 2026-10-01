@@ -718,3 +718,34 @@ def test_system_prompt_carries_the_british_persona() -> None:
         assert rule in sent, rule
     # what the model reads is itself in British spelling
     assert not re.search(r"\b(analyze|summarize|organize|prioritize|center|behavior|color)\b", sent)
+
+
+# ── Intelligence Graph: regressions found by measuring the rendered graph ───
+
+
+def test_console_keyframes_are_uniquely_named() -> None:
+    # A second @keyframes with the same name silently replaces the first: the
+    # graph's "cgstLive" once turned the console's live-dot ring into a fade.
+    names = re.findall(r"@keyframes\s+([\w-]+)", DOCK)
+    dupes = sorted({n for n in names if names.count(n) > 1})
+    assert not dupes, dupes
+
+
+def test_graph_motion_settles_within_five_seconds() -> None:
+    # WCAG 2.2.2: motion that starts on its own may run five seconds before it
+    # needs a stop. The graph settles that long after the last interaction,
+    # pausing CSS animation and the SVG (SMIL) clock alike.
+    calm = re.search(r"var CALM_MS = (\d+);", DOCK)
+    assert calm and int(calm.group(1)) <= 5000
+    assert ".cgst-graph[data-calm] *" in DOCK and "animation-play-state:paused!important" in DOCK
+    settle = re.search(r"\n  function settle\(\) \{(.*?)\n  \}", DOCK, re.S)
+    assert settle and "pauseAnimations()" in settle.group(1)
+    for ev in ("pointerdown", "pointermove", "wheel", "keydown", "focusin"):
+        assert '"' + ev + '"' in DOCK, ev
+
+
+def test_hidden_cluster_rings_leave_the_tab_order() -> None:
+    # With the Clusters layer off the rings are display:none; a focusable
+    # cluster would then take keyboard focus with nothing drawn to show it.
+    layer = re.search(r"\n  function setLayer\(name, on\) \{(.*?)\n  \}", DOCK, re.S)
+    assert layer and 'name === "bounds"' in layer.group(1) and '"tabindex", on ? "0" : "-1"' in layer.group(1)
