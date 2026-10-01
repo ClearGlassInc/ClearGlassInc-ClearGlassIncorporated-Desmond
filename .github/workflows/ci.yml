@@ -25,6 +25,12 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+      # 24 tests shell out to node and skip without it; the admin login guard
+      # needs 22.6+ to strip TypeScript types. Pin it rather than inherit the
+      # runner image's Node (tests/test_node_toolchain_guard.py).
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "22"
       - run: pip install pytest pytest-cov pyyaml
       - run: pytest tests/ --cov --cov-report=xml -q
 
