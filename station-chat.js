@@ -784,79 +784,118 @@
 
     /* ── Intelligence Graph: a full-screen analysis surface over the page ──
        Graphite and midnight, hairline vectors, one colour family per domain,
-       red reserved for cut points and high-severity findings. */
+       red reserved for cut points and high-severity findings. The chrome
+       glows in the console's own blue and teal (--cgst-blue/--cgst-teal);
+       the data colours never change with it. */
     "#cg-station .cgst-graph{position:fixed;inset:0;z-index:5;display:flex;align-items:stretch;justify-content:center;",
     "padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));",
     "background:rgba(2,3,5,.93);color:#d5dde6;font-family:var(--cgst-mono);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);",
-    "--g-panel:rgba(11,14,18,.94);--g-line:rgba(150,170,190,.13);--g-line2:rgba(150,170,190,.26);--g-ink:#e3e9ef;--g-mute:#7f8c99;--g-dim:#56626e;--g-acc:#9fc2e0}",
+    "--g-panel:rgba(11,14,18,.94);--g-line:rgba(150,170,190,.13);--g-line2:rgba(150,170,190,.26);--g-ink:#e3e9ef;--g-mute:#7f8c99;--g-dim:#74818e;--g-acc:#9fc2e0;",
+    "--g-blue:var(--cgst-blue,#4cc3ff);--g-teal:var(--cgst-teal,#78e0c8);--g-glow:rgba(76,195,255,.6);--g-ease:cubic-bezier(.4,0,.2,1)}",
     "#cg-station .cgst-gframe{position:relative;display:grid;grid-template-rows:auto auto minmax(0,1fr);gap:8px;width:min(1480px,100%);height:100%;max-height:960px;align-self:center;",
-    "padding:12px;border-radius:4px;border:1px solid var(--g-line2);overflow:hidden;isolation:isolate;",
-    "background:radial-gradient(120% 60% at 50% 0%,rgba(90,120,150,.09),transparent 62%),linear-gradient(180deg,#0a0c10,#050608);",
-    "box-shadow:0 40px 90px -30px rgba(0,0,0,.95),inset 0 1px 0 rgba(255,255,255,.04);animation:cgstHolo .3s cubic-bezier(.16,1,.3,1)}",
+    "padding:12px;border-radius:14px;border:1px solid var(--g-line2);overflow:hidden;isolation:isolate;",
+    "background:radial-gradient(70% 45% at 50% 58%,rgba(120,224,200,.035),transparent 70%),radial-gradient(120% 60% at 50% 0%,rgba(76,195,255,.08),transparent 62%),linear-gradient(180deg,#0a0c10,#050608);",
+    "box-shadow:0 40px 90px -30px rgba(0,0,0,.95),inset 0 1px 0 rgba(255,255,255,.05),inset 0 0 0 1px rgba(76,195,255,.05),inset 0 0 48px rgba(76,195,255,.03);",
+    "animation:cgstHolo .3s cubic-bezier(.16,1,.3,1)}",
+    /* the console's red · blue · teal, as one hairline across the top edge */
+    "#cg-station .cgst-gframe::before{content:'';position:absolute;left:18px;right:18px;top:0;height:1px;pointer-events:none;",
+    "background:linear-gradient(90deg,transparent,rgba(238,99,101,.55) 18%,rgba(76,195,255,.8) 50%,rgba(120,224,200,.55) 82%,transparent)}",
+    "#cg-station .cgst-gkpi,#cg-station .cgst-gbody>*{animation:cgstRise .34s var(--g-ease) both}",
+    "#cg-station .cgst-gl{animation-delay:.04s}#cg-station .cgst-gview{animation-delay:.08s}#cg-station .cgst-gr{animation-delay:.12s}#cg-station .cgst-gfeed{animation-delay:.16s}",
+    "@keyframes cgstRise{from{opacity:0;transform:translateY(6px)}}",
     "#cg-station .cgst-ghead{display:flex;align-items:flex-start;gap:12px;min-width:0;padding-bottom:8px;border-bottom:1px solid var(--g-line)}",
     "#cg-station .cgst-ghead>div:first-child{flex:1 1 auto;min-width:0}",
     "#cg-station .cgst-gorg{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 4px;font-size:8.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--g-mute)}",
     "#cg-station .cgst-gorg i{font-style:normal;color:#7fd1a8;letter-spacing:.16em}",
+    "#cg-station .cgst-gorg i b{display:inline-block;font-weight:inherit;text-shadow:0 0 8px rgba(127,209,168,.9);animation:cgstLive 2.4s ease-in-out infinite}",
+    "@keyframes cgstLive{50%{opacity:.4;text-shadow:none}}",
     "#cg-station .cgst-gtitle{margin:0;font-size:15px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:var(--g-ink);outline:none}",
     "#cg-station .cgst-gsub{margin:3px 0 0;font-size:8.5px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--g-mute)}",
     "#cg-station .cgst-gtools{flex:0 0 auto;display:flex;gap:4px}",
-    "#cg-station .cgst-gtool{display:grid;place-items:center;min-width:32px;height:30px;padding:0 9px;border-radius:2px;cursor:pointer;",
-    "border:1px solid var(--g-line2);background:rgba(14,18,23,.9);color:var(--g-ink);font:600 11px/1 var(--cgst-mono);letter-spacing:.1em}",
-    "#cg-station .cgst-gtool:hover{border-color:rgba(159,194,224,.7);background:rgba(159,194,224,.08)}",
+    "#cg-station .cgst-gtool{display:grid;place-items:center;min-width:32px;height:30px;padding:0 9px;border-radius:8px;cursor:pointer;",
+    "border:1px solid var(--g-line2);background:linear-gradient(180deg,rgba(20,25,31,.92),rgba(11,14,18,.92));color:var(--g-ink);font:600 11px/1 var(--cgst-mono);letter-spacing:.1em;",
+    "box-shadow:inset 0 1px 0 rgba(255,255,255,.06);transition:border-color .18s var(--g-ease),background .18s var(--g-ease),box-shadow .18s var(--g-ease),transform .18s var(--g-ease)}",
+    "#cg-station .cgst-gtool:hover{border-color:rgba(76,195,255,.6);background:rgba(76,195,255,.09);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 18px -6px var(--g-glow)}",
+    "#cg-station .cgst-gtool:active{transform:scale(.97)}",
     "#cg-station .cgst-gtool svg{width:15px;height:15px;display:block}",
-    /* Sentinel Core readout */
-    "#cg-station .cgst-gkpi{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));margin:0;border:1px solid var(--g-line);border-radius:2px;background:rgba(9,12,15,.85)}",
-    "#cg-station .cgst-gkpi>div{min-width:0;padding:7px 10px;border-left:1px solid var(--g-line)}",
-    "#cg-station .cgst-gkpi>div:first-child{border-left:0}",
+    /* Sentinel Core readout: six glass cards; a card's edge carries its severity */
+    "#cg-station .cgst-gkpi{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin:0}",
+    "#cg-station .cgst-gkpi>div{position:relative;min-width:0;padding:8px 11px 9px;border:1px solid var(--g-line);border-radius:10px;overflow:hidden;",
+    "background:linear-gradient(165deg,rgba(76,195,255,.06),rgba(76,195,255,0) 48%),linear-gradient(180deg,rgba(15,19,24,.94),rgba(8,10,13,.94));",
+    "box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 12px 26px -18px rgba(0,0,0,.9);transition:border-color .18s var(--g-ease),box-shadow .18s var(--g-ease)}",
+    "#cg-station .cgst-gkpi>div::before{content:'';position:absolute;left:10px;right:10px;top:0;height:1px;pointer-events:none;",
+    "background:linear-gradient(90deg,transparent,rgba(76,195,255,.55),transparent);opacity:.75}",
+    "#cg-station .cgst-gkpi>div:hover{border-color:rgba(76,195,255,.32);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 22px -12px var(--g-glow)}",
+    "#cg-station .cgst-gkpi>div[data-sev='med']{border-color:rgba(224,160,64,.34)}",
+    "#cg-station .cgst-gkpi>div[data-sev='med']::before{background:linear-gradient(90deg,transparent,rgba(224,160,64,.85),transparent)}",
+    "#cg-station .cgst-gkpi>div[data-sev='high']{border-color:rgba(229,72,77,.45);animation:cgstAlert 1.6s ease-in-out infinite}",
+    "#cg-station .cgst-gkpi>div[data-sev='high']::before{background:linear-gradient(90deg,transparent,rgba(229,72,77,.9),transparent)}",
+    "@keyframes cgstAlert{50%{box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 0 20px -6px rgba(229,72,77,.65)}}",
     "#cg-station .cgst-gkpi dt{font-size:7.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--g-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
-    "#cg-station .cgst-gkpi dd{margin:3px 0 0;font-size:15px;font-weight:600;color:var(--g-ink);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
-    "#cg-station .cgst-gkpi dd small{display:block;margin-top:1px;font-size:8px;font-weight:500;letter-spacing:.08em;color:var(--g-mute);overflow:hidden;text-overflow:ellipsis}",
+    "#cg-station .cgst-gkpi dd{margin:3px 0 0;font-size:15px;font-weight:600;color:var(--g-ink);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;",
+    "text-shadow:0 0 14px rgba(76,195,255,.28)}",
+    "#cg-station .cgst-gkpi dd small{display:block;margin-top:1px;font-size:8px;font-weight:500;letter-spacing:.08em;color:var(--g-mute);overflow:hidden;text-overflow:ellipsis;text-shadow:none}",
     "#cg-station .cgst-gkpi [data-s='high']{color:#ef6a6e}#cg-station .cgst-gkpi [data-s='med']{color:#e0a040}",
+    /* until the index lands the readout is a shimmer, not an empty strip */
+    "#cg-station .cgst-gkpi:empty{min-height:54px;border:1px solid var(--g-line);border-radius:10px;",
+    "background:linear-gradient(90deg,rgba(76,195,255,.04) 25%,rgba(76,195,255,.11) 50%,rgba(76,195,255,.04) 75%) 0 0/200% 100%;animation:cgstShimmer 1.6s linear infinite}",
+    "@keyframes cgstShimmer{to{background-position:-200% 0}}",
     /* three columns over a feed; one scrolling column on narrow screens */
     "#cg-station .cgst-gbody{display:grid;grid-template-columns:252px minmax(0,1fr) 292px;grid-template-rows:minmax(0,1fr) 132px;gap:8px;min-height:0}",
     "#cg-station .cgst-gl{grid-column:1;grid-row:1/3}#cg-station .cgst-gview{grid-column:2;grid-row:1}",
     "#cg-station .cgst-gr{grid-column:3;grid-row:1/3}#cg-station .cgst-gfeed{grid-column:2;grid-row:2}",
     "#cg-station .cgst-gpanel{display:flex;flex-direction:column;gap:13px;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;",
-    "scrollbar-color:rgba(150,170,190,.3) transparent;padding:10px;border:1px solid var(--g-line);border-radius:2px;background:var(--g-panel)}",
+    "scrollbar-color:rgba(150,170,190,.3) transparent;padding:11px;border:1px solid var(--g-line);border-radius:12px;",
+    "background:linear-gradient(180deg,rgba(76,195,255,.035),rgba(76,195,255,0) 140px),var(--g-panel);box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}",
     "#cg-station .cgst-gsec{display:flex;flex-direction:column;gap:6px;min-width:0}",
-    "#cg-station .cgst-gh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:0;padding-bottom:4px;border-bottom:1px solid var(--g-line);",
+    "#cg-station .cgst-gh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:0;padding-bottom:5px;border-bottom:0;",
+    "background:linear-gradient(90deg,rgba(76,195,255,.45),var(--g-line) 42%) left bottom/100% 1px no-repeat;",
     "font-size:8.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--g-acc)}",
     "#cg-station .cgst-gh span{font-weight:500;letter-spacing:.1em;color:var(--g-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
     "#cg-station .cgst-gnote{margin:0;font-size:9px;line-height:1.55;color:var(--g-dim)}",
-    "#cg-station .cgst-gstats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;margin:0;background:var(--g-line);border:1px solid var(--g-line)}",
+    "#cg-station .cgst-gstats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;margin:0;background:var(--g-line);border:1px solid var(--g-line);border-radius:8px;overflow:hidden}",
     "#cg-station .cgst-gstats>div{min-width:0;padding:5px 7px;background:#0a0d11}",
     "#cg-station .cgst-gstats dt{font-size:7.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--g-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
     "#cg-station .cgst-gstats dd{margin:2px 0 0;font-size:12px;font-weight:600;color:var(--g-ink);font-variant-numeric:tabular-nums}",
     "#cg-station .cgst-grows{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}",
     "#cg-station .cgst-grows li{margin:0}",
     "#cg-station .cgst-grow{display:grid;grid-template-columns:7px minmax(0,1fr) auto;align-items:center;gap:3px 7px;width:100%;padding:5px 3px;border:0;",
-    "border-bottom:1px solid rgba(150,170,190,.07);background:none;color:var(--g-ink);font:500 10px/1.3 var(--cgst-mono);text-align:left;cursor:pointer}",
-    "#cg-station .cgst-grow:hover,#cg-station .cgst-grow[aria-current='true']{background:rgba(159,194,224,.07)}",
-    "#cg-station .cgst-grow>b{width:7px;height:7px;border-radius:1px;background:var(--h,#9fc2e0)}",
+    "border-bottom:1px solid rgba(150,170,190,.07);background:none;color:var(--g-ink);font:500 10px/1.3 var(--cgst-mono);text-align:left;cursor:pointer;",
+    "transition:background .18s var(--g-ease)}",
+    "#cg-station .cgst-grow:hover,#cg-station .cgst-grow[aria-current='true']{background:linear-gradient(90deg,rgba(76,195,255,.1),rgba(76,195,255,.02))}",
+    "#cg-station .cgst-grow>b{width:7px;height:7px;border-radius:1px;background:var(--h,#9fc2e0);box-shadow:0 0 6px -1px var(--h,#9fc2e0)}",
     "#cg-station .cgst-grow>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
     "#cg-station .cgst-grow>em{font-style:normal;font-size:9px;color:var(--g-mute);font-variant-numeric:tabular-nums;white-space:nowrap}",
     "#cg-station .cgst-gbar{grid-column:2/4;display:block;height:2px;background:rgba(150,170,190,.1)}",
-    "#cg-station .cgst-gbar>i{display:block;height:100%;background:var(--h,#9fc2e0);opacity:.75}",
+    "#cg-station .cgst-gbar>i{display:block;height:100%;background:var(--h,#9fc2e0);opacity:.8;box-shadow:0 0 6px var(--h,#9fc2e0)}",
     "#cg-station .cgst-gmodel{grid-template-columns:7px minmax(0,1fr) auto;cursor:default}",
     "#cg-station .cgst-gmodel>b{border-radius:50%;background:#7fd1a8}",
     /* the canvas */
-    "#cg-station .cgst-gview{position:relative;min-height:0;border:1px solid var(--g-line2);border-radius:2px;overflow:hidden;isolation:isolate;",
-    "touch-action:none;cursor:grab;outline:none;background:radial-gradient(circle at 50% 50%,rgba(110,140,170,.08),transparent 58%),#05070a}",
-    "#cg-station .cgst-gview:focus-visible{box-shadow:inset 0 0 0 1px #fff}",
+    "#cg-station .cgst-gview{position:relative;min-height:0;border:1px solid var(--g-line2);border-radius:12px;overflow:hidden;isolation:isolate;",
+    "touch-action:none;cursor:grab;outline:none;box-shadow:inset 0 0 0 1px rgba(76,195,255,.05),inset 0 0 70px rgba(0,0,0,.55);",
+    "background:radial-gradient(circle at 50% 50%,rgba(120,224,200,.06),transparent 30%),radial-gradient(circle at 50% 50%,rgba(76,195,255,.07),transparent 60%),#04060a}",
+    "#cg-station .cgst-gview:focus-visible{box-shadow:inset 0 0 0 1px #fff,inset 0 0 0 4px rgba(76,195,255,.28)}",
     "#cg-station .cgst-gview[data-drag='1']{cursor:grabbing}",
     "#cg-station .cgst-gview::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;",
-    "background:linear-gradient(rgba(150,170,190,.045) 1px,transparent 1px) 0 0/24px 24px,linear-gradient(90deg,rgba(150,170,190,.045) 1px,transparent 1px) 0 0/24px 24px,",
-    "linear-gradient(rgba(150,170,190,.07) 1px,transparent 1px) 0 0/120px 120px,linear-gradient(90deg,rgba(150,170,190,.07) 1px,transparent 1px) 0 0/120px 120px}",
+    "background:linear-gradient(rgba(120,170,210,.04) 1px,transparent 1px) 0 0/24px 24px,linear-gradient(90deg,rgba(120,170,210,.04) 1px,transparent 1px) 0 0/24px 24px,",
+    "linear-gradient(rgba(120,170,210,.075) 1px,transparent 1px) 0 0/120px 120px,linear-gradient(90deg,rgba(120,170,210,.075) 1px,transparent 1px) 0 0/120px 120px}",
     "#cg-station .cgst-gview::after{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 50% 50%,transparent 42%,rgba(0,0,0,.6))}",
+    /* HUD chips float over the canvas, so their blur has something to blur */
     "#cg-station .cgst-ghud{position:absolute;z-index:2;display:flex;flex-wrap:wrap;gap:4px;pointer-events:none}",
     "#cg-station .cgst-ghud>*{pointer-events:auto}",
-    "#cg-station .cgst-ghud-tl{top:7px;left:7px;right:7px}",
-    "#cg-station .cgst-ghud-bl{left:7px;bottom:7px;flex-direction:column;gap:3px;padding:6px 8px;border:1px solid var(--g-line);border-radius:2px;background:rgba(5,7,10,.84)}",
-    "#cg-station .cgst-ghud-br{right:7px;bottom:7px;align-items:center;gap:7px;padding:4px 7px;border:1px solid var(--g-line);border-radius:2px;background:rgba(5,7,10,.84)}",
-    "#cg-station .cgst-glayer{height:22px;padding:0 7px;border-radius:2px;border:1px solid var(--g-line2);background:rgba(5,7,10,.84);color:var(--g-dim);",
-    "font:600 7.5px/1 var(--cgst-mono);letter-spacing:.16em;text-transform:uppercase;cursor:pointer}",
-    "#cg-station .cgst-glayer[aria-pressed='true']{color:var(--g-ink);border-color:rgba(159,194,224,.5)}",
-    "#cg-station .cgst-glayer[aria-pressed='true']::before{content:'';display:inline-block;width:5px;height:5px;margin-right:5px;border-radius:50%;background:#7fd1a8;vertical-align:1px}",
+    "#cg-station .cgst-ghud-tl{top:8px;left:8px;right:8px}",
+    "#cg-station .cgst-ghud-bl,#cg-station .cgst-ghud-br{border:1px solid var(--g-line);border-radius:8px;background:rgba(5,7,10,.7);",
+    "-webkit-backdrop-filter:blur(10px) saturate(1.3);backdrop-filter:blur(10px) saturate(1.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}",
+    "#cg-station .cgst-ghud-bl{left:8px;bottom:8px;flex-direction:column;gap:3px;padding:6px 8px}",
+    "#cg-station .cgst-ghud-br{right:8px;bottom:8px;align-items:center;gap:7px;padding:4px 7px}",
+    "#cg-station .cgst-glayer{height:22px;padding:0 8px;border-radius:6px;border:1px solid var(--g-line2);background:rgba(5,7,10,.86);color:var(--g-dim);",
+    "font:600 7.5px/1 var(--cgst-mono);letter-spacing:.16em;text-transform:uppercase;cursor:pointer;",
+    "transition:color .18s var(--g-ease),border-color .18s var(--g-ease),box-shadow .18s var(--g-ease),background .18s var(--g-ease)}",
+    "#cg-station .cgst-glayer:hover{color:var(--g-ink);border-color:rgba(76,195,255,.45)}",
+    "#cg-station .cgst-glayer[aria-pressed='true']{color:var(--g-ink);border-color:rgba(76,195,255,.5);background:rgba(10,22,30,.88);",
+    "box-shadow:inset 0 0 10px rgba(76,195,255,.12),0 0 14px -7px var(--g-glow)}",
+    "#cg-station .cgst-glayer[aria-pressed='true']::before{content:'';display:inline-block;width:5px;height:5px;margin-right:5px;border-radius:50%;background:#7fd1a8;vertical-align:1px;",
+    "box-shadow:0 0 6px #7fd1a8}",
     "#cg-station .cgst-gleg{display:flex;align-items:center;gap:6px;font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--g-mute);white-space:nowrap}",
     "#cg-station .cgst-gleg b{flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:var(--h)}",
     "#cg-station .cgst-gleg b[data-k='cut']{background:none;border:1px dashed #e5484d}",
@@ -876,12 +915,24 @@
     "#cg-station .cgst-gorbiter{transform-box:view-box;transform-origin:500px 500px;animation:cgstSweep 90s linear infinite;pointer-events:none}",
     "#cg-station .cgst-gorbiter circle{fill:#9fc2e0;opacity:.55}",
     "#cg-station .cgst-gorbiter text{font-size:calc(6px * var(--gs,1));letter-spacing:.14em;fill:#7f8c99!important}",
+    /* background constellation and core bloom: decoration outside the data
+       ring, never an entity; the layout comment's seeded rule holds for it */
+    "#cg-station .cgst-gcosmos{pointer-events:none}",
+    "#cg-station .cgst-gcosmos path{fill:none;stroke:rgba(120,170,210,.08);stroke-width:1;vector-effect:non-scaling-stroke}",
+    "#cg-station .cgst-gcosmos circle{fill:#9fc2e0;opacity:.28}",
+    "#cg-station .cgst-gcosmos circle[data-tw]{animation:cgstTwinkle 4.2s ease-in-out infinite;animation-delay:var(--d,0s)}",
+    "@keyframes cgstTwinkle{50%{opacity:.85}}",
+    "#cg-station .cgst-gbeam,#cg-station .cgst-ghalo,#cg-station .cgst-gwaves,#cg-station .cgst-gpulses,#cg-station .cgst-gcglow,#cg-station .cgst-gcring{pointer-events:none}",
     "#cg-station .cgst-gcluster{cursor:pointer;outline:none}",
-    "#cg-station .cgst-gbound{fill:var(--h);fill-opacity:.03;stroke:var(--h);stroke-opacity:.32;stroke-width:1;stroke-dasharray:3 4;vector-effect:non-scaling-stroke;transition:fill-opacity .2s ease}",
+    "#cg-station .cgst-gbound{fill:var(--h);fill-opacity:.03;stroke:var(--h);stroke-opacity:.32;stroke-width:1;stroke-dasharray:3 4;vector-effect:non-scaling-stroke;",
+    "transition:fill-opacity .2s ease,stroke-opacity .2s ease;animation:cgstMarch 32s linear infinite}",
+    "@keyframes cgstMarch{to{stroke-dashoffset:-70}}",
+    "#cg-station .cgst-gcluster:hover .cgst-gbound:not(.cgst-gon){stroke-opacity:.6}",
     "#cg-station .cgst-gcluster:hover .cgst-gbound{fill-opacity:.06}",
     "#cg-station .cgst-gbound.cgst-gon{fill-opacity:.075;stroke-opacity:.85}",
     "#cg-station .cgst-gcluster:focus-visible .cgst-gbound{stroke:#fff;stroke-opacity:1}",
-    "#cg-station .cgst-gblabel{font-size:calc(7.5px * var(--gs,1));font-weight:700;letter-spacing:.2em;fill:var(--h)!important;opacity:.9}",
+    "#cg-station .cgst-gblabel{font-size:calc(7.5px * var(--gs,1));font-weight:700;letter-spacing:.2em;fill:var(--h)!important;opacity:.9;transition:opacity .18s ease}",
+    "#cg-station .cgst-gblabel[data-clash]{opacity:0}",
     "#cg-station .cgst-gheat circle{mix-blend-mode:screen}",
     "#cg-station .cgst-gspoke{stroke:rgba(159,194,224,.2);stroke-width:1;stroke-dasharray:2 5;vector-effect:non-scaling-stroke}",
     "#cg-station .cgst-gedge{fill:none;stroke:var(--h);stroke-opacity:.15;stroke-width:.6;vector-effect:non-scaling-stroke;transition:stroke-opacity .2s ease}",
@@ -893,6 +944,12 @@
     "#cg-station .cgst-glink{fill:none;stroke:#e9eef3;stroke-width:1.2;stroke-opacity:.85;stroke-dasharray:5 6;vector-effect:non-scaling-stroke;animation:cgstFlow 1.4s linear infinite}",
     "#cg-station .cgst-glink[data-in]{stroke:#9fc2e0;stroke-opacity:.55;animation-direction:reverse}",
     "@keyframes cgstFlow{to{stroke-dashoffset:-22}}",
+    /* a routed link's glow envelope, and one packet riding it the way the link points */
+    "#cg-station .cgst-glinkh{fill:none;stroke:var(--g-blue);stroke-opacity:.16;stroke-width:4.5;stroke-linecap:round;vector-effect:non-scaling-stroke}",
+    "#cg-station .cgst-glinkh[data-in]{stroke:#9fc2e0;stroke-opacity:.09}",
+    "#cg-station .cgst-gpkt{fill:#fff;pointer-events:none}#cg-station .cgst-gpkt[data-in]{fill:#9fc2e0}",
+    /* the core's reach: one pulse runs each real spoke, core to cluster hub */
+    "#cg-station .cgst-gpulse{fill:var(--g-teal)}",
     "#cg-station .cgst-gnode{cursor:pointer;outline:none;transition:opacity .2s ease}",
     "#cg-station .cgst-gdot{fill:#090c10;stroke:var(--h);stroke-width:1.3;vector-effect:non-scaling-stroke}",
     "#cg-station .cgst-gpip{fill:var(--h);opacity:.9}",
@@ -915,15 +972,35 @@
     "#cg-station .cgst-gsvg .cgst-gnode[data-out]{opacity:.07!important}",
     "#cg-station .cgst-gping{fill:none;stroke:#fff;stroke-width:1;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;animation:cgstPing 2.4s ease-out infinite}",
     "@keyframes cgstPing{0%{transform:scale(.6);opacity:.9}100%{transform:scale(2.6);opacity:0}}",
+    "#cg-station .cgst-gnode.cgst-gsel .cgst-gdot{filter:drop-shadow(0 0 3px var(--h))}",
+    /* influence waves: the three highest-PageRank pages, on the Influence layer */
+    "#cg-station .cgst-gwave{fill:none;stroke:var(--h);stroke-width:1;vector-effect:non-scaling-stroke;opacity:0;transform-box:fill-box;transform-origin:center;",
+    "animation:cgstWave 4s ease-out infinite;animation-delay:var(--d,0s)}",
+    "@keyframes cgstWave{0%{transform:scale(.8);opacity:.5}100%{transform:scale(2);opacity:0}}",
+    /* a label that would land on a stronger one waits for hover, focus or zoom */
+    "#cg-station .cgst-gsvg .cgst-gnode[data-clash]:not(:hover):not(:focus) .cgst-glabel,",
+    "#cg-station .cgst-gsvg .cgst-gnode[data-clash]:not(:hover):not(:focus) .cgst-gmeta{opacity:0}",
     "#cg-station .cgst-gsvg:not([data-edges='1']) .cgst-gedges,#cg-station .cgst-gsvg:not([data-bounds='1']) .cgst-gbound,",
     "#cg-station .cgst-gsvg:not([data-bounds='1']) .cgst-gblabel,#cg-station .cgst-gsvg:not([data-heat='1']) .cgst-gheat,",
     "#cg-station .cgst-gsvg:not([data-predict='1']) .cgst-gpreds,#cg-station .cgst-gsvg:not([data-anomaly='1']) .cgst-ganom,",
+    "#cg-station .cgst-gsvg:not([data-bounds='1']) .cgst-ghalo,#cg-station .cgst-gsvg:not([data-heat='1']) .cgst-gwaves,",
+    "#cg-station .cgst-gsvg:not([data-edges='1']) .cgst-gpulses,",
     "#cg-station .cgst-gsvg:not([data-anomaly='1']) .cgst-gcrit{display:none}",
     "#cg-station .cgst-gcore{cursor:pointer;outline:none}",
-    "#cg-station .cgst-gcdisc{fill:#07090c;stroke:rgba(159,194,224,.6);stroke-width:1.1;vector-effect:non-scaling-stroke}",
+    "#cg-station .cgst-gcdisc{fill:#07090c;stroke:rgba(159,194,224,.6);stroke-width:1.1;vector-effect:non-scaling-stroke;transition:stroke .18s var(--g-ease)}",
+    "#cg-station .cgst-gcore:hover .cgst-gcdisc{stroke:rgba(76,195,255,.95)}",
+    /* the core breathes; its rings turn. Neither encodes anything: the three
+       arcs inside the disc are the measurements */
+    "#cg-station .cgst-gcglow{transform-box:view-box;transform-origin:500px 500px;animation:cgstBreath 3.2s ease-in-out infinite}",
+    "@keyframes cgstBreath{0%,100%{transform:scale(.96);opacity:.75}50%{transform:scale(1.04);opacity:1}}",
+    "#cg-station .cgst-gcring{fill:none;stroke:rgba(76,195,255,.34);stroke-width:1;stroke-dasharray:2 7;vector-effect:non-scaling-stroke;",
+    "transform-box:view-box;transform-origin:500px 500px;animation:cgstSweep 26s linear infinite}",
+    "#cg-station .cgst-gcring[data-r='2']{stroke:rgba(120,224,200,.26);stroke-dasharray:16 9 2 9;animation-duration:38s;animation-direction:reverse}",
+    "#cg-station .cgst-gcring[data-r='3']{stroke:rgba(164,139,240,.2);stroke-dasharray:none;animation:none}",
     "#cg-station .cgst-garc0{fill:none;stroke:rgba(150,170,190,.12);stroke-width:2.4;vector-effect:non-scaling-stroke}",
-    "#cg-station .cgst-garc{fill:none;stroke:var(--h);stroke-width:2.4;vector-effect:non-scaling-stroke}",
-    "#cg-station .cgst-gct{font-size:calc(7.5px * var(--gs,1));font-weight:700;letter-spacing:.14em;fill:#e3e9ef!important}",
+    "#cg-station .cgst-garc{fill:none;stroke:var(--h);stroke-width:2.4;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 2.5px var(--h))}",
+    "#cg-station .cgst-gct{font-size:calc(7.5px * var(--gs,1));font-weight:700;letter-spacing:.14em;fill:#e3e9ef!important;",
+    "paint-order:stroke;stroke:#05070a;stroke-width:calc(3px * var(--gs,1));stroke-linejoin:round}",
     "#cg-station .cgst-gcs{font-size:calc(6px * var(--gs,1));letter-spacing:.12em;fill:#8795a3!important}",
     "#cg-station .cgst-gcore:focus-visible .cgst-gcdisc{stroke:#fff;stroke-width:2.4}",
     /* entity profile */
@@ -933,20 +1010,23 @@
     "#cg-station .cgst-gprof-t{margin:0;font-size:12.5px;font-weight:700;letter-spacing:.03em;color:var(--g-ink)}",
     "#cg-station .cgst-gprof-s{margin:0;font-size:9.5px;line-height:1.5;color:var(--g-mute)}",
     "#cg-station .cgst-gmeter{display:grid;grid-template-columns:84px minmax(0,1fr) 26px;align-items:center;gap:7px;font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--g-mute)}",
-    "#cg-station .cgst-gmeter>b{position:relative;height:4px;background:rgba(150,170,190,.1)}",
-    "#cg-station .cgst-gmeter>b>i{position:absolute;left:0;top:0;bottom:0;background:var(--m,#9fc2e0)}",
+    "#cg-station .cgst-gmeter>b{position:relative;height:4px;border-radius:2px;background:rgba(150,170,190,.1)}",
+    "#cg-station .cgst-gmeter>b>i{position:absolute;left:0;top:0;bottom:0;border-radius:2px;background:var(--m,#9fc2e0);box-shadow:0 0 7px var(--m,#9fc2e0)}",
     "#cg-station .cgst-gmeter>em{font-style:normal;font-size:10px;text-align:right;color:var(--g-ink);font-variant-numeric:tabular-nums}",
     "#cg-station .cgst-gacts{display:flex;flex-wrap:wrap;gap:5px}",
-    "#cg-station .cgst-gcmd{display:inline-flex;align-items:center;height:26px;padding:0 9px;border-radius:2px;border:1px solid var(--g-line2);background:rgba(14,18,23,.9);",
-    "color:var(--g-ink);font:600 8px/1 var(--cgst-mono);letter-spacing:.16em;text-transform:uppercase;text-decoration:none;cursor:pointer}",
-    "#cg-station .cgst-gcmd:hover{border-color:rgba(159,194,224,.7);color:#fff}",
+    "#cg-station .cgst-gcmd{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:6px;border:1px solid var(--g-line2);",
+    "background:linear-gradient(180deg,rgba(20,25,31,.92),rgba(11,14,18,.92));box-shadow:inset 0 1px 0 rgba(255,255,255,.05);",
+    "color:var(--g-ink);font:600 8px/1 var(--cgst-mono);letter-spacing:.16em;text-transform:uppercase;text-decoration:none;cursor:pointer;",
+    "transition:border-color .18s var(--g-ease),box-shadow .18s var(--g-ease),color .18s var(--g-ease)}",
+    "#cg-station .cgst-gcmd:hover{border-color:rgba(76,195,255,.6);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 0 16px -7px var(--g-glow)}",
     "#cg-station .cgst-gmx{display:block;width:100%;height:auto}",
-    "#cg-station .cgst-gmx rect{cursor:pointer;stroke:#05070a;stroke-width:1}",
+    "#cg-station .cgst-gmx rect{cursor:pointer;stroke:#05070a;stroke-width:1;transition:stroke .15s ease}",
     "#cg-station .cgst-gmx rect:hover{stroke:#fff}",
     "#cg-station .cgst-gmx text{font-family:var(--cgst-mono);font-size:6.5px;letter-spacing:.04em;fill:#7f8c99}",
     /* observation feed */
     "#cg-station .cgst-gfeed{display:flex;flex-direction:column;gap:4px;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;",
-    "scrollbar-color:rgba(150,170,190,.3) transparent;padding:7px 10px;border:1px solid var(--g-line);border-radius:2px;background:var(--g-panel)}",
+    "scrollbar-color:rgba(150,170,190,.3) transparent;padding:8px 11px;border:1px solid var(--g-line);border-radius:12px;",
+    "background:linear-gradient(180deg,rgba(76,195,255,.03),rgba(76,195,255,0) 60px),var(--g-panel);box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}",
     "#cg-station .cgst-gfeed ol{list-style:none;margin:0;padding:0}",
     "#cg-station .cgst-gfeed li{display:grid;grid-template-columns:56px 34px 88px minmax(0,1fr);gap:8px;padding:3px 0;border-bottom:1px solid rgba(150,170,190,.06);",
     "font-size:9.5px;line-height:1.4;color:#b8c3ce}",
@@ -956,8 +1036,9 @@
     "#cg-station [data-s='low'].cgst-gsev{color:#9fc2e0}#cg-station [data-s='info'].cgst-gsev{color:#7f8c99}",
     "#cg-station .cgst-gfeed button{min-width:0;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}",
     "#cg-station .cgst-gfeed button:hover{color:#fff;text-decoration:underline}",
-    "#cg-station .cgst-gfind{display:flex;align-items:center;gap:8px;padding:2px 5px 2px 9px;border-radius:2px;border:1px solid var(--g-line2);background:rgba(6,8,11,.9)}",
-    "#cg-station .cgst-gfind:focus-within{border-color:rgba(159,194,224,.8)}",
+    "#cg-station .cgst-gfind{display:flex;align-items:center;gap:8px;padding:2px 5px 2px 10px;border-radius:8px;border:1px solid var(--g-line2);background:rgba(6,8,11,.9);",
+    "transition:border-color .18s var(--g-ease),box-shadow .18s var(--g-ease)}",
+    "#cg-station .cgst-gfind:focus-within{border-color:rgba(76,195,255,.75);box-shadow:0 0 0 3px rgba(76,195,255,.14),0 0 18px -8px var(--g-glow)}",
     "#cg-station .cgst-gfind input{flex:1 1 auto;min-width:0;height:30px;border:0;outline:0;color:#fff;font:500 16px/1.2 var(--cgst-mono);",
     "background:transparent!important;box-shadow:none!important;-webkit-appearance:none;appearance:none}",
     "#cg-station .cgst-gfind input::placeholder{color:var(--g-dim);opacity:1}",
@@ -966,19 +1047,26 @@
     "#cg-station .cgst-gl .cgst-tree{font-size:9.5px;color:#b8c3ce}",
     "#cg-station .cgst-gl .cgst-tree a,#cg-station .cgst-gl .cgst-tree button{color:#d3dbe4}",
     "#cg-station .cgst-gl .cgst-tree i,#cg-station .cgst-gl .cgst-tree [data-here]::after{color:var(--g-acc)}",
-    "@media(prefers-reduced-motion:reduce){#cg-station .cgst-gradar,#cg-station .cgst-gorbiter,#cg-station .cgst-glink,#cg-station .cgst-gping{animation:none}}",
+    "@media(prefers-reduced-motion:reduce){#cg-station .cgst-gradar,#cg-station .cgst-gorbiter,#cg-station .cgst-glink,#cg-station .cgst-gping{animation:none}",
+    "#cg-station .cgst-gpulses,#cg-station .cgst-gpkt,#cg-station .cgst-gwaves{display:none}}",
     "html[data-cgm-motion='reduced'] #cg-station .cgst-gradar,html[data-cgm-motion='reduced'] #cg-station .cgst-gorbiter,",
     "html[data-cgm-motion='reduced'] #cg-station .cgst-glink,html[data-cgm-motion='reduced'] #cg-station .cgst-gping{animation:none}",
+    /* SMIL ignores animation:none, so the moving packets leave with the motion */
+    "html[data-cgm-motion='reduced'] #cg-station .cgst-gpulses,html[data-cgm-motion='reduced'] #cg-station .cgst-gpkt,",
+    "html[data-cgm-motion='reduced'] #cg-station .cgst-gwaves{display:none}",
     "@media(max-width:1100px){#cg-station .cgst-gbody{display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}",
     "#cg-station .cgst-gview{order:1;flex:0 0 auto;height:min(66vh,640px);min-height:300px}#cg-station .cgst-gr{order:2}",
     "#cg-station .cgst-gfeed{order:3;flex:0 0 auto;max-height:240px}#cg-station .cgst-gl{order:4}",
     "#cg-station .cgst-gpanel{flex:0 0 auto;overflow:visible}",
-    "#cg-station .cgst-gkpi{grid-template-columns:repeat(3,minmax(0,1fr))}#cg-station .cgst-gkpi>div:nth-child(4){border-left:0}",
-    "#cg-station .cgst-gkpi>div:nth-child(n+4){border-top:1px solid var(--g-line)}}",
+    "#cg-station .cgst-gkpi{grid-template-columns:repeat(3,minmax(0,1fr))}}",
     "@media(max-width:760px){#cg-station .cgst-graph{padding:0}",
     "#cg-station .cgst-gframe{max-height:none;padding:max(8px,env(safe-area-inset-top)) 8px max(8px,env(safe-area-inset-bottom));border-radius:0;border:0;gap:6px}",
     "#cg-station .cgst-gtitle{font-size:12px;letter-spacing:.2em}#cg-station .cgst-gtool{min-width:30px;height:28px;padding:0 7px}",
-    "#cg-station .cgst-gkpi>div{padding:5px 7px}#cg-station .cgst-gkpi dd{font-size:12.5px}#cg-station .cgst-gkpi dd small{font-size:7px}",
+    /* a phone column is ~110px: labels and notes wrap instead of being cut */
+    "#cg-station .cgst-gkpi{gap:5px}#cg-station .cgst-gkpi>div{padding:6px 7px 7px;border-radius:8px}",
+    "#cg-station .cgst-gkpi dt{white-space:normal;letter-spacing:.12em;line-height:1.35}",
+    "#cg-station .cgst-gkpi dd{font-size:12.5px}#cg-station .cgst-gkpi dd small{font-size:7px;line-height:1.35;white-space:normal}",
+    "#cg-station .cgst-gpanel,#cg-station .cgst-gfeed,#cg-station .cgst-gview{border-radius:10px}",
     "#cg-station .cgst-gview{height:58vh}#cg-station .cgst-ghud-bl{display:none}#cg-station .cgst-gplay input{width:72px}",
     "#cg-station .cgst-gfeed li{grid-template-columns:30px 76px minmax(0,1fr)}#cg-station .cgst-gfeed time{display:none}}",
     "html.cgst-graph-open{overflow:hidden}",
@@ -3489,7 +3577,7 @@
   };
   var SEV = { high: 0, med: 1, low: 2, info: 3 };
   var graph = { built: false, open: false, vb: { x: 0, y: 0, w: 1000 }, focus: "", hits: [], hitLabel: "", lastFocus: null, anim: 0,
-    node: {}, pts: {}, drag: null, pinch: null, suppress: false, an: null, sel: "", eb: [], hop: -1, play: 0 };
+    node: {}, pts: {}, drag: null, pinch: null, suppress: false, an: null, sel: "", eb: [], hop: -1, play: 0, dq: 0 };
   var graphEl, gSvg, gView, gSide, gTree, gPath, gFind, gSub, gLinks, gHop, gHopOut, gPlay;
 
   function sv(tag, attrs, parent) {
@@ -3709,9 +3797,40 @@
     var defs = sv("defs", {}, gSvg), heatG = sv("radialGradient", { id: "cgstHeat" }, defs);
     sv("stop", { offset: "0%", "stop-color": "#e0a040", "stop-opacity": ".5" }, heatG);
     sv("stop", { offset: "100%", "stop-color": "#e0a040", "stop-opacity": "0" }, heatG);
+    function glowStops(id, stops) {
+      var g = sv("radialGradient", { id: id }, defs);
+      stops.forEach(function (st) { sv("stop", { offset: st[0], "stop-color": st[1], "stop-opacity": st[2] }, g); });
+    }
+    glowStops("cgstCoreGlow", [["0%", "#4cc3ff", "0"], ["54%", "#4cc3ff", ".2"], ["74%", "#78e0c8", ".07"], ["100%", "#78e0c8", "0"]]);
+    glowStops("cgstBeam", [["0%", "#78e0c8", ".07"], ["100%", "#4cc3ff", "0"]]);
+    site.clusters.forEach(function (c, k) { glowStops("cgstCH" + k, [["0%", hueOf(c.id), ".11"], ["70%", hueOf(c.id), ".035"], ["100%", hueOf(c.id), "0"]]); });
 
     // range rings, bearings and a slow sweep: orientation, not decoration
     var field = sv("g", {}, gSvg);
+    sv("circle", { cx: C, cy: C, r: 340, fill: "url(#cgstBeam)", "class": "cgst-gbeam" }, field);
+    // Background constellation, outside the data ring: seeded, so it is the
+    // same sky every load, and too faint to read as an entity.
+    var seed = 0x5e17c0de, stars = [], sky = sv("g", { "class": "cgst-gcosmos", "aria-hidden": "true" }, field), web = "";
+    function rnd() {
+      seed = (seed + 0x6D2B79F5) | 0;
+      var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    }
+    for (var si = 0; si < 64; si++) {
+      var sa = rnd() * 2 * Math.PI, sr = 505 + rnd() * 300;
+      stars.push({ x: C + sr * Math.cos(sa), y: C + sr * Math.sin(sa), r: 0.6 + rnd() * 1.1, tw: rnd() });
+    }
+    stars.forEach(function (a, ai) {
+      var near = -1, nd = 120;
+      stars.forEach(function (b, bi) { var dd = Math.hypot(a.x - b.x, a.y - b.y); if (bi !== ai && dd < nd) { nd = dd; near = bi; } });
+      if (near > ai) web += "M" + a.x.toFixed(1) + " " + a.y.toFixed(1) + " L" + stars[near].x.toFixed(1) + " " + stars[near].y.toFixed(1) + " ";
+    });
+    if (web) sv("path", { d: web }, sky);
+    stars.forEach(function (a) {
+      var st = sv("circle", { cx: a.x.toFixed(1), cy: a.y.toFixed(1), r: a.r.toFixed(2) }, sky);
+      if (a.tw < 0.22) { st.setAttribute("data-tw", ""); st.style.setProperty("--d", (a.tw * 18).toFixed(2) + "s"); }
+    });
     [120, 240, 360, 470].forEach(function (r, k) { sv("circle", { cx: C, cy: C, r: r, "class": "cgst-gring" + (k % 2 ? "" : " cgst-gmajor") }, field); });
     for (var b = 0; b < 360; b += 30) {
       var ba = (b - 90) * Math.PI / 180;
@@ -3730,12 +3849,14 @@
     });
 
     var bounds = sv("g", {}, gSvg), heat = sv("g", { "class": "cgst-gheat" }, gSvg);
-    var edgeG = sv("g", { "class": "cgst-gedges" }, gSvg), preds = sv("g", { "class": "cgst-gpreds" }, gSvg);
+    var waves = sv("g", { "class": "cgst-gwaves", "aria-hidden": "true" }, gSvg);
+    var edgeG = sv("g", { "class": "cgst-gedges" }, gSvg), pulses = sv("g", { "class": "cgst-gpulses", "aria-hidden": "true" }, gSvg);
+    var preds = sv("g", { "class": "cgst-gpreds" }, gSvg);
     gLinks = sv("g", {}, gSvg);
     var nodes = sv("g", {}, gSvg);
 
     // cluster boundaries: 1.5 standard deviations of the members' spread
-    site.clusters.forEach(function (c) {
+    site.clusters.forEach(function (c, ck) {
       var list = [c.pillar].concat(c.members).map(function (p) { return an.idx[p]; }), cx = 0, cy = 0, v = 0, hue = hueOf(c.id);
       list.forEach(function (i) { cx += pos[i].x; cy += pos[i].y; });
       cx /= list.length; cy /= list.length;
@@ -3746,24 +3867,35 @@
       c.box = { x0: Math.min(cx - r, lx), y0: Math.min(cy - r, ly - 10), x1: Math.max(cx + r, lx), y1: Math.max(cy + r, ly + 10) };
       var g = sv("g", { "class": "cgst-gcluster", tabindex: "0", role: "button", "data-cluster": c.id, style: "--h:" + hue,
         "aria-label": c.name + ": " + plural(list.length, "page") + ". Focus the graph on it" }, bounds);
+      sv("circle", { cx: cx.toFixed(1), cy: cy.toFixed(1), r: (r * 1.3).toFixed(1), fill: "url(#cgstCH" + ck + ")", "class": "cgst-ghalo" }, g);
       sv("circle", { cx: cx.toFixed(1), cy: cy.toFixed(1), r: r.toFixed(1), "class": "cgst-gbound", "data-cluster": c.id }, g);
       // the label sits outside the boundary, on the ray away from the core
       var cos = Math.cos(oa), bl = svText(g, lx, ly, c.id.toUpperCase() + " · " + list.length, "cgst-gblabel",
         cos > 0.08 ? "start" : cos < -0.08 ? "end" : "middle");
       bl.setAttribute("dominant-baseline", Math.sin(oa) > 0.35 ? "hanging" : Math.sin(oa) < -0.35 ? "auto" : "central");
+      c.lab = bl;
     });
 
-    // influence: PageRank as heat
+    // influence: PageRank as heat, and a wave off the three most important pages
     an.ent.forEach(function (x) {
       if (x.imp < 22) return;
       sv("circle", { cx: pos[x.i].x.toFixed(1), cy: pos[x.i].y.toFixed(1), r: (16 + x.imp * 0.5).toFixed(1), fill: "url(#cgstHeat)",
         opacity: (0.05 + x.imp / 420).toFixed(2) }, heat);
     });
+    an.ent.slice().sort(function (p, q) { return q.imp - p.imp || p.i - q.i; }).slice(0, 3).forEach(function (x, k) {
+      [0, 2].forEach(function (lag) {
+        sv("circle", { cx: pos[x.i].x.toFixed(1), cy: pos[x.i].y.toFixed(1), r: (9 + x.imp * 0.075).toFixed(1), "class": "cgst-gwave",
+          style: "--h:" + hueOf(x.e.cluster) + ";--d:" + (lag + k * 0.6).toFixed(1) + "s" }, waves);
+      });
+    });
 
     // the core's reach to every cluster hub, then every relationship
-    site.clusters.forEach(function (c) {
+    site.clusters.forEach(function (c, k) {
       var p = pos[an.idx[c.pillar]];
       sv("line", { x1: C, y1: C, x2: p.x.toFixed(1), y2: p.y.toFixed(1), "class": "cgst-gspoke" }, edgeG);
+      var dot = sv("circle", { r: 2.1, opacity: 0, "class": "cgst-gpulse" }, pulses), at = (k * 0.45).toFixed(2) + "s";
+      sv("animateMotion", { path: "M" + C + " " + C + " L" + p.x.toFixed(1) + " " + p.y.toFixed(1), dur: "3.6s", begin: at, repeatCount: "indefinite" }, dot);
+      sv("animate", { attributeName: "opacity", values: "0;1;1;0", keyTimes: "0;.2;.8;1", dur: "3.6s", begin: at, repeatCount: "indefinite" }, dot);
     });
     graph.eb = an.P.map(function () { return []; });
     an.edges.forEach(function (e) {
@@ -3812,11 +3944,13 @@
       meta.setAttribute("dy", "1.6em");
       meta.setAttribute("dominant-baseline", "central");
       if (site.byId[e.cluster] && site.byId[e.cluster].members.length > 14) link.setAttribute("data-dense", "");
-      graph.node[e.path] = { el: link, x: p.x, y: p.y, i: x.i };
+      graph.node[e.path] = { el: link, x: p.x, y: p.y, i: x.i, lab: lab, meta: meta };
     });
 
     // Sentinel Core: corroboration, cohesion and reach as three arcs
     var core = sv("g", { "class": "cgst-gcore", tabindex: "0", role: "button", "aria-label": "Sentinel Core: show the whole graph" }, gSvg);
+    sv("circle", { cx: C, cy: C, r: 150, fill: "url(#cgstCoreGlow)", "class": "cgst-gcglow", "aria-hidden": "true" }, core);
+    [96, 104, 113].forEach(function (r, k) { sv("circle", { cx: C, cy: C, r: r, "class": "cgst-gcring", "data-r": k + 1, "aria-hidden": "true" }, core); });
     sv("circle", { cx: C, cy: C, r: 86, "class": "cgst-gcdisc" }, core);
     [[80, an.recip / an.m, "#9fc2e0"], [74, Math.max(0, an.Q), "#a48bf0"], [68, an.reach, "#7fd1a8"]].forEach(function (a) {
       sv("circle", { cx: C, cy: C, r: a[0], "class": "cgst-garc0" }, core);
@@ -3833,7 +3967,7 @@
   // ── the panels around the canvas: every figure is from analyseGraph() ──
   function kpi(dl, label, value, note, sev) {
     var d = make("div"), dt = make("dt", "", label), dd = make("dd", "", value);
-    if (sev) dd.setAttribute("data-s", sev);
+    if (sev) { dd.setAttribute("data-s", sev); d.setAttribute("data-sev", sev); }
     if (note) dd.appendChild(make("small", "", note));
     d.appendChild(dt); d.appendChild(dd); dl.appendChild(d);
   }
@@ -4072,6 +4206,7 @@
     });
     gHop.value = String(graph.hop < 0 ? max : graph.hop);
     setText(gHopOut, graph.hop < 0 ? "All hops" : "Hop " + graph.hop + " · " + hit + " reached");
+    queueDeclutter();
   }
   function stopTrace() {
     clearInterval(graph.play);
@@ -4095,6 +4230,7 @@
     gSvg.setAttribute("data-" + name, on ? "1" : "0");
     var b = graphEl.querySelector("[data-glayer='" + name + "']");
     if (b) b.setAttribute("aria-pressed", on ? "true" : "false");
+    queueDeclutter();
   }
 
   // The label scale keeps text the same size on screen at any zoom.
@@ -4103,6 +4239,49 @@
     gSvg.setAttribute("viewBox", v.x.toFixed(1) + " " + v.y.toFixed(1) + " " + v.w.toFixed(1) + " " + v.w.toFixed(1));
     var r = gView.getBoundingClientRect(), px = Math.max(160, Math.min(r.width, r.height) || 600);
     gSvg.style.setProperty("--gs", (v.w / px * 1.12).toFixed(3));
+    queueDeclutter();
+  }
+
+  // Labels hold a constant size on screen, so a zoomed-out cluster has less
+  // room than its names need. Rank the labels that should show (selected,
+  // matched, the cluster names, this page, neighbours, focused cluster,
+  // cluster keys; then importance) and hide any that would land on one
+  // already placed. Hover, focus or zoom brings a hidden one back.
+  function queueDeclutter() { if (!graph.dq) graph.dq = setTimeout(declutter, 60); }
+  function declutter() {
+    graph.dq = 0;
+    if (!graph.built || !graph.open || !gSvg) return;
+    var an = graph.an, keys = gSvg.getAttribute("data-labels") === "1", want = [], placed = [];
+    var pad = 2 * (parseFloat(gSvg.style.getPropertyValue("--gs")) || 1);
+    Object.keys(graph.node).forEach(function (p) {
+      var nd = graph.node[p], cl = nd.el.classList, k = -1;
+      if (cl.contains("cgst-gsel")) k = 0;
+      else if (cl.contains("cgst-ghit")) k = 1;
+      else if (cl.contains("cgst-ghere")) k = 2;
+      else if (cl.contains("cgst-gh1")) k = 3;
+      else if (cl.contains("cgst-gon") && !nd.el.hasAttribute("data-dense")) k = 4;
+      else if (keys && nd.el.hasAttribute("data-key")) k = 5;
+      if (k < 0 || nd.el.hasAttribute("data-out")) { nd.el.removeAttribute("data-clash"); return; }
+      want.push({ nd: nd, el: nd.el, lab: nd.lab, k: k, imp: an.ent[nd.i].imp, i: nd.i });
+    });
+    var bounds = gSvg.getAttribute("data-bounds") === "1";
+    site.clusters.forEach(function (c, ci) {
+      if (!c.lab) return;
+      if (bounds) want.push({ el: c.lab, lab: c.lab, k: 1.5, imp: 0, i: ci });
+      else c.lab.removeAttribute("data-clash");
+    });
+    want.sort(function (a, b) { return (a.k - b.k) || (b.imp - a.imp) || (a.i - b.i); });
+    want.forEach(function (w) {
+      var b;
+      try { b = w.lab.getBBox(); } catch (e) { return; }
+      var box = { x0: b.x - pad, y0: b.y - pad, x1: b.x + b.width + pad, y1: b.y + b.height + pad };
+      if (!w.k) {                                     // the selection also shows its metrics line
+        try { var m = w.nd.meta.getBBox(); box.x0 = Math.min(box.x0, m.x - pad); box.x1 = Math.max(box.x1, m.x + m.width + pad); box.y1 = Math.max(box.y1, m.y + m.height + pad); } catch (e) {}
+      }
+      var hit = placed.some(function (o) { return box.x0 < o.x1 && box.x1 > o.x0 && box.y0 < o.y1 && box.y1 > o.y0; });
+      if (hit) w.el.setAttribute("data-clash", "");
+      else { w.el.removeAttribute("data-clash"); placed.push(box); }
+    });
   }
   function clampVB(v) {
     var w = Math.max(150, Math.min(1500, v.w));
@@ -4153,7 +4332,7 @@
     fitCluster(site.byId[graph.focus]);
     paintSide();
   }
-  function paintDim() { gSvg.setAttribute("data-dim", graph.focus || graph.hits.length || graph.sel ? "1" : "0"); }
+  function paintDim() { gSvg.setAttribute("data-dim", graph.focus || graph.hits.length || graph.sel ? "1" : "0"); queueDeclutter(); }
 
   function setHits(paths, label) {
     graph.hits = (paths || []).filter(function (p) { return graph.node[p]; });
@@ -4174,11 +4353,18 @@
     gLinks.textContent = "";
     var e = site.byPath[path], from = graph.node[path], an = graph.an;
     if (!e || !from || !an) return;
+    var sent = 0;
     function route(to, inbound) {
       var mx = (from.x + to.x) / 2, my = (from.y + to.y) / 2, cx = mx + (500 - mx) * 0.3, cy = my + (500 - my) * 0.3;
-      var el = sv("path", { d: "M" + from.x.toFixed(1) + " " + from.y.toFixed(1) + " Q" + cx.toFixed(1) + " " + cy.toFixed(1) + " " + to.x.toFixed(1) + " " + to.y.toFixed(1),
-        "class": "cgst-glink" }, gLinks);
-      if (inbound) el.setAttribute("data-in", "");
+      var d = "M" + from.x.toFixed(1) + " " + from.y.toFixed(1) + " Q" + cx.toFixed(1) + " " + cy.toFixed(1) + " " + to.x.toFixed(1) + " " + to.y.toFixed(1);
+      var halo = sv("path", { d: d, "class": "cgst-glinkh" }, gLinks), el = sv("path", { d: d, "class": "cgst-glink" }, gLinks);
+      if (inbound) { halo.setAttribute("data-in", ""); el.setAttribute("data-in", ""); }
+      if (sent++ >= 24) return;
+      // one packet per link, travelling the way the link points: out from
+      // this page, or in to it
+      var pk = sv("circle", { r: 1.9, "class": "cgst-gpkt" }, gLinks);
+      if (inbound) pk.setAttribute("data-in", "");
+      sv("animateMotion", { path: d, dur: "1.8s", repeatCount: "indefinite", calcMode: "linear", keyPoints: inbound ? "1;0" : "0;1", keyTimes: "0;1" }, pk);
     }
     var i = an.idx[path];
     an.out[i].forEach(function (j) { route(graph.node[an.P[j].path], false); });
@@ -4251,6 +4437,7 @@
     if (!graph.open) graph.lastFocus = document.activeElement;
     graphEl.hidden = false;
     graph.open = true;
+    if (gSvg && gSvg.unpauseAnimations) gSvg.unpauseAnimations();
     document.documentElement.classList.add("cgst-graph-open");
     syncRun();
     var title = graphEl.querySelector(".cgst-gtitle");
@@ -4285,6 +4472,8 @@
     graphEl.hidden = true;
     graph.open = false;
     cancelAnimationFrame(graph.anim);
+    clearTimeout(graph.dq); graph.dq = 0;
+    if (gSvg && gSvg.pauseAnimations) gSvg.pauseAnimations();
     document.documentElement.classList.remove("cgst-graph-open");
     syncRun();
     var back = graph.lastFocus;
@@ -4605,7 +4794,7 @@
       '<div class="cgst-graph" data-cgst-graph role="dialog" aria-modal="true" aria-labelledby="cgstGraphTitle" hidden>' +
         '<div class="cgst-gframe">' +
           '<div class="cgst-ghead">' +
-            '<div><p class="cgst-gorg" aria-hidden="true">ClearGlass · Sentinel Core <i>● Computed on this device</i></p>' +
+            '<div><p class="cgst-gorg" aria-hidden="true">ClearGlass · Sentinel Core <i><b>●</b> Computed on this device</i></p>' +
               '<h2 class="cgst-gtitle" id="cgstGraphTitle" tabindex="-1">Intelligence Graph</h2>' +
               '<p class="cgst-gsub" data-cgst-gsub>Reading the site index…</p></div>' +
             '<div class="cgst-gtools">' +
