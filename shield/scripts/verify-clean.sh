@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
+# Exit non-zero if any namespace, link, socket, process or key from G01 remains.
 set -euo pipefail
-if ip netns list | grep -Eq '(^|[[:space:]])cgshield-(client|gateway)([[:space:]]|$)'; then
-  echo "Shield test namespaces remain" >&2
-  exit 1
-fi
-if ip link show 2>/dev/null | grep -Eq 'cg-veth-[cg]'; then
-  echo "Shield test veth remains" >&2
-  exit 1
-fi
-[ ! -e /tmp/clearglass-shield-test ] || { echo "Shield temp state remains" >&2; exit 1; }
-echo "Shield test environment clean"
+cd "$(dirname "$0")/../.."
+exec python3 -m shield.topology verify-clean
