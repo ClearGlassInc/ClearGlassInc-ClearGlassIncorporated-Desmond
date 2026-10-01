@@ -69,7 +69,8 @@ if not errors:
         errors.append("missing station-chat.js")
     else:
         dock_js = dock.read_text(encoding="utf-8")
-        for marker in ("SENTINEL CORE", "__cgSentinel", "data-no-future-glass", "cgst-absorb-stack",
+        # The dock is Sentinel Core unless a page names its console (guardian.html: Artemis).
+        for marker in ('|| "Sentinel Core"', "__cgSentinel", "data-no-future-glass", "cgst-absorb-stack",
                        "Intel Desk", "blog/posts.json", "function intelFallback()",
                        "Site Intelligence", "data/site-index.json", "function siteFallback()",
                        "Intelligence Graph", "Mission Control"):

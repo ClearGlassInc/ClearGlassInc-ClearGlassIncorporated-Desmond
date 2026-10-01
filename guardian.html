@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-cg-console-name="Artemis" data-cg-console-line="Observe. Detect. Analyse. Verify. Respond. Audit. Improve." data-cg-console-verify>
 <head>
 <!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
 <link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
@@ -701,7 +701,8 @@ CLEARGLASS GUARDIAN v5.0 — Artemis mission command additive layers
 
 
 /* ════════════════════════════════
-   CLEARGLASS INC. 2040 — hyper-futuristic glassmorphism banner
+   CLEARGLASS INTELLIGENCE PLATFORM — flagship banner (Artemis)
+   Copy and visual sit in a grid, so nothing overlaps at any width.
 ════════════════════════════════ */
 .future-banner{
 position:relative;z-index:2;padding:118px 0 74px;overflow:hidden;
@@ -727,28 +728,33 @@ filter:blur(34px);opacity:.78;animation:holoAurora 16s ease-in-out infinite alte
 }
 @keyframes holoGridDrift{to{background-position:96px 96px,-96px 48px,0 0}}
 @keyframes holoAurora{from{transform:rotate(0deg) scale(1);opacity:.58}to{transform:rotate(18deg) scale(1.08);opacity:.86}}
-.future-stage{position:relative;z-index:1;min-height:560px;border:1px solid rgba(231, 214, 214,.34);border-radius:34px;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(255,255,255,.045));backdrop-filter:blur(34px) saturate(1.65);box-shadow:0 46px 140px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -1px 0 rgba(255,255,255,.08),0 0 120px rgba(231, 41, 44,.15);}
+.future-stage{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:center;gap:clamp(28px,4vw,56px);min-height:560px;padding:clamp(40px,5vw,64px);border:1px solid rgba(231, 214, 214,.34);border-radius:34px;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(255,255,255,.045));backdrop-filter:blur(34px) saturate(1.65);box-shadow:0 46px 140px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -1px 0 rgba(255,255,255,.08),0 0 120px rgba(231, 41, 44,.15);}
 .future-stage::before{content:'';position:absolute;inset:22px;border-radius:26px;border:1px solid rgba(255,255,255,.22);box-shadow:inset 0 0 34px rgba(255,255,255,.08);pointer-events:none;}
 .future-orbit{position:absolute;inset:8%;border:1px solid rgba(231, 41, 44,.18);border-radius:48% 52% 50% 46%;filter:drop-shadow(0 0 20px rgba(231, 41, 44,.24));animation:futureOrbit 18s linear infinite;}
 .future-orbit.o2{inset:14% 20%;border-color:rgba(238, 99, 117,.22);animation-duration:25s;animation-direction:reverse;}
 @keyframes futureOrbit{to{transform:rotate(360deg)}}
-.future-copy{position:absolute;left:clamp(26px,5vw,64px);top:clamp(28px,5vw,58px);max-width:540px;}
+.future-copy{position:relative;z-index:1;max-width:560px;}
 .future-kicker{font-family:var(--M);font-size:10px;letter-spacing:.36em;text-transform:uppercase;color:#e7d7d7;text-shadow:0 0 18px rgba(231, 41, 44,.65);}
 .future-title{margin-top:14px;font-size:clamp(42px,6vw,82px);line-height:.88;font-weight:800;letter-spacing:-.055em;color:#fff;text-shadow:0 1px 0 rgba(255,255,255,.55),0 0 34px rgba(231, 41, 44,.34),0 0 72px rgba(238, 99, 117,.22);}
 .future-title span{display:block;background:linear-gradient(120deg,#0e0e0e,#1e1414 32%,#1a1112 64%,#0e0e0e);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
-.future-sub{margin-top:18px;color:rgba(238,249,255,.78);font-size:16px;line-height:1.75;max-width:500px;}
-.guardian-capsule{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:min(520px,76vw);min-height:138px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:linear-gradient(145deg,rgba(3,7,18,.96),rgba(16, 12, 13,.9) 48%,rgba(0,0,0,.98));box-shadow:0 28px 90px rgba(0,0,0,.62),inset 0 2px 0 rgba(255,255,255,.18),inset 0 -18px 34px rgba(255,255,255,.035),0 0 74px rgba(231, 41, 44,.36),0 0 110px rgba(238, 99, 117,.20);display:grid;place-items:center;text-align:center;isolation:isolate;animation:capsuleFloat 6s ease-in-out infinite;}
+.future-tagline{margin-top:14px;font-size:clamp(22px,2.6vw,32px);line-height:1.15;font-weight:600;letter-spacing:-.02em;color:#fff;text-shadow:0 0 26px rgba(231, 41, 44,.38);}
+.future-sub{margin-top:18px;color:rgba(238,249,255,.78);font-size:16px;line-height:1.75;max-width:520px;}
+.future-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px;}
+.future-visual{position:relative;z-index:1;display:grid;gap:22px;justify-items:center;}
+.guardian-capsule{position:relative;width:min(520px,100%);min-height:138px;padding:26px 56px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:linear-gradient(145deg,rgba(3,7,18,.96),rgba(16, 12, 13,.9) 48%,rgba(0,0,0,.98));box-shadow:0 28px 90px rgba(0,0,0,.62),inset 0 2px 0 rgba(255,255,255,.18),inset 0 -18px 34px rgba(255,255,255,.035),0 0 74px rgba(231, 41, 44,.36),0 0 110px rgba(238, 99, 117,.20);display:grid;place-items:center;align-content:center;gap:10px;text-align:center;isolation:isolate;animation:capsuleFloat 6s ease-in-out infinite;}
 .guardian-capsule::before{content:'';position:absolute;inset:10px;border-radius:inherit;background:linear-gradient(115deg,rgba(255,255,255,.18),transparent 34%,rgba(231, 41, 44,.09) 58%,transparent);filter:blur(.2px);}
 .guardian-capsule::after{content:'';position:absolute;left:11%;right:11%;top:14%;height:16%;border-radius:999px;background:linear-gradient(90deg,transparent,rgba(14, 14, 14,.34),transparent);filter:blur(7px);}
-@keyframes capsuleFloat{0%,100%{transform:translate(-50%,-50%) translateY(0)}50%{transform:translate(-50%,-50%) translateY(-13px)}}
-.capsule-label{position:relative;z-index:1;font-family:var(--M);font-size:clamp(18px,3vw,31px);letter-spacing:.18em;text-transform:uppercase;color:#f8fdff;text-shadow:0 0 18px rgba(255,255,255,.34),0 0 30px rgba(231, 41, 44,.62);}
-.holo-widget{position:absolute;width:190px;padding:14px;border-radius:18px;border:1px solid rgba(231, 214, 214,.26);background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.035));backdrop-filter:blur(18px);box-shadow:inset 0 1px 0 rgba(255,255,255,.32),0 18px 54px rgba(0,0,0,.26);animation:widgetFloat 8s ease-in-out infinite;}
+@keyframes capsuleFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-13px)}}
+.capsule-label{position:relative;z-index:1;font-family:var(--M);font-size:clamp(22px,3vw,34px);letter-spacing:.42em;padding-left:.42em;text-transform:uppercase;color:#f8fdff;text-shadow:0 0 18px rgba(255,255,255,.34),0 0 30px rgba(231, 41, 44,.62);}
+.capsule-desc{position:relative;z-index:1;max-width:340px;font-size:12.5px;line-height:1.55;color:rgba(238,249,255,.72);}
+.holo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;width:100%;}
+.holo-widget{position:relative;padding:14px;border-radius:18px;border:1px solid rgba(231, 214, 214,.26);background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.035));backdrop-filter:blur(18px);box-shadow:inset 0 1px 0 rgba(255,255,255,.32),0 18px 54px rgba(0,0,0,.26);animation:widgetFloat 8s ease-in-out infinite;}
 .holo-widget b{display:block;font-family:var(--M);font-size:8px;letter-spacing:.24em;text-transform:uppercase;color:#ebdcdd}.holo-widget strong{display:block;margin-top:8px;font-family:var(--M);font-size:24px;color:#fff}.holo-widget small{display:block;margin-top:4px;font-family:var(--M);font-size:9px;color:rgba(238,249,255,.62)}
-.holo-widget.w1{right:8%;top:15%}.holo-widget.w2{right:14%;bottom:14%;animation-delay:-2s}.holo-widget.w3{left:9%;bottom:15%;animation-delay:-4s}
+.holo-widget.w2{animation-delay:-2s}.holo-widget.w3{animation-delay:-4s}
 @keyframes widgetFloat{0%,100%{transform:translateY(0) rotateX(0deg)}50%{transform:translateY(-16px) rotateX(4deg)}}
 .vector-line{position:absolute;height:1px;background:linear-gradient(90deg,transparent,rgba(30, 20, 20,.75),rgba(238, 99, 117,.5),transparent);box-shadow:0 0 14px rgba(231, 41, 44,.45);transform-origin:center;animation:vectorPulse 3.8s ease-in-out infinite;}.vector-line.l1{left:20%;right:18%;top:37%;transform:rotate(-9deg)}.vector-line.l2{left:16%;right:22%;bottom:33%;transform:rotate(7deg);animation-delay:-1.3s}.vector-line.l3{left:34%;right:12%;top:68%;transform:rotate(-15deg);animation-delay:-2.2s}@keyframes vectorPulse{0%,100%{opacity:.28;filter:blur(0)}50%{opacity:1;filter:blur(.3px)}}
-@media(max-width:900px){.future-stage{min-height:720px}.guardian-capsule{top:56%}.holo-widget.w1{right:5%;top:34%}.holo-widget.w2{right:5%;bottom:8%}.holo-widget.w3{left:5%;bottom:8%}}
-@media(max-width:640px){.future-banner{padding-top:92px}.future-stage{min-height:780px;border-radius:24px}.future-copy{position:relative;left:auto;top:auto;padding:32px}.guardian-capsule{top:54%;width:84vw}.holo-widget{width:155px}.holo-widget.w1{top:67%;}.holo-widget.w2{bottom:4%;}.holo-widget.w3{bottom:4%;}.vector-line{display:none}}
+@media(max-width:900px){.future-stage{grid-template-columns:minmax(0,1fr);min-height:0}.future-copy{max-width:640px}}
+@media(max-width:640px){.future-banner{padding-top:92px}.future-stage{padding:36px 26px;border-radius:24px;gap:32px}.future-actions a{flex:1 1 100%;justify-content:center}.guardian-capsule{padding:24px 30px;border-radius:44px}.holo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.holo-widget.w1{grid-column:1/-1}.vector-line{display:none}}
 @media(prefers-reduced-motion:reduce){.future-banner::before,.future-banner::after,.future-orbit,.guardian-capsule,.holo-widget,.vector-line{animation:none}}
 </style>
 
@@ -954,26 +960,36 @@ body:not(.cg-evo-live) .cg-evo-aura i{animation-play-state:paused}
 <div class="scanlines"></div>
 
 
-<!-- CLEARGLASS INC. 2040 FUTURE BANNER -->
+<!-- CLEARGLASS INTELLIGENCE PLATFORM BANNER (Artemis) -->
 <section class="future-banner" aria-labelledby="futureBannerTitle">
   <div class="shell">
     <div class="future-stage">
-      <div class="future-orbit"></div>
-      <div class="future-orbit o2"></div>
-      <div class="vector-line l1"></div>
-      <div class="vector-line l2"></div>
-      <div class="vector-line l3"></div>
+      <div class="future-orbit" aria-hidden="true"></div>
+      <div class="future-orbit o2" aria-hidden="true"></div>
+      <div class="vector-line l1" aria-hidden="true"></div>
+      <div class="vector-line l2" aria-hidden="true"></div>
+      <div class="vector-line l3" aria-hidden="true"></div>
       <div class="future-copy">
-        <div class="future-kicker">Photonic command glass · 2040 interface study</div>
-        <h2 class="future-title" id="futureBannerTitle"><span>ClearGlass Inc.</span><span>2040</span></h2>
-        <p class="future-sub">Premium glassmorphism architecture, refractive frosted panels, holographic metrics, and cinematic neon-cyan / deep-magenta light fields merge into the next GUARDIAN command surface.</p>
+        <div class="future-kicker">ClearGlass Intelligence Platform</div>
+        <h2 class="future-title" id="futureBannerTitle"><span>ClearGlass Inc.</span></h2>
+        <div class="future-tagline">See Through Everything.</div>
+        <p class="future-sub">Transform cybersecurity, intelligence, infrastructure, and governance data into transparent, defensible decisions. ClearGlass combines AI-assisted analysis, risk visibility, public-source intelligence, and audit-ready reporting to help organisations understand what matters, verify outcomes, and act confidently.</p>
+        <div class="future-actions">
+          <a href="#contact" class="btn-p">Request Demo <span class="arr">→</span></a>
+          <a href="#modules" class="btn-g">Explore Platform</a>
+        </div>
       </div>
-      <div class="guardian-capsule" role="img" aria-label="Floating black control capsule labeled ClearGlass Guardian">
-        <div class="capsule-label">ClearGlass GUARDIAN</div>
+      <div class="future-visual">
+        <div class="guardian-capsule">
+          <div class="capsule-label">Artemis</div>
+          <p class="capsule-desc">Governed intelligence, public-source analysis, risk monitoring, and evidence management.</p>
+        </div>
+        <div class="holo-grid">
+          <div class="holo-widget w1"><b>Risk Visibility</b><strong>99.8%</strong><small>Evidence Correlation</small></div>
+          <div class="holo-widget w2"><b>Human Oversight</b><strong>GATED</strong><small>High-risk actions held for approval</small></div>
+          <div class="holo-widget w3"><b>Audit Trail</b><strong>SHA-256</strong><small>Hash-chained decision ledger</small></div>
+        </div>
       </div>
-      <div class="holo-widget w1"><b>Threat Mesh</b><strong>99.8%</strong><small>quantum-safe correlation</small></div>
-      <div class="holo-widget w2"><b>Glass Edge</b><strong>4.2ns</strong><small>ray-traced data latency</small></div>
-      <div class="holo-widget w3"><b>Holographs</b><strong>LIVE</strong><small>adaptive vector telemetry</small></div>
     </div>
   </div>
 </section>
