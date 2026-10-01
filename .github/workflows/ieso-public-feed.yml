@@ -1,0 +1,76 @@
+name: IESO Public Feed
+
+# Refreshes data/grid/ieso-public.json for GridShield-Ontario-V6-0-ULTRA-FINAL.html.
+# PUBLIC IESO REPORT DATA — NOT A CONTROL SIGNAL. A failed source keeps its last
+# good snapshot, is committed as a failure record, and turns this job red.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 * * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ieso-public-feed
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: Fetch, validate, publish IESO public data
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: automation-write
+    permissions:
+      contents: write   # commit the refreshed feed
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: true # Required only for this job's audited git push.
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+
+      - name: Fetch IESO public reports
+        run: python scripts/ieso_public_feed.py
+
+      - name: Commit refreshed feed
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- data/grid/ieso-public.json; then
+            echo "Feed unchanged; nothing to publish." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/grid/ieso-public.json
+          git commit -m "bot(grid): refresh IESO public feed [skip ci]"
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/5); rebasing onto latest main"
+            git pull --rebase origin main
+          done
+          echo "::error::Failed to push the refreshed feed after 5 attempts"
+          exit 1
+
+      - name: Fail visibly if any source failed
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import sys
+
+          feed = json.load(open("data/grid/ieso-public.json", encoding="utf-8"))
+          failed = [s for s in feed["sources"] if s["status"] != "ok"]
+          for s in failed:
+              print(f"::error::{s['id']}: {s['error']}")
+          sys.exit(1 if failed else 0)
+          PY

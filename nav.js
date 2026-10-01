@@ -62,6 +62,7 @@
     ["Shield Nexus Simulation", "shield_x5f_nexus_x5f_live_x5f_all.html", "Test-state connectivity surface", "◈"],
     ["Shield Concept Dashboard", "clearglass_x5f_shield_x5f_dashboard.html", "Concept-stage design", "◇"],
     ["GridShield-Ontario v6.0 ULTRA", "gridshield_x5f_v6_x5f_ultra_x5f_do.html", "Passive-first simulated demo", "⌁"],
+    ["GridShield-Ontario Evidence Console", "GridShield-Ontario-V6-0-ULTRA-FINAL.html", "IESO public grid data, read-only", "⌁"],
     ["Ontario Power Grid Live Demo", "ontario_x5f_power_x5f_grid_x5f_live.html", "Simulated grid visualization", "⚡"],
     ["Opal-Koboi Assets", "products/opal-koboi/index.html", "Product asset library", "✧"],
     ["Artemis IV Core · Asset", "products/opal-koboi/artemis-iv-core.html", "Product sheet", "🧭"],

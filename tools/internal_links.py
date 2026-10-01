@@ -135,7 +135,6 @@ EXCLUDED_PAGES: dict[str, tuple[str, str]] = {
     "ClearGlass-Ops-Dashboard.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
     "Fantasy-Command-Live (1).html": ("Uploaded prototype", "noindex re-upload of the FANTASY COMMAND page"),
     "fantasy-command-live (2).html": ("Uploaded prototype", "noindex re-upload of the FANTASY COMMAND page"),
-    "GridShield-Ontario-V6-0-ULTRA-FINAL.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
     "Gridshield-Ontario-V3-Ics.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
     "Gridshield-V7-Ultra-Formal.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
     "Gridshield-V8-Live-Wire.html": ("Uploaded prototype", "noindex upload awaiting owner classification"),
@@ -187,6 +186,7 @@ PAGES: dict[str, tuple[str, str]] = {
     "attack-prompt-core.html": ("ATT&CK Prompt Integrator", "MITRE ATT&CK-aligned analysis prompts"),
     "environmental-cyber-risk.html": ("Environmental Cyber-Risk", "OT and environmental threat monitoring"),
     "shield.html": ("ClearGlass Shield", "privacy-first secure connectivity you can verify"),
+    "GridShield-Ontario-V6-0-ULTRA-FINAL.html": ("GridShield-Ontario", "passive-first OT evidence console on IESO public grid data"),
 
     # Intelligence & OSINT
     "intelligence.html": ("Intelligence", "the ClearGlass intelligence practice"),
@@ -377,6 +377,7 @@ CLUSTERS: dict[str, dict] = {
             "artemis-blue-team.html", "stegoforge.html",
             "attack-prompt-core.html", "environmental-cyber-risk.html",
             "bluedesk-mobile.html", "shield.html",
+            "GridShield-Ontario-V6-0-ULTRA-FINAL.html",
         ],
         "cta": [CTA_STORE, ("offers/security-quick-audit.html", "Start with the $249 Security Quick-Audit")],
     },
@@ -651,6 +652,7 @@ FIXED_VIEWPORT = {
     "sentinel.html", "clearglass.html", "air-control.html",
     "percival-os.html", "artemis-percival.html", "percival-build.html",
     "clearsight.html", "project-board.html",
+    "GridShield-Ontario-V6-0-ULTRA-FINAL.html",
 }
 
 CSS = (
