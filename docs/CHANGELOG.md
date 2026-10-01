@@ -9,6 +9,44 @@ recorded as done unless it was observed.
 
 ---
 
+## 2026-10-01
+
+Full audit of `main` at `b53bfd7`, covering PRs #112 to #162 (217 commits,
+merged with no CI: F1 still holds, job `110455407504`, `runner_id: 0`). Every
+local gate is green: `ci_local.py` 10/0/1, root 1887 passed, control plane
+739 passed on Postgres 16, all Node builds pass, 0 known vulnerabilities in
+6 npm lockfiles and 7 Python requirement files. Report set:
+`docs/audit/2026-10-01/`.
+
+### Fixed
+
+- **CI could report the admin login guard as green while skipping it.** The
+  `python-tests` job never installed Node; 24 root tests skip without it
+  (including the RFED hash-parity gate) and the admin suite skips below Node
+  22.6. `ci.yml` now pins Node 22 and `tests/test_node_toolchain_guard.py`
+  fails if it stops. Protected path: needs review.
+- **The documented local stack could not record a lead.** Compose exits 1
+  without `.env`, `DEPLOY.md` copied the wrong example file, and nothing
+  applied the migrations: `/ready` 200, `POST /revenue/leads` 500 (reproduced
+  on Postgres 16.14). Docs now copy `control-plane/.env.example` and set
+  `RUN_MIGRATIONS=true`; the same configuration returns 201.
+- `CLAUDE.md` and `docs/ARCHITECTURE.md` workflow counts (85 / 38 scheduled /
+  18 write-scoped).
+
+### Found, not changed (owner approval)
+
+- Third-party email addresses (`remote_strike_pipeline.csv`) and 45 personal
+  or business documents are published at the site root of a public repository.
+- `/ready` passes on a database with no schema.
+- Auto Heal fires on every workflow completion (14 runs for one merge).
+- The live Stripe key is read by a job with no environment.
+- `main` is still unprotected.
+
+### Corrected
+
+- 2026-09-24 carried S4 (admin key on a public page) as open; `f8a225a` had
+  already removed it. Closed.
+
 ## 2026-09-23
 
 `main` had gone red again. 156 commits (PRs #52 to #101) merged with no CI,

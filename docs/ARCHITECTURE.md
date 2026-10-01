@@ -279,8 +279,10 @@ canonical JSON and identical chain hashes across both. Change one, change both.
 > python3 scripts/ci_local.py
 > ```
 
-When entitlement returns, 36 scheduled workflows resume at once and 16 can commit
-back to the repository. That warrants a staged re-enable, not a flip. R4.
+When entitlement returns, 38 scheduled workflows resume at once and 18 can commit
+back to the repository (counted 2026-10-01; 36 and 16 on 2026-09-24). That
+warrants a staged re-enable, not a flip. R4. `auto-heal.yml` also reacts to the
+completion of every other workflow; see `docs/audit/2026-10-01/WORKFLOW_MAP.md`.
 
 The root `workflows/` directory is the intact pre-flattening archive and is the
 rollback source. **Copy from it, never move**, and never bulk-register it.
