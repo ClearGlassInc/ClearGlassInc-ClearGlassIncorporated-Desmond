@@ -8,6 +8,8 @@ them are zero today.
 0 bookings, CAD 0 in PayPal. See [`daily/2026-09-30.md`](daily/2026-09-30.md).
 Re-read again 19:41–19:50 UTC: no stage changed. The working pipeline now
 lives in a private sheet in the owner's Drive, not in this repository.
+**Re-read 2026-10-01, to 13:54 UTC: no stage changed.** 0 replies, 0 bounces,
+0 bookings, 0 calls logged, CAD 0 incoming. See [`daily/2026-10-01.md`](daily/2026-10-01.md).
 
 **Correction.** The 2026-09-25 version of this table said 0 outbound leads
 were contacted. That was wrong when it was written: the Quick-Audit emails went
