@@ -58,7 +58,7 @@ import re
 import sys
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import urlencode, urlsplit
+from urllib.parse import urlencode, urljoin, urlsplit
 
 ROOT = Path(__file__).resolve().parent.parent
 CAMPAIGN_DIR = ROOT / "data" / "campaigns"
@@ -236,6 +236,17 @@ class _Page(HTMLParser):
         return [name for id_, name, named in self._fields if not named and id_ not in self._label_for]
 
 
+def _is_same_site_privacy_link(href: str, landing_path: str) -> bool:
+    """Whether href resolves to this site's canonical privacy-policy path."""
+    site = urlsplit(SITE)
+    resolved = urlsplit(urljoin(f"{SITE}{landing_path}", href))
+    return (
+        resolved.scheme == site.scheme
+        and resolved.netloc == site.netloc
+        and resolved.path == f"/{PRIVACY_POLICY_PATH}"
+    )
+
+
 def destination_problem(landing_page: str) -> str | None:
     """Why a landing page cannot receive traffic, or ``None`` if it can."""
     parts = urlsplit(landing_page or "")
@@ -253,7 +264,7 @@ def destination_problem(landing_page: str) -> str | None:
         return f"{parts.path} has no element with id '{parts.fragment}'"
     if ATTRIBUTION_SCRIPT not in html:
         return f"{parts.path} does not load {ATTRIBUTION_SCRIPT}, so its campaign tags never reach the lead"
-    if not any(urlsplit(href).path.endswith(PRIVACY_POLICY_PATH) for href in page.hrefs):
+    if not any(_is_same_site_privacy_link(href, parts.path) for href in page.hrefs):
         return f"{parts.path} has no link to the privacy policy (/{PRIVACY_POLICY_PATH}) [AD-DESTINATION]"
     if not page.lang:
         return f"{parts.path} does not declare its language (<html lang>, WCAG 2.2 SC 3.1.1) [AD-DESTINATION]"

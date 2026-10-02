@@ -158,6 +158,8 @@ GOOD_PAGE = (
 
 @pytest.mark.parametrize("change, expected", [
     (('<a href="../legal/privacy.html">Privacy policy</a>', ""), "no link to the privacy policy"),
+    (("href=\"../legal/privacy.html\"", "href=\"https://evil.example/legal/privacy.html\""), "no link to the privacy policy"),
+    (("href=\"../legal/privacy.html\"", "href=\"/fake/legal/privacy.html\""), "no link to the privacy policy"),
     (('<html lang="en">', "<html>"), "does not declare its language"),
     (('alt=""', ""), "1 image(s) without alt text"),
     (('<label>Email<input name="email"></label>', '<input name="email">'), "without a label: email"),
