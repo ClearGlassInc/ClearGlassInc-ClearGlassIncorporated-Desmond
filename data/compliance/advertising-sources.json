@@ -1,0 +1,98 @@
+{
+  "recorded_on": "2026-10-02",
+  "provenance": "Source list supplied by the owner on 2026-10-02. None of it was fetched: this environment's egress proxy refused every host below. No quote, date or requirement is recorded from these pages, so each entry says where to check, not what the page says today. Set 'fetched' to the date someone actually reads a page.",
+  "qualification": "These sources support the governance model. They do not show that ClearGlass Inc. meets any platform, legal, security, privacy or advertising requirement. Before a campaign runs, the owner re-reads the platform's current rules and gets professional review for business-specific legal, tax, privacy and claims questions.",
+  "hierarchy": [
+    "The ad platform's current terms, advertising policies, data-processing terms, billing terms and verification requirements.",
+    "Canadian federal and Ontario privacy, consumer-protection, tax and commercial-electronic-message obligations.",
+    "ClearGlass's own published privacy policy (legal/privacy.html), terms, service descriptions and substantiation records.",
+    "Written review by qualified Canadian legal, tax and privacy professionals where a campaign involves personal data, retargeting, security claims, legal-tech claims, cross-border processing or OSINT-related messaging.",
+    "Security baselines: NIST CSF 2.0 and the Canadian Centre for Cyber Security baseline controls."
+  ],
+  "sources": [
+    {"id": "opc-pipeda", "authority": "Office of the Privacy Commissioner of Canada", "title": "PIPEDA overview", "url": "https://www.priv.gc.ca/en/privacy-topics/privacy-laws-in-canada/the-personal-information-protection-and-electronic-documents-act-pipeda/", "fetched": null},
+    {"id": "opc-meaningful-consent", "authority": "Office of the Privacy Commissioner of Canada", "title": "Guidelines for obtaining meaningful consent", "url": "https://www.priv.gc.ca/en/privacy-topics/collecting-personal-information/consent/gl_omc_201805/", "fetched": null},
+    {"id": "opc-privacy-laws", "authority": "Office of the Privacy Commissioner of Canada", "title": "Privacy laws in Canada", "url": "https://www.priv.gc.ca/en/privacy-topics/privacy-laws-in-canada/", "fetched": null},
+    {"id": "crtc-casl", "authority": "Canadian Radio-television and Telecommunications Commission", "title": "Canada's Anti-Spam Legislation (CASL) guidance", "url": "https://crtc.gc.ca/eng/com500/faq500.htm", "fetched": null},
+    {"id": "cb-advertising-basics", "authority": "Competition Bureau Canada", "title": "Advertising and marketing basics", "url": "https://competition-bureau.canada.ca/deceptive-marketing-practices/advertising-and-marketing-basics", "fetched": null},
+    {"id": "cb-deceptive-marketing", "authority": "Competition Bureau Canada", "title": "Deceptive marketing practices", "url": "https://competition-bureau.canada.ca/deceptive-marketing-practices", "fetched": null},
+    {"id": "adstandards-code", "authority": "Ad Standards Canada", "title": "Canadian Code of Advertising Standards", "url": "https://adstandards.ca/code/", "fetched": null},
+    {"id": "google-ads-policies", "authority": "Google", "title": "Google Ads policies", "url": "https://support.google.com/adspolicy/answer/6008942", "fetched": null},
+    {"id": "google-personalized-ads", "authority": "Google", "title": "Personalized advertising policy", "url": "https://support.google.com/adspolicy/answer/143465", "fetched": null},
+    {"id": "google-advertiser-verification", "authority": "Google", "title": "Advertiser verification", "url": "https://support.google.com/adspolicy/answer/9703665", "fetched": null},
+    {"id": "google-consent-mode", "authority": "Google", "title": "Consent mode", "url": "https://support.google.com/tagmanager/answer/13695607", "fetched": null, "note": "A technical mechanism, not a substitute for deciding what consent the law requires."},
+    {"id": "google-analytics-privacy", "authority": "Google", "title": "Google Analytics data privacy and security", "url": "https://support.google.com/analytics/answer/6004245", "fetched": null},
+    {"id": "microsoft-ads-policies", "authority": "Microsoft", "title": "Microsoft Advertising policies", "url": "https://about.ads.microsoft.com/en-us/resources/policies", "fetched": null},
+    {"id": "linkedin-ads-policy", "authority": "LinkedIn", "title": "LinkedIn Advertising Policies", "url": "https://www.linkedin.com/legal/ads-policy", "fetched": null},
+    {"id": "nist-csf-2", "authority": "National Institute of Standards and Technology", "title": "Cybersecurity Framework 2.0", "url": "https://www.nist.gov/cyberframework", "fetched": null},
+    {"id": "nist-privacy-framework", "authority": "National Institute of Standards and Technology", "title": "Privacy Framework", "url": "https://www.nist.gov/privacy-framework", "fetched": null},
+    {"id": "cccs-baseline-controls", "authority": "Canadian Centre for Cyber Security", "title": "Baseline cyber security controls for small and medium organizations (ITSAP.10.008)", "url": "https://www.cyber.gc.ca/en/guidance/baseline-cyber-security-controls-small-and-medium-organizations-itsap10008", "fetched": null},
+    {"id": "w3c-wcag-22", "authority": "W3C", "title": "Web Content Accessibility Guidelines (WCAG) 2.2", "url": "https://www.w3.org/TR/WCAG22/", "fetched": null},
+    {"id": "canada-content-style-guide", "authority": "Government of Canada", "title": "Canada.ca Content Style Guide", "url": "https://www.canada.ca/en/treasury-board-secretariat/services/government-communications/canada-content-style-guide.html", "fetched": null, "note": "Supplied as 'web accessibility standards', but the URL is the Canada.ca Content Style Guide: plain-language writing guidance, not an accessibility standard. The landing-page gate checks against WCAG 2.2."}
+  ],
+  "controls": [
+    {
+      "id": "AD-CLAIMS",
+      "rule": "No absolute, performance or urgency claim ('guaranteed', 'unhackable', '100%', 'fully compliant', 'certified', 'proven', 'best', 'limited time', ...) in ad copy unless a substantiation entry names a file in this repository that proves it.",
+      "enforced_by": "tools/campaign_registry.py",
+      "when": "always",
+      "sources": ["cb-advertising-basics", "cb-deceptive-marketing", "adstandards-code", "google-ads-policies"]
+    },
+    {
+      "id": "AD-TARGETING",
+      "rule": "No audience or targeting built on a sensitive personal trait (health or medical condition, disability, pregnancy, religion, ethnicity, sexual orientation, gender identity, political views, union membership, immigration status, criminal record, debt or financial hardship). An industry is not a trait.",
+      "enforced_by": "tools/campaign_registry.py",
+      "when": "always",
+      "sources": ["google-personalized-ads", "linkedin-ads-policy", "microsoft-ads-policies", "opc-pipeda"]
+    },
+    {
+      "id": "AD-TRACKING",
+      "rule": "No remarketing, customer-list upload or conversion pixel while legal/privacy.html says ClearGlass deploys no advertising cookies or third-party tracking pixels. The policy changes first, with counsel; then a dated legal review is required at approval.",
+      "enforced_by": "tools/campaign_registry.py",
+      "when": "always",
+      "sources": ["opc-meaningful-consent", "google-consent-mode", "google-personalized-ads", "nist-privacy-framework"]
+    },
+    {
+      "id": "AD-DESTINATION",
+      "rule": "A landing page links the privacy policy, declares its language, gives every image a text alternative and every visible form field a label.",
+      "enforced_by": "tools/campaign_registry.py",
+      "when": "always",
+      "sources": ["opc-pipeda", "w3c-wcag-22", "google-ads-policies", "canada-content-style-guide"]
+    },
+    {
+      "id": "AD-PLATFORM",
+      "rule": "For each platform a package carries ads for: the date the owner read that platform's current ad policies, and its advertiser-verification state ('verified' or 'not_required').",
+      "enforced_by": "tools/campaign_registry.py",
+      "when": "at approval",
+      "sources": ["google-ads-policies", "google-advertiser-verification", "microsoft-ads-policies", "linkedin-ads-policy"]
+    },
+    {
+      "id": "AD-ACCOUNT",
+      "rule": "Every login to an ad account the campaign spends through uses multi-factor authentication.",
+      "enforced_by": "tools/campaign_registry.py",
+      "when": "at approval",
+      "sources": ["cccs-baseline-controls", "nist-csf-2"]
+    },
+    {
+      "id": "AD-CASL",
+      "rule": "A package that sends email records the recipient list's consent basis ('express' or 'implied'); every message still passes python -m bots.outreach_preflight (sender identification, mailing address, unsubscribe).",
+      "enforced_by": "tools/campaign_registry.py",
+      "when": "at approval",
+      "sources": ["crtc-casl"]
+    },
+    {
+      "id": "AD-LEGAL",
+      "rule": "A dated review by qualified counsel when copy names compliance, privacy law, legal matters, insurance, regulators, OSINT or cross-border matters, or when targeting tracks visitors.",
+      "enforced_by": "tools/campaign_registry.py",
+      "when": "at approval",
+      "sources": ["opc-privacy-laws", "cb-deceptive-marketing", "adstandards-code"]
+    },
+    {
+      "id": "AD-MEASUREMENT",
+      "rule": "No personal information reaches an analytics provider, and no funnel event fires until the owner chooses a provider.",
+      "enforced_by": "tests/test_analytics_funnel_events.py",
+      "when": "always",
+      "sources": ["google-analytics-privacy", "opc-pipeda", "nist-privacy-framework"]
+    }
+  ]
+}
