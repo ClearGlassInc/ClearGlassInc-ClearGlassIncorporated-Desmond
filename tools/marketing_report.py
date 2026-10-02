@@ -84,6 +84,7 @@ def collect() -> dict[str, Any]:
             "ready_for_approval": not issues,
             "tracked_link": campaign_registry.tracked_url(c) if not issues else None,
             "problems": issues,
+            "at_approval": campaign_registry.attestations_missing(c),
             "blockers": c.get("blockers", []),
             "dependencies": c.get("dependencies", []),
             "spend_ceiling_cad": c.get("spend_ceiling_cad"),
@@ -154,7 +155,9 @@ def collect() -> dict[str, Any]:
     for c in ready:
         if c["status"] not in campaign_registry.LIVE_STATUSES:
             actions.append(f"Owner: review {c['id']} ({c['code']}) for approval; set its spend ceiling "
-                           f"(0 for organic) and confirm the proposed success and shutdown thresholds.")
+                           f"(0 for organic), confirm the proposed success and shutdown thresholds, and "
+                           f"record its {len(c['at_approval'])} governance item(s) "
+                           f"(python3 tools/campaign_registry.py lists them).")
     if not registries["opportunities"]:
         actions.append("Record observed market signals in data/growth/opportunities.json, each with its "
                        "public source and a dated quote. This environment could not reach the primary "

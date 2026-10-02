@@ -505,3 +505,26 @@ python3 tools/marketing_report.py            # executive report (--json for data
 python3 tools/campaign_registry.py           # readiness; --links for tracked URLs; --check gates approved ones
 python3 tools/growth_registry.py --check     # opportunities, experiments, competitors
 ```
+
+### Advertising controls — 2026-10-02
+
+The owner supplied a source list (PIPEDA and OPC consent guidance, CASL,
+Competition Bureau, Ad Standards, Google, Microsoft and LinkedIn ad policies,
+NIST CSF 2.0 and Privacy Framework, CCCS baseline controls, WCAG 2.2). It is
+recorded in `data/compliance/advertising-sources.json` with nine controls,
+each tied to its sources; the control table is in
+[`growth-system/compliance-controls.md`](../growth-system/compliance-controls.md).
+None of the sources could be fetched here (egress proxy), so none is quoted.
+
+| Change | Evidence for it | Rollback |
+|---|---|---|
+| `campaign_registry` checks claims, sensitive-trait audiences, tracking, and landing-page privacy link and accessibility on every package; owner `governance` attestations on approved ones | No check covered claims, targeting, the privacy link, accessibility, platform policy review, MFA, CASL basis or legal review | Revert `tools/campaign_registry.py` |
+| Privacy-policy link on all 11 campaign landing pages | None of them linked `legal/privacy.html`, though four collect personal information through a form | Revert the page footers |
+| `m365-account-protection` `not_built` names retargeting and the email sequence | Its deliverables list "retargeting copy", which `legal/privacy.html` §10 rules out ("We do not deploy advertising cookies or third-party tracking pixels") | Revert the package file |
+| `marketing_report.py` counts each ready package's approval items | The owner action did not say what approval now requires | Revert the tool |
+
+Both ready packages still pass every content control. At approval the owner
+records: `burlington-cyber-risk-checkup`, the Google Ads and LinkedIn policy
+reviews and verification states, MFA, and the CASL basis for its outreach
+emails; `m365-account-protection`, the Google Ads review and verification, and
+MFA.

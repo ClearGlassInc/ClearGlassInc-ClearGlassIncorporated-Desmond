@@ -104,7 +104,13 @@ def test_an_approved_campaign_has_an_owner_set_spend_ceiling() -> None:
 
 
 def test_ad_copy_over_googles_limits_is_caught_before_approval() -> None:
-    long_ads = {**COMPLETE, "google_search_ads": [{"headline": "H" * 31, "description": "D" * 91}]}
+    attested = {
+        "policy_reviewed_on": {"google_ads": "2026-10-01"},
+        "advertiser_verification": {"google_ads": "verified"},
+        "account_mfa": True,
+    }
+    long_ads = {**COMPLETE, "governance": attested,
+                "google_search_ads": [{"headline": "H" * 31, "description": "D" * 91}]}
     assert registry.problems(long_ads) == [
         "google_search_ads[1].headline is over Google's 30-character limit",
         "google_search_ads[1].description is over Google's 90-character limit",
