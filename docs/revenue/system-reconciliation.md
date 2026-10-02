@@ -94,7 +94,7 @@ AQ-1001-1 to AQ-1001-8 stand as written in the daily report and PR #164.
 |---|---|---|---|---|
 | AQ-1001-9 | Confirm where Stripe sends successful-payment email, and that it is on | With 0 webhooks it is the only notice of a card sale | None | Stripe Dashboard, your user's notification settings: turn on email for successful payments. Send it to a mailbox you read daily, ideally mailbox A |
 | AQ-1001-10 | Check the 9 published Payment Links are active | Owner's read counted 5 active. A deactivated link shows the buyer an error | None to check. Removing a link from a page is a gated pricing-page edit | Stripe Dashboard → Payment Links: confirm `…Ni00`, `…Ni01`, `…Ni02` and `…Ni07` are active. Name any that are not, and each one comes off its page |
-| AQ-1001-11 | Merge the Quick-Audit button change | The primary offer's page can now take a card payment | Low. Same link, same CAD 249 price already on `store.html` and `pricing.html`. Refund and authorization terms are still missing from every paid page (D3), as they already were | Merge this pull request after AQ-1001-9 |
+| AQ-1001-11 | Merge the Quick-Audit button change | The primary offer's page can now take a card payment | Low. Same link, same CAD 249 price already on `store.html` and `pricing.html`. Refund and authorization terms are still missing from every paid page (D3), as they already were | Merge this pull request after AQ-1001-9. **CLOSED** 2026-10-01: merged in PR #165 (22:32 UTC); Pages run #257 published `582ec42` at 22:34:52 UTC ([`daily/2026-10-02.md`](daily/2026-10-02.md)) |
 
 ### Next highest-value action
 

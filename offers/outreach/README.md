@@ -29,6 +29,11 @@ Lawful, consent-respecting B2B outreach for the four fixed-scope offerings.
    address on `clearglassinc.com`, which has no MX record. Never create a sendable draft,
    in Gmail or anywhere else, that still holds a placeholder: if a required fact such as
    the mailing address is not known yet, do not draft.
+   One exception. A message that answers a firm's own request or inquiry (a question by
+   email, or "send me details" on a call) is outside CASL section 6 under the Electronic
+   Commerce Protection Regulations, SOR/2013-221, s. 3(b), so a `MAILING_ADDRESS` or
+   `OPT_OUT` failure does not bind it. Record the request (date, time, channel) in the
+   private sheet before sending. Every other check still applies.
 
 ## Workflow
 1. Copy `lead-list-template.csv` to `lead-list-<area>.csv` and fill it from permitted

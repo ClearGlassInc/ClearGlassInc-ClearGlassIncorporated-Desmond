@@ -39,6 +39,10 @@ Guidance for agents working in this repository.
 > Re-verified 2026-10-01: still true. Job `110455407504` (Auto Heal, on
 > `b53bfd7`) reported `runner_id: 0` and finished in 4 seconds; Pages run #253
 > deployed the same commit in 33 seconds. See `docs/audit/2026-10-01/`.
+>
+> Re-verified 2026-10-02: still true. Job `110643972279` (Auto Heal, on
+> `582ec42`) reported `runner_id: 0` and no steps, and finished in 4 seconds;
+> Pages run #257 deployed the same commit. See `docs/revenue/daily/2026-10-02.md`.
 
 ## What this repo is
 
