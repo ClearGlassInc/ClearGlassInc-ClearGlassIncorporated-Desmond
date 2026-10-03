@@ -1,0 +1,57 @@
+{
+  "version": "1.1",
+  "purpose": "Authorized public-source regulatory and procurement change monitoring for ClearGlass Strait Watch.",
+  "default_timeout_seconds": 20,
+  "max_response_bytes": 5242880,
+  "sources": [
+    {
+      "id": "ustr-presidential-tariff-actions",
+      "authority": "USTR",
+      "url": "https://www.ustr.gov/trade-topics/presidential-tariff-actions",
+      "allowed_hosts": ["www.ustr.gov"],
+      "content_types": ["text/html"]
+    },
+    {
+      "id": "ustr-canada-section338",
+      "authority": "USTR",
+      "url": "https://www.ustr.gov/about/policy-offices/press-office/press-releases/2026/september/ambassador-greer-issues-statement-president-trumps-response-canadas-continued-retaliation-against",
+      "allowed_hosts": ["www.ustr.gov"],
+      "content_types": ["text/html"]
+    },
+    {
+      "id": "cbsa-customs-tariff",
+      "authority": "CBSA",
+      "url": "https://www.cbsa-asfc.gc.ca/trade-commerce/tariff-tarif/menu-eng.html",
+      "allowed_hosts": ["www.cbsa-asfc.gc.ca"],
+      "content_types": ["text/html"]
+    },
+    {
+      "id": "cnsc-regulatory-documents",
+      "authority": "CNSC",
+      "url": "https://www.cnsc-ccsn.gc.ca/eng/acts-and-regulations/regulatory-documents/",
+      "allowed_hosts": ["www.cnsc-ccsn.gc.ca"],
+      "content_types": ["text/html"]
+    },
+    {
+      "id": "cnsc-consultations",
+      "authority": "CNSC",
+      "url": "https://www.cnsc-ccsn.gc.ca/eng/acts-and-regulations/consultation/",
+      "allowed_hosts": ["www.cnsc-ccsn.gc.ca"],
+      "content_types": ["text/html"]
+    },
+    {
+      "id": "opg-supply-chain",
+      "authority": "OPG",
+      "url": "https://www.opg.com/suppliers/supply-chain/",
+      "allowed_hosts": ["www.opg.com"],
+      "content_types": ["text/html"]
+    },
+    {
+      "id": "bruce-supplier-prequalification",
+      "authority": "Bruce Power",
+      "url": "https://www.brucepower.com/become-a-supplier/prequalification-portal/",
+      "allowed_hosts": ["www.brucepower.com"],
+      "content_types": ["text/html"]
+    }
+  ]
+}
