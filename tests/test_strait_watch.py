@@ -42,9 +42,10 @@ def test_json_invalid_payload_fails_closed() -> None:
 def test_registry_is_valid() -> None:
     root = Path(__file__).resolve().parents[1]
     policy, sources = load_registry(root / "data/strait-watch/sources.json")
-    assert policy["version"] == "1.0"
+    assert policy["version"] == "1.1"
     assert len(sources) >= 5
     assert all(source.url.startswith("https://") for source in sources)
+    assert len({source.source_id for source in sources}) == len(sources)
 
 
 def test_registry_rejects_http_and_non_allowlisted_host(tmp_path: Path) -> None:
