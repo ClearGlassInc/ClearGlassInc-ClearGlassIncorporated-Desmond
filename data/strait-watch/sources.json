@@ -1,0 +1,43 @@
+{
+  "version": "1.0",
+  "purpose": "Authorized public-source regulatory and procurement change monitoring for ClearGlass Strait Watch.",
+  "default_timeout_seconds": 20,
+  "max_response_bytes": 5242880,
+  "sources": [
+    {
+      "id": "ustr-home",
+      "authority": "USTR",
+      "url": "https://ustr.gov/",
+      "allowed_hosts": ["ustr.gov"],
+      "content_types": ["text/html"]
+    },
+    {
+      "id": "cnsc-regulatory-documents",
+      "authority": "CNSC",
+      "url": "https://www.cnsc-ccsn.gc.ca/eng/acts-and-regulations/regulatory-documents/",
+      "allowed_hosts": ["www.cnsc-ccsn.gc.ca"],
+      "content_types": ["text/html"]
+    },
+    {
+      "id": "cnsc-consultations",
+      "authority": "CNSC",
+      "url": "https://www.cnsc-ccsn.gc.ca/eng/acts-and-regulations/consultation/",
+      "allowed_hosts": ["www.cnsc-ccsn.gc.ca"],
+      "content_types": ["text/html"]
+    },
+    {
+      "id": "opg-supply-chain",
+      "authority": "OPG",
+      "url": "https://www.opg.com/suppliers/supply-chain/",
+      "allowed_hosts": ["www.opg.com"],
+      "content_types": ["text/html"]
+    },
+    {
+      "id": "bruce-supplier-prequalification",
+      "authority": "Bruce Power",
+      "url": "https://www.brucepower.com/become-a-supplier/prequalification-portal/",
+      "allowed_hosts": ["www.brucepower.com"],
+      "content_types": ["text/html"]
+    }
+  ]
+}
