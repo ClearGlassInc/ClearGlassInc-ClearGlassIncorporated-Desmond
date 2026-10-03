@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07111d">
+<meta name="robots" content="noindex,nofollow">
+<title>ClearGlass Legal Assistance — Local Security Prototype</title>
+<style>
+:root{color-scheme:dark;--bg:#07111d;--panel:#102235;--line:#24445c;--text:#edf6fc;--muted:#a9bdcc;--cyan:#70dcff;--amber:#ffd68a;--green:#91e2bd;--red:#ff9d9d}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 85% -10%,#17405b 0,transparent 40%),var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:960px;margin:auto;padding:26px 18px 60px}.top{border-bottom:1px solid var(--line);padding-bottom:16px}.eyebrow{color:var(--cyan);font-size:12px;letter-spacing:.16em;font-weight:750}.brand{font-size:21px;font-weight:800}
+h1{font-size:clamp(28px,5vw,42px);line-height:1.1;margin:28px 0 8px}h2{font-size:20px;margin:0 0 12px}p{color:var(--muted);margin:7px 0}
+.notice,.panel{border:1px solid var(--line);border-radius:16px;padding:17px;margin:18px 0;background:#0d1d2c}.notice{border-color:#765f34;background:#282316}.notice strong{color:var(--amber)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}.panel{margin:0}.field{display:grid;gap:6px;margin:12px 0}label{font-weight:650;font-size:14px}input,textarea{width:100%;background:#071522;color:var(--text);border:1px solid #35536a;border-radius:9px;padding:11px;font:inherit}textarea{min-height:100px;resize:vertical}
+button{border:1px solid #4385a5;background:#12354a;color:#eaf8ff;border-radius:9px;padding:10px 14px;font:inherit;font-weight:700;cursor:pointer;margin:4px 6px 4px 0}button.secondary{background:#172636;border-color:#405367}button:disabled{opacity:.45;cursor:not-allowed}:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+.status{font-size:13px;border:1px solid var(--line);padding:7px 10px;border-radius:9px;color:var(--muted);margin:10px 0;overflow-wrap:anywhere}.good{color:var(--green)}.warn{color:var(--amber)}.bad{color:var(--red)}
+.output{white-space:pre-wrap;overflow-wrap:anywhere;background:#06121e;border:1px solid var(--line);border-radius:9px;padding:12px;min-height:44px;color:#ccecff;font:12px/1.5 ui-monospace,monospace}
+.small{font-size:12px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.steps{padding-left:20px;color:var(--muted)}footer{border-top:1px solid var(--line);margin-top:26px;padding-top:16px;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<main>
+<header class="top"><div class="eyebrow">CLEARGLASS INC.</div><div class="brand">LEGAL ASSISTANCE · SECURITY PROTOTYPE</div></header>
+<h1>Local encryption and call-state simulation</h1>
+<p>Offline, browser-local engineering demonstration. It does not connect to a provider or persist information.</p>
+<div class="notice" role="alert"><strong>DEVELOPMENT ONLY — DO NOT ENTER REAL OR PRIVILEGED CASE INFORMATION.</strong><p>Use synthetic test text only. This page is not a live legal service. No lawyer-client privilege is created. Do not rely on this prototype for confidentiality, legal advice, or evidence preservation.</p></div>
+<div class="grid">
+<section class="panel" aria-labelledby="vault-heading">
+<h2 id="vault-heading">Ephemeral encrypted note demo</h2>
+<p>Demonstrates AES-256-GCM encryption/decryption using the browser Web Crypto API. The encryption key is derived from a demo passphrase using PBKDF2-SHA-256. This is a temporary browser-native stand-in, <strong>not</strong> the production Argon2id/key-wrapping design in the specification.</p>
+<div class="field"><label for="passphrase">Demo passphrase (not a real password)</label><input id="passphrase" type="password" autocomplete="off" placeholder="Enter a synthetic demo passphrase"></div>
+<div class="field"><label for="note">Synthetic note</label><textarea id="note" placeholder="Example: DEMO CASE — hearing date placeholder 2026-11-01. No real names or facts."></textarea></div>
+<div class="row"><button id="encrypt">Encrypt in memory</button><button id="decrypt" class="secondary" disabled>Decrypt and verify</button><button id="clear" class="secondary">Clear memory</button></div>
+<div id="vaultStatus" class="status" role="status" aria-live="polite">Waiting. No note has been read or stored.</div>
+<div class="small">Ciphertext package (salt + IV + ciphertext; displayed only for test inspection):</div><div id="ciphertext" class="output">No encrypted package.</div>
+<div id="decrypted" class="output" aria-live="polite">No decryption performed.</div>
+</section>
+<section class="panel" aria-labelledby="voice-heading">
+<h2 id="voice-heading">Voice-session controller mock</h2>
+<p>Exercises a local state machine only. No microphone, telephone, SIP, AI model, network call, recording, or transcript is involved.</p>
+<div class="status" id="callStatus" role="status" aria-live="polite">State: IDLE</div>
+<div class="row"><button id="startCall">Simulate start</button><button id="endCall" class="secondary" disabled>End session</button><button id="resetCall" class="secondary">Reset</button></div>
+<ol class="steps"><li>Start → DISCLOSURE_REQUIRED</li><li>Accept disclosure → AUTHENTICATION_REQUIRED</li><li>Complete demo authentication → ACTIVE</li><li>End → CLOSED; volatile state cleared</li></ol>
+<div class="row"><button id="acceptDisclosure" disabled>Accept demo disclosure</button><button id="authenticate" disabled>Complete demo auth</button></div>
+<p class="small">The buttons simulate control-plane transitions only. There is no caller identity verification or actual authentication in this mock.</p>
+</section>
+</div>
+<section class="panel" style="margin-top:14px">
+<h2>Local acceptance checks</h2>
+<ul class="steps">
+<li>Encrypt a synthetic note; confirm a ciphertext package is shown and plaintext is not shown in the ciphertext field.</li>
+<li>Decrypt with the same passphrase; confirm exact text match.</li>
+<li>Change the passphrase and decrypt; confirm authentication failure.</li>
+<li>Clear memory; confirm ciphertext and decrypted output disappear and decryption is disabled.</li>
+<li>Run the voice mock through disclosure, demo authentication, active, and closed states.</li>
+<li>Reload the page; confirm no state is restored because no browser storage is used.</li>
+</ul>
+<div class="status warn">Production blockers remain: Argon2id implementation and review; per-case DEK wrapping/KEK custody; recovery; authenticated identity and MFA; authorization and threat modelling; provider retention/geography review; independent security testing; deployment and legal review.</div>
+</section>
+<footer>ClearGlass Legal Assistance · Isolated prototype · No network APIs, external scripts, cookies, local/session storage, IndexedDB, microphone access, telephony, provider credentials, persistent case data, or production deployment.</footer>
+</main>
+<script>
+"use strict";
+(() => {
+  const $ = id => document.getElementById(id);
+  let packageInMemory = null;
+  let voiceState = "IDLE";
+  const enc = new TextEncoder();
+  const dec = new TextDecoder();
+
+  function setVault(message, kind="") {
+    $("vaultStatus").textContent = message;
+    $("vaultStatus").className = "status " + kind;
+  }
+  function toB64(bytes) {
+    let binary = "";
+    for (const byte of bytes) binary += String.fromCharCode(byte);
+    return btoa(binary);
+  }
+  function fromB64(value) {
+    const binary = atob(value);
+    return Uint8Array.from(binary, c => c.charCodeAt(0));
+  }
+  async function deriveKey(passphrase, salt) {
+    const material = await crypto.subtle.importKey("raw", enc.encode(passphrase), "PBKDF2", false, ["deriveKey"]);
+    return crypto.subtle.deriveKey(
+      {name:"PBKDF2", hash:"SHA-256", salt, iterations:310000},
+      material, {name:"AES-GCM", length:256}, false, ["encrypt","decrypt"]
+    );
+  }
+  $("encrypt").addEventListener("click", async () => {
+    try {
+      if (!crypto?.subtle || !isSecureContext) throw new Error("Web Crypto requires a secure context (HTTPS or localhost).");
+      const pass = $("passphrase").value;
+      const note = $("note").value;
+      if (pass.length < 12) throw new Error("Use a demo passphrase of at least 12 characters.");
+      if (!note.trim()) throw new Error("Enter synthetic test text first.");
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const key = await deriveKey(pass, salt);
+      const ciphertext = await crypto.subtle.encrypt({name:"AES-GCM",iv}, key, enc.encode(note));
+      packageInMemory = {salt:toB64(salt),iv:toB64(iv),ciphertext:toB64(new Uint8Array(ciphertext))};
+      $("ciphertext").textContent = JSON.stringify(packageInMemory, null, 2);
+      $("decrypted").textContent = "No decryption performed.";
+      $("decrypt").disabled = false;
+      setVault("Encrypted successfully in volatile page memory. Nothing was uploaded or persisted.", "good");
+    } catch (error) {
+      packageInMemory = null;
+      $("decrypt").disabled = true;
+      setVault(error.message || "Encryption failed.", "bad");
+    }
+  });
+  $("decrypt").addEventListener("click", async () => {
+    try {
+      if (!packageInMemory) throw new Error("No in-memory encrypted package exists.");
+      const pass = $("passphrase").value;
+      const key = await deriveKey(pass, fromB64(packageInMemory.salt));
+      const plain = await crypto.subtle.decrypt(
+        {name:"AES-GCM",iv:fromB64(packageInMemory.iv)}, key, fromB64(packageInMemory.ciphertext)
+      );
+      const result = dec.decode(plain);
+      $("decrypted").textContent = result;
+      setVault(result === $("note").value ? "Decryption and exact plaintext comparison passed." : "Decrypted text differs from the current input.", result === $("note").value ? "good" : "warn");
+    } catch {
+      $("decrypted").textContent = "Decryption failed; passphrase or ciphertext is incorrect.";
+      setVault("AES-GCM authentication failed. No plaintext was recovered.", "bad");
+    }
+  });
+  $("clear").addEventListener("click", () => {
+    packageInMemory = null;
+    $("passphrase").value = "";
+    $("note").value = "";
+    $("ciphertext").textContent = "No encrypted package.";
+    $("decrypted").textContent = "No decryption performed.";
+    $("decrypt").disabled = true;
+    setVault("In-memory note, key derivation inputs, and ciphertext references cleared from application state.", "good");
+  });
+
+  function renderVoice() {
+    $("callStatus").textContent = "State: " + voiceState;
+    $("startCall").disabled = voiceState !== "IDLE" && voiceState !== "CLOSED";
+    $("acceptDisclosure").disabled = voiceState !== "DISCLOSURE_REQUIRED";
+    $("authenticate").disabled = voiceState !== "AUTHENTICATION_REQUIRED";
+    $("endCall").disabled = !["DISCLOSURE_REQUIRED","AUTHENTICATION_REQUIRED","ACTIVE"].includes(voiceState);
+  }
+  $("startCall").addEventListener("click", () => { if (["IDLE","CLOSED"].includes(voiceState)) voiceState="DISCLOSURE_REQUIRED"; renderVoice(); });
+  $("acceptDisclosure").addEventListener("click", () => { if (voiceState==="DISCLOSURE_REQUIRED") voiceState="AUTHENTICATION_REQUIRED"; renderVoice(); });
+  $("authenticate").addEventListener("click", () => { if (voiceState==="AUTHENTICATION_REQUIRED") voiceState="ACTIVE"; renderVoice(); });
+  $("endCall").addEventListener("click", () => { if (["DISCLOSURE_REQUIRED","AUTHENTICATION_REQUIRED","ACTIVE"].includes(voiceState)) voiceState="CLOSED"; renderVoice(); });
+  $("resetCall").addEventListener("click", () => { voiceState="IDLE"; renderVoice(); });
+  renderVoice();
+})();
+</script>
+</body>
+</html>
