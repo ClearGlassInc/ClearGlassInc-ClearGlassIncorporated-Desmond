@@ -177,3 +177,33 @@ For the current static site, these responsibilities remain implemented as DOM se
 - Announce blocked states through role=alert.
 - Honour prefers-reduced-motion.
 - Provide a readable inspector/provenance path even when graph visual rendering is unavailable.
+
+
+## 11. Homepage theme alignment and hierarchy implementation
+
+The implementation uses the ClearGlass homepage design language from `index.html`, not a separate blue/cyan product identity.
+
+- Base surfaces: `#07080b`, `#0e0c0c`, and `#151012`.
+- Brand emphasis: `#ea4648` and `#ee637a`, with the homepage prism gradient retained as the visual reference.
+- Success: `#34d399`; caution: `#fbbf24`; neutral text: `#f7f2f2`, `#c0afb0`, and `#968283`.
+- Typography: Urbanist for interface text and IBM Plex Mono for timestamps, provenance, and machine-readable values.
+- Crimson is reserved for ClearGlass identity and priority emphasis; teal and amber remain semantic status colours.
+- The CSS enhancement is additive and retains existing component selectors, DOM IDs, Sigma/Graphology renderer, evidence-verification flow, and all existing dashboard sections.
+- Mobile prioritises the intelligence score, status, metrics, and graph. Supporting descriptions are visually reduced only where space is constrained; their underlying content and functionality remain available.
+- Touch controls remain at least 38px high, with primary mobile controls at 42px where practical. Reduced-motion preferences remain respected.
+- Empty or unverified values remain empty / not assessed. No sample score, confidence percentage, threat rating, or synthetic telemetry is introduced.
+
+
+## 11. Homepage theme alignment and hierarchy implementation
+
+The implementation uses the ClearGlass homepage design language from `index.html`, not a separate blue/cyan product identity.
+
+- Base surfaces: `#07080b`, `#0e0c0c`, and `#151012`.
+- Brand emphasis: `#ea4648` and `#ee637a`, with the homepage prism gradient retained as the visual reference.
+- Success: `#34d399`; caution: `#fbbf24`; neutral text: `#f7f2f2`, `#c0afb0`, and `#968283`.
+- Typography: Urbanist for interface text and IBM Plex Mono for timestamps, provenance, and machine-readable values.
+- Crimson is reserved for ClearGlass identity and priority emphasis; teal and amber remain semantic status colours.
+- The CSS enhancement is additive and retains existing component selectors, DOM IDs, Sigma/Graphology renderer, evidence-verification flow, and all existing dashboard sections.
+- Mobile prioritises the intelligence score, status, metrics, and graph. Supporting descriptions are visually reduced only where space is constrained; their underlying content and functionality remain available.
+- Touch controls remain at least 38px high, with primary mobile controls at 42px where practical. Reduced-motion preferences remain respected.
+- Empty or unverified values remain empty / not assessed. No sample score, confidence percentage, threat rating, or synthetic telemetry is introduced.
