@@ -12,8 +12,6 @@ from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
 
-
-
 CLEARGLASS_LEGAL_AGENT_PROMPT_PATH = Path("prompts/clearglass_legal_agent_system_prompt.md")
 
 LEGAL_AGENT_STATEMENT_CLASSES: tuple[str, ...] = (
@@ -224,8 +222,6 @@ def render_single_page_elite_prompt() -> str:
     """Return the compressed one-page version for direct system-prompt use."""
 
     return SupremeLegalIntelligenceCore().build_prompt()
-
-
 
 def render_clearglass_legal_agent_prompt() -> str:
     """Load the canonical ClearGlass Legal Agent system prompt from the repository.
