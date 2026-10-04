@@ -1,0 +1,118 @@
+name: PR Staging
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [main, staging]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-staging-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  staging:
+    name: staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout PR head (read-only)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Set up Node.js
+        if: hashFiles('package-lock.json') != ''
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install locked Node dependencies
+        if: hashFiles('package-lock.json') != ''
+        run: npm ci --ignore-scripts=false
+
+      - name: Type-check
+        if: hashFiles('package-lock.json') != ''
+        run: npm run typecheck --if-present
+
+      - name: Unit tests
+        if: hashFiles('package-lock.json') != ''
+        run: npm test --if-present
+
+      - name: Build candidate
+        if: hashFiles('package-lock.json') != ''
+        run: npm run build --if-present
+
+      - name: Verify build output
+        if: hashFiles('package-lock.json') != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -d .next ]]; then
+            test -f .next/BUILD_ID
+            echo "Next.js build verified: $(cat .next/BUILD_ID)"
+          elif [[ -d dist || -d build || -d out ]]; then
+            echo "Build output directory detected."
+          else
+            echo "::error::Build command completed but no recognized output directory was produced."
+            exit 1
+          fi
+
+      - name: Start isolated preview and smoke-test
+        if: hashFiles('package-lock.json') != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! node -e "const p=require('./package.json');process.exit(p.scripts?.start?0:1)"; then
+            echo "::notice::No start script; build verification is the available staging check."
+            exit 0
+          fi
+          PORT=3030 npm run start -- --hostname 127.0.0.1 > /tmp/clearglass-preview.log 2>&1 &
+          server_pid=$!
+          cleanup() { kill "$server_pid" 2>/dev/null || true; }
+          trap cleanup EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent --show-error http://127.0.0.1:3030/ -o /tmp/clearglass-preview.html; then
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              cat /tmp/clearglass-preview.log
+              exit 1
+            fi
+            sleep 2
+          done
+          test -s /tmp/clearglass-preview.html || {
+            cat /tmp/clearglass-preview.log
+            echo "::error::Isolated preview did not become healthy within 60 seconds."
+            exit 1
+          }
+          grep -Eiq '<html|<!doctype' /tmp/clearglass-preview.html
+
+      - name: Record staging evidence
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p staging-evidence
+          cat > staging-evidence/summary.txt <<EOF
+          repository=${GITHUB_REPOSITORY}
+          commit=${GITHUB_SHA}
+          pr=${{ github.event.pull_request.number || 'manual' }}
+          run=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
+          mode=ephemeral-github-hosted-runner
+          cloud_deployment=not_configured
+          EOF
+
+      - name: Upload staging evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: pr-staging-evidence-${{ github.event.pull_request.number || github.run_id }}
+          path: staging-evidence/
+          retention-days: 30
