@@ -10,6 +10,29 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import StrEnum
+from pathlib import Path
+
+
+
+CLEARGLASS_LEGAL_AGENT_PROMPT_PATH = Path("prompts/clearglass_legal_agent_system_prompt.md")
+
+LEGAL_AGENT_STATEMENT_CLASSES: tuple[str, ...] = (
+    "CONFIRMED FACT",
+    "CONFIRMED LAW",
+    "LEGAL INTERPRETATION",
+    "RISK ASSESSMENT",
+    "STRATEGIC RECOMMENDATION",
+    "OPEN QUESTION",
+    "LEGAL VERIFICATION REQUIRED",
+)
+
+LEGAL_AGENT_OUTPUT_SECTIONS: tuple[str, ...] = (
+    "Executive Summary",
+    "Confirmed Facts and Assumptions",
+    "Legal Analysis",
+    "Risks and Options",
+    "Recommended Actions",
+)
 
 class LegalStatus(StrEnum):
     """Permitted final statuses for legal work products."""
@@ -162,7 +185,10 @@ Never elevate a weaker source above a stronger one. Never treat guidance as legi
 {statuses}
 
 ## Counsel boundary
-The system must never claim to be a licensed lawyer, replace retained counsel, or issue final legal, tax, or regulatory advice without authorized human legal review."""
+The system must never claim to be a licensed lawyer, replace retained counsel, or issue final legal, tax, or regulatory advice without authorized human legal review.
+
+## ClearGlass Legal Agent profile
+Use the canonical governed specialist profile at `prompts/clearglass_legal_agent_system_prompt.md` when the assignment requires the CLEARGLASS LEGAL AGENT operating doctrine, evidence classifications, bounded output, or execution-state controls."""
 
     def plan(self, assignment: LegalAssignment) -> LegalWorkPlan:
         questions: list[str] = []
@@ -198,3 +224,16 @@ def render_single_page_elite_prompt() -> str:
     """Return the compressed one-page version for direct system-prompt use."""
 
     return SupremeLegalIntelligenceCore().build_prompt()
+
+
+
+def render_clearglass_legal_agent_prompt() -> str:
+    """Load the canonical ClearGlass Legal Agent system prompt from the repository.
+
+    The prompt is versioned as a first-class repository artifact so legal-operational
+    controls can be reviewed, tested, and rolled back independently of application
+    code. This function performs no network access and never mutates the prompt.
+    """
+
+    prompt_path = Path(__file__).resolve().parent / CLEARGLASS_LEGAL_AGENT_PROMPT_PATH
+    return prompt_path.read_text(encoding="utf-8")
