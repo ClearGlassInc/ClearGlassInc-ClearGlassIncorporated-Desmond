@@ -1,0 +1,7 @@
+/* ClearGlass Legal Assistance — local-only synthetic-data crypto prototype. No network calls, storage, provider SDKs, or real case data. */
+export const VERSION="prototype-2026-10-03";
+const enc=new TextEncoder(),dec=new TextDecoder();
+export async function deriveKey(passphrase,salt){if(!(salt instanceof Uint8Array)||salt.length<16)throw new Error("salt must be at least 16 bytes");const base=await crypto.subtle.importKey("raw",enc.encode(passphrase),"PBKDF2",false,["deriveKey"]);return crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:600000,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["encrypt","decrypt"])}
+export async function encryptJson(value,key){const iv=crypto.getRandomValues(new Uint8Array(12));const ciphertext=new Uint8Array(await crypto.subtle.encrypt({name:"AES-GCM",iv},key,enc.encode(JSON.stringify(value))));return{v:1,alg:"AES-256-GCM",iv:b64(iv),ciphertext:b64(ciphertext)}}
+export async function decryptJson(bundle,key){if(!bundle||bundle.v!==1||bundle.alg!=="AES-256-GCM")throw new Error("unsupported encrypted bundle");return JSON.parse(dec.decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:unb64(bundle.iv)},key,unb64(bundle.ciphertext))))}
+export function randomSalt(){return crypto.getRandomValues(new Uint8Array(16))} export function b64(x){return btoa(String.fromCharCode(...x))} export function unb64(x){return Uint8Array.from(atob(x),c=>c.charCodeAt(0))}
