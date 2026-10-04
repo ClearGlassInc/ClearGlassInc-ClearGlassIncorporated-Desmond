@@ -1,17 +1,230 @@
-<link rel="stylesheet" href="/assets/css/future-buttons.css">
-<script defer src="/assets/js/future-buttons.js"></script>
-<link rel="stylesheet" href="/assets/css/neon-pulse.css">
-<script defer src="/assets/js/neon-pulse.js"></script>
-<script defer src="/logo-badge.js"></script>
-<!doctype html><html lang="en-CA"><head><meta charset="utf-8">
-<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
-<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
-<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
-<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
-<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
-<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
-<link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#07111f">
-<meta name="msapplication-TileColor" content="#07111f">
-<meta name="msapplication-TileImage" content="/icon-192.png">
-<meta name="msapplication-config" content="/browserconfig.xml"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ClearGlass Intelligence Graph | Evidence-Verified Site Intelligence</title><meta name="description" content="Cryptographically verifiable ClearGlass site intelligence graph with multi-source provenance, PageRank, betweenness, Louvain communities, temporal diffs and audit diagnostics."><link rel="stylesheet" href="/assets/intelligence-graph/graph.css"></head><body><div class="cg-shell"><header class="cg-header"><div class="cg-brand">CLEARGLASS // INTELLIGENCE GRAPH</div><div class="cg-status">MULTI-SOURCE · ALGORITHMIC · HASH-CHAINED</div><div class="cg-clock" id="clock">--</div></header><div class="cg-alert"></div><main class="cg-layout"><section id="cgGraphCanvas" aria-label="Interactive ClearGlass site intelligence graph"><div class="cg-graph-legend"><div class="cg-legend-title">Graph state</div><div class="cg-legend-text">Node size ∝ normalized PageRank · node color = detected community · edge width = confirmed source weight.</div></div><div class="cg-controls"><button class="cg-btn" id="zoomIn" type="button">+</button><button class="cg-btn" id="zoomOut" type="button">−</button><button class="cg-btn" id="fitBtn" type="button">Fit</button><button class="cg-btn" id="verifyBtn" type="button">Verify</button><button class="cg-btn" id="closeBtn" type="button">Close</button></div><div class="cg-breadcrumb" id="breadcrumb" aria-label="Graph breadcrumb"></div></section><aside class="cg-side"><section class="cg-block cg-integrity" data-state="pending"><div class="cg-kicker">Integrity</div><div class="cg-integrity-state pending">VERIFYING</div><p class="cg-small">Snapshot payload plus node, edge and cluster hashes are re-verified in-browser.</p></section><section class="cg-block"><div class="cg-kicker">Snapshot</div><h1 class="cg-title" id="snapshotMeta">Awaiting verified export</h1><div class="cg-metric"><div><b id="nodeCount">—</b><span>Nodes</span></div><div><b id="edgeCount">—</b><span>Edges</span></div><div><b id="clusterCount">—</b><span>Communities</span></div><div><b id="confidenceCount">—</b><span>Low-conf nodes</span></div></div><div class="cg-pillrow" id="sourceSummary"></div></section><section class="cg-block"><div class="cg-kicker">Command surface</div><div class="cg-search"><input class="cg-input" id="filter" placeholder="filter title / url / sector / tag:..." autocomplete="off"><button class="cg-btn" id="clearFilter" type="button">Clear</button></div><input class="cg-input" id="command" style="margin-top:7px" placeholder="diff(date_a,date_b) · verify · fit"><pre class="cg-code" id="commandOutput" style="margin-top:9px">Awaiting command input.</pre></section><section id="inspector"></section><section id="diagnostics"></section><section class="cg-block"><div class="cg-kicker">System boundary</div><p class="cg-small">No synthetic authority score. No single-source promotion. Source failures stay visible in the exported evidence chain.</p></section><footer class="cg-block"><div class="cg-small">ClearGlass Inc. · Intelligence Graph · <span id="year"></span></div></footer></aside></main></div><script src="https://cdn.jsdelivr.net/npm/graphology@0.26.0/dist/graphology.umd.min.js" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/sigma@3.0.3/dist/sigma.min.js" crossorigin="anonymous"></script><script src="/assets/intelligence-graph/graph.js"></script></body></html>
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#07080b">
+  <meta name="description" content="ClearGlass Intelligence Graph — executive-grade, evidence-aware graph analysis with mobile-first controls and provenance.">
+  <meta property="og:title" content="ClearGlass Intelligence Graph">
+  <meta property="og:description" content="Evidence-aware graph analysis for executive and analyst workflows.">
+  <link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+  <link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#c4363a">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="stylesheet" href="/assets/css/future-buttons.css">
+  <link rel="stylesheet" href="/assets/css/neon-pulse.css">
+  <link rel="stylesheet" href="/assets/intelligence-graph/graph.css">
+  <title>ClearGlass Intelligence Graph</title>
+</head>
+<body>
+  <div class="cg-shell">
+    <header class="cg-header" aria-label="ClearGlass intelligence navigation">
+      <a class="cg-brand" href="index.html" aria-label="ClearGlass Inc. home">
+        <img class="cg-brand-mark" src="/assets/images/clearglass-holographic-seal.png" alt="" aria-hidden="true">
+        <span><strong>ClearGlass</strong><em>Intelligence Graph</em></span>
+      </a>
+      <div class="cg-header-actions">
+        <span class="cg-live-pill"><i aria-hidden="true"></i>Evidence-aware</span>
+        <button class="cg-icon-btn" id="summaryBtn" type="button" title="Open one-tap executive summary" aria-label="Open executive summary">Summary</button>
+        <button class="cg-icon-btn" id="fullScreenBtn" type="button" title="Enter full-screen graph view" aria-label="Toggle full-screen graph view">Full screen</button>
+        <button class="cg-icon-btn" id="closeBtnTop" type="button" title="Return to Authority Network" aria-label="Return to Authority Network">Close</button>
+      </div>
+    </header>
+
+    <div class="cg-alert" id="alert" role="alert" aria-live="polite"></div>
+
+    <main class="cg-main">
+      <section class="cg-command-strip" aria-label="Intelligence status">
+        <div class="cg-hero-score">
+          <div class="cg-section-label"><span class="cg-icon" aria-hidden="true">◉</span> Intelligence score</div>
+          <div class="cg-hero-value" id="intelligenceScore">—</div>
+          <div class="cg-hero-note" id="intelligenceScoreNote">Reserved for governed, evidence-backed scoring.</div>
+        </div>
+
+        <div class="cg-status-card threat">
+          <div class="cg-section-label"><span class="cg-icon" aria-hidden="true">⌁</span> Threat status</div>
+          <div class="cg-status-value" id="threatStatus">Not assessed</div>
+          <div class="cg-status-note">No threat feed is promoted by this graph shell.</div>
+        </div>
+
+        <div class="cg-status-card confidence">
+          <div class="cg-section-label"><span class="cg-icon" aria-hidden="true">✓</span> Confidence</div>
+          <div class="cg-status-value" id="confidenceScore">—</div>
+          <div class="cg-meter"><span id="confidenceMeter"></span></div>
+        </div>
+
+        <div class="cg-status-card updated">
+          <div class="cg-section-label"><span class="cg-icon" aria-hidden="true">◷</span> Last updated</div>
+          <div class="cg-status-value cg-status-value-small" id="lastUpdated">—</div>
+          <div class="cg-status-note" id="integritySummary">Awaiting verified snapshot</div>
+        </div>
+      </section>
+
+      <section class="cg-metric-grid" aria-label="Key graph metrics">
+        <article class="cg-metric-card">
+          <span class="cg-metric-icon" aria-hidden="true">⌬</span>
+          <div><div class="cg-metric-name">Active models</div><strong id="modelCount">7</strong><small>Graph analytics stack</small></div>
+        </article>
+        <article class="cg-metric-card">
+          <span class="cg-metric-icon" aria-hidden="true">●</span>
+          <div><div class="cg-metric-name">Node count</div><strong id="nodeCount">—</strong><small>Verified entities</small></div>
+        </article>
+        <article class="cg-metric-card">
+          <span class="cg-metric-icon" aria-hidden="true">↗</span>
+          <div><div class="cg-metric-name">Relationships</div><strong id="edgeCount">—</strong><small>Verified directed links</small></div>
+        </article>
+        <article class="cg-metric-card">
+          <span class="cg-metric-icon" aria-hidden="true">▦</span>
+          <div><div class="cg-metric-name">Density</div><strong id="densityValue">—</strong><small>Structural connectivity</small></div>
+        </article>
+        <article class="cg-metric-card">
+          <span class="cg-metric-icon" aria-hidden="true">◌</span>
+          <div><div class="cg-metric-name">Coverage</div><strong id="coverageValue">—</strong><small>Verified reach</small></div>
+        </article>
+      </section>
+
+      <section class="cg-workspace" aria-label="Graph workspace">
+        <section class="cg-graph-panel" id="graphPanel" aria-label="Interactive intelligence graph">
+          <div class="cg-graph-topbar">
+            <div>
+              <div class="cg-kicker">Primary intelligence surface</div>
+              <h1>Relationship graph</h1>
+              <p id="graphSubtitle">Select a node to inspect its evidence, confidence and neighborhood.</p>
+            </div>
+            <div class="cg-graph-actions" aria-label="Graph controls">
+              <button class="cg-control" id="zoomIn" type="button" aria-label="Zoom in">+</button>
+              <button class="cg-control" id="zoomOut" type="button" aria-label="Zoom out">−</button>
+              <button class="cg-control cg-control-wide" id="fitBtn" type="button">Fit</button>
+              <button class="cg-control cg-control-wide" id="verifyBtn" type="button">Verify</button>
+            </div>
+          </div>
+
+          <div class="cg-graph-toolbar">
+            <label class="cg-search-wrap" for="filter">
+              <span aria-hidden="true">⌕</span>
+              <input class="cg-input" id="filter" placeholder="Search nodes, sector, type or tag…" autocomplete="off" inputmode="search">
+            </label>
+            <button class="cg-control cg-control-wide" id="clearFilter" type="button">Clear</button>
+            <div id="sectorFilters" class="cg-filter-row" aria-label="Sector filters"></div>
+          </div>
+
+          <div id="cgGraphCanvas" class="cg-canvas">
+            <div class="cg-canvas-grid" aria-hidden="true"></div>
+            <div class="cg-graph-legend">
+              <div class="cg-legend-title">Graph key</div>
+              <div>Node size · PageRank</div>
+              <div>Node color · community</div>
+              <div>Edge weight · source weight</div>
+              <div>Dashed / low-confidence · inspect evidence</div>
+            </div>
+            <div id="graphEmptyState" class="cg-empty-state">
+              <div class="cg-empty-orbit" aria-hidden="true"></div>
+              <div class="cg-empty-kicker">VERIFIED DATA REQUIRED</div>
+              <h2>Graph surface ready</h2>
+              <p id="emptyStateText">No live snapshot is committed. The shell remains usable without fabricating intelligence data.</p>
+              <button class="cg-action-btn" id="retryBtn" type="button">Retry verification</button>
+            </div>
+            <div class="cg-breadcrumb" id="breadcrumb" aria-label="Graph breadcrumb"></div>
+          </div>
+        </section>
+
+        <aside class="cg-executive-rail" aria-label="Executive intelligence rail">
+          <section class="cg-panel cg-integrity" id="integrityPanel" data-state="pending">
+            <div class="cg-panel-head">
+              <div><span class="cg-icon" aria-hidden="true">◇</span><span>Integrity</span></div>
+              <span class="cg-integrity-state pending" id="integrityState">VERIFYING</span>
+            </div>
+            <p id="integrityNote">Snapshot payload, node, edge and cluster hashes are checked in-browser.</p>
+          </section>
+
+          <section class="cg-panel">
+            <div class="cg-panel-head"><span><span class="cg-icon" aria-hidden="true">◎</span> Executive readout</span><button class="cg-link-btn" id="readoutBtn" type="button">Open</button></div>
+            <h2 id="snapshotMeta">Awaiting verified export</h2>
+            <div class="cg-mini-grid">
+              <div><span>Communities</span><strong id="clusterCount">—</strong></div>
+              <div><span>Low confidence</span><strong id="lowConfidenceCount">—</strong></div>
+            </div>
+            <p id="readoutText">The executive summary will appear here when a verified snapshot is available.</p>
+          </section>
+
+          <section class="cg-panel">
+            <div class="cg-panel-head"><span><span class="cg-icon" aria-hidden="true">✦</span> AI findings</span><span class="cg-panel-badge">GOVERNED</span></div>
+            <div id="aiFindings" class="cg-card-list"><div class="cg-muted-state">No generated findings without verified evidence.</div></div>
+          </section>
+
+          <section class="cg-panel">
+            <div class="cg-panel-head"><span><span class="cg-icon" aria-hidden="true">→</span> Recommended actions</span></div>
+            <div id="recommendedActions" class="cg-card-list"><div class="cg-muted-state">Recommendations appear only when supplied by the verified snapshot.</div></div>
+          </section>
+
+          <section class="cg-panel">
+            <div class="cg-panel-head"><span><span class="cg-icon" aria-hidden="true">⚠</span> Top risks</span></div>
+            <div id="topRisks" class="cg-card-list"><div class="cg-muted-state">Risk labels are not invented by the presentation layer.</div></div>
+          </section>
+
+          <section class="cg-panel">
+            <div class="cg-panel-head"><span><span class="cg-icon" aria-hidden="true">▤</span> Source coverage</span></div>
+            <div class="cg-coverage-list" id="sourceSummary"></div>
+          </section>
+
+          <section class="cg-panel">
+            <div class="cg-panel-head"><span><span class="cg-icon" aria-hidden="true">⌁</span> Analyst query</span></div>
+            <div class="cg-query-row">
+              <input class="cg-input" id="command" placeholder="verify · fit · diff(date_a,date_b)" autocomplete="off">
+            </div>
+            <pre class="cg-code" id="commandOutput">Awaiting command input.</pre>
+          </section>
+        </aside>
+      </section>
+
+      <section class="cg-lower-grid">
+        <section class="cg-panel cg-feed-panel">
+          <div class="cg-panel-head">
+            <span><span class="cg-icon" aria-hidden="true">◒</span> Observation feed</span>
+            <span class="cg-panel-badge" id="feedBadge">SNAPSHOT-BACKED</span>
+          </div>
+          <div class="cg-feed" id="observationFeed">
+            <div class="cg-muted-state">No observations available until a verified snapshot is loaded.</div>
+          </div>
+        </section>
+
+        <section class="cg-panel">
+          <div class="cg-panel-head"><span><span class="cg-icon" aria-hidden="true">⌂</span> Entity inspector</span></div>
+          <div id="inspector">
+            <div class="cg-muted-state">Select a graph node to inspect PageRank, confidence, provenance and neighbors.</div>
+          </div>
+        </section>
+      </section>
+
+      <section class="cg-panel cg-diagnostics-panel">
+        <div class="cg-panel-head">
+          <span><span class="cg-icon" aria-hidden="true">▣</span> Analytical diagnostics</span>
+          <span class="cg-panel-badge">EVIDENCE-AWARE</span>
+        </div>
+        <div id="diagnostics" class="cg-diagnostics-grid">
+          <div class="cg-muted-state">Waiting for a verified snapshot.</div>
+        </div>
+      </section>
+    </main>
+
+    <div class="cg-summary-modal" id="summaryModal" hidden>
+      <div class="cg-summary-backdrop" data-close-summary></div>
+      <section class="cg-summary-dialog" role="dialog" aria-modal="true" aria-labelledby="summaryTitle">
+        <div class="cg-panel-head">
+          <span id="summaryTitle"><span class="cg-icon" aria-hidden="true">◉</span> One-tap executive summary</span>
+          <button class="cg-icon-btn" id="closeSummary" type="button" aria-label="Close summary">Close</button>
+        </div>
+        <div id="summaryBody" class="cg-summary-body">No verified snapshot is available.</div>
+      </section>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/graphology@0.26.0/dist/graphology.umd.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sigma@3.0.3/dist/sigma.min.js" crossorigin="anonymous"></script>
+  <script src="/assets/intelligence-graph/graph.js"></script>
+  <script defer src="/assets/js/future-buttons.js"></script>
+  <script defer src="/assets/js/neon-pulse.js"></script>
+</body>
+</html>
