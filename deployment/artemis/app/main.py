@@ -9,6 +9,8 @@ from pydantic import BaseModel, Field
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 from starlette.responses import Response
 
+from artemis.osint.api import router as osint_router
+
 logger = logging.getLogger("artemis")
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
 
@@ -38,6 +40,7 @@ async def lifespan(app: FastAPI):
     logger.info("Stopping ClearGlassInc Artemis service")
 
 app = FastAPI(title="ClearGlassInc Artemis Model Service", version=MODEL_VERSION, lifespan=lifespan)
+app.include_router(osint_router)
 
 @app.get("/health/live")
 def health_live():
