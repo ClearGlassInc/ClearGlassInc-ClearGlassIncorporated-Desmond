@@ -16,7 +16,7 @@ The journey model is: **discover → orient in a topic hub → explore an adjace
 - **CTA bridge:** Each cluster ends in two relevant, non-coercive next steps such as offers, pricing, readiness, or booking.
 - **Responsive behavior:** Three route cards collapse to one column below 620px; related cards use an adaptive grid; motion is disabled when reduced motion is requested.
 - **SEO and accessibility:** Links are static HTML, labels are descriptive, navigation landmarks are named, focus states are visible, and all routes remain unchanged.
-- **Audit coverage:** 173 public pages are connected and 42 utility, completion, prototype, or private pages are explicitly excluded.
+- **Audit coverage:** 173 public pages are connected and 44 utility, completion, prototype, or private pages are explicitly excluded.
 
 ## Page-by-page flow map
 
@@ -220,6 +220,8 @@ These pages remain intact but are not eligible for generated journey updates. Ex
 | `cg-loader.html` | Application utility | noindex branded loading surface |
 | `google23RWyXWkoxqgArev8achU8IfVxYC5EIUAYBsuTYKLFM.html` | Site verification | Google ownership verification artifact |
 | `header-mockup-2040.html` | Design prototype | noindex, nofollow header study |
+| `clearglass-legal-assistance/prototype/index.html` | Design prototype | noindex, nofollow offline-only legal assistance UI |
+| `clearglass-legal-assistance/prototype/security-prototype.html` | Design prototype | noindex, nofollow local encryption and voice-state study |
 | `loader.html` | Application utility | noindex branded loading surface |
 | `guardian_command_nexus_spec.html` | Duplicate surface | noindex root copy of docs/guardian_command_nexus_spec.html; every inbound link targets the docs/ URL, which is the one in sitemap.xml |
 | `offers/thank-you.html` | Conversion completion | noindex form-success destination |

@@ -67,6 +67,12 @@ EXCLUDED_PAGES: dict[str, tuple[str, str]] = {
         "Site verification", "Google ownership verification artifact"
     ),
     "header-mockup-2040.html": ("Design prototype", "noindex, nofollow header study"),
+    "clearglass-legal-assistance/prototype/index.html": (
+        "Design prototype", "noindex, nofollow offline-only legal assistance UI"
+    ),
+    "clearglass-legal-assistance/prototype/security-prototype.html": (
+        "Design prototype", "noindex, nofollow local encryption and voice-state study"
+    ),
     "loader.html": ("Application utility", "noindex branded loading surface"),
     "guardian_command_nexus_spec.html": (
         "Duplicate surface",
