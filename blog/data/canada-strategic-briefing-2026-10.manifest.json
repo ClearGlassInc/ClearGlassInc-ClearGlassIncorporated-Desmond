@@ -1,0 +1,20 @@
+{
+  "schema": "clearglass-provenance-manifest-v1",
+  "classification": "PUBLIC // OSINT",
+  "artifact": "canada-strategic-briefing-2026-10.json",
+  "artifactSchema": "clearglass-claim-ledger-v1",
+  "asOf": "2026-10-06",
+  "records": 29,
+  "hashAlgorithm": "SHA-256",
+  "sha256": "fe130ebbf524c6aa0ad4e6ccc332d6d44c07cdf93f2c3d617003a1042ae7b778",
+  "console": "../canada-briefing-console.js",
+  "integrityPolicy": "The console recomputes SHA-256 over the exact UTF-8 ledger bytes and compares it with this manifest before rendering. A mismatch is shown as HASH MISMATCH. tests/test_canada_briefing_ledger.py fails if this value goes stale.",
+  "securityModel": {
+    "network": "same-origin ledger and manifest retrieval only",
+    "analytics": false,
+    "externalJavaScriptDependencies": 0,
+    "localState": "tracked actions in browser localStorage only",
+    "exports": "generated client-side",
+    "claim": "Open-source verification aid; no government certification or affiliation is asserted."
+  }
+}

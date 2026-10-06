@@ -360,6 +360,7 @@ PAGES: dict[str, tuple[str, str]] = {
     "blog/2026-09-15-strategic-chokepoint-sitrep.html": ("Strategic Chokepoint Sitrep", "a verification-first open-source assessment of Hormuz, the Red Sea and Ukraine"),
     "blog/shadow-ai-incident-response-logs-gone.html": ("Shadow AI Incident Response", "forensic readiness before security evidence disappears"),
     "blog/canada-strategic-resilience-command-brief-2026.html": ("Canada Strategic Resilience Command Brief", "an evidence-led brief on economic capacity, foreign interference, cyber risk and infrastructure dependencies"),
+    "blog/canada-strategic-briefing-october-2026.html": ("Strategic Briefing: Canada, October 2026", "a verification-first national briefing with a 29-claim evidence ledger, scenarios and an action matrix"),
     "blog/csis-threat-reduction-botnets-canadian-iot-federal-court-2026.html": ("CSIS, Botnets and Canada's Connected Devices", "Federal Court File C-6-24 and threat-reduction warrants reaching into routers and IoT"),
     "blog/truth-forensics.html": ("Truth Forensics Console", "in-browser evidence integrity: hashing, provenance, media indicators and human review"),
     "blog/truth-is-an-evidence-graph.html": ("Truth Is an Evidence Graph", "why copies are not corroboration and how to label what you know"),
@@ -552,6 +553,7 @@ CLUSTERS: dict[str, dict] = {
             "blog/shadow-ai-incident-response-logs-gone.html",
             "blog/2026-09-15-strategic-chokepoint-sitrep.html",
             "blog/canada-strategic-resilience-command-brief-2026.html",
+            "blog/canada-strategic-briefing-october-2026.html",
             "blog/csis-threat-reduction-botnets-canadian-iot-federal-court-2026.html",
             "blog/truth-forensics.html",
             "blog/truth-is-an-evidence-graph.html",
@@ -648,6 +650,7 @@ EXTRA_LINKS: dict[str, list[str]] = {
     "blog/truth-is-an-evidence-graph.html": ["blog/truth-forensics.html", "blog/osint-workflow-that-survives-contact-with-reality.html"],
     "blog/deepfake-detection-needs-chain-of-custody.html": ["blog/truth-forensics.html", "blog/shadow-ai-incident-response-logs-gone.html"],
     "blog/when-ai-cannot-determine-the-truth.html": ["blog/truth-forensics.html", "blog/ai-agent-governance-governed-autonomy.html"],
+    "blog/canada-strategic-briefing-october-2026.html": ["blog/canada-strategic-resilience-command-brief-2026.html", "blog/dual-clock-incident-runbook-ccspa-circia-pipeda.html", "blog/truth-is-an-evidence-graph.html"],
 }
 
 SIBLING_WINDOW = 4     # rotated sibling links per member page
