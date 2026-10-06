@@ -267,6 +267,17 @@ CURATED: dict[str, dict] = {
         series="ClearGlass Strategic Intelligence",
         deskRank=1,
     ),
+    # Desk-verified: every checkable claim in the supplied draft has a record
+    # in blog/data/canada-strategic-briefing-2026-10.json (hash-pinned by its
+    # manifest and tests/test_canada_briefing_ledger.py).
+    "canada-strategic-briefing-october-2026": dict(
+        category="Strategic Resilience",
+        quote="Strong on paper. Slower in practice. Measured claim by claim.",
+        cta="Open the briefing →",
+        topics="strategic-resilience osint cross-border cyber information-integrity",
+        series="ClearGlass Strategic Intelligence",
+        deskRank=1,
+    ),
     "csis-threat-reduction-botnets-canadian-iot-federal-court-2026": dict(
         category="Cyber Intelligence &amp; Critical Infrastructure",
         quote="A Canadian-owned device can become foreign-controlled relay infrastructure.",

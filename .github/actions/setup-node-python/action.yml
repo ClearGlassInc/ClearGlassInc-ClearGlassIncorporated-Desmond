@@ -6,40 +6,70 @@
 # pinned for the same reason ci.yml pins ruff: an unpinned install turns a green
 # tree red with no code change. Local composite action -> exempt from the SHA-pin
 # gate, but every action it calls is pinned to a full commit SHA.
+#
+# Per-component use (reusable-component-ci.yml): pass an empty version to skip
+# that toolchain, a working_directory whose package-lock.json keys the npm cache
+# and `npm ci`, and python_requirements to install a component's runtime deps.
 name: "Setup Node + Python"
 description: "Install the pinned Node.js and Python toolchains plus the repo's lint/test tools."
 
 inputs:
   node_version:
-    description: "Node.js version."
+    description: "Node.js version; empty skips Node."
     required: false
     default: "22"
   python_version:
-    description: "Python version."
+    description: "Python version; empty skips Python."
     required: false
     default: "3.11"
   install_test_tools:
     description: "Install pytest, pytest-cov and pyyaml as well as ruff."
     required: false
     default: "true"
+  working_directory:
+    description: "Component directory; its package-lock.json keys the npm cache and npm ci."
+    required: false
+    default: "."
+  install_node_dependencies:
+    description: "Run npm ci in working_directory when it has a package-lock.json."
+    required: false
+    default: "false"
+  python_requirements:
+    description: "Repository-relative requirements file to install after the tools."
+    required: false
+    default: ""
 
 runs:
   using: "composite"
   steps:
+    - name: Resolve the npm cache
+      id: npm
+      shell: bash
+      env:
+        WD: ${{ inputs.working_directory }}
+      run: |
+        if [ -f "$WD/package-lock.json" ]; then echo "cache=npm" >> "$GITHUB_OUTPUT"; else echo "cache=" >> "$GITHUB_OUTPUT"; fi
+
     - name: Setup Node
+      if: inputs.node_version != ''
       uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
       with:
         node-version: ${{ inputs.node_version }}
+        cache: ${{ steps.npm.outputs.cache }}
+        cache-dependency-path: ${{ inputs.working_directory }}/package-lock.json
 
     - name: Setup Python
+      if: inputs.python_version != ''
       uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       with:
         python-version: ${{ inputs.python_version }}
 
     - name: Install pinned lint and test tools
+      if: inputs.python_version != ''
       shell: bash
       env:
         INSTALL_TEST_TOOLS: ${{ inputs.install_test_tools }}
+        REQS: ${{ inputs.python_requirements }}
       run: |
         set -euo pipefail
         python -m pip install --quiet --upgrade pip
@@ -47,4 +77,23 @@ runs:
         pip install --quiet "ruff==0.15.8"
         if [ "$INSTALL_TEST_TOOLS" = "true" ]; then
           pip install --quiet pytest pytest-cov pyyaml
+        fi
+        if [ -n "$REQS" ]; then
+          if [ ! -f "$REQS" ]; then
+            echo "::error title=Missing requirements::$REQS does not exist"
+            exit 1
+          fi
+          pip install --quiet -r "$REQS"
+        fi
+
+    - name: Install locked Node dependencies
+      if: inputs.node_version != '' && inputs.install_node_dependencies == 'true'
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        set -euo pipefail
+        if [ -f package-lock.json ]; then
+          npm ci --no-audit --no-fund
+        else
+          echo "::notice::No package-lock.json in $PWD; skipping npm ci (an unlocked install is not reproducible)."
         fi

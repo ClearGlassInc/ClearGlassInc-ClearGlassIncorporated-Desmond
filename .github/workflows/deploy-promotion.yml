@@ -1,8 +1,10 @@
 name: Deploy Promotion (Staging -> Production)
 
-# One commit, proven twice: re-run the gates on it, deploy it to staging and
-# smoke-test it, then deploy the same SHA to production behind the production
-# environment's required reviewers (AUTOMATION.md).
+# One commit, proven twice: re-run the gates on it, deploy it to staging, smoke-test
+# it and run the end-to-end contract checks against it, then deploy the same SHA to
+# production behind the production environment's required reviewers (AUTOMATION.md).
+# The provider is the repository variable DEPLOY_PROVIDER (render by default;
+# cloudrun builds one image in staging and promotes that exact digest).
 #
 # OFF BY DEFAULT on push. commerce-deploy.yml already deploys production on every
 # push to main that touches the commerce tree; running both would send two
@@ -11,8 +13,12 @@ name: Deploy Promotion (Staging -> Production)
 # secret (commerce-deploy.yml then keeps its gates and skips its own deploy).
 # A manual workflow_dispatch always runs: it is an explicit human request.
 #
-# No automatic rollback (docs/INCIDENT_RESPONSE.md). A failed production deploy
-# opens an incident issue naming the last known-good SHA for the Rollback workflow.
+# Rollback. render: none automatic (docs/INCIDENT_RESPONSE.md); a failed production
+# deploy opens an incident issue naming the last known-good SHA for the Rollback
+# workflow. cloudrun: traffic is routed back to the previous revision in one shot,
+# unless the release ships control-plane migrations since the last good production
+# deploy (RUN_MIGRATIONS applies them at boot; moving traffic back does not
+# un-migrate a schema), in which case a human decides. The issue opens either way.
 
 on:
   push:
@@ -50,6 +56,8 @@ jobs:
     outputs:
       ref: ${{ steps.ref.outputs.ref }}
       previous_good: ${{ steps.previous.outputs.sha }}
+      auto_rollback: ${{ steps.rollback.outputs.auto_rollback }}
+      services: ${{ steps.rollback.outputs.services }}
     steps:
       - name: Checkout full history
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -102,6 +110,31 @@ jobs:
             core.warning('No successful production deployment found; a failure will not name a rollback target.');
             core.setOutput('sha', '');
 
+      - name: Decide whether production may roll back automatically
+        id: rollback
+        env:
+          PROVIDER: ${{ vars.DEPLOY_PROVIDER || 'render' }}
+          REF: ${{ steps.ref.outputs.ref }}
+          PREVIOUS: ${{ steps.previous.outputs.sha }}
+          RELEASE_SERVICES: ${{ vars.RELEASE_SERVICES || 'control-plane' }}
+        run: |
+          set -euo pipefail
+          auto=false
+          reason="provider $PROVIDER rolls back by hand (Rollback workflow)"
+          if [ "$PROVIDER" = "cloudrun" ]; then
+            if [ -z "$PREVIOUS" ] || ! git cat-file -e "${PREVIOUS}^{commit}" 2>/dev/null; then
+              reason="no known-good production commit to compare migrations against"
+            elif git diff --quiet "$PREVIOUS" "$REF" -- control-plane/migrations; then
+              auto=true
+              reason="no control-plane migrations since ${PREVIOUS:0:7}"
+            else
+              reason="control-plane migrations changed since ${PREVIOUS:0:7}; a human decides"
+            fi
+          fi
+          echo "auto_rollback=$auto" >> "$GITHUB_OUTPUT"
+          echo "services=$RELEASE_SERVICES" >> "$GITHUB_OUTPUT"
+          echo "### Automatic production rollback: **$auto** ($reason)" >> "$GITHUB_STEP_SUMMARY"
+
   gate:
     name: Gates on the release commit
     needs: resolve
@@ -118,17 +151,52 @@ jobs:
   staging:
     name: Staging
     needs: [resolve, gate]
+    permissions:
+      contents: read
+      id-token: write # cloudrun's OIDC exchange
     uses: ./.github/workflows/reusable-deploy.yml
     with:
       environment: staging
       ref: ${{ needs.resolve.outputs.ref }}
       run_smoke: true
       run_e2e: false
+      services: ${{ needs.resolve.outputs.services }}
+      build: true # cloudrun: the one build of this release; production reuses its digest
+      auto_rollback: true # staging holds no customer data
     secrets: inherit
+
+  e2e:
+    name: Staging end-to-end
+    needs: [resolve, staging]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Contract checks against staging (read-only)
+        env:
+          URLS: ${{ needs.staging.outputs.urls }}
+          DEPLOY_URL: ${{ needs.staging.outputs.deploy_url }}
+        run: |
+          set -euo pipefail
+          urls="${URLS:-}"
+          if [ -z "$urls" ]; then urls='{}'; fi
+          api="$(jq -r '."control-plane" // empty' <<<"$urls")"
+          storefront="$(jq -r '.storefront // empty' <<<"$urls")"
+          api="${api:-$DEPLOY_URL}"
+          if [ -z "$api" ]; then
+            echo "::error::staging reported no control-plane URL; refusing to promote untested"
+            exit 1
+          fi
+          python3 scripts/ci/e2e_staging.py --api "$api" --storefront "$storefront"
 
   production:
     name: Production
-    needs: [resolve, staging]
+    needs: [resolve, staging, e2e]
+    permissions:
+      contents: read
+      id-token: write # cloudrun's OIDC exchange
     uses: ./.github/workflows/reusable-deploy.yml
     with:
       environment: production
@@ -136,6 +204,9 @@ jobs:
       run_smoke: true
       run_e2e: true
       rollback_hint_ref: ${{ needs.resolve.outputs.previous_good }}
+      services: ${{ needs.resolve.outputs.services }}
+      build: false # never rebuild for production
+      auto_rollback: ${{ needs.resolve.outputs.auto_rollback == 'true' }}
     secrets: inherit
 
   incident:
@@ -154,6 +225,7 @@ jobs:
           CG_REF: ${{ needs.resolve.outputs.ref }}
           CG_PREVIOUS: ${{ needs.resolve.outputs.previous_good }}
           CG_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          CG_OUTCOME: ${{ needs.production.outputs.outcome }}
         with:
           script: |
             const ref = process.env.CG_REF;
@@ -162,6 +234,9 @@ jobs:
               `Production deploy of \`${ref}\` failed its post-deploy checks.`,
               '',
               `- Run: ${process.env.CG_RUN_URL}`,
+              process.env.CG_OUTCOME === 'rolled-back'
+                ? '- Traffic was already routed back to the previous revision automatically. Verify it is healthy; fix forward through a pull request.'
+                : '- Traffic was NOT moved back automatically.',
               previous
                 ? `- Last known-good revision: \`${previous}\``
                 : '- No known-good revision was recorded; choose one from the production deployment history.',
