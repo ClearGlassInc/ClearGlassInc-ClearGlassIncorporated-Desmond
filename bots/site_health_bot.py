@@ -24,6 +24,8 @@ from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
+from tools.site_page_policy import NON_DEPLOYABLE_HTML_PAGES
+
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "operations" / "output"
 
@@ -67,6 +69,7 @@ SITEMAP_EXEMPT = {
 LOGO_EXEMPT = {
     "google23RWyXWkoxqgArev8achU8IfVxYC5EIUAYBsuTYKLFM.html",
     "artemis-vi.html",  # standalone spec page, no chrome
+    *NON_DEPLOYABLE_HTML_PAGES,
 }
 
 
