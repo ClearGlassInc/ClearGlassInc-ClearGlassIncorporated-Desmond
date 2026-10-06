@@ -5,9 +5,9 @@ on:
     branches: ["main", "staging"]
   pull_request:
     branches: ["main", "staging"]
-  # Manual on-demand runs from the Actions tab / API. auto-fix.yml also uses this
-  # to re-run CI on a PR branch after it pushes a fix: a push made with
-  # GITHUB_TOKEN does not trigger pull_request workflows, workflow_dispatch does.
+  # Manual on-demand runs from the Actions tab / API. A fix pushed by auto-fix.yml
+  # with GITHUB_TOKEN does not trigger pull_request workflows; dispatching this,
+  # or the author's next push, re-runs CI on that branch.
   workflow_dispatch:
 
 permissions:
@@ -175,7 +175,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.changes.outputs.matrix) }}
-    uses: ./.github/workflows/reusable-ci.yml
+    uses: ./.github/workflows/reusable-component-ci.yml
     with:
       component: ${{ matrix.component }}
       language: ${{ matrix.language }}
@@ -216,19 +216,7 @@ jobs:
             exit 1
           }
 
-  # Release: only a push to main whose whole CI run passed starts one.
-  # deploy-promotion.yml runs staging -> E2E -> approval -> production.
-  release:
-    name: Release
-    needs: result
-    if: >-
-      github.event_name == 'push' && github.ref == 'refs/heads/main' &&
-      needs.result.result == 'success' && vars.DEPLOY_PROVIDER != ''
-    permissions:
-      contents: read
-      checks: read
-      id-token: write
-    uses: ./.github/workflows/deploy-promotion.yml
-    with:
-      ref: ${{ github.sha }}
-      base: ${{ github.event.before }}
+  # No release job here. deploy-promotion.yml on main triggers itself on a push
+  # to main (opt-in: PROMOTION_PIPELINE_ENABLED) and declares no workflow_call,
+  # so calling it from this file made GitHub reject the whole of ci.yml. Calling
+  # it as well would also promote every commit twice. See AUTOMATION.md.

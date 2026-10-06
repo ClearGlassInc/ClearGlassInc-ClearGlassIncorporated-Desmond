@@ -42,6 +42,10 @@ jobs:
       github.event.workflow_run.head_branch != 'staging'
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # The approval boundary for unattended writes, shared with auto-heal.yml and
+    # workflow-doctor.yml. audit_github_actions.py cannot see the git push inside
+    # verified-commit, so it does not ask for this; the job needs it all the same.
+    environment: automation-write
     permissions:
       contents: write
       pull-requests: write
@@ -83,7 +87,9 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
           # true, justified: verified-commit falls back to `git push` if the signed
-          # API commit fails. No code from the PR is executed in this job.
+          # API commit fails. No code from the PR is executed in this job: ruff is
+          # pinned from PyPI, and the local actions below are restored from the
+          # default branch before each use, never loaded from this checkout.
           persist-credentials: true
 
       - name: Setup Python
@@ -126,6 +132,23 @@ jobs:
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
           fi
 
+      # This job holds contents: write and pull-requests: write, and a local
+      # action (`uses: ./.github/actions/...`) runs whatever sits at that path in
+      # the workspace, which is the PR's checkout. Without this, a PR could edit
+      # verified-commit or post-pr-comment and run its own code with the token.
+      # So the actions are replaced with the default branch's copies and proven
+      # identical before any of them runs.
+      - name: Load this job's actions from the default branch
+        if: steps.pr.outputs.skip == 'false'
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          git fetch --quiet --no-tags origin "refs/heads/${DEFAULT_BRANCH}"
+          rm -rf -- .github/actions
+          git restore --source=FETCH_HEAD --worktree -- .github/actions
+          git diff --quiet FETCH_HEAD -- .github/actions
+
       - name: Commit the fixes (Verified)
         id: commit
         if: steps.fix.outputs.has_changes == 'true'
@@ -134,6 +157,19 @@ jobs:
           paths: ${{ steps.fix.outputs.paths }}
           message: "auto-fix: ruff safe fixes for PR #${{ steps.pr.outputs.pr_number }}"
           branch: ${{ steps.pr.outputs.branch }}
+
+      # verified-commit ends with `git reset --hard` to the PR branch, which puts
+      # the PR's copy of .github/actions back. Restore again before the comments.
+      - name: Reload this job's actions from the default branch
+        if: steps.pr.outputs.skip == 'false'
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          git fetch --quiet --no-tags origin "refs/heads/${DEFAULT_BRANCH}"
+          rm -rf -- .github/actions
+          git restore --source=FETCH_HEAD --worktree -- .github/actions
+          git diff --quiet FETCH_HEAD -- .github/actions
 
       - name: Comment (fixes applied)
         if: steps.commit.outputs.committed == 'true'
