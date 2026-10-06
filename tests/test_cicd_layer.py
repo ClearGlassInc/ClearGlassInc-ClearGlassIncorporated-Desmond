@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
+from typing import Any
 
 import pytest
 import yaml
@@ -22,6 +23,7 @@ from scripts.audit_github_actions import GitHubLoader, audit, load
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOWS = ROOT / ".github" / "workflows"
 ACTIONS = ROOT / ".github" / "actions"
+DEFAULT_BRANCH = "${{ github.event.repository.default_branch }}"
 
 LAYER = [
     "ci.yml",
@@ -38,11 +40,14 @@ COMPOSITES = ["setup-node-python", "run-smoke-tests", "post-pr-comment"]
 SCOPES = {"none": 0, "read": 1, "write": 2}
 
 
-def workflow(name: str) -> dict:
-    return yaml.load((WORKFLOWS / name).read_text(encoding="utf-8"), Loader=GitHubLoader)
+def triggers(data: dict[str, Any]) -> set[str]:
+    on = data.get("on") or {}
+    if isinstance(on, str):
+        return {on}
+    return set(on)
 
 
-def steps(job: dict) -> list[dict]:
+def steps(job: dict[str, Any]) -> list[dict[str, Any]]:
     return [step for step in job.get("steps") or [] if isinstance(step, dict)]
 
 
@@ -84,17 +89,17 @@ def test_every_caller_grants_what_its_callee_requests() -> None:
                     problems.append(f"{caller}:{name} -> {callee}:{callee_job_name} needs {scope}: {level}")
     assert problems == []
 
+# ── Reusable-workflow contracts (GitHub rejects the caller when broken) ────
 
-def test_reusable_workflows_are_only_ever_called_at_job_level() -> None:
+
+def test_reusable_workflows_are_only_called_at_job_level() -> None:
     """A step cannot call a reusable workflow; GitHub fails the run."""
     offenders = []
     for path in sorted(WORKFLOWS.glob("*.y*ml")):
-        data = yaml.load(path.read_text(encoding="utf-8"), Loader=GitHubLoader) or {}
-        for job_name, job in (data.get("jobs") or {}).items():
+        for job_id, job in (parse(path.read_text(encoding="utf-8")).get("jobs") or {}).items():
             for step in steps(job) if isinstance(job, dict) else []:
-                uses = step.get("uses")
-                if isinstance(uses, str) and uses.startswith("./.github/workflows/"):
-                    offenders.append(f"{path.name}:{job_name}")
+                if str(step.get("uses", "")).startswith("./.github/workflows/"):
+                    offenders.append(f"{path.name}:{job_id}")
     assert offenders == []
 
 
@@ -290,7 +295,7 @@ def test_setup_action_matches_ci_yml_toolchain() -> None:
     ci = (WORKFLOWS / "ci.yml").read_text(encoding="utf-8")
     assert action["inputs"]["node_version"]["default"] == "22"
     assert action["inputs"]["python_version"]["default"] == "3.11"
-    assert re.search(r'node-version: "22"', ci) and re.search(r'python-version: "3.11"', ci)
+    assert 'node-version: "22"' in ci and 'python-version: "3.11"' in ci
 
 
 def test_codeowners_is_not_shadowed() -> None:

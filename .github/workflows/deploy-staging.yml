@@ -129,9 +129,14 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - name: Checkout (local actions only)
+      # This job holds a pull-requests: write token, so the action it runs comes
+      # from the default branch, not from the PR's merge commit, which a PR could
+      # edit to run its own code with that token.
+      - name: Checkout (local actions only, default branch)
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ github.event.repository.default_branch }}
+          sparse-checkout: .github/actions
           persist-credentials: false
 
       - name: Compose the status
