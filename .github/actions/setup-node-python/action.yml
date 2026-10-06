@@ -1,0 +1,50 @@
+# Shared Node + Python toolchain for the CI/CD automation layer (AUTOMATION.md).
+#
+# Defaults match ci.yml, not a generic template: Python 3.11 is what the suite is
+# verified on, and Node 22 is required because the admin login guard needs 22.6+
+# to strip TypeScript types (tests/test_node_toolchain_guard.py). Tool versions are
+# pinned for the same reason ci.yml pins ruff: an unpinned install turns a green
+# tree red with no code change. Local composite action -> exempt from the SHA-pin
+# gate, but every action it calls is pinned to a full commit SHA.
+name: "Setup Node + Python"
+description: "Install the pinned Node.js and Python toolchains plus the repo's lint/test tools."
+
+inputs:
+  node_version:
+    description: "Node.js version."
+    required: false
+    default: "22"
+  python_version:
+    description: "Python version."
+    required: false
+    default: "3.11"
+  install_test_tools:
+    description: "Install pytest, pytest-cov and pyyaml as well as ruff."
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Node
+      uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      with:
+        node-version: ${{ inputs.node_version }}
+
+    - name: Setup Python
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      with:
+        python-version: ${{ inputs.python_version }}
+
+    - name: Install pinned lint and test tools
+      shell: bash
+      env:
+        INSTALL_TEST_TOOLS: ${{ inputs.install_test_tools }}
+      run: |
+        set -euo pipefail
+        python -m pip install --quiet --upgrade pip
+        # Same pin as ci.yml's lint job and scripts/ci_local.py.
+        pip install --quiet "ruff==0.15.8"
+        if [ "$INSTALL_TEST_TOOLS" = "true" ]; then
+          pip install --quiet pytest pytest-cov pyyaml
+        fi
