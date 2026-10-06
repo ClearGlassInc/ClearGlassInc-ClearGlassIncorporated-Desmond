@@ -1,0 +1,103 @@
+# Read-only smoke checks against a deployed control plane (AUTOMATION.md).
+#
+# Every request is a GET. Nothing here creates a lead, an order or an approval,
+# so it is safe to point at production. The routes are the ones the control
+# plane actually serves (control-plane/app/main.py): /health is liveness and
+# makes no external calls, /ready proves the database is reachable.
+#
+# A fresh deploy takes minutes to come up, so /health is polled, not sampled once.
+name: "Run Smoke Tests"
+description: "Poll /health, then check /ready and, optionally, that the admin gate is live."
+
+inputs:
+  base_url:
+    description: "Base URL of the deployed service, e.g. https://clearglass-commerce-api.onrender.com"
+    required: true
+  attempts:
+    description: "How many times to poll /health before giving up."
+    required: false
+    default: "40"
+  interval_seconds:
+    description: "Seconds between /health polls."
+    required: false
+    default: "15"
+  check_ready:
+    description: "Also require GET /ready to return 200 (database reachable)."
+    required: false
+    default: "true"
+  expect_admin_auth:
+    description: >
+      Require /health to report admin_auth=enabled and require the admin-only
+      ledger (/events, /metrics/overview) to refuse an unauthenticated read with
+      401 or 403. Turn on for production, where an open admin surface is a breach.
+    required: false
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Validate base URL
+      shell: bash
+      env:
+        BASE_URL: ${{ inputs.base_url }}
+      run: |
+        set -euo pipefail
+        if ! printf '%s' "$BASE_URL" | grep -qE '^https://[A-Za-z0-9.-]+(:[0-9]+)?(/[A-Za-z0-9._~/-]*)?$'; then
+          echo "::error::base_url must be an https URL with no query string, got '${BASE_URL}'"
+          exit 1
+        fi
+
+    - name: Wait for /health
+      shell: bash
+      env:
+        BASE_URL: ${{ inputs.base_url }}
+        ATTEMPTS: ${{ inputs.attempts }}
+        INTERVAL: ${{ inputs.interval_seconds }}
+      run: |
+        set -euo pipefail
+        url="${BASE_URL%/}/health"
+        for attempt in $(seq 1 "$ATTEMPTS"); do
+          if curl --fail --silent --show-error --max-time 10 "$url" -o /tmp/cg-health.json; then
+            echo "Health check passed on attempt ${attempt}."
+            cat /tmp/cg-health.json; echo
+            exit 0
+          fi
+          echo "Health attempt ${attempt}/${ATTEMPTS} failed; retrying in ${INTERVAL}s."
+          sleep "$INTERVAL"
+        done
+        echo "::error::${url} did not become healthy."
+        exit 1
+
+    - name: Check /ready
+      if: inputs.check_ready == 'true'
+      shell: bash
+      env:
+        BASE_URL: ${{ inputs.base_url }}
+      run: |
+        set -euo pipefail
+        code="$(curl --silent --output /dev/null --write-out '%{http_code}' --max-time 15 "${BASE_URL%/}/ready")"
+        if [ "$code" != "200" ]; then
+          echo "::error::GET /ready returned ${code}; the service is up but cannot reach its database."
+          exit 1
+        fi
+        echo "/ready returned 200."
+
+    - name: Check the admin gate is live
+      if: inputs.expect_admin_auth == 'true'
+      shell: bash
+      env:
+        BASE_URL: ${{ inputs.base_url }}
+      run: |
+        set -euo pipefail
+        auth="$(python3 -c 'import json,sys; print(json.load(open("/tmp/cg-health.json")).get("admin_auth",""))')"
+        if [ "$auth" != "enabled" ]; then
+          echo "::error::/health reports admin_auth='${auth}'. Production must run with ADMIN_API_KEY set."
+          exit 1
+        fi
+        for path in /events /metrics/overview; do
+          code="$(curl --silent --output /dev/null --write-out '%{http_code}' --max-time 15 "${BASE_URL%/}${path}")"
+          case "$code" in
+            401|403) echo "${path} refused an unauthenticated read (${code})." ;;
+            *) echo "::error::${path} returned ${code} without credentials; the admin gate is not enforced."; exit 1 ;;
+          esac
+        done

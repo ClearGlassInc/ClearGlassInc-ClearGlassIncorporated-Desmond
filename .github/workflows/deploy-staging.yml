@@ -1,0 +1,91 @@
+name: Deploy Staging (Per-PR)
+
+# Per-PR staging: verify the PR's own preview deployment and post its URL on the
+# PR (AUTOMATION.md).
+#
+# The preview itself is built by the host, not by this job. On Render that is a
+# preview environment (render.yaml `previews:`), which creates `<service>-pr-<N>`
+# for each pull request and tears it down on close. This workflow waits for that
+# preview to answer, smoke-tests it read-only, and upserts one PR comment.
+#
+# OFF until the repository variable PR_PREVIEW_URL_TEMPLATE is set, e.g.
+#   https://clearglass-commerce-api-pr-{pr}.onrender.com
+# ({pr} is replaced with the PR number). Previews are billed instances, so turning
+# them on in render.yaml is an owner decision this file does not make.
+#
+# Fork PRs are skipped: they get no preview and no write token.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-staging-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    name: Verify PR preview
+    if: vars.PR_PREVIEW_URL_TEMPLATE != '' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      url: ${{ steps.url.outputs.url }}
+    steps:
+      - name: Checkout (local actions only)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Resolve the preview URL
+        id: url
+        env:
+          TEMPLATE: ${{ vars.PR_PREVIEW_URL_TEMPLATE }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          url="${TEMPLATE//\{pr\}/$PR_NUMBER}"
+          echo "url=${url%/}" >> "$GITHUB_OUTPUT"
+          echo "Preview for PR #${PR_NUMBER}: ${url%/}"
+
+      # A preview build can take several minutes after a push, so poll for up to
+      # 15 minutes. The previous push's preview may still be serving while the new
+      # one builds; see AUTOMATION.md for that limit.
+      - name: Smoke tests
+        uses: ./.github/actions/run-smoke-tests
+        with:
+          base_url: ${{ steps.url.outputs.url }}
+          attempts: "60"
+          interval_seconds: "15"
+          check_ready: "true"
+
+  comment:
+    name: Post preview status
+    needs: preview
+    if: always() && needs.preview.result != 'skipped'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout (local actions only)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Upsert the PR comment
+        uses: ./.github/actions/post-pr-comment
+        with:
+          pr_number: ${{ github.event.pull_request.number }}
+          marker: staging-preview
+          header: ${{ needs.preview.result == 'success' && 'Staging preview ready' || 'Staging preview failed its checks' }}
+          body: |
+            Preview: ${{ needs.preview.outputs.url || 'not resolved' }}
+            Commit: ${{ github.event.pull_request.head.sha }}
+            Result: ${{ needs.preview.result }} (health, readiness)
+            Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

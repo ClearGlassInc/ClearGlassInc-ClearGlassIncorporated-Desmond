@@ -1,0 +1,164 @@
+name: Auto-Fix CI Issues
+
+# Self-healing for the one class of CI failure a machine can fix without judgement:
+# lint findings that ruff marks as safe to fix (AUTOMATION.md).
+#
+# When CI fails on a same-repository PR, this applies `ruff check --fix` (safe fixes
+# only, the repo's pinned ruff 0.15.8 and its pyproject config) to the Python files
+# that PR changed, commits the result as a Verified commit on the PR branch, and
+# upserts one PR comment. It never runs eslint, prettier or black (the repo uses
+# none of them) and never touches files the PR did not change.
+#
+# Deliberately not an LLM: codex-autofix.yml stays manual-only because a model with
+# write access firing on untrusted CI output is a prompt-injection risk. ruff reads
+# files and rewrites them by fixed rules; it executes nothing from the PR.
+#
+# Guards: same-repo PRs only (never forks), not the default branch, not bot-authored
+# PRs, not PRs labelled `no-autofix`, at most 2 `auto-fix:` commits per PR, and
+# never if the branch moved after the failing run. Disable entirely with the
+# repository variable AUTOFIX_ENABLED=false.
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: auto-fix-${{ github.event.workflow_run.head_repository.full_name }}-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+jobs:
+  auto-fix:
+    name: Apply safe lint fixes
+    if: >-
+      vars.AUTOFIX_ENABLED != 'false' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'failure' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      github.event.workflow_run.head_branch != github.event.repository.default_branch &&
+      github.event.workflow_run.head_branch != 'staging'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Resolve the pull request and apply the guards
+        id: pr
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          CG_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        with:
+          script: |
+            const skip = (reason) => {
+              core.notice(`Auto-fix skipped: ${reason}`);
+              core.setOutput('skip', 'true');
+            };
+            const runPrs = context.payload.workflow_run.pull_requests || [];
+            if (!runPrs.length) return skip('the failing run is not attached to a pull request');
+            const { owner, repo } = context.repo;
+            const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: runPrs[0].number });
+            if (pr.state !== 'open') return skip(`PR #${pr.number} is ${pr.state}`);
+            if (pr.head.repo?.full_name !== `${owner}/${repo}`) return skip('PR head is a fork');
+            if (pr.user?.type === 'Bot') return skip('PR author is a bot');
+            if (pr.labels.some(l => l.name === 'no-autofix')) return skip('PR is labelled no-autofix');
+            if (pr.head.sha !== process.env.CG_HEAD_SHA) return skip('the PR has newer commits than the failing run');
+            const commits = await github.paginate(github.rest.pulls.listCommits, {
+              owner, repo, pull_number: pr.number, per_page: 100,
+            });
+            const autoFixCount = commits.filter(c => c.commit.message.startsWith('auto-fix:')).length;
+            if (autoFixCount >= 2) return skip(`PR #${pr.number} already has ${autoFixCount} auto-fix commits`);
+            core.setOutput('skip', 'false');
+            core.setOutput('pr_number', String(pr.number));
+            core.setOutput('branch', pr.head.ref);
+            core.setOutput('base', pr.base.ref);
+
+      - name: Checkout the failing commit
+        if: steps.pr.outputs.skip == 'false'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+          # true, justified: verified-commit falls back to `git push` if the signed
+          # API commit fails. No code from the PR is executed in this job.
+          persist-credentials: true
+
+      - name: Setup Python
+        if: steps.pr.outputs.skip == 'false'
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+
+      - name: Apply ruff safe fixes to the files this PR changed
+        id: fix
+        if: steps.pr.outputs.skip == 'false'
+        env:
+          BASE_REF: ${{ steps.pr.outputs.base }}
+          BRANCH: ${{ steps.pr.outputs.branch }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          pip install --quiet "ruff==0.15.8"
+          git fetch --quiet --no-tags origin "$BASE_REF"
+          # Names with whitespace are left alone: verified-commit takes a
+          # space-separated path list.
+          mapfile -t files < <(git diff --name-only --diff-filter=ACMR "origin/${BASE_REF}...HEAD" -- '*.py' | grep -v '[[:space:]]' || true)
+          echo "Python files changed by this PR: ${#files[@]}"
+          changed=""
+          if [ "${#files[@]}" -gt 0 ]; then
+            # --force-exclude keeps pyproject's extend-exclude (vendor/) in force
+            # even though the files are named explicitly.
+            ruff check --fix --exit-zero --quiet --force-exclude -- "${files[@]}"
+            changed="$(git diff --name-only -- "${files[@]}" | tr '\n' ' ' | sed 's/ *$//')"
+          fi
+          remote="$(git ls-remote origin "refs/heads/${BRANCH}" | cut -f1)"
+          if [ -n "$changed" ] && [ "$remote" != "$HEAD_SHA" ]; then
+            echo "::notice::${BRANCH} moved to ${remote} after the failing run; not committing over it."
+            changed=""
+          fi
+          if [ -n "$changed" ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            echo "paths=${changed}" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit the fixes (Verified)
+        id: commit
+        if: steps.fix.outputs.has_changes == 'true'
+        uses: ./.github/actions/verified-commit
+        with:
+          paths: ${{ steps.fix.outputs.paths }}
+          message: "auto-fix: ruff safe fixes for PR #${{ steps.pr.outputs.pr_number }}"
+          branch: ${{ steps.pr.outputs.branch }}
+
+      - name: Comment (fixes applied)
+        if: steps.commit.outputs.committed == 'true'
+        uses: ./.github/actions/post-pr-comment
+        with:
+          pr_number: ${{ steps.pr.outputs.pr_number }}
+          marker: auto-fix
+          header: "Auto-fix applied"
+          body: |
+            CI failed on `${{ github.event.workflow_run.head_sha }}`. Ruff's safe fixes changed: `${{ steps.fix.outputs.paths }}`.
+            Review the `auto-fix:` commit before merging.
+
+            CI does not re-run on commits made by the workflow token, so the new head has no checks yet. Your next push runs them.
+            Failing run: ${{ github.event.workflow_run.html_url }}
+
+      - name: Comment (nothing auto-fixable)
+        if: steps.pr.outputs.skip == 'false' && steps.commit.outputs.committed != 'true'
+        uses: ./.github/actions/post-pr-comment
+        with:
+          pr_number: ${{ steps.pr.outputs.pr_number }}
+          marker: auto-fix
+          header: "CI failed: needs a manual fix"
+          body: |
+            CI failed on `${{ github.event.workflow_run.head_sha }}` and ruff's safe fixes changed nothing in the Python files this PR touches.
+            The cause is outside auto-fix's scope (failing tests, type errors, generated files out of date, or lint ruff will not fix safely).
+
+            Failing run: ${{ github.event.workflow_run.html_url }}
+            Run the same gates locally: `python3 scripts/ci_local.py`

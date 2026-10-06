@@ -1,0 +1,59 @@
+# Post or update one standard comment on a pull request (AUTOMATION.md).
+#
+# Comments are upserted by a hidden marker, so a workflow that runs on every push
+# edits its own comment instead of stacking a new one each time. Inputs reach the
+# script through the environment, never through ${{ }} interpolation into the
+# JavaScript source, so a body containing backticks or ${...} cannot break out.
+name: "Post PR Comment"
+description: "Create or update a marker-tagged comment on a pull request."
+
+inputs:
+  pr_number:
+    description: "Pull request number."
+    required: true
+  header:
+    description: "Short header for the comment."
+    required: true
+  body:
+    description: "Main body of the comment (Markdown)."
+    required: true
+  marker:
+    description: "Stable id for this comment. Same marker = same comment, edited in place."
+    required: true
+  token:
+    description: "Token with pull-requests: write."
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Upsert comment
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+      env:
+        CG_PR_NUMBER: ${{ inputs.pr_number }}
+        CG_HEADER: ${{ inputs.header }}
+        CG_BODY: ${{ inputs.body }}
+        CG_MARKER: ${{ inputs.marker }}
+      with:
+        github-token: ${{ inputs.token }}
+        script: |
+          const prNumber = Number(process.env.CG_PR_NUMBER);
+          if (!Number.isInteger(prNumber) || prNumber <= 0) {
+            core.setFailed(`pr_number must be a positive integer, got '${process.env.CG_PR_NUMBER}'`);
+            return;
+          }
+          const marker = `<!-- cg-pr-comment:${process.env.CG_MARKER} -->`;
+          const body = `${marker}\n### ${process.env.CG_HEADER}\n\n${process.env.CG_BODY.trim()}`;
+          const { owner, repo } = context.repo;
+          const comments = await github.paginate(github.rest.issues.listComments, {
+            owner, repo, issue_number: prNumber, per_page: 100,
+          });
+          const existing = comments.find(c => (c.body || '').startsWith(marker));
+          if (existing) {
+            await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            core.info(`Updated comment ${existing.id} on #${prNumber}`);
+          } else {
+            const { data } = await github.rest.issues.createComment({ owner, repo, issue_number: prNumber, body });
+            core.info(`Created comment ${data.id} on #${prNumber}`);
+          }
