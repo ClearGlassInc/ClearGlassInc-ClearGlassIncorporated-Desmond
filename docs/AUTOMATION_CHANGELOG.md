@@ -9,6 +9,59 @@ a note.
 
 ---
 
+## 2026-10-06 — CI/CD layer: reusable CI/deploy, staging, promotion, auto-fix, heal, telemetry
+
+**Changes what automation may do:** yes. Adds one workflow that pushes to
+pull-request branches (`auto-fix.yml`) and two deploy paths, both off by default.
+Full description: `AUTOMATION.md`.
+
+### What was added
+
+Seven workflows (`reusable-ci`, `reusable-deploy`, `deploy-staging`,
+`deploy-promotion`, `auto-fix`, `heal-pipeline`, `ci-telemetry`), three composite
+actions under `.github/actions/`, `AUTOMATION.md`, a CI/CD section in
+`SECURITY.md`, `/.github/actions/` in the root `CODEOWNERS`, and
+`tests/test_cicd_layer.py`. No existing workflow, action or script was edited
+or removed.
+
+### Evidence it was based on
+
+An external blueprint, adapted where its literal form would have broken this
+repository:
+
+- its `ci.yml` would have replaced the existing one and dropped five of its gates;
+- it called reusable workflows from steps, which GitHub rejects;
+- it deployed per-PR through `pr-<n>` environments, which hold no secrets;
+- `if: failure() && ${{ inputs.enable_rollback }}` is always true (actionlint
+  `if-cond`), so it would have rolled back on every failure, and automatic
+  rollback contradicts `docs/INCIDENT_RESPONSE.md`;
+- its auto-fix ran PR code with a write token and ran black and prettier over a
+  repository that configures neither;
+- its `.github/CODEOWNERS` would have shadowed the root file;
+- its actions were unpinned tags, which `scripts/workflow_doctor.py` fails.
+
+### Validated
+
+- `scripts/workflow_doctor.py`: 0 errors, 98 files. `scripts/audit_github_actions.py`:
+  all seven new workflows "valid and ready", no warnings. Defender workflow scan:
+  0 findings on the new files.
+- actionlint 1.7.12 with shellcheck: clean on the seven new files.
+- `tests/test_cicd_layer.py`: 26 passed, and each of four injected regressions
+  (PR code in the write job, production without a real staging deploy, input
+  interpolated into JavaScript, a per-PR environment) fails exactly one test.
+- `scripts/ci_local.py`: same result as untouched `main` (163fb9b). The only
+  failures are the five pre-existing ones in `clearglass-legal-assistance/prototype/`.
+- Nothing ran in GitHub Actions: runners are still not dispatched.
+
+### Reversing
+
+Set `CG_AUTO_FIX_DISABLED` and `CG_HEAL_PIPELINE_DISABLED` to `true` to stop
+the event-driven workflows without a code change; the deploy workflows are
+already off unless enabled. To remove the layer, revert the commit; nothing
+else depends on it.
+
+---
+
 ## 2026-09-15 — INCIDENT: admin app could not install (react/react-dom split)
 
 **Severity:** production-blocking for the `admin` app. Not customer-facing — the
