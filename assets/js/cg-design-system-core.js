@@ -119,6 +119,29 @@
   // Hiding them here as well left them invisible until two observers fired.
   var FOREIGN_REVEAL = '.rv, [data-cgm-reveal], .cg-np-reveal-up';
   var STAGGER_MAX = 5;
+  // Longest a reveal can take (duration + the last stagger step), plus slack.
+  var SETTLE_MS = 700 + STAGGER_MAX * 70 + 400;
+
+  // Once a block is shown, hand it back its own transitions and delays.
+  function settle(el) {
+    el.classList.remove('cg-rv', 'cg-vis');
+    el.style.removeProperty('--cg-rv-i');
+  }
+  function reveal(el, step) {
+    // The sweep and the observer can both reach a block; reveal it once.
+    if (!el.classList.contains('cg-rv') || el.classList.contains('cg-vis')) return;
+    if (step) el.style.setProperty('--cg-rv-i', String(step));
+    el.classList.add('cg-vis');
+    var done = false;
+    var finish = function (e) {
+      if (done || (e && (e.target !== el || e.propertyName !== 'opacity'))) return;
+      done = true;
+      el.removeEventListener('transitionend', finish);
+      settle(el);
+    };
+    el.addEventListener('transitionend', finish);
+    setTimeout(finish, SETTLE_MS);
+  }
 
   function bindReveal() {
     if (reduceMotion || !('IntersectionObserver' in window)) return;
@@ -129,7 +152,7 @@
       if (!targets.length) return;
       var showAll = function () {
         var all = document.querySelectorAll('.cg-rv:not(.cg-vis)');
-        for (var k = 0; k < all.length; k++) all[k].classList.add('cg-vis');
+        for (var k = 0; k < all.length; k++) reveal(all[k], 0);
       };
       // threshold must stay 0: a percentage threshold is a fraction of the
       // ELEMENT, not the viewport, so a section taller than
@@ -142,8 +165,7 @@
         var step = 0;
         entries.forEach(function (en) {
           if (en.isIntersecting) {
-            en.target.style.setProperty('--cg-rv-i', String(Math.min(step++, STAGGER_MAX)));
-            en.target.classList.add('cg-vis');
+            reveal(en.target, Math.min(step++, STAGGER_MAX));
             io.unobserve(en.target);
           }
         });
@@ -154,8 +176,8 @@
         // Never hide content already in the first viewport.
         if (r.top < window.innerHeight * 0.9) continue;
         if (t.matches(FOREIGN_REVEAL)) continue;
-        // The reveal runs as an animation; an element with its own would
-        // have it replaced, so it keeps its own motion and is not hidden.
+        // An element that animates itself keeps its own motion: an opacity
+        // or transform animation would override the hidden state anyway.
         if (getComputedStyle(t).animationName !== 'none') continue;
         t.classList.add('cg-rv');
         io.observe(t);
@@ -167,7 +189,7 @@
         var pending = document.querySelectorAll('.cg-rv:not(.cg-vis)');
         for (var j = 0; j < pending.length; j++) {
           if (pending[j].getBoundingClientRect().top < window.innerHeight) {
-            pending[j].classList.add('cg-vis');
+            reveal(pending[j], 0);
           }
         }
       };

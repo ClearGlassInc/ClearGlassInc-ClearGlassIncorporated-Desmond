@@ -131,17 +131,25 @@ def test_hover_never_retimes_an_infinite_animation() -> None:
                 assert "animation-duration" not in body, (path.name, prelude.strip())
 
 
-def test_reveal_is_one_animation_that_cannot_strand_content() -> None:
+def test_reveal_is_one_transition_that_cannot_strand_content() -> None:
+    """Visibility never waits on an animation starting.
+
+    An animation with backwards fill holds its first frame (opacity 0) until the
+    compositor starts it; on a busy page that kept /guardian.html's hero blank.
+    A transition that never runs simply shows the end state.
+    """
     css = _strip_comments(DESIGN.read_text(encoding="utf-8"))
-    hidden = re.search(r"\.cg-rv:not\(\.cg-vis\)\s*\{([^}]*)\}", css).group(1)
+    hidden = re.search(r"html \.cg-rv:not\(\.cg-vis\)\s*\{([^}]*)\}", css).group(1)
     assert "opacity: 0" in hidden and "translate3d" in hidden
-    shown = re.search(r"\.cg-rv\.cg-vis\s*\{([^}]*)\}", css).group(1)
-    assert "cgRevealUp" in shown and "backwards" in shown and "--cg-rv-i" in shown
-    # It must not fight the element's own hover transitions.
-    assert not re.search(r"\.cg-rv[^{]*\{[^}]*transition\s*:", css.split("@media")[0])
+    moving = re.search(r"html \.cg-rv\s*\{([^}]*)\}", css).group(1)
+    assert "transition:" in moving and "--cg-rv-i" in moving and "animation" not in moving
+    assert "cgRevealUp" not in css
     script = CORE_JS.read_text(encoding="utf-8")
+    # Settles: both classes come off, so the element gets its own hover
+    # transitions (which `html .cg-rv` outranks while in flight) back.
+    assert "classList.remove('cg-rv', 'cg-vis')" in script
+    assert "transitionend" in script and "setTimeout(finish, SETTLE_MS)" in script
     assert "FOREIGN_REVEAL" in script and "[data-cgm-reveal]" in script
-    assert "animationName !== 'none'" in script
     assert "--cg-rv-i" in script and "STAGGER_MAX" in script
     assert "addEventListener('change'" in script
     # Reduced motion and print always resolve to visible content.
