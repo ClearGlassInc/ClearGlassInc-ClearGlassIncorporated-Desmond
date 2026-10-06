@@ -309,26 +309,26 @@ a:hover { color: #ee6669 !important; }
 
 /* ── 6. SCROLL-REVEAL MOTION (classes applied by JS; no-JS unaffected) ──
    The site's one reveal pattern: fade + rise, staggered by --cg-rv-i (set by
-   cg-design-system-core.js for blocks that enter together). It is an
-   animation, not a transition, on purpose: cards declare their own
-   `transition` for hover, and whichever rule won the cascade used to drop the
-   other, so cards popped in without fading and lost their hover easing. The
-   keyframe has no end frame, so it settles on the element's own resting
-   state and leaves nothing behind. Tune via --cg-np-reveal-* in
+   cg-design-system-core.js for blocks that enter together).
+   It is a transition, so visibility never waits on an animation starting: if
+   the transition cannot run, the block is simply shown. `html .cg-rv`
+   outranks the cards' own `transition` (which used to win the cascade, so
+   cards popped in without fading), and only for as long as the reveal is in
+   flight: the script removes both classes once it settles, handing the
+   element back its own hover transitions. Tune via --cg-np-reveal-* in
    neon-pulse.css. */
-.cg-rv:not(.cg-vis) {
+html .cg-rv {
+  transition:
+    opacity var(--cg-np-reveal-dur, .7s) var(--cg-np-ease-out, cubic-bezier(.16, 1, .3, 1)),
+    transform var(--cg-np-reveal-dur, .7s) var(--cg-np-ease-out, cubic-bezier(.16, 1, .3, 1));
+  transition-delay: calc(var(--cg-rv-i, 0) * var(--cg-np-stagger, 70ms));
+}
+html .cg-rv:not(.cg-vis) {
   opacity: 0;
   transform: translate3d(0, var(--cg-np-reveal-shift, 18px), 0);
 }
-.cg-rv.cg-vis {
-  animation: cgRevealUp var(--cg-np-reveal-dur, .7s) var(--cg-np-ease-out, cubic-bezier(.16, 1, .3, 1)) backwards;
-  animation-delay: calc(var(--cg-rv-i, 0) * var(--cg-np-stagger, 70ms));
-}
-@keyframes cgRevealUp {
-  from { opacity: 0; transform: translate3d(0, var(--cg-np-reveal-shift, 18px), 0); }
-}
 /* Printing must never capture a half-revealed page. */
-@media print { .cg-rv { opacity: 1 !important; transform: none !important; animation: none !important; } }
+@media print { .cg-rv { opacity: 1 !important; transform: none !important; } }
 
 /* ── 7. GLOBAL TOP BAR — the homepage nav menu, futurized and mounted
        site-wide by cg-design-system.js. Pages that already ship the
@@ -587,7 +587,7 @@ a:hover { color: #ee6669 !important; }
   .cg-fx-cursor { display: none !important; }
   .cg-pulse, .hdot, .cg-status-dot, [class*="status-dot"] { animation: none !important; }
   .btn-crystal, [class*="btn-crystal"] { animation: none !important; }
-  .cg-rv { opacity: 1 !important; transform: none !important; transition: none !important; animation: none !important; }
+  .cg-rv { opacity: 1 !important; transform: none !important; transition: none !important; }
   .cg-topbar::before, .cg-topbar::after, .cg-tb-ring { animation: none !important; }
   html { scroll-behavior: auto; }
 }
@@ -720,8 +720,7 @@ a:hover,a:focus-visible{
   .cg-fx-aurora, .cg-fx-orb, .cg-fx-neon-grid::before, .cg-fx-neon-thread { animation: none !important; will-change: auto !important; }
   .cg-fx-scan { display: none !important; }
   :is(.card,.panel,.prompt,.mini,.product-card,.tech-card,.connect-card,.value-card,.offer-card,.cg-glass-card,.glass,.tile,.module,.console,.terminal,.metric,.feature,.service-card,.case-card)::before{animation:none!important}
-  /* The one-shot entrance (.cg-rv) is exempt: it costs nothing once played. */
-  body.cg-neon-ready :is(.card,.panel,.mini,.product-card,.tech-card,.connect-card,.value-card,.offer-card,.cg-glass-card,.tile,.module):not(.cg-rv){animation:none!important;translate:none!important}
+  body.cg-neon-ready :is(.card,.panel,.mini,.product-card,.tech-card,.connect-card,.value-card,.offer-card,.cg-glass-card,.tile,.module){animation:none!important;translate:none!important}
 }
 
 
