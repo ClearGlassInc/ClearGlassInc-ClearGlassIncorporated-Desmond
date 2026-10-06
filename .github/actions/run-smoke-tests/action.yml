@@ -1,0 +1,73 @@
+name: "Run Smoke Tests"
+description: >
+  Poll a deployed service's health endpoints until each answers 2xx, or fail.
+  The defaults are the control plane's real probes: /health (the
+  healthCheckPath in render.yaml) and /ready (database reachability). Neither
+  reports a commit, so a pass proves the service is healthy, not that the
+  revision just deployed is the one answering.
+
+inputs:
+  base_url:
+    description: Base URL of the deployed service. https only.
+    required: true
+  paths:
+    description: Space-separated paths that must each return 2xx.
+    required: false
+    default: "/health /ready"
+  attempts:
+    description: Polls per path before failing. A fresh deploy takes time to come up.
+    required: false
+    default: "20"
+  interval_seconds:
+    description: Seconds between polls.
+    required: false
+    default: "15"
+
+runs:
+  using: composite
+  steps:
+    - name: Health checks
+      shell: bash
+      # Inputs reach the script through env, never by interpolation into it.
+      env:
+        CG_BASE_URL: ${{ inputs.base_url }}
+        CG_PATHS: ${{ inputs.paths }}
+        CG_ATTEMPTS: ${{ inputs.attempts }}
+        CG_INTERVAL: ${{ inputs.interval_seconds }}
+      run: |
+        set -euo pipefail
+        case "$CG_BASE_URL" in
+          https://*) ;;
+          *)
+            echo "::error::base_url must be an https:// URL, got '${CG_BASE_URL}'"
+            exit 1
+            ;;
+        esac
+        for value in "$CG_ATTEMPTS" "$CG_INTERVAL"; do
+          if ! printf '%s' "$value" | grep -qE '^[1-9][0-9]*$'; then
+            echo "::error::attempts and interval_seconds must be positive integers, got '${value}'"
+            exit 1
+          fi
+        done
+
+        base="${CG_BASE_URL%/}"
+        for path in $CG_PATHS; do
+          url="${base}${path}"
+          ok=false
+          for attempt in $(seq 1 "$CG_ATTEMPTS"); do
+            code="$(curl --silent --output /dev/null --write-out '%{http_code}' --max-time 10 "$url" || true)"
+            if [ "${code:0:1}" = "2" ]; then
+              echo "PASS ${url} -> ${code} (attempt ${attempt})"
+              ok=true
+              break
+            fi
+            echo "wait ${url} -> ${code:-no response} (attempt ${attempt}/${CG_ATTEMPTS})"
+            if [ "$attempt" -lt "$CG_ATTEMPTS" ]; then
+              sleep "$CG_INTERVAL"
+            fi
+          done
+          if [ "$ok" != true ]; then
+            echo "::error::${url} did not return 2xx after ${CG_ATTEMPTS} attempts"
+            exit 1
+          fi
+        done

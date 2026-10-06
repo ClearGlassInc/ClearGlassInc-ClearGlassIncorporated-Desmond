@@ -1,0 +1,357 @@
+name: Auto-Fix CI Issues
+
+# Deterministic self-healing for a failed CI run on a pull request. No LLM is
+# involved: codex-autofix.yml stays the only AI fixer, manual-dispatch only.
+#
+# What it fixes, and nothing else:
+#   - ruff's safe autofixes, on the Python files the PR changed (pinned ruff
+#     0.15.8, the repository's own config);
+#   - drift in the generated assets ci.yml checks: sitemap.xml, feed.xml and
+#     data/seo/page-intents.json (tools/generate_search_assets.py), the
+#     "Continue exploring" blocks (tools/internal_links.py) and the Insights
+#     hub (tools/insights_index.py). CLAUDE.md requires these to be
+#     regenerated, never hand-edited.
+# black, prettier and eslint --fix are deliberately absent: none is configured
+# here, and they would reformat the whole static site in one commit.
+#
+# Trust boundary. The PR's code runs only in `fix`, which holds a read-only
+# token and produces a patch. `push` holds the write token and runs no PR
+# code: it applies the patch, refuses any path scripts/automation_governance.py
+# protects (loaded from the default branch, not the PR), and pushes without
+# force, so a branch that moved meanwhile is left alone.
+#
+# Skipped for fork PRs, bot authors, the `no-autofix` label, PRs that already
+# carry two `auto-fix:` commits, stale runs, and whenever the repository
+# variable CG_AUTO_FIX_DISABLED is 'true'.
+#
+# A commit pushed with the workflow token does not start new workflow runs,
+# so CI re-runs on the author's next push, not on this one.
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: auto-fix-${{ github.event.workflow_run.head_sha }}
+  cancel-in-progress: false
+
+jobs:
+  context:
+    name: Resolve the pull request
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'failure' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      github.event.workflow_run.head_branch != 'main' &&
+      github.event.workflow_run.head_branch != 'staging' &&
+      vars.CG_AUTO_FIX_DISABLED != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      skip: ${{ steps.pr.outputs.skip }}
+      reason: ${{ steps.pr.outputs.reason }}
+      pr_number: ${{ steps.pr.outputs.pr_number }}
+      head_sha: ${{ steps.pr.outputs.head_sha }}
+      head_branch: ${{ steps.pr.outputs.head_branch }}
+      base_ref: ${{ steps.pr.outputs.base_ref }}
+    steps:
+      - name: Resolve PR, labels and iteration count
+        id: pr
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const run = context.payload.workflow_run;
+            const { owner, repo } = context.repo;
+            const out = (key, value) => core.setOutput(key, String(value));
+            const skip = (reason) => {
+              out('skip', 'true');
+              out('reason', reason);
+              core.notice(`auto-fix skipped: ${reason}`);
+            };
+
+            let number = run.pull_requests && run.pull_requests[0] && run.pull_requests[0].number;
+            if (!number) {
+              const { data } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+                owner, repo, commit_sha: run.head_sha,
+              });
+              const open = data.find((p) => p.state === 'open' && p.head.sha === run.head_sha);
+              number = open && open.number;
+            }
+            if (!number) return skip('no open pull request for this run');
+
+            const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: number });
+            out('pr_number', pr.number);
+            out('head_sha', pr.head.sha);
+            out('head_branch', pr.head.ref);
+            out('base_ref', pr.base.ref);
+
+            if (pr.state !== 'open') return skip('pull request is not open');
+            if (!pr.head.repo || pr.head.repo.full_name !== `${owner}/${repo}`) return skip('head is a fork');
+            if (pr.head.sha !== run.head_sha) return skip('the PR has moved on since this CI run');
+            if (pr.user.type === 'Bot') return skip('bot-authored pull request');
+            if (pr.labels.some((l) => l.name === 'no-autofix')) return skip("labelled 'no-autofix'");
+
+            const commits = await github.paginate(github.rest.pulls.listCommits, {
+              owner, repo, pull_number: number, per_page: 100,
+            });
+            const prior = commits.filter((c) => c.commit.message.startsWith('auto-fix:')).length;
+            if (prior >= 2) return skip(`already has ${prior} auto-fix commits (limit 2)`);
+
+            out('skip', 'false');
+            out('reason', '');
+
+  fix:
+    name: Run deterministic fixers (read-only)
+    needs: context
+    if: needs.context.outputs.skip == 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    outputs:
+      has_changes: ${{ steps.patch.outputs.has_changes }}
+    steps:
+      - name: Checkout the PR head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.context.outputs.head_sha }}
+          # Full history: merge-base for the changed-file list, and git dates
+          # for sitemap <lastmod>.
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+
+      - name: Install pinned ruff
+        run: python -m pip install --quiet "ruff==0.15.8"
+
+      - name: Apply ruff's safe fixes to the PR's changed Python files
+        env:
+          BASE_REF: ${{ needs.context.outputs.base_ref }}
+        run: |
+          set -euo pipefail
+          base="$(git merge-base HEAD "origin/${BASE_REF}")"
+          mapfile -t files < <(git diff --name-only --diff-filter=ACMR "$base" HEAD -- '*.py')
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No Python files changed in this PR."
+            exit 0
+          fi
+          # --exit-zero: what ruff cannot fix is reported, not treated as a
+          # fixer failure. --force-exclude keeps pyproject's excludes in force
+          # for paths passed explicitly.
+          ruff check --fix --exit-zero --force-exclude -- "${files[@]}"
+
+      - name: Regenerate the assets ci.yml checks for drift
+        run: |
+          set -euo pipefail
+          python3 tools/generate_search_assets.py
+          python3 tools/internal_links.py
+          python3 tools/insights_index.py
+
+      - name: Capture the fix as a patch
+        id: patch
+        env:
+          HEAD_SHA: ${{ needs.context.outputs.head_sha }}
+        run: |
+          set -euo pipefail
+          git add -u
+          if git diff --cached --quiet; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            echo "Nothing to fix."
+            exit 0
+          fi
+          # Sitemap <lastmod> reads each page's last commit date. Commit
+          # locally, then regenerate once more, so pages this fix rewrites are
+          # dated by the fix commit and CI's drift check does not trip on them.
+          ident=(-c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com")
+          git "${ident[@]}" commit --quiet -m "auto-fix: local"
+          python3 tools/generate_search_assets.py
+          git add -u
+          git "${ident[@]}" commit --quiet --amend --no-edit
+          mkdir -p "$RUNNER_TEMP/auto-fix"
+          git diff --binary "$HEAD_SHA" HEAD > "$RUNNER_TEMP/auto-fix/fix.patch"
+          git --no-pager diff --stat "$HEAD_SHA" HEAD
+          echo "has_changes=true" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the patch
+        if: steps.patch.outputs.has_changes == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: auto-fix-patch
+          path: ${{ runner.temp }}/auto-fix/fix.patch
+          retention-days: 3
+          if-no-files-found: error
+
+  push:
+    name: Apply and push (governed)
+    needs: [context, fix]
+    if: needs.fix.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # The repository's approval boundary for unattended writes, shared with
+    # auto-heal.yml and workflow-doctor.yml.
+    environment: automation-write
+    permissions:
+      contents: write
+    outputs:
+      pushed: ${{ steps.push.outputs.pushed }}
+      blocked: ${{ steps.gate.outputs.blocked }}
+      blocked_paths: ${{ steps.gate.outputs.blocked_paths }}
+    steps:
+      - name: Checkout the policy (default branch, not the PR)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          path: trusted
+          sparse-checkout: scripts
+          persist-credentials: false
+
+      - name: Checkout the PR head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.context.outputs.head_sha }}
+          path: pr
+          persist-credentials: false
+
+      - name: Download the patch
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: auto-fix-patch
+          path: ${{ runner.temp }}/auto-fix
+
+      # The patch was produced by PR code, so treat it as untrusted input: it
+      # may name any path. Anything the automation policy protects (payments,
+      # auth, workflows, migrations, dependencies, infrastructure, legal) or
+      # anything under .github/ is refused outright. The path list comes from
+      # the index after applying, with renames off, so a rename cannot hide
+      # either of its two paths.
+      - name: Apply the patch and refuse protected paths
+        id: gate
+        run: |
+          set -euo pipefail
+          git -C pr apply --index "$RUNNER_TEMP/auto-fix/fix.patch"
+          git -C pr diff --cached --no-renames --name-only -z > "$RUNNER_TEMP/auto-fix/paths"
+          python3 - "$RUNNER_TEMP/auto-fix/paths" <<'PY'
+          import os
+          import secrets
+          import sys
+
+          sys.path.insert(0, "trusted")
+          from scripts.automation_governance import protected_reason
+
+          raw = open(sys.argv[1], "rb").read().decode("utf-8", "replace")
+          paths = [path for path in raw.split("\0") if path]
+          blocked = []
+          for path in paths:
+              reason = "under .github/" if path.startswith(".github/") else protected_reason(path)
+              if reason:
+                  blocked.append(f"- `{path}`: {reason}")
+          delimiter = f"CG_{secrets.token_hex(12)}"
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as out:
+              out.write(f"blocked={'true' if blocked else 'false'}\n")
+              out.write(f"blocked_paths<<{delimiter}\n" + "\n".join(blocked) + f"\n{delimiter}\n")
+          print(f"{len(paths)} path(s) in patch, {len(blocked)} protected")
+          print("\n".join(blocked))
+          PY
+
+      - name: Commit and push
+        id: push
+        if: steps.gate.outputs.blocked == 'false'
+        working-directory: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_BRANCH: ${{ needs.context.outputs.head_branch }}
+          HEAD_SHA: ${{ needs.context.outputs.head_sha }}
+          PR_NUMBER: ${{ needs.context.outputs.pr_number }}
+        run: |
+          set -euo pipefail
+          git -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit --quiet -m "auto-fix: ruff fixes and regenerated assets for PR #${PR_NUMBER}"
+          remote="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          current="$(git ls-remote "$remote" "refs/heads/${HEAD_BRANCH}" | cut -f1)"
+          if [ "$current" != "$HEAD_SHA" ]; then
+            echo "::notice::${HEAD_BRANCH} moved to ${current:-nothing} since CI ran on ${HEAD_SHA}; not pushing."
+            echo "pushed=moved" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Never forced: if the branch moves between the check and the push,
+          # GitHub rejects this and the author's commit wins.
+          git push --quiet "$remote" "HEAD:refs/heads/${HEAD_BRANCH}"
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+  report:
+    name: Report on the PR
+    needs: [context, fix, push]
+    if: always() && needs.context.outputs.skip == 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Compose the result
+        id: msg
+        env:
+          FIX_RESULT: ${{ needs.fix.result }}
+          HAS_CHANGES: ${{ needs.fix.outputs.has_changes }}
+          PUSH_RESULT: ${{ needs.push.result }}
+          PUSHED: ${{ needs.push.outputs.pushed }}
+          BLOCKED: ${{ needs.push.outputs.blocked }}
+          BLOCKED_PATHS: ${{ needs.push.outputs.blocked_paths }}
+          CI_URL: ${{ github.event.workflow_run.html_url }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          covers="Auto-fix covers ruff's safe fixes on changed Python files and regeneration of sitemap.xml, feed.xml, page-intents, internal-link blocks and the Insights hub."
+          if [ "$FIX_RESULT" != "success" ]; then
+            header="Auto-fix could not run"
+            body="The fixers failed before producing a patch. Run: ${RUN_URL}"$'\n\n'"Failed CI run: ${CI_URL}"
+          elif [ "$HAS_CHANGES" != "true" ]; then
+            header="CI failed with issues auto-fix cannot repair"
+            body="${covers} None of those changed anything, so the failure is elsewhere (tests, type errors, a gate). Failed CI run: ${CI_URL}"
+          elif [ "$BLOCKED" = "true" ]; then
+            header="Auto-fix withheld: the fix touches protected paths"
+            body="A fix was produced but not pushed, because automation may not change these paths (scripts/automation_governance.py):"$'\n\n'"${BLOCKED_PATHS}"$'\n\n'"Apply it by hand: run the same tools locally (AUTOMATION.md). Run: ${RUN_URL}"
+          elif [ "$PUSHED" = "true" ]; then
+            header="Auto-fix applied"
+            body="Pushed an \`auto-fix:\` commit with ruff fixes and/or regenerated assets. Review it. CI does not re-run for commits pushed with the workflow token; it runs on your next push. Run: ${RUN_URL}"
+          elif [ "$PUSHED" = "moved" ]; then
+            header="Auto-fix skipped: the branch moved"
+            body="New commits landed after the failing CI run, so the fix was not pushed. The next CI run decides. Run: ${RUN_URL}"
+          else
+            header="Auto-fix push did not complete"
+            body="Push job result: ${PUSH_RESULT}. It may be waiting on, or have been refused by, the automation-write environment's reviewers. Run: ${RUN_URL}"
+          fi
+          delimiter="CG_$(openssl rand -hex 12)"
+          {
+            echo "header=${header}"
+            echo "body<<${delimiter}"
+            echo "$body"
+            echo "${delimiter}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Checkout shared actions (default branch only)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          sparse-checkout: .github/actions
+          persist-credentials: false
+
+      - name: Post or update the auto-fix comment
+        uses: ./.github/actions/post-pr-comment
+        with:
+          pr_number: ${{ needs.context.outputs.pr_number }}
+          marker: cg-auto-fix
+          header: ${{ steps.msg.outputs.header }}
+          body: ${{ steps.msg.outputs.body }}

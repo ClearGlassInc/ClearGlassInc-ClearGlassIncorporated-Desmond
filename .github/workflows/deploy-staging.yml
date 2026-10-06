@@ -1,0 +1,77 @@
+name: Deploy Staging (Per-PR)
+
+# Opt-in. Until the repository variable CG_PR_STAGING_DEPLOY is 'true' every
+# job here is skipped: no runner, no deployment, no comment.
+#
+# Every PR deploys through the single `staging` GitHub Environment so the job
+# receives staging's secrets and protection rules. A per-PR environment
+# (pr-<n>) would hold no secrets at all, because environment secrets are not
+# inherited, and would leave one orphaned environment behind per PR. The
+# namespace pr-<n> carries the identity instead; whether it is isolated
+# depends on the provider (see reusable-deploy.yml).
+#
+# pr-staging.yml, the read-only build and test of each PR candidate, is
+# unchanged and still runs on every PR. This workflow only adds a deployment.
+#
+# Fork PRs are never deployed: their code would run against staging's
+# credentials. Dependabot PRs are skipped for the same reason.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [main, staging]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-staging-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy PR to staging
+    if: >-
+      vars.CG_PR_STAGING_DEPLOY == 'true' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.draft == false &&
+      github.actor != 'dependabot[bot]'
+    uses: ./.github/workflows/reusable-deploy.yml
+    permissions:
+      contents: read
+      deployments: read
+    with:
+      target_env: staging
+      namespace: pr-${{ github.event.pull_request.number }}
+      ref: ${{ github.event.pull_request.head.sha }}
+      run_smoke: true
+
+  comment:
+    name: Post the staging URL
+    needs: deploy
+    if: needs.deploy.outputs.deployed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      # Action code comes from the default branch, not the PR: this job holds
+      # a pull-requests: write token.
+      - name: Checkout shared actions (default branch only)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          sparse-checkout: .github/actions
+          persist-credentials: false
+
+      - name: Post or update the staging comment
+        uses: ./.github/actions/post-pr-comment
+        with:
+          pr_number: ${{ github.event.pull_request.number }}
+          marker: cg-deploy-staging
+          header: "Staging deployed"
+          body: |
+            Commit `${{ github.event.pull_request.head.sha }}` is deployed to the `staging` environment as `pr-${{ github.event.pull_request.number }}`, and its health checks passed.
+
+            ${{ needs.deploy.outputs.deploy_url }}

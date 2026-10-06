@@ -1,0 +1,74 @@
+name: "Post PR Comment"
+description: >
+  Post a standardised comment to a pull request. With `marker`, the comment is
+  upserted: the bot's earlier comment carrying the same marker is edited rather
+  than a new one added, so automation that reacts to every CI run leaves one
+  comment per PR, not one per run. Inputs reach the script through env; they
+  are never interpolated into the script source, where a header or body
+  containing a backtick or ${...} would execute as JavaScript.
+
+inputs:
+  pr_number:
+    description: Pull request number.
+    required: true
+  header:
+    description: Short header for the comment.
+    required: true
+  body:
+    description: Main body of the comment (Markdown).
+    required: true
+  marker:
+    description: "Optional upsert key, [A-Za-z0-9._:-] only. Empty posts a new comment every time."
+    required: false
+    default: ""
+  github_token:
+    description: Token with pull-requests write on this repository.
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: composite
+  steps:
+    - name: Post comment
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+      env:
+        CG_PR_NUMBER: ${{ inputs.pr_number }}
+        CG_HEADER: ${{ inputs.header }}
+        CG_BODY: ${{ inputs.body }}
+        CG_MARKER: ${{ inputs.marker }}
+      with:
+        github-token: ${{ inputs.github_token }}
+        script: |
+          const prNumber = Number(process.env.CG_PR_NUMBER);
+          if (!Number.isInteger(prNumber) || prNumber <= 0) {
+            core.setFailed(`pr_number must be a positive integer, got '${process.env.CG_PR_NUMBER}'`);
+            return;
+          }
+          const marker = (process.env.CG_MARKER || '').trim();
+          if (marker && !/^[A-Za-z0-9._:-]+$/.test(marker)) {
+            core.setFailed(`marker may contain only [A-Za-z0-9._:-], got '${marker}'`);
+            return;
+          }
+          const tag = marker ? `<!-- ${marker} -->\n` : '';
+          const body = `${tag}### ${process.env.CG_HEADER}\n\n${(process.env.CG_BODY || '').trim()}`;
+          const { owner, repo } = context.repo;
+
+          if (marker) {
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner, repo, issue_number: prNumber, per_page: 100,
+            });
+            // Only ever edit a bot's own comment: a person can paste the marker
+            // into theirs, and that must not let automation overwrite it.
+            const previous = comments.find(
+              (c) => c.user && c.user.type === 'Bot' && (c.body || '').startsWith(tag),
+            );
+            if (previous) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: previous.id, body });
+              core.info(`Updated ${previous.html_url}`);
+              return;
+            }
+          }
+          const { data } = await github.rest.issues.createComment({
+            owner, repo, issue_number: prNumber, body,
+          });
+          core.info(`Created ${data.html_url}`);

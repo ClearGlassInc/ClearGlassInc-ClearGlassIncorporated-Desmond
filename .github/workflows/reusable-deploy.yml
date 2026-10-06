@@ -1,0 +1,226 @@
+name: Reusable Deploy
+
+# Deploy-and-verify primitive shared by deploy-staging.yml and
+# deploy-promotion.yml.
+#
+# The provider is chosen per GitHub Environment by the environment-scoped
+# variable DEPLOY_PROVIDER, so staging and production can differ and switching
+# one needs no code change:
+#
+#   unset / none   Nothing is deployed. The job says so and reports
+#                  deployed=false, which stops a promotion going further.
+#   render         Calls the environment's RENDER_DEPLOY_HOOK secret with
+#                  ?ref=<sha>, the same call rollback.yml makes.
+#   anything else  Fails closed. Cloud Run, ECS and Kubernetes are not wired:
+#                  no registry, cluster or credentials for them exist in this
+#                  repository. Add a case below when one does, authenticating
+#                  with OIDC (see AUTOMATION.md), never a stored cloud key.
+#
+# DEPLOY_BASE_URL (environment variable, https) is where the smoke tests point.
+#
+# Rollback is NOT automatic. docs/INCIDENT_RESPONSE.md and rollback.yml make
+# it a human decision: an automatic rollback on a failed health check can flap
+# between two broken states, and cannot safely undo a data migration. With
+# enable_rollback, a failed deploy names the last revision GitHub recorded as
+# deployed to this environment and the exact rollback.yml dispatch, then fails.
+#
+# No code from the revision being deployed runs in this job. The only
+# checkout is .github/actions from the default branch, so a pull request
+# cannot rewrite the smoke-test action to read this environment's secrets.
+
+on:
+  workflow_call:
+    inputs:
+      target_env:
+        description: GitHub Environment to deploy through (staging or production).
+        required: true
+        type: string
+      namespace:
+        description: Deployment identity, e.g. main or pr-123. Lowercase, digits, hyphens.
+        required: true
+        type: string
+      ref:
+        description: Full 40-character commit SHA to deploy.
+        required: true
+        type: string
+      run_smoke:
+        required: false
+        type: boolean
+        default: true
+      enable_rollback:
+        description: On failure, name the rollback target and the rollback.yml dispatch.
+        required: false
+        type: boolean
+        default: false
+    outputs:
+      deploy_url:
+        description: Deployed environment URL (empty when nothing was deployed).
+        value: ${{ jobs.deploy.outputs.deploy_url }}
+      deployed:
+        description: "'true' only when a provider actually deployed the ref."
+        value: ${{ jobs.deploy.outputs.deployed }}
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy ${{ inputs.namespace }} to ${{ inputs.target_env }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: ${{ inputs.target_env }}
+      url: ${{ steps.deploy.outputs.deploy_url }}
+    # One deploy per environment at a time. With a single-service provider
+    # (render) two pull requests would otherwise race for the same service.
+    concurrency:
+      group: deploy-env-${{ inputs.target_env }}
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      deployments: read
+    outputs:
+      deploy_url: ${{ steps.deploy.outputs.deploy_url }}
+      deployed: ${{ steps.deploy.outputs.deployed }}
+    steps:
+      - name: Validate inputs
+        env:
+          TARGET_ENV: ${{ inputs.target_env }}
+          NAMESPACE: ${{ inputs.namespace }}
+          REF: ${{ inputs.ref }}
+        run: |
+          set -euo pipefail
+          case "$TARGET_ENV" in
+            staging|production) ;;
+            *) echo "::error::target_env must be staging or production, got '${TARGET_ENV}'"; exit 1 ;;
+          esac
+          if ! printf '%s' "$NAMESPACE" | grep -qE '^[a-z0-9][a-z0-9-]{0,62}$'; then
+            echo "::error::namespace must match ^[a-z0-9][a-z0-9-]{0,62}$, got '${NAMESPACE}'"
+            exit 1
+          fi
+          # A tag or branch can move between resolution and deploy; a SHA cannot.
+          if ! printf '%s' "$REF" | grep -qE '^[0-9a-f]{40}$'; then
+            echo "::error::ref must be a full 40-character commit SHA, got '${REF}'"
+            exit 1
+          fi
+
+      - name: Checkout shared actions (default branch only)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          sparse-checkout: .github/actions
+          persist-credentials: false
+
+      - name: Deploy
+        id: deploy
+        env:
+          PROVIDER: ${{ vars.DEPLOY_PROVIDER }}
+          BASE_URL: ${{ vars.DEPLOY_BASE_URL }}
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+          TARGET_ENV: ${{ inputs.target_env }}
+          NAMESPACE: ${{ inputs.namespace }}
+          REF: ${{ inputs.ref }}
+          RUN_SMOKE: ${{ inputs.run_smoke }}
+        run: |
+          set -euo pipefail
+          provider="${PROVIDER:-none}"
+          case "$provider" in
+            none)
+              echo "::notice::No DEPLOY_PROVIDER on the '${TARGET_ENV}' environment. Nothing was deployed."
+              {
+                echo "deployed=false"
+                echo "deploy_url="
+              } >> "$GITHUB_OUTPUT"
+              {
+                echo "### ${TARGET_ENV}: nothing deployed"
+                echo
+                echo "The \`${TARGET_ENV}\` environment has no \`DEPLOY_PROVIDER\` variable, so"
+                echo "\`${REF}\` (${NAMESPACE}) was **not** deployed anywhere. See AUTOMATION.md."
+              } >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+              ;;
+            render)
+              if [ -z "${RENDER_DEPLOY_HOOK:-}" ]; then
+                echo "::error::DEPLOY_PROVIDER=render but the '${TARGET_ENV}' environment has no RENDER_DEPLOY_HOOK secret."
+                exit 1
+              fi
+              curl --fail --silent --show-error --location --max-time 60 \
+                --output /dev/null "${RENDER_DEPLOY_HOOK}?ref=${REF}"
+              echo "Render deploy of ${REF} requested for ${TARGET_ENV} (${NAMESPACE})."
+              if [ "$NAMESPACE" != "main" ]; then
+                echo "::notice::A Render deploy hook targets one service: ${NAMESPACE} now occupies ${TARGET_ENV} until the next deploy. Per-PR isolation needs Render preview environments or a namespaced provider."
+              fi
+              ;;
+            *)
+              echo "::error::DEPLOY_PROVIDER='${provider}' is not implemented in reusable-deploy.yml. Supported: none, render."
+              exit 1
+              ;;
+          esac
+
+          if [ "$RUN_SMOKE" = "true" ] && [ -z "${BASE_URL:-}" ]; then
+            echo "::error::Deployed, but the '${TARGET_ENV}' environment has no DEPLOY_BASE_URL variable, so the deploy cannot be verified."
+            echo "deployed=true" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+          {
+            echo "deployed=true"
+            echo "deploy_url=${BASE_URL%/}"
+          } >> "$GITHUB_OUTPUT"
+          {
+            echo "### ${TARGET_ENV}: deploy requested"
+            echo
+            echo "- Provider: \`${provider}\`"
+            echo "- Revision: \`${REF}\`"
+            echo "- Namespace: \`${NAMESPACE}\`"
+            echo "- URL: ${BASE_URL:-not set}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Smoke tests
+        if: steps.deploy.outputs.deployed == 'true' && inputs.run_smoke
+        uses: ./.github/actions/run-smoke-tests
+        with:
+          base_url: ${{ steps.deploy.outputs.deploy_url }}
+
+      - name: Name the rollback target (manual rollback only)
+        if: failure() && inputs.enable_rollback
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          TARGET_ENV: ${{ inputs.target_env }}
+          REF: ${{ inputs.ref }}
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const env = process.env.TARGET_ENV;
+            const failed = process.env.REF;
+            // Newest first; the last 100 deployments are plenty to find one.
+            const { data: deployments } = await github.rest.repos.listDeployments({
+              owner, repo, environment: env, per_page: 100,
+            });
+            let target = null;
+            for (const d of deployments) {
+              if (d.sha === failed) continue;
+              const { data: statuses } = await github.rest.repos.listDeploymentStatuses({
+                owner, repo, deployment_id: d.id, per_page: 10,
+              });
+              if (statuses.some((s) => s.state === 'success')) { target = d; break; }
+            }
+            const lines = [`### ${env} deploy of \`${failed}\` failed`, ''];
+            if (target) {
+              lines.push(
+                `Last revision GitHub recorded as successfully deployed to \`${env}\`: \`${target.sha}\` (${target.created_at}).`,
+                '',
+                'GitHub records a deployment for every job bound to this environment, including runs that deployed nothing,',
+                'so confirm that revision was really live before using it. Then roll back by hand:',
+                '',
+                '```',
+                `gh workflow run rollback.yml -f target_sha=${target.sha} -f surface=control-plane -f reason="<what is broken>"`,
+                '```',
+              );
+            } else {
+              lines.push(`No earlier successful deployment to \`${env}\` is recorded. Roll back from the hosting provider's dashboard and follow docs/INCIDENT_RESPONSE.md.`);
+            }
+            lines.push('', 'Rollback is deliberately not automatic: see docs/INCIDENT_RESPONSE.md.');
+            await core.summary.addRaw(lines.join('\n')).write();
+            core.error(target
+              ? `Deploy failed. Rollback candidate: ${target.sha}. Dispatch rollback.yml by hand.`
+              : 'Deploy failed and no earlier successful deployment is recorded.');

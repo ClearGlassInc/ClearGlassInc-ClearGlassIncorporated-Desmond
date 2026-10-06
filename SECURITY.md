@@ -44,3 +44,23 @@ Good faith security research is permitted when it:
 
 ## Security commitments
 ClearGlassInc Artemis follows secure by design principles including least privilege, access control, logging, and policy-driven change management.
+
+## CI/CD security
+How the repository's GitHub Actions are kept from becoming the attack path. Details and settings: `AUTOMATION.md`.
+
+### Credentials
+- Deploy credentials are GitHub **environment** secrets (`staging`, `production`), readable only by jobs bound to that environment, so staging and production never share one.
+- The Render deploy hook (`RENDER_DEPLOY_HOOK`) is a long-lived URL credential. Rotate it in Render if it is ever exposed.
+- No cloud provider is wired yet. When one is, it authenticates with OIDC, never a stored key, and its trust policy names the environment (`repo:ClearGlassInc/ClearGlassInc-ClearGlassIncorporated-Desmond:environment:production`), not the whole repository.
+- Secrets reach scripts through `env:`, never by `${{ }}` interpolation into a script. `scripts/audit_github_actions.py` fails any workflow that does otherwise.
+
+### Supply chain
+- Every external action is pinned to a full commit SHA (`scripts/workflow_doctor.py` fails on a tag or branch).
+- Every workflow declares least-privilege `permissions`; write scopes sit on the job that needs them.
+- `CODEOWNERS` requires owner review for `.github/workflows/` and `.github/actions/`.
+
+### Fork and pull-request safety for auto-fix
+- Auto-fix runs only for pull requests from this repository, never forks, and never for bot authors or PRs labelled `no-autofix`.
+- Pull-request code runs only in a read-only job. The job holding the write token runs none of it: it applies the resulting patch, refuses any path `scripts/automation_governance.py` protects or anything under `.github/`, and pushes without force.
+- At most two `auto-fix:` commits per pull request, which prevents fix loops.
+- Deploy and comment jobs load shared actions from the default branch, so a pull request cannot alter code that runs beside an environment's secrets.

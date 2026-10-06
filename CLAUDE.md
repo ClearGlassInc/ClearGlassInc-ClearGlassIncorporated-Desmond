@@ -74,6 +74,7 @@ non‑negotiable when changing it.
 | `storefront/`, `admin/` | The commerce OS's Next.js apps, each deploying independently |
 | `side-store.html`, `side-store/lib/`, `data/side-store/` | The Side Store: 57 impulse SKUs inline in the page, its pricing module, and the catalog projected out of it by `tools/side_store_catalog.py` |
 | `.github/auto-heal/` | Self-healing controller for Actions (`auto_heal.py` + its JSON policy). Landed at the root as `auto-heal/` in the upload flattening, so the workflow that runs it found nothing; restored to the path `auto_heal.py` itself resolves |
+| `AUTOMATION.md`, `.github/actions/` | The CI/CD layer: `reusable-ci.yml` (runs `scripts/ci_local.py` + the commerce gates), `reusable-deploy.yml` (provider per GitHub Environment via `DEPLOY_PROVIDER`; `none` deploys nothing), `deploy-staging.yml` and `deploy-promotion.yml` (both **off** until `CG_PR_STAGING_DEPLOY` / `CG_PROMOTION_ENABLED` are `true`), `auto-fix.yml` (deterministic: ruff + generated assets; PR code never runs beside the write token), `heal-pipeline.yml`, `ci-telemetry.yml`. Rollback stays manual via `rollback.yml`. Don't add `.github/CODEOWNERS`: it would shadow the root file. Invariants: `tests/test_cicd_layer.py` |
 | `agent_army/` | Governed role routing + approval gating (`AGENT_POLICY.md`, `orchestrator.py`, `secure_runtime/` Rust sidecar) |
 | `agents/` | Per‑agent definitions (`agent.json`, `system_prompt.md`, tool schemas) |
 | `bots/` | Standalone Python automation bots invoked by workflows (e.g. `store_smoke_bot.py`) |

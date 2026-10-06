@@ -1,0 +1,112 @@
+name: Deploy Promotion (Staging -> Production)
+
+# Gates -> staging -> (approval) -> production, for one resolved commit.
+#
+# Opt-in. Until the repository variable CG_PROMOTION_ENABLED is 'true' every
+# job is skipped, so this adds nothing to a main push today.
+#
+# The manual approval is the `production` GitHub Environment's required
+# reviewers and wait timer. Those are repository settings (AUTOMATION.md),
+# not code: without them, production deploys straight after staging passes.
+#
+# Read before enabling with DEPLOY_PROVIDER=render on `production`. Two paths
+# already deploy the control plane on a main push:
+#   - render.yaml sets autoDeploy: true, so Render deploys every main push itself;
+#   - commerce-deploy.yml calls RENDER_DEPLOY_HOOK_URL when control-plane/,
+#     storefront/ or admin/ change.
+# Enabling this as well deploys the same commit two or three times. Retire the
+# others first (autoDeploy: false, remove the RENDER_DEPLOY_HOOK_URL secret).
+# That is an owner decision and is deliberately not made here.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Tag or full commit SHA on the default branch to promote. Empty = the dispatched ref's head."
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-promotion
+  cancel-in-progress: false
+
+jobs:
+  resolve:
+    name: Resolve the revision
+    if: vars.CG_PROMOTION_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      sha: ${{ steps.resolve.outputs.sha }}
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      # A tag can be repointed while this workflow runs. Resolve it to a SHA
+      # once, here, and use only the SHA from then on.
+      - name: Resolve to one commit on the default branch
+        id: resolve
+        env:
+          WANTED: ${{ inputs.release_tag }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          wanted="${WANTED:-$GITHUB_SHA}"
+          if ! sha="$(git rev-parse --verify --quiet --end-of-options "${wanted}^{commit}")"; then
+            echo "::error::'${wanted}' does not resolve to a commit in this repository"
+            exit 1
+          fi
+          # Never promote something that was never on the default branch:
+          # that is deploying unreviewed code, not promoting it.
+          if ! git merge-base --is-ancestor "$sha" "origin/${DEFAULT_BRANCH}"; then
+            echo "::error::${sha} is not on ${DEFAULT_BRANCH}; refusing to promote it"
+            exit 1
+          fi
+          echo "sha=${sha}" >> "$GITHUB_OUTPUT"
+          git --no-pager log -1 --format='Promoting %H%n  %s' "$sha"
+
+  ci:
+    name: Gates
+    needs: resolve
+    uses: ./.github/workflows/reusable-ci.yml
+    with:
+      ref: ${{ needs.resolve.outputs.sha }}
+
+  staging:
+    name: Staging
+    needs: [resolve, ci]
+    uses: ./.github/workflows/reusable-deploy.yml
+    permissions:
+      contents: read
+      deployments: read
+    with:
+      target_env: staging
+      namespace: main
+      ref: ${{ needs.resolve.outputs.sha }}
+      run_smoke: true
+
+  production:
+    name: Production
+    needs: [resolve, staging]
+    # Promotion means staging really ran this revision. A staging no-op
+    # (no DEPLOY_PROVIDER) is not evidence, so it stops here.
+    if: needs.staging.outputs.deployed == 'true'
+    uses: ./.github/workflows/reusable-deploy.yml
+    permissions:
+      contents: read
+      deployments: read
+    with:
+      target_env: production
+      namespace: main
+      ref: ${{ needs.resolve.outputs.sha }}
+      run_smoke: true
+      enable_rollback: true
