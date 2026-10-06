@@ -90,8 +90,22 @@ def test_iteration_cap_downgrades_to_report_only():
 
 
 def test_a_human_commit_titled_auto_fix_does_not_count_without_the_trailer():
-    commits = [{"commit": {"message": "auto-fix: my own tidy-up"}}, fix_commit()]
+    commits = [{"commit": {"message": "auto-fix: my own tidy-up"}, "author": {"login": "desmond"}}, fix_commit()]
     assert autofix.count_autofix_commits(commits) == 1
+
+
+def test_earlier_bot_fix_commits_without_the_trailer_still_count():
+    """#187's auto-fix committed 'auto-fix: ruff safe fixes for PR #N' with no trailer."""
+    legacy = {"commit": {"message": "auto-fix: ruff safe fixes for PR #42"}, "author": {"login": "github-actions[bot]"}}
+    assert autofix.count_autofix_commits([legacy, fix_commit()]) == 2
+
+
+@pytest.mark.parametrize("branch", ["main", "staging"])
+def test_integration_branches_are_never_auto_fixed(branch):
+    result = autofix.plan(run_payload(head_branch=branch), [job("Lint (ruff)")],
+                          pr_payload(head={"sha": SHA, "ref": branch, "repo": {"full_name": REPO}}), [],
+                          repository=REPO)
+    assert result.act is False and "integration branch" in result.reason
 
 
 def test_unfixable_failures_report_only():
@@ -269,7 +283,7 @@ def test_render_links_to_the_tree_the_line_numbers_belong_to():
                             check={"files": []}, outcome="pushed", commit_sha="c" * 40, run_url="u")
     refused = autofix.render(repository=REPO, plan_out=plan_out, failed_jobs=[], report=report,
                              check={"refusals": ["nope"]}, outcome="refused", commit_sha="", run_url="u")
-    assert pushed.startswith(autofix.MARKER)
+    assert "Verified" in pushed
     assert f"/blob/{'c' * 40}/bots/x.py#L2" in pushed
     assert "**1/2**" in pushed
     assert f"/blob/{SHA}/bots/x.py#L3" in refused
@@ -314,3 +328,19 @@ def test_fix_produces_a_patch_and_before_after_diagnostics(tmp_path: Path):
     assert after == {"F821"}  # the unused import was fixed; the undefined name needs a human
     assert report["issues_after"][0]["path"] == "mod.py"
     assert autofix.check_patch(patch, {"mod.py"}, ["ruff"])["ok"] is True
+
+
+def test_commit_request_pins_the_failing_head_and_carries_the_staged_files(page_repo: Path):
+    (page_repo / "about.html").write_text(PAGE.replace("<p>Body</p>", "<p>Fixed</p>"))
+    subprocess.run(["git", "-C", str(page_repo), "add", "about.html"], check=True)
+    request = autofix.commit_request(page_repo, repository=REPO, branch="feature/x", head_sha=SHA,
+                                     headline="auto-fix: ruff for #42", body="Auto-Fix-Run: u")
+    data = request["variables"]["input"]
+    assert data["expectedHeadOid"] == SHA
+    assert data["branch"] == {"repositoryNameWithOwner": REPO, "branchName": "feature/x"}
+    assert data["fileChanges"]["deletions"] == []
+    [addition] = data["fileChanges"]["additions"]
+    assert addition["path"] == "about.html"
+    import base64
+    assert b"<p>Fixed</p>" in base64.b64decode(addition["contents"])
+    assert "createCommitOnBranch" in request["query"]

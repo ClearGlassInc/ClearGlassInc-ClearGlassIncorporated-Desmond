@@ -6,6 +6,10 @@
 # makes no external calls, /ready proves the database is reachable.
 #
 # A fresh deploy takes minutes to come up, so /health is polled, not sampled once.
+#
+# Generic mode: set `checks` to newline-separated "METHOD PATH EXPECTED[,EXPECTED]"
+# lines and smoke.sh (next to this file) runs those instead. scripts/ci/release.py
+# calls smoke.sh directly for the per-service checks in scripts/ci/components.py.
 name: "Run Smoke Tests"
 description: "Poll /health, then check /ready and, optionally, that the admin gate is live."
 
@@ -32,11 +36,16 @@ inputs:
       401 or 403. Turn on for production, where an open admin surface is a breach.
     required: false
     default: "false"
+  checks:
+    description: "Generic mode: newline-separated 'METHOD PATH EXPECTED' checks; replaces the steps above."
+    required: false
+    default: ""
 
 runs:
   using: "composite"
   steps:
     - name: Validate base URL
+      if: inputs.checks == ''
       shell: bash
       env:
         BASE_URL: ${{ inputs.base_url }}
@@ -48,6 +57,7 @@ runs:
         fi
 
     - name: Wait for /health
+      if: inputs.checks == ''
       shell: bash
       env:
         BASE_URL: ${{ inputs.base_url }}
@@ -69,7 +79,7 @@ runs:
         exit 1
 
     - name: Check /ready
-      if: inputs.check_ready == 'true'
+      if: inputs.checks == '' && inputs.check_ready == 'true'
       shell: bash
       env:
         BASE_URL: ${{ inputs.base_url }}
@@ -83,7 +93,7 @@ runs:
         echo "/ready returned 200."
 
     - name: Check the admin gate is live
-      if: inputs.expect_admin_auth == 'true'
+      if: inputs.checks == '' && inputs.expect_admin_auth == 'true'
       shell: bash
       env:
         BASE_URL: ${{ inputs.base_url }}
@@ -101,3 +111,13 @@ runs:
             *) echo "::error::${path} returned ${code} without credentials; the admin gate is not enforced."; exit 1 ;;
           esac
         done
+
+    - name: Run the generic checks
+      if: inputs.checks != ''
+      shell: bash
+      env:
+        SMOKE_BASE_URL: ${{ inputs.base_url }}
+        SMOKE_CHECKS: ${{ inputs.checks }}
+        SMOKE_ATTEMPTS: ${{ inputs.attempts }}
+        SMOKE_INTERVAL: ${{ inputs.interval_seconds }}
+      run: '"$GITHUB_ACTION_PATH/smoke.sh"'
