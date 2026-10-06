@@ -1,0 +1,171 @@
+name: Deploy Staging (PR previews)
+
+# Every same-repository pull request gets an isolated, ephemeral environment:
+# a tagged Cloud Run revision (tag pr-<number>) on the shared preview service.
+# It takes no production traffic, runs payments in mock mode against its own
+# throwaway SQLite database, and gets a fresh random admin key per deploy.
+#
+#   opened / synchronize / reopened  build -> deploy -> smoke -> PR comment + deployment status
+#   closed                           remove the tag (the preview URL stops resolving)
+#
+# A newer push cancels the in-flight deploy for the same PR (concurrency) and
+# re-points the same tag at the new revision, so a PR never has two previews.
+# Inert until the repository variable DEPLOY_PROVIDER is set. Opt out per PR with
+# the `no-preview` label. Which services get previews: PREVIEW_SERVICES
+# (default control-plane; see AUTOMATION.md for why the frontends are opt-in).
+#
+# Fork PRs are never deployed: they are filtered here, and GitHub gives fork runs
+# neither secrets nor a write-scoped token.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: [main, staging]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: preview-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -eo pipefail {0}
+
+jobs:
+  plan:
+    name: Plan preview
+    if: >-
+      vars.DEPLOY_PROVIDER != '' &&
+      github.event.action != 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      !contains(github.event.pull_request.labels.*.name, 'no-preview')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      services: ${{ steps.select.outputs.names }}
+      any: ${{ steps.select.outputs.any }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - id: select
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PREVIEW_SERVICES: ${{ vars.PREVIEW_SERVICES || 'control-plane' }}
+        run: |
+          python3 scripts/ci/components.py services --base "$BASE_SHA" --head HEAD --only "$PREVIEW_SERVICES" \
+            | grep -E '^(any|names)=' | tee -a "$GITHUB_OUTPUT"
+
+  deploy:
+    name: Preview
+    needs: plan
+    if: needs.plan.outputs.any == 'true'
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      environment: preview
+      services: ${{ needs.plan.outputs.services }}
+      ref: ${{ github.event.pull_request.head.sha }}
+      tag: pr-${{ github.event.pull_request.number }}
+      build: true
+
+  comment:
+    name: Post preview URLs
+    needs: [plan, deploy]
+    if: always() && needs.plan.outputs.any == 'true' && needs.deploy.result != 'cancelled'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Upsert the sticky preview comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+          OUTCOME: ${{ needs.deploy.outputs.outcome || needs.deploy.result }}
+          URLS: ${{ needs.deploy.outputs.urls || '{}' }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          {
+            echo "<!-- cg-preview -->"
+            echo "## Preview environment"
+            echo
+            if [ "$OUTCOME" = "success" ]; then
+              echo "Deployed \`${SHA:0:12}\` and passed its smoke tests."
+            else
+              echo "Preview deploy **${OUTCOME}** for \`${SHA:0:12}\` — see the [run log]($RUN_URL)."
+            fi
+            echo
+            echo "| Service | URL |"
+            echo "|---|---|"
+            jq -r 'to_entries[] | "| \(.key) | \(.value) |"' <<<"$URLS"
+            echo
+            echo "<sub>Isolated tagged revision: mock payments, throwaway SQLite, random admin key. Removed when this PR closes. Label \`no-preview\` to opt out. · [run]($RUN_URL)</sub>"
+          } > comment.md
+          existing="$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments?per_page=100" --paginate \
+            --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | startswith("<!-- cg-preview -->"))) | .id' | tail -n1)"
+          if [ -n "$existing" ]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$existing" -F body=@comment.md > /dev/null
+          else
+            gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" -F body=@comment.md > /dev/null
+          fi
+
+  teardown:
+    name: Tear down preview
+    if: >-
+      vars.DEPLOY_PROVIDER != '' &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: preview
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+    env:
+      DEPLOY_PROVIDER: ${{ vars.DEPLOY_PROVIDER }}
+      DEPLOY_PROJECT: ${{ vars.DEPLOY_PROJECT }}
+      DEPLOY_REGION: ${{ vars.DEPLOY_REGION }}
+    steps:
+      # The base branch's copy of the adapter: the PR is closed, its code is not run.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+
+      - name: Authenticate to Google Cloud (OIDC)
+        if: vars.DEPLOY_PROVIDER == 'cloudrun'
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+
+      - name: Remove the PR's revision tag from every preview service
+        env:
+          TAG: pr-${{ github.event.pull_request.number }}
+          PREVIEW_SERVICES: ${{ vars.PREVIEW_SERVICES || 'control-plane' }}
+          SERVICE_PREFIX: ${{ vars.SERVICE_PREFIX || 'cg' }}
+        run: |
+          for service in ${PREVIEW_SERVICES//,/ }; do
+            SERVICE="${SERVICE_PREFIX}-${service}-preview" scripts/ci/deploy_target.sh untag
+          done
+
+      - name: Mark the preview comment as torn down
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          existing="$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments?per_page=100" --paginate \
+            --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | startswith("<!-- cg-preview -->"))) | .id' | tail -n1)"
+          if [ -n "$existing" ]; then
+            printf '<!-- cg-preview -->\n## Preview environment\n\nTorn down when this pull request closed.\n' > comment.md
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$existing" -F body=@comment.md > /dev/null
+          fi

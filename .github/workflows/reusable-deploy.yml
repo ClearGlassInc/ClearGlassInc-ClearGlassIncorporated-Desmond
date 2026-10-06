@@ -1,0 +1,146 @@
+name: Reusable Deploy
+
+# Release a set of services to ONE environment as a unit (scripts/ci/release.py):
+# image by digest -> candidate revisions with no traffic -> smoke -> promote in
+# dependency order -> live smoke -> roll every promoted service back on failure.
+#
+# Credentials: OIDC only. The job exchanges its GitHub-signed identity token for
+# a short-lived cloud credential bound to THIS environment's service account
+# (environment-level variables), so no long-lived cloud key exists in the
+# repository or in GitHub secrets. Each environment has its own identity: the
+# preview identity cannot touch staging, and staging's cannot touch production.
+#
+# Environment-level variables (Settings → Environments → <env> → Variables):
+#   GCP_WORKLOAD_IDENTITY_PROVIDER  projects/<num>/locations/global/workloadIdentityPools/<pool>/providers/<provider>
+#   GCP_SERVICE_ACCOUNT             deployer SA for this environment
+#   DEPLOY_PROJECT  DEPLOY_REGION   where the services live
+#   IMAGE_REPOSITORY                <region>-docker.pkg.dev/<project>/<repo>
+# Repository variable: DEPLOY_PROVIDER (cloudrun). Unset = every deploy skips.
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: "preview | staging | production"
+        required: true
+        type: string
+      services:
+        description: "Comma-separated components (scripts/ci/components.py)"
+        required: true
+        type: string
+      ref:
+        description: "Full commit SHA to release"
+        required: true
+        type: string
+      tag:
+        description: "Revision tag: pr-<n> for previews, sha-<short> for releases"
+        required: true
+        type: string
+      build:
+        description: "Build and push the image (previews, staging). Production never builds."
+        required: false
+        type: boolean
+        default: false
+      promote:
+        description: "Move traffic to the new revisions (never for previews)"
+        required: false
+        type: boolean
+        default: false
+      auto-rollback:
+        description: "Route traffic back automatically if a promoted service fails"
+        required: false
+        type: boolean
+        default: true
+    outputs:
+      outcome:
+        description: "success | failed | rolled-back"
+        value: ${{ jobs.release.outputs.outcome }}
+      urls:
+        description: "JSON map of service -> URL"
+        value: ${{ jobs.release.outputs.urls }}
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -eo pipefail {0}
+
+jobs:
+  release:
+    name: Release to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ steps.release.outputs.primary_url }}
+    permissions:
+      contents: read
+      id-token: write # OIDC token for the cloud credential exchange
+    outputs:
+      outcome: ${{ steps.release.outputs.outcome }}
+      urls: ${{ steps.release.outputs.urls }}
+    env:
+      DEPLOY_PROVIDER: ${{ vars.DEPLOY_PROVIDER }}
+      DEPLOY_PROJECT: ${{ vars.DEPLOY_PROJECT }}
+      DEPLOY_REGION: ${{ vars.DEPLOY_REGION }}
+      IMAGE_REPOSITORY: ${{ vars.IMAGE_REPOSITORY }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref }}
+          persist-credentials: false
+
+      - name: Refuse an incomplete environment
+        env:
+          WIF: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          SA: ${{ vars.GCP_SERVICE_ACCOUNT }}
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          missing=()
+          for name in DEPLOY_PROVIDER DEPLOY_PROJECT DEPLOY_REGION IMAGE_REPOSITORY WIF SA; do
+            [ -n "${!name:-}" ] || missing+=("$name")
+          done
+          if [ "${#missing[@]}" -gt 0 ]; then
+            echo "::error title=Environment not configured::$ENVIRONMENT is missing: ${missing[*]} (AUTOMATION.md, 'Environments')"
+            exit 1
+          fi
+
+      - name: Authenticate to Google Cloud (OIDC, Workload Identity Federation)
+        if: vars.DEPLOY_PROVIDER == 'cloudrun'
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+
+      - name: Let docker use the short-lived credential for the registry
+        if: vars.DEPLOY_PROVIDER == 'cloudrun'
+        run: gcloud auth configure-docker "${IMAGE_REPOSITORY%%/*}" --quiet
+
+      - name: Release
+        id: release
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+          SERVICES: ${{ inputs.services }}
+          REF: ${{ inputs.ref }}
+          TAG: ${{ inputs.tag }}
+          BUILD: ${{ inputs.build }}
+          PROMOTE: ${{ inputs.promote }}
+          AUTO_ROLLBACK: ${{ inputs.auto-rollback }}
+          SERVICE_PREFIX: ${{ vars.SERVICE_PREFIX || 'cg' }}
+        run: |
+          args=(--environment "$ENVIRONMENT" --services "$SERVICES" --sha "$REF" --tag "$TAG"
+                --image-repository "$IMAGE_REPOSITORY" --service-prefix "$SERVICE_PREFIX" --out release.json)
+          if [ "$BUILD" = "true" ]; then args+=(--build); fi
+          if [ "$PROMOTE" = "true" ]; then args+=(--promote); fi
+          if [ "$AUTO_ROLLBACK" = "true" ]; then args+=(--auto-rollback); fi
+          python3 scripts/ci/release.py "${args[@]}"
+
+      - name: Keep the release record
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-${{ inputs.environment }}-${{ inputs.tag }}
+          path: release.json
+          if-no-files-found: ignore
+          retention-days: 90

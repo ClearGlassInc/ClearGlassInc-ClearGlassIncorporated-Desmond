@@ -1,0 +1,194 @@
+name: Deploy Promotion
+
+# main -> staging (build once, smoke, end-to-end) -> human approval -> production
+# (the SAME image digest, never a rebuild) -> live smoke -> automatic rollback.
+#
+# Entry points:
+#   * ci.yml calls this after "CI result" passes on a push to main, so a release
+#     can only start from a commit whose full CI run is green;
+#   * workflow_dispatch, to release (or re-release) a tag or commit already on
+#     main. It refuses anything not on main or without a green "CI result".
+#
+# Gates, in order: CI green -> staging smoke -> staging E2E -> production
+# environment approval (required reviewers) -> candidate smoke before traffic
+# -> live smoke after traffic. Auto-rollback is withheld when the release ships
+# control-plane migrations (RUN_MIGRATIONS applies them at boot, and routing
+# traffic back does not un-migrate a schema): a human decides via rollback.yml.
+#
+# Inert until the repository variable DEPLOY_PROVIDER is set.
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: "Commit SHA to release"
+        required: true
+        type: string
+      base:
+        description: "Previous commit (push 'before'), used to scope services and detect migrations"
+        required: false
+        type: string
+        default: ""
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Release tag or commit on main (default: tip of main)"
+        required: false
+        type: string
+        default: ""
+      services:
+        description: "Comma-separated services (default: RELEASE_SERVICES)"
+        required: false
+        type: string
+        default: ""
+      auto_rollback:
+        description: "Allow automatic rollback (only if this release ships no migrations)"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -eo pipefail {0}
+
+jobs:
+  plan:
+    name: Plan release
+    if: vars.DEPLOY_PROVIDER != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      checks: read
+    outputs:
+      sha: ${{ steps.resolve.outputs.sha }}
+      tag: ${{ steps.resolve.outputs.tag }}
+      services: ${{ steps.resolve.outputs.names }}
+      any: ${{ steps.resolve.outputs.any }}
+      auto_rollback: ${{ steps.resolve.outputs.auto_rollback }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Resolve what to release
+        id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          REF: ${{ inputs.ref }}
+          BASE: ${{ inputs.base }}
+          REQUESTED: ${{ inputs.services }}
+          DISPATCH_ROLLBACK: ${{ inputs.auto_rollback }}
+          RELEASE_SERVICES: ${{ vars.RELEASE_SERVICES || 'control-plane' }}
+        run: |
+          git fetch --quiet --tags origin main
+          sha="$(git rev-parse --verify "${REF:-origin/main}^{commit}")"
+          if ! git merge-base --is-ancestor "$sha" origin/main; then
+            echo "::error title=Not releasable::$sha is not on main"
+            exit 1
+          fi
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            ci="$(gh api "repos/$GITHUB_REPOSITORY/commits/$sha/check-runs?check_name=CI%20result" \
+                    --jq '[.check_runs[].conclusion][0] // "missing"')"
+            if [ "$ci" != "success" ]; then
+              echo "::error title=CI not green::'CI result' on $sha is '$ci'; only green commits are releasable"
+              exit 1
+            fi
+          fi
+
+          only="${REQUESTED:-$RELEASE_SERVICES}"
+          selection="$(python3 scripts/ci/components.py services --base "$BASE" --head "$sha" --only "$only" | grep -E '^(any|names)=')"
+          echo "$selection" >> "$GITHUB_OUTPUT"
+          names="$(sed -n 's/^names=//p' <<<"$selection")"
+
+          # Migrations shipped in this release => no automatic rollback.
+          if [ -n "$BASE" ] && git cat-file -e "${BASE}^{commit}" 2>/dev/null; then
+            if git diff --quiet "$BASE" "$sha" -- control-plane/migrations; then auto=true; else auto=false; fi
+          else
+            auto="${DISPATCH_ROLLBACK:-false}"
+          fi
+          {
+            echo "sha=$sha"
+            echo "tag=sha-${sha:0:7}"
+            echo "auto_rollback=$auto"
+          } >> "$GITHUB_OUTPUT"
+          {
+            echo "### Release plan"
+            echo "- commit: \`$sha\`"
+            echo "- services: \`${names:-none changed}\`"
+            echo "- automatic rollback: **$auto**"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  staging:
+    name: Staging
+    needs: plan
+    if: needs.plan.outputs.any == 'true'
+    concurrency:
+      group: release-staging
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      environment: staging
+      services: ${{ needs.plan.outputs.services }}
+      ref: ${{ needs.plan.outputs.sha }}
+      tag: ${{ needs.plan.outputs.tag }}
+      build: true # the one build of this release; production reuses its digest
+      promote: true
+      auto-rollback: true # staging holds no customer data
+
+  e2e:
+    name: Staging end-to-end
+    needs: [plan, staging]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.plan.outputs.sha }}
+          persist-credentials: false
+      - name: Contract checks against staging
+        env:
+          URLS: ${{ needs.staging.outputs.urls }}
+          FALLBACK_API: ${{ vars.STAGING_API_URL }}
+          FALLBACK_STOREFRONT: ${{ vars.STAGING_STOREFRONT_URL }}
+        run: |
+          urls="${URLS:-}"
+          if [ -z "$urls" ]; then urls='{}'; fi
+          api="$(jq -r '."control-plane" // empty' <<<"$urls")"
+          storefront="$(jq -r '.storefront // empty' <<<"$urls")"
+          api="${api:-$FALLBACK_API}"
+          storefront="${storefront:-$FALLBACK_STOREFRONT}"
+          if [ -z "$api" ]; then
+            echo "::error title=No E2E target::the control plane was not in this release and STAGING_API_URL is unset; refusing to promote untested"
+            exit 1
+          fi
+          python3 scripts/ci/e2e_staging.py --api "$api" --storefront "$storefront"
+
+  production:
+    name: Production
+    needs: [plan, staging, e2e]
+    concurrency:
+      group: release-production
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+    # The production environment's required reviewers are the manual gate: this
+    # job does not start until one of them approves the run.
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      environment: production
+      services: ${{ needs.plan.outputs.services }}
+      ref: ${{ needs.plan.outputs.sha }}
+      tag: ${{ needs.plan.outputs.tag }}
+      build: false
+      promote: true
+      auto-rollback: ${{ needs.plan.outputs.auto_rollback == 'true' }}

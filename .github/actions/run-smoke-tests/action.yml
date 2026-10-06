@@ -1,0 +1,44 @@
+# Smoke-test a deployed URL. The logic lives in smoke.sh so it can be run, and
+# tested, outside Actions:
+#   SMOKE_BASE_URL=http://127.0.0.1:8000 SMOKE_CHECKS="GET /health 200" ./smoke.sh
+name: "Run smoke tests"
+description: "Wait for a deployment to answer, then assert METHOD PATH -> expected status checks."
+
+inputs:
+  base-url:
+    description: "Deployment base URL (https://, or http:// on localhost)."
+    required: true
+  checks:
+    description: "Newline-separated 'METHOD PATH EXPECTED[,EXPECTED]' lines; the first is also the warm-up probe."
+    required: false
+    default: "GET /health 200"
+  attempts:
+    description: "Warm-up polls before giving up (cold starts)."
+    required: false
+    default: "30"
+  interval-seconds:
+    description: "Seconds between warm-up polls."
+    required: false
+    default: "5"
+  timeout-seconds:
+    description: "Per-request timeout."
+    required: false
+    default: "10"
+
+outputs:
+  passed:
+    description: "'true' when every check passed."
+    value: ${{ steps.smoke.outputs.passed }}
+
+runs:
+  using: "composite"
+  steps:
+    - id: smoke
+      shell: bash
+      env:
+        SMOKE_BASE_URL: ${{ inputs.base-url }}
+        SMOKE_CHECKS: ${{ inputs.checks }}
+        SMOKE_ATTEMPTS: ${{ inputs.attempts }}
+        SMOKE_INTERVAL: ${{ inputs.interval-seconds }}
+        SMOKE_TIMEOUT: ${{ inputs.timeout-seconds }}
+      run: '"$GITHUB_ACTION_PATH/smoke.sh"'

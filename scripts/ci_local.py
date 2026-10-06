@@ -57,12 +57,14 @@ class Gate:
         *,
         needs_network: bool = False,
         needs: str | None = None,
+        cwd: str = ".",
     ) -> None:
         self.job = job
         self.name = name
         self.command = command
         self.needs_network = needs_network
         self.needs = needs  # executable that must be on PATH
+        self.cwd = cwd  # repository-relative working directory
 
     def skip_reason(self, with_network: bool) -> str | None:
         if self.needs_network and not with_network:
@@ -125,6 +127,45 @@ GATES: list[Gate] = [
         needs_network=True,
         needs="npx",
     ),
+    # The stack job (reusable-ci.yml, one matrix leg per component). CI runs only
+    # the components a change touches; locally every one runs. The container
+    # builds are not mirrored: they need Docker and the network, and the tests and
+    # type-checks below catch what a contributor can fix before pushing.
+    Gate(
+        "stack",
+        "control-plane tests",
+        [sys.executable, "-m", "pytest", "tests/", "-q"],
+        cwd="control-plane",
+    ),
+    Gate(
+        "stack",
+        "control-plane dependency audit",
+        ["pip-audit", "--requirement", "control-plane/requirements.txt", "--progress-spinner", "off"],
+        needs_network=True,
+        needs="pip-audit",
+    ),
+    *(
+        Gate(
+            "stack",
+            f"{app} type-check",
+            ["sh", "-c", "npm ci --no-audit --no-fund && ./node_modules/.bin/tsc --noEmit --pretty false"],
+            needs_network=True,
+            needs="npm",
+            cwd=app,
+        )
+        for app in ("storefront", "admin")
+    ),
+    *(
+        Gate(
+            "stack",
+            f"{app} dependency audit",
+            ["npm", "audit", "--omit=dev", "--audit-level=high"],
+            needs_network=True,
+            needs="npm",
+            cwd=app,
+        )
+        for app in ("storefront", "admin")
+    ),
 ]
 
 
@@ -133,7 +174,7 @@ def run(gate: Gate) -> tuple[str, float, str]:
     try:
         proc = subprocess.run(
             gate.command,
-            cwd=ROOT,
+            cwd=ROOT / gate.cwd,
             capture_output=True,
             text=True,
             timeout=1800,
@@ -157,7 +198,7 @@ def main() -> int:
     parser.add_argument(
         "--with-network",
         action="store_true",
-        help="also run gates that download or fetch (Lighthouse)",
+        help="also run gates that download or fetch (Lighthouse, npm, dependency audits)",
     )
     parser.add_argument("--list", action="store_true", help="list the gates and exit")
     args = parser.parse_args()
