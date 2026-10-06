@@ -1,57 +1,40 @@
 name: Reusable CI
 
-# Lint, type-check, test, build and dependency-audit ONE component. ci.yml calls it
-# once per changed component (scripts/ci/components.py builds that matrix).
+# The repository's real gates, callable from any workflow (AUTOMATION.md).
 #
-# Tool selection is convention-driven so this file never has to change when a
-# component adopts a tool:
-#   python  ruff check (always) · ruff format / black (opt-in input) · mypy (opt-in)
-#           pytest · pip-audit · docker build when a Dockerfile exists
-#   node    npm run lint / format:check (ESLint / Prettier — run when the script
-#           exists) · tsc --noEmit when tsconfig.json exists · npm test (Vitest /
-#           Jest — when the script exists) · npm audit · docker build or npm run build
-#   cpp     clang-format when .clang-format exists · cmake build · ctest
-# A tool the component does not configure is reported as a notice, never faked.
+# ci.yml stays the authoritative PR/push gate and is not wired to this file; this
+# exists so a deploy can re-prove the exact commit it is about to ship
+# (deploy-promotion.yml calls it first). It runs what ci.yml runs for Python, the
+# workflow-safety audit, and optionally the commerce frontends and CodeQL. It does
+# not run eslint, prettier or black: this repo uses none of them, and running them
+# repo-wide would fail on, or rewrite, thousands of untouched files.
 #
-# SAST is CodeQL *default setup* (repository settings). It is deliberately not
-# re-declared here: GitHub refuses an advanced CodeQL workflow while default setup
-# is on (see semgrep-trial.yml for the run that proved it).
+# CodeQL is off by default. If GitHub's CodeQL "default setup" is enabled for the
+# repository, an advanced-configuration upload is rejected, so turn it on only
+# when default setup is off. The caller must grant security-events: write.
 
 on:
   workflow_call:
     inputs:
-      component:
-        description: "Component name, for display"
-        required: true
-        type: string
-      language:
-        description: "python | node | cpp"
-        required: true
-        type: string
-      working-directory:
-        description: "Repository-relative component directory"
-        required: true
-        type: string
-      python-version:
-        required: false
-        type: string
-        default: "3.11"
-      node-version:
-        required: false
-        type: string
-        default: "22"
-      requirements:
-        description: "Python requirements file (repository-relative)"
+      ref:
+        description: "Commit to test. Defaults to the caller's commit."
         required: false
         type: string
         default: ""
-      python-format:
-        description: "none | ruff | black — formatter check to enforce"
+      node_version:
         required: false
         type: string
-        default: "none"
-      python-typecheck:
-        description: "Run mypy against the component"
+        default: "22"
+      python_version:
+        required: false
+        type: string
+        default: "3.11"
+      run_frontends:
+        description: "Also typecheck and build storefront/ and admin/."
+        required: false
+        type: boolean
+        default: false
+      enable_codeql:
         required: false
         type: boolean
         default: false
@@ -59,232 +42,127 @@ on:
 permissions:
   contents: read
 
-defaults:
-  run:
-    shell: bash --noprofile --norc -eo pipefail {0}
-
 jobs:
-  static:
-    name: Lint & types
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup-node-python
-        with:
-          python-version: ${{ inputs.language == 'python' && inputs.python-version || '' }}
-          node-version: ${{ inputs.language == 'node' && inputs.node-version || '' }}
-          working-directory: ${{ inputs.working-directory }}
-          # Linting needs no runtime deps; mypy does.
-          python-requirements: ${{ inputs.python-typecheck && inputs.requirements || '' }}
-
-      # Every check below runs even when an earlier one failed (!cancelled), so one
-      # run reports — and auto-fix sees — all static problems at once.
-      - name: Lint (ruff)
-        if: ${{ !cancelled() && inputs.language == 'python' }}
-        env:
-          WD: ${{ inputs.working-directory }}
-        # github format turns each finding into a file:line annotation on the PR.
-        run: ruff check --output-format=github "$WD"
-
-      - name: Format check (Python)
-        if: ${{ !cancelled() && inputs.language == 'python' }}
-        env:
-          WD: ${{ inputs.working-directory }}
-          FORMATTER: ${{ inputs.python-format }}
-        run: |
-          case "$FORMATTER" in
-            ruff)  ruff format --check "$WD" ;;
-            black) pip install "black==26.10.0" && black --check "$WD" ;;
-            none)  echo "::notice title=Format::${WD} has no Python formatter enforced (python-format: none)" ;;
-            *)     echo "::error::unknown python-format '$FORMATTER'"; exit 1 ;;
-          esac
-
-      - name: Type-check (mypy)
-        if: ${{ !cancelled() && inputs.language == 'python' }}
-        env:
-          WD: ${{ inputs.working-directory }}
-          ENABLED: ${{ inputs.python-typecheck }}
-        run: |
-          if [ "$ENABLED" != "true" ]; then
-            echo "::notice title=Types::${WD} does not opt into mypy (python-typecheck: false)"
-            exit 0
-          fi
-          pip install "mypy==2.4.0"
-          mypy "$WD"
-
-      - name: Lint (ESLint via npm run lint)
-        if: ${{ !cancelled() && inputs.language == 'node' }}
-        working-directory: ${{ inputs.working-directory }}
-        run: |
-          if node -e "process.exit(require('./package.json').scripts?.lint ? 0 : 1)"; then
-            npm run lint
-          else
-            echo "::notice title=Lint::${PWD##*/} defines no 'lint' script; add ESLint as a devDependency and a lint script to enable this gate"
-          fi
-
-      - name: Format check (Prettier via npm run format:check)
-        if: ${{ !cancelled() && inputs.language == 'node' }}
-        working-directory: ${{ inputs.working-directory }}
-        run: |
-          if node -e "process.exit(require('./package.json').scripts?.['format:check'] ? 0 : 1)"; then
-            npm run format:check
-          else
-            echo "::notice title=Format::${PWD##*/} defines no 'format:check' script; add Prettier and the script to enable this gate"
-          fi
-
-      - name: Type-check (tsc --noEmit)
-        if: ${{ !cancelled() && inputs.language == 'node' }}
-        working-directory: ${{ inputs.working-directory }}
-        # --pretty false: setup-node's tsc problem matcher turns each error into
-        # a file:line annotation, which auto-fix.yml reads back.
-        run: |
-          if [ -f tsconfig.json ]; then
-            # The locked local compiler only: never let npx fetch an unpinned one.
-            ./node_modules/.bin/tsc --noEmit --pretty false
-          else
-            echo "::notice title=Types::${PWD##*/} has no tsconfig.json"
-          fi
-
-      - name: Format check (clang-format)
-        if: ${{ !cancelled() && inputs.language == 'cpp' }}
-        working-directory: ${{ inputs.working-directory }}
-        run: |
-          if [ -f .clang-format ]; then
-            git ls-files '*.c' '*.cc' '*.cpp' '*.h' '*.hpp' | xargs --no-run-if-empty clang-format --dry-run --Werror
-          else
-            echo "::notice title=Format::no .clang-format in ${PWD##*/}"
-          fi
-
-  test:
-    name: Tests
+  python:
+    name: Lint + tests (Python)
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ inputs.ref || github.sha }}
           persist-credentials: false
-      - uses: ./.github/actions/setup-node-python
+
+      - name: Setup Node + Python
+        uses: ./.github/actions/setup-node-python
         with:
-          python-version: ${{ inputs.language == 'python' && inputs.python-version || '' }}
-          node-version: ${{ inputs.language == 'node' && inputs.node-version || '' }}
-          working-directory: ${{ inputs.working-directory }}
-          python-requirements: ${{ inputs.requirements }}
+          node_version: ${{ inputs.node_version }}
+          python_version: ${{ inputs.python_version }}
 
-      - name: Unit tests (pytest)
-        if: inputs.language == 'python'
-        working-directory: ${{ inputs.working-directory }}
-        run: |
-          if [ -d tests ]; then
-            python -m pytest tests/ -q
-          else
-            echo "::warning title=Tests::${PWD##*/} has no tests/ directory"
-          fi
+      - name: Lint (ruff, repo-wide)
+        run: ruff check .
 
-      - name: Unit tests (npm test — Vitest / Jest)
-        if: inputs.language == 'node'
-        working-directory: ${{ inputs.working-directory }}
-        run: |
-          if node -e "process.exit(require('./package.json').scripts?.test ? 0 : 1)"; then
-            npm test
-          else
-            echo "::warning title=Tests::${PWD##*/} defines no 'test' script; nothing verifies its behaviour"
-          fi
+      - name: Root test suite
+        run: pytest tests/ -q
 
-      - name: Build and test (CMake / CTest)
-        if: inputs.language == 'cpp'
-        working-directory: ${{ inputs.working-directory }}
-        run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-          cmake --build build --parallel
-          ctest --test-dir build --output-on-failure
-
-  build:
-    name: Build
+  control-plane:
+    name: Control plane (ruff + pytest)
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ inputs.ref || github.sha }}
           persist-credentials: false
 
-      # The Dockerfile is what ships, so when one exists it IS the build check:
-      # it catches a broken requirements file, a missing COPY or a failing
-      # `next build` the same way a deploy would. Nothing is pushed.
-      - name: Detect build mode
-        id: mode
-        env:
-          WD: ${{ inputs.working-directory }}
-        run: |
-          if [ -f "$WD/Dockerfile" ]; then echo "mode=docker" >> "$GITHUB_OUTPUT"; else echo "mode=native" >> "$GITHUB_OUTPUT"; fi
-
-      - name: Container build (no push)
-        if: steps.mode.outputs.mode == 'docker'
-        env:
-          WD: ${{ inputs.working-directory }}
-          COMPONENT: ${{ inputs.component }}
-        run: docker build --tag "ci/${COMPONENT}:${GITHUB_SHA}" "$WD"
-
-      - uses: ./.github/actions/setup-node-python
-        if: steps.mode.outputs.mode == 'native' && inputs.language != 'cpp'
+      - name: Setup Node + Python
+        uses: ./.github/actions/setup-node-python
         with:
-          python-version: ${{ inputs.language == 'python' && inputs.python-version || '' }}
-          node-version: ${{ inputs.language == 'node' && inputs.node-version || '' }}
-          working-directory: ${{ inputs.working-directory }}
+          node_version: ${{ inputs.node_version }}
+          python_version: ${{ inputs.python_version }}
 
-      - name: Native build
-        if: steps.mode.outputs.mode == 'native'
-        working-directory: ${{ inputs.working-directory }}
-        env:
-          LANGUAGE: ${{ inputs.language }}
-        run: |
-          case "$LANGUAGE" in
-            python) python -m compileall -q . ;;
-            node)   npm run build ;;
-            cpp)    cmake -S . -B build && cmake --build build --parallel ;;
-          esac
+      # requirements.txt pins httpx; without it the webhook -> DB -> /payouts tests
+      # silently skip and the governed money paths go unexercised (CLAUDE.md).
+      - name: Install control-plane requirements
+        run: pip install -r control-plane/requirements.txt
 
-  security:
-    name: Dependency audit
+      - name: Lint
+        run: ruff check control-plane
+
+      - name: Tests
+        working-directory: control-plane
+        run: python -m pytest tests/ -q
+
+  workflow-safety:
+    name: Workflow safety invariants
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ inputs.ref || github.sha }}
           persist-credentials: false
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-        if: inputs.language == 'python'
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
-          python-version: ${{ inputs.python-version }}
+          python-version: ${{ inputs.python_version }}
 
-      # Known-vulnerability check on resolved dependencies. Independent of GitHub
-      # Advanced Security, which is off on this repository (that is why the
-      # dependency-review action fails here — semgrep-trial.yml).
-      - name: Audit Python dependencies (pip-audit)
-        if: inputs.language == 'python'
-        env:
-          REQS: ${{ inputs.requirements }}
+      - run: pip install pyyaml
+      - run: python scripts/workflow_doctor.py
+      - run: python scripts/audit_github_actions.py
+
+  frontends:
+    name: Frontend build (${{ matrix.app }})
+    if: inputs.run_frontends
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [storefront, admin]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Install, typecheck, build
+        working-directory: ${{ matrix.app }}
         run: |
-          if [ -z "$REQS" ]; then
-            echo "::notice title=Audit::no requirements file declared"
-            exit 0
-          fi
-          pip install "pip-audit==2.9.0"
-          pip-audit --requirement "$REQS" --progress-spinner off
+          set -euo pipefail
+          npm ci
+          npx tsc --noEmit
+          npm run build
 
-      - name: Audit Node dependencies (npm audit)
-        if: inputs.language == 'node'
-        working-directory: ${{ inputs.working-directory }}
-        # Lockfile-only: npm audit reads package-lock.json and runs no package code.
-        run: |
-          if [ -f package-lock.json ]; then
-            npm audit --omit=dev --audit-level=high
-          else
-            echo "::warning title=Audit::no package-lock.json; dependencies are unpinned and unaudited"
-          fi
+  codeql:
+    name: CodeQL
+    if: inputs.enable_codeql
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          persist-credentials: false
 
-      - name: Audit C++ dependencies
-        if: inputs.language == 'cpp'
-        run: echo "::notice title=Audit::no dependency auditor is configured for C++ components"
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        with:
+          languages: python, javascript-typescript
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2

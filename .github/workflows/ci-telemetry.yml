@@ -1,0 +1,118 @@
+name: CI Telemetry (Weekly)
+
+# Weekly health of every workflow in the repository (AUTOMATION.md): runs, failure
+# rate, fast failures and the slowest workflows over the last 7 days, written to
+# ONE open issue labelled ci-telemetry that is edited in place each week.
+#
+# "Fast failure" means a failed run that finished in under 20 seconds. That is the
+# shape of the runner-dispatch problem in CLAUDE.md (runner_id 0, no steps), so a
+# high count points at settings rather than code. It is a duration heuristic:
+# confirm on one job before acting on it.
+#
+# Read-only on Actions; its only write is that one issue.
+
+on:
+  schedule:
+    - cron: "47 8 * * 1" # Mondays 08:47 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-telemetry
+  cancel-in-progress: false
+
+jobs:
+  telemetry:
+    name: Aggregate and publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: read
+      issues: write
+    steps:
+      - name: Aggregate the last 7 days and upsert the issue
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const since = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10);
+            const runs = [];
+            for await (const { data } of github.paginate.iterator(
+              github.rest.actions.listWorkflowRunsForRepo,
+              { owner, repo, created: `>=${since}`, per_page: 100 },
+            )) {
+              runs.push(...data);
+              if (runs.length >= 2000) break;
+            }
+
+            const seconds = r => (new Date(r.updated_at) - new Date(r.run_started_at || r.created_at)) / 1000;
+            const median = xs => {
+              if (!xs.length) return 0;
+              const s = [...xs].sort((a, b) => a - b);
+              const m = Math.floor(s.length / 2);
+              return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+            };
+            const fmt = s => (s >= 60 ? `${(s / 60).toFixed(1)} min` : `${Math.round(s)} s`);
+
+            const by = new Map();
+            for (const r of runs) {
+              if (r.status !== 'completed') continue;
+              const w = by.get(r.name) || { name: r.name, total: 0, success: 0, failure: 0, fast: 0, other: 0, durations: [] };
+              w.total++;
+              if (r.conclusion === 'success') w.success++;
+              else if (r.conclusion === 'failure') { w.failure++; if (seconds(r) < 20) w.fast++; }
+              else w.other++;
+              w.durations.push(seconds(r));
+              by.set(r.name, w);
+            }
+            const all = [...by.values()];
+            const sum = k => all.reduce((n, w) => n + w[k], 0);
+            const total = sum('total');
+            const pct = (a, b) => (b ? `${((a / b) * 100).toFixed(1)}%` : 'n/a');
+
+            const lines = [
+              `## CI telemetry: ${since} to ${new Date().toISOString().slice(0, 10)}`,
+              '',
+              `- Completed runs: ${total}${runs.length >= 2000 ? ' (capped at 2000)' : ''}`,
+              `- Success: ${sum('success')}  |  Failure: ${sum('failure')}  |  Other (cancelled, skipped, neutral): ${sum('other')}`,
+              `- Failure rate: ${pct(sum('failure'), total)}`,
+              `- Fast failures (<20 s, runner-dispatch shape): ${sum('fast')} of ${sum('failure')}`,
+              '',
+              '### Most failing workflows',
+              '',
+              '| Workflow | Runs | Failed | Failure rate | Fast failures | Median duration |',
+              '|---|---:|---:|---:|---:|---:|',
+              ...all
+                .filter(w => w.failure > 0)
+                .sort((a, b) => b.failure - a.failure)
+                .slice(0, 15)
+                .map(w => `| ${w.name} | ${w.total} | ${w.failure} | ${pct(w.failure, w.total)} | ${w.fast} | ${fmt(median(w.durations))} |`),
+              '',
+              '### Slowest workflows (median)',
+              '',
+              '| Workflow | Runs | Median duration |',
+              '|---|---:|---:|',
+              ...all
+                .sort((a, b) => median(b.durations) - median(a.durations))
+                .slice(0, 5)
+                .map(w => `| ${w.name} | ${w.total} | ${fmt(median(w.durations))} |`),
+              '',
+              'If most failures are fast failures, read PRODUCTION-RECOVERY.md §1.4 before touching any workflow.',
+              `Run: ${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`,
+            ];
+            const body = lines.join('\n');
+            const title = 'Weekly CI Telemetry';
+
+            const open = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, state: 'open', labels: 'ci-telemetry', per_page: 100,
+            });
+            const existing = open.find(i => i.title === title && !i.pull_request);
+            if (existing) {
+              await github.rest.issues.update({ owner, repo, issue_number: existing.number, body });
+              core.info(`Updated #${existing.number}`);
+            } else {
+              const { data } = await github.rest.issues.create({ owner, repo, title, body, labels: ['ci-telemetry'] });
+              core.info(`Opened #${data.number}`);
+            }

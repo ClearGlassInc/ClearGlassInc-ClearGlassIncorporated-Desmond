@@ -1,146 +1,187 @@
 name: Reusable Deploy
 
-# Release a set of services to ONE environment as a unit (scripts/ci/release.py):
-# image by digest -> candidate revisions with no traffic -> smoke -> promote in
-# dependency order -> live smoke -> roll every promoted service back on failure.
+# Deploy one commit to one protected environment, then prove it is serving
+# (AUTOMATION.md). Called by deploy-promotion.yml.
 #
-# Credentials: OIDC only. The job exchanges its GitHub-signed identity token for
-# a short-lived cloud credential bound to THIS environment's service account
-# (environment-level variables), so no long-lived cloud key exists in the
-# repository or in GitHub secrets. Each environment has its own identity: the
-# preview identity cannot touch staging, and staging's cannot touch production.
+# The mechanism is the one this repo already uses (rollback.yml, commerce-deploy.yml):
+# a Render deploy hook, POSTed with ?ref=<full SHA>. Everything it needs is
+# environment-scoped, so the job's environment binding decides which service is hit:
 #
-# Environment-level variables (Settings → Environments → <env> → Variables):
-#   GCP_WORKLOAD_IDENTITY_PROVIDER  projects/<num>/locations/global/workloadIdentityPools/<pool>/providers/<provider>
-#   GCP_SERVICE_ACCOUNT             deployer SA for this environment
-#   DEPLOY_PROJECT  DEPLOY_REGION   where the services live
-#   IMAGE_REPOSITORY                <region>-docker.pkg.dev/<project>/<repo>
-# Repository variable: DEPLOY_PROVIDER (cloudrun). Unset = every deploy skips.
+#   secret RENDER_DEPLOY_HOOK   the environment's deploy hook URL (holds a key; never echoed)
+#   secret RENDER_API_KEY       optional; lets the job wait for the deploy to go live
+#   var    DEPLOY_BASE_URL      https base URL of that environment's control plane
+#
+# Without RENDER_API_KEY the job cannot tell when the new revision is live, so it
+# waits settle_seconds and the smoke test may still be answered by the previous
+# revision. Set the key: it is the difference between "a revision is healthy" and
+# "this revision is healthy".
+#
+# No automatic rollback, by design. docs/INCIDENT_RESPONSE.md: an automatic
+# rollback can flap between two broken states, and an automatic rollback of a data
+# migration is worse than the outage. On failure this job names the last known-good
+# commit and the exact Rollback dispatch; a human runs it, behind the production gate.
 
 on:
   workflow_call:
     inputs:
       environment:
-        description: "preview | staging | production"
-        required: true
-        type: string
-      services:
-        description: "Comma-separated components (scripts/ci/components.py)"
+        description: "GitHub environment to deploy into: staging or production."
         required: true
         type: string
       ref:
-        description: "Full commit SHA to release"
+        description: "Full 40-character commit SHA to deploy."
         required: true
         type: string
-      tag:
-        description: "Revision tag: pr-<n> for previews, sha-<short> for releases"
-        required: true
-        type: string
-      build:
-        description: "Build and push the image (previews, staging). Production never builds."
-        required: false
-        type: boolean
-        default: false
-      promote:
-        description: "Move traffic to the new revisions (never for previews)"
-        required: false
-        type: boolean
-        default: false
-      auto-rollback:
-        description: "Route traffic back automatically if a promoted service fails"
+      run_smoke:
+        description: "Poll /health and check /ready after the deploy."
         required: false
         type: boolean
         default: true
+      run_e2e:
+        description: "Extended read-only checks: admin auth enabled and the admin ledger refuses anonymous reads."
+        required: false
+        type: boolean
+        default: false
+      settle_seconds:
+        description: "Wait used only when RENDER_API_KEY is absent."
+        required: false
+        type: number
+        default: 180
+      rollback_hint_ref:
+        description: "Last known-good commit, quoted in the failure summary for the manual Rollback workflow."
+        required: false
+        type: string
+        default: ""
     outputs:
-      outcome:
-        description: "success | failed | rolled-back"
-        value: ${{ jobs.release.outputs.outcome }}
-      urls:
-        description: "JSON map of service -> URL"
-        value: ${{ jobs.release.outputs.urls }}
+      deploy_url:
+        description: "Base URL of the deployed environment."
+        value: ${{ jobs.deploy.outputs.deploy_url }}
 
 permissions:
   contents: read
 
-defaults:
-  run:
-    shell: bash --noprofile --norc -eo pipefail {0}
-
 jobs:
-  release:
-    name: Release to ${{ inputs.environment }}
+  deploy:
+    name: Deploy to ${{ inputs.environment }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     environment:
       name: ${{ inputs.environment }}
-      url: ${{ steps.release.outputs.primary_url }}
-    permissions:
-      contents: read
-      id-token: write # OIDC token for the cloud credential exchange
+      url: ${{ steps.target.outputs.deploy_url }}
     outputs:
-      outcome: ${{ steps.release.outputs.outcome }}
-      urls: ${{ steps.release.outputs.urls }}
-    env:
-      DEPLOY_PROVIDER: ${{ vars.DEPLOY_PROVIDER }}
-      DEPLOY_PROJECT: ${{ vars.DEPLOY_PROJECT }}
-      DEPLOY_REGION: ${{ vars.DEPLOY_REGION }}
-      IMAGE_REPOSITORY: ${{ vars.IMAGE_REPOSITORY }}
+      deploy_url: ${{ steps.target.outputs.deploy_url }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout (local actions only)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ inputs.ref }}
           persist-credentials: false
 
-      - name: Refuse an incomplete environment
+      - name: Validate inputs and resolve the target
+        id: target
         env:
-          WIF: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          SA: ${{ vars.GCP_SERVICE_ACCOUNT }}
-          ENVIRONMENT: ${{ inputs.environment }}
+          TARGET_ENV: ${{ inputs.environment }}
+          TARGET_REF: ${{ inputs.ref }}
+          DEPLOY_BASE_URL: ${{ vars.DEPLOY_BASE_URL }}
         run: |
-          missing=()
-          for name in DEPLOY_PROVIDER DEPLOY_PROJECT DEPLOY_REGION IMAGE_REPOSITORY WIF SA; do
-            [ -n "${!name:-}" ] || missing+=("$name")
-          done
-          if [ "${#missing[@]}" -gt 0 ]; then
-            echo "::error title=Environment not configured::$ENVIRONMENT is missing: ${missing[*]} (AUTOMATION.md, 'Environments')"
+          set -euo pipefail
+          case "$TARGET_ENV" in
+            staging|production) ;;
+            *) echo "::error::environment must be staging or production, got '${TARGET_ENV}'"; exit 1 ;;
+          esac
+          # A branch or tag can move between approval and deploy; a full SHA cannot.
+          if ! printf '%s' "$TARGET_REF" | grep -qE '^[0-9a-f]{40}$'; then
+            echo "::error::ref must be a full 40-character commit SHA, got '${TARGET_REF}'"
             exit 1
           fi
+          if [ -z "${DEPLOY_BASE_URL:-}" ]; then
+            echo "::error::DEPLOY_BASE_URL is not set in the '${TARGET_ENV}' environment (Settings -> Environments -> ${TARGET_ENV} -> Variables)."
+            exit 1
+          fi
+          echo "deploy_url=${DEPLOY_BASE_URL%/}" >> "$GITHUB_OUTPUT"
 
-      - name: Authenticate to Google Cloud (OIDC, Workload Identity Federation)
-        if: vars.DEPLOY_PROVIDER == 'cloudrun'
-        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
-        with:
-          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
-
-      - name: Let docker use the short-lived credential for the registry
-        if: vars.DEPLOY_PROVIDER == 'cloudrun'
-        run: gcloud auth configure-docker "${IMAGE_REPOSITORY%%/*}" --quiet
-
-      - name: Release
-        id: release
+      - name: Trigger the deploy hook
+        id: hook
         env:
-          ENVIRONMENT: ${{ inputs.environment }}
-          SERVICES: ${{ inputs.services }}
-          REF: ${{ inputs.ref }}
-          TAG: ${{ inputs.tag }}
-          BUILD: ${{ inputs.build }}
-          PROMOTE: ${{ inputs.promote }}
-          AUTO_ROLLBACK: ${{ inputs.auto-rollback }}
-          SERVICE_PREFIX: ${{ vars.SERVICE_PREFIX || 'cg' }}
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+          TARGET_ENV: ${{ inputs.environment }}
+          TARGET_REF: ${{ inputs.ref }}
         run: |
-          args=(--environment "$ENVIRONMENT" --services "$SERVICES" --sha "$REF" --tag "$TAG"
-                --image-repository "$IMAGE_REPOSITORY" --service-prefix "$SERVICE_PREFIX" --out release.json)
-          if [ "$BUILD" = "true" ]; then args+=(--build); fi
-          if [ "$PROMOTE" = "true" ]; then args+=(--promote); fi
-          if [ "$AUTO_ROLLBACK" = "true" ]; then args+=(--auto-rollback); fi
-          python3 scripts/ci/release.py "${args[@]}"
+          set -euo pipefail
+          if [ -z "${RENDER_DEPLOY_HOOK:-}" ]; then
+            echo "::error::RENDER_DEPLOY_HOOK is not set in the '${TARGET_ENV}' environment's secrets."
+            exit 1
+          fi
+          # Render hook URLs already carry ?key=..., so ref is appended with '&'.
+          case "$RENDER_DEPLOY_HOOK" in *\?*) sep='&' ;; *) sep='?' ;; esac
+          curl --fail --silent --show-error --location --max-time 60 \
+            --output /tmp/cg-hook.json \
+            "${RENDER_DEPLOY_HOOK}${sep}ref=${TARGET_REF}"
+          deploy_id="$(python3 -c 'import json; print((json.load(open("/tmp/cg-hook.json")).get("deploy") or {}).get("id",""))' 2>/dev/null || true)"
+          echo "deploy_id=${deploy_id}" >> "$GITHUB_OUTPUT"
+          echo "Deploy of ${TARGET_REF} requested in ${TARGET_ENV}${deploy_id:+ (deploy ${deploy_id})}."
 
-      - name: Keep the release record
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - name: Wait for the new revision to go live
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          DEPLOY_ID: ${{ steps.hook.outputs.deploy_id }}
+          SETTLE_SECONDS: ${{ inputs.settle_seconds }}
+        run: |
+          set -euo pipefail
+          service_id="$(printf '%s' "$RENDER_DEPLOY_HOOK" | grep -oE 'srv-[a-z0-9]+' | head -n1 || true)"
+          if [ -z "${RENDER_API_KEY:-}" ] || [ -z "${DEPLOY_ID:-}" ] || [ -z "$service_id" ]; then
+            echo "::warning::Cannot track the deploy (RENDER_API_KEY, deploy id or service id missing). Waiting ${SETTLE_SECONDS}s; the smoke test may reach the previous revision."
+            sleep "$SETTLE_SECONDS"
+            exit 0
+          fi
+          export SERVICE_ID="$service_id"
+          python3 - <<'PY'
+          import json, os, sys, time, urllib.request
+          url = f"https://api.render.com/v1/services/{os.environ['SERVICE_ID']}/deploys/{os.environ['DEPLOY_ID']}"
+          request = urllib.request.Request(url, headers={
+              "Authorization": f"Bearer {os.environ['RENDER_API_KEY']}",
+              "Accept": "application/json",
+          })
+          failed = {"build_failed", "update_failed", "canceled", "pre_deploy_failed", "deactivated"}
+          for attempt in range(1, 121):
+              with urllib.request.urlopen(request, timeout=20) as response:
+                  status = json.load(response).get("status", "")
+              print(f"attempt {attempt}: deploy status {status!r}")
+              if status == "live":
+                  sys.exit(0)
+              if status in failed:
+                  print(f"::error::Render reports the deploy as {status}.")
+                  sys.exit(1)
+              time.sleep(15)
+          print("::error::Deploy did not go live within 30 minutes.")
+          sys.exit(1)
+          PY
+
+      - name: Smoke tests
+        if: inputs.run_smoke
+        uses: ./.github/actions/run-smoke-tests
         with:
-          name: release-${{ inputs.environment }}-${{ inputs.tag }}
-          path: release.json
-          if-no-files-found: ignore
-          retention-days: 90
+          base_url: ${{ steps.target.outputs.deploy_url }}
+          check_ready: "true"
+          expect_admin_auth: ${{ inputs.run_e2e && 'true' || 'false' }}
+
+      - name: Record the rollback path
+        if: failure()
+        env:
+          TARGET_ENV: ${{ inputs.environment }}
+          TARGET_REF: ${{ inputs.ref }}
+          ROLLBACK_REF: ${{ inputs.rollback_hint_ref }}
+        run: |
+          {
+            echo "## Deploy to ${TARGET_ENV} failed"
+            echo
+            echo "- Failed revision: \`${TARGET_REF}\`"
+            if [ -n "${ROLLBACK_REF}" ]; then
+              echo "- Last known-good revision: \`${ROLLBACK_REF}\`"
+              echo
+              echo "Do not roll forward. Run **Actions -> Rollback -> Run workflow** with"
+              echo "\`target_sha=${ROLLBACK_REF}\` and \`surface=control-plane\`, per docs/INCIDENT_RESPONSE.md."
+            else
+              echo "- No known-good revision was recorded for ${TARGET_ENV}; pick one from its deployment history."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
