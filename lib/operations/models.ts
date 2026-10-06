@@ -7,9 +7,21 @@ export type Tenant = {
   createdAt: string;
 };
 
+export type CaseRecord = {
+  id: string;
+  tenantId: string;
+  reference: string;
+  title: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+  status: "open" | "closed";
+};
+
 export type Incident = {
   id: string;
   tenantId: string;
+  caseId?: string;
   title: string;
   description: string;
   category: string;
@@ -45,6 +57,20 @@ export type EvidenceItem = {
   createdBy: string;
   createdAt: string;
   version: number;
+  currentVersionId: string;
+};
+
+export type EvidenceVersion = {
+  id: string;
+  tenantId: string;
+  evidenceItemId: string;
+  version: number;
+  sha256: string;
+  sizeBytes: number;
+  storageKey: string;
+  createdBy: string;
+  createdAt: string;
+  original: boolean;
 };
 
 export type CustodyAction = "ingested" | "verified" | "accessed" | "exported" | "held";
@@ -64,7 +90,7 @@ export type AuditEvent = {
   tenantId: string;
   actor: string;
   action: string;
-  entityType: "incident" | "assignment" | "evidence" | "custody" | "system";
+  entityType: "case" | "incident" | "assignment" | "evidence" | "custody" | "system";
   entityId: string;
   metadata: Record<string, string | number | boolean | null>;
   createdAt: string;
