@@ -2,15 +2,23 @@ name: CI
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "staging"]
   pull_request:
-    branches: ["main"]
-  # Allow manual on-demand runs (Python Tests, Site Reliability Audit, lint,
-  # workflow-doctor, OSINT deck) from the Actions tab / API.
+    branches: ["main", "staging"]
+  # Manual on-demand runs from the Actions tab / API. auto-fix.yml also uses this
+  # to re-run CI on a PR branch after it pushes a fix: a push made with
+  # GITHUB_TOKEN does not trigger pull_request workflows, workflow_dispatch does.
   workflow_dispatch:
 
 permissions:
   contents: read
+
+# One live run per PR: a new push cancels the superseded run. Pushes get a group
+# per commit, so no push to main or staging is ever cancelled or superseded and
+# every merged commit keeps a result (and can be released).
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   python-tests:
@@ -134,3 +142,93 @@ jobs:
       # indexable, intel.json valid, sitemap/nav/sw wired, inline JS + sw.js
       # syntax. Node ships on the runner, so the JS syntax checks run too.
       - run: python scripts/osint_deck_release.py --strict
+
+  # ── Application stack (control-plane, storefront, admin) ──────────────────
+  # Only components the change touches are built; scripts/ci/components.py owns
+  # the component table and selects everything when it cannot tell.
+  changes:
+    name: Detect changed components
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.detect.outputs.matrix }}
+      any: ${{ steps.detect.outputs.any }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: detect
+        env:
+          # PR: diff against the base tip. Push: against the previous head.
+          # workflow_dispatch has neither, which selects every component.
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || '' }}
+        run: |
+          python3 scripts/ci/components.py matrix --base "$BASE_SHA" --head HEAD | tee -a "$GITHUB_OUTPUT"
+
+  stack:
+    name: Stack (${{ matrix.component }})
+    needs: changes
+    if: needs.changes.outputs.any == 'true'
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.changes.outputs.matrix) }}
+    uses: ./.github/workflows/reusable-ci.yml
+    with:
+      component: ${{ matrix.component }}
+      language: ${{ matrix.language }}
+      working-directory: ${{ matrix.path }}
+      python-version: ${{ matrix.python-version }}
+      node-version: ${{ matrix.node-version }}
+      requirements: ${{ matrix.requirements }}
+      python-format: ${{ matrix.python-format }}
+      python-typecheck: ${{ matrix.python-typecheck }}
+
+  # The single check to mark required in branch protection. Path-filtered and
+  # matrix jobs that legitimately skip would otherwise leave a required check
+  # "expected" forever; this one always reports, and passes only when every job
+  # above succeeded or was skipped by design.
+  result:
+    name: CI result
+    if: always()
+    needs:
+      - python-tests
+      - lint
+      - site-audit
+      - search-integrity
+      - lighthouse
+      - workflow-doctor
+      - osint-deck
+      - changes
+      - stack
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require every job to have succeeded or been skipped
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          echo "$NEEDS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
+          echo "$NEEDS" | jq -e 'all(.[]; .result == "success" or .result == "skipped")' > /dev/null || {
+            echo "::error title=CI result::at least one CI job failed or was cancelled"
+            exit 1
+          }
+
+  # Release: only a push to main whose whole CI run passed starts one.
+  # deploy-promotion.yml runs staging -> E2E -> approval -> production.
+  release:
+    name: Release
+    needs: result
+    if: >-
+      github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+      needs.result.result == 'success' && vars.DEPLOY_PROVIDER != ''
+    permissions:
+      contents: read
+      checks: read
+      id-token: write
+    uses: ./.github/workflows/deploy-promotion.yml
+    with:
+      ref: ${{ github.sha }}
+      base: ${{ github.event.before }}
