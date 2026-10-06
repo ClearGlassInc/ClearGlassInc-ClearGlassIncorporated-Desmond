@@ -2,13 +2,12 @@
 # Proprietary and confidential. See LICENSE for terms.
 """Invariants of the CI/CD layer described in AUTOMATION.md.
 
-The layer was adapted from an external blueprint whose literal form would have
-broken this repository: it replaced ci.yml, called reusable workflows from
-steps, deployed per-PR through environments holding no secrets, ran the PR's
-code beside a write token, rolled production back on its own, reformatted the
-whole site with black and prettier, and added a .github/CODEOWNERS that shadows
-the root one. Each test below pins one of those decisions, so a later edit that
-quietly reintroduces it fails here rather than in production.
+The layer arrived as several overlapping pull requests (#187, #188, #190). Two of
+their decisions conflicted and one merge left ci.yml calling a reusable workflow
+with inputs it does not declare, which GitHub rejects as an invalid workflow
+file. Each test below pins one decision, so a later edit that quietly reverses
+it fails here rather than in a run nobody can see while Actions dispatches no
+runners. The two contract tests at the top would have caught that merge.
 """
 from __future__ import annotations
 
@@ -25,7 +24,9 @@ WORKFLOWS = ROOT / ".github" / "workflows"
 ACTIONS = ROOT / ".github" / "actions"
 
 LAYER = [
+    "ci.yml",
     "reusable-ci.yml",
+    "reusable-component-ci.yml",
     "reusable-deploy.yml",
     "deploy-staging.yml",
     "deploy-promotion.yml",
@@ -34,6 +35,7 @@ LAYER = [
     "ci-telemetry.yml",
 ]
 COMPOSITES = ["setup-node-python", "run-smoke-tests", "post-pr-comment"]
+SCOPES = {"none": 0, "read": 1, "write": 2}
 
 
 def workflow(name: str) -> dict:
@@ -44,19 +46,43 @@ def steps(job: dict) -> list[dict]:
     return [step for step in job.get("steps") or [] if isinstance(step, dict)]
 
 
-@pytest.mark.parametrize("name", LAYER)
-def test_layer_passes_the_safety_audit_with_no_warnings(name: str) -> None:
-    result = load(WORKFLOWS / name)
-    audit(result)
-    assert result.errors == [] and result.warnings == [], result.errors + result.warnings
-    assert result.status == "valid and ready"
+def local_calls():
+    """(caller file, job name, job, callee file) for every local reusable-workflow call."""
+    for path in sorted(WORKFLOWS.glob("*.y*ml")):
+        data = yaml.load(path.read_text(encoding="utf-8"), Loader=GitHubLoader) or {}
+        for name, job in (data.get("jobs") or {}).items():
+            uses = job.get("uses") if isinstance(job, dict) else None
+            if isinstance(uses, str) and uses.startswith("./.github/workflows/"):
+                yield path.name, name, job, Path(uses).name
 
 
-def test_existing_ci_workflow_is_not_replaced() -> None:
-    """ci.yml's job names are the checks branch protection reads."""
-    jobs = workflow("ci.yml")["jobs"]
-    assert {"python-tests", "lint", "site-audit", "search-integrity", "workflow-doctor"} <= set(jobs)
-    assert not any("uses" in job for job in jobs.values()), "ci.yml must not become a caller"
+# ── Contracts GitHub enforces at load time ────────────────────────────────
+
+
+def test_every_reusable_call_passes_only_declared_inputs_and_all_required_ones() -> None:
+    problems = []
+    for caller, name, job, callee in local_calls():
+        declared = (workflow(callee)["on"].get("workflow_call") or {}).get("inputs") or {}
+        given = set(job.get("with") or {})
+        problems += [f"{caller}:{name} passes undeclared {callee} input {key!r}" for key in given - set(declared)]
+        problems += [
+            f"{caller}:{name} omits required {callee} input {key!r}"
+            for key, spec in declared.items()
+            if str(spec.get("required")).lower() == "true" and key not in given
+        ]
+    assert problems == []
+
+
+def test_every_caller_grants_what_its_callee_requests() -> None:
+    """A callee job asking for more than the calling job grants fails to load."""
+    problems = []
+    for caller, name, job, callee in local_calls():
+        granted = job.get("permissions", workflow(caller).get("permissions")) or {}
+        for callee_job_name, callee_job in workflow(callee)["jobs"].items():
+            for scope, level in (callee_job.get("permissions") or {}).items():
+                if SCOPES[level] > SCOPES[granted.get(scope, "none")]:
+                    problems.append(f"{caller}:{name} -> {callee}:{callee_job_name} needs {scope}: {level}")
+    assert problems == []
 
 
 def test_reusable_workflows_are_only_ever_called_at_job_level() -> None:
@@ -72,97 +98,136 @@ def test_reusable_workflows_are_only_ever_called_at_job_level() -> None:
     assert offenders == []
 
 
-def test_reusable_ci_runs_the_same_gates_as_ci_yml() -> None:
-    gate = workflow("reusable-ci.yml")["jobs"]["repo-gates"]
-    assert any(step.get("run") == "python3 scripts/ci_local.py" for step in steps(gate))
-    checkout = steps(gate)[0]
-    assert checkout["with"]["fetch-depth"] == 0, "sitemap dates need full history"
+@pytest.mark.parametrize("name", LAYER)
+def test_layer_passes_the_safety_audit_with_no_warnings(name: str) -> None:
+    result = load(WORKFLOWS / name)
+    audit(result)
+    assert result.errors == [] and result.warnings == [], result.errors + result.warnings
+    assert result.status == "valid and ready"
 
 
-def test_reusable_ci_requests_no_extra_permissions() -> None:
-    """A callee asking for more than a caller grants fails to load at all."""
-    data = workflow("reusable-ci.yml")
-    assert data["permissions"] == {"contents": "read"}
-    assert all("permissions" not in job for job in data["jobs"].values())
+# ── ci.yml ────────────────────────────────────────────────────────────────
 
 
-def test_per_pr_deploys_go_through_the_staging_environment() -> None:
-    """A pr-<n> environment would inherit none of staging's secrets."""
-    deploy = workflow("reusable-deploy.yml")["jobs"]["deploy"]
-    assert deploy["environment"]["name"] == "${{ inputs.target_env }}"
-    staging = workflow("deploy-staging.yml")["jobs"]["deploy"]
-    assert staging["with"]["target_env"] == "staging"
-    assert "environment" not in staging
+def test_existing_ci_jobs_are_kept_and_one_result_check_covers_them() -> None:
+    """Job names are the checks branch protection reads; `result` is the one to require."""
+    jobs = workflow("ci.yml")["jobs"]
+    existing = {"python-tests", "lint", "site-audit", "search-integrity", "lighthouse", "workflow-doctor", "osint-deck"}
+    assert existing <= set(jobs)
+    assert set(jobs["result"]["needs"]) == existing | {"changes", "stack"}
+    assert jobs["result"]["if"] == "always()"
+    callers = {name: job["uses"] for name, job in jobs.items() if "uses" in job}
+    assert callers == {"stack": "./.github/workflows/reusable-component-ci.yml"}
+
+
+def test_ci_cancels_superseded_pr_runs_but_never_a_push() -> None:
+    concurrency = workflow("ci.yml")["concurrency"]
+    assert concurrency["group"] == "ci-${{ github.event.pull_request.number || github.sha }}"
+    assert concurrency["cancel-in-progress"] == "${{ github.event_name == 'pull_request' }}"
+
+
+# ── Deploys ───────────────────────────────────────────────────────────────
 
 
 def test_deploys_are_opt_in() -> None:
-    assert "vars.CG_PR_STAGING_DEPLOY == 'true'" in workflow("deploy-staging.yml")["jobs"]["deploy"]["if"]
+    staging = workflow("deploy-staging.yml")["jobs"]
+    assert "vars.PR_PREVIEW_URL_TEMPLATE != ''" in staging["preview"]["if"]
+    assert "vars.DEPLOY_PROVIDER == 'cloudrun'" in staging["plan-cloudrun"]["if"]
+    assert "vars.DEPLOY_PROVIDER == 'cloudrun'" in staging["teardown"]["if"]
     promotion = workflow("deploy-promotion.yml")["jobs"]
-    assert promotion["resolve"]["if"] == "vars.CG_PROMOTION_ENABLED == 'true'"
-    for name in ("ci", "staging", "production"):
+    assert "vars.PROMOTION_PIPELINE_ENABLED == 'true'" in promotion["resolve"]["if"]
+    for name in ("gate", "staging", "production"):
         assert "resolve" in promotion[name]["needs"], f"{name} must inherit the opt-in"
 
 
 def test_fork_prs_are_never_deployed() -> None:
-    condition = workflow("deploy-staging.yml")["jobs"]["deploy"]["if"]
-    assert "github.event.pull_request.head.repo.full_name == github.repository" in condition
+    jobs = workflow("deploy-staging.yml")["jobs"]
+    for name in ("preview", "plan-cloudrun", "teardown"):
+        assert "github.event.pull_request.head.repo.full_name == github.repository" in jobs[name]["if"], name
 
 
-def test_production_follows_gates_and_a_real_staging_deploy() -> None:
+def test_production_follows_gates_staging_and_end_to_end_checks() -> None:
     jobs = workflow("deploy-promotion.yml")["jobs"]
-    assert "ci" in jobs["staging"]["needs"]
-    assert "staging" in jobs["production"]["needs"]
-    assert jobs["production"]["if"] == "needs.staging.outputs.deployed == 'true'"
-    assert jobs["production"]["with"]["target_env"] == "production"
+    assert "gate" in jobs["staging"]["needs"]
+    assert {"staging", "e2e"} <= set(jobs["production"]["needs"])
+    assert "staging" in jobs["e2e"]["needs"]
+    e2e_runs = " ".join(str(step.get("run", "")) for step in steps(jobs["e2e"]))
+    assert "scripts/ci/e2e_staging.py" in e2e_runs
+    # GitHubLoader keeps YAML booleans as strings, the way GitHub reads `on:`.
+    assert str(jobs["production"]["with"]["build"]) == "false", "production must deploy staging's digest, not rebuild"
+    assert str(jobs["staging"]["with"]["build"]) == "true"
 
 
-def test_unconfigured_or_unknown_providers_never_report_a_deploy() -> None:
-    script = next(
-        step["run"] for step in steps(workflow("reusable-deploy.yml")["jobs"]["deploy"])
-        if step.get("id") == "deploy"
-    )
-    none_branch = script.split("none)", 1)[1].split(";;", 1)[0]
-    assert "deployed=false" in none_branch and "deployed=true" not in none_branch
-    unknown_branch = script.split("*)", 1)[1].split(";;", 1)[0]
-    assert "exit 1" in unknown_branch
+def test_unknown_providers_never_report_a_deploy() -> None:
+    deploy = workflow("reusable-deploy.yml")["jobs"]["deploy"]
+    guard = next(step for step in steps(deploy) if step.get("name") == "Refuse an unknown provider")
+    assert "render|cloudrun)" in guard["run"] and "exit 1" in guard["run"]
+    for step in steps(deploy)[2:]:
+        condition = str(step.get("if", ""))
+        assert "env.PROVIDER == 'render'" in condition or "env.PROVIDER == 'cloudrun'" in condition, step.get("name")
 
 
-def test_rollback_is_never_automatic() -> None:
-    """docs/INCIDENT_RESPONSE.md: a person dispatches rollback.yml."""
+def test_render_never_rolls_back_on_its_own() -> None:
+    """docs/INCIDENT_RESPONSE.md: on Render a person dispatches rollback.yml."""
+    for step in steps(workflow("reusable-deploy.yml")["jobs"]["deploy"]):
+        if "env.PROVIDER == 'render'" in str(step.get("if", "")):
+            assert "rollback" not in str(step.get("run", "")).lower() or step["name"] == "Record the rollback path"
+            assert "createWorkflowDispatch" not in str(step)
+
+
+def test_cloud_run_rolls_back_automatically_only_without_migrations() -> None:
+    jobs = workflow("deploy-promotion.yml")["jobs"]
+    assert jobs["production"]["with"]["auto_rollback"] == "${{ needs.resolve.outputs.auto_rollback == 'true' }}"
+    decide = next(step for step in steps(jobs["resolve"]) if step.get("id") == "rollback")["run"]
+    assert 'auto=false' in decide.splitlines()[1], "the default must be no automatic rollback"
+    assert 'git diff --quiet "$PREVIOUS" "$REF" -- control-plane/migrations' in decide
+    assert '[ "$PROVIDER" = "cloudrun" ]' in decide
+    release = next(s for s in steps(workflow("reusable-deploy.yml")["jobs"]["deploy"]) if s.get("id") == "release")
+    assert 'if [ "$AUTO_ROLLBACK" = "true" ]; then args+=(--auto-rollback); fi' in release["run"]
+
+
+def test_cloud_run_uses_oidc_and_no_long_lived_key() -> None:
     text = (WORKFLOWS / "reusable-deploy.yml").read_text(encoding="utf-8")
-    for forbidden in ("createWorkflowDispatch", "rollout undo", "actions: write"):
-        assert forbidden not in text
-    # The rollback command is only ever printed for a person, never executed.
-    for step in steps(workflow("reusable-deploy.yml")["jobs"]["deploy"]):
-        assert "rollback" not in str(step.get("run", "")).lower()
+    assert "google-github-actions/auth@" in text and "workload_identity_provider:" in text
+    assert "credentials_json" not in text and "GCP_SA_KEY" not in text
+    assert workflow("reusable-deploy.yml")["jobs"]["deploy"]["permissions"]["id-token"] == "write"
 
 
-def test_deploy_job_runs_no_code_from_the_revision_it_deploys() -> None:
-    for step in steps(workflow("reusable-deploy.yml")["jobs"]["deploy"]):
-        if str(step.get("uses", "")).startswith("actions/checkout@"):
-            assert step["with"]["ref"] == "${{ github.event.repository.default_branch }}"
-            assert step["with"]["sparse-checkout"] == ".github/actions"
+def test_deploy_builds_but_never_executes_the_revision_it_deploys() -> None:
+    """The release scripts come from the caller's commit; the released ref is only a build context."""
+    deploy = workflow("reusable-deploy.yml")["jobs"]["deploy"]
+    checkouts = [s for s in steps(deploy) if str(s.get("uses", "")).startswith("actions/checkout@")]
+    assert "ref" not in checkouts[0].get("with", {})
+    source = [s for s in checkouts if (s.get("with") or {}).get("ref") == "${{ inputs.ref }}"]
+    assert len(source) == 1 and source[0]["with"]["path"] == "source"
+    release = next(s for s in steps(deploy) if s.get("id") == "release")["run"]
+    assert "python3 scripts/ci/release.py" in release and "--source source" in release
+
+
+# ── Auto-fix ──────────────────────────────────────────────────────────────
 
 
 def test_auto_fix_runs_pr_code_only_without_write_access() -> None:
     jobs = workflow("auto-fix.yml")["jobs"]
     assert jobs["fix"]["permissions"] == {"contents": "read"}
-    push = jobs["push"]
-    assert push["permissions"] == {"contents": "write"}
-    assert push["environment"] == "automation-write"
-    runs = " ".join(str(step.get("run", "")) for step in steps(push))
+    apply = jobs["apply"]
+    assert apply["permissions"]["contents"] == "write"
+    runs = " ".join(str(step.get("run", "")) for step in steps(apply))
     for pr_code in ("python3 tools/", "ruff check", "pip install", "npm ci", "npm run"):
         assert pr_code not in runs, f"write job runs PR-controlled code: {pr_code!r}"
-    assert 'sys.path.insert(0, "trusted")' in runs, "policy must load from the default branch"
-    trusted = steps(push)[0]
-    assert trusted["with"]["ref"] == "${{ github.event.repository.default_branch }}"
+    for checkout in (s for s in steps(apply) if str(s.get("uses", "")).startswith("actions/checkout@")):
+        assert str(checkout["with"]["persist-credentials"]) == "false", "no credential may be written into a checkout"
+    trusted = steps(apply)[0]
+    assert "ref" not in trusted["with"], "policy and driver must come from the default branch"
 
 
 def test_auto_fix_refuses_protected_paths_and_never_forces() -> None:
-    runs = " ".join(str(step.get("run", "")) for step in steps(workflow("auto-fix.yml")["jobs"]["push"]))
-    assert "protected_reason" in runs and '"under .github/"' in runs
-    assert "--no-renames" in runs, "a rename must not hide a protected path"
-    assert "--force" not in runs and " -f " not in runs and "+HEAD" not in runs
+    text = (ROOT / "scripts" / "ci" / "autofix.py").read_text(encoding="utf-8")
+    assert "protected_reason(f.path)" in text and "--no-renames" in text
+    apply_runs = " ".join(str(s.get("run", "")) for s in steps(workflow("auto-fix.yml")["jobs"]["apply"]))
+    assert "check-patch" in apply_runs and "verify-applied" in apply_runs
+    assert "git push" not in apply_runs and "--force" not in apply_runs
+    assert "--head-sha \"$HEAD_SHA\"" in apply_runs, "the commit must be pinned to the failing head"
 
 
 def test_auto_fix_only_runs_deterministic_repository_tools() -> None:
@@ -170,14 +235,18 @@ def test_auto_fix_only_runs_deterministic_repository_tools() -> None:
     code = "\n".join(line for line in text.splitlines() if not line.strip().startswith("#"))
     for tool in ("black ", "prettier", "eslint", "ruff format", "codex", "openai"):
         assert tool not in code, f"auto-fix must not run {tool.strip()}"
-    assert 'ruff==0.15.8' in code
+    assert "ruff==0.15.8" in code
 
 
-def test_auto_fix_skips_forks_and_respects_the_iteration_cap() -> None:
-    context = workflow("auto-fix.yml")["jobs"]["context"]
-    assert "head_repository.full_name == github.repository" in context["if"]
-    script = steps(context)[0]["with"]["script"]
-    assert "no-autofix" in script and "prior >= 2" in script
+def test_auto_fix_skips_forks_integration_branches_and_respects_the_kill_switch() -> None:
+    condition = workflow("auto-fix.yml")["jobs"]["plan"]["if"]
+    assert "head_repository.full_name == github.repository" in condition
+    assert "vars.AUTOFIX_ENABLED != 'false'" in condition
+    assert "head_branch != 'staging'" in condition
+    assert "head_branch != github.event.repository.default_branch" in condition
+
+
+# ── Composite actions and ownership ───────────────────────────────────────
 
 
 def test_composite_actions_never_interpolate_inputs_into_code() -> None:
@@ -188,11 +257,32 @@ def test_composite_actions_never_interpolate_inputs_into_code() -> None:
             assert "${{" not in code, f"{name}: expression interpolated into code"
 
 
-def test_smoke_test_defaults_are_real_control_plane_routes() -> None:
-    action = yaml.safe_load((ACTIONS / "run-smoke-tests" / "action.yml").read_text(encoding="utf-8"))
-    main = (ROOT / "control-plane" / "app" / "main.py").read_text(encoding="utf-8")
-    for path in action["inputs"]["paths"]["default"].split():
-        assert f'@app.get("{path}"' in main, f"smoke default {path} is not a control-plane route"
+def control_plane_routes() -> set[str]:
+    app = ROOT / "control-plane" / "app"
+    routes = set(re.findall(r'@app\.get\("([^"]+)"', (app / "main.py").read_text(encoding="utf-8")))
+    routes.add("/openapi.json")  # served by FastAPI itself
+    for router in (app / "routers").glob("*.py"):
+        text = router.read_text(encoding="utf-8")
+        prefix = re.search(r'APIRouter\(prefix="([^"]*)"', text)
+        for path in re.findall(r'@router\.get\(\s*"([^"]*)"', text):
+            routes.add(((prefix.group(1) if prefix else "") + path) or "/")
+    return routes
+
+
+def test_smoke_checks_name_real_control_plane_routes() -> None:
+    from scripts.ci.components import COMPONENTS
+
+    routes = control_plane_routes()
+    for line in COMPONENTS["control-plane"]["deploy"]["smoke"]:
+        path = line.split()[1]
+        assert path in routes, f"smoke check {path} is not a control-plane route"
+
+
+def test_preview_control_plane_always_gets_an_admin_key() -> None:
+    """Unset ADMIN_API_KEY is open dev mode: approvals and refunds on a public URL."""
+    from scripts.ci.components import COMPONENTS
+
+    assert COMPONENTS["control-plane"]["deploy"]["preview_env"]["ADMIN_API_KEY"] == "@random"
 
 
 def test_setup_action_matches_ci_yml_toolchain() -> None:

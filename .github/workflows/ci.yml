@@ -175,7 +175,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.changes.outputs.matrix) }}
-    uses: ./.github/workflows/reusable-ci.yml
+    uses: ./.github/workflows/reusable-component-ci.yml
     with:
       component: ${{ matrix.component }}
       language: ${{ matrix.language }}
@@ -215,20 +215,3 @@ jobs:
             echo "::error title=CI result::at least one CI job failed or was cancelled"
             exit 1
           }
-
-  # Release: only a push to main whose whole CI run passed starts one.
-  # deploy-promotion.yml runs staging -> E2E -> approval -> production.
-  release:
-    name: Release
-    needs: result
-    if: >-
-      github.event_name == 'push' && github.ref == 'refs/heads/main' &&
-      needs.result.result == 'success' && vars.DEPLOY_PROVIDER != ''
-    permissions:
-      contents: read
-      checks: read
-      id-token: write
-    uses: ./.github/workflows/deploy-promotion.yml
-    with:
-      ref: ${{ github.sha }}
-      base: ${{ github.event.before }}

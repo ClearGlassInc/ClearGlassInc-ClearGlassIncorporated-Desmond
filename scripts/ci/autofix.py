@@ -12,8 +12,9 @@
 ``apply``    trusted, the only job that can write. Validates the patch against the
              repository's own automation policy (``scripts/automation_governance.py``,
              loaded from the default branch, never from the PR), applies it, proves
-             generated-block edits stayed inside their markers, pushes without force,
-             and posts one sticky PR comment.
+             generated-block edits stayed inside their markers, commits it as a
+             Verified commit pinned to the failing head (a branch that moved is left
+             alone), and upserts one PR comment.
 
 Fixers are deterministic tools only (ruff's safe fixes, the repository's own
 generators, a component's own ``lint:fix`` / ``format`` scripts). Nothing here asks
@@ -25,6 +26,7 @@ passes them in as files, which keeps every decision here testable offline.
 from __future__ import annotations
 
 import argparse
+import base64
 import json
 import re
 import subprocess
@@ -44,11 +46,12 @@ for _path in (HERE.parent, HERE.parents[1]):
 from automation_governance import POLICY_VERSION, protected_reason  # noqa: E402
 from components import COMPONENTS  # noqa: E402
 
-MARKER = "<!-- cg-auto-fix -->"
 COMMIT_PREFIX = "auto-fix:"
 RUN_TRAILER = "Auto-Fix-Run:"
 OPT_OUT_LABEL = "no-autofix"
 DEFAULT_MAX_ITERATIONS = 2
+#: Integration branches are never auto-fixed, even when a PR is opened from one.
+PROTECTED_BRANCHES = frozenset({"main", "staging"})
 MAX_FILES = 200
 MAX_CHANGED_LINES = 4000
 MAX_ISSUES_SHOWN = 50
@@ -131,10 +134,14 @@ def is_bot(user: dict[str, Any]) -> bool:
 
 
 def count_autofix_commits(commits: list[dict[str, Any]]) -> int:
+    """Fix commits already on the PR: ours carry the run trailer; earlier ones were
+    bot-authored. A human commit merely titled "auto-fix:" does not use the budget."""
     count = 0
     for item in commits:
         message = (item.get("commit") or {}).get("message", "")
-        if message.startswith(COMMIT_PREFIX) and RUN_TRAILER in message:
+        if not message.startswith(COMMIT_PREFIX):
+            continue
+        if RUN_TRAILER in message or str((item.get("author") or {}).get("login", "")).endswith("[bot]"):
             count += 1
     return count
 
@@ -189,6 +196,8 @@ def plan(
     head_repo = (run.get("head_repository") or {}).get("full_name")
     if head_repo != repository:
         return Plan(False, f"head repository {head_repo!r} is a fork; auto-fix never writes to forks")
+    if run.get("head_branch") in PROTECTED_BRANCHES:
+        return Plan(False, f"{run.get('head_branch')!r} is an integration branch; it is never auto-fixed")
     if not pr:
         return Plan(False, f"no open pull request for branch {run.get('head_branch')!r}")
     if (pr.get("head") or {}).get("repo", {}).get("full_name") != repository:
@@ -503,6 +512,54 @@ def verify_applied(repo: Path, paths: list[str]) -> list[str]:
     return refusals
 
 
+# ── commit (trusted job) ─────────────────────────────────────────────────
+
+COMMIT_MUTATION = (
+    "mutation($input: CreateCommitOnBranchInput!) {"
+    " createCommitOnBranch(input: $input) { commit { oid url } } }"
+)
+
+
+def staged_file_changes(repo: Path) -> dict[str, list[dict[str, str]]]:
+    """The staged diff as createCommitOnBranch FileChanges (contents base64-encoded)."""
+
+    def staged(diff_filter: str) -> list[str]:
+        out = subprocess.run(
+            ["git", "diff", "--cached", "--name-only", "--no-renames", f"--diff-filter={diff_filter}"],
+            cwd=repo, capture_output=True, text=True, check=True,
+        ).stdout
+        return [line for line in out.splitlines() if line.strip()]
+
+    additions = [
+        {"path": path, "contents": base64.b64encode((repo / path).read_bytes()).decode("ascii")}
+        for path in staged("AM")
+    ]
+    deletions = [{"path": path} for path in staged("D")]
+    return {"additions": additions, "deletions": deletions}
+
+
+def commit_request(
+    repo: Path, *, repository: str, branch: str, head_sha: str, headline: str, body: str
+) -> dict[str, Any]:
+    """GraphQL request for a Verified commit that only lands on exactly ``head_sha``.
+
+    ``expectedHeadOid`` is fixed to the commit CI failed on and is never refreshed:
+    if the author pushed meanwhile, GitHub rejects the commit instead of writing
+    the fixed files over their newer work.
+    """
+    return {
+        "query": COMMIT_MUTATION,
+        "variables": {
+            "input": {
+                "branch": {"repositoryNameWithOwner": repository, "branchName": branch},
+                "message": {"headline": headline, "body": body},
+                "expectedHeadOid": head_sha,
+                "fileChanges": staged_file_changes(repo),
+            }
+        },
+    }
+
+
 # ── render ───────────────────────────────────────────────────────────────
 
 
@@ -524,17 +581,19 @@ def render(
     commit_sha: str,
     run_url: str,
 ) -> str:
-    """One sticky comment. outcome: pushed | refused | no-changes | moved | report-only | fix-failed."""
+    """The body of the one sticky comment (the post-pr-comment action adds the marker
+    and header). outcome: pushed | refused | no-changes | moved | report-only | fix-failed."""
     iteration = int(plan_out.get("iteration", "0")) + (1 if outcome == "pushed" else 0)
     cap = plan_out.get("max_iterations", str(DEFAULT_MAX_ITERATIONS))
-    lines = [MARKER, "## Auto-fix", ""]
+    lines: list[str] = []
     headline = {
-        "pushed": f"Pushed fix commit `{commit_sha[:12]}` to this branch. CI is re-running.",
+        "pushed": f"Committed `{commit_sha[:12]}` (Verified) to this branch. CI is re-running on it.",
         "refused": "Fixes were produced but **not pushed**: the patch failed a safety check.",
         "no-changes": "Ran the fixers; they changed nothing. The failures below need a human.",
         "moved": "The branch moved while fixes were prepared; nothing was pushed. The next CI run decides.",
         "report-only": f"Not fixing: {cell(plan_out.get('reason', ''))}.",
         "fix-failed": "The fix job failed before producing a patch; see the run log.",
+        "commit-failed": "The fix passed every check but GitHub refused the commit; see the run log.",
     }.get(outcome, outcome)
     lines += [headline, "", f"Fix commits on this PR: **{iteration}/{cap}** · [run log]({run_url})", ""]
 
@@ -632,6 +691,15 @@ def main(argv: list[str] | None = None) -> int:
     v.add_argument("--repo", required=True)
     v.add_argument("--check", required=True, help="check-patch output; refusals are appended to it")
 
+    m = sub.add_parser("commit-request")
+    m.add_argument("--repo", required=True)
+    m.add_argument("--repository", required=True)
+    m.add_argument("--branch", required=True)
+    m.add_argument("--head-sha", required=True)
+    m.add_argument("--headline", required=True)
+    m.add_argument("--body", default="")
+    m.add_argument("--out", required=True)
+
     r = sub.add_parser("render")
     r.add_argument("--repository", required=True)
     r.add_argument("--plan", required=True, help="file of key=value plan outputs")
@@ -681,6 +749,17 @@ def main(argv: list[str] | None = None) -> int:
             check.setdefault("refusals", []).extend(refusals)
             Path(args.check).write_text(json.dumps(check, indent=2), encoding="utf-8")
         emit({"ok": "true" if not refusals else "false"})
+        return 0
+
+    if args.command == "commit-request":
+        request = commit_request(
+            Path(args.repo), repository=args.repository, branch=args.branch,
+            head_sha=args.head_sha, headline=args.headline, body=args.body,
+        )
+        Path(args.out).write_text(json.dumps(request), encoding="utf-8")
+        changes = request["variables"]["input"]["fileChanges"]
+        print(f"additions={len(changes['additions'])}")
+        print(f"deletions={len(changes['deletions'])}")
         return 0
 
     if args.command == "render":

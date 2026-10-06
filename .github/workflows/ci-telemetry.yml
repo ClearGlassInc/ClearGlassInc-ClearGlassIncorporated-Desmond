@@ -1,15 +1,18 @@
 name: CI Telemetry (Weekly)
 
 # Weekly health of every workflow in the repository (AUTOMATION.md): runs, failure
-# rate, fast failures and the slowest workflows over the last 7 days, written to
-# ONE open issue labelled ci-telemetry that is edited in place each week.
+# rate, fast failures, flaky runs (passed only on a re-run, or both red and green
+# on the same commit), the slowest workflows and the slowest CI jobs over the last
+# 7 days, written to ONE open issue labelled ci-telemetry that is edited in place
+# each week. With the CI_ALERTS_WEBHOOK_URL secret set (a Slack-compatible
+# incoming webhook for #ci-alerts), the headline is posted there too.
 #
 # "Fast failure" means a failed run that finished in under 20 seconds. That is the
 # shape of the runner-dispatch problem in CLAUDE.md (runner_id 0, no steps), so a
 # high count points at settings rather than code. It is a duration heuristic:
 # confirm on one job before acting on it.
 #
-# Read-only on Actions; its only write is that one issue.
+# Read-only on Actions; its writes are that one issue and the optional webhook.
 
 on:
   schedule:
@@ -33,6 +36,7 @@ jobs:
       issues: write
     steps:
       - name: Aggregate the last 7 days and upsert the issue
+        id: telemetry
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
@@ -67,6 +71,42 @@ jobs:
               w.durations.push(seconds(r));
               by.set(r.name, w);
             }
+            // Flaky: green only after a re-run, or both red and green on one commit.
+            const outcomes = new Map();
+            for (const r of runs) {
+              if (r.status !== 'completed') continue;
+              const w = by.get(r.name);
+              if (w && r.conclusion === 'success' && (r.run_attempt || 1) > 1) w.retried = (w.retried || 0) + 1;
+              const key = `${r.name}@${r.head_sha}`;
+              const seen = outcomes.get(key) || new Set();
+              seen.add(r.conclusion);
+              outcomes.set(key, seen);
+            }
+            for (const [key, seen] of outcomes) {
+              if (seen.has('success') && seen.has('failure')) {
+                const w = by.get(key.slice(0, key.lastIndexOf('@')));
+                if (w) w.mixed = (w.mixed || 0) + 1;
+              }
+            }
+            const flaky = [...by.values()].filter(w => (w.retried || 0) + (w.mixed || 0) > 0);
+
+            // Slowest CI jobs: per-job medians over the latest completed CI runs.
+            const jobDurations = new Map();
+            const ciRuns = runs.filter(r => r.name === 'CI' && r.status === 'completed').slice(0, 20);
+            for (const r of ciRuns) {
+              const { data } = await github.rest.actions.listJobsForWorkflowRun({ owner, repo, run_id: r.id, per_page: 100 });
+              for (const job of data.jobs) {
+                if (!job.started_at || !job.completed_at || !(job.steps || []).length) continue;
+                const list = jobDurations.get(job.name) || [];
+                list.push((new Date(job.completed_at) - new Date(job.started_at)) / 1000);
+                jobDurations.set(job.name, list);
+              }
+            }
+            const slowJobs = [...jobDurations.entries()]
+              .map(([name, xs]) => ({ name, n: xs.length, median: median(xs) }))
+              .sort((a, b) => b.median - a.median)
+              .slice(0, 10);
+
             const all = [...by.values()];
             const sum = k => all.reduce((n, w) => n + w[k], 0);
             const total = sum('total');
@@ -90,6 +130,16 @@ jobs:
                 .slice(0, 15)
                 .map(w => `| ${w.name} | ${w.total} | ${w.failure} | ${pct(w.failure, w.total)} | ${w.fast} | ${fmt(median(w.durations))} |`),
               '',
+              '### Flaky workflows',
+              '',
+              ...(flaky.length
+                ? [
+                    '| Workflow | Passed only on re-run | Red and green on one commit |',
+                    '|---|---:|---:|',
+                    ...flaky.map(w => `| ${w.name} | ${w.retried || 0} | ${w.mixed || 0} |`),
+                  ]
+                : ['None this week.']),
+              '',
               '### Slowest workflows (median)',
               '',
               '| Workflow | Runs | Median duration |',
@@ -99,11 +149,23 @@ jobs:
                 .slice(0, 5)
                 .map(w => `| ${w.name} | ${w.total} | ${fmt(median(w.durations))} |`),
               '',
+              `### Slowest CI jobs (median over the last ${ciRuns.length} CI runs)`,
+              '',
+              ...(slowJobs.length
+                ? ['| Job | Runs | Median |', '|---|---:|---:|', ...slowJobs.map(j => `| ${j.name} | ${j.n} | ${fmt(j.median)} |`)]
+                : ['No CI job ran any steps (runner-dispatch problem: see below).']),
+              '',
               'If most failures are fast failures, read PRODUCTION-RECOVERY.md §1.4 before touching any workflow.',
               `Run: ${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`,
             ];
             const body = lines.join('\n');
             const title = 'Weekly CI Telemetry';
+            core.setOutput(
+              'headline',
+              `CI telemetry ${since}: ${total} runs, failure rate ${pct(sum('failure'), total)}, ` +
+              `${sum('fast')} fast failures, ${flaky.length} flaky workflow(s). ` +
+              `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`,
+            );
 
             const open = await github.paginate(github.rest.issues.listForRepo, {
               owner, repo, state: 'open', labels: 'ci-telemetry', per_page: 100,
@@ -116,3 +178,17 @@ jobs:
               const { data } = await github.rest.issues.create({ owner, repo, title, body, labels: ['ci-telemetry'] });
               core.info(`Opened #${data.number}`);
             }
+
+      - name: Post the headline to #ci-alerts
+        if: steps.telemetry.outputs.headline != ''
+        env:
+          ALERTS_URL: ${{ secrets.CI_ALERTS_WEBHOOK_URL }}
+          HEADLINE: ${{ steps.telemetry.outputs.headline }}
+        run: |
+          set -euo pipefail
+          if [ -z "${ALERTS_URL:-}" ]; then
+            echo "No #ci-alerts URL secret is set; the issue is the only report."
+            exit 0
+          fi
+          jq -n --arg text "$HEADLINE" '{text: $text}' \
+            | curl --fail --silent --show-error --max-time 20 -H 'Content-Type: application/json' -d @- "$ALERTS_URL" > /dev/null
