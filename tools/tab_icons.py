@@ -34,6 +34,8 @@ import pathlib
 import re
 import sys
 
+from tools.site_page_policy import is_non_deployable_html
+
 REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 SEAL = "/assets/images/clearglass-holographic-seal.png"
@@ -134,6 +136,8 @@ SKIP_DIRS = {".git", "node_modules", ".next", "dist", "build", "vendor"}
 def iter_pages(root: pathlib.Path):
     for path in sorted(root.rglob("*.html")):
         if SKIP_DIRS & set(path.relative_to(root).parts):
+            continue
+        if is_non_deployable_html(path, root):
             continue
         yield path
 

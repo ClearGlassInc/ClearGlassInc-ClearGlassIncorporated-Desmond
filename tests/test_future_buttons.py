@@ -2,6 +2,8 @@
 
 from pathlib import Path
 
+from tools.site_page_policy import is_non_deployable_html
+
 
 ROOT = Path(__file__).resolve().parents[1]
 CSS_PATH = ROOT / "assets/css/future-buttons.css"
@@ -13,6 +15,8 @@ def deployable_html_pages() -> list[Path]:
     pages = []
     for path in ROOT.rglob("*.html"):
         if EXCLUDED_PARTS.intersection(path.relative_to(ROOT).parts):
+            continue
+        if is_non_deployable_html(path, ROOT):
             continue
         markup = path.read_text(encoding="utf-8")
         if "</head>" in markup.lower() and "</body>" in markup.lower():
