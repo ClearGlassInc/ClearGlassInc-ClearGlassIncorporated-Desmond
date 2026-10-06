@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from tools.site_page_policy import NON_DEPLOYABLE_HTML_PAGES
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SEAL = "assets/images/clearglass-holographic-seal.png"
@@ -41,7 +43,9 @@ def test_every_public_html_page_declares_a_tab_icon() -> None:
     public_pages = [
         page
         for page in ROOT.rglob("*.html")
-        if not {"node_modules", ".next"} & set(page.parts) and page.name not in excluded
+        if not {"node_modules", ".next"} & set(page.parts)
+        and page.name not in excluded
+        and page.relative_to(ROOT).as_posix() not in NON_DEPLOYABLE_HTML_PAGES
     ]
 
     missing = [
