@@ -102,9 +102,4 @@ federated credentials take the same environment-scoped subject.
 - It skips bot-authored PRs, PRs labelled `no-autofix`, and branches that moved after
   the failing run, and stops after 2 auto-fix commits on one PR.
 - It runs only `ruff check --fix` (safe fixes). Nothing from the PR is executed, and no
-  dependency from the PR is installed, while the job holds a write token. That
-  includes the job's own local actions: `.github/actions` is restored from the
-  default branch, and proven identical, before each use. Until 2026-10-06 they
-  were loaded from the PR's checkout, so a PR could run its own code with the token.
-- The job runs in the `automation-write` environment, so that environment's
-  required reviewers gate every auto-fix push.
+  dependency from the PR is installed, while the job holds a write token.

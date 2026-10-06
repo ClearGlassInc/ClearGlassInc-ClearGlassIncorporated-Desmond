@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Any
 
 import pytest
 import yaml
@@ -23,7 +22,6 @@ from scripts.audit_github_actions import GitHubLoader, audit, load
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOWS = ROOT / ".github" / "workflows"
 ACTIONS = ROOT / ".github" / "actions"
-DEFAULT_BRANCH = "${{ github.event.repository.default_branch }}"
 
 LAYER = [
     "ci.yml",
@@ -40,14 +38,11 @@ COMPOSITES = ["setup-node-python", "run-smoke-tests", "post-pr-comment"]
 SCOPES = {"none": 0, "read": 1, "write": 2}
 
 
-def triggers(data: dict[str, Any]) -> set[str]:
-    on = data.get("on") or {}
-    if isinstance(on, str):
-        return {on}
-    return set(on)
+def workflow(name: str) -> dict:
+    return yaml.load((WORKFLOWS / name).read_text(encoding="utf-8"), Loader=GitHubLoader)
 
 
-def steps(job: dict[str, Any]) -> list[dict[str, Any]]:
+def steps(job: dict) -> list[dict]:
     return [step for step in job.get("steps") or [] if isinstance(step, dict)]
 
 
@@ -89,18 +84,96 @@ def test_every_caller_grants_what_its_callee_requests() -> None:
                     problems.append(f"{caller}:{name} -> {callee}:{callee_job_name} needs {scope}: {level}")
     assert problems == []
 
-# ── Reusable-workflow contracts (GitHub rejects the caller when broken) ────
 
-
-def test_reusable_workflows_are_only_called_at_job_level() -> None:
+def test_reusable_workflows_are_only_ever_called_at_job_level() -> None:
     """A step cannot call a reusable workflow; GitHub fails the run."""
     offenders = []
     for path in sorted(WORKFLOWS.glob("*.y*ml")):
-        for job_id, job in (parse(path.read_text(encoding="utf-8")).get("jobs") or {}).items():
+        data = yaml.load(path.read_text(encoding="utf-8"), Loader=GitHubLoader) or {}
+        for job_name, job in (data.get("jobs") or {}).items():
             for step in steps(job) if isinstance(job, dict) else []:
-                if str(step.get("uses", "")).startswith("./.github/workflows/"):
-                    offenders.append(f"{path.name}:{job_id}")
+                uses = step.get("uses")
+                if isinstance(uses, str) and uses.startswith("./.github/workflows/"):
+                    offenders.append(f"{path.name}:{job_name}")
     assert offenders == []
+
+
+# ── Which code a job holding a write token runs ───────────────────────────
+
+TRUSTED_REFS = {
+    "${{ github.event.repository.default_branch }}",
+    "${{ github.event.pull_request.base.sha }}",
+}
+
+
+def pr_controlled_local_actions(data: dict) -> list[str]:
+    """Local actions that a write-token job loads from code a pull request controls.
+
+    `uses: ./...` runs whatever sits at that path in the workspace root, and only
+    a checkout into the root decides what that is: one with a `path:` puts the
+    code elsewhere. A root checkout with no ref is the PR's merge commit under
+    pull_request, and the default or base branch under workflow_run and
+    pull_request_target. verified-commit resets the root to the PR branch.
+    """
+    on = data.get("on") or {}
+    events = {on} if isinstance(on, str) else set(on)
+    if not events & {"pull_request", "pull_request_target", "workflow_run"}:
+        return []
+    findings = []
+    for name, job in (data.get("jobs") or {}).items():
+        if not isinstance(job, dict):
+            continue
+        grant = job.get("permissions", data.get("permissions")) or {}
+        if grant != "write-all" and not (isinstance(grant, dict) and "write" in grant.values()):
+            continue
+        trusted = False
+        for step in steps(job):
+            uses = str(step.get("uses", ""))
+            if uses.startswith("actions/checkout@"):
+                options = step.get("with") or {}
+                if options.get("path") not in (None, "", ".", "./"):
+                    continue
+                ref = options.get("ref")
+                trusted = ref in TRUSTED_REFS or (ref is None and "pull_request" not in events)
+            elif uses.startswith("./"):
+                if not trusted:
+                    findings.append(f"{name}: {uses}")
+                if uses.rstrip("/").endswith("verified-commit"):
+                    trusted = False
+    return findings
+
+
+def test_write_token_jobs_never_run_pr_controlled_actions() -> None:
+    """A PR that edits a local action must not get to run it with a write token."""
+    findings = {}
+    for path in sorted(WORKFLOWS.glob("*.y*ml")):
+        data = yaml.load(path.read_text(encoding="utf-8"), Loader=GitHubLoader) or {}
+        if found := pr_controlled_local_actions(data):
+            findings[path.name] = found
+    assert findings == {}
+
+
+def test_the_write_token_check_catches_what_it_guards() -> None:
+    """Without this the check above could pass by never matching anything."""
+    def check(text: str) -> list[str]:
+        return pr_controlled_local_actions(yaml.load(text, Loader=GitHubLoader))
+
+    base = "permissions: {contents: read}\njobs:\n  j:\n    permissions: {pull-requests: write}\n    steps:\n"
+    checkout = "      - uses: actions/checkout@0000000000000000000000000000000000000000\n"
+    action = "      - uses: ./.github/actions/post-pr-comment\n"
+    pr = "on: {pull_request: null}\n"
+    run = "on: {workflow_run: {workflows: [CI], types: [completed]}}\n"
+
+    # The pattern deploy-staging.yml's comment job had: the PR's merge commit.
+    assert check(pr + base + checkout + action) == ["j: ./.github/actions/post-pr-comment"]
+    default = checkout + "        with: {ref: '${{ github.event.repository.default_branch }}'}\n"
+    assert check(pr + base + default + action) == []
+    # auto-fix.yml's design: default branch at the root, the PR in a subdirectory.
+    into_pr = checkout + "        with: {ref: '${{ needs.plan.outputs.head_sha }}', path: pr}\n"
+    assert check(run + base + checkout + into_pr + action) == []
+    # The PR head at the root is untrusted on any trigger.
+    head = checkout + "        with: {ref: '${{ github.event.workflow_run.head_sha }}'}\n"
+    assert check(run + base + head + action) == ["j: ./.github/actions/post-pr-comment"]
 
 
 @pytest.mark.parametrize("name", LAYER)
@@ -295,7 +368,7 @@ def test_setup_action_matches_ci_yml_toolchain() -> None:
     ci = (WORKFLOWS / "ci.yml").read_text(encoding="utf-8")
     assert action["inputs"]["node_version"]["default"] == "22"
     assert action["inputs"]["python_version"]["default"] == "3.11"
-    assert 'node-version: "22"' in ci and 'python-version: "3.11"' in ci
+    assert re.search(r'node-version: "22"', ci) and re.search(r'python-version: "3.11"', ci)
 
 
 def test_codeowners_is_not_shadowed() -> None:
