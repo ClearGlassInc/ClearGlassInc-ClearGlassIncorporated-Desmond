@@ -110,10 +110,13 @@ code, pre, kbd, samp { font-family: var(--cg-mono); }
 .cg-fx-orb.o1 { width: 46vmin; height: 46vmin; top: 6%; left: -8%; background: radial-gradient(circle, rgba(234, 70, 72,.20), transparent 65%); }
 .cg-fx-orb.o2 { width: 38vmin; height: 38vmin; top: 46%; right: -6%; background: radial-gradient(circle, rgba(238, 99, 122,.18), transparent 65%); animation-delay: -6s; animation-duration: 22s; }
 .cg-fx-orb.o3 { width: 32vmin; height: 32vmin; bottom: -4%; left: 24%; background: radial-gradient(circle, rgba(238, 99, 101,.16), transparent 65%); animation-delay: -12s; animation-duration: 26s; }
+/* Floats on the individual `translate` property, which composes with the
+   scroll parallax on `transform`. It used to animate margin-top/left, which
+   re-laid-out and re-painted three 42px-blurred layers on every frame. */
 @keyframes cgOrbFloat {
-  0%   { margin-top: 0; margin-left: 0; }
-  50%  { margin-top: -3vmin; margin-left: 2vmin; }
-  100% { margin-top: 2vmin; margin-left: -2vmin; }
+  0%   { translate: 0 0; }
+  50%  { translate: 2vmin -3vmin; }
+  100% { translate: -2vmin 2vmin; }
 }
 
 /* scan-line sweep — periodic thin light band sweeping the viewport */
@@ -152,8 +155,12 @@ code, pre, kbd, samp { font-family: var(--cg-mono); }
     rgba(234, 70, 72, .07) 0%,
     rgba(238, 99, 122, .045) 30%,
     transparent 70%);
-  transform: translate(-50%, -50%);
-  transition: left .45s ease, top .45s ease;
+  /* Moved by transform (written by cg-design-system-core.js), not left/top. */
+  left: 0;
+  top: 0;
+  transform: translate3d(var(--cg-cx, -999px), var(--cg-cy, -999px), 0) translate(-50%, -50%);
+  transition: transform .45s cubic-bezier(.16, 1, .3, 1);
+  will-change: transform;
 }
 /* glass.css force-hides the homepage's own cursor glow; restore both */
 .cursor-glow, .cg-fx-cursor { display: block !important; }
@@ -203,15 +210,17 @@ code, pre, kbd, samp { font-family: var(--cg-mono); }
   height: 7px;
   border-radius: 50%;
   background: var(--prism-1);
-  box-shadow: 0 0 0 0 rgba(234, 70, 72, .5);
-  animation: cgPulse 2.1s ease-in-out infinite;
+  box-shadow: 0 0 0 3px rgba(234, 70, 72, .14), 0 0 8px rgba(234, 70, 72, .5), 0 0 20px rgba(234, 70, 72, .18);
+  animation: cgPulse var(--cg-np-pulse-status, 2.8s) ease-in-out infinite;
   flex-shrink: 0;
 }
 .cg-pulse.ok { background: var(--prism-4); }
 .cg-pulse.warn { background: var(--prism-5); }
+/* The halo is painted once (above); only opacity breathes, 100% to 60%.
+   The expanding box-shadow ring it replaces repainted every frame. */
 @keyframes cgPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(234, 70, 72, .35); }
-  50%      { box-shadow: 0 0 0 7px rgba(234, 70, 72, 0); }
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .6; }
 }
 
 /* premium glass card utility (homepage .product-card language) */
@@ -294,19 +303,32 @@ a:hover { color: #ee6669 !important; }
 /* status dots regain their pulse (glass.css freezes them) */
 .hdot, .cg-status-dot, [class*="status-dot"] {
   background: var(--prism-1) !important;
-  box-shadow: 0 0 0 0 rgba(234, 70, 72, .4) !important;
-  animation: cgPulse 2.1s ease-in-out infinite !important;
+  box-shadow: 0 0 0 3px rgba(234, 70, 72, .14), 0 0 8px rgba(234, 70, 72, .5) !important;
+  animation: cgPulse var(--cg-np-pulse-status, 2.8s) ease-in-out infinite !important;
 }
 
-/* ── 6. SCROLL-REVEAL MOTION (classes applied by JS; no-JS unaffected) ── */
-.cg-rv {
+/* ── 6. SCROLL-REVEAL MOTION (classes applied by JS; no-JS unaffected) ──
+   The site's one reveal pattern: fade + rise, staggered by --cg-rv-i (set by
+   cg-design-system-core.js for blocks that enter together). It is an
+   animation, not a transition, on purpose: cards declare their own
+   `transition` for hover, and whichever rule won the cascade used to drop the
+   other, so cards popped in without fading and lost their hover easing. The
+   keyframe has no end frame, so it settles on the element's own resting
+   state and leaves nothing behind. Tune via --cg-np-reveal-* in
+   neon-pulse.css. */
+.cg-rv:not(.cg-vis) {
   opacity: 0;
-  transform: translateY(26px);
-  transition: opacity .8s var(--cg-ease), transform .8s var(--cg-ease);
+  transform: translate3d(0, var(--cg-np-reveal-shift, 18px), 0);
 }
-.cg-rv.cg-vis { opacity: 1; transform: translateY(0); }
+.cg-rv.cg-vis {
+  animation: cgRevealUp var(--cg-np-reveal-dur, .7s) var(--cg-np-ease-out, cubic-bezier(.16, 1, .3, 1)) backwards;
+  animation-delay: calc(var(--cg-rv-i, 0) * var(--cg-np-stagger, 70ms));
+}
+@keyframes cgRevealUp {
+  from { opacity: 0; transform: translate3d(0, var(--cg-np-reveal-shift, 18px), 0); }
+}
 /* Printing must never capture a half-revealed page. */
-@media print { .cg-rv { opacity: 1 !important; transform: none !important; } }
+@media print { .cg-rv { opacity: 1 !important; transform: none !important; animation: none !important; } }
 
 /* ── 7. GLOBAL TOP BAR — the homepage nav menu, futurized and mounted
        site-wide by cg-design-system.js. Pages that already ship the
@@ -338,11 +360,12 @@ a:hover { color: #ee6669 !important; }
   height: 2px;
   pointer-events: none;
   background: linear-gradient(90deg, transparent, rgba(238, 99, 108,.9) 18%, rgba(14, 14, 14,.98) 42%, rgba(238, 99, 122,.98) 64%, transparent);
-  background-size: 220% 100%;
   opacity: .88;
-  animation: cgTbEdge 9s linear infinite;
+  animation: cgTbEdge 7s ease-in-out infinite;
 }
-@keyframes cgTbEdge { to { background-position: 220% 0; } }
+/* Opacity only: the old background-position scroll repainted the hairline,
+   inside a 34px backdrop blur, on every frame. */
+@keyframes cgTbEdge { 0%, 100% { opacity: .88; } 50% { opacity: .53; } }
 /* periodic sheen sweeping across the glass */
 .cg-topbar::before {
   content: '';
@@ -355,7 +378,6 @@ a:hover { color: #ee6669 !important; }
   background: linear-gradient(180deg,rgba(255,255,255,.18),transparent 34%), linear-gradient(90deg,rgba(238, 99, 108,.22),transparent 28%,rgba(238, 99, 122,.23) 72%,rgba(235,244,255,.14)), repeating-linear-gradient(90deg,transparent 0 154px,rgba(238, 99, 108,.2) 155px,transparent 157px);
   box-shadow: inset 0 0 42px rgba(238, 99, 108,.44), inset 0 0 0 1px rgba(255,255,255,.18);
 }
-@keyframes cgTbSheen { 0%, 58% { left: -40%; } 88%, 100% { left: 120%; } }
 
 .cg-topbar-in {
   max-width: 1840px;
@@ -565,7 +587,7 @@ a:hover { color: #ee6669 !important; }
   .cg-fx-cursor { display: none !important; }
   .cg-pulse, .hdot, .cg-status-dot, [class*="status-dot"] { animation: none !important; }
   .btn-crystal, [class*="btn-crystal"] { animation: none !important; }
-  .cg-rv { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .cg-rv { opacity: 1 !important; transform: none !important; transition: none !important; animation: none !important; }
   .cg-topbar::before, .cg-topbar::after, .cg-tb-ring { animation: none !important; }
   html { scroll-behavior: auto; }
 }
@@ -587,16 +609,27 @@ a:hover { color: #ee6669 !important; }
   --cg-neon-bloom-strong:0 0 22px rgba(235, 76, 79,.34),0 0 58px rgba(237, 95, 119,.20),0 0 90px rgba(238, 99, 117,.10);
 }
 
+/* The vignette mask stays on the fixed frame; the lines drift inside it by
+   transform, one cell across and two down per loop, so it is seamless. It
+   used to animate background-position: a full-viewport repaint every frame. */
 .cg-fx-neon-grid{
-  position:fixed;inset:0;z-index:-4;pointer-events:none;opacity:.22;
+  position:fixed;inset:0;z-index:-4;pointer-events:none;opacity:.22;overflow:hidden;
+  -webkit-mask-image:radial-gradient(circle at 50% 35%,#000 0 45%,transparent 82%);
+  mask-image:radial-gradient(circle at 50% 35%,#000 0 45%,transparent 82%);
+}
+.cg-fx-neon-grid::before{
+  content:"";position:absolute;inset:-144px 0 0 -72px;
   background-image:
     linear-gradient(rgba(235, 76, 79,.14) 1px,transparent 1px),
     linear-gradient(90deg,rgba(237, 95, 119,.12) 1px,transparent 1px);
   background-size:72px 72px;
-  mask-image:radial-gradient(circle at 50% 35%,#000 0 45%,transparent 82%);
   animation:cgGridDrift 28s linear infinite;
+  will-change:transform;
 }
-@keyframes cgGridDrift{to{background-position:72px 144px}}
+@keyframes cgGridDrift{to{transform:translate3d(72px,144px,0)}}
+/* The design system's atmosphere replaces neon-pulse's on the pages it runs
+   on (neon-pulse.js also skips mounting it), so one grid drifts, not two. */
+body:has(> .cg-fx-neon-grid) > .cg-np-ambient{display:none}
 
 .cg-fx-neon-thread{
   position:fixed;inset:auto -10vw 8vh -10vw;height:2px;z-index:-1;pointer-events:none;opacity:.42;
@@ -613,13 +646,16 @@ a:hover { color: #ee6669 !important; }
 }
 :is(.card,.panel,.prompt,.mini,.product-card,.tech-card,.connect-card,.value-card,.offer-card,.cg-glass-card,.glass,.tile,.module,.console,.terminal,.metric,.feature,.service-card,.case-card)::before{
   content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;opacity:.48;
-  background:linear-gradient(120deg,rgba(235, 76, 79,.0),rgba(235, 76, 79,.72),rgba(237, 95, 119,.55),rgba(238, 99, 117,.0));
-  background-size:240% 240%;
+  background:linear-gradient(120deg,rgba(235, 76, 79,.06),rgba(235, 76, 79,.6) 38%,rgba(237, 95, 119,.46) 62%,rgba(238, 99, 117,.06));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;mask-composite:exclude;
-  animation:cgNeonEdge 9s ease-in-out infinite;
+  animation:cgNeonEdge calc(var(--cg-np-pulse, 3.2s) * 2) ease-in-out infinite;
 }
-@keyframes cgNeonEdge{0%,100%{background-position:0% 50%;opacity:.30}50%{background-position:100% 50%;opacity:.72}}
+/* Opacity only, 100% to 60% of a .72 peak. The old background-position sweep
+   repainted every card on the page on every frame (25 at once on /blog/). */
+@keyframes cgNeonEdge{0%,100%{opacity:.72}50%{opacity:.43}}
+:is(.card,.panel,.prompt,.mini,.product-card,.tech-card,.connect-card,.value-card,.offer-card,.cg-glass-card,.glass,.tile,.module,.console,.terminal,.metric,.feature,.service-card,.case-card):nth-child(3n+2)::before{animation-delay:-2.1s}
+:is(.card,.panel,.prompt,.mini,.product-card,.tech-card,.connect-card,.value-card,.offer-card,.cg-glass-card,.glass,.tile,.module,.console,.terminal,.metric,.feature,.service-card,.case-card):nth-child(3n)::before{animation-delay:-4.2s}
 :is(.card,.panel,.prompt,.mini,.product-card,.tech-card,.connect-card,.value-card,.offer-card,.cg-glass-card,.glass,.tile,.module,.console,.terminal,.metric,.feature,.service-card,.case-card):hover{
   border-color:rgba(235, 76, 79,.36)!important;
   box-shadow:var(--cg-neon-bloom),0 24px 80px rgba(0,0,0,.18);
@@ -636,7 +672,11 @@ a:hover { color: #ee6669 !important; }
 :is(a,button,.btn,.primary,.ghost,.navlinks a,.nav-links a,.cg-tb-link,.cg-tb-cta,.pill,.badge,.chip,.tag,.kicker,.eyebrow){
   transition:color .22s var(--cg-ease),background .22s var(--cg-ease),border-color .22s var(--cg-ease),box-shadow .22s var(--cg-ease),transform .22s var(--cg-ease),text-shadow .22s var(--cg-ease);
 }
-a:hover,a:focus-visible,
+/* Inline text links glow as text only: a box-shadow on an inline <a> drew a
+   glowing rectangle around every hovered link in body copy. */
+a:hover,a:focus-visible{
+  text-shadow:0 0 14px rgba(235, 76, 79,.36),0 0 26px rgba(238, 99, 117,.16);
+}
 :is(button,.btn,.primary,.ghost,.navlinks a,.nav-links a,.cg-tb-link,.cg-tb-cta,.pill,.badge,.chip,.tag):hover{
   text-shadow:0 0 14px rgba(235, 76, 79,.36),0 0 26px rgba(238, 99, 117,.16);
   box-shadow:var(--cg-neon-bloom);
@@ -645,14 +685,12 @@ a:hover,a:focus-visible,
   box-shadow:inset 0 0 0 1px rgba(235, 76, 79,.18),0 0 22px rgba(235, 76, 79,.14),0 0 36px rgba(237, 95, 119,.08);
 }
 
-/* subtle life: only opt-in pages get floating after JS tags body */
-body.cg-neon-ready :is(.card,.panel,.mini,.product-card,.tech-card,.connect-card,.value-card,.offer-card,.cg-glass-card,.tile,.module):nth-of-type(3n+1){animation:cgSoftFloat 12s ease-in-out infinite}
-body.cg-neon-ready :is(.card,.panel,.mini,.product-card,.tech-card,.connect-card,.value-card,.offer-card,.cg-glass-card,.tile,.module):nth-of-type(3n+2){animation:cgSoftFloat 14s ease-in-out -4s infinite}
-body.cg-neon-ready :is(.card,.panel,.mini,.product-card,.tech-card,.connect-card,.value-card,.offer-card,.cg-glass-card,.tile,.module):nth-of-type(3n){animation:cgSoftFloat 16s ease-in-out -8s infinite}
-@keyframes cgSoftFloat{0%,100%{translate:0 0}50%{translate:0 -4px}}
+/* Cards no longer float on a loop. Every card bobbing on its own compositor
+   layer (17 on the homepage, 24 on /blog/) read as drift, not life; cards
+   move on entrance (section 6) and on hover only. */
 
 @media(prefers-reduced-motion:reduce){
-  .cg-fx-neon-grid,.cg-fx-neon-thread{animation:none!important}
+  .cg-fx-neon-grid::before,.cg-fx-neon-thread{animation:none!important}
   :is(.card,.panel,.prompt,.mini,.product-card,.tech-card,.connect-card,.value-card,.offer-card,.cg-glass-card,.glass,.tile,.module,.console,.terminal,.metric,.feature,.service-card,.case-card)::before{animation:none!important}
   body.cg-neon-ready :is(.card,.panel,.mini,.product-card,.tech-card,.connect-card,.value-card,.offer-card,.cg-glass-card,.tile,.module){animation:none!important;translate:none!important}
 }
@@ -679,10 +717,11 @@ body.cg-neon-ready :is(.card,.panel,.mini,.product-card,.tech-card,.connect-card
   }
 }
 @media (hover: none) and (pointer: coarse), (max-width: 768px) {
-  .cg-fx-aurora, .cg-fx-orb, .cg-fx-neon-grid, .cg-fx-neon-thread { animation: none !important; will-change: auto !important; }
+  .cg-fx-aurora, .cg-fx-orb, .cg-fx-neon-grid::before, .cg-fx-neon-thread { animation: none !important; will-change: auto !important; }
   .cg-fx-scan { display: none !important; }
   :is(.card,.panel,.prompt,.mini,.product-card,.tech-card,.connect-card,.value-card,.offer-card,.cg-glass-card,.glass,.tile,.module,.console,.terminal,.metric,.feature,.service-card,.case-card)::before{animation:none!important}
-  body.cg-neon-ready :is(.card,.panel,.mini,.product-card,.tech-card,.connect-card,.value-card,.offer-card,.cg-glass-card,.tile,.module){animation:none!important;translate:none!important}
+  /* The one-shot entrance (.cg-rv) is exempt: it costs nothing once played. */
+  body.cg-neon-ready :is(.card,.panel,.mini,.product-card,.tech-card,.connect-card,.value-card,.offer-card,.cg-glass-card,.tile,.module):not(.cg-rv){animation:none!important;translate:none!important}
 }
 
 

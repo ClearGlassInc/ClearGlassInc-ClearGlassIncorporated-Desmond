@@ -131,7 +131,16 @@
     document.body.insertBefore(layer, document.body.firstChild);
 
     var cards = document.querySelectorAll('.card,.panel,.tile,.tech-card,.product-card,.connect-card,.value-card,.founder-card,.credentials-card,.signup-card,.catalog-card,.dcard,.console,.stat,.stat-card,.metric,.kpi,.feature-card,.data-panel');
-    cards.forEach(function (el) { el.classList.add("cg-neon-card"); });
+    // A card that already carries an edge-lit rim (cg-design-system.css draws
+    // a masked ::before on .card/.panel/.tile/...) keeps that one. Tagging it
+    // too merged ui.css's 24px halo blur into that 1px rim, smearing it, and
+    // stacked a second rim on ::after.
+    var rimmed = function (el) {
+      var before = getComputedStyle(el, "::before");
+      var mask = before.maskImage || before.webkitMaskImage || "none";
+      return before.content !== "none" && before.content !== "normal" && mask !== "none";
+    };
+    cards.forEach(function (el) { if (!rimmed(el)) el.classList.add("cg-neon-card"); });
 
     var focal = document.querySelectorAll('.btn-crystal,.nav-cta,.primary-btn,.btn-dark,.cta-primary,.primary,.hero-actions .btn:first-child');
     focal.forEach(function (el) { el.classList.add("cg-neon-action"); });

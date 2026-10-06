@@ -304,10 +304,10 @@
 }
 @keyframes cgBtnAurora { to { background-position: 300% 0; } }
 
-/* primary hover: deepen the aurora edge + lift the glow a touch further */
-@media (hover: hover) {
-  .cg-btn--primary:hover::before { animation-duration: 2.4s; }
-}
+/* Hover no longer speeds the aurora up: changing animation-duration
+   mid-cycle recomputes the animation's progress, so the edge jumped to a new
+   position on every hover in and out. The hover glow comes from the
+   box-shadow and filter rules above. */
 
 /* ── opt-in variant: --aurora — a slowly flowing prism fill ─────────────────── */
 .cg-btn--aurora {

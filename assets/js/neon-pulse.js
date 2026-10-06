@@ -2,6 +2,10 @@
  *  status dots for /assets/css/neon-pulse.css without touching their layout,
  *  page-owned pseudo-elements, stacking or events. Decorative only.
  *
+ *  Changed 2026-10-06: an element that already has an edge-lit (masked) rim
+ *  gets no second one, and the ambient grid is mounted only when no other
+ *  layer owns the page's atmosphere. Tuning lives in neon-pulse.css's header.
+ *
  *  Every class this adds is in the cg-np- namespace. The layer only ever
  *  paints a pseudo-element it has claimed: cg-np-own-a (::after) or
  *  cg-np-own-b (::before), and only when that pseudo-element was free. */
@@ -47,6 +51,19 @@
   function free(el, pseudo) {
     const content = getComputedStyle(el, pseudo).content;
     return !content || content === "none" || content === "normal";
+  }
+
+  // An edge-lit rim is a masked pseudo-element. cg-design-system.css draws one
+  // on every .card/.panel/.tile/.module, ui.css on .cg-neon-card; a second rim
+  // from this layer stacked two gradients pulsing at different tempos.
+  function rimmed(el) {
+    for (const pseudo of ["::before", "::after"]) {
+      if (free(el, pseudo)) continue;
+      const style = getComputedStyle(el, pseudo);
+      const mask = style.maskImage || style.webkitMaskImage || "none";
+      if (mask !== "none") return true;
+    }
+    return false;
   }
 
   // Marker classes added by enhancement layers (this one, ui.js's
@@ -115,6 +132,11 @@
       const rect = el.getBoundingClientRect();
       if (rect.width < MIN_SIZE || rect.height < MIN_SIZE || rect.height > innerHeight * 2.5) return;
       if (!anchorable(el, style)) return;
+    }
+    if (rimmed(el)) {
+      // Already edge-lit. A module can still carry the header scan edge.
+      if (kind === "module" && /(hidden|clip)/.test(style.overflowX)) planScanbar(el, planned, plan);
+      return;
     }
     const freeA = free(el, "::after");
     const freeB = free(el, "::before");
@@ -221,11 +243,20 @@
     }
   }
 
+  // Another layer's atmosphere is on the page, or is about to be: ui.js's
+  // #cg-command-atmosphere, the homepage's .cgm-atmos, or the design system's
+  // .cg-fx-* layers. The design system mounts from a script it injects, which
+  // can run after this check, so its loader tag counts unless the page opted
+  // out of its effects. A second grid would double up rather than add.
+  function atmosphereOwned() {
+    if (document.querySelector(".cg-np-ambient,#cg-command-atmosphere,.cgm-atmos,.cg-fx-neon-grid,.cg-fx-aurora")) return true;
+    const optedOut = root.hasAttribute("data-cg-no-fx") || document.body.hasAttribute("data-cg-no-fx");
+    return !optedOut && !!document.querySelector("script[src*='cg-design-system']");
+  }
+
   function ambient() {
     ambientChecked = true;
-    // ui.js already paints a command atmosphere (grid + drift) on its pages;
-    // a second grid would double up rather than add.
-    if (document.querySelector(".cg-np-ambient,#cg-command-atmosphere")) return;
+    if (atmosphereOwned()) return;
     const layer = document.createElement("div");
     layer.className = "cg-np-ambient";
     layer.setAttribute("aria-hidden", "true");
@@ -234,6 +265,10 @@
       span.className = part;
       layer.appendChild(span);
     }
+    // The grid frame holds the vignette mask still; the lines drift inside it.
+    const lines = document.createElement("span");
+    lines.className = "cg-np-grid-lines";
+    layer.firstChild.appendChild(lines);
     document.body.appendChild(layer);
   }
 
