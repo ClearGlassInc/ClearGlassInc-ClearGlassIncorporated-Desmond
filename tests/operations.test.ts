@@ -46,12 +46,15 @@ test("invalid incident transitions are rejected server-side", () => {
   assert.throws(() => store.updateStatus(operator, incident.id, "closed"), /invalid incident transition/);
 });
 
-test("core vertical slice completes with quarantine, verified hash and audit trail", async () => {
+test("core vertical slice completes with quarantine, evidence version, verified hash and audit trail", async () => {
   const result = await getOperationsStore().runSyntheticVerticalSlice();
   assert.equal(result.synthetic, true);
   assert.equal(result.verification.matches, true);
   assert.equal(result.evidence.status, "available");
   assert.equal(result.evidence.sha256, result.verification.computedSha256);
+  assert.equal(result.evidence.version, 1);
+  assert.equal(result.evidence.currentVersionId, result.evidenceVersions[0]?.id);
+  assert.equal(result.evidenceVersions[0]?.original, true);
   assert.equal(result.incident.status, "in_review");
   assert.ok(result.assignment.assignee);
   assert.ok(result.audit.some((e) => e.action === "incident.created"));
@@ -75,6 +78,7 @@ test("legal hold prevents evidence deletion", () => {
     createdBy: "operator-demo",
     createdAt: "2020-01-01T00:00:00.000Z",
     version: 1,
+    currentVersionId: "version-1",
   };
   const hold = {
     id: "hold-1",

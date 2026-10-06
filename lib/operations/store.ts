@@ -6,6 +6,7 @@ import type {
   AuditEvent,
   CustodyEvent,
   EvidenceItem,
+  EvidenceVersion,
   Incident,
   IncidentPriority,
   IncidentStatus,
@@ -54,6 +55,7 @@ type StoredData = {
   incidents: Map<string, Incident>;
   assignments: Map<string, Assignment>;
   evidence: Map<string, EvidenceItem>;
+  evidenceVersions: Map<string, EvidenceVersion>;
   evidenceBytes: Map<string, Uint8Array>;
   custody: CustodyEvent[];
   audit: AuditEvent[];
@@ -68,10 +70,15 @@ export class OperationsStore {
 
   constructor() {
     this.data = {
-      tenant: { id: DEMO_TENANT_ID, name: "ClearGlass Synthetic Workspace", createdAt: new Date(0).toISOString() },
+      tenant: {
+        id: DEMO_TENANT_ID,
+        name: "ClearGlass Synthetic Workspace",
+        createdAt: new Date(0).toISOString(),
+      },
       incidents: new Map(),
       assignments: new Map(),
       evidence: new Map(),
+      evidenceVersions: new Map(),
       evidenceBytes: new Map(),
       custody: [],
       audit: [],
@@ -144,7 +151,9 @@ export class OperationsStore {
     this.requireEnabled();
     const incident = this.getIncident(principal, incidentId);
     if (!assignee.trim()) throw new Error("assignee is required");
-    if (!allowedTransitions[incident.status].includes("assigned")) throw new Error("invalid incident transition");
+    if (!allowedTransitions[incident.status].includes("assigned")) {
+      throw new Error("invalid incident transition");
+    }
     const now = new Date().toISOString();
     const assignment: Assignment = {
       id: randomUUID(),
@@ -159,8 +168,14 @@ export class OperationsStore {
     incident.assignedTo = assignment.assignee;
     incident.status = "assigned";
     incident.updatedAt = now;
-    this.audit(principal, "incident.assigned", "assignment", assignment.id, { incidentId: incident.id, assignee: assignment.assignee });
-    this.audit(principal, "incident.status_changed", "incident", incident.id, { from: previous, to: incident.status });
+    this.audit(principal, "incident.assigned", "assignment", assignment.id, {
+      incidentId: incident.id,
+      assignee: assignment.assignee,
+    });
+    this.audit(principal, "incident.status_changed", "incident", incident.id, {
+      from: previous,
+      to: incident.status,
+    });
     return assignment;
   }
 
@@ -174,11 +189,15 @@ export class OperationsStore {
     const incident = this.getIncident(principal, incidentId);
     if (!input.filename.trim()) throw new Error("filename is required");
     if (!input.contentType.trim()) throw new Error("content type is required");
-    if (input.bytes.byteLength > operationsConfig.maxEvidenceBytes) throw new Error("evidence exceeds configured size limit");
+    if (input.bytes.byteLength > operationsConfig.maxEvidenceBytes) {
+      throw new Error("evidence exceeds configured size limit");
+    }
 
     const now = new Date().toISOString();
     const id = randomUUID();
+    const versionId = randomUUID();
     const sha256 = sha256Hex(input.bytes);
+    const storageKey = `mock://evidence/${id}/original`;
     const item: EvidenceItem = {
       id,
       tenantId: incident.tenantId,
@@ -187,14 +206,29 @@ export class OperationsStore {
       contentType: input.contentType.trim().toLowerCase(),
       sizeBytes: input.bytes.byteLength,
       sha256,
-      storageKey: `mock://evidence/${id}/original`,
+      storageKey,
       status: "quarantined",
       createdBy: principal.subject,
       createdAt: now,
       version: 1,
+      currentVersionId: versionId,
+    };
+
+    const version: EvidenceVersion = {
+      id: versionId,
+      tenantId: item.tenantId,
+      evidenceItemId: item.id,
+      version: 1,
+      sha256,
+      sizeBytes: item.sizeBytes,
+      storageKey,
+      createdBy: principal.subject,
+      createdAt: now,
+      original: true,
     };
 
     this.data.evidence.set(item.id, item);
+    this.data.evidenceVersions.set(version.id, version);
     this.data.evidenceBytes.set(item.id, new Uint8Array(input.bytes));
     this.data.custody.push({
       id: randomUUID(),
@@ -205,7 +239,12 @@ export class OperationsStore {
       evidenceSha256: item.sha256,
       createdAt: now,
     });
-    this.audit(principal, "evidence.ingested", "evidence", item.id, { sha256: item.sha256, sizeBytes: item.sizeBytes, status: item.status });
+    this.audit(principal, "evidence.ingested", "evidence", item.id, {
+      sha256: item.sha256,
+      sizeBytes: item.sizeBytes,
+      status: item.status,
+      version: item.version,
+    });
     return item;
   }
 
@@ -216,11 +255,16 @@ export class OperationsStore {
     this.authorize(principal, evidence.tenantId);
     if (evidence.status !== "quarantined") throw new Error("evidence is not awaiting scan");
     evidence.status = "available";
-    this.audit(principal, "evidence.scan_completed", "evidence", evidence.id, { result: "synthetic-pass" });
+    this.audit(principal, "evidence.scan_completed", "evidence", evidence.id, {
+      result: "synthetic-pass",
+    });
     return evidence;
   }
 
-  verifyEvidence(principal: Principal, evidenceId: string): { matches: boolean; recordedSha256: string; computedSha256: string } {
+  verifyEvidence(
+    principal: Principal,
+    evidenceId: string,
+  ): { matches: boolean; recordedSha256: string; computedSha256: string } {
     this.requireEnabled();
     const evidence = this.data.evidence.get(evidenceId);
     if (!evidence) throw new Error("evidence not found");
@@ -239,22 +283,34 @@ export class OperationsStore {
       evidenceSha256: computedSha256,
       createdAt: now,
     });
-    this.audit(principal, "evidence.verified", "evidence", evidence.id, { matches, computedSha256 });
-    return { matches, recordedSha256: evidence.sha256, computedSha256 };
+    this.audit(principal, "evidence.verified", "evidence", evidence.id, {
+      matches,
+      computedSha256,
+    });
+    return {
+      matches,
+      recordedSha256: evidence.sha256,
+      computedSha256,
+    };
   }
 
   updateStatus(principal: Principal, incidentId: string, status: IncidentStatus): Incident {
     this.requireEnabled();
     const incident = this.getIncident(principal, incidentId);
-    if (!allowedTransitions[incident.status].includes(status)) throw new Error("invalid incident transition");
+    if (!allowedTransitions[incident.status].includes(status)) {
+      throw new Error("invalid incident transition");
+    }
     const previous = incident.status;
     incident.status = status;
     incident.updatedAt = new Date().toISOString();
-    this.audit(principal, "incident.status_changed", "incident", incident.id, { from: previous, to: status });
+    this.audit(principal, "incident.status_changed", "incident", incident.id, {
+      from: previous,
+      to: status,
+    });
     return incident;
   }
 
-  getIncident(principal: Principal, incidentId: string) {
+  getIncident(principal: Principal, incidentId: string): Incident {
     this.requireEnabled();
     const incident = this.data.incidents.get(incidentId);
     if (!incident) throw new Error("incident not found");
@@ -265,9 +321,13 @@ export class OperationsStore {
   getSnapshot(principal: Principal, incidentId: string) {
     const incident = this.getIncident(principal, incidentId);
     const evidence = [...this.data.evidence.values()].filter((e) => e.incidentId === incident.id);
-    const custody = this.data.custody.filter((e) => evidence.some((item) => item.id === e.evidenceId));
+    const evidenceIds = new Set(evidence.map((item) => item.id));
+    const versions = [...this.data.evidenceVersions.values()].filter((version) =>
+      evidenceIds.has(version.evidenceItemId),
+    );
+    const custody = this.data.custody.filter((e) => evidenceIds.has(e.evidenceId));
     const audit = this.data.audit.filter((event) => event.tenantId === incident.tenantId);
-    return { tenant: this.data.tenant, incident, evidence, custody, audit };
+    return { tenant: this.data.tenant, incident, evidence, versions, custody, audit };
   }
 
   async runSyntheticVerticalSlice() {
@@ -297,6 +357,7 @@ export class OperationsStore {
       incident: updated,
       assignment,
       evidence: scanned,
+      evidenceVersions: snapshot.versions,
       verification,
       audit: snapshot.audit,
       custody: snapshot.custody,

@@ -102,6 +102,8 @@ create index if not exists idx_cg_ops_custody_evidence on cg_operations_custody_
 create index if not exists idx_cg_ops_audit_tenant_created on cg_operations_audit_events(tenant_id, created_at);
 
 -- Rollback (when/if this migration is actually applied):
+-- The evidence-version foreign keys must be removed in dependency order.
+-- alter table cg_operations_evidence_items drop constraint if exists fk_current_evidence_version;
 -- drop table cg_operations_audit_events;
 -- drop table cg_operations_custody_events;
 -- drop table cg_operations_evidence_versions;
