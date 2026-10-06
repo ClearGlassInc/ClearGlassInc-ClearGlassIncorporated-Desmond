@@ -1,18 +1,19 @@
 name: CI Telemetry (Weekly)
 
-# Weekly CI health report from the Actions API: per-workflow failure rate,
-# duration, runs that only passed on a re-run (flaky signal), and how many
-# sampled failed jobs never got a runner at all. That last number is the one
-# that matters in this repository's current state (CLAUDE.md, deploy blocker).
+# Weekly health of every workflow in the repository (AUTOMATION.md): runs, failure
+# rate, fast failures and the slowest workflows over the last 7 days, written to
+# ONE open issue labelled ci-telemetry that is edited in place each week.
 #
-# One open issue labelled ci-telemetry is kept current rather than a new one
-# opened each week. Optionally also POSTs the summary as {"text": ...} to the
-# repository secret CI_TELEMETRY_WEBHOOK_URL (a Slack incoming webhook works).
-# The report holds workflow names and counts only: no people, no customer data.
+# "Fast failure" means a failed run that finished in under 20 seconds. That is the
+# shape of the runner-dispatch problem in CLAUDE.md (runner_id 0, no steps), so a
+# high count points at settings rather than code. It is a duration heuristic:
+# confirm on one job before acting on it.
+#
+# Read-only on Actions; its only write is that one issue.
 
 on:
   schedule:
-    - cron: "0 9 * * 1" # Mondays 09:00 UTC
+    - cron: "47 8 * * 1" # Mondays 08:47 UTC
   workflow_dispatch:
 
 permissions:
@@ -24,161 +25,94 @@ concurrency:
 
 jobs:
   telemetry:
-    name: Aggregate the last 7 days
+    name: Aggregate and publish
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     permissions:
       actions: read
       issues: write
     steps:
-      # Everything happens in one script so the summary never passes through
-      # an expression interpolated into code.
-      - name: Aggregate CI metrics and update the telemetry issue
+      - name: Aggregate the last 7 days and upsert the issue
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
-            const fs = require('fs');
-            const path = require('path');
             const { owner, repo } = context.repo;
-            const MAX_RUNS = 2000;
-            const SAMPLE_FAILED = 15;
-            const since = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString().slice(0, 10);
-
-            let seen = 0;
-            let truncated = false;
-            const runs = await github.paginate(
+            const since = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10);
+            const runs = [];
+            for await (const { data } of github.paginate.iterator(
               github.rest.actions.listWorkflowRunsForRepo,
-              { owner, repo, created: `>=${since}`, status: 'completed', per_page: 100 },
-              (response, done) => {
-                seen += response.data.length;
-                if (seen >= MAX_RUNS) { truncated = true; done(); }
-                return response.data;
-              },
-            );
+              { owner, repo, created: `>=${since}`, per_page: 100 },
+            )) {
+              runs.push(...data);
+              if (runs.length >= 2000) break;
+            }
 
-            const minutes = (r) => {
-              const start = Date.parse(r.run_started_at || r.created_at);
-              const end = Date.parse(r.updated_at);
-              return Number.isFinite(start) && Number.isFinite(end) ? Math.max(0, (end - start) / 60000) : null;
-            };
-            const median = (xs) => {
-              if (!xs.length) return null;
+            const seconds = r => (new Date(r.updated_at) - new Date(r.run_started_at || r.created_at)) / 1000;
+            const median = xs => {
+              if (!xs.length) return 0;
               const s = [...xs].sort((a, b) => a - b);
               const m = Math.floor(s.length / 2);
               return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
             };
+            const fmt = s => (s >= 60 ? `${(s / 60).toFixed(1)} min` : `${Math.round(s)} s`);
 
             const by = new Map();
             for (const r of runs) {
-              const w = by.get(r.name) || { name: r.name, total: 0, success: 0, failure: 0, cancelled: 0, other: 0, rerunPass: 0, mins: [] };
-              w.total += 1;
-              if (r.conclusion === 'success') w.success += 1;
-              else if (r.conclusion === 'failure') w.failure += 1;
-              else if (r.conclusion === 'cancelled') w.cancelled += 1;
-              else w.other += 1;
-              if (r.conclusion === 'success' && (r.run_attempt || 1) > 1) w.rerunPass += 1;
-              const m = minutes(r);
-              if (m !== null) w.mins.push(m);
+              if (r.status !== 'completed') continue;
+              const w = by.get(r.name) || { name: r.name, total: 0, success: 0, failure: 0, fast: 0, other: 0, durations: [] };
+              w.total++;
+              if (r.conclusion === 'success') w.success++;
+              else if (r.conclusion === 'failure') { w.failure++; if (seconds(r) < 20) w.fast++; }
+              else w.other++;
+              w.durations.push(seconds(r));
               by.set(r.name, w);
             }
-            const rows = [...by.values()];
-            const total = runs.length;
-            const failedTotal = rows.reduce((a, w) => a + w.failure, 0);
-            const successTotal = rows.reduce((a, w) => a + w.success, 0);
-            const rate = (n, d) => (d ? `${((n / d) * 100).toFixed(1)}%` : 'n/a');
-            const fmt = (x) => (x === null ? 'n/a' : `${x.toFixed(1)} min`);
-
-            // Sample the most recent failed runs for jobs that never got a runner.
-            let sampledJobs = 0;
-            let undispatched = 0;
-            for (const r of runs.filter((x) => x.conclusion === 'failure').slice(0, SAMPLE_FAILED)) {
-              const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRun, {
-                owner, repo, run_id: r.id, filter: 'latest', per_page: 100,
-              });
-              for (const j of jobs.filter((x) => x.conclusion === 'failure')) {
-                sampledJobs += 1;
-                if (!j.runner_id && !(j.steps && j.steps.length)) undispatched += 1;
-              }
-            }
-
-            const worst = [...rows].sort((a, b) => b.failure - a.failure || b.total - a.total).slice(0, 15);
-            const slowest = rows
-              .map((w) => ({ ...w, med: median(w.mins) }))
-              .filter((w) => w.med !== null)
-              .sort((a, b) => b.med - a.med)
-              .slice(0, 5);
-            const flaky = rows.filter((w) => w.rerunPass > 0).sort((a, b) => b.rerunPass - a.rerunPass);
+            const all = [...by.values()];
+            const sum = k => all.reduce((n, w) => n + w[k], 0);
+            const total = sum('total');
+            const pct = (a, b) => (b ? `${((a / b) * 100).toFixed(1)}%` : 'n/a');
 
             const lines = [
-              '<!-- cg-ci-telemetry -->',
-              `## CI telemetry: runs created since ${since}`,
+              `## CI telemetry: ${since} to ${new Date().toISOString().slice(0, 10)}`,
               '',
-              `- Completed runs: ${total}${truncated ? ` (capped at ${MAX_RUNS})` : ''}`,
-              `- Success: ${successTotal} · Failed: ${failedTotal} · Failure rate: ${rate(failedTotal, total)}`,
-              `- Sampled failed jobs that never got a runner: ${undispatched} of ${sampledJobs} (from the latest ${SAMPLE_FAILED} failed runs)`,
+              `- Completed runs: ${total}${runs.length >= 2000 ? ' (capped at 2000)' : ''}`,
+              `- Success: ${sum('success')}  |  Failure: ${sum('failure')}  |  Other (cancelled, skipped, neutral): ${sum('other')}`,
+              `- Failure rate: ${pct(sum('failure'), total)}`,
+              `- Fast failures (<20 s, runner-dispatch shape): ${sum('fast')} of ${sum('failure')}`,
               '',
-            ];
-            if (sampledJobs && undispatched === sampledJobs) {
-              lines.push(
-                '**Every sampled failure is a job that never got a runner.** These numbers measure the Actions',
-                'entitlement outage, not code health. Fix it in organisation settings (CLAUDE.md, PRODUCTION-RECOVERY.md',
-                'section 1.1) and run `python3 scripts/ci_local.py` until then.',
-                '',
-              );
-            }
-            lines.push(
-              '### Workflows by failures',
+              '### Most failing workflows',
               '',
-              '| Workflow | Runs | Failed | Failure rate | Cancelled | Median duration |',
+              '| Workflow | Runs | Failed | Failure rate | Fast failures | Median duration |',
               '|---|---:|---:|---:|---:|---:|',
-              ...worst.map((w) => `| ${w.name} | ${w.total} | ${w.failure} | ${rate(w.failure, w.total)} | ${w.cancelled} | ${fmt(median(w.mins))} |`),
+              ...all
+                .filter(w => w.failure > 0)
+                .sort((a, b) => b.failure - a.failure)
+                .slice(0, 15)
+                .map(w => `| ${w.name} | ${w.total} | ${w.failure} | ${pct(w.failure, w.total)} | ${w.fast} | ${fmt(median(w.durations))} |`),
               '',
               '### Slowest workflows (median)',
               '',
-              ...(slowest.length ? slowest.map((w) => `- ${w.name}: ${fmt(w.med)} over ${w.mins.length} run(s)`) : ['- No timing data.']),
+              '| Workflow | Runs | Median duration |',
+              '|---|---:|---:|',
+              ...all
+                .sort((a, b) => median(b.durations) - median(a.durations))
+                .slice(0, 5)
+                .map(w => `| ${w.name} | ${w.total} | ${fmt(median(w.durations))} |`),
               '',
-              '### Passed only on a re-run (flaky candidates)',
-              '',
-              ...(flaky.length ? flaky.map((w) => `- ${w.name}: ${w.rerunPass} run(s)`) : ['- None.']),
-              '',
-              `Generated ${new Date().toISOString()} by ci-telemetry.yml. Action items: fix the top failing workflow first; a test that passes only on re-run is a bug, not noise.`,
-            );
-            const summary = lines.join('\n');
+              'If most failures are fast failures, read PRODUCTION-RECOVERY.md §1.4 before touching any workflow.',
+              `Run: ${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`,
+            ];
+            const body = lines.join('\n');
+            const title = 'Weekly CI Telemetry';
 
-            await core.summary.addRaw(summary).write();
-            fs.writeFileSync(path.join(process.env.RUNNER_TEMP, 'ci-telemetry.md'), summary);
-
-            try {
-              await github.rest.issues.createLabel({ owner, repo, name: 'ci-telemetry', color: '0e8a16' });
-            } catch (error) {
-              if (error.status !== 422) core.warning(`Could not create label ci-telemetry: ${error.message}`);
-            }
             const open = await github.paginate(github.rest.issues.listForRepo, {
-              owner, repo, labels: 'ci-telemetry', state: 'open', per_page: 100,
+              owner, repo, state: 'open', labels: 'ci-telemetry', per_page: 100,
             });
-            const existing = open.find((i) => !i.pull_request && (i.body || '').startsWith('<!-- cg-ci-telemetry -->'));
+            const existing = open.find(i => i.title === title && !i.pull_request);
             if (existing) {
-              await github.rest.issues.update({ owner, repo, issue_number: existing.number, body: summary });
-              core.notice(`Updated #${existing.number}`);
+              await github.rest.issues.update({ owner, repo, issue_number: existing.number, body });
+              core.info(`Updated #${existing.number}`);
             } else {
-              const { data } = await github.rest.issues.create({
-                owner, repo, title: 'Weekly CI Telemetry', body: summary, labels: ['ci-telemetry'],
-              });
-              core.notice(`Opened #${data.number}`);
+              const { data } = await github.rest.issues.create({ owner, repo, title, body, labels: ['ci-telemetry'] });
+              core.info(`Opened #${data.number}`);
             }
-
-      # A notification, not a deployment. The variable is deliberately not
-      # named *HOOK*: audit_github_actions.py treats curl + HOOK as a deploy.
-      - name: Post the summary to the telemetry endpoint (optional)
-        env:
-          TELEMETRY_ENDPOINT: ${{ secrets.CI_TELEMETRY_WEBHOOK_URL }}
-        run: |
-          set -euo pipefail
-          if [ -z "${TELEMETRY_ENDPOINT:-}" ]; then
-            echo "No telemetry endpoint secret is set; skipping."
-            exit 0
-          fi
-          jq -Rs '{text: .}' "$RUNNER_TEMP/ci-telemetry.md" \
-            | curl --fail --silent --show-error --max-time 30 \
-                -H 'Content-Type: application/json' --data @- "$TELEMETRY_ENDPOINT" > /dev/null
-          echo "Posted the summary to the telemetry endpoint."

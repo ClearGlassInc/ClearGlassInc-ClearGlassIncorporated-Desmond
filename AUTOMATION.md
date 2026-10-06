@@ -1,138 +1,138 @@
-# ClearGlass CI/CD automation
+# ClearGlass CI/CD Automation
 
-The CI, self-healing, staging and promotion layer added on 2026-10-06, and how
-it fits the workflows that were already here. What automation may *change* is
-governed separately by [`docs/AUTOMATION_POLICY.md`](docs/AUTOMATION_POLICY.md);
-nothing here overrides it.
+The CI/CD automation layer: lint auto-fix on PRs, per-PR staging checks,
+staging-to-production promotion, CI diagnostics and weekly CI telemetry.
 
-> **None of this runs yet.** Since 2026-09-06 GitHub Actions dispatches no
-> runner for user-authored jobs in this repository (`runner_id: 0`, no steps,
-> no logs; `CLAUDE.md`, `PRODUCTION-RECOVERY.md` §1.1). That is fixed in
-> organisation settings (billing hold, spending limit, allowed-actions policy,
-> or the Actions toggle), not in code. Every workflow below needs a runner.
-> Until then, run the gates yourself: `python3 scripts/ci_local.py`.
+> **None of this runs yet.** Since 2026-09-06 GitHub Actions dispatches no runners
+> for this repository (`runner_id: 0`, no steps). That is an organisation-level
+> setting, not code: see CLAUDE.md, `PRODUCTION-RECOVERY.md` §1.4 and
+> `docs/BASELINE.md` F1. Until it is fixed, run the gates yourself:
+> `python3 scripts/ci_local.py`.
 
-## What was added
+Everything here is additive. `ci.yml`, `commerce-deploy.yml`, `rollback.yml`,
+`auto-heal.yml`, `pr-staging.yml` and `codex-autofix.yml` are unchanged and
+keep their jobs. Anything that deploys or pushes stays off until its switch is set.
 
-| File | Purpose | State on merge |
-|---|---|---|
-| `.github/workflows/reusable-ci.yml` | Callable gates: `scripts/ci_local.py` (every offline `ci.yml` gate) + the commerce gates from `commerce-deploy.yml` | Runs only when called |
-| `.github/workflows/reusable-deploy.yml` | Deploy, smoke-test and name-the-rollback primitive, provider chosen per environment | Runs only when called |
-| `.github/workflows/deploy-staging.yml` | Deploys each same-repo PR to `staging` as `pr-<n>` and comments the URL | **Off** until `CG_PR_STAGING_DEPLOY=true` |
-| `.github/workflows/deploy-promotion.yml` | Gates, then staging, then production, for one resolved commit | **Off** until `CG_PROMOTION_ENABLED=true` |
-| `.github/workflows/auto-fix.yml` | On a failed PR CI run: ruff safe fixes + regenerated assets, pushed as an `auto-fix:` commit | On (kill switch `CG_AUTO_FIX_DISABLED`) |
-| `.github/workflows/heal-pipeline.yml` | One issue per workflow+branch after N consecutive CI failures | On (kill switch `CG_HEAL_PIPELINE_DISABLED`) |
-| `.github/workflows/ci-telemetry.yml` | Weekly CI health issue, Mondays 09:00 UTC | On |
-| `.github/actions/setup-node-python/` | Node 22 + Python 3.11 + ci.yml's pinned gate tools | n/a |
-| `.github/actions/run-smoke-tests/` | Polls `/health` and `/ready` until 2xx | n/a |
-| `.github/actions/post-pr-comment/` | PR comment, upserted by marker so a bot leaves one comment, not one per run | n/a |
+## 1. What is where
 
-## How it coexists with what was already here
-
-Nothing existing was removed, renamed or edited.
-
-| Blueprint item | Already here | Decision |
-|---|---|---|
-| `ci.yml` calling `reusable-ci.yml` | `ci.yml` with 7 gates (pytest, ruff, site audit, search integrity, Lighthouse, workflow doctor, OSINT deck) | **Kept unchanged.** The blueprint's file would have replaced it and dropped those gates. Its job names are also the check names branch protection reads; routing them through a reusable workflow renames every check. `reusable-ci.yml` exists for promotion, which now gates on exactly what `ci.yml` gates on. |
-| `auto-fix.yml` | `codex-autofix.yml` (LLM, manual dispatch only) | Both kept. The new one is deterministic, never an LLM. |
-| `heal-pipeline.yml` | `auto-heal.yml` (one issue per failed run, any workflow) | Both kept. The new one reports patterns, not incidents. |
-| `deploy-staging.yml` | `pr-staging.yml` (read-only build and test of each PR) | Both kept. The new one only adds the deploy, and is off by default. |
-| Auto-rollback in production | `rollback.yml` + `docs/INCIDENT_RESPONSE.md`: rollback is manual dispatch only | **Repository policy wins.** A failed production deploy names the last recorded good revision and the exact `rollback.yml` command, then fails. It does not roll back on its own. |
-| Production deploy on `main` push | `render.yaml` `autoDeploy: true`, and `commerce-deploy.yml` calling `RENDER_DEPLOY_HOOK_URL` | Promotion is off by default. Enabling it with `render` deploys the same commit up to three times: retire the other two first. That is your call. |
-| `.github/CODEOWNERS` | Root `CODEOWNERS` | **Not created.** GitHub reads the first CODEOWNERS it finds, `.github/` before the root, so a new file there would silently replace every existing rule. `/.github/actions/` was added to the root file instead. |
-| CodeQL in `reusable-ci.yml` | `defensive-security-orchestrator.yml` uploads SARIF | Not duplicated. A called workflow that asks for `security-events: write` fails to load in any caller that does not grant it. |
-
-## Auto-fix
-
-Triggered when the `CI` workflow fails on a same-repository pull request.
-
-1. **`context`** resolves the PR and stops if: the head is a fork, the author is a bot, the PR is labelled `no-autofix`, it already has two `auto-fix:` commits, the PR moved on since that CI run, or `CG_AUTO_FIX_DISABLED=true`.
-2. **`fix`** (read-only token) checks out the PR head and runs only:
-   - `ruff check --fix` (pinned 0.15.8, the repository's config) on the Python files the PR changed;
-   - `tools/generate_search_assets.py`, `tools/internal_links.py`, `tools/insights_index.py`, the generators whose drift `ci.yml` fails on.
-   It uploads the result as a patch. No black, prettier or eslint: none is configured here, and they would reformat the whole static site.
-3. **`push`** (write token, `automation-write` environment) runs no PR code. It applies the patch, refuses it if any path is protected by `scripts/automation_governance.py` (loaded from the default branch) or sits under `.github/`, and pushes without force only if the branch has not moved.
-4. **`report`** keeps one PR comment current with the outcome.
-
-GitHub does not start workflow runs for a commit pushed with the workflow token, so CI runs again on the author's next push.
-
-## Staging and promotion
-
-The provider is chosen **per GitHub Environment** by the variable `DEPLOY_PROVIDER`:
-
-| Value | Behaviour |
-|---|---|
-| unset / `none` | Nothing deployed. The run says so and reports `deployed=false`, which stops a promotion. |
-| `render` | Calls the environment's `RENDER_DEPLOY_HOOK` secret with `?ref=<sha>`, the same call `rollback.yml` makes. One hook is one service, so `pr-<n>` deploys take turns on a single staging service. |
-| anything else | Fails. Cloud Run, ECS and Kubernetes are not wired: no registry, cluster or credentials for them exist here. Add a case to `reusable-deploy.yml` when one does, with OIDC. |
-
-Per-PR deploys run through the single `staging` environment. A `pr-<n>` environment would receive none of staging's secrets (environment secrets are not inherited) and would leave one orphan environment per PR.
-
-Promotion order: resolve the tag or SHA to one commit on `main` → `reusable-ci` → `staging` → `production`. Production runs only if staging really deployed. Its manual approval is the `production` environment's required reviewers and wait timer, which are settings, below.
-
-Smoke tests prove `/health` and `/ready` answer 2xx. Neither reports a commit, so a pass shows the service is healthy, not that the new revision is the one answering.
-
-## Settings you make (cannot be done from code)
-
-**Environments** (Settings → Environments):
-
-| Environment | Protection | Variables | Secrets |
+| File | Trigger | What it does | Default |
 |---|---|---|---|
-| `staging` | Optional reviewer; branches `main`, `staging` and PR heads | `DEPLOY_PROVIDER`, `DEPLOY_BASE_URL` (https) | `RENDER_DEPLOY_HOOK` if `render` |
-| `production` | 1-2 required reviewers, 5-15 min wait timer, branch `main` only | `DEPLOY_PROVIDER`, `DEPLOY_BASE_URL`; `PRODUCTION_HEALTH_URL` is already read by `rollback.yml` | `RENDER_DEPLOY_HOOK` (already read by `rollback.yml`) |
-| `automation-write` | Already exists (auto-heal, workflow doctor). Reviewers here also gate auto-fix pushes. | none | none |
+| `.github/workflows/auto-fix.yml` | CI fails on a PR | Applies ruff safe fixes to the PR's changed `.py` files, commits them as a Verified commit, posts one PR comment | **On** (off: `AUTOFIX_ENABLED=false`) |
+| `.github/workflows/deploy-staging.yml` | PR opened or updated | Waits for the PR's host-built preview, smoke-tests it, posts the URL on the PR | Off until `PR_PREVIEW_URL_TEMPLATE` is set |
+| `.github/workflows/deploy-promotion.yml` | Push to `main` (commerce paths), or manual | Gates, then staging, then production behind reviewers | Push: off until `PROMOTION_PIPELINE_ENABLED=true`. Manual: always runs |
+| `.github/workflows/heal-pipeline.yml` | CI fails | After 3 failures in a row on a branch, keeps one `ci-diagnostic` issue for that branch, with a cause | On |
+| `.github/workflows/ci-telemetry.yml` | Mondays 08:47 UTC, or manual | Failure rate, fast failures, slowest workflows over 7 days, in one `ci-telemetry` issue | On |
+| `.github/workflows/reusable-ci.yml` | Called | The repo's real gates: ruff, root pytest, control-plane pytest, workflow safety; optional frontends and CodeQL | n/a |
+| `.github/workflows/reusable-deploy.yml` | Called | Render deploy hook with a full SHA, waits for live, smoke-tests | n/a |
+| `.github/actions/setup-node-python/` | Used by the above | Node 22, Python 3.11, ruff 0.15.8 (the versions `ci.yml` uses) | n/a |
+| `.github/actions/run-smoke-tests/` | Used by the above | Read-only: polls `/health`, checks `/ready`, optionally proves the admin gate refuses anonymous reads | n/a |
+| `.github/actions/post-pr-comment/` | Used by the above | Creates or edits one marker-tagged PR comment, so reruns do not stack comments | n/a |
 
-Secrets are scoped to their environment, so the same name in each is correct; `STAGING_`/`PROD_` prefixes are unnecessary and nothing reads them.
+## 2. Switches
 
-**Repository variables** (Settings → Secrets and variables → Actions → Variables):
+Set in **Settings → Secrets and variables → Actions** (repository) or **Settings →
+Environments → <name>** (environment).
 
-| Variable | Effect |
-|---|---|
-| `CG_PR_STAGING_DEPLOY=true` | Turns on per-PR staging deploys |
-| `CG_PROMOTION_ENABLED=true` | Turns on staging → production promotion |
-| `CG_AUTO_FIX_DISABLED=true` | Turns auto-fix off |
-| `CG_HEAL_PIPELINE_DISABLED=true` | Turns heal-pipeline off |
-| `CG_HEAL_FAILURE_THRESHOLD` | Consecutive CI failures before an issue (default 3, minimum 2) |
+| Name | Kind | Scope | Effect |
+|---|---|---|---|
+| `AUTOFIX_ENABLED` | variable | repository | `false` disables auto-fix everywhere |
+| `PR_PREVIEW_URL_TEMPLATE` | variable | repository | e.g. `https://clearglass-commerce-api-pr-{pr}.onrender.com`; turns on per-PR staging checks |
+| `PROMOTION_PIPELINE_ENABLED` | variable | repository | `true` lets a push to `main` start a promotion |
+| `HEAL_PIPELINE_THRESHOLD` | variable | repository | Consecutive failures before a diagnostic issue (default 3, minimum 2) |
+| `DEPLOY_BASE_URL` | variable | `staging`, `production` | https base URL of that environment's control plane |
+| `RENDER_DEPLOY_HOOK` | secret | `staging`, `production` | That environment's Render deploy hook. `rollback.yml` already reads this name in `production` |
+| `RENDER_API_KEY` | secret | `staging`, `production` | Lets the deploy wait until Render reports the new revision `live` |
 
-**Optional repository secret:** `CI_TELEMETRY_WEBHOOK_URL`, which receives the weekly summary as `{"text": ...}`.
+## 3. Auto-fix
 
-## OIDC, when a cloud provider is added
+When `CI` fails on a pull request:
 
-Use OIDC; never store a long-lived cloud key. Scope the trust to the **environment**, not the repository. The blueprint's `repo:ORG/REPO:*` lets any branch or pull request job in the repository assume the production role:
+1. Skips unless the PR is open, from this repository (not a fork), not bot-authored,
+   not labelled `no-autofix`, not on the default branch or `staging`, still at the
+   failing commit, and has fewer than 2 `auto-fix:` commits.
+2. Runs `ruff check --fix --force-exclude` (safe fixes only, pinned ruff 0.15.8,
+   the repo's `pyproject.toml` config) on the Python files the PR changed.
+3. If anything changed and the branch has not moved, commits it through
+   `.github/actions/verified-commit` as `auto-fix: ruff safe fixes for PR #N`.
+4. Edits one PR comment: what was fixed, or that the failure needs a person.
 
-```json
-"Condition": {
-  "StringEquals": {
-    "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
-    "token.actions.githubusercontent.com:sub": "repo:ClearGlassInc/ClearGlassInc-ClearGlassIncorporated-Desmond:environment:production"
-  }
-}
-```
+It never runs eslint, prettier or black. The repo uses none of them, and running
+them repo-wide would rewrite thousands of files nobody touched. It is not an LLM:
+`codex-autofix.yml` stays manual-only for the reasons in its header.
 
-One role per environment, least-privilege policies, and `id-token: write` granted only on the deploy job, never at the top level. An Azure equivalent is staged in `scripts/azure_oidc_activation.sh`.
+## 4. Per-PR staging
 
-## Overriding automation
+The host builds the preview; this workflow verifies it. On Render that means a
+preview environment (`previews:` in `render.yaml`), which names each service
+`<service>-pr-<N>`. Previews are billed instances, so enabling them is an owner
+decision this change does not make. With `PR_PREVIEW_URL_TEMPLATE` set, each PR
+gets a smoke test (up to 15 minutes for the build) and one comment with the URL.
 
-- Label a PR `no-autofix` to keep auto-fix off it.
-- Repository variables above switch each workflow on or off without a code change.
-- `[skip ci]` in a commit message skips push and pull_request workflows for that commit (GitHub built-in).
-- `deploy-promotion.yml` can be run by hand with `release_tag` (a tag or full SHA on `main`).
-- Rollback is always `rollback.yml`, dispatched by a person: [`docs/INCIDENT_RESPONSE.md`](docs/INCIDENT_RESPONSE.md).
+## 5. Promotion to production
 
-## Validating a change to this layer
+1. **Resolve.** Takes the pushed commit (or the dispatched `ref`), refuses anything
+   not on `main`, and looks up the last successful `production` deployment.
+2. **Gate.** `reusable-ci.yml` re-runs the Python, control-plane and workflow-safety
+   gates on that exact commit.
+3. **Staging.** Deploy hook with `?ref=<SHA>`, wait for `live`, smoke-test.
+4. **Production.** The same SHA. The `production` environment's required reviewers
+   approve before the job starts. Smoke tests here also require
+   `admin_auth=enabled` and a 401/403 from `/events` and `/metrics/overview`.
+5. **Incident.** If production fails, an `incident` issue names the last known-good
+   SHA and the exact Rollback inputs.
+
+**Switching from `commerce-deploy.yml`.** That workflow already deploys production on
+every push to `main` that touches the commerce tree. Turning on
+`PROMOTION_PIPELINE_ENABLED` while its `RENDER_DEPLOY_HOOK_URL` secret is still set
+means two production deploys per push. To switch: delete `RENDER_DEPLOY_HOOK_URL`
+(commerce-deploy keeps its gates and skips its deploy cleanly), then set the variable.
+
+**Staging needs its own service.** `render.yaml` defines one set of services. Until a
+separate staging service and database exist, there is nothing for the `staging`
+environment's hook to point at. Pointing it at production is not staging.
+
+## 6. Rollback
+
+Manual, on purpose. `docs/INCIDENT_RESPONSE.md`: an automatic rollback can flap
+between two broken states, and an automatic rollback of a data migration is worse
+than the outage. A failed deploy writes the rollback target to the run summary and
+the incident issue; a person runs **Actions → Rollback** with it.
+
+## 7. Diagnostics and telemetry
+
+- **heal-pipeline** classifies a red streak. If every failed job reports
+  `runner_id: 0` and no steps, it says so and points at settings, not code.
+  Otherwise it lists failing jobs and steps, and whether CI on `main` is red too.
+  One issue per branch, edited in place.
+- **ci-telemetry** counts runs per workflow over 7 days. A "fast failure" is a
+  failed run under 20 seconds, the shape of the runner-dispatch problem. It is a
+  duration heuristic: confirm on one job before acting on it.
+
+## 8. Overriding automation
+
+- `no-autofix` label on a PR: auto-fix leaves it alone.
+- `AUTOFIX_ENABLED=false`: auto-fix off everywhere.
+- `[skip ci]` in a commit message: GitHub skips push and pull_request workflows for it.
+- **Actions → Deploy Promotion → Run workflow**: promote a specific SHA by hand.
+
+## 9. Known limits
+
+- **Commits made with the workflow token do not trigger CI.** After an auto-fix
+  commit the PR head has no checks until the author pushes again.
+- **Without `RENDER_API_KEY` the deploy cannot tell when the new revision is live.**
+  It waits 180 seconds, and the smoke test may be answered by the previous
+  revision. The same applies to PR previews.
+- **`/health` reports the package version, not the commit.** No job can prove which
+  SHA is serving. Fix: return `RENDER_GIT_COMMIT` from `/health`. That is a
+  control-plane change and is not part of this layer.
+- **CodeQL** in `reusable-ci.yml` is off by default. If GitHub's CodeQL default setup
+  is on, an advanced-configuration upload is rejected.
+
+## 10. Checking a change to this layer
 
 ```bash
-pip install pytest pyyaml "ruff==0.15.8" actionlint-py shellcheck-py
-python3 scripts/workflow_doctor.py           # SHA pins, trigger schema
-python3 scripts/audit_github_actions.py      # permissions, credentials, environments
-actionlint .github/workflows/{reusable-ci,reusable-deploy,deploy-staging,deploy-promotion,auto-fix,heal-pipeline,ci-telemetry}.yml
-python3 -m pytest tests/test_cicd_layer.py -q
-```
-
-`actionlint` is not a repository gate: on 2026-10-06 it reported findings in 12
-older workflows, which this layer did not touch. The seven files above lint
-clean, including shellcheck.
-
-```bash
-python3 scripts/ci_local.py                  # everything ci.yml gates on
+pip install pyyaml "ruff==0.15.8"
+python3 scripts/workflow_doctor.py        # SHA pins, trigger schemas
+python3 scripts/audit_github_actions.py   # permissions, secrets, deploy gating
+python3 scripts/ci_local.py               # every ci.yml gate
 ```

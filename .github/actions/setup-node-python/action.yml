@@ -1,28 +1,30 @@
+# Shared Node + Python toolchain for the CI/CD automation layer (AUTOMATION.md).
+#
+# Defaults match ci.yml, not a generic template: Python 3.11 is what the suite is
+# verified on, and Node 22 is required because the admin login guard needs 22.6+
+# to strip TypeScript types (tests/test_node_toolchain_guard.py). Tool versions are
+# pinned for the same reason ci.yml pins ruff: an unpinned install turns a green
+# tree red with no code change. Local composite action -> exempt from the SHA-pin
+# gate, but every action it calls is pinned to a full commit SHA.
 name: "Setup Node + Python"
-description: >
-  Install Node.js and Python at the versions this repository's CI pins, plus
-  ci.yml's pinned Python gate tools. Defaults match .github/workflows/ci.yml.
-  Do not lower Node below 22.6: the admin login guard strips TypeScript types
-  natively (tests/test_node_toolchain_guard.py). No global eslint, prettier or
-  black is installed - none of them is configured here, and running them would
-  reformat the static site wholesale.
+description: "Install the pinned Node.js and Python toolchains plus the repo's lint/test tools."
 
 inputs:
   node_version:
-    description: Node.js version.
+    description: "Node.js version."
     required: false
     default: "22"
   python_version:
-    description: Python version.
+    description: "Python version."
     required: false
     default: "3.11"
-  install_python_tools:
-    description: "'true' installs ci.yml's pinned gate tools: pytest, pytest-cov, pyyaml, ruff==0.15.8."
+  install_test_tools:
+    description: "Install pytest, pytest-cov and pyyaml as well as ruff."
     required: false
     default: "true"
 
 runs:
-  using: composite
+  using: "composite"
   steps:
     - name: Setup Node
       uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -34,9 +36,15 @@ runs:
       with:
         python-version: ${{ inputs.python_version }}
 
-    # ruff is pinned for the reason ci.yml gives: an unpinned install pulls a
-    # newer default rule set and turns `ruff check .` red with no code change.
-    - name: Install pinned Python gate tools
-      if: inputs.install_python_tools == 'true'
+    - name: Install pinned lint and test tools
       shell: bash
-      run: python -m pip install --quiet pytest pytest-cov pyyaml "ruff==0.15.8"
+      env:
+        INSTALL_TEST_TOOLS: ${{ inputs.install_test_tools }}
+      run: |
+        set -euo pipefail
+        python -m pip install --quiet --upgrade pip
+        # Same pin as ci.yml's lint job and scripts/ci_local.py.
+        pip install --quiet "ruff==0.15.8"
+        if [ "$INSTALL_TEST_TOOLS" = "true" ]; then
+          pip install --quiet pytest pytest-cov pyyaml
+        fi

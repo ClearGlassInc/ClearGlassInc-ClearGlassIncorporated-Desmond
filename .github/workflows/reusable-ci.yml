@@ -1,81 +1,52 @@
 name: Reusable CI
 
-# The repository's gates in callable form, used by deploy-promotion.yml so
-# nothing is promoted that has not passed them.
+# The repository's real gates, callable from any workflow (AUTOMATION.md).
 #
-# repo-gates runs scripts/ci_local.py, the offline mirror of every ci.yml job,
-# so this file cannot drift from ci.yml: ci_local.py is the thing CLAUDE.md
-# requires to be kept in step with it. Lighthouse is its one network gate and
-# is not run here. commerce-gates and frontend-build mirror commerce-deploy.yml.
+# ci.yml stays the authoritative PR/push gate and is not wired to this file; this
+# exists so a deploy can re-prove the exact commit it is about to ship
+# (deploy-promotion.yml calls it first). It runs what ci.yml runs for Python, the
+# workflow-safety audit, and optionally the commerce frontends and CodeQL. It does
+# not run eslint, prettier or black: this repo uses none of them, and running them
+# repo-wide would fail on, or rewrite, thousands of untouched files.
 #
-# ci.yml is deliberately NOT refactored into a caller of this file. Its job
-# names are the check names branch protection reads; routing them through a
-# reusable workflow renames every check to "<caller> / <job>" and silently
-# orphans each required status.
-#
-# CodeQL is not here either. defensive-security-orchestrator.yml already
-# uploads SARIF, and a called workflow that asks for security-events: write
-# fails to load in any caller that does not grant it, even when the job
-# would be skipped.
-#
-# Testing a ref older than the commit that added .github/actions/
-# setup-node-python fails at setup, by design. Use rollback.yml to redeploy
-# an older revision.
+# CodeQL is off by default. If GitHub's CodeQL "default setup" is enabled for the
+# repository, an advanced-configuration upload is rejected, so turn it on only
+# when default setup is off. The caller must grant security-events: write.
 
 on:
   workflow_call:
     inputs:
       ref:
-        description: Full commit SHA to test. Empty means the caller's commit.
+        description: "Commit to test. Defaults to the caller's commit."
         required: false
         type: string
         default: ""
-      python_version:
-        required: false
-        type: string
-        default: "3.11"
       node_version:
         required: false
         type: string
         default: "22"
-      include_commerce:
-        description: Also run the control-plane and storefront/admin gates from commerce-deploy.yml.
+      python_version:
+        required: false
+        type: string
+        default: "3.11"
+      run_frontends:
+        description: "Also typecheck and build storefront/ and admin/."
         required: false
         type: boolean
-        default: true
+        default: false
+      enable_codeql:
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
 jobs:
-  repo-gates:
-    name: Repository gates (ci.yml mirror)
+  python:
+    name: Lint + tests (Python)
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-          # Sitemap <lastmod> values come from git history; a shallow clone
-          # dates every page wrong and the drift gate fails.
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Setup Node + Python
-        uses: ./.github/actions/setup-node-python
-        with:
-          node_version: ${{ inputs.node_version }}
-          python_version: ${{ inputs.python_version }}
-
-      - name: Run every offline ci.yml gate
-        run: python3 scripts/ci_local.py
-
-  commerce-gates:
-    name: Commerce control-plane gate
-    if: inputs.include_commerce
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -89,30 +60,70 @@ jobs:
           node_version: ${{ inputs.node_version }}
           python_version: ${{ inputs.python_version }}
 
-      # The full web stack (httpx for TestClient) is what makes the webhook ->
-      # DB -> /payouts integration tests run instead of silently skipping.
-      - name: Install control-plane dependencies
-        run: python -m pip install --quiet -r control-plane/requirements.txt
+      - name: Lint (ruff, repo-wide)
+        run: ruff check .
 
-      - name: Lint commerce package
+      - name: Root test suite
+        run: pytest tests/ -q
+
+  control-plane:
+    name: Control plane (ruff + pytest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          persist-credentials: false
+
+      - name: Setup Node + Python
+        uses: ./.github/actions/setup-node-python
+        with:
+          node_version: ${{ inputs.node_version }}
+          python_version: ${{ inputs.python_version }}
+
+      # requirements.txt pins httpx; without it the webhook -> DB -> /payouts tests
+      # silently skip and the governed money paths go unexercised (CLAUDE.md).
+      - name: Install control-plane requirements
+        run: pip install -r control-plane/requirements.txt
+
+      - name: Lint
         run: ruff check control-plane
 
-      - name: Governance and payments tests
+      - name: Tests
         working-directory: control-plane
         run: python -m pytest tests/ -q
 
-  frontend-build:
-    name: Frontend build gate (${{ matrix.app }})
-    if: inputs.include_commerce
+  workflow-safety:
+    name: Workflow safety invariants
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          persist-credentials: false
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ inputs.python_version }}
+
+      - run: pip install pyyaml
+      - run: python scripts/workflow_doctor.py
+      - run: python scripts/audit_github_actions.py
+
+  frontends:
+    name: Frontend build (${{ matrix.app }})
+    if: inputs.run_frontends
     runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
         app: [storefront, admin]
-    defaults:
-      run:
-        working-directory: ${{ matrix.app }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -120,18 +131,38 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
           persist-credentials: false
 
-      # Node 20 to match commerce-deploy.yml, which builds these apps today.
       - name: Setup Node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: "20"
-          cache: npm
-          cache-dependency-path: ${{ matrix.app }}/package-lock.json
+          node-version: ${{ inputs.node_version }}
 
-      - run: npm ci --no-audit --no-fund
+      - name: Install, typecheck, build
+        working-directory: ${{ matrix.app }}
+        run: |
+          set -euo pipefail
+          npm ci
+          npx tsc --noEmit
+          npm run build
 
-      - name: Typecheck (tsc --noEmit)
-        run: npx tsc --noEmit
+  codeql:
+    name: CodeQL
+    if: inputs.enable_codeql
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          persist-credentials: false
 
-      - name: Production build (next build)
-        run: npm run build
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        with:
+          languages: python, javascript-typescript
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2

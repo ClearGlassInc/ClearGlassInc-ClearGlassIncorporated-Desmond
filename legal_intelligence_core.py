@@ -32,6 +32,49 @@ LEGAL_AGENT_OUTPUT_SECTIONS: tuple[str, ...] = (
     "Recommended Actions",
 )
 
+CLEARGLASS_LEGAL_OPERATIONS_COMMAND_PROMPT_PATH = Path(
+    "prompts/clearglass_legal_operations_command_system_prompt.md"
+)
+
+CLOC_FACT_CLASSIFICATIONS: tuple[str, ...] = (
+    "CONFIRMED FACT",
+    "SUPPORTED INFERENCE",
+    "UNVERIFIED CLAIM",
+    "ASSUMPTION",
+    "LEGAL INTERPRETATION",
+    "CONTESTED FACT",
+    "MISSING EVIDENCE",
+)
+
+CLOC_ESCALATION_FLAGS: tuple[str, ...] = (
+    "LEGAL COUNSEL REQUIRED",
+    "URGENT DEADLINE",
+    "EVIDENCE PRESERVATION REQUIRED",
+    "PRIVILEGE REVIEW REQUIRED",
+    "HUMAN AUTHORIZATION REQUIRED",
+)
+
+CLOC_OUTPUT_SECTIONS: tuple[str, ...] = (
+    "MATTER STATUS",
+    "WHAT WAS PROVIDED",
+    "CONFIRMED FACTS",
+    "SUPPORTED INFERENCES",
+    "UNVERIFIED CLAIMS",
+    "CONTESTED OR MISSING FACTS",
+    "CHRONOLOGY UPDATE",
+    "EVIDENCE INDEX UPDATE",
+    "ISSUE MATRIX UPDATE",
+    "CONTRACTUAL / POLICY OBLIGATIONS",
+    "RISK REGISTER UPDATE",
+    "DEADLINES AND PRESERVATION FLAGS",
+    "QUESTIONS FOR LICENSED COUNSEL",
+    "RECOMMENDED PREPARATION ACTIONS",
+    "DRAFTS FOR COUNSEL REVIEW, IF REQUESTED",
+    "APPROVALS REQUIRED",
+    "NEXT ACTIONS",
+    "LIMITATIONS AND VERIFICATION NOTICE",
+)
+
 class LegalStatus(StrEnum):
     """Permitted final statuses for legal work products."""
 
@@ -186,7 +229,10 @@ Never elevate a weaker source above a stronger one. Never treat guidance as legi
 The system must never claim to be a licensed lawyer, replace retained counsel, or issue final legal, tax, or regulatory advice without authorized human legal review.
 
 ## ClearGlass Legal Agent profile
-Use the canonical governed specialist profile at `prompts/clearglass_legal_agent_system_prompt.md` when the assignment requires the CLEARGLASS LEGAL AGENT operating doctrine, evidence classifications, bounded output, or execution-state controls."""
+Use the canonical governed specialist profile at `prompts/clearglass_legal_agent_system_prompt.md` when the assignment requires the CLEARGLASS LEGAL AGENT operating doctrine, evidence classifications, bounded output, or execution-state controls.
+
+## ClearGlass Legal Operations Command profile
+Use `prompts/clearglass_legal_operations_command_system_prompt.md` when the assignment is to open or maintain a matter file: chronology, evidence index, issue matrix, risk register, or counsel handoff package. It withholds legal conclusions pending licensed counsel review."""
 
     def plan(self, assignment: LegalAssignment) -> LegalWorkPlan:
         questions: list[str] = []
@@ -232,4 +278,16 @@ def render_clearglass_legal_agent_prompt() -> str:
     """
 
     prompt_path = Path(__file__).resolve().parent / CLEARGLASS_LEGAL_AGENT_PROMPT_PATH
+    return prompt_path.read_text(encoding="utf-8")
+
+
+def render_clearglass_legal_operations_command_prompt() -> str:
+    """Load the CLEARGLASS LEGAL OPERATIONS COMMAND (CLOC) system prompt.
+
+    CLOC builds the counsel-ready matter record that the Legal Agent's analysis
+    starts from. Like the Legal Agent loader, this reads a repository file only:
+    no network access, and the prompt is never mutated.
+    """
+
+    prompt_path = Path(__file__).resolve().parent / CLEARGLASS_LEGAL_OPERATIONS_COMMAND_PROMPT_PATH
     return prompt_path.read_text(encoding="utf-8")

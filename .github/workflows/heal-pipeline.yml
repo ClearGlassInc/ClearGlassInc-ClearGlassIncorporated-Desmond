@@ -1,20 +1,17 @@
 name: Heal Pipeline Diagnostics
 
-# Pattern detection for CI, alongside auto-heal.yml, not instead of it.
+# Speaks only when CI is chronically red on one branch, and says why (AUTOMATION.md).
 #
-#   auto-heal.yml      one issue per failed run of any workflow (incident level).
-#   heal-pipeline.yml  one issue per CI workflow + branch, opened only once
-#                      that branch has failed CI N times in a row (pattern
-#                      level), then kept current instead of duplicated.
+# Auto Heal (auto-heal.yml) reacts to every failure of every workflow. This one
+# waits for a streak: when CI has failed HEAL_PIPELINE_THRESHOLD times in a row on
+# a branch (default 3, cancelled/skipped runs ignored) it keeps ONE open issue per
+# branch, labelled ci-diagnostic, and edits that issue on later failures instead of
+# opening another or commenting each time.
 #
-# N is the repository variable CG_HEAL_FAILURE_THRESHOLD (default 3, minimum 2).
-# Evidence comes from the Actions API: failing jobs, their failed steps, and
-# the runner-not-dispatched signature (no runner, no steps) that has blocked
-# this repository's Actions since 2026-09-06. That signature is an
-# organisation-settings problem, and the issue says so rather than suggesting
-# code changes. While it persists, this workflow cannot get a runner either.
-#
-# Disable with the repository variable CG_HEAL_PIPELINE_DISABLED = 'true'.
+# It classifies the failure from the run's jobs. A run whose failed jobs all report
+# runner_id 0 and no steps is the organisation-level runner-dispatch problem in
+# CLAUDE.md (fixed in settings, not code); anything else lists the failing jobs and
+# steps, and whether CI on the default branch is red too.
 
 on:
   workflow_run:
@@ -25,113 +22,109 @@ permissions:
   contents: read
 
 concurrency:
-  # Serialised per branch so two failures cannot both create the issue.
   group: heal-pipeline-${{ github.event.workflow_run.head_branch }}
   cancel-in-progress: false
 
 jobs:
   diagnose:
-    name: Diagnose repeated CI failures
+    name: Diagnose repeated CI failure
     if: >-
       github.event.workflow_run.conclusion == 'failure' &&
-      vars.CG_HEAL_PIPELINE_DISABLED != 'true'
+      github.event.workflow_run.head_repository.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
       actions: read
       issues: write
     steps:
-      - name: Count the streak, collect evidence, open or refresh the issue
+      - name: Classify and record
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
-          THRESHOLD: ${{ vars.CG_HEAL_FAILURE_THRESHOLD }}
+          CG_THRESHOLD: ${{ vars.HEAL_PIPELINE_THRESHOLD || '3' }}
+          CG_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         with:
           script: |
             const run = context.payload.workflow_run;
             const { owner, repo } = context.repo;
-            const threshold = Math.max(2, parseInt(process.env.THRESHOLD || '3', 10) || 3);
+            const threshold = Math.max(2, Number(process.env.CG_THRESHOLD) || 3);
 
-            // Consecutive failures on this branch, newest first. Cancelled and
-            // skipped runs neither extend nor break the streak.
-            const { data: recent } = await github.rest.actions.listWorkflowRuns({
+            const { data: history } = await github.rest.actions.listWorkflowRuns({
               owner, repo, workflow_id: run.workflow_id, branch: run.head_branch,
               status: 'completed', per_page: 30,
             });
             let streak = 0;
-            for (const r of recent.workflow_runs) {
-              if (r.conclusion === 'failure') { streak += 1; continue; }
-              if (r.conclusion === 'cancelled' || r.conclusion === 'skipped') continue;
-              break;
+            for (const r of history.workflow_runs) {
+              if (r.conclusion === 'failure') streak++;
+              else if (r.conclusion === 'cancelled' || r.conclusion === 'skipped') continue;
+              else break;
             }
             if (streak < threshold) {
-              core.info(`${run.name} on ${run.head_branch}: ${streak} consecutive failure(s), threshold ${threshold}. No issue.`);
+              core.info(`CI failure streak on ${run.head_branch}: ${streak} (threshold ${threshold}); no issue.`);
               return;
             }
 
             const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRun, {
-              owner, repo, run_id: run.id, filter: 'latest', per_page: 100,
+              owner, repo, run_id: run.id, per_page: 100,
             });
-            const failed = jobs.filter((j) => j.conclusion === 'failure');
-            const undispatched = failed.filter((j) => !j.runner_id && !(j.steps && j.steps.length));
-            const notDispatched = failed.length > 0 && undispatched.length === failed.length;
+            const failed = jobs.filter(j => j.conclusion === 'failure');
+            const noRunner = failed.length > 0 && failed.every(j => !j.runner_id && !(j.steps || []).length);
 
-            const evidence = failed.map((j) => {
-              const steps = (j.steps || []).filter((s) => s.conclusion === 'failure').map((s) => s.name);
-              const where = steps.length ? `failed at: ${steps.join(', ')}` : 'no steps ran (no runner was assigned)';
-              return `- [${j.name}](${j.html_url}): ${where}`;
-            });
+            let baseRed = false;
+            if (run.head_branch !== process.env.CG_DEFAULT_BRANCH) {
+              const { data: base } = await github.rest.actions.listWorkflowRuns({
+                owner, repo, workflow_id: run.workflow_id, branch: process.env.CG_DEFAULT_BRANCH,
+                status: 'completed', per_page: 1,
+              });
+              baseRed = base.workflow_runs[0]?.conclusion === 'failure';
+            }
 
-            const guidance = notDispatched
-              ? [
-                  '**Classification: RUNNER_NOT_DISPATCHED.** Every failed job ended with no runner and no steps.',
-                  'This is not a code failure and no commit will fix it. It is the organisation-level Actions',
-                  'entitlement problem in CLAUDE.md and PRODUCTION-RECOVERY.md section 1.1 (billing hold,',
-                  'spending limit, allowed-actions policy, or the Actions toggle). Fix it in organisation settings.',
-                  'Until then, run the gates locally: `python3 scripts/ci_local.py`.',
-                ]
-              : [
-                  '**Classification: CODE_OR_TEST_FAILURE.** Jobs ran and failed at the steps above.',
-                  '',
-                  '- Reproduce locally: `python3 scripts/ci_local.py` runs every ci.yml gate offline.',
-                  '- A failing test is fixed or the change is abandoned. It is never skipped (docs/AUTOMATION_POLICY.md).',
-                  '- If the same step fails on the default branch too, the failure is not this branch\'s: fix it there first.',
-                ];
-
-            const marker = `<!-- cg-heal:${run.workflow_id}:${run.head_branch} -->`;
-            const title = `CI repeatedly failing on ${run.head_branch}`;
-            const body = [
-              marker,
-              `## ${run.name} has failed ${streak} times in a row on \`${run.head_branch}\``,
+            const lines = [
+              `CI has failed **${streak}** consecutive times on \`${run.head_branch}\`.`,
               '',
-              `- Latest failed run: ${run.html_url}`,
+              `- Latest failing run: ${run.html_url}`,
               `- Commit: \`${run.head_sha}\``,
               `- Updated: ${new Date().toISOString()}`,
               '',
-              '### Failing jobs in the latest run',
-              '',
-              ...(evidence.length ? evidence : ['- The API reported no failed jobs for this run.']),
-              '',
-              ...guidance,
-              '',
-              'Maintained by heal-pipeline.yml: this issue is updated, not duplicated, while the streak continues.',
-            ].join('\n');
-
-            try {
-              await github.rest.issues.createLabel({ owner, repo, name: 'ci-diagnostic', color: 'd93f0b' });
-            } catch (error) {
-              if (error.status !== 422) core.warning(`Could not create label ci-diagnostic: ${error.message}`);
+            ];
+            if (noRunner) {
+              lines.push(
+                '### Classification: no runner dispatched',
+                '',
+                'Every failed job reports `runner_id: 0` and no steps. No code ran, so no code change fixes this.',
+                'It is the organisation-level Actions entitlement problem recorded in CLAUDE.md: billing hold,',
+                'spending limit, allowed-actions policy, or the Actions toggle. Fix it in GitHub settings.',
+                'See PRODUCTION-RECOVERY.md §1.4 and docs/BASELINE.md F1.',
+                '',
+                'Until then CI reports nothing. Run the gates locally: `python3 scripts/ci_local.py`.',
+              );
+            } else {
+              lines.push('### Failing jobs', '');
+              for (const job of failed) {
+                const steps = (job.steps || []).filter(s => s.conclusion === 'failure').map(s => s.name);
+                lines.push(`- **${job.name}**${steps.length ? `: ${steps.join(', ')}` : ''} (${job.html_url})`);
+              }
+              lines.push(
+                '',
+                '### Next steps',
+                '',
+                baseRed
+                  ? `- CI is also red on \`${process.env.CG_DEFAULT_BRANCH}\`: check whether the failure is the base branch's before changing this branch.`
+                  : `- CI on \`${process.env.CG_DEFAULT_BRANCH}\` is not red, so the cause is most likely in this branch's changes.`,
+                '- Reproduce with `python3 scripts/ci_local.py` (every ci.yml gate, offline).',
+                '- A test that fails twice is real. Do not skip, disable or quarantine it to get green.',
+              );
             }
+            const body = lines.join('\n');
+            const title = `CI repeatedly failing on ${run.head_branch}`;
 
             const open = await github.paginate(github.rest.issues.listForRepo, {
-              owner, repo, labels: 'ci-diagnostic', state: 'open', per_page: 100,
+              owner, repo, state: 'open', labels: 'ci-diagnostic', per_page: 100,
             });
-            const existing = open.find((i) => !i.pull_request && (i.body || '').startsWith(marker));
+            const existing = open.find(i => i.title === title && !i.pull_request);
             if (existing) {
               await github.rest.issues.update({ owner, repo, issue_number: existing.number, body });
-              core.notice(`Refreshed #${existing.number} (${streak} consecutive failures).`);
+              core.info(`Updated #${existing.number}`);
             } else {
-              const { data } = await github.rest.issues.create({
-                owner, repo, title, body, labels: ['ci-diagnostic'],
-              });
-              core.notice(`Opened #${data.number} (${streak} consecutive failures).`);
+              const { data } = await github.rest.issues.create({ owner, repo, title, body, labels: ['ci-diagnostic'] });
+              core.info(`Opened #${data.number}`);
             }

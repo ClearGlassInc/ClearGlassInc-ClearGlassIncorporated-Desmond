@@ -1,30 +1,31 @@
 name: Deploy Promotion (Staging -> Production)
 
-# Gates -> staging -> (approval) -> production, for one resolved commit.
+# One commit, proven twice: re-run the gates on it, deploy it to staging and
+# smoke-test it, then deploy the same SHA to production behind the production
+# environment's required reviewers (AUTOMATION.md).
 #
-# Opt-in. Until the repository variable CG_PROMOTION_ENABLED is 'true' every
-# job is skipped, so this adds nothing to a main push today.
+# OFF BY DEFAULT on push. commerce-deploy.yml already deploys production on every
+# push to main that touches the commerce tree; running both would send two
+# deploys per push. To switch: set the repository variable
+# PROMOTION_PIPELINE_ENABLED=true AND delete the RENDER_DEPLOY_HOOK_URL repository
+# secret (commerce-deploy.yml then keeps its gates and skips its own deploy).
+# A manual workflow_dispatch always runs: it is an explicit human request.
 #
-# The manual approval is the `production` GitHub Environment's required
-# reviewers and wait timer. Those are repository settings (AUTOMATION.md),
-# not code: without them, production deploys straight after staging passes.
-#
-# Read before enabling with DEPLOY_PROVIDER=render on `production`. Two paths
-# already deploy the control plane on a main push:
-#   - render.yaml sets autoDeploy: true, so Render deploys every main push itself;
-#   - commerce-deploy.yml calls RENDER_DEPLOY_HOOK_URL when control-plane/,
-#     storefront/ or admin/ change.
-# Enabling this as well deploys the same commit two or three times. Retire the
-# others first (autoDeploy: false, remove the RENDER_DEPLOY_HOOK_URL secret).
-# That is an owner decision and is deliberately not made here.
+# No automatic rollback (docs/INCIDENT_RESPONSE.md). A failed production deploy
+# opens an incident issue naming the last known-good SHA for the Rollback workflow.
 
 on:
   push:
-    branches: [main]
+    branches: ["main"]
+    paths:
+      - "control-plane/**"
+      - "render.yaml"
+      - ".github/workflows/deploy-promotion.yml"
+      - ".github/workflows/reusable-deploy.yml"
   workflow_dispatch:
     inputs:
-      release_tag:
-        description: "Tag or full commit SHA on the default branch to promote. Empty = the dispatched ref's head."
+      ref:
+        description: "Full commit SHA on main to promote (default: the commit this run is on)"
         required: false
         type: string
         default: ""
@@ -33,17 +34,22 @@ permissions:
   contents: read
 
 concurrency:
+  # Never two promotions at once: the survivor would be whichever finished last.
   group: deploy-promotion
   cancel-in-progress: false
 
 jobs:
   resolve:
-    name: Resolve the revision
-    if: vars.CG_PROMOTION_ENABLED == 'true'
+    name: Resolve the release
+    if: github.event_name == 'workflow_dispatch' || vars.PROMOTION_PIPELINE_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
+      deployments: read
     outputs:
-      sha: ${{ steps.resolve.outputs.sha }}
+      ref: ${{ steps.ref.outputs.ref }}
+      previous_good: ${{ steps.previous.outputs.sha }}
     steps:
       - name: Checkout full history
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -51,62 +57,127 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      # A tag can be repointed while this workflow runs. Resolve it to a SHA
-      # once, here, and use only the SHA from then on.
-      - name: Resolve to one commit on the default branch
-        id: resolve
+      - name: Validate the commit
+        id: ref
         env:
-          WANTED: ${{ inputs.release_tag }}
+          INPUT_REF: ${{ inputs.ref }}
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           set -euo pipefail
-          wanted="${WANTED:-$GITHUB_SHA}"
-          if ! sha="$(git rev-parse --verify --quiet --end-of-options "${wanted}^{commit}")"; then
-            echo "::error::'${wanted}' does not resolve to a commit in this repository"
+          ref="${INPUT_REF:-$GITHUB_SHA}"
+          if ! printf '%s' "$ref" | grep -qE '^[0-9a-f]{40}$'; then
+            echo "::error::ref must be a full 40-character commit SHA, got '${ref}'"
             exit 1
           fi
-          # Never promote something that was never on the default branch:
-          # that is deploying unreviewed code, not promoting it.
-          if ! git merge-base --is-ancestor "$sha" "origin/${DEFAULT_BRANCH}"; then
-            echo "::error::${sha} is not on ${DEFAULT_BRANCH}; refusing to promote it"
+          # Only reviewed history ships: refuse a commit that never reached the default branch.
+          if ! git merge-base --is-ancestor "$ref" "origin/${DEFAULT_BRANCH}"; then
+            echo "::error::${ref} is not on ${DEFAULT_BRANCH}; it was never reviewed into it."
             exit 1
           fi
-          echo "sha=${sha}" >> "$GITHUB_OUTPUT"
-          git --no-pager log -1 --format='Promoting %H%n  %s' "$sha"
+          echo "ref=${ref}" >> "$GITHUB_OUTPUT"
+          git --no-pager log -1 --format='Promoting %h %s (%an)' "$ref"
 
-  ci:
-    name: Gates
+      - name: Find the last known-good production deploy
+        id: previous
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          CG_REF: ${{ steps.ref.outputs.ref }}
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const { data: deployments } = await github.rest.repos.listDeployments({
+              owner, repo, environment: 'production', per_page: 30,
+            });
+            for (const deployment of deployments) {
+              if (deployment.sha === process.env.CG_REF) continue;
+              const { data: statuses } = await github.rest.repos.listDeploymentStatuses({
+                owner, repo, deployment_id: deployment.id, per_page: 10,
+              });
+              if (statuses[0]?.state === 'success') {
+                core.setOutput('sha', deployment.sha);
+                core.info(`Last known-good production revision: ${deployment.sha}`);
+                return;
+              }
+            }
+            core.warning('No successful production deployment found; a failure will not name a rollback target.');
+            core.setOutput('sha', '');
+
+  gate:
+    name: Gates on the release commit
     needs: resolve
+    # A called workflow's jobs may only request what the caller grants, even jobs
+    # that will be skipped; reusable-ci's optional CodeQL job asks for these two.
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
     uses: ./.github/workflows/reusable-ci.yml
     with:
-      ref: ${{ needs.resolve.outputs.sha }}
+      ref: ${{ needs.resolve.outputs.ref }}
 
   staging:
     name: Staging
-    needs: [resolve, ci]
+    needs: [resolve, gate]
     uses: ./.github/workflows/reusable-deploy.yml
-    permissions:
-      contents: read
-      deployments: read
     with:
-      target_env: staging
-      namespace: main
-      ref: ${{ needs.resolve.outputs.sha }}
+      environment: staging
+      ref: ${{ needs.resolve.outputs.ref }}
       run_smoke: true
+      run_e2e: false
+    secrets: inherit
 
   production:
     name: Production
     needs: [resolve, staging]
-    # Promotion means staging really ran this revision. A staging no-op
-    # (no DEPLOY_PROVIDER) is not evidence, so it stops here.
-    if: needs.staging.outputs.deployed == 'true'
     uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      environment: production
+      ref: ${{ needs.resolve.outputs.ref }}
+      run_smoke: true
+      run_e2e: true
+      rollback_hint_ref: ${{ needs.resolve.outputs.previous_good }}
+    secrets: inherit
+
+  incident:
+    name: Open an incident record
+    needs: [resolve, production]
+    if: always() && needs.production.result == 'failure'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
-      deployments: read
-    with:
-      target_env: production
-      namespace: main
-      ref: ${{ needs.resolve.outputs.sha }}
-      run_smoke: true
-      enable_rollback: true
+      issues: write
+    steps:
+      - name: Open the incident issue
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          CG_REF: ${{ needs.resolve.outputs.ref }}
+          CG_PREVIOUS: ${{ needs.resolve.outputs.previous_good }}
+          CG_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const ref = process.env.CG_REF;
+            const previous = process.env.CG_PREVIOUS;
+            const lines = [
+              `Production deploy of \`${ref}\` failed its post-deploy checks.`,
+              '',
+              `- Run: ${process.env.CG_RUN_URL}`,
+              previous
+                ? `- Last known-good revision: \`${previous}\``
+                : '- No known-good revision was recorded; choose one from the production deployment history.',
+              '',
+              '### Required follow-up (docs/INCIDENT_RESPONSE.md)',
+              '',
+              previous
+                ? `- [ ] Actions -> Rollback -> Run workflow with \`target_sha=${previous}\`, \`surface=control-plane\``
+                : '- [ ] Actions -> Rollback -> Run workflow with a known-good `target_sha`',
+              '- [ ] Do not roll forward; capture evidence first',
+              '- [ ] Open a remediation pull request against the change that caused this',
+            ];
+            const { data } = await github.rest.issues.create({
+              ...context.repo,
+              title: `Production deploy failed: ${ref.slice(0, 7)}`,
+              body: lines.join('\n'),
+              labels: ['incident', 'deploy-promotion'],
+            });
+            core.info(`Opened incident #${data.number}`);
