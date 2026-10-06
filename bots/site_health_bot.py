@@ -24,7 +24,7 @@ from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
-from tools.site_page_policy import NON_DEPLOYABLE_HTML_PAGES
+from tools.site_page_policy import is_non_deployable_html
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "operations" / "output"
@@ -69,7 +69,6 @@ SITEMAP_EXEMPT = {
 LOGO_EXEMPT = {
     "google23RWyXWkoxqgArev8achU8IfVxYC5EIUAYBsuTYKLFM.html",
     "artemis-vi.html",  # standalone spec page, no chrome
-    *NON_DEPLOYABLE_HTML_PAGES,
 }
 
 
@@ -81,7 +80,13 @@ IGNORED_HTML_DIRS = {
 
 
 def _is_shipped_html(path: Path) -> bool:
-    """Return True for source-controlled HTML pages, not generated deps/builds."""
+    """Return True for source-controlled HTML pages, not generated deps/builds.
+
+    The offline prototypes in tools/site_page_policy.py are not shipped either.
+    LOGO_EXEMPT matches file names, so their repo-relative paths go here.
+    """
+    if is_non_deployable_html(path, ROOT):
+        return False
     return not any(part in IGNORED_HTML_DIRS for part in path.relative_to(ROOT).parts)
 
 # Proof that a page carries the ClearGlass logo: either the shared corner-badge

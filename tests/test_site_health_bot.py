@@ -20,6 +20,7 @@ from bots.site_health_bot import (  # noqa: E402
     _check_page,
     _page_has_logo,
 )
+from tools.site_page_policy import is_non_deployable_html  # noqa: E402
 
 
 class TestPageHealth:
@@ -106,6 +107,7 @@ class TestLogoCoverage:
             for p in sorted(ROOT.rglob("*.html"))
             if not any(part in IGNORED_HTML_DIRS for part in p.relative_to(ROOT).parts)
             and p.name not in LOGO_EXEMPT
+            and not is_non_deployable_html(p, ROOT)
             and not _page_has_logo(p.read_text(encoding="utf-8", errors="replace"))
         ]
         assert not missing, f"Pages missing the ClearGlass logo: {missing}"
