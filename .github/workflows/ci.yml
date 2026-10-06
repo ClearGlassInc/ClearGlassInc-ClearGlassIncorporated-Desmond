@@ -5,9 +5,9 @@ on:
     branches: ["main", "staging"]
   pull_request:
     branches: ["main", "staging"]
-  # Manual on-demand runs from the Actions tab / API. A fix pushed by auto-fix.yml
-  # with GITHUB_TOKEN does not trigger pull_request workflows; dispatching this,
-  # or the author's next push, re-runs CI on that branch.
+  # Manual on-demand runs from the Actions tab / API. auto-fix.yml also uses this
+  # to re-run CI on a PR branch after it pushes a fix: a push made with
+  # GITHUB_TOKEN does not trigger pull_request workflows, workflow_dispatch does.
   workflow_dispatch:
 
 permissions:

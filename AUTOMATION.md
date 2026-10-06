@@ -9,27 +9,24 @@ staging-to-production promotion, CI diagnostics and weekly CI telemetry.
 > `docs/BASELINE.md` F1. Until it is fixed, run the gates yourself:
 > `python3 scripts/ci_local.py`.
 
-`commerce-deploy.yml`, `rollback.yml`, `auto-heal.yml`, `pr-staging.yml` and
-`codex-autofix.yml` are unchanged. `ci.yml` keeps its seven original gates under
-their original names, and since #190 also runs a per-component stack (`changes`,
-`stack`, `result`). Anything that deploys or pushes stays off until its switch is set.
+Everything here is additive. `ci.yml`, `commerce-deploy.yml`, `rollback.yml`,
+`auto-heal.yml`, `pr-staging.yml` and `codex-autofix.yml` are unchanged and
+keep their jobs. Anything that deploys or pushes stays off until its switch is set.
 
 ## 1. What is where
 
 | File | Trigger | What it does | Default |
 |---|---|---|---|
-| `.github/workflows/auto-fix.yml` | CI fails on a PR | Applies ruff safe fixes to the PR's changed `.py` files, commits them as a Verified commit, posts one PR comment. Runs in the `automation-write` environment | **On** (off: `AUTOFIX_ENABLED=false`) |
+| `.github/workflows/auto-fix.yml` | CI fails on a PR | Applies ruff safe fixes to the PR's changed `.py` files, commits them as a Verified commit, posts one PR comment | **On** (off: `AUTOFIX_ENABLED=false`) |
 | `.github/workflows/deploy-staging.yml` | PR opened or updated | Waits for the PR's host-built preview, smoke-tests it, posts the URL on the PR | Off until `PR_PREVIEW_URL_TEMPLATE` is set |
 | `.github/workflows/deploy-promotion.yml` | Push to `main` (commerce paths), or manual | Gates, then staging, then production behind reviewers | Push: off until `PROMOTION_PIPELINE_ENABLED=true`. Manual: always runs |
 | `.github/workflows/heal-pipeline.yml` | CI fails | After 3 failures in a row on a branch, keeps one `ci-diagnostic` issue for that branch, with a cause | On |
 | `.github/workflows/ci-telemetry.yml` | Mondays 08:47 UTC, or manual | Failure rate, fast failures, slowest workflows over 7 days, in one `ci-telemetry` issue | On |
-| `.github/workflows/reusable-ci.yml` | Called by `deploy-promotion.yml` | The repo's real gates: ruff, root pytest, control-plane pytest, workflow safety; optional frontends and CodeQL | n/a |
-| `.github/workflows/reusable-component-ci.yml` | Called by `ci.yml` (`stack`) | Lint, type-check, test, build and audit one component from `scripts/ci/components.py` | n/a |
+| `.github/workflows/reusable-ci.yml` | Called | The repo's real gates: ruff, root pytest, control-plane pytest, workflow safety; optional frontends and CodeQL | n/a |
 | `.github/workflows/reusable-deploy.yml` | Called | Render deploy hook with a full SHA, waits for live, smoke-tests | n/a |
 | `.github/actions/setup-node-python/` | Used by the above | Node 22, Python 3.11, ruff 0.15.8 (the versions `ci.yml` uses) | n/a |
 | `.github/actions/run-smoke-tests/` | Used by the above | Read-only: polls `/health`, checks `/ready`, optionally proves the admin gate refuses anonymous reads | n/a |
 | `.github/actions/post-pr-comment/` | Used by the above | Creates or edits one marker-tagged PR comment, so reruns do not stack comments | n/a |
-| `.github/actions/setup-component-toolchain/` | Used by `reusable-component-ci.yml` | Python and/or Node for one component, with caching | n/a |
 
 ## 2. Switches
 
@@ -39,7 +36,6 @@ Environments → <name>** (environment).
 | Name | Kind | Scope | Effect |
 |---|---|---|---|
 | `AUTOFIX_ENABLED` | variable | repository | `false` disables auto-fix everywhere |
-| `automation-write` | environment | repository | Already exists (auto-heal, workflow doctor). Required reviewers here also gate every auto-fix run |
 | `PR_PREVIEW_URL_TEMPLATE` | variable | repository | e.g. `https://clearglass-commerce-api-pr-{pr}.onrender.com`; turns on per-PR staging checks |
 | `PROMOTION_PIPELINE_ENABLED` | variable | repository | `true` lets a push to `main` start a promotion |
 | `HEAL_PIPELINE_THRESHOLD` | variable | repository | Consecutive failures before a diagnostic issue (default 3, minimum 2) |
@@ -59,14 +55,6 @@ When `CI` fails on a pull request:
 3. If anything changed and the branch has not moved, commits it through
    `.github/actions/verified-commit` as `auto-fix: ruff safe fixes for PR #N`.
 4. Edits one PR comment: what was fixed, or that the failure needs a person.
-
-The job holds `contents: write` and `pull-requests: write`, and its workspace is the
-PR's checkout. A local action (`uses: ./.github/actions/...`) runs whatever sits at
-that path, so before `verified-commit` runs, and again after it (it resets the
-worktree to the PR branch), the job restores `.github/actions` from the default
-branch and fails unless `git diff` proves them identical. A PR cannot change the
-code that runs beside the token. `deploy-staging.yml`'s comment job checks out its
-actions from the default branch for the same reason.
 
 It never runs eslint, prettier or black. The repo uses none of them, and running
 them repo-wide would rewrite thousands of files nobody touched. It is not an LLM:
@@ -137,10 +125,6 @@ the incident issue; a person runs **Actions → Rollback** with it.
 - **`/health` reports the package version, not the commit.** No job can prove which
   SHA is serving. Fix: return `RENDER_GIT_COMMIT` from `/health`. That is a
   control-plane change and is not part of this layer.
-- **If a PR changes `.github/actions/`, auto-fix's git fallback cannot rebase.**
-  The restore leaves those files different from the PR's index, so
-  `verified-commit`'s fallback (used only when the signed API commit fails and the
-  push is then rejected) stops instead of retrying. It fails closed.
 - **CodeQL** in `reusable-ci.yml` is off by default. If GitHub's CodeQL default setup
   is on, an advanced-configuration upload is rejected.
 
@@ -150,11 +134,5 @@ the incident issue; a person runs **Actions → Rollback** with it.
 pip install pyyaml "ruff==0.15.8"
 python3 scripts/workflow_doctor.py        # SHA pins, trigger schemas
 python3 scripts/audit_github_actions.py   # permissions, secrets, deploy gating
-python3 -m pytest tests/test_cicd_layer.py -q   # call contracts, trust boundary, opt-ins
 python3 scripts/ci_local.py               # every ci.yml gate
-pip install actionlint-py && actionlint .github/workflows/ci.yml   # schema + call contracts
 ```
-
-The first two passed on 2026-10-06 while `ci.yml` was invalid: neither reads
-reusable-workflow inputs or permissions. `tests/test_cicd_layer.py` and actionlint
-do. Run them on any change to a workflow that calls, or is called by, another.
