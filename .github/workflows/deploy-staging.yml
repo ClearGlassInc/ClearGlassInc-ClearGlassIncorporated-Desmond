@@ -1,9 +1,17 @@
 name: Deploy Staging (Per-PR)
 
-# Per-PR staging: verify the PR's own preview deployment and post its URL on the
-# PR (AUTOMATION.md).
+# Per-PR staging: an isolated preview for every same-repository pull request, its
+# URL posted on the PR and as a deployment status (AUTOMATION.md §4). The provider
+# is the repository variable DEPLOY_PROVIDER.
 #
-# The preview itself is built by the host, not by this job. On Render that is a
+# cloudrun: this workflow builds the PR and deploys it as a tagged revision
+# (pr-<N>) on the shared preview service: no traffic, mock payments, a throwaway
+# SQLite database and a fresh random admin key per deploy. A newer push re-points
+# the same tag (concurrency cancels the superseded deploy); closing the PR removes
+# the tag. Which services: PREVIEW_SERVICES (default control-plane). Opt a PR out
+# with the `no-preview` label.
+#
+# render (default): the preview itself is built by the host, not by this job. On Render that is a
 # preview environment (render.yaml `previews:`), which creates `<service>-pr-<N>`
 # for each pull request and tears it down on close. This workflow waits for that
 # preview to answer, smoke-tests it read-only, and upserts one PR comment.
@@ -17,8 +25,8 @@ name: Deploy Staging (Per-PR)
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
-    branches: ["main"]
+    types: [opened, synchronize, reopened, closed]
+    branches: ["main", "staging"]
 
 permissions:
   contents: read
@@ -30,7 +38,10 @@ concurrency:
 jobs:
   preview:
     name: Verify PR preview
-    if: vars.PR_PREVIEW_URL_TEMPLATE != '' && github.event.pull_request.head.repo.full_name == github.repository
+    if: >-
+      vars.PR_PREVIEW_URL_TEMPLATE != '' && vars.DEPLOY_PROVIDER != 'cloudrun' &&
+      github.event.action != 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 30
     outputs:
@@ -63,10 +74,55 @@ jobs:
           interval_seconds: "15"
           check_ready: "true"
 
+  plan-cloudrun:
+    name: Plan Cloud Run preview
+    if: >-
+      vars.DEPLOY_PROVIDER == 'cloudrun' &&
+      github.event.action != 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      !contains(github.event.pull_request.labels.*.name, 'no-preview')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      services: ${{ steps.select.outputs.names }}
+      any: ${{ steps.select.outputs.any }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - id: select
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PREVIEW_SERVICES: ${{ vars.PREVIEW_SERVICES || 'control-plane' }}
+        run: |
+          python3 scripts/ci/components.py services --base "$BASE_SHA" --head HEAD --only "$PREVIEW_SERVICES" \
+            | grep -E '^(any|names)=' | tee -a "$GITHUB_OUTPUT"
+
+  cloudrun:
+    name: Cloud Run preview
+    needs: plan-cloudrun
+    if: needs.plan-cloudrun.outputs.any == 'true'
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      environment: preview
+      ref: ${{ github.event.pull_request.head.sha }}
+      services: ${{ needs.plan-cloudrun.outputs.services }}
+      tag: pr-${{ github.event.pull_request.number }}
+      build: true
+      promote: false
+
   comment:
     name: Post preview status
-    needs: preview
-    if: always() && needs.preview.result != 'skipped'
+    needs: [preview, cloudrun]
+    if: >-
+      always() && github.event.action != 'closed' &&
+      (needs.preview.result == 'success' || needs.preview.result == 'failure' ||
+       needs.cloudrun.result == 'success' || needs.cloudrun.result == 'failure')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -83,14 +139,96 @@ jobs:
           sparse-checkout: .github/actions
           persist-credentials: false
 
+      - name: Compose the status
+        id: compose
+        env:
+          RENDER_RESULT: ${{ needs.preview.result }}
+          RENDER_URL: ${{ needs.preview.outputs.url }}
+          CLOUDRUN_RESULT: ${{ needs.cloudrun.result }}
+          CLOUDRUN_URLS: ${{ needs.cloudrun.outputs.urls }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          if [ "$CLOUDRUN_RESULT" = "success" ] || [ "$CLOUDRUN_RESULT" = "failure" ]; then
+            result="$CLOUDRUN_RESULT"
+            urls="${CLOUDRUN_URLS:-}"
+            if [ -z "$urls" ]; then urls='{}'; fi
+            table="$(jq -r 'to_entries[] | "| \(.key) | \(.value) |"' <<<"$urls")"
+            note="Isolated tagged revision: mock payments, throwaway SQLite, random admin key. Removed when this PR closes."
+          else
+            result="$RENDER_RESULT"
+            table="| control-plane | ${RENDER_URL:-not resolved} |"
+            note="Built by Render's preview environment; checked here for health and readiness."
+          fi
+          header="Staging preview ready"
+          if [ "$result" != "success" ]; then header="Staging preview failed its checks"; fi
+          delimiter="CG_$(openssl rand -hex 12)"
+          {
+            echo "header=$header"
+            echo "body<<$delimiter"
+            echo "| Service | URL |"
+            echo "|---|---|"
+            echo "$table"
+            echo
+            echo "Commit: \`$SHA\` · Result: $result · [run]($RUN_URL)"
+            echo
+            echo "$note Label \`no-preview\` to opt out."
+            echo "$delimiter"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Upsert the PR comment
         uses: ./.github/actions/post-pr-comment
         with:
           pr_number: ${{ github.event.pull_request.number }}
           marker: staging-preview
-          header: ${{ needs.preview.result == 'success' && 'Staging preview ready' || 'Staging preview failed its checks' }}
-          body: |
-            Preview: ${{ needs.preview.outputs.url || 'not resolved' }}
-            Commit: ${{ github.event.pull_request.head.sha }}
-            Result: ${{ needs.preview.result }} (health, readiness)
-            Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          header: ${{ steps.compose.outputs.header }}
+          body: ${{ steps.compose.outputs.body }}
+
+  teardown:
+    name: Tear down Cloud Run preview
+    if: >-
+      vars.DEPLOY_PROVIDER == 'cloudrun' &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: preview
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+    env:
+      DEPLOY_PROVIDER: cloudrun
+      DEPLOY_PROJECT: ${{ vars.DEPLOY_PROJECT }}
+      DEPLOY_REGION: ${{ vars.DEPLOY_REGION }}
+    steps:
+      # The base branch's copy of the adapter: the PR is closed and its code is not run.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+
+      - name: Authenticate to Google Cloud (OIDC)
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+
+      - name: Remove the PR's revision tag from every preview service
+        env:
+          TAG: pr-${{ github.event.pull_request.number }}
+          PREVIEW_SERVICES: ${{ vars.PREVIEW_SERVICES || 'control-plane' }}
+          SERVICE_PREFIX: ${{ vars.SERVICE_PREFIX || 'cg' }}
+        run: |
+          for service in ${PREVIEW_SERVICES//,/ }; do
+            SERVICE="${SERVICE_PREFIX}-${service}-preview" scripts/ci/deploy_target.sh untag
+          done
+
+      - name: Mark the preview comment as torn down
+        uses: ./.github/actions/post-pr-comment
+        with:
+          pr_number: ${{ github.event.pull_request.number }}
+          marker: staging-preview
+          header: "Staging preview removed"
+          body: "The `pr-${{ github.event.pull_request.number }}` revision tag was removed when this pull request closed."

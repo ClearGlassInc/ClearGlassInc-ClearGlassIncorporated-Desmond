@@ -147,7 +147,7 @@ def release(args: argparse.Namespace, cloud: dict[str, str]) -> Release:
             spec = COMPONENTS[result.service]
             image = f"{args.image_repository}/{result.service}:{args.sha}"
             if args.build:
-                run(["docker", "build", "--tag", image, str(ROOT / spec["path"])])
+                run(["docker", "build", "--tag", image, str(args.source / spec["path"])])
                 run(["docker", "push", image])
             result.image = resolve_digest(image)
             result.previous_revision = adapter("describe", **target(result)).get("serving_revision", "")
@@ -264,6 +264,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--promote", action="store_true")
     parser.add_argument("--auto-rollback", action="store_true")
     parser.add_argument("--out", default="")
+    parser.add_argument(
+        "--source",
+        type=Path,
+        default=ROOT,
+        help="checkout of the commit being released (build context); defaults to this checkout",
+    )
     args = parser.parse_args(argv)
     args.services = [s.strip() for s in args.services.split(",") if s.strip()]
 

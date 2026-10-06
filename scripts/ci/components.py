@@ -62,6 +62,7 @@ COMPONENTS: dict[str, dict[str, Any]] = {
                 "GET /ready 200",
                 "GET /openapi.json 200",
                 "GET /events 401,403",
+                "GET /metrics/overview 401,403",
             ],
         },
     },
@@ -83,7 +84,7 @@ COMPONENTS: dict[str, dict[str, Any]] = {
 #: so it selects them all.
 SHARED_PATHS = (
     ".github/workflows/ci.yml",
-    ".github/workflows/reusable-ci.yml",
+    ".github/workflows/reusable-component-ci.yml",
     ".github/workflows/reusable-deploy.yml",
     ".github/workflows/deploy-staging.yml",
     ".github/actions/setup-node-python/",

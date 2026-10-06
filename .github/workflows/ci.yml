@@ -215,8 +215,3 @@ jobs:
             echo "::error title=CI result::at least one CI job failed or was cancelled"
             exit 1
           }
-
-  # No release job here. deploy-promotion.yml on main triggers itself on a push
-  # to main (opt-in: PROMOTION_PIPELINE_ENABLED) and declares no workflow_call,
-  # so calling it from this file made GitHub reject the whole of ci.yml. Calling
-  # it as well would also promote every commit twice. See AUTOMATION.md.

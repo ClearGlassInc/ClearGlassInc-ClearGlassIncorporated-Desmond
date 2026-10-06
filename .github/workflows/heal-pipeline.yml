@@ -10,8 +10,12 @@ name: Heal Pipeline Diagnostics
 #
 # It classifies the failure from the run's jobs. A run whose failed jobs all report
 # runner_id 0 and no steps is the organisation-level runner-dispatch problem in
-# CLAUDE.md (fixed in settings, not code); anything else lists the failing jobs and
-# steps, and whether CI on the default branch is red too.
+# CLAUDE.md (fixed in settings, not code). Anything else is classified per failing
+# job: its failed steps and check annotations (file:line) are matched against
+# .github/auto-heal/error-patterns.json, the table Auto Heal already uses, and each
+# category maps to a structural fix. The issue also names the run where the streak
+# began, which is where the regression came in, and whether CI on the default
+# branch is red too.
 
 on:
   workflow_run:
@@ -35,8 +39,16 @@ jobs:
     timeout-minutes: 10
     permissions:
       actions: read
+      checks: read # failing-job annotations (file:line)
+      contents: read
       issues: write
     steps:
+      - name: Check out the shared error-pattern table (default branch)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: .github/auto-heal
+
       - name: Classify and record
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
@@ -53,8 +65,9 @@ jobs:
               status: 'completed', per_page: 30,
             });
             let streak = 0;
+            let firstRed = run;
             for (const r of history.workflow_runs) {
-              if (r.conclusion === 'failure') streak++;
+              if (r.conclusion === 'failure') { streak++; firstRed = r; }
               else if (r.conclusion === 'cancelled' || r.conclusion === 'skipped') continue;
               else break;
             }
@@ -83,6 +96,7 @@ jobs:
               '',
               `- Latest failing run: ${run.html_url}`,
               `- Commit: \`${run.head_sha}\``,
+              `- Streak began at \`${firstRed.head_sha.slice(0, 12)}\` (${firstRed.html_url}): start the investigation there.`,
               `- Updated: ${new Date().toISOString()}`,
               '',
             ];
@@ -98,10 +112,62 @@ jobs:
                 'Until then CI reports nothing. Run the gates locally: `python3 scripts/ci_local.py`.',
               );
             } else {
+              const fs = require('fs');
+              let patterns = [];
+              try {
+                patterns = JSON.parse(fs.readFileSync('.github/auto-heal/error-patterns.json', 'utf8')).patterns || [];
+              } catch (error) {
+                core.warning(`error-patterns.json unreadable: ${error.message}`);
+              }
+              // Structural fixes per category: what to change so the class of failure
+              // stops recurring, not how to make this one run green.
+              const fixes = {
+                GENERATED_ASSETS: 'Generated files are stale. Run `python3 tools/generate_search_assets.py && python3 tools/internal_links.py && python3 tools/insights_index.py` and commit; auto-fix.yml does this on PRs. Never hand-edit generated blocks.',
+                TEST_FAILURE: 'Find the change the streak began with and fix or revert it. A test that fails twice is real: do not skip, disable or quarantine it.',
+                LINT_ERROR: 'ruff is pinned to 0.15.8 so the rule set cannot drift; run `ruff check --fix` locally. auto-fix.yml applies safe fixes on PRs.',
+                BUILD_ERROR: 'Reproduce with `npm ci && ./node_modules/.bin/tsc --noEmit` in the component. A dependency or TypeScript bump in the lockfile is the usual structural cause.',
+                DEPENDENCY_ERROR: 'A dependency is missing or unresolvable. Pin it in the component requirements or lockfile; CI installs only what is locked.',
+                CONFIG_ERROR: 'A workflow or config path is invalid. The upload flattening moved paths: check PRODUCTION-RECOVERY.md, then run `python3 scripts/workflow_doctor.py`.',
+                INFRASTRUCTURE_ERROR: 'Timeouts, rate limits or a lost runner. Re-run once only if the same job passed on this commit before; otherwise add caching or split the job before raising timeout-minutes.',
+                SECURITY_SCAN_FAILURE: 'A scanner found something or could not run. GHAS is off on this repository, so dependency-review cannot pass; see semgrep-trial.yml.',
+                DEPLOYMENT_ERROR: 'A deploy failed. Do not roll forward; follow docs/INCIDENT_RESPONSE.md and the Rollback workflow.',
+                UNKNOWN: 'No known pattern matched. Read the job log; if it recurs, add its signature to .github/auto-heal/error-patterns.json.',
+              };
+              const classify = (job, text) => {
+                if (/Search discovery|generated search assets|internal links|Insights hub/i.test(job.name + ' ' + text)) return 'GENERATED_ASSETS';
+                for (const p of patterns) {
+                  try { if (new RegExp(p.pattern, 'im').test(text)) return p.category; } catch (error) { /* invalid pattern: skip */ }
+                }
+                return 'UNKNOWN';
+              };
               lines.push('### Failing jobs', '');
+              const files = new Map();
               for (const job of failed) {
                 const steps = (job.steps || []).filter(s => s.conclusion === 'failure').map(s => s.name);
+                let annotations = [];
+                try {
+                  annotations = (await github.rest.checks.listAnnotations({ owner, repo, check_run_id: job.id, per_page: 50 })).data
+                    .filter(a => a.annotation_level === 'failure');
+                } catch (error) {
+                  core.warning(`annotations for ${job.name}: ${error.message}`);
+                }
+                const category = classify(job, [job.name, ...steps, ...annotations.map(a => a.message)].join('\n'));
                 lines.push(`- **${job.name}**${steps.length ? `: ${steps.join(', ')}` : ''} (${job.html_url})`);
+                lines.push(`  - Classification: \`${category}\`. ${fixes[category] || fixes.UNKNOWN}`);
+                for (const a of annotations.slice(0, 5)) {
+                  const where = a.path && a.path !== '.github' ? `${a.path}:${a.start_line}` : 'workflow';
+                  const link = a.path && a.path !== '.github'
+                    ? `https://github.com/${owner}/${repo}/blob/${run.head_sha}/${a.path}#L${a.start_line}`
+                    : job.html_url;
+                  lines.push(`  - [\`${where}\`](${link}): ${String(a.message).split('\n')[0].slice(0, 200)}`);
+                  if (a.path && a.path !== '.github') files.set(a.path, (files.get(a.path) || 0) + 1);
+                }
+              }
+              if (files.size) {
+                lines.push('', '### Files named by the failures', '');
+                for (const [path, count] of [...files.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10)) {
+                  lines.push(`- \`${path}\` (${count})`);
+                }
               }
               lines.push(
                 '',

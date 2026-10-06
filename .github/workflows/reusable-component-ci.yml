@@ -1,13 +1,9 @@
 name: Reusable Component CI
 
-# Restored verbatim from e0301ef (merged in #190) under its own name. The #190
-# merge kept #187's reusable-ci.yml at that path, whose inputs differ, so
-# ci.yml's `stack` job was calling a workflow that does not accept its inputs
-# and GitHub rejected the whole of ci.yml. reusable-ci.yml is unchanged and
-# still serves deploy-promotion.yml.
-
 # Lint, type-check, test, build and dependency-audit ONE component. ci.yml calls it
 # once per changed component (scripts/ci/components.py builds that matrix).
+# Companion to reusable-ci.yml, which runs the whole-repo gates on one commit so a
+# deploy can re-prove what it is about to ship.
 #
 # Tool selection is convention-driven so this file never has to change when a
 # component adopts a tool:
@@ -78,13 +74,15 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup-component-toolchain
+      - uses: ./.github/actions/setup-node-python
         with:
-          python-version: ${{ inputs.language == 'python' && inputs.python-version || '' }}
-          node-version: ${{ inputs.language == 'node' && inputs.node-version || '' }}
-          working-directory: ${{ inputs.working-directory }}
+          python_version: ${{ inputs.language == 'python' && inputs.python-version || '' }}
+          node_version: ${{ inputs.language == 'node' && inputs.node-version || '' }}
+          working_directory: ${{ inputs.working-directory }}
+          install_test_tools: "false"
+          install_node_dependencies: "true"
           # Linting needs no runtime deps; mypy does.
-          python-requirements: ${{ inputs.python-typecheck && inputs.requirements || '' }}
+          python_requirements: ${{ inputs.python-typecheck && inputs.requirements || '' }}
 
       # Every check below runs even when an earlier one failed (!cancelled), so one
       # run reports — and auto-fix sees — all static problems at once.
@@ -172,12 +170,13 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup-component-toolchain
+      - uses: ./.github/actions/setup-node-python
         with:
-          python-version: ${{ inputs.language == 'python' && inputs.python-version || '' }}
-          node-version: ${{ inputs.language == 'node' && inputs.node-version || '' }}
-          working-directory: ${{ inputs.working-directory }}
-          python-requirements: ${{ inputs.requirements }}
+          python_version: ${{ inputs.language == 'python' && inputs.python-version || '' }}
+          node_version: ${{ inputs.language == 'node' && inputs.node-version || '' }}
+          working_directory: ${{ inputs.working-directory }}
+          install_node_dependencies: "true"
+          python_requirements: ${{ inputs.requirements }}
 
       - name: Unit tests (pytest)
         if: inputs.language == 'python'
@@ -233,12 +232,14 @@ jobs:
           COMPONENT: ${{ inputs.component }}
         run: docker build --tag "ci/${COMPONENT}:${GITHUB_SHA}" "$WD"
 
-      - uses: ./.github/actions/setup-component-toolchain
+      - uses: ./.github/actions/setup-node-python
         if: steps.mode.outputs.mode == 'native' && inputs.language != 'cpp'
         with:
-          python-version: ${{ inputs.language == 'python' && inputs.python-version || '' }}
-          node-version: ${{ inputs.language == 'node' && inputs.node-version || '' }}
-          working-directory: ${{ inputs.working-directory }}
+          python_version: ${{ inputs.language == 'python' && inputs.python-version || '' }}
+          node_version: ${{ inputs.language == 'node' && inputs.node-version || '' }}
+          working_directory: ${{ inputs.working-directory }}
+          install_test_tools: "false"
+          install_node_dependencies: "true"
 
       - name: Native build
         if: steps.mode.outputs.mode == 'native'

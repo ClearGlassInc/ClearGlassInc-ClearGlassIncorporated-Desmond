@@ -1,22 +1,25 @@
 name: Auto-Fix CI Issues
 
-# Self-healing for the one class of CI failure a machine can fix without judgement:
-# lint findings that ruff marks as safe to fix (AUTOMATION.md).
+# Self-healing for pull requests. When CI fails on a same-repository PR, run the
+# deterministic fixers for the checks that failed and commit the result to the PR
+# branch, or post precisely what still needs a human (file:line links, rule,
+# suggested fix). Logic: scripts/ci/autofix.py. Operator guide: AUTOMATION.md §3.
 #
-# When CI fails on a same-repository PR, this applies `ruff check --fix` (safe fixes
-# only, the repo's pinned ruff 0.15.8 and its pyproject config) to the Python files
-# that PR changed, commits the result as a Verified commit on the PR branch, and
-# upserts one PR comment. It never runs eslint, prettier or black (the repo uses
-# none of them) and never touches files the PR did not change.
+# Trust boundary — why three jobs:
+#   plan   default-branch code · read-only token        decide whether to act
+#   fix    PR code · read-only token · no secrets       run fixers -> patch artifact
+#   apply  default-branch code · write token · runs no PR code
+#                                                       validate, apply, commit, comment
+# PR code never runs with a write token, and workflow_run always executes this
+# file as it exists on the default branch, so a PR cannot rewrite these rules for
+# its own run. Forks are refused at every layer.
 #
-# Deliberately not an LLM: codex-autofix.yml stays manual-only because a model with
-# write access firing on untrusted CI output is a prompt-injection risk. ruff reads
-# files and rewrites them by fixed rules; it executes nothing from the PR.
-#
-# Guards: same-repo PRs only (never forks), not the default branch, not bot-authored
-# PRs, not PRs labelled `no-autofix`, at most 2 `auto-fix:` commits per PR, and
-# never if the branch moved after the failing run. Disable entirely with the
-# repository variable AUTOFIX_ENABLED=false.
+# Safeguards: same-repo PRs only · never main or staging · bot authors skipped ·
+# `no-autofix` label skips · at most AUTOFIX_MAX_ITERATIONS (default 2) fix commits
+# per PR · protected paths (payments, auth, workflows, lockfiles, migrations, legal
+# pages — the automation_governance policy) are never written · the Verified commit
+# is pinned to the failing head, so a branch that moved is left alone · repository
+# variable AUTOFIX_ENABLED=false is the kill switch.
 
 on:
   workflow_run:
@@ -28,173 +31,308 @@ permissions:
 
 concurrency:
   group: auto-fix-${{ github.event.workflow_run.head_repository.full_name }}-${{ github.event.workflow_run.head_branch }}
-  cancel-in-progress: false
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -eo pipefail {0}
 
 jobs:
-  auto-fix:
-    name: Apply safe lint fixes
+  plan:
+    name: Plan
+    # Cheap pre-filter; autofix.py re-checks everything against live API state.
     if: >-
       vars.AUTOFIX_ENABLED != 'false' &&
-      github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion == 'failure' &&
       github.event.workflow_run.head_repository.full_name == github.repository &&
       github.event.workflow_run.head_branch != github.event.repository.default_branch &&
-      github.event.workflow_run.head_branch != 'staging'
+      github.event.workflow_run.head_branch != 'staging' &&
+      (github.event.workflow_run.event == 'pull_request' ||
+       github.event.workflow_run.event == 'workflow_dispatch')
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    # The approval boundary for unattended writes, shared with auto-heal.yml and
-    # workflow-doctor.yml. audit_github_actions.py cannot see the git push inside
-    # verified-commit, so it does not ask for this; the job needs it all the same.
-    environment: automation-write
+    timeout-minutes: 5
     permissions:
-      contents: write
-      pull-requests: write
+      contents: read
+      actions: read
+      pull-requests: read
+    outputs:
+      act: ${{ steps.plan.outputs.act }}
+      mode: ${{ steps.plan.outputs.mode }}
+      pr: ${{ steps.plan.outputs.pr }}
+      branch: ${{ steps.plan.outputs.branch }}
+      head_sha: ${{ steps.plan.outputs.head_sha }}
+      fixers: ${{ steps.plan.outputs.fixers }}
+      node_components: ${{ steps.plan.outputs.node_components }}
     steps:
-      - name: Resolve the pull request and apply the guards
-        id: pr
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-        env:
-          CG_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
-        with:
-          script: |
-            const skip = (reason) => {
-              core.notice(`Auto-fix skipped: ${reason}`);
-              core.setOutput('skip', 'true');
-            };
-            const runPrs = context.payload.workflow_run.pull_requests || [];
-            if (!runPrs.length) return skip('the failing run is not attached to a pull request');
-            const { owner, repo } = context.repo;
-            const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: runPrs[0].number });
-            if (pr.state !== 'open') return skip(`PR #${pr.number} is ${pr.state}`);
-            if (pr.head.repo?.full_name !== `${owner}/${repo}`) return skip('PR head is a fork');
-            if (pr.user?.type === 'Bot') return skip('PR author is a bot');
-            if (pr.labels.some(l => l.name === 'no-autofix')) return skip('PR is labelled no-autofix');
-            if (pr.head.sha !== process.env.CG_HEAD_SHA) return skip('the PR has newer commits than the failing run');
-            const commits = await github.paginate(github.rest.pulls.listCommits, {
-              owner, repo, pull_number: pr.number, per_page: 100,
-            });
-            const autoFixCount = commits.filter(c => c.commit.message.startsWith('auto-fix:')).length;
-            if (autoFixCount >= 2) return skip(`PR #${pr.number} already has ${autoFixCount} auto-fix commits`);
-            core.setOutput('skip', 'false');
-            core.setOutput('pr_number', String(pr.number));
-            core.setOutput('branch', pr.head.ref);
-            core.setOutput('base', pr.base.ref);
-
-      - name: Checkout the failing commit
-        if: steps.pr.outputs.skip == 'false'
+      - name: Check out the default branch (trusted)
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
-          fetch-depth: 0
-          # true, justified: verified-commit falls back to `git push` if the signed
-          # API commit fails. No code from the PR is executed in this job: ruff is
-          # pinned from PyPI, and the local actions below are restored from the
-          # default branch before each use, never loaded from this checkout.
-          persist-credentials: true
+          persist-credentials: false
+          sparse-checkout: scripts
 
-      - name: Setup Python
-        if: steps.pr.outputs.skip == 'false'
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      - name: Collect the CI run, its jobs, the PR and its commits
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_JSON: ${{ toJSON(github.event.workflow_run) }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          OWNER: ${{ github.repository_owner }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+        run: |
+          mkdir -p .autofix
+          printf '%s' "$RUN_JSON" > .autofix/run.json
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID/jobs?per_page=100" --paginate --jq '.jobs[]' \
+            | jq -s '.' > .autofix/jobs.json
+          gh api -X GET "repos/$GITHUB_REPOSITORY/pulls" -f state=open -f head="$OWNER:$BRANCH" > .autofix/prs.json
+          pr="$(jq -r '.[0].number // empty' .autofix/prs.json)"
+          if [ -n "$pr" ]; then
+            gh api "repos/$GITHUB_REPOSITORY/pulls/$pr/commits?per_page=100" --paginate --jq '.[]' | jq -s '.' > .autofix/commits.json
+            gh api "repos/$GITHUB_REPOSITORY/pulls/$pr/files?per_page=100" --paginate --jq '.[].filename' > .autofix/changed.txt
+          else
+            echo '[]' > .autofix/commits.json
+            : > .autofix/changed.txt
+          fi
+
+      - name: Decide
+        id: plan
+        env:
+          ENABLED: ${{ vars.AUTOFIX_ENABLED || 'true' }}
+          MAX_ITERATIONS: ${{ vars.AUTOFIX_MAX_ITERATIONS || '2' }}
+        run: |
+          python3 scripts/ci/autofix.py plan \
+            --run .autofix/run.json --jobs .autofix/jobs.json --pr .autofix/prs.json \
+            --commits .autofix/commits.json --repository "$GITHUB_REPOSITORY" \
+            --max-iterations "$MAX_ITERATIONS" --enabled "$ENABLED" \
+            --failed-jobs-out .autofix/failed-jobs.json > .autofix/plan.txt
+          cat .autofix/plan.txt >> "$GITHUB_OUTPUT"
+          {
+            echo "### Auto-fix plan"
+            echo
+            sed 's/^/    /' .autofix/plan.txt
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Hand the plan to the next jobs
+        if: steps.plan.outputs.act == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: autofix-plan
+          path: .autofix/
+          retention-days: 7
+
+  fix:
+    name: Run fixers (unprivileged)
+    needs: plan
+    if: needs.plan.outputs.act == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Read-only and secret-free on purpose: everything below executes PR code.
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the PR head (untrusted)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.plan.outputs.head_sha }}
+          path: pr
+          fetch-depth: 0 # generators date sitemap entries from git history
+          persist-credentials: false
+
+      - name: Check out the fixer driver from the default branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: trusted
+          sparse-checkout: scripts
+          persist-credentials: false
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: autofix-plan
+          path: plan
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.11"
+      - name: Install pinned ruff
+        run: pip install "ruff==0.15.8"
 
-      - name: Apply ruff safe fixes to the files this PR changed
-        id: fix
-        if: steps.pr.outputs.skip == 'false'
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        if: needs.plan.outputs.node_components != ''
+        with:
+          node-version: "20"
+      - name: Install locked dependencies for the failing Node components
+        if: needs.plan.outputs.node_components != ''
         env:
-          BASE_REF: ${{ steps.pr.outputs.base }}
-          BRANCH: ${{ steps.pr.outputs.branch }}
-          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          COMPONENTS: ${{ needs.plan.outputs.node_components }}
         run: |
-          set -euo pipefail
-          pip install --quiet "ruff==0.15.8"
-          git fetch --quiet --no-tags origin "$BASE_REF"
-          # Names with whitespace are left alone: verified-commit takes a
-          # space-separated path list.
-          mapfile -t files < <(git diff --name-only --diff-filter=ACMR "origin/${BASE_REF}...HEAD" -- '*.py' | grep -v '[[:space:]]' || true)
-          echo "Python files changed by this PR: ${#files[@]}"
-          changed=""
-          if [ "${#files[@]}" -gt 0 ]; then
-            # --force-exclude keeps pyproject's extend-exclude (vendor/) in force
-            # even though the files are named explicitly.
-            ruff check --fix --exit-zero --quiet --force-exclude -- "${files[@]}"
-            changed="$(git diff --name-only -- "${files[@]}" | tr '\n' ' ' | sed 's/ *$//')"
-          fi
-          remote="$(git ls-remote origin "refs/heads/${BRANCH}" | cut -f1)"
-          if [ -n "$changed" ] && [ "$remote" != "$HEAD_SHA" ]; then
-            echo "::notice::${BRANCH} moved to ${remote} after the failing run; not committing over it."
-            changed=""
-          fi
-          if [ -n "$changed" ]; then
-            echo "has_changes=true" >> "$GITHUB_OUTPUT"
-            echo "paths=${changed}" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
-          fi
+          for component in ${COMPONENTS//,/ }; do
+            path="$(python3 trusted/scripts/ci/components.py get "$component" | jq -r '.path')"
+            if [ -f "pr/$path/package-lock.json" ]; then
+              (cd "pr/$path" && npm ci --no-audit --no-fund)
+            fi
+          done
 
-      # This job holds contents: write and pull-requests: write, and a local
-      # action (`uses: ./.github/actions/...`) runs whatever sits at that path in
-      # the workspace, which is the PR's checkout. Without this, a PR could edit
-      # verified-commit or post-pr-comment and run its own code with the token.
-      # So the actions are replaced with the default branch's copies and proven
-      # identical before any of them runs.
-      - name: Load this job's actions from the default branch
-        if: steps.pr.outputs.skip == 'false'
+      - name: Run fixers and collect diagnostics
         env:
-          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          FIXERS: ${{ needs.plan.outputs.fixers }}
+          NODE_COMPONENTS: ${{ needs.plan.outputs.node_components }}
+          MODE: ${{ needs.plan.outputs.mode }}
         run: |
-          set -euo pipefail
-          git fetch --quiet --no-tags origin "refs/heads/${DEFAULT_BRANCH}"
-          rm -rf -- .github/actions
-          git restore --source=FETCH_HEAD --worktree -- .github/actions
-          git diff --quiet FETCH_HEAD -- .github/actions
+          python3 trusted/scripts/ci/autofix.py fix \
+            --repo-root pr --changed plan/changed.txt --fixers "$FIXERS" \
+            --node-components "$NODE_COMPONENTS" --mode "$MODE" --out result
 
-      - name: Commit the fixes (Verified)
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: autofix-result
+          path: result/
+          retention-days: 7
+
+  apply:
+    name: Validate, commit and report
+    needs: [plan, fix]
+    if: always() && needs.plan.outputs.act == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # The only job that can write. It runs no PR code: the patch is data, checked
+    # against the default branch's policy before git applies it, and the commit is
+    # made through the API, so no credential is ever written into a checkout.
+    permissions:
+      contents: write # the Verified fix commit on the PR branch
+      pull-requests: write # the sticky comment
+      actions: write # re-dispatch CI when the commit used GITHUB_TOKEN
+    steps:
+      - name: Check out the default branch (trusted policy, driver and actions)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            scripts
+            .github/actions
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: autofix-plan
+          path: plan
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        if: needs.fix.result == 'success'
+        with:
+          name: autofix-result
+          path: result
+
+      - name: Validate the patch against the automation policy
+        id: check
+        if: needs.fix.result == 'success' && needs.plan.outputs.mode == 'fix'
+        env:
+          FIXERS: ${{ needs.plan.outputs.fixers }}
+        run: |
+          python3 scripts/ci/autofix.py check-patch --patch result/patch.diff \
+            --changed plan/changed.txt --fixers "$FIXERS" --out result/check.json >> "$GITHUB_OUTPUT"
+
+      - name: Check out the PR head as data
+        if: steps.check.outputs.ok == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.plan.outputs.head_sha }}
+          path: pr
+          persist-credentials: false
+
+      - name: Apply and verify the patch
+        id: apply
+        if: steps.check.outputs.ok == 'true'
+        working-directory: pr
+        run: |
+          git apply --index --whitespace=nowarn ../result/patch.diff
+          python3 ../scripts/ci/autofix.py verify-applied --repo . --check ../result/check.json >> "$GITHUB_OUTPUT"
+
+      # Optional: a GitHub App token makes the commit trigger CI like a human push.
+      # Without one, commits made with GITHUB_TOKEN trigger nothing, so CI is
+      # re-dispatched below instead.
+      - name: Mint a GitHub App token
+        id: app
+        if: steps.apply.outputs.ok == 'true' && vars.AUTOFIX_APP_ID != ''
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ vars.AUTOFIX_APP_ID }}
+          private-key: ${{ secrets.AUTOFIX_APP_PRIVATE_KEY }}
+          permission-contents: write
+
+      - name: Commit (Verified, only onto the failing head)
         id: commit
-        if: steps.fix.outputs.has_changes == 'true'
-        uses: ./.github/actions/verified-commit
-        with:
-          paths: ${{ steps.fix.outputs.paths }}
-          message: "auto-fix: ruff safe fixes for PR #${{ steps.pr.outputs.pr_number }}"
-          branch: ${{ steps.pr.outputs.branch }}
-
-      # verified-commit ends with `git reset --hard` to the PR branch, which puts
-      # the PR's copy of .github/actions back. Restore again before the comments.
-      - name: Reload this job's actions from the default branch
-        if: steps.pr.outputs.skip == 'false'
+        if: steps.apply.outputs.ok == 'true'
         env:
-          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          GH_TOKEN: ${{ steps.app.outputs.token || github.token }}
+          BRANCH: ${{ needs.plan.outputs.branch }}
+          HEAD_SHA: ${{ needs.plan.outputs.head_sha }}
+          PR: ${{ needs.plan.outputs.pr }}
+          FIXERS: ${{ needs.plan.outputs.fixers }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          set -euo pipefail
-          git fetch --quiet --no-tags origin "refs/heads/${DEFAULT_BRANCH}"
-          rm -rf -- .github/actions
-          git restore --source=FETCH_HEAD --worktree -- .github/actions
-          git diff --quiet FETCH_HEAD -- .github/actions
+          python3 scripts/ci/autofix.py commit-request --repo pr --repository "$GITHUB_REPOSITORY" \
+            --branch "$BRANCH" --head-sha "$HEAD_SHA" \
+            --headline "auto-fix: ${FIXERS//,/, } for PR #${PR}" \
+            --body "Deterministic fixes for the failing CI checks on this pull request.
 
-      - name: Comment (fixes applied)
-        if: steps.commit.outputs.committed == 'true'
+          Auto-Fix-Run: ${RUN_URL}" --out request.json
+          if oid="$(gh api graphql --input request.json --jq '.data.createCommitOnBranch.commit.oid')" && [ -n "$oid" ]; then
+            echo "outcome=pushed" >> "$GITHUB_OUTPUT"
+            echo "commit=$oid" >> "$GITHUB_OUTPUT"
+          elif [ "$(gh api "repos/$GITHUB_REPOSITORY/branches/$BRANCH" --jq .commit.sha)" != "$HEAD_SHA" ]; then
+            echo "outcome=moved" >> "$GITHUB_OUTPUT"
+          else
+            echo "outcome=commit-failed" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Re-run CI on the fix commit
+        if: steps.commit.outputs.outcome == 'pushed' && steps.app.outputs.token == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ needs.plan.outputs.branch }}
+        run: gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref "$BRANCH"
+
+      - name: Render the comment
+        id: render
+        if: always()
+        env:
+          FIX_RESULT: ${{ needs.fix.result }}
+          MODE: ${{ needs.plan.outputs.mode }}
+          OK: ${{ steps.check.outputs.ok }}
+          EMPTY: ${{ steps.check.outputs.empty }}
+          APPLIED: ${{ steps.apply.outputs.ok }}
+          COMMITTED: ${{ steps.commit.outputs.outcome }}
+          COMMIT: ${{ steps.commit.outputs.commit }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ "$FIX_RESULT" != "success" ]; then outcome=fix-failed
+          elif [ "$MODE" != "fix" ]; then outcome=report-only
+          elif [ "$EMPTY" = "true" ]; then outcome=no-changes
+          elif [ "$OK" != "true" ] || [ "$APPLIED" != "true" ]; then outcome=refused
+          elif [ -n "$COMMITTED" ]; then outcome="$COMMITTED"
+          else outcome=refused
+          fi
+          args=(--repository "$GITHUB_REPOSITORY" --plan plan/plan.txt --failed-jobs plan/failed-jobs.json
+                --outcome "$outcome" --commit-sha "$COMMIT" --run-url "$RUN_URL")
+          if [ -f result/report.json ]; then args+=(--report result/report.json); fi
+          if [ -f result/check.json ]; then args+=(--check result/check.json); fi
+          python3 scripts/ci/autofix.py render "${args[@]}" > comment.md
+          case "$outcome" in
+            pushed) header="Auto-fix applied" ;;
+            refused) header="Auto-fix withheld: needs a manual fix" ;;
+            *) header="CI failed: needs a manual fix" ;;
+          esac
+          delimiter="CG_$(openssl rand -hex 12)"
+          {
+            echo "header=$header"
+            echo "body<<$delimiter"
+            cat comment.md
+            echo "$delimiter"
+          } >> "$GITHUB_OUTPUT"
+          cat comment.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upsert the PR comment
+        if: always() && steps.render.outcome == 'success'
         uses: ./.github/actions/post-pr-comment
         with:
-          pr_number: ${{ steps.pr.outputs.pr_number }}
-          marker: auto-fix
-          header: "Auto-fix applied"
-          body: |
-            CI failed on `${{ github.event.workflow_run.head_sha }}`. Ruff's safe fixes changed: `${{ steps.fix.outputs.paths }}`.
-            Review the `auto-fix:` commit before merging.
-
-            CI does not re-run on commits made by the workflow token, so the new head has no checks yet. Your next push runs them.
-            Failing run: ${{ github.event.workflow_run.html_url }}
-
-      - name: Comment (nothing auto-fixable)
-        if: steps.pr.outputs.skip == 'false' && steps.commit.outputs.committed != 'true'
-        uses: ./.github/actions/post-pr-comment
-        with:
-          pr_number: ${{ steps.pr.outputs.pr_number }}
-          marker: auto-fix
-          header: "CI failed: needs a manual fix"
-          body: |
-            CI failed on `${{ github.event.workflow_run.head_sha }}` and ruff's safe fixes changed nothing in the Python files this PR touches.
-            The cause is outside auto-fix's scope (failing tests, type errors, generated files out of date, or lint ruff will not fix safely).
-
-            Failing run: ${{ github.event.workflow_run.html_url }}
-            Run the same gates locally: `python3 scripts/ci_local.py`
+          pr_number: ${{ needs.plan.outputs.pr }}
+          marker: auto-fix # the same comment #187's auto-fix posted, edited in place
+          header: ${{ steps.render.outputs.header }}
+          body: ${{ steps.render.outputs.body }}
