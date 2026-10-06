@@ -364,7 +364,7 @@
 .cgm-signal-badge[data-state="stale"]{color:var(--cgm-warn);opacity:.85}
 .cgm-signal-badge[data-state="unavailable"]{color:var(--text-4,#af9c9d)}
 .cgm-signal-badge.cgm-pulse{animation:cgm-edge-pulse 600ms var(--cgm-ease)}
-@keyframes cgm-breathe{0%,100%{opacity:.45}50%{opacity:1}}
+@keyframes cgm-breathe{0%,100%{opacity:1}50%{opacity:.6}}  /* 60-100%, see neon-pulse.css */
 @keyframes cgm-edge-pulse{
   from{box-shadow:0 0 0 0 color-mix(in srgb, currentColor 55%, transparent)}
   to{box-shadow:0 0 0 9px transparent}

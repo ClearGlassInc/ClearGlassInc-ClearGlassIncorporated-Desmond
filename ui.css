@@ -194,7 +194,6 @@ body:has(.hero-prism) :is(.btn-crystal, .nav-cta, .primary-btn) {
               0 0 0 1px rgba(var(--cg-neon-cyan),.24),
               0 0 20px rgba(var(--cg-neon-blue),.28),
               0 10px 34px -12px rgba(var(--cg-neon-violet),.62);
-  animation: cg-neon-action-pulse 5.6s ease-in-out infinite;
 }
 
 body:has(.hero-prism) :is(.tech-card, .product-card, .connect-card,
@@ -220,18 +219,17 @@ body:has(.hero-prism) :is(.mission-strip, .tl-item, .cta-sect) {
     rgba(var(--cg-neon-cyan),.42), rgba(var(--cg-neon-violet),.38), transparent) 1;
 }
 
+/* Pulses breathe between 60% and 100% of their peak (see the tuning notes in
+   /assets/css/neon-pulse.css). The CTA filter pulse that used to sit here
+   (cg-neon-action-pulse) is gone: animating filter repainted the button and
+   its four-layer glow on every frame. The glow above stays, static. */
 @keyframes cg-neon-breathe {
-  0%, 100% { opacity: .18; transform: scale(.99); }
+  0%, 100% { opacity: .29; transform: scale(.99); }
   50% { opacity: .48; transform: scale(1.012); }
 }
 
-@keyframes cg-neon-action-pulse {
-  0%, 100% { filter: saturate(1); }
-  50% { filter: saturate(1.12) brightness(1.04); }
-}
-
 @keyframes cg-neon-shimmer {
-  0%, 100% { opacity: .45; transform: scaleX(.88); }
+  0%, 100% { opacity: .55; transform: scaleX(.88); }
   50% { opacity: .92; transform: scaleX(1); }
 }
 
@@ -303,7 +301,15 @@ body:has(.hero-prism) :is(.mission-strip, .tl-item, .cta-sect) {
   background: conic-gradient(from 140deg, transparent, rgba(var(--cg-cyber-cyan, 34,211,238), .18), transparent 28%, rgba(var(--cg-cyber-magenta, 244,114,182), .14), transparent 58%, rgba(var(--cg-cyber-violet, 167,139,250), .16), transparent);
   filter: blur(24px);
   opacity: .2;
-  animation: cg-halo-rotate 16s linear infinite;
+}
+/* The halo turns only under the pointer. ui.js tags every card, eyebrow,
+   badge, pill and chip, and 96 blurred halos rotating at once on the
+   homepage (66 of them catalog cards, most off screen) was a page of
+   compositor layers for a glow nobody could see move. */
+@media (hover: hover) {
+  .cg-neon-card:hover::before {
+    animation: cg-halo-rotate 16s linear infinite;
+  }
 }
 
 .cg-signal-active::before {
@@ -315,7 +321,7 @@ body:has(.hero-prism) :is(.mission-strip, .tl-item, .cta-sect) {
   border-radius: 999px;
   background: rgb(var(--cg-cyber-mint, 52,211,153));
   box-shadow: 0 0 10px rgba(var(--cg-cyber-mint, 52,211,153), .8), 0 0 24px rgba(var(--cg-cyber-cyan, 34,211,238), .42);
-  animation: cg-signal-pulse 1.8s ease-in-out infinite;
+  animation: cg-signal-pulse var(--cg-np-pulse-status, 2.8s) ease-in-out infinite;
 }
 
 :is(.nav, .navbar, header nav, #cg-nav, .mobile-menu) {
@@ -400,8 +406,8 @@ body:has(.hero-prism) :is(.mission-strip, .tl-item, .cta-sect) {
   to { transform: rotate(360deg); }
 }
 @keyframes cg-signal-pulse {
-  0%, 100% { transform: scale(1); opacity: .78; }
-  50% { transform: scale(1.22); opacity: 1; }
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(.9); opacity: .6; }
 }
 
 /* ── magnetic-capable controls get a snappier transform curve ─────────────── */
@@ -511,7 +517,8 @@ body:has(#kit-fallback) .cell.sel {
 
 body:has(#kit-fallback) .clive i,
 body:has(#kit-fallback) .eyebrow .dot {
-  animation: smb-status-pulse 2.1s ease-in-out infinite;
+  box-shadow: 0 0 8px currentColor, 0 0 20px rgba(234, 70, 72,.22);
+  animation: smb-status-pulse var(--cg-np-pulse-status, 2.8s) ease-in-out infinite;
 }
 
 @keyframes smb-neon-breathe {
@@ -519,9 +526,11 @@ body:has(#kit-fallback) .eyebrow .dot {
   to   { opacity: 1; transform: scale(1.025); }
 }
 
+/* The glow is set once on the dot (see .clive i / .eyebrow .dot above);
+   only transform and opacity move. */
 @keyframes smb-status-pulse {
-  0%, 100% { transform: scale(1); box-shadow: 0 0 8px currentColor; }
-  50% { transform: scale(1.18); box-shadow: 0 0 18px currentColor, 0 0 30px rgba(234, 70, 72,.35); }
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(.9); opacity: .6; }
 }
 
 /* ── respect reduced-motion preferences ──────────────────────────────────── */

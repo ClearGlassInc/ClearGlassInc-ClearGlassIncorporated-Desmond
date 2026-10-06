@@ -5,16 +5,31 @@
    sweep, cursor-reactive glow, and scroll-reveal motion.
    Idempotent; respects prefers-reduced-motion; opt out per page with
    <body data-cg-no-fx> or <html data-cg-no-fx>.
+
+   Changed 2026-10-06: reduced motion is tracked live; the cursor glow moves
+   by transform; the reveal staggers blocks that enter together (--cg-rv-i)
+   and skips blocks another reveal system or animation already owns; the
+   ambient layers stand down where the page has its own (.cgm-atmos).
+   Reveal timing is tuned by --cg-np-reveal-* in neon-pulse.css.
 ═══════════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
   if (window.__cgDesignSystem) return;
   window.__cgDesignSystem = true;
 
-  var reduceMotion = false;
+  // Reduced motion is read live: a reader who switches it on mid-visit stops
+  // the pointer glow, the parallax and any pending reveals straight away.
+  var reduceQuery = null;
   try {
-    reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
   } catch (e) { /* ignore */ }
+  var reduceMotion = !!(reduceQuery && reduceQuery.matches);
+  function onReduceChange(fn) {
+    if (!reduceQuery) return;
+    var handler = function () { reduceMotion = reduceQuery.matches; fn(reduceMotion); };
+    if (reduceQuery.addEventListener) reduceQuery.addEventListener('change', handler);
+    else if (reduceQuery.addListener) reduceQuery.addListener(handler);
+  }
 
   function optedOut() {
     return document.documentElement.hasAttribute('data-cg-no-fx') ||
@@ -43,6 +58,10 @@
   }
 
   function mountAmbient() {
+    // A page with its own atmosphere keeps it alone: the homepage's
+    // Cinematic Motion System (.cgm-atmos) already paints a grid, light
+    // fields and a scan, and a second set stacked two drifting grids.
+    if (document.querySelector('.cgm-atmos')) return;
     var frag = document.createDocumentFragment();
     frag.appendChild(el('div', 'cg-fx-neon-grid'));
     frag.appendChild(el('div', 'cg-fx-aurora'));
@@ -63,12 +82,15 @@
     var glow = el('div', 'cg-fx-cursor');
     document.body.appendChild(glow);
     var x = -500, y = -500, raf = null;
+    // Position goes through transform (custom properties read by the CSS),
+    // so following the pointer never triggers layout.
     document.addEventListener('pointermove', function (e) {
+      if (reduceMotion) return;
       x = e.clientX; y = e.clientY;
       if (raf) return;
       raf = requestAnimationFrame(function () {
-        glow.style.left = x + 'px';
-        glow.style.top = y + 'px';
+        glow.style.setProperty('--cg-cx', x + 'px');
+        glow.style.setProperty('--cg-cy', y + 'px');
         raf = null;
       });
     }, { passive: true });
@@ -80,7 +102,7 @@
     if (!orbs.length) return;
     var ticking = false;
     window.addEventListener('scroll', function () {
-      if (ticking) return;
+      if (ticking || reduceMotion) return;
       ticking = true;
       requestAnimationFrame(function () {
         var s = window.scrollY || 0;
@@ -92,6 +114,12 @@
     }, { passive: true });
   }
 
+  // Blocks another reveal system already owns (the homepage's
+  // [data-cgm-reveal], inline `.rv` pages, neon-pulse's opt-in entrance).
+  // Hiding them here as well left them invisible until two observers fired.
+  var FOREIGN_REVEAL = '.rv, [data-cgm-reveal], .cg-np-reveal-up';
+  var STAGGER_MAX = 5;
+
   function bindReveal() {
     if (reduceMotion || !('IntersectionObserver' in window)) return;
     try {
@@ -99,14 +127,22 @@
         'main > section, body > section, article, .card, .product-card, .tech-card, .connect-card, .value-card, .offer-card, .cg-glass-card'
       );
       if (!targets.length) return;
+      var showAll = function () {
+        var all = document.querySelectorAll('.cg-rv:not(.cg-vis)');
+        for (var k = 0; k < all.length; k++) all[k].classList.add('cg-vis');
+      };
       // threshold must stay 0: a percentage threshold is a fraction of the
       // ELEMENT, not the viewport, so a section taller than
       // viewport/threshold can never satisfy it and would sit at opacity:0
       // permanently. Blog sections run past 10,000px on a phone. rootMargin
       // provides the easing instead, and works at any element height.
       var io = new IntersectionObserver(function (entries) {
+        // Blocks that arrive in the same frame (a row of cards) cascade:
+        // each gets the next stagger step, capped so the last is never late.
+        var step = 0;
         entries.forEach(function (en) {
           if (en.isIntersecting) {
+            en.target.style.setProperty('--cg-rv-i', String(Math.min(step++, STAGGER_MAX)));
             en.target.classList.add('cg-vis');
             io.unobserve(en.target);
           }
@@ -117,9 +153,14 @@
         var r = t.getBoundingClientRect();
         // Never hide content already in the first viewport.
         if (r.top < window.innerHeight * 0.9) continue;
+        if (t.matches(FOREIGN_REVEAL)) continue;
+        // The reveal runs as an animation; an element with its own would
+        // have it replaced, so it keeps its own motion and is not hidden.
+        if (getComputedStyle(t).animationName !== 'none') continue;
         t.classList.add('cg-rv');
         io.observe(t);
       }
+      onReduceChange(function (reduced) { if (reduced) showAll(); });
       // Failsafe: a block the reader has already reached must be painted even
       // if its observation was missed. Visibility never depends on animation.
       var sweep = function () {
@@ -134,10 +175,7 @@
       window.addEventListener('resize', sweep, { passive: true });
       window.addEventListener('load', sweep);
       window.addEventListener('pageshow', function (e) { if (e.persisted) sweep(); });
-      window.addEventListener('beforeprint', function () {
-        var all = document.querySelectorAll('.cg-rv:not(.cg-vis)');
-        for (var k = 0; k < all.length; k++) all[k].classList.add('cg-vis');
-      });
+      window.addEventListener('beforeprint', showAll);
     } catch (e) { /* reveal is progressive enhancement only */ }
   }
 

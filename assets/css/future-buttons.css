@@ -186,6 +186,11 @@
   .future-glass-control::before, .future-glass-control::after { display: none; }
 }
 
-@keyframes future-glass-shimmer { 0% { left: -65%; opacity: 0; } 25% { opacity: .52; } 100% { left: 125%; opacity: 0; } }
-@keyframes future-glass-scan { from { left: -50%; } to { left: 120%; } }
+/* Both sweeps move by transform, not `left`, so they never trigger layout.
+   Percentages are of the glint's own width: the hover glint is 44% wide and
+   travels from -65% to 125% of the button (190 / 44 = 432%); the busy scan is
+   34% wide and travels from -50% to 120% (170 / 34 = 500%). The skew rides
+   along because these frames replace the base transform. */
+@keyframes future-glass-shimmer { 0% { transform: translateX(0) skewX(-16deg); opacity: 0; } 25% { opacity: .52; } 100% { transform: translateX(432%) skewX(-16deg); opacity: 0; } }
+@keyframes future-glass-scan { from { transform: translateX(0) skewX(-16deg); } to { transform: translateX(500%) skewX(-16deg); } }
 @keyframes future-glass-error { 35% { translate: -2px 0; } 70% { translate: 2px 0; } }
