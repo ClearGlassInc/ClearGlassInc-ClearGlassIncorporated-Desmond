@@ -39,7 +39,9 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "22"
-      - run: pip install pytest pytest-cov pyyaml
+      # pydantic + httpx: tests/test_artemis_osint.py imports artemis.osint,
+      # and skips rather than runs without them.
+      - run: pip install pytest pytest-cov pyyaml "pydantic>=2,<3" "httpx>=0.27,<1"
       - run: pytest tests/ --cov --cov-report=xml -q
 
   lint:
