@@ -1,7 +1,15 @@
-from artemis.osint.connectors import ConnectorDisabled, HttpSourceConnector
-from artemis.osint.models import ProvenanceRecord
-from artemis.osint.normalization import normalize_geojson
-from artemis.osint.registry import SOURCE_DEFINITIONS, get_source, list_sources
+import pytest
+
+# artemis.osint needs pydantic and httpx. A bare import made this module a
+# collection error wherever they were missing, which aborted the whole root
+# suite; ci.yml installs both so these tests still run there.
+pytest.importorskip("pydantic")
+pytest.importorskip("httpx")
+
+from artemis.osint.connectors import ConnectorDisabled, HttpSourceConnector  # noqa: E402
+from artemis.osint.models import ProvenanceRecord  # noqa: E402
+from artemis.osint.normalization import normalize_geojson  # noqa: E402
+from artemis.osint.registry import SOURCE_DEFINITIONS, get_source, list_sources  # noqa: E402
 
 
 def test_registry_contains_all_requested_sources():
