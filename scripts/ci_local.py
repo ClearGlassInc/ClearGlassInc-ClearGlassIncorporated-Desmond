@@ -58,6 +58,7 @@ class Gate:
         needs_network: bool = False,
         needs: str | None = None,
         cwd: str = ".",
+        artifacts: tuple[str, ...] = (),
     ) -> None:
         self.job = job
         self.name = name
@@ -65,6 +66,8 @@ class Gate:
         self.needs_network = needs_network
         self.needs = needs  # executable that must be on PATH
         self.cwd = cwd  # repository-relative working directory
+        # Repository-relative paths the command writes and must not leave behind.
+        self.artifacts = artifacts
 
     def skip_reason(self, with_network: bool) -> str | None:
         if self.needs_network and not with_network:
@@ -126,6 +129,10 @@ GATES: list[Gate] = [
         ["npx", "--yes", "@lhci/cli@0.15.1", "autorun", "--config=lighthouserc.json"],
         needs_network=True,
         needs="npx",
+        # lhci writes its HTML reports here. Left behind, every page scanner
+        # (search assets, internal links, the page tests) reads them as site
+        # pages and the next run fails 4 gates and 10 tests.
+        artifacts=(".lighthouseci",),
     ),
     # The stack job (reusable-ci.yml, one matrix leg per component). CI runs only
     # the components a change touches; locally every one runs. The container
@@ -171,6 +178,18 @@ GATES: list[Gate] = [
 
 def run(gate: Gate) -> tuple[str, float, str]:
     started = time.monotonic()
+    created = [ROOT / path for path in gate.artifacts if not (ROOT / path).exists()]
+    try:
+        return _run(gate, started)
+    finally:
+        for path in created:
+            if path.is_dir():
+                shutil.rmtree(path, ignore_errors=True)
+            elif path.exists():
+                path.unlink()
+
+
+def _run(gate: Gate, started: float) -> tuple[str, float, str]:
     try:
         proc = subprocess.run(
             gate.command,

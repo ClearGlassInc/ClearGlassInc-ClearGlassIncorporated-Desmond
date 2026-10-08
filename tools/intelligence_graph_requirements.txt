@@ -1,4 +1,9 @@
 requests>=2.32,<3
 beautifulsoup4>=4.12,<5
 networkx>=3.4,<4
+# nx.pagerank runs on SciPy in NetworkX 3.x. Without these the crawl dies at the
+# analytics step on a clean install (ModuleNotFoundError: numpy), after every
+# source has been fetched. Floors are NetworkX's own "default" extra.
+numpy>=1.25,<3
+scipy>=1.11.2,<2
 playwright>=1.50,<2
