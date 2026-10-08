@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+/* ClearGlass workspace theme: dark glass surfaces, restrained cyan accent.
+   System fonts only: no external font requests. */
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --color-ink: #070b12;
+  --color-panel: rgb(255 255 255 / 0.045);
+  --color-line: rgb(255 255 255 / 0.1);
+  --color-accent: #67e8f9;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    background-color: var(--color-ink);
+    background-image:
+      radial-gradient(60rem 30rem at 85% -10%, rgb(34 211 238 / 0.09), transparent 60%),
+      radial-gradient(40rem 24rem at -10% 110%, rgb(56 189 248 / 0.06), transparent 60%);
+    background-attachment: fixed;
+    @apply min-h-screen font-sans text-slate-200 antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  a {
+    @apply text-cyan-300 underline-offset-2 hover:underline;
+  }
+  h1 {
+    @apply text-2xl font-semibold tracking-tight text-white;
+  }
+  h2 {
+    @apply text-lg font-semibold text-white;
+  }
+  h3 {
+    @apply text-sm font-semibold uppercase tracking-wide text-slate-300;
+  }
+  table {
+    @apply w-full border-collapse text-left text-sm;
+  }
+  th {
+    @apply border-b border-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-400;
+  }
+  td {
+    @apply border-b border-white/5 px-3 py-2 align-top;
+  }
+  label {
+    @apply text-sm text-slate-300;
+  }
+  input,
+  select,
+  textarea {
+    max-width: 100%;
+    @apply rounded-md border border-white/15 bg-black/30 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500;
+  }
+  code,
+  pre {
+    @apply font-mono;
+  }
+}
+
+@layer components {
+  /* Grid children may shrink below their content (long JSON, ids) instead of widening the page. */
+  .grid > * {
+    min-width: 0;
+  }
+  /* Grid forms in narrow cards: let long option text shrink instead of overflowing. */
+  form.grid:not([class*="grid-cols"]) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .glass {
+    @apply rounded-xl border border-white/10 bg-white/[0.045] shadow-[0_1px_0_0_rgb(255_255_255/0.05)_inset] backdrop-blur-md;
+  }
+  .btn {
+    @apply inline-flex items-center gap-2 rounded-md border border-cyan-300/40 bg-cyan-300/10 px-3 py-1.5 text-sm font-medium text-cyan-100 no-underline hover:bg-cyan-300/20 hover:no-underline disabled:opacity-50 motion-safe:transition-colors;
+  }
+  .btn-quiet {
+    @apply inline-flex items-center gap-2 rounded-md border border-white/15 px-3 py-1.5 text-sm text-slate-200 no-underline hover:bg-white/10 hover:no-underline motion-safe:transition-colors;
+  }
+  .muted {
+    @apply text-sm text-slate-400;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,627 @@
+// ClearGlass OSINT Fraud Detection Dashboard - evidence and provenance model.
+//
+// Three layers are kept in separate tables on purpose:
+//   Evidence        - the original material as collected (excerpt, location, hash).
+//   ExtractedFact   - a statement pulled out of one Evidence row.
+//   InvestigationNote (kind INTERPRETATION) - what an analyst thinks it means.
+// A content hash identifies the bytes that were collected. It says nothing
+// about whether the claim inside them is true.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMINISTRATOR
+  ANALYST
+  REVIEWER
+  READ_ONLY
+}
+
+// Where a record came from. SYNTHETIC rows are fixtures and never real cases.
+enum DataOrigin {
+  SYNTHETIC
+  PUBLIC_SOURCE
+  INTERNAL_RECORD
+  ANALYST_ENTERED
+}
+
+// The epistemic status shown on every screen.
+enum ClaimStatus {
+  ALLEGATION
+  SOURCE_SUPPORTED_OBSERVATION
+  ANALYST_INTERPRETATION
+  REVIEWED_FINDING
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  PARTIALLY_VERIFIED
+  VERIFIED
+  DISPUTED
+  REJECTED
+}
+
+enum AccessClassification {
+  PUBLIC
+  INTERNAL
+  CONFIDENTIAL
+  RESTRICTED
+}
+
+enum ExtractionMethod {
+  SYNTHETIC_FIXTURE
+  MANUAL_EXCERPT
+  CSV_IMPORT
+  JSON_IMPORT
+  MOCK_ADAPTER
+}
+
+enum SourceKind {
+  SYNTHETIC_FIXTURE
+  PUBLIC_WEB
+  PUBLIC_RECORD
+  INTERNAL_SYSTEM
+  ANALYST_PROVIDED
+}
+
+enum TransactionType {
+  PURCHASE_ORDER
+  INVOICE
+  PAYMENT
+  BANK_DETAIL_CHANGE
+  CHANGE_ORDER
+  CONTRACT
+}
+
+enum IncidentStepKind {
+  OBSERVATION
+  ACTOR
+  EVENT
+  EVIDENCE_GAP
+  CONTRADICTION
+}
+
+enum RuleVersionStatus {
+  DRAFT
+  PENDING_APPROVAL
+  ACTIVE
+  SUPERSEDED
+  REJECTED
+  RETIRED
+}
+
+enum EvaluationOutcome {
+  MATCH
+  NO_MATCH
+  INSUFFICIENT_DATA
+}
+
+enum ReviewState {
+  NEW
+  NEEDS_EVIDENCE
+  UNDER_REVIEW
+  ESCALATED_FOR_REVIEW
+  EXPLAINED_NO_FURTHER_ACTION
+  CLOSED
+}
+
+enum ReviewPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum EntityKind {
+  PERSON
+  ORGANIZATION
+  VENDOR
+  DOMAIN
+}
+
+enum RelationshipBasis {
+  EXPLICIT_IDENTIFIER
+  DOCUMENTED_IN_EVIDENCE
+  CANDIDATE_NAME_SIMILARITY
+  CANDIDATE_SHARED_ADDRESS
+  CANDIDATE_SHARED_DOMAIN
+  ANALYST_ASSERTED
+}
+
+enum RelationshipStatus {
+  CANDIDATE
+  CONFIRMED
+  REJECTED
+  REVERSED
+}
+
+enum DecisionTarget {
+  ALERT
+  INVESTIGATION
+  RULE_VERSION
+  RELATIONSHIP
+  EVIDENCE
+}
+
+enum NoteKind {
+  OBSERVATION
+  INTERPRETATION
+  QUESTION
+}
+
+enum ImportFormat {
+  CSV
+  JSON
+}
+
+enum ImportRecordType {
+  VENDOR
+  TRANSACTION
+  EVIDENCE
+  INCIDENT
+}
+
+enum ImportStatus {
+  VALIDATED
+  COMMITTED
+  REJECTED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  role      Role
+  isDemo    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  ownedInvestigations Investigation[]     @relation("InvestigationOwner")
+  notes               InvestigationNote[]
+  decisions           ReviewDecision[]
+  proposedVersions    RuleVersion[]       @relation("RuleVersionProposer")
+  approvedVersions    RuleVersion[]       @relation("RuleVersionApprover")
+  verifiedEvidence    Evidence[]          @relation("EvidenceVerifier")
+  imports             ImportBatch[]
+  auditEvents         AuditEvent[]
+  assignedAlerts      Alert[]             @relation("AlertAssignee")
+}
+
+model Source {
+  id                   String               @id @default(cuid())
+  recordId             String               @unique
+  kind                 SourceKind
+  title                String
+  url                  String?
+  publisher            String?
+  origin               DataOrigin
+  accessClassification AccessClassification
+  limitations          String?
+  isSynthetic          Boolean              @default(false)
+  createdAt            DateTime             @default(now())
+
+  evidence Evidence[]
+}
+
+model Evidence {
+  id                   String               @id @default(cuid())
+  recordId             String               @unique
+  sourceId             String
+  title                String
+  // Verbatim excerpt as collected. Untrusted text: rendered as text, never as HTML.
+  excerpt              String
+  url                  String?
+  documentLocation     String?
+  publishedAt          DateTime?
+  observedAt           DateTime?
+  collectedAt          DateTime?
+  ingestedAt           DateTime             @default(now())
+  // SHA-256 of the canonical collected content. Identifies the bytes; does not verify the claim.
+  contentHash          String
+  hashAlgorithm        String               @default("sha256")
+  verificationStatus   VerificationStatus   @default(UNVERIFIED)
+  verifiedById         String?
+  verifiedAt           DateTime?
+  accessClassification AccessClassification
+  extractionMethod     ExtractionMethod
+  origin               DataOrigin
+  limitations          String?
+  providedFields       String[]
+  missingFields        String[]
+  isSynthetic          Boolean              @default(false)
+  importBatchId        String?
+
+  source        Source             @relation(fields: [sourceId], references: [id])
+  verifiedBy    User?              @relation("EvidenceVerifier", fields: [verifiedById], references: [id])
+  importBatch   ImportBatch?       @relation(fields: [importBatchId], references: [id])
+  facts         ExtractedFact[]
+  incidents     IncidentEvidence[]
+  ruleSupport   RuleSupport[]
+  noteLinks     NoteEvidence[]
+  transactions  Transaction[]
+  relationships Relationship[]
+  incidentSteps IncidentStep[]
+
+  @@index([contentHash])
+}
+
+model ExtractedFact {
+  id          String      @id @default(cuid())
+  evidenceId  String
+  statement   String
+  claimStatus ClaimStatus
+  createdAt   DateTime    @default(now())
+
+  evidence Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+}
+
+model Incident {
+  id           String      @id @default(cuid())
+  recordId     String      @unique
+  title        String
+  summary      String
+  claimStatus  ClaimStatus
+  origin       DataOrigin
+  isSynthetic  Boolean     @default(false)
+  documentedAt DateTime?
+  createdAt    DateTime    @default(now())
+
+  evidence    IncidentEvidence[]
+  steps       IncidentStep[]
+  ruleSupport RuleSupport[]
+}
+
+model IncidentEvidence {
+  incidentId String
+  evidenceId String
+
+  incident Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  evidence Evidence @relation(fields: [evidenceId], references: [id])
+
+  @@id([incidentId, evidenceId])
+}
+
+// Steps A-D of the incident-to-rule workflow. A step with no evidence must be
+// flagged as an assumption; the service layer refuses anything else.
+model IncidentStep {
+  id           String           @id @default(cuid())
+  incidentId   String
+  kind         IncidentStepKind
+  position     Int
+  text         String
+  evidenceId   String?
+  isAssumption Boolean          @default(false)
+  occurredAt   DateTime?
+
+  incident Incident  @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  evidence Evidence? @relation(fields: [evidenceId], references: [id])
+
+  @@index([incidentId, position])
+}
+
+model Organization {
+  id                 String     @id @default(cuid())
+  recordId           String     @unique
+  name               String
+  registrationNumber String?
+  domain             String?
+  address            String?
+  origin             DataOrigin
+  isSynthetic        Boolean    @default(false)
+  createdAt          DateTime   @default(now())
+
+  vendors Vendor[]
+  people  Person[]
+}
+
+model Vendor {
+  id             String     @id @default(cuid())
+  recordId       String     @unique
+  name           String
+  taxId          String?
+  domain         String?
+  address        String?
+  organizationId String?
+  origin         DataOrigin
+  providedFields String[]
+  isSynthetic    Boolean    @default(false)
+  importBatchId  String?
+  contentHash    String
+  createdAt      DateTime   @default(now())
+
+  organization Organization? @relation(fields: [organizationId], references: [id])
+  importBatch  ImportBatch?  @relation(fields: [importBatchId], references: [id])
+  transactions Transaction[]
+}
+
+model Person {
+  id             String     @id @default(cuid())
+  recordId       String     @unique
+  displayName    String
+  roleTitle      String?
+  organizationId String?
+  origin         DataOrigin
+  isSynthetic    Boolean    @default(false)
+  createdAt      DateTime   @default(now())
+
+  organization Organization? @relation(fields: [organizationId], references: [id])
+}
+
+model Transaction {
+  id               String          @id @default(cuid())
+  recordId         String          @unique
+  type             TransactionType
+  // Explicit vendor identifier as supplied by the source. Rules group on this, never on names.
+  vendorRecordId   String?
+  vendorId         String?
+  amount           Decimal?        @db.Decimal(16, 2)
+  currency         String?
+  occurredAt       DateTime?
+  recordedAt       DateTime?
+  approvedAt       DateTime?
+  workStartedAt    DateTime?
+  approvedBy       String?
+  poReference      String?
+  invoiceReference String?
+  documents        String[]
+  description      String?
+  // Canonical fields the source actually supplied. A field outside this list is
+  // unknown, not empty: rules return INSUFFICIENT_DATA instead of a negative.
+  providedFields   String[]
+  missingFields    String[]
+  origin           DataOrigin
+  isSynthetic      Boolean         @default(false)
+  evidenceId       String?
+  importBatchId    String?
+  contentHash      String
+  createdAt        DateTime        @default(now())
+
+  vendor      Vendor?      @relation(fields: [vendorId], references: [id])
+  evidence    Evidence?    @relation(fields: [evidenceId], references: [id])
+  importBatch ImportBatch? @relation(fields: [importBatchId], references: [id])
+
+  @@index([vendorRecordId, occurredAt])
+  @@index([contentHash])
+}
+
+model Relationship {
+  id           String             @id @default(cuid())
+  fromKind     EntityKind
+  fromId       String
+  toKind       EntityKind
+  toId         String
+  relationType String
+  basis        RelationshipBasis
+  basisDetail  String
+  status       RelationshipStatus
+  claimStatus  ClaimStatus
+  evidenceId   String?
+  isSynthetic  Boolean            @default(false)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  evidence Evidence? @relation(fields: [evidenceId], references: [id])
+
+  @@unique([fromKind, fromId, toKind, toId, relationType, basis])
+}
+
+model DetectionRule {
+  id             String   @id @default(cuid())
+  ruleKey        String   @unique
+  name           String
+  description    String
+  // True for the shipped templates: investigative checks, not patterns from verified incidents.
+  isIllustrative Boolean  @default(false)
+  isSynthetic    Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  versions RuleVersion[]
+  alerts   Alert[]
+}
+
+model RuleVersion {
+  id                String            @id @default(cuid())
+  ruleId            String
+  version           Int
+  // Validated by src/lib/rules/schema.ts before it is stored.
+  definition        Json
+  changeSummary     String
+  status            RuleVersionStatus
+  proposedById      String
+  approvedById      String?
+  approvedAt        DateTime?
+  approvalRationale String?
+  createdAt         DateTime          @default(now())
+
+  rule        DetectionRule    @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  proposedBy  User             @relation("RuleVersionProposer", fields: [proposedById], references: [id])
+  approvedBy  User?            @relation("RuleVersionApprover", fields: [approvedById], references: [id])
+  support     RuleSupport[]
+  evaluations RuleEvaluation[]
+  alerts      Alert[]
+
+  @@unique([ruleId, version])
+}
+
+// Source-to-rule traceability with referential integrity: one row per
+// (rule version, condition) and the evidence or incident that supports it.
+model RuleSupport {
+  id            String  @id @default(cuid())
+  ruleVersionId String
+  conditionId   String?
+  evidenceId    String?
+  incidentId    String?
+
+  ruleVersion RuleVersion @relation(fields: [ruleVersionId], references: [id], onDelete: Cascade)
+  evidence    Evidence?   @relation(fields: [evidenceId], references: [id])
+  incident    Incident?   @relation(fields: [incidentId], references: [id])
+
+  @@index([evidenceId])
+  @@index([incidentId])
+}
+
+model EvaluationRun {
+  id            String    @id @default(cuid())
+  triggeredById String
+  startedAt     DateTime  @default(now())
+  finishedAt    DateTime?
+  summary       Json?
+
+  evaluations RuleEvaluation[]
+}
+
+model RuleEvaluation {
+  id               String            @id @default(cuid())
+  runId            String
+  ruleVersionId    String
+  subjectKey       String
+  outcome          EvaluationOutcome
+  matchedRecordIds String[]
+  conditions       Json
+  missingFields    Json
+  evidenceRefs     String[]
+  explanation      String
+  evaluatedAt      DateTime
+
+  run         EvaluationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  ruleVersion RuleVersion   @relation(fields: [ruleVersionId], references: [id])
+  alert       Alert?
+
+  @@index([ruleVersionId, outcome])
+}
+
+model Alert {
+  id               String            @id @default(cuid())
+  ruleId           String
+  ruleVersionId    String
+  evaluationId     String            @unique
+  outcome          EvaluationOutcome
+  status           ReviewState
+  priority         ReviewPriority
+  subjectKey       String
+  explanation      String
+  matchedRecordIds String[]
+  missingFields    Json
+  conditions       Json
+  evidenceRefs     String[]
+  isSynthetic      Boolean
+  // Same rule version + subject + matched records = same alert; re-runs do not duplicate it.
+  dedupeKey        String            @unique
+  investigationId  String?
+  assignedToId     String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  rule          DetectionRule  @relation(fields: [ruleId], references: [id])
+  ruleVersion   RuleVersion    @relation(fields: [ruleVersionId], references: [id])
+  evaluation    RuleEvaluation @relation(fields: [evaluationId], references: [id])
+  investigation Investigation? @relation(fields: [investigationId], references: [id])
+  assignedTo    User?          @relation("AlertAssignee", fields: [assignedToId], references: [id])
+
+  @@index([status])
+}
+
+model Investigation {
+  id          String         @id @default(cuid())
+  caseKey     String         @unique
+  title       String
+  summary     String
+  status      ReviewState
+  priority    ReviewPriority
+  claimStatus ClaimStatus
+  ownerId     String
+  isSynthetic Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  owner  User                @relation("InvestigationOwner", fields: [ownerId], references: [id])
+  alerts Alert[]
+  notes  InvestigationNote[]
+}
+
+model InvestigationNote {
+  id              String   @id @default(cuid())
+  investigationId String
+  authorId        String
+  kind            NoteKind
+  body            String
+  createdAt       DateTime @default(now())
+
+  investigation Investigation  @relation(fields: [investigationId], references: [id], onDelete: Cascade)
+  author        User           @relation(fields: [authorId], references: [id])
+  evidence      NoteEvidence[]
+}
+
+model NoteEvidence {
+  noteId     String
+  evidenceId String
+
+  note     InvestigationNote @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  evidence Evidence          @relation(fields: [evidenceId], references: [id])
+
+  @@id([noteId, evidenceId])
+}
+
+// Decision history for alerts, investigations, rule versions, relationships
+// and evidence verification. Rows are appended; prior decisions are never edited.
+model ReviewDecision {
+  id            String         @id @default(cuid())
+  targetType    DecisionTarget
+  targetId      String
+  fromState     String?
+  toState       String
+  rationale     String
+  ruleVersionId String?
+  decidedById   String
+  createdAt     DateTime       @default(now())
+
+  decidedBy User @relation(fields: [decidedById], references: [id])
+
+  @@index([targetType, targetId])
+}
+
+model ImportBatch {
+  id            String           @id @default(cuid())
+  format        ImportFormat
+  recordType    ImportRecordType
+  filename      String
+  fileHash      String
+  sizeBytes     Int
+  origin        DataOrigin
+  isSynthetic   Boolean
+  status        ImportStatus
+  totalRows     Int
+  acceptedRows  Int
+  rejectedRows  Int
+  duplicateRows Int
+  report        Json
+  submittedById String
+  createdAt     DateTime         @default(now())
+
+  submittedBy  User          @relation(fields: [submittedById], references: [id])
+  vendors      Vendor[]
+  transactions Transaction[]
+  evidence     Evidence[]
+}
+
+// Application audit log. It is an ordinary table: a database administrator can
+// change it. See docs/PRODUCTION_READINESS.md before relying on it as a record.
+model AuditEvent {
+  id         String   @id @default(cuid())
+  at         DateTime @default(now())
+  actorId    String?
+  actorRole  String?
+  action     String
+  targetType String?
+  targetId   String?
+  outcome    String   @default("ok")
+  details    Json?
+
+  actor User? @relation(fields: [actorId], references: [id])
+
+  @@index([action, at])
+}

@@ -1,0 +1,49 @@
+# Local development only. Everything binds to 127.0.0.1, the data is synthetic,
+# and demo sign-in is enabled. Do not deploy this file.
+name: clearglass-osint
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: cg_osint
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cg_osint_local}
+      POSTGRES_DB: cg_osint
+    ports:
+      # 5434 so it does not collide with the commerce stack's 5432.
+      - "127.0.0.1:5434:5432"
+    volumes:
+      - osint_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cg_osint -d cg_osint"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  migrate:
+    build: .
+    image: clearglass-osint-dashboard:local
+    command: ["sh", "-c", "npx prisma migrate deploy && npm run db:seed"]
+    environment:
+      DATABASE_URL: postgresql://cg_osint:${POSTGRES_PASSWORD:-cg_osint_local}@db:5432/cg_osint
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  app:
+    build: .
+    image: clearglass-osint-dashboard:local
+    environment:
+      DATABASE_URL: postgresql://cg_osint:${POSTGRES_PASSWORD:-cg_osint_local}@db:5432/cg_osint
+      APP_ENV: local
+      DEMO_AUTH_ENABLED: "true"
+      SESSION_SECRET: ${SESSION_SECRET:?Set SESSION_SECRET in .env (32+ random characters, see .env.example)}
+    ports:
+      - "127.0.0.1:3050:3050"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  osint_db:

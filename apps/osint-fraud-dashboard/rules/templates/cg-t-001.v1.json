@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "illustrative": true,
+  "disclaimer": "Illustrative investigative check shipped with the prototype. It is not derived from any verified or suppressed incident, and a match is not evidence of fraud. Set thresholds from your own policy before use.",
+  "supportingIncidentIds": [],
+  "supportingEvidenceIds": [],
+  "missingDataBehavior": "INSUFFICIENT_DATA",
+  "ruleKey": "CG-T-001",
+  "name": "Vendor banking-detail change followed by payment",
+  "description": "Flags a payment to a vendor that occurs within a configured number of days after that vendor's banking details were changed, so the change can be checked against an independent callback record.",
+  "requiredFields": [
+    "vendorRecordId",
+    "occurredAt"
+  ],
+  "entityMatching": "explicit_vendor_record_id",
+  "thresholds": {
+    "windowDays": {
+      "value": 14,
+      "unit": "days",
+      "rationale": "Illustrative default: one typical payment cycle. Replace with the period your payment-verification policy covers.",
+      "basis": "ANALYST_ASSUMPTION",
+      "evidenceIds": []
+    }
+  },
+  "pattern": {
+    "kind": "sequence_within_window",
+    "groupBy": "vendorRecordId",
+    "first": {
+      "recordType": "BANK_DETAIL_CHANGE",
+      "description": "A banking-detail change is recorded for the vendor",
+      "support": {
+        "evidenceIds": [],
+        "incidentIds": [],
+        "assumption": "Payment-redirection schemes commonly start with a change to the payee's bank details; this is a general control assumption, not an incident finding."
+      }
+    },
+    "then": {
+      "recordType": "PAYMENT",
+      "description": "A payment to the same vendor identifier follows",
+      "support": {
+        "evidenceIds": [],
+        "incidentIds": [],
+        "assumption": "The exposure arises when a payment is released to the changed details."
+      }
+    },
+    "window": {
+      "days": {
+        "threshold": "windowDays"
+      },
+      "description": "The payment falls within the configured window after the change (end inclusive)",
+      "support": {
+        "evidenceIds": [],
+        "incidentIds": [],
+        "assumption": "Short gaps leave less time for an independent verification callback."
+      }
+    }
+  },
+  "benignExplanations": [
+    "Vendor changed banks and the change was verified by an independent callback",
+    "Scheduled payment that happened to fall after a legitimate update"
+  ],
+  "falsePositiveConsiderations": [
+    "High-volume vendors pay often, so almost any change is followed by a payment",
+    "Bank-change records may be logged on the approval date, not the request date"
+  ],
+  "reviewPriority": "HIGH"
+}

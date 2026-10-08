@@ -1,0 +1,19 @@
+[
+  {
+    "recordId": "SYN-INC-001",
+    "title": "Synthetic fixture: payment released seven days after an unverified bank-detail change",
+    "summary": "SYNTHETIC. Constructed to demonstrate the incident-to-rule workflow. It is not a real, verified or suppressed incident, and it describes no real organisation or person.",
+    "claimStatus": "SOURCE_SUPPORTED_OBSERVATION",
+    "documentedAt": "2026-03-21",
+    "evidenceRecordIds": ["SYN-EV-001", "SYN-EV-002", "SYN-EV-003", "SYN-EV-005"],
+    "steps": [
+      { "kind": "OBSERVATION", "text": "Change request CR-0042 updated SYN-V-001's remittance account on 2026-03-02; its callback verification field is blank.", "evidenceRecordId": "SYN-EV-001", "occurredAt": "2026-03-02T14:00:00Z" },
+      { "kind": "OBSERVATION", "text": "Payment SYN-PAY-001 (48000.00 CAD) was released on 2026-03-09 to the account on file at that time.", "evidenceRecordId": "SYN-EV-002", "occurredAt": "2026-03-09T15:00:00Z" },
+      { "kind": "ACTOR", "text": "Vendor SYN-V-001 is the payee of record. The evidence does not establish who submitted the change request.", "evidenceRecordId": "SYN-EV-001" },
+      { "kind": "EVENT", "text": "Sequence: change request on 2026-03-02, then payment release on 2026-03-09, seven days later.", "evidenceRecordId": "SYN-EV-002" },
+      { "kind": "EVIDENCE_GAP", "text": "No callback record or telephone log is available to show whether the change was verified." },
+      { "kind": "CONTRADICTION", "text": "A public notice attributed to the vendor says its banking arrangements did not change in Q1 2026, which conflicts with the change request.", "evidenceRecordId": "SYN-EV-003" },
+      { "kind": "EVENT", "text": "Analyst assumption: the account change and the payment relate to the same remittance account.", "isAssumption": true }
+    ]
+  }
+]
