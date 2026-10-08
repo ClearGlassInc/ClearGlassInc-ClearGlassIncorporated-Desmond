@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "illustrative": true,
+  "disclaimer": "Illustrative investigative check shipped with the prototype. It is not derived from any verified or suppressed incident, and a match is not evidence of fraud. Set thresholds from your own policy before use.",
+  "supportingIncidentIds": [],
+  "supportingEvidenceIds": [],
+  "missingDataBehavior": "INSUFFICIENT_DATA",
+  "ruleKey": "CG-T-003",
+  "name": "Payment recorded without a purchase-order reference",
+  "description": "Flags payments whose source record supplies a purchase-order reference field that is blank. Records whose source does not include the field at all return insufficient data instead.",
+  "requiredFields": [
+    "poReference"
+  ],
+  "entityMatching": "per_record",
+  "thresholds": {},
+  "pattern": {
+    "kind": "record_checks",
+    "recordType": "PAYMENT",
+    "applicability": [],
+    "conditions": [
+      {
+        "id": "po_reference_blank",
+        "op": "is_blank",
+        "field": "poReference",
+        "description": "The purchase-order reference is supplied but blank",
+        "support": {
+          "evidenceIds": [],
+          "incidentIds": [],
+          "assumption": "Most procurement policies expect payments to trace to an approved order; confirm against your own policy."
+        }
+      }
+    ]
+  },
+  "benignExplanations": [
+    "Payment category exempt from purchase orders (utilities, taxes, payroll-related)",
+    "Reference held in a different field or system"
+  ],
+  "falsePositiveConsiderations": [
+    "Exempt categories must be filtered before this check is meaningful"
+  ],
+  "reviewPriority": "LOW"
+}

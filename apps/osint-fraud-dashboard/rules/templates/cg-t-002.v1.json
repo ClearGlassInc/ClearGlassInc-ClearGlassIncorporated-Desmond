@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "illustrative": true,
+  "disclaimer": "Illustrative investigative check shipped with the prototype. It is not derived from any verified or suppressed incident, and a match is not evidence of fraud. Set thresholds from your own policy before use.",
+  "supportingIncidentIds": [],
+  "supportingEvidenceIds": [],
+  "missingDataBehavior": "INSUFFICIENT_DATA",
+  "ruleKey": "CG-T-002",
+  "name": "Multiple purchases near a procurement threshold within a window",
+  "description": "Flags several purchase orders to one vendor, each below a configured approval threshold, whose combined value reaches that threshold within a configured window. It indicates the possibility of order splitting, which a reviewer must confirm.",
+  "requiredFields": [
+    "vendorRecordId",
+    "occurredAt",
+    "amount"
+  ],
+  "entityMatching": "explicit_vendor_record_id",
+  "thresholds": {
+    "approvalThreshold": {
+      "value": 25000,
+      "unit": "currency",
+      "rationale": "Illustrative placeholder for a single-purchase approval limit. Replace with the limit in your procurement policy.",
+      "basis": "ANALYST_ASSUMPTION",
+      "evidenceIds": []
+    },
+    "minPurchases": {
+      "value": 2,
+      "unit": "count",
+      "rationale": "Two or more purchases is the minimum that can represent a split.",
+      "basis": "ANALYST_ASSUMPTION",
+      "evidenceIds": []
+    },
+    "windowDays": {
+      "value": 30,
+      "unit": "days",
+      "rationale": "Illustrative default of one month; align with your purchasing cycle.",
+      "basis": "ANALYST_ASSUMPTION",
+      "evidenceIds": []
+    }
+  },
+  "pattern": {
+    "kind": "aggregate_within_window",
+    "groupBy": "vendorRecordId",
+    "recordType": "PURCHASE_ORDER",
+    "eachBelow": {
+      "value": {
+        "threshold": "approvalThreshold"
+      },
+      "description": "Each purchase is individually below the approval threshold",
+      "support": {
+        "evidenceIds": [],
+        "incidentIds": [],
+        "assumption": "Purchases at or above the threshold would already require approval, so they are excluded."
+      }
+    },
+    "minCount": {
+      "value": {
+        "threshold": "minPurchases"
+      },
+      "description": "At least the configured number of purchases in one window",
+      "support": {
+        "evidenceIds": [],
+        "incidentIds": [],
+        "assumption": "A single purchase cannot be a split."
+      }
+    },
+    "sumAtLeast": {
+      "value": {
+        "threshold": "approvalThreshold"
+      },
+      "description": "Their combined value reaches the approval threshold",
+      "support": {
+        "evidenceIds": [],
+        "incidentIds": [],
+        "assumption": "Splitting matters only if the combined value would have needed approval."
+      }
+    },
+    "window": {
+      "days": {
+        "threshold": "windowDays"
+      },
+      "description": "The purchases fall within the configured window",
+      "support": {
+        "evidenceIds": [],
+        "incidentIds": [],
+        "assumption": "Purchases far apart in time are less likely to be one requirement."
+      }
+    }
+  },
+  "benignExplanations": [
+    "Separate, genuinely independent requirements from different departments",
+    "Framework or call-off agreement with pre-approved total value"
+  ],
+  "falsePositiveConsiderations": [
+    "Vendors supplying consumables are routinely ordered from several times a month",
+    "Amounts in different currencies are compared without conversion in this prototype"
+  ],
+  "reviewPriority": "MEDIUM"
+}

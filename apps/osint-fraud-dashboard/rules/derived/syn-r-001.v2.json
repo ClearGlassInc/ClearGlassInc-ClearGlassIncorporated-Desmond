@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "ruleKey": "SYN-R-001",
+  "name": "Payment soon after an unverified banking-detail change (from SYN-INC-001)",
+  "description": "Derived from synthetic incident SYN-INC-001 to demonstrate the incident-to-rule workflow. Flags a payment to the same explicit vendor identifier within the policy window after a banking-detail change. The rule cannot see callback-verification records, so the reviewer must check them.",
+  "illustrative": false,
+  "disclaimer": "Derived from synthetic fixtures. It is not a pattern from any real or suppressed incident.",
+  "supportingIncidentIds": [
+    "SYN-INC-001"
+  ],
+  "supportingEvidenceIds": [
+    "SYN-EV-001",
+    "SYN-EV-002"
+  ],
+  "requiredFields": [
+    "vendorRecordId",
+    "occurredAt"
+  ],
+  "entityMatching": "explicit_vendor_record_id",
+  "thresholds": {
+    "windowDays": {
+      "value": 10,
+      "unit": "days",
+      "basis": "POLICY_DOCUMENT",
+      "evidenceIds": [
+        "SYN-EV-005"
+      ],
+      "rationale": "Proposed: read the policy's 10 business days as 10 calendar days, which is narrower and produces fewer matches; awaiting reviewer decision."
+    }
+  },
+  "pattern": {
+    "kind": "sequence_within_window",
+    "groupBy": "vendorRecordId",
+    "first": {
+      "recordType": "BANK_DETAIL_CHANGE",
+      "description": "A banking-detail change is recorded for the vendor",
+      "support": {
+        "evidenceIds": [
+          "SYN-EV-001"
+        ],
+        "incidentIds": [
+          "SYN-INC-001"
+        ],
+        "assumption": null
+      }
+    },
+    "then": {
+      "recordType": "PAYMENT",
+      "description": "A payment to the same vendor identifier follows",
+      "support": {
+        "evidenceIds": [
+          "SYN-EV-002"
+        ],
+        "incidentIds": [
+          "SYN-INC-001"
+        ],
+        "assumption": null
+      }
+    },
+    "window": {
+      "days": {
+        "threshold": "windowDays"
+      },
+      "description": "The payment is within the policy window after the change (end inclusive)",
+      "support": {
+        "evidenceIds": [
+          "SYN-EV-005"
+        ],
+        "incidentIds": [],
+        "assumption": null
+      }
+    }
+  },
+  "missingDataBehavior": "INSUFFICIENT_DATA",
+  "benignExplanations": [
+    "The change was verified by callback, but the callback record is held outside the imported data",
+    "A scheduled payment that the policy exempts"
+  ],
+  "falsePositiveConsiderations": [
+    "The rule cannot see callback verification, so verified changes still match",
+    "Change timestamps may be the approval time rather than the request time"
+  ],
+  "reviewPriority": "HIGH"
+}

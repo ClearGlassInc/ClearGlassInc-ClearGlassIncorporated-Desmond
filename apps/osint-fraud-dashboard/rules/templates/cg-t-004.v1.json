@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "illustrative": true,
+  "disclaimer": "Illustrative investigative check shipped with the prototype. It is not derived from any verified or suppressed incident, and a match is not evidence of fraud. Set thresholds from your own policy before use.",
+  "supportingIncidentIds": [],
+  "supportingEvidenceIds": [],
+  "missingDataBehavior": "INSUFFICIENT_DATA",
+  "ruleKey": "CG-T-004",
+  "name": "Change-order approval recorded after work started",
+  "description": "Flags change orders whose approval timestamp is later than the recorded start of the work they cover, beyond a configured grace period.",
+  "requiredFields": [
+    "approvedAt",
+    "workStartedAt"
+  ],
+  "entityMatching": "per_record",
+  "thresholds": {
+    "graceDays": {
+      "value": 0,
+      "unit": "days",
+      "rationale": "Illustrative default of zero; some organisations allow emergency work to start before paperwork. Set to your policy.",
+      "basis": "ANALYST_ASSUMPTION",
+      "evidenceIds": []
+    }
+  },
+  "pattern": {
+    "kind": "record_checks",
+    "recordType": "CHANGE_ORDER",
+    "applicability": [],
+    "conditions": [
+      {
+        "id": "approved_after_start",
+        "op": "date_after",
+        "field": "approvedAt",
+        "otherField": "workStartedAt",
+        "graceDays": {
+          "threshold": "graceDays"
+        },
+        "description": "Approval is recorded after the work start date plus grace",
+        "support": {
+          "evidenceIds": [],
+          "incidentIds": [],
+          "assumption": "Retroactive approval removes the chance to reject or re-price the change before cost is incurred."
+        }
+      }
+    ]
+  },
+  "benignExplanations": [
+    "Documented emergency or safety work",
+    "Approval entered late into the system although granted verbally in time"
+  ],
+  "falsePositiveConsiderations": [
+    "Timestamps may record data entry rather than decision time"
+  ],
+  "reviewPriority": "MEDIUM"
+}

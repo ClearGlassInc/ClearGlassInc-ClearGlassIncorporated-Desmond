@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "illustrative": true,
+  "disclaimer": "Illustrative investigative check shipped with the prototype. It is not derived from any verified or suppressed incident, and a match is not evidence of fraud. Set thresholds from your own policy before use.",
+  "supportingIncidentIds": [],
+  "supportingEvidenceIds": [],
+  "missingDataBehavior": "INSUFFICIENT_DATA",
+  "ruleKey": "CG-T-006",
+  "name": "Payment recorded before its approval",
+  "description": "Flags payments whose recorded approval timestamp is later than the payment date, which is a chronology inconsistency to explain.",
+  "requiredFields": [
+    "approvedAt",
+    "occurredAt"
+  ],
+  "entityMatching": "per_record",
+  "thresholds": {
+    "graceDays": {
+      "value": 0,
+      "unit": "days",
+      "rationale": "Illustrative default of zero days; increase if approvals are routinely back-dated for batching.",
+      "basis": "ANALYST_ASSUMPTION",
+      "evidenceIds": []
+    }
+  },
+  "pattern": {
+    "kind": "record_checks",
+    "recordType": "PAYMENT",
+    "applicability": [],
+    "conditions": [
+      {
+        "id": "approved_after_payment",
+        "op": "date_after",
+        "field": "approvedAt",
+        "otherField": "occurredAt",
+        "graceDays": {
+          "threshold": "graceDays"
+        },
+        "description": "Approval is recorded after the payment date plus grace",
+        "support": {
+          "evidenceIds": [],
+          "incidentIds": [],
+          "assumption": "An approval after release cannot have controlled the release."
+        }
+      }
+    ]
+  },
+  "benignExplanations": [
+    "Batch approval entered after an urgent, separately authorised payment",
+    "Time-zone or data-entry lag"
+  ],
+  "falsePositiveConsiderations": [
+    "Some systems record approval of the reconciliation, not of the payment"
+  ],
+  "reviewPriority": "MEDIUM"
+}

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "illustrative": true,
+  "disclaimer": "Illustrative investigative check shipped with the prototype. It is not derived from any verified or suppressed incident, and a match is not evidence of fraud. Set thresholds from your own policy before use.",
+  "supportingIncidentIds": [],
+  "supportingEvidenceIds": [],
+  "missingDataBehavior": "INSUFFICIENT_DATA",
+  "ruleKey": "CG-T-005",
+  "name": "Required procurement documents missing",
+  "description": "Flags purchase orders at or above a configured value whose supplied document list lacks any of the configured required documents.",
+  "requiredFields": [
+    "amount",
+    "documents"
+  ],
+  "entityMatching": "per_record",
+  "thresholds": {
+    "documentThreshold": {
+      "value": 10000,
+      "unit": "currency",
+      "rationale": "Illustrative placeholder above which quotes and an approval form are expected. Replace with your policy value.",
+      "basis": "ANALYST_ASSUMPTION",
+      "evidenceIds": []
+    }
+  },
+  "pattern": {
+    "kind": "record_checks",
+    "recordType": "PURCHASE_ORDER",
+    "applicability": [
+      {
+        "id": "amount_at_or_above",
+        "op": "gte",
+        "field": "amount",
+        "value": {
+          "threshold": "documentThreshold"
+        },
+        "description": "The order value is at or above the document threshold",
+        "support": {
+          "evidenceIds": [],
+          "incidentIds": [],
+          "assumption": "Document requirements usually scale with value."
+        }
+      }
+    ],
+    "conditions": [
+      {
+        "id": "documents_missing",
+        "op": "list_missing_any",
+        "field": "documents",
+        "required": [
+          "quote",
+          "approval_form"
+        ],
+        "description": "At least one required document is absent from the supplied list",
+        "support": {
+          "evidenceIds": [],
+          "incidentIds": [],
+          "assumption": "Quote and approval form are example requirements, not a universal standard."
+        }
+      }
+    ]
+  },
+  "benignExplanations": [
+    "Documents stored in a system not included in the import",
+    "Sole-source justification replaces quotes"
+  ],
+  "falsePositiveConsiderations": [
+    "Document names vary between systems; map them consistently on import"
+  ],
+  "reviewPriority": "LOW"
+}
