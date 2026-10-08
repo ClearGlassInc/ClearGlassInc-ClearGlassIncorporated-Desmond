@@ -10,6 +10,13 @@ the URL. None of the existing tests executes page JavaScript, so none caught it.
 
 V8 compiles each block without running it, which reports the same early errors
 as ``node --check``. One Node process checks the whole site.
+
+The same holds for first-party script *files*. ``assets/intelligence-graph/graph.js``
+never parsed from the day it was added: its ``\n`` and ``\(`` escapes had been
+consumed on the way in, leaving raw newlines inside string literals and an
+unterminated regex group, so the Intelligence Graph page sat on "VERIFYING"
+for eleven days while the inline-only check stayed green. Every local script a
+shipped page loads is parsed too, and must exist.
 """
 
 from __future__ import annotations
@@ -62,6 +69,7 @@ class _InlineScripts(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=False)
         self.blocks: list[tuple[int, bool, str]] = []
+        self.sources: list[tuple[int, bool, str]] = []
         self._open: tuple[int, bool, list[str]] | None = None
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
@@ -69,6 +77,8 @@ class _InlineScripts(HTMLParser):
             return
         attributes = dict(attrs)
         kind = (attributes.get("type") or "").strip().lower()
+        if "src" in attributes and (kind in CLASSIC_TYPES or kind == "module"):
+            self.sources.append((self.getpos()[0], kind == "module", attributes["src"] or ""))
         if "src" in attributes or (kind not in CLASSIC_TYPES and kind != "module"):
             self._open = None
             return
@@ -99,6 +109,37 @@ def inline_script_blocks() -> list[dict[str, object]]:
     return blocks
 
 
+def local_script_files() -> tuple[list[dict[str, object]], list[str]]:
+    """Every first-party script a shipped page loads, as checker blocks, plus missing ones."""
+    seen: dict[tuple[Path, bool], str] = {}
+    missing: list[str] = []
+    for path in sorted(ROOT.rglob("*.html")):
+        relative = path.relative_to(ROOT)
+        if EXCLUDED_PARTS.intersection(relative.parts):
+            continue
+        parser = _InlineScripts()
+        parser.feed(path.read_text(encoding="utf-8", errors="replace"))
+        for line, is_module, src in parser.sources:
+            target = src.split("?", 1)[0].split("#", 1)[0].strip()
+            if not target or target.startswith(("http:", "https:", "//", "data:")):
+                continue
+            file = (ROOT / target.lstrip("/")) if target.startswith("/") else (path.parent / target)
+            file = file.resolve()
+            if not file.is_file():
+                missing.append(f"{relative}:{line}: {src}")
+                continue
+            seen.setdefault((file, is_module), f"{relative}:{line}")
+    blocks = [
+        {
+            "where": f"{file.relative_to(ROOT)} (loaded by {page})",
+            "module": is_module,
+            "code": file.read_text(encoding="utf-8", errors="replace"),
+        }
+        for (file, is_module), page in sorted(seen.items(), key=lambda item: str(item[0][0]))
+    ]
+    return blocks, missing
+
+
 def test_inline_scripts_are_discovered() -> None:
     # Guards the guard: a parser regression that finds nothing would pass vacuously.
     assert len(inline_script_blocks()) > 100
@@ -117,6 +158,28 @@ def test_every_inline_script_parses() -> None:
     )
     failures = json.loads(result.stdout)
     assert not failures, "Inline scripts that will not parse:\n" + "\n".join(failures)
+
+
+def test_local_script_files_are_discovered_and_exist() -> None:
+    blocks, missing = local_script_files()
+    # Guards the guard, as above.
+    assert len(blocks) > 20
+    assert not missing, "Pages load scripts that do not exist:\n" + "\n".join(missing)
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node is required to parse page JavaScript")
+def test_every_local_script_file_parses() -> None:
+    blocks, _ = local_script_files()
+    result = subprocess.run(
+        ["node", "-e", CHECKER],
+        input=json.dumps(blocks),
+        capture_output=True,
+        text=True,
+        timeout=120,
+        check=True,
+    )
+    failures = json.loads(result.stdout)
+    assert not failures, "Script files that will not parse:\n" + "\n".join(failures)
 
 
 def test_lead_form_never_falls_back_to_get() -> None:
