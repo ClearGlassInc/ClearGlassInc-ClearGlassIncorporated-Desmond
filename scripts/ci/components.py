@@ -78,6 +78,13 @@ COMPONENTS: dict[str, dict[str, Any]] = {
         "node_version": "20",
         "deploy": {"port": 3000, "preview_env": {}, "smoke": ["GET / 200,302,307,401"]},
     },
+    # The root Next.js app is independently versioned and must not disappear
+    # from validation just because it is not a deployable preview service.
+    "root-app": {
+        "language": "node",
+        "path": ".",
+        "node_version": "22",
+    },
 }
 
 #: A change to any of these can change how *every* component is built or checked,
@@ -115,17 +122,48 @@ def changed_files(base: str | None, head: str) -> list[str] | None:
 
 
 def select(files: list[str] | None) -> list[str]:
-    """Component names a change touches. None (unknown) selects everything."""
+    """Select impacted components; uncertainty always expands validation.
+
+    The root app is selected only for its own manifests/source/tests. Paths not
+    accounted for by a component or a known root-app path fail closed to the
+    complete matrix, preventing newly added applications from being silently
+    skipped until they are registered explicitly.
+    """
     if files is None:
         return list(COMPONENTS)
+    if not files:
+        return []
     if any(f == shared or f.startswith(shared) for f in files for shared in SHARED_PATHS):
         return list(COMPONENTS)
-    picked = []
-    for name, spec in COMPONENTS.items():
-        prefix = spec["path"].rstrip("/") + "/"
-        if any(f.startswith(prefix) for f in files):
-            picked.append(name)
-    return picked
+
+    root_app_exact = {
+        "package.json", "package-lock.json", "tsconfig.json", "next.config.js",
+        "next.config.mjs", "next.config.ts", "next-env.d.ts",
+    }
+    root_app_prefixes = ("app/", "src/", "tests/")
+    picked: list[str] = []
+    unknown: list[str] = []
+    for path in files:
+        matched = False
+        for name, spec in COMPONENTS.items():
+            if name == "root-app":
+                if path in root_app_exact or path.startswith(root_app_prefixes):
+                    picked.append(name)
+                    matched = True
+                    break
+                continue
+            prefix = spec["path"].rstrip("/") + "/"
+            if path.startswith(prefix):
+                picked.append(name)
+                matched = True
+                break
+        if not matched:
+            unknown.append(path)
+
+    if unknown:
+        return list(COMPONENTS)
+    # Preserve the declared component order and avoid duplicate matrix entries.
+    return [name for name in COMPONENTS if name in picked]
 
 
 def matrix_entry(name: str) -> dict[str, Any]:
