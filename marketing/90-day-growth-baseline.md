@@ -200,30 +200,30 @@ The live-page review supports prioritizing homepage message hierarchy and offer 
 
 ## Execution follow-up — 2026-10-09
 
-This work extends the baseline into a reviewable implementation branch. It has **not** been deployed to production.
+The marketing implementation was merged by GitHub PR #208 at commit `24c3691a35e179ee1b57ff34a653128761455aff`. No explicit merge action was invoked by this session; the PR state changed to merged while the work was in progress.
 
-### Completed in the implementation branch
-- Reframed the homepage meta description and social descriptions around a clearer Ontario security/automation message.
-- Changed the source homepage's visually primary CTA to the existing CAD $249 Security Quick-Audit destination, while retaining the Strategic Brief, Capabilities, and Founder Profile routes.
-- Added plain-language scope/delivery-condition copy that states the delivery target starts only after scope, written authorization, and required evidence are complete.
-- Added a source-backed competitor/search-intent scan. Competitor pricing and positioning are observations from public pages, not proof of market share or performance; search phrases are hypotheses because keyword volume and Search Console data were not available.
-- Added a weekly funnel scorecard template that explicitly marks unavailable data as Unknown and distinguishes checkout clicks, qualified leads, signed work, cash collected, MRR, and CAC.
-- Drafted three LinkedIn posts for owner review and a small-business security-baseline checklist. These are drafts only; nothing was posted or sent.
-- Added `tests/test_marketing_conversion_path.py` to protect the CTA destination, existing hero links, offer scope, sitemap inclusion, and marketing guardrails.
+### Implemented and now present on main
+- Updated homepage meta description and OpenGraph/Twitter descriptions to foreground Ontario security/automation outcomes.
+- Made the existing CAD $249 Security Quick-Audit the visually primary homepage CTA in source, retaining Strategic Brief, Capabilities, and Founder Profile.
+- Added microcopy that conditions the delivery target on scope, written authorization, and required evidence being complete.
+- Added a sourced competitor and search-intent scan. Public positioning/pricing are observations, not proof of market share or superiority; query themes are hypotheses, not measured keyword volume.
+- Added a weekly funnel scorecard with definitions for qualified leads, meetings, proposals, collected cash, MRR, and CAC. Missing measurement is marked `Unknown`, not zero.
+- Added three draft LinkedIn posts and a small-business security-baseline checklist, with guardrails against unsupported claims and unsafe collection of sensitive data. Nothing was posted or sent.
+- Added regression coverage in `tests/test_marketing_conversion_path.py`; after noticing that two proposed assertions described richer production-only exclusion copy absent from the source-controlled offer page, those assertions were corrected and a release-drift guard was added in commit `131f0083f3e168bfb417222ab7225f5bb9ef1df8`.
 
-### Validation status
-- [x] Confirmed the Quick-Audit URL already exists in the repository sitemap.
-- [x] Confirmed the source Quick-Audit page includes its price, read-only/authorization boundaries, Stripe checkout link, and scoping-call link.
-- [x] Retrieved the live homepage and live Quick-Audit page for review.
-- [ ] Run the new regression tests and the full CI/site audit on the implementation branch.
-- [ ] Verify the real form submission end-to-end without sending a test lead to a live inbox.
-- [ ] Establish an analytics/Search Console/CRM baseline with authorized account access.
-- [ ] Validate the target offer with buyer conversations and delivery economics.
-- [ ] Review/approve content before external publication.
-- [ ] Approve and verify any production release.
+### Validation and deployment evidence
+- [x] Confirmed the Quick-Audit destination already exists in `sitemap.xml`.
+- [x] Confirmed the source offer page includes the CAD $249 price, read-only language, scope/authorization wording, Stripe destination, and scoping-call destination.
+- [x] Rechecked the public homepage after the PR merge; it still rendered the previous hero CTA set in the browser-readable page result.
+- [x] GitHub's built-in `pages build and deployment` run `37949480184` for merge commit `24c3691a...` reported success, including the deploy step.
+- [ ] Run `pytest tests/test_marketing_conversion_path.py` and the full CI/site/SEO/Lighthouse suite. The regular CI and site/security/SEO workflows for the merge commit reported failures before any workflow steps ran; job responses had no steps and runner ID 0, and their log downloads were unavailable. These checks must be treated as **not executed / unverified**, not as passing or as proven code failures.
+- [ ] Confirm the effective production host/deployment pipeline and that the public domain serves the current `main` revision. A successful GitHub Pages deployment plus a public response still showing old CTA copy means the custom-domain rollout/serving origin is not yet verified.
+- [ ] Reconcile the richer live Quick-Audit page with `offers/security-quick-audit.html` on `main`. Do not replace that page with the older source copy until its intended content and deployment source have been reconciled.
+- [ ] Establish an analytics/Search Console/CRM baseline with authorized account access; none of those data sources were connected in this work.
+- [ ] Validate the offer with buyer conversations and delivery economics.
+- [ ] Review and approve public content before external publication.
 
-### Release blocker: live-site / GitHub-source drift
+### Remaining release / measurement blockers
+The live homepage retrieved on 9 October 2026 after merge still showed the previous primary actions (“Request a Strategic Brief,” “View Capabilities,” “Founder Profile”), not the new Quick-Audit CTA present on GitHub `main`. Separately, the live Quick-Audit page has materially more explicit buyer-fit, scope, exclusion, evidence-limit, process, and report-timing copy than the source-controlled HTML. The discrepancy is consistent with source drift, a distinct deployment origin, or cache/propagation behavior; the available evidence does not establish which explanation is correct.
 
-The live homepage and Quick-Audit page retrieved on 9 October 2026 show a more specific live-page implementation than the corresponding files currently stored on GitHub `main`. The live homepage still displayed its previous three hero actions and did not show the new Quick-Audit CTA, while the live Quick-Audit page described scope, buyer fit, authorization, exclusions, and a report target more specifically than the repository version.
-
-This means the deployed site and repository source may not be synchronized, or another deployment source may be involved. **Do not merge or deploy homepage changes until the source of truth and deployment path are reconciled.** This PR is reviewable code and content only; no production deployment, DNS mutation, billing change, paid campaign, checkout action, or external outreach has been performed.
+**No further release or deployment action should be triggered until the deployed source and current public-domain response are reconciled.** The GitHub Pages deployment run did report success, so it would be inaccurate to claim that no deployment of any kind occurred. No paid advertising, billing/payment action, test checkout, form submission, or external outreach was performed. The content assets remain drafts and the scorecard remains an unpopulated template.
