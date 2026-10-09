@@ -222,8 +222,12 @@ This work extends the baseline into a reviewable implementation branch. It has *
 - [ ] Review/approve content before external publication.
 - [ ] Approve and verify any production release.
 
-### Release blocker: live-site / GitHub-source drift
+### Release blocker: live Quick-Audit page and repository source differ
 
-The live homepage and Quick-Audit page retrieved on 9 October 2026 show a more specific live-page implementation than the corresponding files currently stored on GitHub `main`. The live homepage still displayed its previous three hero actions and did not show the new Quick-Audit CTA, while the live Quick-Audit page described scope, buyer fit, authorization, exclusions, and a report target more specifically than the repository version.
+The live homepage retrieved on 9 October 2026 showed the same existing hero CTA pattern represented in GitHub `main`; the proposed Quick-Audit CTA is only on this unmerged branch and is therefore not expected to appear live yet. Separately, the live Quick-Audit page was materially more specific than the corresponding HTML file on GitHub `main`: live copy identifies a target buyer, describes exclusions and evidence limitations, clarifies authorization steps, links to a sample report/methodology, and conditions its report target on scope, authorization, and required evidence being complete.
 
-This means the deployed site and repository source may not be synchronized, or another deployment source may be involved. **Do not merge or deploy homepage changes until the source of truth and deployment path are reconciled.** This PR is reviewable code and content only; no production deployment, DNS mutation, billing change, paid campaign, checkout action, or external outreach has been performed.
+The discrepancy indicates that the deployed Quick-Audit page may have newer changes that have not been synchronized to the repository source. **Do not deploy the repo version of that page or merge a change that triggers a whole-site deploy until the Quick-Audit source of truth and deployment path are reconciled.** The PR does not edit the Quick-Audit HTML file. No production deployment, DNS mutation, billing change, paid campaign, checkout action, form submission, or external outreach has been performed.
+
+### Execution validation note
+
+Fourteen source-level assertions were checked against files fetched from the implementation branch; all 14 passed. This checks the expected strings and links only, not browser rendering or test execution. GitHub Actions reported several failed jobs, but their job records contained no executed steps and runner ID 0; log downloads were unavailable. Therefore the Python regression tests, Lighthouse, and full site/SEO audits must be treated as **not validated**, not as passing or as demonstrated code failures. The PR also received a bot comment indicating that Codex review usage limits had been reached.
