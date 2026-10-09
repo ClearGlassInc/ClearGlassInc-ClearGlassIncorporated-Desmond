@@ -182,3 +182,18 @@ Definitions:
 - [ ] Production deployment approved and verified.
 
 **Important:** This document is a planning artifact based on the repository files inspected on 2026-10-09. It is not evidence of live performance or completed production changes.
+
+
+## Live homepage review — 2026-10-09
+
+A separate live page review confirmed the homepage is reachable and publicly crawlable in the review environment. Visible copy leads with “Governed AI systems for high stakes operations” and describes AI automation, cybersecurity, legal-tech, OSINT, and enterprise architecture. It includes an interactive Sentinel concierge with quick objectives such as high-performance website, qualified leads, AI automation, cybersecurity guidance, and a digital growth system. It also presents a broad product catalog with many prototype/platform surfaces and has multiple calls to action including “Request a Strategic Brief,” “View Capabilities,” and “Book a Security Engagement.”
+
+### Additional verified live-page observations
+- **Commercial intent exists but is dispersed:** the concierge explicitly includes a “more qualified leads” objective, but the homepage also gives substantial space to a broad catalog and technical platform descriptions. Test whether one primary paid entry offer and a clearer next step improve qualified conversion.
+- **The lead offer is not singular:** multiple top-level CTAs and different service pathways appear together. Choose one primary CTA for the first target segment; keep secondary routes available without competing equally for attention.
+- **Technical language may exceed the needs of a nontechnical buyer:** terms such as provenance-linked workflows, deterministic execution graphs, and model routing appear prominently. Pair technical depth with plain-language outcomes and concrete deliverables.
+- **Proof needs careful labeling:** the page presents prototypes, capabilities, system descriptions, and some price ranges. Clearly distinguish available services, working products, prototypes, planned features, and illustrative pricing so visitors do not infer unverified deployment or customer outcomes.
+- **Founder credibility content is extensive:** the homepage contains a long leadership and credentials section. Preserve verifiable records, but prioritize the most relevant, independently verifiable trust signals and avoid letting this section overwhelm the core commercial journey.
+- **Performance, accessibility, form delivery, analytics, and conversion behavior remain unverified:** the page render alone does not establish Core Web Vitals, successful form delivery, analytics coverage, or conversion rates. These require direct tests and authorized access.
+
+The live-page review supports prioritizing homepage message hierarchy and offer clarity before adding more content. No production changes were made as part of this review.
