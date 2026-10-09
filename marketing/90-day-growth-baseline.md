@@ -200,30 +200,34 @@ The live-page review supports prioritizing homepage message hierarchy and offer 
 
 ## Execution follow-up — 2026-10-09
 
-The marketing implementation was merged by GitHub PR #208 at commit `24c3691a35e179ee1b57ff34a653128761455aff`. No explicit merge action was invoked by this session; the PR state changed to merged while the work was in progress.
+The marketing implementation was merged to `main` by PR #208 at commit `24c3691a35e179ee1b57ff34a653128761455aff`. No explicit merge action was invoked by this execution session; GitHub reported the PR as merged while validation was still in progress.
 
-### Implemented and now present on main
-- Updated homepage meta description and OpenGraph/Twitter descriptions to foreground Ontario security/automation outcomes.
-- Made the existing CAD $249 Security Quick-Audit the visually primary homepage CTA in source, retaining Strategic Brief, Capabilities, and Founder Profile.
-- Added microcopy that conditions the delivery target on scope, written authorization, and required evidence being complete.
-- Added a sourced competitor and search-intent scan. Public positioning/pricing are observations, not proof of market share or superiority; query themes are hypotheses, not measured keyword volume.
-- Added a weekly funnel scorecard with definitions for qualified leads, meetings, proposals, collected cash, MRR, and CAC. Missing measurement is marked `Unknown`, not zero.
-- Added three draft LinkedIn posts and a small-business security-baseline checklist, with guardrails against unsupported claims and unsafe collection of sensitive data. Nothing was posted or sent.
-- Added regression coverage in `tests/test_marketing_conversion_path.py`; after noticing that two proposed assertions described richer production-only exclusion copy absent from the source-controlled offer page, those assertions were corrected and a release-drift guard was added in commit `131f0083f3e168bfb417222ab7225f5bb9ef1df8`.
+### Implemented and present in the repository
+- Updated the homepage meta description and OpenGraph/Twitter descriptions around reducing technology risk and governed AI automation for Ontario organizations.
+- Made the existing CAD $249 Security Quick-Audit the visually primary CTA in the source homepage, retaining Strategic Brief, Capabilities and Founder Profile links.
+- Added plain-language microcopy that conditions the delivery target on scope, written authorization and required evidence being complete.
+- Added a sourced competitor/search-intent scan. Public pricing/positioning are snapshots, not proof of market share or superiority; search phrases are hypotheses because measured volume/ranking data was unavailable.
+- Added a weekly funnel scorecard with explicit metric definitions and `Unknown` for missing data.
+- Drafted three LinkedIn posts and a small-business security-baseline checklist. These are owner-review drafts only; nothing was posted or sent.
+- Added `tests/test_marketing_conversion_path.py` for CTA, retained routes, metadata, source offer/sitemap paths, draft guardrails and rollout-status documentation.
 
 ### Validation and deployment evidence
-- [x] Confirmed the Quick-Audit destination already exists in `sitemap.xml`.
-- [x] Confirmed the source offer page includes the CAD $249 price, read-only language, scope/authorization wording, Stripe destination, and scoping-call destination.
-- [x] Rechecked the public homepage after the PR merge; it still rendered the previous hero CTA set in the browser-readable page result.
+- [x] Confirmed the Quick-Audit destination exists in `sitemap.xml`.
+- [x] Confirmed the source-controlled Quick-Audit page and the latest public text view agree on their principal content: CAD $249, read-only review, written authorization, scope-confirmation steps, Stripe checkout and the scoping-call link.
 - [x] GitHub's built-in `pages build and deployment` run `37949480184` for merge commit `24c3691a...` reported success, including the deploy step.
-- [ ] Run `pytest tests/test_marketing_conversion_path.py` and the full CI/site/SEO/Lighthouse suite. The regular CI and site/security/SEO workflows for the merge commit reported failures before any workflow steps ran; job responses had no steps and runner ID 0, and their log downloads were unavailable. These checks must be treated as **not executed / unverified**, not as passing or as proven code failures.
-- [ ] Confirm the effective production host/deployment pipeline and that the public domain serves the current `main` revision. A successful GitHub Pages deployment plus a public response still showing old CTA copy means the custom-domain rollout/serving origin is not yet verified.
-- [ ] Reconcile the richer live Quick-Audit page with `offers/security-quick-audit.html` on `main`. Do not replace that page with the older source copy until its intended content and deployment source have been reconciled.
-- [ ] Establish an analytics/Search Console/CRM baseline with authorized account access; none of those data sources were connected in this work.
+- [x] Rechecked the public homepage after merge. The browser-readable result still showed the former hero actions — “Request a Strategic Brief,” “View Capabilities,” and “Founder Profile” — while GitHub `main` contains the new Quick-Audit CTA.
+- [ ] Run `pytest tests/test_marketing_conversion_path.py` and the full CI/site/SEO/Lighthouse suite. Regular CI and several site/security/SEO workflows for the merge commit returned failures before any workflow steps ran; job responses had no steps and runner ID 0, with log downloads unavailable. Treat code tests and audit gates as **not executed / unverified**, not as passing or as demonstrated code failures.
+- [ ] Establish why the current public domain still renders old homepage CTA copy after the successful GitHub Pages run. The available evidence does not establish whether the public domain uses a different deployment origin, cache/propagation is stale, or a separate release path is authoritative.
+- [ ] Establish an analytics/Search Console/CRM baseline with authorized account access; those data sources were not connected.
 - [ ] Validate the offer with buyer conversations and delivery economics.
 - [ ] Review and approve public content before external publication.
 
-### Remaining release / measurement blockers
-The live homepage retrieved on 9 October 2026 after merge still showed the previous primary actions (“Request a Strategic Brief,” “View Capabilities,” “Founder Profile”), not the new Quick-Audit CTA present on GitHub `main`. Separately, the live Quick-Audit page has materially more explicit buyer-fit, scope, exclusion, evidence-limit, process, and report-timing copy than the source-controlled HTML. The discrepancy is consistent with source drift, a distinct deployment origin, or cache/propagation behavior; the available evidence does not establish which explanation is correct.
+### Correction to the initial source-drift interpretation
 
-**No further release or deployment action should be triggered until the deployed source and current public-domain response are reconciled.** The GitHub Pages deployment run did report success, so it would be inaccurate to claim that no deployment of any kind occurred. No paid advertising, billing/payment action, test checkout, form submission, or external outreach was performed. The content assets remain drafts and the scorecard remains an unpopulated template.
+The most recent public-text retrieval of `/offers/security-quick-audit.html` (9 October 2026) shows the same principal text as the current source-controlled HTML. The earlier concern that the live Quick-Audit page was materially richer is **not supported by this latest retrieval** and should not be treated as a confirmed mismatch. A remaining content-quality opportunity is to make scope exclusions explicit on the Quick-Audit page (for example, that it is not a penetration test, incident-response engagement or certification/attestation) and clarify exactly when the three-business-day target begins. Those edits should be made deliberately and validated before any whole-site release.
+
+### Current release / measurement blocker
+
+The current, browser-readable public homepage shows the previous hero CTA set, while the source on `main` contains the Quick-Audit CTA. Although the GitHub Pages build/deployment run reported success, that single result does not establish that `www.clearglassinc.com` is serving the new homepage revision. **Do not trigger another deployment or call the public rollout complete until the effective hosting origin and public-domain response are reconciled.**
+
+No paid advertising, billing/payment action, test checkout, form submission or external outreach was performed. The scorecard remains unpopulated; the posts remain drafts.
