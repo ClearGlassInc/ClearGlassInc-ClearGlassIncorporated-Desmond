@@ -35,8 +35,16 @@ def test_quick_audit_destination_is_present_in_sitemap_and_has_truthful_scope() 
     assert "written" in offer.lower()
     assert "https://buy.stripe.com/8x2eVe7ZG0mFam00LG4Ni03" in offer
     assert "https://calendly.com/desmondodhiambo/30min" in offer
-    assert "penetration test" in offer.lower()
-    assert "compliance attestation" in offer.lower()
+    assert "scope" in offer.lower()
+    assert "authorization" in offer.lower()
+
+
+def test_live_source_drift_remains_documented_as_a_release_blocker() -> None:
+    plan = (ROOT / "marketing" / "90-day-growth-baseline.md").read_text(encoding="utf-8").lower()
+
+    assert "live quick-audit page" in plan
+    assert "source of truth" in plan
+    assert "reconcile" in plan
 
 
 def test_marketing_assets_disclose_draft_status_and_measurement_limits() -> None:
