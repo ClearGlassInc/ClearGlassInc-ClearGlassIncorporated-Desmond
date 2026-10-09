@@ -61,8 +61,8 @@ def scan(root: Path) -> list[str]:
         try:
             text = path.read_text(encoding="utf-8", errors="ignore")
         except OSError:
-            # An unreadable file is not evidence of cleanliness, but it is also
-            # not a finding; the walk continues and the run stays honest.
+            # Fail closed: an unreadable candidate file cannot be treated as clean.
+            findings.append(f"{path}: unreadable file")
             continue
         for label, pattern in compiled.items():
             if pattern.search(text):
