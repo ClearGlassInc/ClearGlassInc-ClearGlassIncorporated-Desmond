@@ -47,6 +47,6 @@ def test_marketing_assets_disclose_draft_status_and_measurement_limits() -> None
 
     assert "Unknown" in scorecard
     assert "CAC" in scorecard
-    assert "not a market-size study" in scan
+    assert "not a market-size study" in scan.lower()
     assert "nothing has been posted or sent" in launch_kit.lower()
     assert "not an audit, certification, penetration test, or legal opinion" in checklist
