@@ -43,7 +43,7 @@ def test_public_homepage_rollout_status_remains_documented() -> None:
     plan = (ROOT / "marketing" / "90-day-growth-baseline.md").read_text(encoding="utf-8").lower()
 
     assert "public homepage" in plan
-    assert "previous primary actions" in plan
+    assert "previous hero actions" in plan
     assert "public domain" in plan
 
 
