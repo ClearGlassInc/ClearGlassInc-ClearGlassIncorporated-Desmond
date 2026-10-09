@@ -39,12 +39,12 @@ def test_quick_audit_destination_is_present_in_sitemap_and_has_truthful_scope() 
     assert "authorization" in offer.lower()
 
 
-def test_live_source_drift_remains_documented_as_a_release_blocker() -> None:
+def test_public_homepage_rollout_status_remains_documented() -> None:
     plan = (ROOT / "marketing" / "90-day-growth-baseline.md").read_text(encoding="utf-8").lower()
 
-    assert "live quick-audit page" in plan
-    assert "source of truth" in plan
-    assert "reconcile" in plan
+    assert "public homepage" in plan
+    assert "previous primary actions" in plan
+    assert "public domain" in plan
 
 
 def test_marketing_assets_disclose_draft_status_and_measurement_limits() -> None:
