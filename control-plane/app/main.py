@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from . import __version__
 from .config import get_settings
 from .routers import (
+    apex,
     approvals,
     commerce,
     etsy,
@@ -164,6 +165,8 @@ def create_app() -> FastAPI:
     # Sentinel Core's model endpoint: public (the console is a static site), rate
     # limited, capped per day, read-only tools, one audit row per answer.
     app.include_router(sentinel.router)
+    # APEX planning is admin-only and shares the existing risk and audit kernel.
+    app.include_router(apex.router, dependencies=admin)
     app.include_router(orders.router, dependencies=admin)
     app.include_router(inventory.router, dependencies=admin)
     app.include_router(metrics.router, dependencies=admin)
