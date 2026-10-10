@@ -67,7 +67,10 @@ def plan_mission(
     if _SENSITIVE_INPUT.search(supplied_text):
         raise HTTPException(
             status_code=422,
-            detail="Sensitive credentials or personal identifiers are not accepted; no plan was created.",
+            detail=(
+                "Sensitive credentials or personal identifiers are not accepted; "
+                "no plan was created."
+            ),
         )
 
     try:
@@ -80,13 +83,17 @@ def plan_mission(
             objective=req.objective,
             requested_action=req.requested_action,
             sources=sources,
-            fingerprint_key=settings.crcs_audit_hash_key or "local-development-key-change-in-production",
+            fingerprint_key=(
+                settings.crcs_audit_hash_key or "local-development-key-change-in-production"
+            ),
         )
     except apex_core.APEXInputError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     objective_fingerprint = hmac.new(
-        (settings.crcs_audit_hash_key or "local-development-key-change-in-production").encode("utf-8"),
+        (
+            settings.crcs_audit_hash_key or "local-development-key-change-in-production"
+        ).encode("utf-8"),
         req.objective.strip().encode("utf-8"),
         hashlib.sha256,
     ).hexdigest()
