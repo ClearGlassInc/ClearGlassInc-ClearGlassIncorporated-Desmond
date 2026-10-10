@@ -1,4 +1,4 @@
-# ClearGlass OSINT Fraud Detection Dashboard Prototype
+# ClearGlass Inc.
 
 Prototype uses synthetic fixtures only. No real incidents are included.
 
