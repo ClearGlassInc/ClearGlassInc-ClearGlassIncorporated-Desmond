@@ -33,6 +33,16 @@ def test_plan_is_explicitly_non_executing_and_integrates_governance() -> None:
     assert plan["sources"][0]["digest_status"] == "declared_not_verified"
 
 
+def test_duplicate_source_ids_are_rejected() -> None:
+    source = EvidenceRef("DUP-1", "repo://docs/one.md")
+    with pytest.raises(APEXInputError, match="unique"):
+        create_plan(
+            mission_id="MISSION-DUP",
+            objective="Review this system and make a recommendation.",
+            sources=(source, source),
+        )
+
+
 def test_unknown_actions_stay_fail_closed_through_apex() -> None:
     plan = create_plan(
         mission_id="MISSION-2",
@@ -59,6 +69,8 @@ def test_invalid_source_digest_and_uri_are_rejected() -> None:
         EvidenceRef("SRC-1", "https://user:password@example.org/private")
     with pytest.raises(APEXInputError):
         EvidenceRef("SRC-2", "javascript:alert(1)")
+    with pytest.raises(APEXInputError):
+        EvidenceRef("SRC-4", "https://[malformed")
     with pytest.raises(APEXInputError):
         EvidenceRef("SRC-3", "repo://docs/file.md", "not-a-digest")
 
