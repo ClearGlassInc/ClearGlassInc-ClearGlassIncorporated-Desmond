@@ -20,7 +20,9 @@ from .governance import RiskAssessment, score_action
 _SOURCE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
 _SHA256 = re.compile(r"^[a-fA-F0-9]{64}$")
 _ALLOWED_SCHEMES = {"https", "http", "repo", "artifact", "dataset", "urn"}
-_SECURITY_TERMS = ("security", "threat", "incident", "vulnerability", "defense", "defence", "attack", "audit")
+_SECURITY_TERMS = (
+    "security", "threat", "incident", "vulnerability", "defense", "defence", "attack", "audit"
+)
 _QUANTUM_TERMS = ("quantum", "optimization", "optimisation", "schedule", "scheduling", "routing")
 
 
@@ -96,7 +98,11 @@ class APEXPlan:
             "steps": [step.to_dict() for step in self.steps],
             "quantum_research": {
                 "included": self.quantum_research_included,
-                "status": "benchmark_design_only" if self.quantum_research_included else "not_requested",
+                "status": (
+                    "benchmark_design_only"
+                    if self.quantum_research_included
+                    else "not_requested"
+                ),
                 "quantum_job_submitted": False,
                 "quantum_advantage_claimed": False,
             },
@@ -115,12 +121,18 @@ def _make_steps(objective: str, quantum_requested: bool) -> tuple[PlanStep, ...]
         ),
         (
             "ARTEMIS",
-            "Map each supplied source to its provenance; correlate only supported facts and preserve contradictions.",
+            (
+                "Map each supplied source to its provenance; correlate supported facts "
+                "and preserve contradictions."
+            ),
             "Evidence map with source identifiers, limitations and unresolved conflicts",
         ),
         (
             "AEGIS",
-            "Apply the existing fail-closed risk policy; identify actions requiring a human decision.",
+            (
+                "Apply the existing fail-closed risk policy; identify actions requiring "
+                "a human decision."
+            ),
             "Policy decision and approval boundary",
         ),
     ]
@@ -128,7 +140,10 @@ def _make_steps(objective: str, quantum_requested: bool) -> tuple[PlanStep, ...]
         rows.append(
             (
                 "SENTINEL",
-                "Review defensive security implications and independently identify unsupported threat claims.",
+                (
+                    "Review defensive security implications and independently identify "
+                    "unsupported threat claims."
+                ),
                 "Defensive findings, counterevidence and remediation options",
             )
         )
@@ -144,14 +159,20 @@ def _make_steps(objective: str, quantum_requested: bool) -> tuple[PlanStep, ...]
         rows.append(
             (
                 "QUANTUM_RESEARCH",
-                "Specify a reproducible classical-versus-quantum or quantum-inspired benchmark before selecting a backend.",
+                (
+                    "Specify a reproducible classical-versus-quantum or quantum-inspired "
+                    "benchmark before selecting a backend."
+                ),
                 "Benchmark protocol, equal-constraint baseline and claim limitations",
             )
         )
     rows.append(
         (
             "CORTEX",
-            "Synthesize a traceable recommendation and distinguish verified facts, hypotheses and missing evidence.",
+            (
+                "Synthesize a traceable recommendation and distinguish verified facts, "
+                "hypotheses and missing evidence."
+            ),
             "Decision brief with confidence limits and next human review",
         )
     )
@@ -239,7 +260,10 @@ class BenchmarkSummary:
     sample_count: int
 
     def __post_init__(self) -> None:
-        if self.backend not in {"classical", "quantum_simulator", "quantum_hardware", "quantum_inspired"}:
+        supported_backends = {
+            "classical", "quantum_simulator", "quantum_hardware", "quantum_inspired"
+        }
+        if self.backend not in supported_backends:
             raise APEXInputError("unsupported benchmark backend label")
         if not self.problem_fingerprint or not self.constraints_fingerprint:
             raise APEXInputError("problem and constraints fingerprints are required")
@@ -251,7 +275,9 @@ class BenchmarkSummary:
             raise APEXInputError("sample_count must be at least 1")
 
 
-def compare_benchmarks(candidate: BenchmarkSummary, baseline: BenchmarkSummary) -> dict[str, object]:
+def compare_benchmarks(
+    candidate: BenchmarkSummary, baseline: BenchmarkSummary
+) -> dict[str, object]:
     """Report candidate signals without ever asserting quantum advantage.
 
     Lower runtime and lower objective value are treated as better for this generic
