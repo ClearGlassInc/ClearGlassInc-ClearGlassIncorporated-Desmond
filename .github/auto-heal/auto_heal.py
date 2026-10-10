@@ -2,12 +2,14 @@
 """Conservative GitHub Actions self-healing controller."""
 from __future__ import annotations
 
+import io
 import json
 import os
 import re
 import sys
 import urllib.error
 import urllib.request
+import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -23,6 +25,44 @@ REPOSITORY = os.environ.get("GITHUB_REPOSITORY", "")
 API_URL = os.environ.get("GITHUB_API_URL", "https://api.github.com").rstrip("/")
 TARGET_RUN_ID = os.environ.get("AUTO_HEAL_RUN_ID", "").strip()
 SELF_WORKFLOW = os.environ.get("AUTO_HEAL_WORKFLOW_NAME", "Auto Heal")
+
+# Logs and API error bodies are untrusted: never persist a credential-shaped
+# value into the issue register, learned signatures, or run history.
+SENSITIVE_TOKEN_PATTERNS = (
+    re.compile(
+        r"\b(?:gh[pousr]_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|"
+        r"sk_(?:live|test)_[A-Za-z0-9]{16,}|rk_(?:live|test)_[A-Za-z0-9]{16,}|"
+        r"whsec_[A-Za-z0-9]{16,}|AKIA[A-Z0-9]{16}|xox[baprs]-[A-Za-z0-9-]{10,})\b",
+        re.IGNORECASE,
+    ),
+    re.compile(r"\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b"),
+)
+AUTHORIZATION_HEADER_RE = re.compile(
+    r"(?i)\b(authorization\s*[:=]\s*)(?:bearer|basic)\s+[^\s,;]+"
+)
+BEARER_TOKEN_RE = re.compile(r"(?i)\b(bearer\s+)[A-Za-z0-9._~+/=-]+")
+CREDENTIAL_ASSIGNMENT_RE = re.compile(
+    r"(?i)\b((?:api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret|"
+    r"secret[_-]?key|password|passwd|token|secret|credential|private[_-]?key)"
+    r"\s*[:=]\s*)(?:\"[^\"]*\"|'[^']*'|[^\s,;]+)"
+)
+COOKIE_HEADER_RE = re.compile(r"(?im)^\s*(set-cookie|cookie)\s*:\s*[^\r\n]*")
+PRIVATE_KEY_BLOCK_RE = re.compile(
+    r"-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----.*?-----END [A-Z0-9 ]*PRIVATE KEY-----",
+    re.DOTALL,
+)
+
+
+def redact_sensitive_text(value: str) -> str:
+    """Redact common credentials before log text is classified or persisted."""
+    redacted = PRIVATE_KEY_BLOCK_RE.sub("[REDACTED PRIVATE KEY BLOCK]", value)
+    redacted = AUTHORIZATION_HEADER_RE.sub(r"\1[REDACTED]", redacted)
+    redacted = BEARER_TOKEN_RE.sub(r"\1[REDACTED]", redacted)
+    redacted = CREDENTIAL_ASSIGNMENT_RE.sub(r"\1[REDACTED]", redacted)
+    redacted = COOKIE_HEADER_RE.sub(r"\1: [REDACTED]", redacted)
+    for pattern in SENSITIVE_TOKEN_PATTERNS:
+        redacted = pattern.sub("[REDACTED]", redacted)
+    return redacted
 
 
 def now() -> str:
@@ -60,16 +100,28 @@ def api(method: str, path: str, payload: dict[str, Any] | None = None) -> Any:
         ctype = response.headers.get("content-type", "")
         if not raw:
             return None
-        if "json" in ctype:
+        if "json" in ctype.lower():
             return json.loads(raw.decode("utf-8"))
-        return raw.decode("utf-8", errors="replace")
+        if "zip" in ctype.lower() or raw.startswith(b"PK\x03\x04"):
+            try:
+                with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+                    logs = [
+                        f"===== {name} =====\n"
+                        f"{archive.read(name).decode('utf-8', errors='replace')}"
+                        for name in archive.namelist()
+                        if not name.endswith("/")
+                    ]
+                return redact_sensitive_text("\n".join(logs))
+            except (OSError, zipfile.BadZipFile):
+                return "[REDACTED] GitHub Actions log archive could not be decoded."
+        return redact_sensitive_text(raw.decode("utf-8", errors="replace"))
 
 
 def try_api(method: str, path: str, payload: dict[str, Any] | None = None) -> Any:
     try:
         return api(method, path, payload)
     except urllib.error.HTTPError as exc:
-        detail = exc.read().decode("utf-8", errors="replace")
+        detail = redact_sensitive_text(exc.read().decode("utf-8", errors="replace"))
         print(f"API {method} {path} failed: HTTP {exc.code}: {detail[:500]}", file=sys.stderr)
         return None
     except Exception as exc:
@@ -102,6 +154,7 @@ def classify(log_text: str, compiled: list[tuple[re.Pattern[str], dict[str, Any]
 
 
 def signature(log_text: str) -> str:
+    log_text = redact_sensitive_text(log_text)
     lines = [line.strip() for line in log_text.splitlines() if line.strip()]
     interesting = [
         line for line in lines
@@ -163,7 +216,7 @@ def create_issue(run: dict[str, Any], category: str, strategy: str, diagnostics:
         labels.append("deps")
     excerpt_lines: list[str] = []
     for diag in diagnostics[:8]:
-        clean_sig = str(diag.get("signature", "")).replace("`", "'")
+        clean_sig = redact_sensitive_text(str(diag.get("signature", ""))).replace("`", "'")
         excerpt_lines.append(f"- `{diag.get('job', 'unknown')}`: `{clean_sig}`")
     excerpts = "\n".join(excerpt_lines) or "- No failed-job log excerpt was available."
     body = f"""<!-- auto-heal-run:{run_id} -->
