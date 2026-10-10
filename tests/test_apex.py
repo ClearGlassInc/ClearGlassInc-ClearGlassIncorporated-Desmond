@@ -97,3 +97,28 @@ def test_governance_kernel_still_provides_risk_explanation() -> None:
     assert assessment.score == 5
     assert not assessment.requires_approval
     assert assessment.reasons
+
+
+def test_control_plane_wires_apex_through_the_existing_admin_surface() -> None:
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    main = (root / "control-plane" / "app" / "main.py").read_text(encoding="utf-8")
+    router = (root / "control-plane" / "app" / "routers" / "apex.py").read_text(encoding="utf-8")
+
+    assert "    apex," in main
+    assert "app.include_router(apex.router, dependencies=admin)" in main
+    assert "actor: str = Depends(require_admin)" in router
+    assert "log_event(" in router
+    assert 'action="apex_plan_mission"' in router
+
+
+def test_apex_route_declines_sensitive_inputs_before_creating_a_plan() -> None:
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    router = (root / "control-plane" / "app" / "routers" / "apex.py").read_text(encoding="utf-8")
+    guard = router.index("if _SENSITIVE_INPUT.search(supplied_text):")
+    planner = router.index("plan = apex_core.create_plan(")
+    assert guard < planner
+    assert "no plan was created" in router
