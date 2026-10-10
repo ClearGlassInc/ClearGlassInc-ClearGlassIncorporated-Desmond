@@ -43,9 +43,14 @@ class EvidenceRef:
             raise APEXInputError("source_id must be 1-64 safe identifier characters")
         if not self.uri or len(self.uri) > 1024:
             raise APEXInputError("uri must contain 1-1024 characters")
-        parsed = urlsplit(self.uri)
+        try:
+            parsed = urlsplit(self.uri)
+        except ValueError as exc:
+            raise APEXInputError("uri must be syntactically valid") from exc
         if parsed.scheme.lower() not in _ALLOWED_SCHEMES:
             raise APEXInputError("uri scheme is not allowed for a provenance reference")
+        if parsed.scheme.lower() in {"http", "https"} and not parsed.netloc:
+            raise APEXInputError("http(s) provenance URIs must include a host")
         if parsed.username or parsed.password:
             raise APEXInputError("credentials must not be embedded in provenance URIs")
         if self.sha256 is not None and not _SHA256.fullmatch(self.sha256):
@@ -202,6 +207,9 @@ def create_plan(
         raise APEXInputError("objective must contain 8-2000 characters")
     if not re.fullmatch(r"[a-z][a-z0-9_]{0,79}", requested_action):
         raise APEXInputError("requested_action must be a snake_case action identifier")
+
+    if len({source.source_id for source in sources}) != len(sources):
+        raise APEXInputError("source_id values must be unique within a mission")
 
     quantum_requested = any(term in objective.casefold() for term in _QUANTUM_TERMS)
     steps = _make_steps(objective, quantum_requested)
