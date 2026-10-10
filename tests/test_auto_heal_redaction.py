@@ -76,7 +76,11 @@ def test_api_unzips_and_redacts_github_actions_job_logs(monkeypatch: pytest.Monk
 
     monkeypatch.setattr(auto_heal, "TOKEN", "test-token")
     monkeypatch.setattr(auto_heal, "REPOSITORY", "example/repository")
-    monkeypatch.setattr(auto_heal.urllib.request, "urlopen", lambda _request, timeout: FakeResponse())
+    monkeypatch.setattr(
+        auto_heal.urllib.request,
+        "urlopen",
+        lambda _request, timeout: FakeResponse(),
+    )
 
     result = auto_heal.api("GET", "/repos/example/repository/actions/jobs/123/logs")
     assert "Request failed" in result
