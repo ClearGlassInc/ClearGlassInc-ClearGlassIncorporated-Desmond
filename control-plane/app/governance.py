@@ -22,6 +22,8 @@ class RiskTier(str, Enum):
 # Action types the operator can propose, mapped to a base risk score (0-100).
 # Anything touching money, payment config, fulfillment, or mass outbound is gated.
 ACTION_RISK: dict[str, int] = {
+    # APEX only creates a plan and audit record; it is not an executor.
+    "apex_plan_mission": 5,
     # low — analysis / drafting, fully reversible
     "generate_copy": 5,
     "read_metrics": 0,
