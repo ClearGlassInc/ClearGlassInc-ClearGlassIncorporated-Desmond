@@ -92,8 +92,16 @@ export class SyntheticRulesProvider implements PersonaReasoningProvider {
     return proposals.map((proposal, index) => ({
       ...proposal,
       id: event.id + "-" + proposal.personaId + "-" + index,
+      recordedAt: new Date().toISOString(),
       simHour: context.simHour,
-      sourceEventId: event.id
+      sourceEventId: event.id,
+      toolName: null,
+      inputSummary: JSON.stringify({
+        sourceEventId: event.id,
+        eventCategory: event.category,
+        metrics: context.metrics
+      }),
+      outputSummary: proposal.chosenAction
     }));
   }
 }
