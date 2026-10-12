@@ -37,18 +37,18 @@ export class SyntheticRulesProvider implements PersonaReasoningProvider {
         chosenAction: "Assign a decision owner and compare containment with recovery options",
         rationale: "A coordinated response should preserve reversibility and state which evidence is still missing.",
         riskScore: event.riskScore,
-        approvalStatus: event.riskScore >= 70 ? "pending" : "not-required",
+        approvalStatus: event.riskScore >= 60 ? "pending" : "not-required",
         externalSideEffect: false
       },
       {
         personaId: "response-agent",
         intent: "Prepare a bounded defensive playbook proposal",
-        chosenAction: event.riskScore >= 70
+        chosenAction: event.riskScore >= 60
           ? "Queue containment recommendation for operator approval"
           : "Prepare a reversible synthetic checklist step",
         rationale: "The response agent can recommend and record simulated work only; it has no executable tools.",
         riskScore: event.riskScore,
-        approvalStatus: event.riskScore >= 70 ? "pending" : "not-required",
+        approvalStatus: event.riskScore >= 60 ? "pending" : "not-required",
         externalSideEffect: false
       }
     ];
