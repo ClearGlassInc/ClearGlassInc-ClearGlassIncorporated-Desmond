@@ -44,6 +44,7 @@ export type ApprovalRequest = {
   rationale: string;
   riskScore: number;
   status: ApprovalStatus;
+  relatedEventId?: string;
   approver?: string;
   decidedAt?: string;
 };
@@ -51,12 +52,13 @@ export type ApprovalRequest = {
 export type AgentDecision = {
   id: string;
   simHour: number;
+  sourceEventId: string;
   personaId: string;
   intent: string;
   chosenAction: string;
   rationale: string;
   riskScore: number;
-  approvalStatus: "not-required" | "pending";
+  approvalStatus: "not-required" | "pending" | "approved" | "rejected";
   externalSideEffect: false;
 };
 
