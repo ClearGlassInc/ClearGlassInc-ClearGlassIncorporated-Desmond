@@ -25,13 +25,15 @@ ClearGlassInc-ClearGlassIncorporated-Desmond/
     │   ├── model.ts
     │   ├── scenario.ts
     │   ├── agent-runtime.ts
+    │   ├── policy.ts
     │   └── engine.ts
     ├── prisma/
     │   └── schema.prisma
     ├── schemas/
     │   └── persona.schema.json
     ├── tests/
-    │   └── engine.test.ts
+    │   ├── engine.test.ts
+    │   └── policy.test.ts
     └── docs/
         ├── ARCHITECTURE.md
         ├── DATA-MODELS.md
