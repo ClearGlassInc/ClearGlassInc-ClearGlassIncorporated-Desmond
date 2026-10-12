@@ -264,6 +264,7 @@ export function injectEvent(state: WorldState, kind: InjectedEventKind): WorldSt
     preset.blastRadius
   );
   const proposals = agentProvider.propose({
+    runId: state.runId,
     simHour: state.simHour,
     event,
     metrics: metrics(state)
@@ -387,6 +388,7 @@ export function advanceOneHour(state: WorldState): WorldState {
       preset.blastRadius
     );
     const proposals = agentProvider.propose({
+      runId: next.runId,
       simHour: nextHour,
       event,
       metrics: metrics(next)
