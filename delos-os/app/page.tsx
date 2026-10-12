@@ -365,6 +365,24 @@ export default function DelosConsole() {
               <section className="panel report-main"><div className="panel-header"><div><div className="eyebrow">INTELLIGENCE / AFTER-ACTION</div><h2>Decision intelligence report</h2></div><span className="panel-tag">LOCAL EXPORT</span></div>
                 <p className="detail-lead">{afterActionReport(state).executiveSummary}</p>
                 <div className="report-kpis"><div><span>Mission progress</span><strong>{state.missionProgress}%</strong></div><div><span>High-risk events</span><strong>{state.events.filter((event) => event.riskScore >= 70).length}</strong></div><div><span>Approvals accepted</span><strong>{state.approvals.filter((approval) => approval.status === "approved").length}</strong></div><div><span>Audit records</span><strong>{state.audit.length}</strong></div></div>
+                <h3 className="subheading">Persona engine proposals <span className="subheading-note">SYNTHETIC · NO TOOLS</span></h3>
+                <p className="proposal-intro">Bounded personas generate decision options from the scenario record. These proposals are not actions; high-risk recommendations stay gated for an operator decision.</p>
+                <div className="proposal-list">
+                  {[...state.agentDecisions].reverse().slice(0, 8).map((decision) => {
+                    const persona = PERSONAS.find((item) => item.id === decision.personaId) || PERSONAS[0];
+                    return <article className="decision-card" key={decision.id}>
+                      <div className="decision-top">
+                        <span className="decision-persona">{persona.name}</span>
+                        <span className={"risk-chip " + (decision.riskScore >= 70 ? "risk-high" : decision.riskScore >= 40 ? "risk-medium" : "risk-low")}>RISK {decision.riskScore}</span>
+                      </div>
+                      <div className="decision-intent">{decision.intent}</div>
+                      <strong className="decision-action">{decision.chosenAction}</strong>
+                      <p className="decision-rationale">{decision.rationale}</p>
+                      <div className="decision-foot"><span>{decision.approvalStatus === "pending" ? "HUMAN REVIEW REQUIRED" : "SIMULATION ONLY"}</span><span>EXTERNAL SIDE EFFECT: NO</span></div>
+                    </article>;
+                  })}
+                  {state.agentDecisions.length === 0 ? <div className="empty-state">No persona proposals yet. Launch the scenario and advance the clock or inject a synthetic event to generate bounded recommendations.</div> : null}
+                </div>
                 <h3 className="subheading">Recommended actions</h3>{afterActionReport(state).recommendations.map((item, index) => <div className="recommendation-row" key={item}><span>0{index + 1}</span><p>{item}</p></div>)}
                 <h3 className="subheading">Current branch</h3><div className="boundary-callout"><strong>{state.branchName}</strong> · T+{String(state.simHour).padStart(2, "0")}H · {state.status.toUpperCase()} {state.parentSnapshotId ? "· forked from " + state.parentSnapshotId : "· baseline branch"}</div>
                 <div className="panel-actions"><button className="button button-primary" onClick={exportMarkdown}>↓ Export Markdown</button><button className="button button-secondary" onClick={exportJson}>↓ Export JSON</button></div>
