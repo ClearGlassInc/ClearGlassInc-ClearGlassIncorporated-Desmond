@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://clearglassinc.com/delos/schemas/persona.schema.json",
+  "title": "DELOS OS Synthetic Persona",
+  "description": "Synthetic-only persona definition. This schema is a design contract; MVP loads typed local fixture personas.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "identity",
+    "role",
+    "objective",
+    "personality",
+    "expertise",
+    "permissions",
+    "knowledgeBoundary",
+    "riskLevel",
+    "memoryScope",
+    "approvalRequirements"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,63}$"
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "displayName"
+      ],
+      "properties": {
+        "kind": {
+          "const": "synthetic"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "disclosure": {
+          "type": "string",
+          "default": "Synthetic DELOS OS persona; not a real person."
+        }
+      }
+    },
+    "role": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 120
+    },
+    "objective": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 1000
+    },
+    "personality": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 500
+    },
+    "expertise": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 120
+      },
+      "maxItems": 20,
+      "uniqueItems": true
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 160
+      },
+      "maxItems": 30,
+      "uniqueItems": true
+    },
+    "availableTools": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]{0,63}$"
+      },
+      "default": [],
+      "maxItems": 20,
+      "uniqueItems": true
+    },
+    "knowledgeBoundary": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 2000
+    },
+    "riskLevel": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "memoryScope": {
+      "enum": [
+        "none",
+        "current-run",
+        "organization-approved",
+        "persona-profile"
+      ]
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "personaId",
+          "relationship"
+        ],
+        "properties": {
+          "personaId": {
+            "type": "string"
+          },
+          "relationship": {
+            "type": "string",
+            "maxLength": 200
+          }
+        }
+      },
+      "maxItems": 100
+    },
+    "approvalRequirements": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 250
+      },
+      "maxItems": 30
+    },
+    "policyVersion": {
+      "type": "string",
+      "default": "delos-policy-v1"
+    }
+  }
+}
