@@ -6,6 +6,7 @@ import type { AgentDecision, SimulationEvent, WorldMetrics } from "./model";
  * This MVP intentionally uses deterministic synthetic rules and has no LLM key.
  */
 export type PersonaReasoningContext = {
+  runId: string;
   simHour: number;
   event: SimulationEvent;
   metrics: WorldMetrics;
@@ -21,7 +22,7 @@ export class SyntheticRulesProvider implements PersonaReasoningProvider {
 
   propose(context: PersonaReasoningContext): AgentDecision[] {
     const event = context.event;
-    const proposals: Omit<AgentDecision, "id" | "simHour" | "sourceEventId" | "recordedAt" | "toolName" | "inputSummary" | "outputSummary">[] = [
+    const proposals: Omit<AgentDecision, "id" | "agentId" | "simHour" | "sourceEventId" | "recordedAt" | "toolName" | "inputSummary" | "outputSummary">[] = [
       {
         personaId: "security-analyst",
         intent: "Correlate evidence and preserve telemetry",
@@ -92,6 +93,7 @@ export class SyntheticRulesProvider implements PersonaReasoningProvider {
     return proposals.map((proposal, index) => ({
       ...proposal,
       id: event.id + "-" + proposal.personaId + "-" + index,
+      agentId: "agent:" + context.runId + ":" + proposal.personaId,
       recordedAt: new Date().toISOString(),
       simHour: context.simHour,
       sourceEventId: event.id,
