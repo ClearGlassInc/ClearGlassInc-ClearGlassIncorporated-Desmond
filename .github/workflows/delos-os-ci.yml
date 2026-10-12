@@ -1,13 +1,16 @@
 name: DELOS OS CI
 
 on:
+  workflow_dispatch:
   pull_request:
     paths:
       - "delos-os/**"
       - ".github/workflows/delos-os-ci.yml"
   push:
     branches:
+      - main
       - "feature/delos-os-mvp-2026-10-12"
+      - "fix/delos-ci-main-trigger-2026-10-12"
     paths:
       - "delos-os/**"
       - ".github/workflows/delos-os-ci.yml"
@@ -15,9 +18,14 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: delos-os-ci-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Check out repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
