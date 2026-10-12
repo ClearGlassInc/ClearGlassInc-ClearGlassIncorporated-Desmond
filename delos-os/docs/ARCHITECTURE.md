@@ -20,7 +20,7 @@ Operator browser
   -> Simulation Kernel (deterministic state transitions and versioned snapshots)
   -> Event log + audit chain (append-only writes; PostgreSQL)
   -> Redis queue / worker pool (future asynchronous persona turns and replay jobs)
-  -> Persona Runtime (provider-agnostic; schema-validated outputs)
+  -> Persona Runtime (`PersonaReasoningProvider`; synthetic rules provider first; schema-validated proposal records)
   -> Tool Gateway (deny-all by default; sandbox and explicit allow-list only)
   -> Report Generator (Markdown/JSON first; PDF after renderer testing)
   -> Observability (structured logs, metrics, traces, redacted payloads)
@@ -30,10 +30,11 @@ The browser prototype intentionally bypasses no production policy: it has no ext
 ## Layer boundaries
 
 - World Forge: validates a world definition and immutable revision.
-- Persona Engine: validates persona schemas and knowledge/tool boundaries.
+- Persona Engine: validates persona schemas and knowledge/tool boundaries; each proposal includes a source event ID, rationale, risk score, and explicit `externalSideEffect: false` contract in the MVP.
+- SyntheticRulesProvider: provides deterministic, provider-pluggable multi-persona proposals without API keys or external calls; model-backed adapters remain disabled until server-side validation and governance are built.
 - Agent Operations: state reads and proposals only; all proposed actions enter the policy gate before mutation.
 - Narrative Director: produces scenario injects; cannot amend canonical history except through an audited event.
 - Reality Engine: applies deterministic domain events; a provider response is a proposal, never executable authority.
 - Command Console: reads state and issues authenticated operator commands.
-- Governance Core: role checks, approval separation of duties, global stop, retention, audit hash chain, and export authorization.
+- Governance Core: role checks, approval separation of duties, event-linked approval decisions, global stop, retention, audit hash chain, and export authorization.
 - Intelligence: creates reports from recorded facts, labeling assumptions and unresolved items.
