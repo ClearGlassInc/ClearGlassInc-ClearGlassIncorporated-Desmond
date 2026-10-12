@@ -211,9 +211,11 @@ model AgentDecision {
   id              String        @id @default(cuid())
   runId           String
   agentId         String
-  sourceEventId    String
+  personaId       String
+  sourceEventId   String
   intent          String
   chosenAction    String
+  rationale       String
   toolName        String?
   inputDigest     String?
   inputSummary    String
@@ -222,11 +224,13 @@ model AgentDecision {
   approvalStatus  AgentDecisionApprovalStatus
   externalSideEffect Boolean     @default(false)
   sequence        Int
+  recordedAt      DateTime      @default(now())
   createdAt       DateTime      @default(now())
   run             SimulationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
 
   @@unique([runId, sequence])
-  @@index([runId, createdAt])
+  @@index([runId, recordedAt])
+  @@index([runId, agentId])
 }
 
 model AuditEvent {
