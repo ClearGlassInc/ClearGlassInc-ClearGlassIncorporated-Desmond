@@ -22,8 +22,8 @@ Gate: separate requester/approver test, session expiry test, and restore test pa
 
 ## Days 15–19 · Governed persona/provider runtime (Oct 27–31)
 
-Deliverable: provider interface, synthetic provider, schema validation, server-side policy gate, approval expiry/state-version checks, Markdown and JSON exports.
-KPIs: no external actions possible without a granted connector; all high-risk proposals logged; every rejected proposal has a policy reason.
+Deliverable: synthetic provider interface and provider-pluggable persona proposals, server-side schema validation, policy gate, approval expiry/state-version checks, Markdown and JSON exports.
+KPIs: current synthetic provider reports zero external side effects; all high-risk proposals are event-linked and approval-gated; every rejected proposal has a policy reason.
 Gate: threat-model review, dependency audit, and reviewed prompt-injection tests.
 
 ## Days 20–24 · Observability and branch analysis (Nov 1–5)
