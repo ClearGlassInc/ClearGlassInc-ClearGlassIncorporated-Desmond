@@ -204,11 +204,13 @@ model AgentDecision {
   id              String        @id @default(cuid())
   runId           String
   agentId         String
+  sourceEventId    String
   sourceEventId   String?
   intent          String
   chosenAction    String
   toolName        String?
   inputDigest     String?
+  inputSummary    String
   outputSummary   String
   riskScore       Int
   approvalStatus  ApprovalStatus?
