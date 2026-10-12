@@ -415,9 +415,9 @@ export function advanceOneHour(state: WorldState): WorldState {
       "scenario.event",
       event.title,
       event.riskScore,
-      event.riskScore >= 70 ? "pending" : "not-required"
+      requiresHumanApproval(event.riskScore) ? "pending" : "not-required"
     );
-    if (event.riskScore >= 70) {
+    if (requiresHumanApproval(event.riskScore)) {
       const approval: ApprovalRequest = {
         id: id("approval"),
         requestedAt: now(),
