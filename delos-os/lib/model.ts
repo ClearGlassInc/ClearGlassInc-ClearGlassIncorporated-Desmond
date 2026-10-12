@@ -119,6 +119,7 @@ export type WorldState = WorldMetrics & {
   lastUpdatedAt: string;
   agents: AgentRecord[];
   events: SimulationEvent[];
+  agentDecisions: AgentDecision[];
   approvals: ApprovalRequest[];
   audit: AuditEvent[];
   snapshots: WorldSnapshot[];
