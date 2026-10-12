@@ -189,6 +189,7 @@ model ApprovalRequest {
   riskScore      Int
   status         ApprovalStatus @default(PENDING)
   requestedBy    String
+  relatedEventId String?
   decidedBy      String?
   decisionReason String?
   expiresAt      DateTime?
