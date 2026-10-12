@@ -383,6 +383,12 @@ export default function DelosConsole() {
                       <strong className="decision-action">{decision.chosenAction}</strong>
                       <p className="decision-rationale">{decision.rationale}</p>
                       <div className="decision-foot"><span className={decision.approvalStatus === "approved" ? "decision-status-approved" : decision.approvalStatus === "rejected" ? "decision-status-rejected" : decision.approvalStatus === "pending" ? "decision-status-pending" : ""}>{decision.approvalStatus === "pending" ? "HUMAN REVIEW REQUIRED" : decision.approvalStatus === "approved" ? "OPERATOR APPROVED" : decision.approvalStatus === "rejected" ? "REJECTED BY OPERATOR" : "SIMULATION ONLY"}</span><span>EXTERNAL SIDE EFFECT: NO</span></div>
+                      <div className="decision-trace">
+                        <span>RECORDED {new Date(decision.recordedAt).toLocaleTimeString()}</span>
+                        <span>TOOL {decision.toolName ?? "NONE"}</span>
+                        <p><b>INPUT</b> {decision.inputSummary}</p>
+                        <p><b>OUTPUT</b> {decision.outputSummary}</p>
+                      </div>
                     </article>;
                   })}
                   {state.agentDecisions.length === 0 ? <div className="empty-state">No persona proposals yet. Launch the scenario and advance the clock or inject a synthetic event to generate bounded recommendations.</div> : null}
