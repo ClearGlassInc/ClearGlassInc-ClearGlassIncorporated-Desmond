@@ -10,7 +10,9 @@ import {
   injectEvent,
   restoreCheckpoint,
   scoreRisk,
-  startRun
+  startRun,
+  terminateRun,
+  reportAsMarkdown
 } from "../lib/engine";
 
 test("risk scoring is bounded and rejects out-of-range inputs", () => {
@@ -86,4 +88,29 @@ test("the completed scenario has a hard 72-hour ceiling", () => {
   assert.equal(state.simHour, 72);
   assert.equal(state.status, "completed");
   assert.equal(advanceOneHour(state).simHour, 72);
+});
+
+
+test("initial fixture is deterministic across server and browser hydration", () => {
+  const first = createInitialState();
+  const second = createInitialState();
+  assert.equal(first.runId, second.runId);
+  assert.equal(first.lastUpdatedAt, second.lastUpdatedAt);
+  assert.deepEqual(first.approvals.map((approval) => approval.id), second.approvals.map((approval) => approval.id));
+  assert.deepEqual(first.events.map((event) => event.id), second.events.map((event) => event.id));
+});
+
+test("after-action Markdown exports real line breaks", () => {
+  const markdown = reportAsMarkdown(createInitialState());
+  assert.ok(markdown.includes("\n## KPIs\n"));
+  assert.ok(!markdown.includes("\\n## KPIs\\n"));
+});
+
+test("termination is distinct from emergency stop and prevents future advancement", () => {
+  const running = startRun(createInitialState());
+  const terminated = terminateRun(running);
+  assert.equal(terminated.status, "terminated");
+  assert.equal(terminated.safetyStop, false);
+  assert.equal(advanceOneHour(terminated).simHour, terminated.simHour);
+  assert.ok(terminated.audit.some((entry) => entry.action === "simulation.terminated"));
 });
