@@ -13,6 +13,7 @@ import { PERSONAS, SCENARIO } from "./scenario";
 
 const agentProvider = new SyntheticRulesProvider();
 
+const INITIAL_TIME = "2026-10-12T00:00:00.000Z";
 const now = (): string => new Date().toISOString();
 const id = (prefix: string): string =>
   prefix + "-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
@@ -84,7 +85,8 @@ function makeEvent(
 }
 
 export function createInitialState(): WorldState {
-  const initialEvent = makeEvent(
+  const initialEvent: SimulationEvent = {
+    ...makeEvent(
     0,
     "milestone",
     "Synthetic environment verified",
@@ -94,19 +96,22 @@ export function createInitialState(): WorldState {
     0,
     5,
     0
-  );
+    ),
+    id: "evt-glassfall-start",
+    recordedAt: INITIAL_TIME
+  };
   const approvals: ApprovalRequest[] = [
     {
-      id: id("approval"),
-      requestedAt: now(),
+      id: "approval-supplier-isolation",
+      requestedAt: INITIAL_TIME,
       action: "Isolate the simulated supplier integration",
       rationale: "Containment may reduce blast radius but risks delaying recovery. Operator decision required.",
       riskScore: 76,
       status: "pending"
     },
     {
-      id: id("approval"),
-      requestedAt: now(),
+      id: "approval-comms-draft",
+      requestedAt: INITIAL_TIME,
       action: "Approve a draft executive incident statement",
       rationale: "Messaging must be checked against verified facts before release. This draft stays in the simulation.",
       riskScore: 82,
@@ -114,7 +119,7 @@ export function createInitialState(): WorldState {
     }
   ];
   const state: WorldState = {
-    runId: id("run"),
+    runId: "run-glassfall-baseline",
     scenarioId: SCENARIO.id,
     scenarioName: SCENARIO.name,
     branchName: "GLASSFALL-BASELINE",
@@ -129,7 +134,7 @@ export function createInitialState(): WorldState {
     missionProgress: 0,
     decisionCount: 0,
     agentDecisions: [],
-    lastUpdatedAt: now(),
+    lastUpdatedAt: INITIAL_TIME,
     agents: PERSONAS.map((persona, index) => ({
       personaId: persona.id,
       status: index === 4 ? "standby" : "monitoring",
@@ -143,18 +148,28 @@ export function createInitialState(): WorldState {
     snapshots: [],
     checkpoints: []
   };
-  state.audit = appendAudit(state, "system", "world.initialized", "Operation Glassfall created with synthetic fixtures only.");
-  for (const approval of approvals) {
-    state.audit = appendAudit(
-      state,
-      "policy-engine",
-      "approval.requested",
-      approval.action,
-      approval.riskScore,
-      "pending"
-    );
-  }
-  state.lastUpdatedAt = now();
+  state.audit = [
+    {
+      id: "audit-world-initialized",
+      recordedAt: INITIAL_TIME,
+      simHour: 0,
+      actor: "system",
+      action: "world.initialized",
+      detail: "Operation Glassfall created with synthetic fixtures only.",
+      riskScore: 0,
+      approvalStatus: "not-required"
+    },
+    ...approvals.map((approval, index): AuditEvent => ({
+      id: "audit-approval-request-" + String(index + 1),
+      recordedAt: INITIAL_TIME,
+      simHour: 0,
+      actor: "policy-engine",
+      action: "approval.requested",
+      detail: approval.action,
+      riskScore: clamp(approval.riskScore),
+      approvalStatus: "pending"
+    }))
+  ];
   return state;
 }
 
