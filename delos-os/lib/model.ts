@@ -51,11 +51,15 @@ export type ApprovalRequest = {
 
 export type AgentDecision = {
   id: string;
+  recordedAt: string;
   simHour: number;
   sourceEventId: string;
   personaId: string;
   intent: string;
   chosenAction: string;
+  toolName: string | null;
+  inputSummary: string;
+  outputSummary: string;
   rationale: string;
   riskScore: number;
   approvalStatus: "not-required" | "pending" | "approved" | "rejected";
