@@ -1,0 +1,247 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum WorldType {
+  CORPORATE
+  CYBER
+  URBAN
+  FINANCIAL
+  INDUSTRIAL
+  FUTURISTIC
+  TRAINING
+  NARRATIVE
+}
+
+enum RunStatus {
+  READY
+  RUNNING
+  PAUSED
+  COMPLETED
+  TERMINATED
+  STOPPED
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+}
+
+enum MemberRole {
+  ADMIN
+  WORLD_BUILDER
+  OPERATOR
+  OBSERVER
+  AUDITOR
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  members   Member[]
+  worlds    World[]
+}
+
+model Member {
+  id             String       @id @default(cuid())
+  organizationId String
+  externalSub    String
+  email          String
+  role           MemberRole   @default(OBSERVER)
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, externalSub])
+  @@index([organizationId, role])
+}
+
+model World {
+  id             String        @id @default(cuid())
+  organizationId String
+  name           String
+  worldType      WorldType
+  description    String
+  activeRevision Int           @default(1)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  revisions      WorldRevision[]
+  runs           SimulationRun[]
+
+  @@index([organizationId, updatedAt])
+}
+
+model WorldRevision {
+  id          String   @id @default(cuid())
+  worldId     String
+  revision    Int
+  definition  Json
+  createdBy   String
+  createdAt   DateTime @default(now())
+  world       World    @relation(fields: [worldId], references: [id], onDelete: Cascade)
+
+  @@unique([worldId, revision])
+}
+
+model SimulationRun {
+  id                 String              @id @default(cuid())
+  worldId            String
+  worldRevisionId    String
+  status             RunStatus            @default(READY)
+  branchName         String               @default("BASELINE")
+  parentSnapshotId   String?
+  simulatedHour      Int                  @default(0)
+  worldState         Json
+  safetyStopped      Boolean              @default(false)
+  startedAt          DateTime?
+  endedAt            DateTime?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  world              World                @relation(fields: [worldId], references: [id], onDelete: Cascade)
+  events             SimulationEvent[]
+  snapshots          WorldSnapshot[]
+  agents             AgentInstance[]
+  approvals          ApprovalRequest[]
+  auditEvents        AuditEvent[]
+  decisions          AgentDecision[]
+  report             AfterActionReport?
+
+  @@index([worldId, status, updatedAt])
+}
+
+model Persona {
+  id             String          @id @default(cuid())
+  organizationId String
+  slug           String
+  displayName    String
+  definition     Json
+  active         Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  agents         AgentInstance[]
+
+  @@unique([organizationId, slug])
+}
+
+model AgentInstance {
+  id           String         @id @default(cuid())
+  runId        String
+  personaId    String
+  status       String
+  memoryScope  String
+  memory       Json
+  lastActionAt DateTime?
+  createdAt    DateTime       @default(now())
+  run          SimulationRun  @relation(fields: [runId], references: [id], onDelete: Cascade)
+  persona      Persona         @relation(fields: [personaId], references: [id])
+
+  @@index([runId, status])
+}
+
+model SimulationEvent {
+  id             String        @id @default(cuid())
+  runId          String
+  sequence       Int
+  simulatedHour  Int
+  category       String
+  title          String
+  detail         String
+  severity       Int
+  riskScore      Int
+  source         String
+  payload        Json
+  recordedAt     DateTime      @default(now())
+  run            SimulationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@unique([runId, sequence])
+  @@index([runId, simulatedHour])
+}
+
+model WorldSnapshot {
+  id            String        @id @default(cuid())
+  runId         String
+  parentId      String?
+  branchName    String
+  label         String
+  simulatedHour Int
+  worldState    Json
+  stateDigest   String
+  createdBy     String
+  createdAt     DateTime      @default(now())
+  run           SimulationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([runId, createdAt])
+}
+
+model ApprovalRequest {
+  id             String         @id @default(cuid())
+  runId          String
+  action         String
+  rationale      String
+  riskScore      Int
+  status         ApprovalStatus @default(PENDING)
+  requestedBy    String
+  decidedBy      String?
+  decisionReason String?
+  expiresAt      DateTime?
+  decidedAt      DateTime?
+  createdAt      DateTime       @default(now())
+  run            SimulationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([runId, status, riskScore])
+}
+
+model AgentDecision {
+  id              String        @id @default(cuid())
+  runId           String
+  agentId         String
+  intent          String
+  chosenAction    String
+  toolName        String?
+  inputDigest     String?
+  outputSummary   String
+  riskScore       Int
+  approvalStatus  ApprovalStatus?
+  sequence        Int
+  createdAt       DateTime      @default(now())
+  run             SimulationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@unique([runId, sequence])
+  @@index([runId, createdAt])
+}
+
+model AuditEvent {
+  id              String        @id @default(cuid())
+  runId           String
+  sequence        Int
+  actorId         String
+  action          String
+  detail          String
+  riskScore       Int
+  approvalStatus  String
+  previousHash    String?
+  eventHash       String
+  createdAt       DateTime      @default(now())
+  run             SimulationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@unique([runId, sequence])
+  @@index([runId, createdAt])
+}
+
+model AfterActionReport {
+  id          String        @id @default(cuid())
+  runId       String        @unique
+  summary     String
+  report      Json
+  markdown    String
+  generatedAt DateTime      @default(now())
+  run         SimulationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+}
