@@ -303,7 +303,7 @@ export function injectEvent(state: WorldState, kind: InjectedEventKind): WorldSt
     ...agent,
     status: requiresHumanApproval(event.riskScore) && index === 6 ? "awaiting-approval" : event.riskScore >= 60 && index === 1 ? "active" : agent.status,
     lastAction: index === 1 ? "Correlated " + event.title.toLowerCase() : agent.lastAction,
-    load: clamp(agent.load + (event.riskScore >= 70 ? 9 : 3))
+    load: clamp(agent.load + (requiresHumanApproval(event.riskScore) ? 9 : 3))
   }));
   return next;
 }
@@ -402,7 +402,7 @@ export function advanceOneHour(state: WorldState): WorldState {
     );
     next.agents = next.agents.map((agent) => ({
       ...agent,
-      status: preset.severity >= 70 && agent.personaId === "response-agent"
+      status: requiresHumanApproval(event.riskScore) && agent.personaId === "response-agent"
         ? "awaiting-approval"
         : preset.severity >= 50 && agent.personaId === "security-analyst"
           ? "active"
