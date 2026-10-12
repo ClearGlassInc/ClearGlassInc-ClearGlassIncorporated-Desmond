@@ -1,0 +1,46 @@
+name: DELOS OS CI
+
+on:
+  pull_request:
+    paths:
+      - "delos-os/**"
+      - ".github/workflows/delos-os-ci.yml"
+  push:
+    branches:
+      - "feature/delos-os-mvp-2026-10-12"
+    paths:
+      - "delos-os/**"
+      - ".github/workflows/delos-os-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+
+      - name: Install DELOS OS dependencies
+        working-directory: delos-os
+        run: npm install --no-audit --no-fund
+
+      - name: Unit tests
+        working-directory: delos-os
+        run: npm test
+
+      - name: Type check
+        working-directory: delos-os
+        run: npm run typecheck
+
+      - name: Production build
+        working-directory: delos-os
+        run: npm run build
