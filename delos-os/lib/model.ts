@@ -48,6 +48,18 @@ export type ApprovalRequest = {
   decidedAt?: string;
 };
 
+export type AgentDecision = {
+  id: string;
+  simHour: number;
+  personaId: string;
+  intent: string;
+  chosenAction: string;
+  rationale: string;
+  riskScore: number;
+  approvalStatus: "not-required" | "pending";
+  externalSideEffect: false;
+};
+
 export type AuditEvent = {
   id: string;
   recordedAt: string;
@@ -87,6 +99,7 @@ export type SimulationCheckpoint = WorldMetrics & {
   status: RunStatus;
   branchName: string;
   events: SimulationEvent[];
+  agentDecisions: AgentDecision[];
   approvals: ApprovalRequest[];
   audit: AuditEvent[];
   agents: AgentRecord[];
