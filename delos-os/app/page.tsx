@@ -238,6 +238,7 @@ export default function DelosConsole() {
                   <button className="button button-primary" onClick={controlRun} disabled={runIsFrozen}>{state.status === "ready" ? "▶  Launch" : state.status === "running" ? "Ⅱ  Pause" : state.status === "paused" ? "▶  Resume" : "Unavailable"}</button>
                   <button className="button button-secondary" onClick={() => setState((current) => advanceOneHour(current))} disabled={state.status !== "running" || runIsFrozen}>+1 simulated hour</button>
                   <button className="button button-secondary" onClick={() => setState((current) => captureSnapshot(current, "Operator checkpoint"))} disabled={runIsFrozen}>◇ Checkpoint</button>
+                  <button className="button button-danger" onClick={() => setState((current) => terminateRun(current))} disabled={runIsFrozen}>■ Terminate</button>
                   <button className="button button-danger" onClick={() => setState((current) => emergencyStop(current))} disabled={state.safetyStop}>■ Global stop</button>
                 </div>
               </section>
@@ -261,7 +262,7 @@ export default function DelosConsole() {
                     <div className="map-node node-comms"><span className="node-ring" /><b>COMMS</b><small>REVIEW</small></div>
                     <div className="map-status"><span className="safe-dot" /> 4 LOGICAL ZONES <span>•</span> NO LIVE NETWORK</div>
                   </div>
-                  <div className="world-panel-foot"><span><i className="legend-dot" /> Simulated asset</span><span><i className="legend-dot legend-alert" /> Risk focus</span><span>WORLD HASH <b>{state.runId.slice(-8).toUpperCase()}</b></span></div>
+                  <div className="world-panel-foot"><span><i className="legend-dot" /> Simulated asset</span><span><i className="legend-dot legend-alert" /> Risk focus</span><span>RUN ID <b>{state.runId.slice(-8).toUpperCase()}</b></span></div>
                 </section>
 
                 <section className="panel objectives-panel">
