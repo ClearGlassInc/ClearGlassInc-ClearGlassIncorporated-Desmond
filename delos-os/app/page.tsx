@@ -113,6 +113,7 @@ export default function DelosConsole() {
   const currentPersona = PERSONAS.find((persona) => persona.id === selectedPersona) || PERSONAS[0];
   const title = NAV.find((item) => item.id === view)?.label || "Command overview";
   const runIsFrozen = state.safetyStop || ["terminated", "stopped", "completed"].includes(state.status);
+  const approvalsLocked = state.safetyStop || ["terminated", "stopped"].includes(state.status);
   const latestCheckpoint = state.checkpoints[state.checkpoints.length - 1];
   const baseline = state.snapshots[0];
 
@@ -299,9 +300,9 @@ export default function DelosConsole() {
                   <div className="panel-header"><div><div className="eyebrow">CANONICAL EVENTS / 04</div><h2>Event stream</h2></div><button className="text-link" onClick={() => setView("narrative")}>Full timeline ↗</button></div>
                   <div className="event-stream">
                     {latestEvents.map((event) => <div className="event-row" key={event.id}>
-                      <div className={"event-marker " + (event.riskScore >= 70 ? "event-marker-alert" : event.category === "milestone" ? "event-marker-good" : "")} />
+                      <div className={"event-marker " + (event.riskScore >= 60 ? "event-marker-alert" : event.category === "milestone" ? "event-marker-good" : "")} />
                       <div className="event-copy"><div><span className="event-time">T+{String(event.simHour).padStart(2, "0")}H</span><span className="event-category">{event.category}</span></div><strong>{event.title}</strong><p>{event.detail}</p></div>
-                      <span className={"risk-chip " + (event.riskScore >= 70 ? "risk-high" : event.riskScore >= 40 ? "risk-medium" : "risk-low")}>{event.riskScore}</span>
+                      <span className={"risk-chip " + (event.riskScore >= 60 ? "risk-high" : event.riskScore >= 40 ? "risk-medium" : "risk-low")}>{event.riskScore}</span>
                     </div>)}
                   </div>
                 </section>
@@ -346,7 +347,7 @@ export default function DelosConsole() {
               <div className="panel-header"><div><div className="eyebrow">NARRATIVE DIRECTOR / EVENT JOURNAL</div><h2>Canonical event timeline</h2></div><span className="panel-tag">{state.events.length} EVENTS</span></div>
               <p className="detail-lead">Every event below is a synthetic fact or scenario inject. Operators can branch future outcomes without rewriting prior checkpoints.</p>
               <div className="inject-toolbar"><span className="eyebrow">INJECT A CONTROLLED EVENT</span>{INJECTS.map((item) => <button className="button button-small button-secondary" key={item.kind} onClick={() => inject(item.kind)} disabled={runIsFrozen}>{item.label}</button>)}</div>
-              <div className="full-timeline">{[...state.events].sort((a, b) => b.simHour - a.simHour).map((event) => <div className="full-timeline-row" key={event.id}><div className="timeline-hour">T+{String(event.simHour).padStart(2, "0")}<small>HOUR</small></div><div className="timeline-spine"><span className={event.riskScore >= 70 ? "danger-spine" : event.category === "milestone" ? "success-spine" : ""} /></div><div className="full-timeline-copy"><div className="inline-tags"><span className="event-category">{event.category}</span><span className={"risk-chip " + (event.riskScore >= 70 ? "risk-high" : event.riskScore >= 40 ? "risk-medium" : "risk-low")}>RISK {event.riskScore}</span></div><h3>{event.title}</h3><p>{event.detail}</p><small>ORIGIN: {event.source.toUpperCase()}</small></div></div>)}</div>
+              <div className="full-timeline">{[...state.events].sort((a, b) => b.simHour - a.simHour).map((event) => <div className="full-timeline-row" key={event.id}><div className="timeline-hour">T+{String(event.simHour).padStart(2, "0")}<small>HOUR</small></div><div className="timeline-spine"><span className={event.riskScore >= 60 ? "danger-spine" : event.category === "milestone" ? "success-spine" : ""} /></div><div className="full-timeline-copy"><div className="inline-tags"><span className="event-category">{event.category}</span><span className={"risk-chip " + (event.riskScore >= 60 ? "risk-high" : event.riskScore >= 40 ? "risk-medium" : "risk-low")}>RISK {event.riskScore}</span></div><h3>{event.title}</h3><p>{event.detail}</p><small>ORIGIN: {event.source.toUpperCase()}</small></div></div>)}</div>
             </section>
           ) : null}
 
@@ -355,7 +356,7 @@ export default function DelosConsole() {
               <section className="governance-banner"><div className="governance-emblem">◇</div><div><div className="eyebrow">GOVERNANCE CORE / FAIL-CLOSED</div><h2>Human authority stays in the loop.</h2><p>Approvals in this prototype record a simulated decision only. No real-world connector is invoked.</p></div><div className="governance-mode">DEFAULT DENY <span>●</span></div></section>
               <div className="dashboard-grid governance-grid">
                 <section className="panel"><div className="panel-header"><div><div className="eyebrow">POLICY GATE / 01</div><h2>Approval queue</h2></div><span className="panel-tag">{pending.length} PENDING</span></div>
-                  {state.approvals.length === 0 ? <div className="empty-state">No approval requests have been generated.</div> : <div className="approval-list">{[...state.approvals].reverse().map((approval) => <div className="approval-card" key={approval.id}><div className="approval-top"><span className={"risk-chip " + (approval.riskScore >= 80 ? "risk-high" : "risk-medium")}>RISK {approval.riskScore}</span><span className={"approval-status " + approval.status}>{approval.status}</span></div><h3>{approval.action}</h3><p>{approval.rationale}</p>{approval.status === "pending" && !runIsFrozen ? <div className="approval-actions"><button className="button button-small button-primary" onClick={() => setState((current) => decideApproval(current, approval.id, "approved"))}>Record approval</button><button className="button button-small button-secondary" onClick={() => setState((current) => decideApproval(current, approval.id, "rejected"))}>Reject</button></div> : <small className="approval-foot">{approval.approver ? "DECIDED BY " + approval.approver.toUpperCase() : "DECISION LOCKED BY RUN STATE"} {approval.decidedAt ? "· " + new Date(approval.decidedAt).toLocaleTimeString() : ""}</small>}</div>)}</div>}
+                  {state.approvals.length === 0 ? <div className="empty-state">No approval requests have been generated.</div> : <div className="approval-list">{[...state.approvals].reverse().map((approval) => <div className="approval-card" key={approval.id}><div className="approval-top"><span className={"risk-chip " + (approval.riskScore >= 80 ? "risk-high" : "risk-medium")}>RISK {approval.riskScore}</span><span className={"approval-status " + approval.status}>{approval.status}</span></div><h3>{approval.action}</h3><p>{approval.rationale}</p>{approval.status === "pending" && !approvalsLocked ? <div className="approval-actions"><button className="button button-small button-primary" onClick={() => setState((current) => decideApproval(current, approval.id, "approved"))}>Record approval</button><button className="button button-small button-secondary" onClick={() => setState((current) => decideApproval(current, approval.id, "rejected"))}>Reject</button></div> : <small className="approval-foot">{approval.approver ? "DECIDED BY " + approval.approver.toUpperCase() : "DECISION LOCKED BY RUN STATE"} {approval.decidedAt ? "· " + new Date(approval.decidedAt).toLocaleTimeString() : ""}</small>}</div>)}</div>}
                 </section>
                 <section className="panel audit-panel"><div className="panel-header"><div><div className="eyebrow">AUDIT REGISTRY / 02</div><h2>Operator activity</h2></div><span className="metric-glyph">≋</span></div><div className="audit-list">{[...state.audit].reverse().slice(0, 12).map((entry) => <div className="audit-row" key={entry.id}><span className="audit-time">T+{String(entry.simHour).padStart(2, "0")}</span><div><strong>{entry.action}</strong><p>{entry.detail}</p><small>{entry.actor} · {entry.approvalStatus} · risk {entry.riskScore}</small></div></div>)}</div><div className="audit-disclaimer">Prototype note: this client-side log is replayable demo evidence, not an immutable server-side audit ledger.</div></section>
               </div>
@@ -367,7 +368,7 @@ export default function DelosConsole() {
             <div className="report-layout">
               <section className="panel report-main"><div className="panel-header"><div><div className="eyebrow">INTELLIGENCE / AFTER-ACTION</div><h2>Decision intelligence report</h2></div><span className="panel-tag">LOCAL EXPORT</span></div>
                 <p className="detail-lead">{afterActionReport(state).executiveSummary}</p>
-                <div className="report-kpis"><div><span>Mission progress</span><strong>{state.missionProgress}%</strong></div><div><span>High-risk events</span><strong>{state.events.filter((event) => event.riskScore >= 70).length}</strong></div><div><span>Approvals accepted</span><strong>{state.approvals.filter((approval) => approval.status === "approved").length}</strong></div><div><span>Audit records</span><strong>{state.audit.length}</strong></div></div>
+                <div className="report-kpis"><div><span>Mission progress</span><strong>{state.missionProgress}%</strong></div><div><span>High-risk events</span><strong>{state.events.filter((event) => event.riskScore >= 60).length}</strong></div><div><span>Approvals accepted</span><strong>{state.approvals.filter((approval) => approval.status === "approved").length}</strong></div><div><span>Audit records</span><strong>{state.audit.length}</strong></div></div>
                 <h3 className="subheading">Persona engine proposals <span className="subheading-note">SYNTHETIC · NO TOOLS</span></h3>
                 <p className="proposal-intro">Bounded personas generate decision options from the scenario record. These proposals are not actions; high-risk recommendations stay gated for an operator decision.</p>
                 <div className="proposal-list">
@@ -376,7 +377,7 @@ export default function DelosConsole() {
                     return <article className="decision-card" key={decision.id}>
                       <div className="decision-top">
                         <span className="decision-persona">{persona.name}</span>
-                        <span className={"risk-chip " + (decision.riskScore >= 70 ? "risk-high" : decision.riskScore >= 40 ? "risk-medium" : "risk-low")}>RISK {decision.riskScore}</span>
+                        <span className={"risk-chip " + (decision.riskScore >= 60 ? "risk-high" : decision.riskScore >= 40 ? "risk-medium" : "risk-low")}>RISK {decision.riskScore}</span>
                       </div>
                       <div className="decision-intent">{decision.intent}</div>
                       <strong className="decision-action">{decision.chosenAction}</strong>
