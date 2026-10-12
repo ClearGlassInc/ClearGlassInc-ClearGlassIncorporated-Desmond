@@ -45,6 +45,7 @@ test("high-risk injected events produce bounded persona proposals and linked app
   assert.ok(state.audit.some((entry) => entry.action === "approval.requested"));
   assert.ok(state.agentDecisions.length >= 3);
   assert.ok(state.agentDecisions.every((decision) => decision.externalSideEffect === false && decision.sourceEventId === sourceEvent.id));
+  assert.ok(state.agentDecisions.every((decision) => decision.agentId === "agent:" + state.runId + ":" + decision.personaId));
   assert.ok(state.agentDecisions.every((decision) => typeof decision.recordedAt === "string" && decision.toolName === null));
   assert.ok(state.agentDecisions.every((decision) => decision.inputSummary.includes(sourceEvent.id) && decision.outputSummary.length > 0));
   assert.ok(state.agentDecisions.some((decision) => decision.personaId === "security-analyst"));
