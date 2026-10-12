@@ -21,7 +21,7 @@ export class SyntheticRulesProvider implements PersonaReasoningProvider {
 
   propose(context: PersonaReasoningContext): AgentDecision[] {
     const event = context.event;
-    const proposals: Omit<AgentDecision, "id" | "simHour" | "sourceEventId">[] = [
+    const proposals: Omit<AgentDecision, "id" | "simHour" | "sourceEventId" | "recordedAt" | "toolName" | "inputSummary" | "outputSummary">[] = [
       {
         personaId: "security-analyst",
         intent: "Correlate evidence and preserve telemetry",
