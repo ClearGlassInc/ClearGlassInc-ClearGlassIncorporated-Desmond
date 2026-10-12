@@ -288,6 +288,7 @@ export function injectEvent(state: WorldState, kind: InjectedEventKind): WorldSt
       action: "Review synthetic response to: " + event.title,
       rationale: "High-risk scenario changes require an explicit operator decision before the simulation marks the proposed response as accepted.",
       riskScore: event.riskScore,
+      relatedEventId: event.id,
       status: "pending"
     };
     next.approvals = [...next.approvals, approval];
@@ -418,6 +419,7 @@ export function advanceOneHour(state: WorldState): WorldState {
         action: "Review response to: " + event.title,
         rationale: "Scenario director surfaced a high-impact inject. Operator approval applies only to this synthetic world.",
         riskScore: event.riskScore,
+        relatedEventId: event.id,
         status: "pending"
       };
       next.approvals = [...state.approvals, approval];
@@ -435,7 +437,18 @@ export function decideApproval(state: WorldState, approvalId: string, decision: 
   const approvals = state.approvals.map((approval) =>
     approval.id === approvalId ? { ...approval, status: decision, approver: "Local demo operator", decidedAt } : approval
   );
-  const next = { ...state, approvals, lastUpdatedAt: decidedAt };
+  const next = {
+    ...state,
+    approvals,
+    agentDecisions: state.agentDecisions.map((proposal) =>
+      target.relatedEventId &&
+      proposal.sourceEventId === target.relatedEventId &&
+      proposal.approvalStatus === "pending"
+        ? { ...proposal, approvalStatus: decision }
+        : proposal
+    ),
+    lastUpdatedAt: decidedAt
+  };
   next.audit = appendAudit(
     next,
     "operator",
