@@ -53,6 +53,7 @@ export type AgentDecision = {
   id: string;
   recordedAt: string;
   simHour: number;
+  agentId: string;
   sourceEventId: string;
   personaId: string;
   intent: string;
