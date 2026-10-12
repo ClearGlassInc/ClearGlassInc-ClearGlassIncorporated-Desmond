@@ -21,7 +21,7 @@ export class SyntheticRulesProvider implements PersonaReasoningProvider {
 
   propose(context: PersonaReasoningContext): AgentDecision[] {
     const event = context.event;
-    const proposals: Omit<AgentDecision, "id" | "simHour">[] = [
+    const proposals: Omit<AgentDecision, "id" | "simHour" | "sourceEventId">[] = [
       {
         personaId: "security-analyst",
         intent: "Correlate evidence and preserve telemetry",
@@ -92,7 +92,8 @@ export class SyntheticRulesProvider implements PersonaReasoningProvider {
     return proposals.map((proposal, index) => ({
       ...proposal,
       id: event.id + "-" + proposal.personaId + "-" + index,
-      simHour: context.simHour
+      simHour: context.simHour,
+      sourceEventId: event.id
     }));
   }
 }
