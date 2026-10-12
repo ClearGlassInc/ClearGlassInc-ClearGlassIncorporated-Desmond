@@ -151,7 +151,7 @@ export default function DelosConsole() {
   }
 
   return (
-    <div className="app-shell">
+    <div className="app-shell min-h-screen">
       <aside className="sidebar">
         <div className="brand-lockup">
           <IconMark />
@@ -227,7 +227,7 @@ export default function DelosConsole() {
 
           {view === "overview" ? (
             <>
-              <motion.section className="metric-grid min-h-screen" aria-label="World metrics" initial={reducedMotion ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+              <motion.section className="metric-grid" aria-label="World metrics" initial={reducedMotion ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
                 <div className="metric-card accent-cyan"><div className="metric-top"><span>SIMULATED TIME</span><span className="metric-glyph">◷</span></div><div className="metric-value">{String(state.simHour).padStart(2, "0")}<small> / 72 H</small></div><div className="metric-foot"><span className="foot-line" /> Scenario clock</div></div>
                 <div className="metric-card"><div className="metric-top"><span>THREAT PRESSURE</span><span className="metric-glyph">⌁</span></div><div className="metric-value">{state.threatLevel}<small> / 100</small></div><div className="metric-foot"><span className="metric-dot red-dot" /> Synthetic signal severity</div></div>
                 <div className="metric-card"><div className="metric-top"><span>SUPPLIER CAPACITY</span><span className="metric-glyph">◇</span></div><div className="metric-value">{state.supplierCapacity}<small>%</small></div><div className="metric-foot"><span className="metric-dot cyan-dot" /> Continuity index</div></div>
