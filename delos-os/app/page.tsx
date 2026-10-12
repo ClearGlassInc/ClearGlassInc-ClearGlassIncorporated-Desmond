@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   advanceOneHour,
   afterActionReport,
@@ -76,6 +77,7 @@ function IconMark() {
 }
 
 export default function DelosConsole() {
+  const reducedMotion = useReducedMotion();
   const [state, setState] = useState<WorldState>(() => createInitialState());
   const [hydrated, setHydrated] = useState(false);
   const [view, setView] = useState<View>("overview");
@@ -225,12 +227,12 @@ export default function DelosConsole() {
 
           {view === "overview" ? (
             <>
-              <section className="metric-grid" aria-label="World metrics">
+              <motion.section className="metric-grid min-h-screen" aria-label="World metrics" initial={reducedMotion ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
                 <div className="metric-card accent-cyan"><div className="metric-top"><span>SIMULATED TIME</span><span className="metric-glyph">◷</span></div><div className="metric-value">{String(state.simHour).padStart(2, "0")}<small> / 72 H</small></div><div className="metric-foot"><span className="foot-line" /> Scenario clock</div></div>
                 <div className="metric-card"><div className="metric-top"><span>THREAT PRESSURE</span><span className="metric-glyph">⌁</span></div><div className="metric-value">{state.threatLevel}<small> / 100</small></div><div className="metric-foot"><span className="metric-dot red-dot" /> Synthetic signal severity</div></div>
                 <div className="metric-card"><div className="metric-top"><span>SUPPLIER CAPACITY</span><span className="metric-glyph">◇</span></div><div className="metric-value">{state.supplierCapacity}<small>%</small></div><div className="metric-foot"><span className="metric-dot cyan-dot" /> Continuity index</div></div>
                 <div className="metric-card"><div className="metric-top"><span>APPROVAL QUEUE</span><span className="metric-glyph">⌑</span></div><div className="metric-value">{String(pending.length).padStart(2, "0")}<small> PENDING</small></div><div className="metric-foot"><span className="metric-dot amber-dot" /> Human decision required</div></div>
-              </section>
+              </motion.section>
 
               <section className="control-strip">
                 <div className="control-context"><span className="live-rings"><i /></span><div><strong>SIMULATION CONTROL</strong><span>All controls operate on synthetic state only.</span></div></div>
