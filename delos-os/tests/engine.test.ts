@@ -37,16 +37,24 @@ test("scheduled supplier disruption creates a high-risk approval request", () =>
   assert.ok(state.approvals.some((approval) => approval.status === "pending" && approval.riskScore >= 70));
 });
 
-test("high-risk injected events produce an approval gate and bounded persona proposals", () => {
+test("high-risk injected events produce bounded persona proposals and linked approval outcomes", () => {
   const state = injectEvent(createInitialState(), "identity-anomaly");
-  assert.ok(state.approvals.some((approval) => approval.status === "pending" && approval.action.includes("Identity telemetry anomaly")));
+  const sourceEvent = state.events.find((event) => event.title === "Identity telemetry anomaly");
+  assert.ok(sourceEvent);
+  assert.ok(state.approvals.some((approval) => approval.status === "pending" && approval.relatedEventId === sourceEvent.id));
   assert.ok(state.audit.some((entry) => entry.action === "approval.requested"));
   assert.ok(state.agentDecisions.length >= 3);
-  assert.ok(state.agentDecisions.every((decision) => decision.externalSideEffect === false));
+  assert.ok(state.agentDecisions.every((decision) => decision.externalSideEffect === false && decision.sourceEventId === sourceEvent.id));
   assert.ok(state.agentDecisions.some((decision) => decision.personaId === "security-analyst"));
   assert.ok(state.agentDecisions.some((decision) => decision.personaId === "incident-commander" && decision.approvalStatus === "pending"));
   assert.ok(state.agentDecisions.some((decision) => decision.personaId === "response-agent" && decision.approvalStatus === "pending"));
   assert.ok(state.audit.some((entry) => entry.action === "agent.proposals.generated"));
+
+  const approval = state.approvals.find((item) => item.relatedEventId === sourceEvent.id && item.status === "pending");
+  assert.ok(approval);
+  const decided = decideApproval(state, approval.id, "rejected");
+  assert.ok(decided.agentDecisions.filter((item) => item.sourceEventId === sourceEvent.id && item.approvalStatus === "pending").length === 0);
+  assert.ok(decided.agentDecisions.some((item) => item.sourceEventId === sourceEvent.id && item.approvalStatus === "rejected"));
 });
 
 test("approval decisions are audited and do not execute external actions", () => {
@@ -63,12 +71,14 @@ test("fork and restore operate on checkpoints and preserve previous checkpoints"
   state = advanceOneHour(state);
   state = captureSnapshot(state, "Known good");
   const checkpointId = state.checkpoints[0].id;
+  const proposalCountAtCheckpoint = state.checkpoints[0].agentDecisions.length;
   state = advanceOneHour(state);
   const forked = forkBranch(state, "GLASSFALL-ALT-01");
   assert.equal(forked.branchName, "GLASSFALL-ALT-01");
   assert.equal(forked.status, "paused");
   const restored = restoreCheckpoint(forked, checkpointId);
   assert.equal(restored.simHour, 1);
+  assert.equal(restored.agentDecisions.length, proposalCountAtCheckpoint);
   assert.ok(restored.audit.some((entry) => entry.action === "checkpoint.restored"));
   assert.ok(restored.checkpoints.length >= 2);
 });
