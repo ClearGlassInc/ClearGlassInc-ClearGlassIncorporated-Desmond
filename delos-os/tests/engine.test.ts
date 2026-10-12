@@ -35,10 +35,16 @@ test("scheduled supplier disruption creates a high-risk approval request", () =>
   assert.ok(state.approvals.some((approval) => approval.status === "pending" && approval.riskScore >= 70));
 });
 
-test("high-risk injected events produce an approval gate", () => {
+test("high-risk injected events produce an approval gate and bounded persona proposals", () => {
   const state = injectEvent(createInitialState(), "identity-anomaly");
   assert.ok(state.approvals.some((approval) => approval.status === "pending" && approval.action.includes("Identity telemetry anomaly")));
   assert.ok(state.audit.some((entry) => entry.action === "approval.requested"));
+  assert.ok(state.agentDecisions.length >= 3);
+  assert.ok(state.agentDecisions.every((decision) => decision.externalSideEffect === false));
+  assert.ok(state.agentDecisions.some((decision) => decision.personaId === "security-analyst"));
+  assert.ok(state.agentDecisions.some((decision) => decision.personaId === "incident-commander" && decision.approvalStatus === "pending"));
+  assert.ok(state.agentDecisions.some((decision) => decision.personaId === "response-agent" && decision.approvalStatus === "pending"));
+  assert.ok(state.audit.some((entry) => entry.action === "agent.proposals.generated"));
 });
 
 test("approval decisions are audited and do not execute external actions", () => {
