@@ -34,6 +34,13 @@ enum ApprovalStatus {
   EXPIRED
 }
 
+enum AgentDecisionApprovalStatus {
+  NOT_REQUIRED
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 enum MemberRole {
   ADMIN
   WORLD_BUILDER
@@ -212,7 +219,8 @@ model AgentDecision {
   inputSummary    String
   outputSummary   String
   riskScore       Int
-  approvalStatus  ApprovalStatus?
+  approvalStatus  AgentDecisionApprovalStatus
+  externalSideEffect Boolean     @default(false)
   sequence        Int
   createdAt       DateTime      @default(now())
   run             SimulationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
