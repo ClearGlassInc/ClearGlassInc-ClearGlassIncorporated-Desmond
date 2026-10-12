@@ -59,6 +59,16 @@ test("high-risk injected events produce bounded persona proposals and linked app
   assert.ok(decided.agentDecisions.some((item) => item.sourceEventId === sourceEvent.id && item.approvalStatus === "rejected"));
 });
 
+test("moderate-high score at the policy boundary still requires approval", () => {
+  const state = injectEvent(createInitialState(), "rumor-escalation");
+  const event = state.events.find((item) => item.title === "Unverified public claim gains traction");
+  assert.ok(event);
+  assert.equal(event.riskScore, 68);
+  assert.ok(event.riskScore >= 60 && event.riskScore < 70);
+  assert.ok(state.approvals.some((item) => item.relatedEventId === event.id && item.status === "pending"));
+  assert.ok(state.agentDecisions.some((item) => item.sourceEventId === event.id && item.approvalStatus === "pending"));
+});
+
 test("approval decisions are audited and do not execute external actions", () => {
   const state = createInitialState();
   const pending = state.approvals.find((approval) => approval.status === "pending");
