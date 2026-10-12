@@ -652,7 +652,7 @@ export function reportAsMarkdown(state: WorldState): string {
     "",
     "## Persona proposals (synthetic only)",
     ...(report.personaProposals.length
-      ? report.personaProposals.map((proposal) => "- T+" + String(proposal.simHour).padStart(2, "0") + " " + proposal.personaId + ": " + proposal.chosenAction + " (risk " + proposal.riskScore + "/100; approval " + proposal.approvalStatus + "; external side effect: " + proposal.externalSideEffect + ")")
+      ? report.personaProposals.map((proposal) => "- " + proposal.recordedAt + " T+" + String(proposal.simHour).padStart(2, "0") + " " + proposal.personaId + ": " + proposal.chosenAction + " (risk " + proposal.riskScore + "/100; tool " + (proposal.toolName ?? "none") + "; input " + proposal.inputSummary + "; output " + proposal.outputSummary + "; approval " + proposal.approvalStatus + "; external side effect: " + proposal.externalSideEffect + ")")
       : ["- No persona proposals recorded yet."]),
     "",
     "## Key decisions",
