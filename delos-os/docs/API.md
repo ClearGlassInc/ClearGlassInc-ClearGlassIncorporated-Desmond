@@ -31,12 +31,14 @@ Base path: /api/v1. Every endpoint except health requires an authenticated OIDC 
 - GET /worlds/{worldId}/personas — list scoped personas.
 - POST /worlds/{worldId}/personas — create or revise a persona contract.
 - GET /runs/{runId}/agents — inspect agent status and policy boundaries.
+- GET /runs/{runId}/decisions — list persona proposals with source event, rationale, risk score, and approval disposition.
 - POST /runs/{runId}/agents/{agentId}/step — request one bounded proposal; policy engine decides whether it can be applied.
+- Proposal records are non-executable data. Server code must bind an approval to the exact source event, proposal digest, run, and state version.
 
 ## Approvals and reports
 
 - GET /runs/{runId}/approvals — list pending and decided approvals.
-- POST /approvals/{approvalId}/decision — approve or reject with reason; only a separate authorized human can approve high-impact actions.
+- POST /approvals/{approvalId}/decision — approve or reject with reason; only a separate authorized human can approve high-impact actions. The decision must update the linked proposal state in the same transaction while appending an audit event.
 - POST /runs/{runId}/reports — generate report from recorded events.
 - GET /reports/{reportId} — retrieve a tenant-authorized report.
 - POST /reports/{reportId}/exports — request a governed Markdown/JSON/PDF export with audited purpose.
