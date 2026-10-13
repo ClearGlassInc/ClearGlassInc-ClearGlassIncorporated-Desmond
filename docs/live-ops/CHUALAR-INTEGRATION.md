@@ -1,0 +1,47 @@
+# Chualar — Monterey County Live Operations
+
+## Files
+- `app/chualar/page.tsx`: dashboard route at `/chualar`
+- `app/chualar/ChualarOperations.tsx`, `chualar.module.css`: independent layer toggles, 10-second refresh, selectable markers and inspector
+- `app/api/live/ops/route.ts`: validated unified API, best-effort request limiting
+- `lib/live-ops/types.ts`: normalized types, radius geometry and sanitizers
+- `lib/live-ops/cache.ts`: provider TTL cache, single-flight requests, timeout/retry and per-process request guard
+- `lib/live-ops/opensky.ts`: OpenSky state-vector adapter
+- `lib/live-ops/adsbexchange.ts`: ADS-B Exchange adapter; military classification only accepts provider `mil === true`
+- `lib/live-ops/satellites.ts`: N2YO `/above` adapter
+- `lib/live-ops/cctv.ts`: Caltrans District 5 public CCTV feed adapter
+
+## Environment
+Copy the following keys into the hosting environment (never commit real values):
+```dotenv
+OPENSKY_CLIENT_ID=
+OPENSKY_CLIENT_SECRET=
+ADSBX_API_KEY=
+SATELLITE_API_KEY=
+```
+OpenSky can be queried anonymously subject to its current service policy and quotas; credentials are optional for the adapter but recommended when access is available. ADS-B Exchange and N2YO layers are OFFLINE until their respective valid API keys are configured. Caltrans District 5 CCTV does not require a key for the public feed.
+
+## API
+`GET /api/live/ops?lat=36.57&lon=-121.525&radius_nm=40`
+- Validates coordinate ranges and a 1–150 NM radius.
+- OpenSky cache: 7 seconds; ADS-B Exchange: 7 seconds; N2YO: 45 seconds; Caltrans CCTV: 180 seconds.
+- Provider errors return empty arrays and an `offline` status when no cached result exists. Cached last-good provider data is returned as `degraded` when refresh fails.
+- Counts are derived only from returned, normalized records. A count is `null` when that provider is offline without usable cached data.
+- Radius filtering uses great-circle distance after bounding-box/provider queries.
+- Route rate limiting is per Node.js process. Multi-instance production needs a shared rate-limit/cache backend (e.g. Redis) for enforceable global quotas.
+
+## Data/coverage caveats
+- OpenSky is a public state-vector source; its results are not a guarantee of all aircraft in the radius.
+- ADS-B Exchange military records are included only when the response's explicit `mil` flag is boolean true. No callsign-pattern inference is used.
+- N2YO's `/above` response includes satellite ID/name/position/altitude; it does not supply velocity, azimuth, elevation or pass predictions in this response shape, so those fields are null and rendered as “—”. The angular radius sent to N2YO is radius_nm / 60 degrees. This provider reports overhead objects, not a complete satellite catalogue.
+- CCTV coverage comes from the Caltrans District 5 public status feed, not an asserted county-wide count. Status is `UNKNOWN` unless the feed provides an explicit service flag.
+- The map background is a schematic operational plot, not a street/terrain basemap. Markers are actual provider coordinates. Add a licensed/approved tile or map provider only after CSP, attribution and usage terms are reviewed.
+- “Live flights 9.6K”, “Military 171”, “Satellites 838” and “CCTV 800” are not hardcoded. The dashboard displays only actual returned counts or “—”.
+
+## Production checklist
+1. Configure ADSBX_API_KEY and SATELLITE_API_KEY in hosting secret storage.
+2. Add OpenSky credentials if provisioned; never put credentials in client code.
+3. Configure a shared Redis-backed cache and rate limiter for serverless/multi-region deployment.
+4. Confirm current provider terms, quota, retention and attribution obligations.
+5. Run `npm run typecheck`, `npm test`, and `npm run build` in CI; this connector did not run repository commands in the editing session.
+6. Verify endpoint connectivity and provider schemas from the actual deployment environment; mark the deployment as a prototype until checks pass.
