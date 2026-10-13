@@ -14,6 +14,8 @@ export async function getOpenSky(center: Center, radiusNm: number, bounds: Bound
     const id = process.env.OPENSKY_CLIENT_ID, secret = process.env.OPENSKY_CLIENT_SECRET;
     if (id && secret) headers.authorization = "Basic " + Buffer.from(`${id}:${secret}`).toString("base64");
     const raw = await fetchJson(url.toString(), { headers }, 7_000, 1) as { states?: unknown[][] | null; time?: number };
+    // OpenSky legitimately returns states: null when the bounding box has no aircraft.
+    if (raw.states === null && isFiniteNumber(raw.time)) return { items: [], status: "online" };
     if (!Array.isArray(raw.states)) throw new Error("OpenSky response has no states array");
     const items: FlightAsset[] = [];
     for (const s of raw.states) {
