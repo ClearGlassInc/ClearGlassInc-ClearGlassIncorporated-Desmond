@@ -29,12 +29,14 @@ export default function ChualarOperations(): React.JSX.Element {
   const [layers, setLayers] = useState(INITIAL_LAYERS);
   const [selected, setSelected] = useState<Selected>(null);
   const [busy, setBusy] = useState(false);
+  const busyRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [radius, setRadius] = useState(40);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const lastGood = useRef<LiveOpsResponse | null>(null);
   const refresh = useCallback(async (manual = false) => {
-    if (busy && !manual) return;
+    if (busyRef.current && !manual) return;
+    busyRef.current = true;
     setBusy(true);
     try {
       const query = new URLSearchParams({ lat: String(CENTER.lat), lon: String(CENTER.lon), radius_nm: String(radius) });
@@ -47,8 +49,8 @@ export default function ChualarOperations(): React.JSX.Element {
       setError(e instanceof Error ? e.message : "Refresh failed.");
       if (!lastGood.current) setData(emptyData);
       else setData({ ...lastGood.current, sources: { ...lastGood.current.sources, flights: lastGood.current.sources.flights === "online" ? "degraded" : lastGood.current.sources.flights, military: lastGood.current.sources.military === "online" ? "degraded" : lastGood.current.sources.military, satellites: lastGood.current.sources.satellites === "online" ? "degraded" : lastGood.current.sources.satellites, cctv: lastGood.current.sources.cctv === "online" ? "degraded" : lastGood.current.sources.cctv } });
-    } finally { setBusy(false); }
-  }, [busy, radius]);
+    } finally { busyRef.current = false; setBusy(false); }
+  }, [radius]);
   useEffect(() => { void refresh(); }, [refresh]);
   useEffect(() => {
     if (!autoRefresh) return;
