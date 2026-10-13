@@ -90,7 +90,9 @@
     ["Intelligence Services", "intelligence.html", "Advisory and OSINT", "◈"],
     ["Percival Build", "percival-build.html", "Build architecture", "◐"],
     ["Procurement Legal Tech", "procurement-legal-tech.html", "Procurement integrity AI", "⚖"],
-    ["Pricing", "pricing.html", "Plans and engagements", "₵"]
+    ["Pricing", "pricing.html", "Plans and engagements", "₵"],
+    ["XENOLITH", "xenolith.html", "Catalog entry; live status not yet verified", "⬡"],
+    ["ARTEMIS FAWL", "artemis-fawl/index.html", "Static demonstration · simulated metrics", "⟲"]
   ];
   var TOP = [["Vision","index.html#vision"],["Services","index.html#services"],["Products","products.html"],["Government","index.html#government"],["Insights","blog/"],["Contact","index.html#contact"]];
   var COMPANY = [
