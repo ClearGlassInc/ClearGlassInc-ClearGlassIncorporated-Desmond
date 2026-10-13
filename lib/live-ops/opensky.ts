@@ -28,6 +28,7 @@ export async function getOpenSky(center: Center, radiusNm: number, bounds: Bound
     const url = new URL("https://opensky-network.org/api/states/all");
     url.searchParams.set("lamin", String(bounds.lamin)); url.searchParams.set("lomin", String(bounds.lomin));
     url.searchParams.set("lamax", String(bounds.lamax)); url.searchParams.set("lomax", String(bounds.lomax));
+    url.searchParams.set("extended", "1");
     const headers: Record<string, string> = { accept: "application/json" };
     const id = process.env.OPENSKY_CLIENT_ID, secret = process.env.OPENSKY_CLIENT_SECRET;
     if (id && secret) headers.authorization = `Bearer ${await openSkyBearerToken(id, secret)}`;
@@ -49,7 +50,7 @@ export async function getOpenSky(center: Center, radiusNm: number, bounds: Bound
         heading_deg: isFiniteNumber(s[10]) ? s[10] : null,
         vertical_rate: isFiniteNumber(s[11]) ? Math.round(s[11] * MS_TO_FPM) : null,
         on_ground: typeof s[8] === "boolean" ? s[8] : null,
-        squawk: cleanText(s[14], 8), last_seen: seen === null ? null : new Date(seen * 1000).toISOString()
+        squawk: cleanText(s[14], 8), category: isFiniteNumber(s[17]) ? s[17] : null, last_seen: seen === null ? null : new Date(seen * 1000).toISOString()
       });
     }
     return { items, status: "online" };
