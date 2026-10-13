@@ -103,7 +103,7 @@ All entries were present in `data/products.json`. A local `productUrl` whose fil
 | `cg-044` | Intelligence Services | `available` | **UNKNOWN / NEEDS REVIEW** | `/intelligence.html` | Preserve entry; add evidence metadata; do not claim operational until verified |
 | `cg-045` | Percival Build | `available` | **UNKNOWN / NEEDS REVIEW** | `/percival-build.html` | Preserve entry; add evidence metadata; do not claim operational until verified |
 | `cg-046` | Command Center | `available` | **UNKNOWN / NEEDS REVIEW** | `/command-center.html` | Preserve entry; add evidence metadata; do not claim operational until verified |
-| `cg-047` | Platform Command Center | `available` | **UNKNOWN / NEEDS REVIEW** | `/platform-command-center.html` | Preserve entry; add evidence metadata; do not claim operational until verified |
+| `cg-047` | Platform Command Center | `available` | **UNKNOWN / NEEDS REVIEW** | `/platform-command-center.html` | Preserve legacy route and record; current page is `noindex`, so set `seoIndexable: false` and exclude from sitemap/ItemList pending owner resolution |
 | `cg-048` | Authority Network | `available` | **UNKNOWN / NEEDS REVIEW** | `/authority-network.html` | Preserve entry; add evidence metadata; do not claim operational until verified |
 | `cg-049` | BLUEDESK | `available` | **UNKNOWN / NEEDS REVIEW** | `/bluedesk.html` | Preserve entry; add evidence metadata; do not claim operational until verified |
 | `cg-050` | BLUEDESK Mobile | `available` | **UNKNOWN / NEEDS REVIEW** | `/bluedesk-mobile.html` | Preserve entry; add evidence metadata; do not claim operational until verified |
@@ -156,8 +156,9 @@ The tree contains 43 root-level HTML pages not represented as catalog destinatio
 - `nav.js`: 84 hard-coded items.
 - Navigation items absent from JSON catalog: Shield Concept Dashboard (`clearglass_x5f_shield_x5f_dashboard.html`) and GridShield-Ontario Evidence Console (`GridShield-Ontario-V6-0-ULTRA-FINAL.html`).
 - Existing catalog item absent from navigation: XENOLITH (`xenolith.html`).
-- `sitemap.xml`: 174 URLs.
-- Existing portfolio routes not represented in the sitemap: `platform-command-center.html`, `ClearGlass-Revenue-Machine.html`, `clearGlass-revenue-os-v2.html`, `clearglass_x5f_shield_x5f_g01_x5f_verified.html`, `shield_x5f_nexus_x5f_live_x5f_all.html`, `gridshield_x5f_v6_x5f_ultra_x5f_do.html`, `ontario_x5f_power_x5f_grid_x5f_live.html`.
+- `sitemap.xml`: 174 URLs; the branch restores the original URL set rather than adding the Platform Command Center route.
+- The Platform Command Center page has an explicit `noindex` directive, and repository SEO documentation conflicts about whether it should be public or private. Preserve the page, legacy catalog `productUrl`, and global navigation; use `seoIndexable: false` and omit it from the sitemap and public ItemList until the owner resolves scope.
+- `ClearGlass-Revenue-Machine.html` and `clearGlass-revenue-os-v2.html` are internal/noindex; the Shield G01, Shield Nexus, GridShield v6, and Ontario Power Grid demo pages explicitly use `noindex,nofollow`. Their demo cards remain clearly labelled, but `seoIndexable` is false and these routes stay out of the sitemap/structured-data ItemList.
 
 Consolidation proposal: keep one canonical card for Shield and one for GridShield when the evidence confirms the nav-only surfaces are alternate/demo views of the same product. Preserve existing routes and associate them as related surfaces; add no duplicate cards by name alone.
 
@@ -175,7 +176,7 @@ A web snapshot of `https://www.clearglassinc.com/products.html` showed the page 
 4. Add the verified public demo ARTEMIS FAWL only with an explicit demo/synthetic status; list unhosted backend/prototype systems as internal entries using safe contact destinations rather than exposing private endpoints.
 5. Preserve current navigation items and ordering, append XENOLITH, and include the ARTEMIS FAWL demo. Keep the Shield/GridShield related surfaces consolidated unless code evidence demonstrates distinct products.
 6. Add catalog CTA/status rendering that honors explicit internal-vs-public classification; preserve existing legacy `productUrl` values as source data.
-7. Preserve current canonical URL and JSON-LD `CollectionPage` schema. Add reviewed `ItemList` structured data only for public entries with a verified public destination; do not publish internal or simulated systems as live product offers.
+7. Preserve the canonical URL and JSON-LD `CollectionPage` schema. Keep `ItemList` limited to public, indexable destinations; any explicit `noindex` route has `seoIndexable: false` and is excluded while its catalog card/legacy route is preserved. Never describe internal or simulated systems as live services.
 8. Update tests for the expanded registry, required metadata, safe internal CTAs, original IDs/URLs, and destination existence.
 9. Run catalog tests, site integrity, schema/JSON parsing, JS syntax, tests/typecheck/build where available, desktop/mobile rendering, sitemap consistency, and workflow YAML validation. If the environment cannot run a gate, record `NOT_EXECUTABLE_IN_THIS_ENVIRONMENT`.
 10. Open a reviewable PR with changed-file and validation evidence; do not merge or deploy.

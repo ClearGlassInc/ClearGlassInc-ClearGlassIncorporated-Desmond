@@ -17,6 +17,7 @@ class ProductCommandCenterTests(unittest.TestCase):
     def test_catalog_has_unique_required_identifiers(self) -> None:
         self.assertEqual(self.catalog["schema"], "clearglass.products/v1")
         self.assertEqual(len(self.products), 94)
+        self.assertEqual([p["id"] for p in self.products[:82]], [f"cg-{i:03d}" for i in range(1, 83)])
         for key in ("id", "slug", "name", "description", "category", "status", "productUrl"):
             values = [product[key] for product in self.products]
             self.assertTrue(all(isinstance(value, str) and value for value in values), key)
@@ -51,7 +52,7 @@ class ProductCommandCenterTests(unittest.TestCase):
             "tagline", "audience", "keyCapabilities", "sourcePath", "publicUrl",
             "internalRoute", "repositoryPath", "documentationLink", "ctaLabel",
             "ctaDestination", "seoTitle", "seoDescription", "keywords",
-            "last_verified", "evidence_notes", "integrationStatus", "catalogVisibility",
+            "last_verified", "evidence_notes", "integrationStatus", "catalogVisibility", "seoIndexable",
         )
         for product in self.products:
             for key in required:
@@ -62,11 +63,13 @@ class ProductCommandCenterTests(unittest.TestCase):
                 self.assertTrue(isinstance(product[key], str) and product[key], f'{product["id"]}: {key}')
             self.assertIsInstance(product["keyCapabilities"], list, product["id"])
             self.assertIsInstance(product["keywords"], list, product["id"])
+            self.assertIsInstance(product["seoIndexable"], bool, product["id"])
             self.assertRegex(product["last_verified"], r"^\d{4}-\d{2}-\d{2}$")
             source = ROOT / product["sourcePath"]
             self.assertTrue(source.is_file(), f'{product["id"]} evidence source: {product["sourcePath"]}')
             if product["catalogVisibility"] == "internal":
                 self.assertIsNone(product["publicUrl"], product["id"])
+                self.assertFalse(product["seoIndexable"], product["id"])
                 self.assertIsInstance(product["internalRoute"], str, product["id"])
                 self.assertEqual(product["ctaLabel"], "Contact ClearGlass", product["id"])
                 self.assertEqual(product["ctaDestination"], "/index.html#contact", product["id"])
@@ -89,6 +92,7 @@ class ProductCommandCenterTests(unittest.TestCase):
             if product.get("catalogVisibility") != "internal"
             and isinstance(product.get("publicUrl"), str)
             and product["publicUrl"].startswith("/")
+            and product.get("seoIndexable", True) is not False
         }
         actual_urls = {row["item"]["url"] for row in listed}
         self.assertEqual(actual_urls, expected_urls)
@@ -112,6 +116,43 @@ class ProductCommandCenterTests(unittest.TestCase):
         self.assertIn('"GridShield-Ontario Evidence Console", "GridShield-Ontario-V6-0-ULTRA-FINAL.html"', nav)
         self.assertIn('["Authority Network", "authority-network.html", "Connected knowledge graph", "🔗"]', nav)
         self.assertNotIn('["Authority Grid", "authority-network.html", "⌁"]', nav)
+
+    def test_noindex_routes_are_excluded_from_search_surfaces_without_deleting_pages(self) -> None:
+        by_slug = {product["slug"]: product for product in self.products}
+        platform = by_slug["platform-command-center"]
+        self.assertEqual(platform["productUrl"], "/platform-command-center.html")
+        self.assertEqual(platform["publicUrl"], "/platform-command-center.html")
+        self.assertFalse(platform["seoIndexable"])
+        self.assertTrue((ROOT / "platform-command-center.html").is_file())
+
+        noindex_public = [
+            product for product in self.products
+            if product.get("publicUrl") and product.get("seoIndexable") is False
+        ]
+        self.assertGreaterEqual(len(noindex_public), 5)
+        for product in noindex_public:
+            page_path = ROOT / product["publicUrl"].lstrip("/")
+            self.assertTrue(page_path.is_file(), f'{product["id"]}: {product["publicUrl"]}')
+            page = page_path.read_text(encoding="utf-8")
+            robots_tags = [
+                tag.lower() for tag in re.findall(r"<meta[^>]*>", page, flags=re.IGNORECASE)
+                if "robots" in tag.lower()
+            ]
+            self.assertTrue(
+                any("noindex" in tag for tag in robots_tags),
+                f'{product["id"]} is non-indexable but has no noindex robots directive',
+            )
+
+        sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
+        for product in noindex_public:
+            self.assertNotIn("https://www.clearglassinc.com" + product["publicUrl"], sitemap)
+        page = (ROOT / "products.html").read_text(encoding="utf-8")
+        match = re.search(r'<script type="application/ld\\+json">([\\s\\S]*?)</script>', page)
+        self.assertIsNotNone(match)
+        schema = json.loads(match.group(1))
+        urls = {row["item"]["url"] for row in schema["mainEntity"]["itemListElement"]}
+        for product in noindex_public:
+            self.assertNotIn("https://www.clearglassinc.com" + product["publicUrl"], urls)
 
     def test_new_product_surfaces_are_explicitly_noncommercial(self) -> None:
         expected = {

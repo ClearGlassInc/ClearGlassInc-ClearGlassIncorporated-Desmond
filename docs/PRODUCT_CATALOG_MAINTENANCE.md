@@ -19,6 +19,7 @@ Each portfolio record keeps its existing ID, slug, name, description, category, 
 - `publicUrl` or `internalRoute`: relative public route only when a safe public surface is intended; internal systems must not advertise private service endpoints.
 - `repositoryPath`, `documentationLink`, `ctaLabel`, `ctaDestination`, `seoTitle`, `seoDescription`, `keywords`, `last_verified` (ISO date), `evidence_notes`.
 - `integrationStatus`: the conservative, evidence-based assessment. It is independent of the pre-existing `status` and never overwrites that field.
+- `seoIndexable`: explicit boolean for search indexing, separate from card visibility. Set `false` when the destination uses a `noindex` robots directive or public/private intent remains unresolved. Such routes stay in the catalog only as required, but are excluded from sitemap additions and the JSON-LD `ItemList`.
 - `catalogVisibility`: `public` or `internal`. Internal cards use the safe `/index.html#contact` CTA and do not expose the implementation route as a card destination.
 
 ## Integration status definitions
@@ -44,8 +45,8 @@ Do not infer operational status from a file name, catalog field named `available
 5. For an internal service, use `catalogVisibility: "internal"`, `publicUrl: null`, a clearly marked `internalRoute` description, and `ctaDestination: "/index.html#contact"`. Never put credentials, tokens or private endpoint URLs in catalog data, docs, PR text or screenshots.
 6. For a public demo, retain a demo/prototype assessment and show the synthetic-data or read-only boundary.
 7. Add public product cards to `nav.js` without deleting or reordering existing destinations. Internal-only catalog records do not need public navigation links.
-8. Keep the public `ItemList` JSON-LD synchronized with `catalogVisibility` and `publicUrl`. Do not index private route targets or market simulations as operational services.
-9. Add a canonical sitemap URL only for an intended public route whose URL has been checked. Do not add source files, drafts, internal routes, aliases or duplicate routes by default.
+8. Keep the public `ItemList` JSON-LD synchronized with `catalogVisibility`, `publicUrl`, and `seoIndexable`. Exclude any `seoIndexable: false` destination. Do not index private route targets or market simulations as operational services.
+9. Add a canonical sitemap URL only for an intended, indexable public route whose URL and robots directives have been checked. Do not add noindex pages, source files, drafts, internal routes, aliases or duplicate routes by default.
 
 ## Validation checklist
 
