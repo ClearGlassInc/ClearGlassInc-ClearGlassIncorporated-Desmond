@@ -19,7 +19,7 @@ OPENSKY_CLIENT_SECRET=
 ADSBX_API_KEY=
 SATELLITE_API_KEY=
 ```
-OpenSky can be queried anonymously subject to its current service policy and quotas; credentials are optional for the adapter but recommended when access is available. ADS-B Exchange and N2YO layers are OFFLINE until their respective valid API keys are configured. Caltrans District 5 CCTV does not require a key for the public feed.
+OpenSky can be queried anonymously subject to its current service policy and quotas; when credentials are configured, the adapter uses the documented OAuth2 client-credentials flow and caches the bearer token server-side. ADS-B Exchange and N2YO layers are OFFLINE until their respective valid API keys are configured. Caltrans District 5 CCTV does not require a key for the public feed.
 
 ## API
 `GET /api/live/ops?lat=36.57&lon=-121.525&radius_nm=40`
@@ -33,7 +33,7 @@ OpenSky can be queried anonymously subject to its current service policy and quo
 ## Data/coverage caveats
 - OpenSky is a public state-vector source; its results are not a guarantee of all aircraft in the radius.
 - ADS-B Exchange military records are included only when the response's explicit `mil` flag is boolean true. No callsign-pattern inference is used.
-- N2YO's `/above` response includes satellite ID/name/position/altitude; it does not supply velocity, azimuth, elevation or pass predictions in this response shape, so those fields are null and rendered as “—”. The angular radius sent to N2YO is radius_nm / 60 degrees. This provider reports overhead objects, not a complete satellite catalogue.
+- N2YO's `/above` search radius is an angular radius from zenith, not a ground-distance radius. The adapter uses a bounded sky cone, then filters each provider-supplied satellite ground footprint with great-circle distance. If no footprint lies within the configured radius, it widens the sky cone and includes only footprints within a capped expanded geographic radius, labelled `NEARBY`. The response includes satellite ID/name/position/altitude; velocity, azimuth, elevation and pass predictions are null because this response shape does not supply them. This provider is not a complete satellite catalogue.
 - CCTV coverage comes from the Caltrans District 5 public status feed, not an asserted county-wide count. Status is `UNKNOWN` unless the feed provides an explicit service flag.
 - The map background is a schematic operational plot, not a street/terrain basemap. Markers are actual provider coordinates. Add a licensed/approved tile or map provider only after CSP, attribution and usage terms are reviewed.
 - “Live flights 9.6K”, “Military 171”, “Satellites 838” and “CCTV 800” are not hardcoded. The dashboard displays only actual returned counts or “—”.
