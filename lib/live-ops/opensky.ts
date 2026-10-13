@@ -4,6 +4,24 @@ import { cleanText, distanceNm, isFiniteNumber, type Center, type FlightAsset, t
 const M_TO_FT = 3.280839895;
 const MS_TO_KTS = 1.943844492;
 const MS_TO_FPM = 196.850394;
+let tokenCache: { value: string; expiresAt: number } | null = null;
+let tokenRequest: Promise<string> | null = null;
+
+async function openSkyBearerToken(clientId: string, clientSecret: string): Promise<string> {
+  if (tokenCache && tokenCache.expiresAt > Date.now() + 60_000) return tokenCache.value;
+  if (tokenRequest) return tokenRequest;
+  tokenRequest = (async () => {
+    const body = new URLSearchParams({ grant_type: "client_credentials", client_id: clientId, client_secret: clientSecret });
+    const response = await fetchJson("https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token", {
+      method: "POST", headers: { accept: "application/json", "content-type": "application/x-www-form-urlencoded" }, body
+    }, 7_000, 1) as { access_token?: unknown; expires_in?: unknown };
+    if (typeof response.access_token !== "string" || !response.access_token) throw new Error("OpenSky OAuth response did not contain an access token");
+    const expiresIn = isFiniteNumber(response.expires_in) ? Math.max(120, response.expires_in) : 1800;
+    tokenCache = { value: response.access_token, expiresAt: Date.now() + expiresIn * 1000 };
+    return response.access_token;
+  })();
+  try { return await tokenRequest; } finally { tokenRequest = null; }
+}
 export async function getOpenSky(center: Center, radiusNm: number, bounds: Bounds): Promise<ProviderResult<FlightAsset>> {
   const key = `opensky:${center.lat.toFixed(3)}:${center.lon.toFixed(3)}:${radiusNm}`;
   return cachedProvider(key, 7_000, async () => {
@@ -12,7 +30,7 @@ export async function getOpenSky(center: Center, radiusNm: number, bounds: Bound
     url.searchParams.set("lamax", String(bounds.lamax)); url.searchParams.set("lomax", String(bounds.lomax));
     const headers: Record<string, string> = { accept: "application/json" };
     const id = process.env.OPENSKY_CLIENT_ID, secret = process.env.OPENSKY_CLIENT_SECRET;
-    if (id && secret) headers.authorization = "Basic " + Buffer.from(`${id}:${secret}`).toString("base64");
+    if (id && secret) headers.authorization = `Bearer ${await openSkyBearerToken(id, secret)}`;
     const raw = await fetchJson(url.toString(), { headers }, 7_000, 1) as { states?: unknown[][] | null; time?: number };
     // OpenSky legitimately returns states: null when the bounding box has no aircraft.
     if (raw.states === null && isFiniteNumber(raw.time)) return { items: [], status: "online" };
