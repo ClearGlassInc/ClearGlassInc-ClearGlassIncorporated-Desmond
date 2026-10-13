@@ -50,7 +50,7 @@
   }
 
   function normalizedText(product) {
-    return [product.name, product.category, product.sku, product.description, ...(product.tags || []), ...(product.features || []), ...(product.useCases || [])].filter(Boolean).join(" ").toLocaleLowerCase();
+    return [product.name, product.tagline, product.category, product.sku, product.description, product.audience, assessmentLabel(product), ...(product.tags || []), ...(product.keyCapabilities || []), ...(product.features || []), ...(product.useCases || [])].filter(Boolean).join(" ").toLocaleLowerCase();
   }
 
   function visibleProducts() {
@@ -68,8 +68,21 @@
     "name-az": (a, b) => a.name.localeCompare(b.name), "name-za": (a, b) => b.name.localeCompare(a.name)
   };
 
+  function assessmentLabel(product) {
+    if (product && product.integrationStatus) return product.integrationStatus;
+    return product && product.status === "available" ? "UNKNOWN / NEEDS REVIEW" : String((product && product.status) || "UNKNOWN / NEEDS REVIEW");
+  }
+
+  function productDestination(product) {
+    return (product && product.ctaDestination) || (product && product.productUrl) || "/index.html#contact";
+  }
+
+  function productCtaLabel(product) {
+    return (product && product.ctaLabel) || "View product";
+  }
+
   function badgeMarkup(product) {
-    const badges = [product.featured && "Featured", product.new && "New", product.bestseller && "Bestseller", product.recommended && "Recommended", product.status !== "available" && product.status].filter(Boolean).slice(0, 2);
+    const badges = [product.featured && "Featured", product.new && "New", product.bestseller && "Bestseller", product.recommended && "Recommended"].filter(Boolean).slice(0, 2);
     return badges.map((badge) => `<span class="pc-badge">${escapeHtml(String(badge).replace("-", " "))}</span>`).join("");
   }
 
@@ -79,9 +92,9 @@
       <div class="pc-card-top"><span class="pc-icon" aria-hidden="true">${escapeHtml(product.icon || "◇")}</span><button class="pc-favorite" type="button" data-favorite="${escapeHtml(product.id)}" aria-pressed="${favorite}" aria-label="${favorite ? "Remove" : "Add"} ${escapeHtml(product.name)} ${favorite ? "from" : "to"} favorites">${favorite ? "♥" : "♡"}</button></div>
       <div><span class="pc-label">${escapeHtml(product.category)}</span><h2>${escapeHtml(product.name)}</h2></div>
       <p>${escapeHtml(product.shortDescription || product.description || "Details available on the product page.")}</p>
-      <div class="pc-badges">${badgeMarkup(product)}<span class="pc-badge">${escapeHtml(product.status)}</span></div>
+      <div class="pc-badges">${badgeMarkup(product)}<span class="pc-badge">${escapeHtml(assessmentLabel(product))}</span></div>
       <div class="pc-tags" aria-label="Product tags">${(product.tags || []).slice(0, 4).map((tag) => `<span>#${escapeHtml(tag)}</span>`).join("")}</div>
-      <div class="pc-card-actions"><a class="pc-primary" href="${escapeHtml(product.productUrl)}" data-product-link="${escapeHtml(product.id)}">View product</a><button type="button" data-quick-view="${escapeHtml(product.id)}">Quick view</button><button type="button" data-compare="${escapeHtml(product.id)}" aria-pressed="${compared}">${compared ? "Remove compare" : "Add to compare"}</button><a href="/#contact">Contact</a></div>
+      <div class="pc-card-actions"><a class="pc-primary" href="${escapeHtml(productDestination(product))}" data-product-link="${escapeHtml(product.id)}">${escapeHtml(productCtaLabel(product))}</a><button type="button" data-quick-view="${escapeHtml(product.id)}">Quick view</button><button type="button" data-compare="${escapeHtml(product.id)}" aria-pressed="${compared}">${compared ? "Remove compare" : "Add to compare"}</button><a href="/#contact">Contact</a></div>
     </article>`;
   }
 
@@ -134,7 +147,7 @@
 
   function openInspector(id) {
     const product = state.products.find((item) => item.id === id); if (!product) return;
-    els.dialogContent.innerHTML = `<span class="pc-label">Product inspector · ${escapeHtml(product.category)}</span><h2 id="product-dialog-title">${escapeHtml(product.name)}</h2><p>${escapeHtml(product.description)}</p><div class="pc-badges"><span class="pc-badge">${escapeHtml(product.status)}</span>${badgeMarkup(product)}</div><h3>Product metadata</h3><p>${(product.tags || []).length ? product.tags.map((tag) => `#${escapeHtml(tag)}`).join(" · ") : "See the full product page for verified capabilities."}</p><div class="pc-inspector-actions"><a href="${escapeHtml(product.productUrl)}" data-product-link="${escapeHtml(product.id)}">Full product details</a><a href="/#contact">Contact ClearGlass</a></div>`;
+    els.dialogContent.innerHTML = `<span class="pc-label">Product inspector · ${escapeHtml(product.category)}</span><h2 id="product-dialog-title">${escapeHtml(product.name)}</h2><p>${escapeHtml(product.description)}</p><div class="pc-badges"><span class="pc-badge">${escapeHtml(assessmentLabel(product))}</span>${badgeMarkup(product)}</div><h3>Product metadata</h3><p>${(product.tags || []).length ? product.tags.map((tag) => `#${escapeHtml(tag)}`).join(" · ") : "See the full product page for verified capabilities."}</p><div class="pc-inspector-actions"><a href="${escapeHtml(productDestination(product))}" data-product-link="${escapeHtml(product.id)}">${escapeHtml(productCtaLabel(product))}</a><a href="/#contact">Contact ClearGlass</a></div>`;
     els.dialog.showModal(); track("quick_view_opened", { product_id: id });
   }
 
@@ -142,7 +155,7 @@
     const products = state.products.filter((product) => state.compared.has(product.id));
     if (products.length < 2) { showToast("Select at least two products to compare."); return; }
     const row = (label, value) => `<tr><th scope="row">${label}</th>${products.map((product) => `<td>${escapeHtml(value(product))}</td>`).join("")}</tr>`;
-    els.dialogContent.innerHTML = `<span class="pc-label">Comparison workspace</span><h2 id="product-dialog-title">Compare products</h2><div role="region" aria-label="Product comparison" tabindex="0"><table class="pc-comparison"><thead><tr><th scope="col">Attribute</th>${products.map((product) => `<th scope="col">${escapeHtml(product.name)}</th>`).join("")}</tr></thead><tbody>${row("Category", (p) => p.category)}${row("Availability", (p) => p.status)}${row("Pricing", (p) => p.price == null ? "Contact for pricing" : `${p.currency || "CAD"} ${p.price}`)}${row("Description", (p) => p.description)}${row("Tags", (p) => (p.tags || []).join(", ") || "Not specified")}</tbody></table></div>`;
+    els.dialogContent.innerHTML = `<span class="pc-label">Comparison workspace</span><h2 id="product-dialog-title">Compare products</h2><div role="region" aria-label="Product comparison" tabindex="0"><table class="pc-comparison"><thead><tr><th scope="col">Attribute</th>${products.map((product) => `<th scope="col">${escapeHtml(product.name)}</th>`).join("")}</tr></thead><tbody>${row("Category", (p) => p.category)}${row("Evidence status", (p) => assessmentLabel(p))}${row("Pricing", (p) => p.price == null ? "Contact for pricing" : `${p.currency || "CAD"} ${p.price}`)}${row("Description", (p) => p.description)}${row("Tags", (p) => (p.tags || []).join(", ") || "Not specified")}</tbody></table></div>`;
     els.dialog.showModal();
   }
 
@@ -155,7 +168,7 @@
     els.total.textContent = state.products.length; els.categoryTotal.textContent = categories.length;
     els.collections.innerHTML = `<button class="pc-collection" type="button" data-collection="all" aria-pressed="${state.category === "all"}">All systems · ${state.products.length}</button>` + categories.map((category) => `<button class="pc-collection" type="button" data-collection="${escapeHtml(category)}" aria-pressed="${state.category === category}">${escapeHtml(category)} · ${state.products.filter((product) => product.category === category).length}</button>`).join("");
     const featured = state.products.find((product) => product.featured) || state.products[0];
-    if (featured) els.featured.innerHTML = `<div><span class="pc-label">Catalog spotlight</span><h2>${escapeHtml(featured.name)}</h2><p>${escapeHtml(featured.description)}</p></div><a class="pc-control" href="${escapeHtml(featured.productUrl)}">Explore system</a>`;
+    if (featured) els.featured.innerHTML = `<div><span class="pc-label">Catalog spotlight</span><h2>${escapeHtml(featured.name)}</h2><p>${escapeHtml(featured.description)}</p></div><a class="pc-control" href="${escapeHtml(productDestination(featured))}">${escapeHtml(productCtaLabel(featured))}</a>`;
   }
 
   root.addEventListener("click", (event) => {
