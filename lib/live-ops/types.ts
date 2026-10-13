@@ -10,7 +10,7 @@ export interface FlightAsset {
   altitude_ft: number | null; speed_kts: number | null; heading_deg: number | null;
   callsign: string | null; icao24: string; country: string | null; squawk: string | null;
   on_ground: boolean | null; vertical_rate: number | null; last_seen: string | null;
-  category?: "military";
+  category?: "military" | number | null;
 }
 export interface SatelliteAsset {
   id: string; type: "satellite"; name: string; norad_id: number; lat: number; lon: number;
