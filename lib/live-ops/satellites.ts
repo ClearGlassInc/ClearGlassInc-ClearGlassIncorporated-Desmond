@@ -8,18 +8,29 @@ export async function getSatellites(center: Center, radiusNm: number): Promise<P
     if (!apiKey) throw new Error("SATELLITE_API_KEY is not configured");
     // N2YO's /above endpoint uses an angular search radius in degrees (not nautical miles).
     const angularRadius = Math.min(90, Math.max(0.1, radiusNm / 60));
-    const url = `https://api.n2yo.com/rest/v1/satellite/above/${center.lat}/${center.lon}/0/${angularRadius}/0/&apiKey=${encodeURIComponent(apiKey)}`;
-    const raw = await fetchJson(url, { headers: { accept: "application/json" } }, 8_000, 1) as { above?: unknown[]; info?: { satcount?: number } };
-    if (!Array.isArray(raw.above)) throw new Error("N2YO response has no above array");
+    const queryAbove = async (radiusDegrees: number) => {
+      const url = `https://api.n2yo.com/rest/v1/satellite/above/${center.lat}/${center.lon}/0/${radiusDegrees}/0/&apiKey=${encodeURIComponent(apiKey)}`;
+      const response = await fetchJson(url, { headers: { accept: "application/json" } }, 8_000, 1) as { above?: unknown[]; info?: { satcount?: number } };
+      if (!Array.isArray(response.above)) throw new Error("N2YO response has no above array");
+      return response.above;
+    };
+    let rawAbove = await queryAbove(angularRadius);
+    let context: SatelliteAsset["context"] = "OVERHEAD";
+    // If no object is reported inside the configured radius, widen the angular search
+    // and explicitly label those returned objects as nearby rather than overhead.
+    if (rawAbove.length === 0) {
+      rawAbove = await queryAbove(Math.min(15, Math.max(5, angularRadius * 5)));
+      context = "NEARBY";
+    }
     const items: SatelliteAsset[] = [];
-    for (const sat of raw.above as Record<string, unknown>[]) {
+    for (const sat of rawAbove as Record<string, unknown>[]) {
       if (!sat || !isFiniteNumber(sat.satid) || typeof sat.satname !== "string" || !isFiniteNumber(sat.satlat) || !isFiniteNumber(sat.satlng)) continue;
       const altitude = isFiniteNumber(sat.satalt) ? sat.satalt : null;
       items.push({
         id: String(sat.satid), type: "satellite", name: sat.satname.slice(0, 120), norad_id: sat.satid,
         lat: sat.satlat, lon: sat.satlng, altitude_km: altitude,
         velocity_kms: null, azimuth: null, elevation: null,
-        last_seen: new Date().toISOString(), context: "OVERHEAD"
+        last_seen: new Date().toISOString(), context
       });
     }
     return { items, status: "online" };
