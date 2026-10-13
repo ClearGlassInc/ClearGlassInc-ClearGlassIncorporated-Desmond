@@ -96,7 +96,7 @@
   ];
   var TOP = [["Vision","index.html#vision"],["Services","index.html#services"],["Products","products.html"],["Government","index.html#government"],["Insights","blog/"],["Contact","index.html#contact"]];
   var COMPANY = [
-    ["Authority Grid", "authority-network.html", "⌁"]
+
   ];
   var script = document.currentScript || Array.prototype.slice.call(document.scripts).filter(function(s){return /nav\.js(?:\?|$)/.test(s.src);}).pop();
   var base = script ? new URL('.', script.src).href : new URL('.', location.href).href;

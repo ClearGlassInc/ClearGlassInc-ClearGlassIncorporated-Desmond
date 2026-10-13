@@ -110,6 +110,8 @@ class ProductCommandCenterTests(unittest.TestCase):
         self.assertIn('"ARTEMIS FAWL", "artemis-fawl/index.html"', nav)
         self.assertIn('"Shield Concept Dashboard", "clearglass_x5f_shield_x5f_dashboard.html"', nav)
         self.assertIn('"GridShield-Ontario Evidence Console", "GridShield-Ontario-V6-0-ULTRA-FINAL.html"', nav)
+        self.assertIn('["Authority Network", "authority-network.html", "Connected knowledge graph", "🔗"]', nav)
+        self.assertNotIn('["Authority Grid", "authority-network.html", "⌁"]', nav)
 
     def test_new_product_surfaces_are_explicitly_noncommercial(self) -> None:
         expected = {
