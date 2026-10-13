@@ -1,29 +1,47 @@
 # Site Health Report
 
-**Run:** 2026-08-09T07:52:37.524279+00:00
-**Status:** ⚠️ Issues Detected
+**Run:** 2026-10-13T14:51:34.194889+00:00
+**Status:** ✅ Healthy
 **Pages:** 6/6 healthy
 
 ## Pages
 
-- ✅ `/` (276ms)
-- ✅ `/artemis.html` (123ms)
-- ✅ `/artemis-iv.html` (149ms)
-- ✅ `/guardian.html` (143ms)
-- ✅ `/clearglass-nexus.html` (158ms)
-- ✅ `/government.html` (152ms)
-
-## Local Issues
-
-- ❌ Page missing ClearGlass logo: blog/ontario-influence-environment-august-2026.html
-- ❌ Page missing ClearGlass logo: blog/shadow-ai-incident-response-logs-gone.html
-- ❌ Page missing ClearGlass logo: business-productivity-suite.html
-- ❌ Page missing ClearGlass logo: threads.html
+- ✅ `/` (234ms)
+- ✅ `/artemis.html` (179ms)
+- ✅ `/artemis-iv.html` (185ms)
+- ✅ `/guardian.html` (129ms)
+- ✅ `/clearglass-nexus.html` (201ms)
+- ✅ `/government.html` (144ms)
 
 ## Warnings (non-failing)
 
-- ⚠️ HTML page not referenced in sitemap.xml: business-productivity-suite.html
-- ⚠️ HTML page not referenced in sitemap.xml: global-growth-engine.html
+- ⚠️ HTML page not referenced in sitemap.xml: ClearGlass-Ops-Dashboard.html
+- ⚠️ HTML page not referenced in sitemap.xml: ClearGlass-Revenue-Machine.html
+- ⚠️ HTML page not referenced in sitemap.xml: Clearglass-Animation-Repair-Ultracode.html
+- ⚠️ HTML page not referenced in sitemap.xml: Clearglass-Shield-Dashboard.html
+- ⚠️ HTML page not referenced in sitemap.xml: Fantasy-Command-Live (1).html
+- ⚠️ HTML page not referenced in sitemap.xml: Fantasy-Pool-Dashboard.html
+- ⚠️ HTML page not referenced in sitemap.xml: Gridshield-Ontario-V3-Ics.html
+- ⚠️ HTML page not referenced in sitemap.xml: Gridshield-V7-Ultra-Formal.html
+- ⚠️ HTML page not referenced in sitemap.xml: Gridshield-V8-Live-Wire.html
+- ⚠️ HTML page not referenced in sitemap.xml: HoloSurg-surgical-visualization-blueprint.html
+- ⚠️ HTML page not referenced in sitemap.xml: Ontario-Power-Grid-Live.html
+- ⚠️ HTML page not referenced in sitemap.xml: Orelogic-Final-Dashboard-Production.html
+- ⚠️ HTML page not referenced in sitemap.xml: Orelogic-V4-Ultra-Beyond.html
+- ⚠️ HTML page not referenced in sitemap.xml: artemis-nonprofit-os.html
+- ⚠️ HTML page not referenced in sitemap.xml: clearGlass-revenue-os-v2.html
+- ⚠️ HTML page not referenced in sitemap.xml: clearglass-sat-mission-deploy.html
+- ⚠️ HTML page not referenced in sitemap.xml: clearglass_x5f_pricing_x5f_preview.html
+- ⚠️ HTML page not referenced in sitemap.xml: clearglass_x5f_rescue_x5f_draft_x5f_landing.html
+- ⚠️ HTML page not referenced in sitemap.xml: clearglass_x5f_shield_x5f_dashboard.html
+- ⚠️ HTML page not referenced in sitemap.xml: clearglass_x5f_shield_x5f_g01_x5f_verified.html
+- ⚠️ HTML page not referenced in sitemap.xml: fantasy-command-live (2).html
+- ⚠️ HTML page not referenced in sitemap.xml: fantasy-command-live.html
+- ⚠️ HTML page not referenced in sitemap.xml: gridshield_x5f_v6_x5f_ultra_x5f_do.html
 - ⚠️ HTML page not referenced in sitemap.xml: header-mockup-2040.html
+- ⚠️ HTML page not referenced in sitemap.xml: intelligence-graph.html
+- ⚠️ HTML page not referenced in sitemap.xml: ontario_x5f_power_x5f_grid_x5f_live (1).html
+- ⚠️ HTML page not referenced in sitemap.xml: ontario_x5f_power_x5f_grid_x5f_live.html
 - ⚠️ HTML page not referenced in sitemap.xml: seo-dashboard.html
+- ⚠️ HTML page not referenced in sitemap.xml: shield_x5f_nexus_x5f_live_x5f_all.html
 - ⚠️ HTML page not referenced in sitemap.xml: threads.html
