@@ -4,7 +4,7 @@ import { getOpenSky } from "@/lib/live-ops/opensky";
 import { getMilitaryFlights } from "@/lib/live-ops/adsbexchange";
 import { getSatellites } from "@/lib/live-ops/satellites";
 import { getCameras } from "@/lib/live-ops/cctv";
-import { boundsFor, distanceNm, type LiveOpsResponse, type ProviderResult, type FlightAsset, type SatelliteAsset, type CameraAsset } from "@/lib/live-ops/types";
+import { boundsFor, type LiveOpsResponse, type ProviderResult, type FlightAsset, type SatelliteAsset, type CameraAsset } from "@/lib/live-ops/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
