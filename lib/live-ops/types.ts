@@ -34,6 +34,18 @@ export interface LiveOpsResponse {
 export function isFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
+
+export function parseFiniteNumber(value: unknown): number | null {
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  if (typeof value !== "string" || value.trim() === "") return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+export function isValidCoordinates(lat: number, lon: number): boolean {
+  return Number.isFinite(lat) && lat >= -90 && lat <= 90 &&
+    Number.isFinite(lon) && lon >= -180 && lon <= 180;
+}
 export function cleanText(value: unknown, max = 120): string | null {
   if (typeof value !== "string") return null;
   const text = value.replace(/[\u0000-\u001f\u007f]/g, "").trim().slice(0, max);
