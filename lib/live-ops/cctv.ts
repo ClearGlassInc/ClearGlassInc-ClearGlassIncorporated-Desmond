@@ -4,7 +4,7 @@ import { cleanText, distanceNm, isValidCoordinates, parseFiniteNumber, type Came
 const CALTRANS_D05 = "https://cwwp2.dot.ca.gov/data/d5/cctv/cctvStatusD05.json";
 function safeHttpUrl(value: unknown): string | null {
   if (typeof value !== "string") return null;
-  try { const u = new URL(value); return u.protocol === "https:" || u.protocol === "http:" ? u.toString() : null; } catch { return null; }
+  try { const u = new URL(value); return u.protocol === "https:" ? u.toString() : null; } catch { return null; }
 }
 function nested(obj: unknown, ...keys: string[]): unknown {
   let v = obj;
