@@ -22,7 +22,7 @@ export async function getSatellites(center: Center, radiusNm: number): Promise<P
           id: String(sat.satid), type: "satellite", name: sat.satname.slice(0, 120), norad_id: sat.satid,
           lat: sat.satlat, lon: sat.satlng, altitude_km: isFiniteNumber(sat.satalt) ? sat.satalt : null,
           velocity_kms: null, azimuth: null, elevation: null,
-          last_seen: new Date().toISOString(), context
+          last_seen: null, context
         });
       }
       return items;
