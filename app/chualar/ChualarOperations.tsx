@@ -69,6 +69,11 @@ export default function ChualarOperations(): React.JSX.Element {
   }), [data]);
   const allMarkers = (Object.keys(assets) as LayerKey[]).flatMap(kind => layers[kind] ? assets[kind].map(({ asset }) => ({ kind, asset })) : []);
   const sourceStatus = data.sources;
+  const overallHealth = Object.values(sourceStatus).some(status => status === "online")
+    ? "LIVE"
+    : Object.values(sourceStatus).some(status => status === "degraded") ? "DEGRADED" : "OFFLINE";
+  const overallStyle = overallHealth === "LIVE" ? styles.liveOnline : overallHealth === "DEGRADED" ? styles.liveDegraded : styles.liveOffline;
+  const pulseStyle = overallHealth === "LIVE" ? styles.pulseOnline : overallHealth === "DEGRADED" ? styles.pulseDegraded : styles.pulseOffline;
   const viewRadius = useMemo(() => {
     const nearby = layers.satellites
       ? data.layers.satellites.filter(asset => asset.context === "NEARBY")
@@ -109,7 +114,7 @@ export default function ChualarOperations(): React.JSX.Element {
   return <main className={styles.shell}>
     <header className={styles.header}>
       <div><p className={styles.eyebrow}>CLEARGLASS / PUBLIC-SOURCE SENSOR FABRIC</p><h1>CHUALAR <span>— MONTEREY COUNTY</span><br/>LIVE OPERATIONS</h1><p className={styles.sub}>36.5700° N · 121.5250° W · {radius} NM OPERATIONAL RADIUS</p></div>
-      <div className={styles.live}><span className={styles.pulse}/><strong>LIVE</strong><small>{busy ? "SYNCING" : "POLLING / 10 SEC"}</small></div>
+      <div className={styles.live + " " + overallStyle}><span className={styles.pulse + " " + pulseStyle}/><strong>{overallHealth}</strong><small>{busy ? "SYNCING" : overallHealth === "LIVE" ? "POLLING / 10 SEC" : "SOURCE HEALTH STATUS"}</small></div>
     </header>
     <section className={styles.toolbar}>
       <label>RADIUS <select value={radius} onChange={e => setRadius(Number(e.target.value))}><option value={20}>20 NM</option><option value={40}>40 NM</option><option value={60}>60 NM</option><option value={100}>100 NM</option><option value={150}>150 NM</option></select></label>
