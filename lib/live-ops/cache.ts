@@ -1,9 +1,11 @@
 import type { ProviderResult } from "./types";
 
 type Entry<T> = { expiresAt: number; value: ProviderResult<T> };
+const MAX_CACHE_ENTRIES = 512;
 const cache = new Map<string, Entry<unknown>>();
 const inflight = new Map<string, Promise<ProviderResult<unknown>>>();
 const limits = new Map<string, { started: number; count: number }>();
+let inboundLimitCalls = 0;
 const providerLimits = new Map<string, { started: number; count: number }>();
 let providerLimitCalls = 0;
 
@@ -16,7 +18,13 @@ export async function cachedProvider<T>(key: string, ttlMs: number, loader: () =
   const task = (async () => {
     try {
       const fresh = await loader();
-      if (fresh.status !== "offline") cache.set(key, { expiresAt: Date.now() + ttlMs, value: fresh });
+      if (fresh.status !== "offline") {
+        if (!cache.has(key) && cache.size >= MAX_CACHE_ENTRIES) {
+          const oldestKey = cache.keys().next().value;
+          if (oldestKey !== undefined) cache.delete(oldestKey);
+        }
+        cache.set(key, { expiresAt: Date.now() + ttlMs, value: fresh });
+      }
       else if (entry) return { ...entry.value, status: "degraded" as const, stale: true, error: fresh.error || "Provider unavailable; serving cached data." };
       return fresh;
     } catch (error) {
@@ -51,6 +59,11 @@ export function allowProviderRequest(provider: string, maxRequests: number, wind
 /** Best-effort per-process guard. Use a shared store (e.g. Redis) for multi-instance deployments. */
 export function allowRequest(key: string, maxRequests = 30, windowMs = 60_000): boolean {
   const now = Date.now();
+  if (++inboundLimitCalls % 100 === 0) {
+    for (const [limitKey, entry] of limits) {
+      if (now - entry.started >= windowMs * 2) limits.delete(limitKey);
+    }
+  }
   const bucket = limits.get(key);
   if (!bucket || now - bucket.started >= windowMs) {
     limits.set(key, { started: now, count: 1 });
