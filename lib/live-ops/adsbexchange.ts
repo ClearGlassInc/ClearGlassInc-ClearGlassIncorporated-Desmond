@@ -41,7 +41,7 @@ export async function getMilitaryFlights(center: Center, radiusNm: number): Prom
       const altitude = isFiniteNumber(a.alt_baro) ? a.alt_baro : isFiniteNumber(a.alt_geom) ? a.alt_geom : null;
       items.push({
         id: a.hex.toLowerCase(), type: "flight", category: "military", icao24: a.hex.toLowerCase(),
-        lat: a.lat, lon: a.lon, callsign: cleanText(a.flight, 16), country: cleanText(a.ownOp, 80),
+        lat: a.lat, lon: a.lon, callsign: cleanText(a.flight, 16), country: cleanText(a.country, 80), operator: cleanText(a.ownOp, 80),
         altitude_ft: altitude, speed_kts: isFiniteNumber(a.gs) ? Math.round(a.gs) : null,
         heading_deg: isFiniteNumber(a.track) ? a.track : null,
         vertical_rate: isFiniteNumber(a.baro_rate) ? a.baro_rate : isFiniteNumber(a.geom_rate) ? a.geom_rate : null,
