@@ -60,20 +60,85 @@ export function allowRequest(key: string, maxRequests = 30, windowMs = 60_000): 
   bucket.count += 1;
   return true;
 }
-export async function fetchJson(url: string, init: RequestInit = {}, timeoutMs = 8_000, retries = 1): Promise<unknown> {
+class ProviderHttpError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+    readonly retryable: boolean,
+    readonly retryAfterMs = 0
+  ) {
+    super(message);
+    this.name = "ProviderHttpError";
+  }
+}
+
+export async function fetchJson(
+  url: string,
+  init: RequestInit = {},
+  timeoutMs = 8_000,
+  retries = 1,
+  maxBytes = 5_000_000
+): Promise<unknown> {
   let lastError: unknown;
   for (let attempt = 0; attempt <= retries; attempt++) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
       const response = await fetch(url, { ...init, signal: controller.signal, cache: "no-store" });
-      if (!response.ok) throw new Error(`Provider returned HTTP ${response.status}`);
+      if (!response.ok) {
+        const retryable = response.status === 429 || response.status >= 500;
+        const retryAfter = Number(response.headers.get("retry-after"));
+        const retryAfterMs = Number.isFinite(retryAfter) && retryAfter > 0
+          ? Math.min(5_000, retryAfter * 1000)
+          : 0;
+        throw new ProviderHttpError(
+          "Provider returned HTTP " + response.status,
+          response.status,
+          retryable,
+          retryAfterMs
+        );
+      }
       const type = response.headers.get("content-type") || "";
-      if (!type.toLowerCase().includes("json")) throw new Error("Provider returned a non-JSON response");
-      return await response.json();
+      if (!type.toLowerCase().includes("json")) {
+        throw new ProviderHttpError("Provider returned a non-JSON response", response.status, false);
+      }
+      const declaredLength = Number(response.headers.get("content-length"));
+      if (Number.isFinite(declaredLength) && declaredLength > maxBytes) {
+        await response.body?.cancel();
+        throw new ProviderHttpError("Provider response exceeded the size limit", response.status, false);
+      }
+      if (!response.body) throw new Error("Provider response body was empty");
+      const reader = response.body.getReader();
+      const chunks: Uint8Array[] = [];
+      let totalBytes = 0;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        totalBytes += value.byteLength;
+        if (totalBytes > maxBytes) {
+          await reader.cancel();
+          throw new ProviderHttpError("Provider response exceeded the size limit", response.status, false);
+        }
+        chunks.push(value);
+      }
+      const bytes = new Uint8Array(totalBytes);
+      let offset = 0;
+      for (const chunk of chunks) {
+        bytes.set(chunk, offset);
+        offset += chunk.byteLength;
+      }
+      try {
+        return JSON.parse(new TextDecoder().decode(bytes)) as unknown;
+      } catch {
+        throw new ProviderHttpError("Provider returned invalid JSON", response.status, false);
+      }
     } catch (error) {
       lastError = error;
-      if (attempt < retries) await new Promise(resolve => setTimeout(resolve, 250 * (attempt + 1)));
+      const nonRetryable = error instanceof ProviderHttpError && !error.retryable;
+      const canRetry = attempt < retries && !nonRetryable;
+      if (!canRetry) break;
+      const retryAfterMs = error instanceof ProviderHttpError ? error.retryAfterMs : 0;
+      await new Promise(resolve => setTimeout(resolve, retryAfterMs || 250 * (attempt + 1)));
     } finally {
       clearTimeout(timer);
     }
