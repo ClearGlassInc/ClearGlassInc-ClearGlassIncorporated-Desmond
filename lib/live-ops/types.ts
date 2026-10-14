@@ -46,6 +46,26 @@ export function isValidCoordinates(lat: number, lon: number): boolean {
   return Number.isFinite(lat) && lat >= -90 && lat <= 90 &&
     Number.isFinite(lon) && lon >= -180 && lon <= 180;
 }
+
+export interface MercatorPoint { x: number; y: number; }
+
+export function webMercatorPixels(lat: number, lon: number, zoom: number): MercatorPoint {
+  const safeLat = Math.max(-85.05112878, Math.min(85.05112878, lat));
+  const worldSize = 256 * 2 ** zoom;
+  const sinLat = Math.sin(safeLat * Math.PI / 180);
+  return {
+    x: ((lon + 180) / 360) * worldSize,
+    y: (0.5 - Math.log((1 + sinLat) / (1 - sinLat)) / (4 * Math.PI)) * worldSize,
+  };
+}
+
+export function tileZoomForRadius(centerLat: number, radiusNm: number): number {
+  const radiusKm = radiusNm * 1.852;
+  const targetTileKm = (2 * radiusKm) / 2.25;
+  const latitudeAdjustedWorldKm = 40075.016686 * Math.cos(centerLat * Math.PI / 180);
+  const zoom = Math.round(Math.log2(latitudeAdjustedWorldKm / targetTileKm));
+  return Math.max(3, Math.min(13, zoom));
+}
 export function cleanText(value: unknown, max = 120): string | null {
   if (typeof value !== "string") return null;
   const text = value.replace(/[\u0000-\u001f\u007f]/g, "").trim().slice(0, max);
