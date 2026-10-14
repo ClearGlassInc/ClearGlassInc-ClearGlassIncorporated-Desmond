@@ -18,12 +18,14 @@ const emptyData: LiveOpsResponse = {
 };
 function sourceLabel(v: SourceHealth) { return v.toUpperCase(); }
 function countLabel(n: number | null) { return n === null ? "—" : n.toLocaleString(); }
-function mapPoint(lat: number, lon: number, radiusNm: number) {
-  // Equirectangular operational view centered on Chualar; bounds are intentionally fixed to the configured 40-NM operational area.
-  const scale = Math.max(1, radiusNm);
-  const x = 50 + (lon - CENTER.lon) * 60 * Math.cos(CENTER.lat * Math.PI / 180) / scale * 50;
-  const y = 50 - (lat - CENTER.lat) * 60 / scale * 50;
-  return { x: Math.max(1.5, Math.min(98.5, x)), y: Math.max(1.5, Math.min(98.5, y)) };
+function mapPoint(lat: number, lon: number, zoom: number) {
+  const center = webMercatorPixels(CENTER.lat, CENTER.lon, zoom);
+  const point = webMercatorPixels(lat, lon, zoom);
+  const worldSpan = 256 * 3;
+  return {
+    x: 50 + (point.x - center.x) / worldSpan * 100,
+    y: 50 + (point.y - center.y) / worldSpan * 100
+  };
 }
 export default function ChualarOperations(): React.JSX.Element {
   const [data, setData] = useState<LiveOpsResponse>(emptyData);
@@ -67,6 +69,36 @@ export default function ChualarOperations(): React.JSX.Element {
   }), [data]);
   const allMarkers = (Object.keys(assets) as LayerKey[]).flatMap(kind => layers[kind] ? assets[kind].map(({ asset }) => ({ kind, asset })) : []);
   const sourceStatus = data.sources;
+  const viewRadius = useMemo(() => {
+    const nearby = layers.satellites
+      ? data.layers.satellites.filter(asset => asset.context === "NEARBY")
+        .map(asset => distanceNm(CENTER, asset.lat, asset.lon) * 1.05)
+      : [];
+    return Math.max(radius, ...nearby);
+  }, [data.layers.satellites, layers.satellites, radius]);
+  const tileLayout = useMemo(() => {
+    const zoom = tileZoomForRadius(CENTER.lat, viewRadius);
+    const centerPx = webMercatorPixels(CENTER.lat, CENTER.lon, zoom);
+    const minX = Math.floor((centerPx.x - 384) / 256);
+    const maxX = Math.floor((centerPx.x + 384) / 256);
+    const minY = Math.floor((centerPx.y - 384) / 256);
+    const maxY = Math.floor((centerPx.y + 384) / 256);
+    const worldTiles = 2 ** zoom;
+    const tiles = [];
+    for (let y = minY; y <= maxY; y += 1) {
+      if (y < 0 || y >= worldTiles) continue;
+      for (let x = minX; x <= maxX; x += 1) {
+        const wrappedX = ((x % worldTiles) + worldTiles) % worldTiles;
+        tiles.push({
+          key: zoom + "/" + wrappedX + "/" + y,
+          url: "https://tile.openstreetmap.org/" + zoom + "/" + wrappedX + "/" + y + ".png",
+          left: 50 + (x * 256 - centerPx.x) / 768 * 100,
+          top: 50 + (y * 256 - centerPx.y) / 768 * 100
+        });
+      }
+    }
+    return { zoom, tiles };
+  }, [viewRadius]);
   function toggle(kind: LayerKey) { setLayers(prev => ({ ...prev, [kind]: !prev[kind] })); }
   function titleFor(kind: LayerKey, asset: Selected extends infer _ ? FlightAsset | SatelliteAsset | CameraAsset : never): string {
     if (kind === "satellites") return (asset as SatelliteAsset).name;
@@ -98,15 +130,24 @@ export default function ChualarOperations(): React.JSX.Element {
     <section className={styles.contentGrid}>
       <div className={styles.mapPanel}>
         <div className={styles.panelHeading}><div><h2>GEOSPATIAL TRACK VIEW</h2><p>Configured operational radius · schematic projection</p></div><span>{allMarkers.length.toLocaleString()} VISIBLE ASSETS</span></div>
-        <div className={styles.map} role="img" aria-label="Schematic geographic map with selectable public-source asset markers">
-          <div className={styles.gridLines}/><div className={styles.coastline}/><div className={`${styles.ring} ${styles.ring1}`} style={{ width: `${Math.min(96, 48 * (40 / radius))}%` }}/><div className={`${styles.ring} ${styles.ring2}`} style={{ width: `${Math.min(96, 96 * (40 / radius))}%` }}/><div className={styles.centerMark}><b/>CHUALAR</div>
-          {allMarkers.map(({ kind, asset }) => {
-            const point = mapPoint(asset.lat, asset.lon, radius);
-            return <button key={kind + ":" + asset.id} type="button" title={titleFor(kind, asset)} className={`${styles.marker} ${styles["marker_" + kind]}`} style={{ left: point.x + "%", top: point.y + "%" }} onClick={() => setSelected({ kind, asset })} aria-label={`Select ${names[kind]} asset ${titleFor(kind, asset)}`}>{kind === "flights" ? "✈" : kind === "military" ? "◆" : kind === "satellites" ? "✦" : "●"}</button>;
-          })}
-          {!allMarkers.length && <div className={styles.emptyMap}>NO ASSETS TO PLOT<br/><span>Sources may be offline, unavailable, or empty for this radius.</span></div>}
+        <div className={styles.map} role="group" aria-label="Interactive OpenStreetMap view with live-source asset markers">
+          <div className={styles.mapSurface}>
+            {tileLayout.tiles.map(tile => <img key={tile.key} className={styles.mapTile} src={tile.url} alt="" aria-hidden="true" loading="lazy" referrerPolicy="no-referrer" style={{ left: tile.left + "%", top: tile.top + "%" }}/>)}
+            <div className={styles.gridLines}/>
+            <div className={styles.ring + " " + styles.ring1} style={{ width: Math.min(96, 50 * (40 / viewRadius)) + "%" }}/>
+            <div className={styles.ring + " " + styles.ring2} style={{ width: Math.min(96, 100 * (40 / viewRadius)) + "%" }}/>
+            <div className={styles.centerMark}><b/>CHUALAR</div>
+            {allMarkers.map(({ kind, asset }) => {
+              const point = mapPoint(asset.lat, asset.lon, tileLayout.zoom);
+              if (point.x < 0 || point.x > 100 || point.y < 0 || point.y > 100) return null;
+              const markerTitle = titleFor(kind, asset);
+              return <button key={kind + ":" + asset.id} type="button" title={markerTitle} className={styles.marker + " " + styles["marker_" + kind]} style={{ left: point.x + "%", top: point.y + "%" }} onClick={() => setSelected({ kind, asset })} aria-label={"Select " + names[kind] + " asset " + markerTitle}>{kind === "flights" ? "✈" : kind === "military" ? "◆" : kind === "satellites" ? "✦" : "●"}</button>;
+            })}
+            {!allMarkers.length && <div className={styles.emptyMap}>NO ASSETS TO PLOT<br/><span>Sources may be offline, unavailable, or empty for this radius.</span></div>}
+          </div>
           <div className={styles.mapLegend}>{(Object.keys(names) as LayerKey[]).filter(k => layers[k]).map(k => <span key={k}><i style={{ background: colors[k] }}/>{names[k]}</span>)}</div>
           <div className={styles.scale}>N ↑ <span>{radius} NM OPERATIONAL RADIUS</span></div>
+          <a className={styles.attribution} href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors</a>
         </div>
         <p className={styles.mapNote}>Markers are plotted from provider coordinates. The background is a schematic view, not a street map; missing source positions are not inferred.</p>
       </div>
