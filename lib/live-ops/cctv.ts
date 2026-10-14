@@ -1,5 +1,5 @@
 import { allowProviderRequest, cachedProvider, fetchJson } from "./cache";
-import { cleanText, distanceNm, isFiniteNumber, type CameraAsset, type Center, type ProviderResult } from "./types";
+import { cleanText, distanceNm, isValidCoordinates, parseFiniteNumber, type CameraAsset, type Center, type ProviderResult } from "./types";
 
 const CALTRANS_D05 = "https://cwwp2.dot.ca.gov/data/d5/cctv/cctvStatusD05.json";
 function safeHttpUrl(value: unknown): string | null {
@@ -23,8 +23,8 @@ export async function getCameras(center: Center, radiusNm: number): Promise<Prov
       const camera = nested(entry, "cctv") as Record<string, unknown> | undefined;
       if (!camera) continue;
       const loc = nested(entry, "location") as Record<string, unknown> | undefined;
-      const lat = Number(loc?.latitude), lon = Number(loc?.longitude);
-      if (!Number.isFinite(lat) || !Number.isFinite(lon) || distanceNm(center, lat, lon) > radiusNm) continue;
+      const lat = parseFiniteNumber(loc?.latitude), lon = parseFiniteNumber(loc?.longitude);
+      if (lat === null || lon === null || !isValidCoordinates(lat, lon) || distanceNm(center, lat, lon) > radiusNm) continue;
       const name = cleanText(loc?.locationName ?? camera.locationName ?? camera.name, 160) || "Caltrans public traffic camera";
       const id = cleanText(camera.index ?? camera.id ?? camera.cctvId, 100) || `${lat.toFixed(5)},${lon.toFixed(5)}`;
       const current = nested(camera, "imageData", "static", "currentImageURL");
