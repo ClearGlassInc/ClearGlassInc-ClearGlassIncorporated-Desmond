@@ -19,7 +19,7 @@ OPENSKY_CLIENT_SECRET=
 ADSBX_API_KEY=
 SATELLITE_API_KEY=
 ```
-OpenSky can be queried anonymously subject to its current service policy and quotas; when credentials are configured, the adapter uses the documented OAuth2 client-credentials flow and caches the bearer token server-side. ADS-B Exchange and N2YO layers are OFFLINE until their respective valid API keys are configured. Caltrans District 5 CCTV does not require a key for the public feed.
+OpenSky can be queried anonymously subject to its current service policy and quotas when both credentials are absent; if only one of `OPENSKY_CLIENT_ID` or `OPENSKY_CLIENT_SECRET` is configured, the adapter fails closed. When both are configured, it uses the documented OAuth2 client-credentials flow and caches the bearer token server-side. ADS-B Exchange and N2YO layers are OFFLINE until their respective valid API keys are configured. Caltrans District 5 CCTV does not require a key for the public feed.
 
 ## API
 `GET /api/live/ops?lat=36.57&lon=-121.525&radius_nm=40`
