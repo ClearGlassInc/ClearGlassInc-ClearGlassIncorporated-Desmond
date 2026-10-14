@@ -1,6 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { boundsFor, cleanText, distanceNm, inBounds, isValidCoordinates, parseFiniteNumber } from "../lib/live-ops/types";
+import { allowProviderRequest } from "../lib/live-ops/cache";
+import { isMilitaryAircraft, normalizeOnGround } from "../lib/live-ops/adsbexchange";
 
 test("Chualar 40 NM bounds contain the center and stay finite", () => {
   const center = { lat: 36.57, lon: -121.525 };
@@ -36,4 +38,26 @@ test("coordinate sanitizers reject absent and out-of-range values", () => {
   assert.equal(isValidCoordinates(36.57, -121.525), true);
   assert.equal(isValidCoordinates(91, -121.525), false);
   assert.equal(isValidCoordinates(36.57, 181), false);
+});
+
+test("ADS-B military classification requires the provider military bit or explicit flag", () => {
+  assert.equal(isMilitaryAircraft({ dbFlags: 1 }), true);
+  assert.equal(isMilitaryAircraft({ dbFlags: 3 }), true);
+  assert.equal(isMilitaryAircraft({ dbFlags: 2 }), false);
+  assert.equal(isMilitaryAircraft({ mil: true }), true);
+  assert.equal(isMilitaryAircraft({ flight: "NAVY1" }), false);
+});
+
+test("ADS-B on-ground normalization preserves missing values as unknown", () => {
+  assert.equal(normalizeOnGround("ground"), true);
+  assert.equal(normalizeOnGround(12000), false);
+  assert.equal(normalizeOnGround(null), null);
+  assert.equal(normalizeOnGround(undefined), null);
+});
+
+test("provider request budgets are isolated per provider", () => {
+  const provider = "test-provider-" + Date.now();
+  assert.equal(allowProviderRequest(provider, 1, 60_000), true);
+  assert.equal(allowProviderRequest(provider, 1, 60_000), false);
+  assert.equal(allowProviderRequest(provider + "-other", 1, 60_000), true);
 });
