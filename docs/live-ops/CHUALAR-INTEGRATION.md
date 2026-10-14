@@ -35,7 +35,7 @@ OpenSky can be queried anonymously subject to its current service policy and quo
 - ADS-B Exchange military records are included only when the response's explicit `mil` flag is boolean true. No callsign-pattern inference is used.
 - N2YO's `/above` search radius is an angular radius from zenith, not a ground-distance radius. The adapter uses a bounded sky cone, then filters each provider-supplied satellite ground footprint with great-circle distance. If no footprint lies within the configured radius, it widens the sky cone and includes only footprints within a capped expanded geographic radius, labelled `NEARBY`. The response includes satellite ID/name/position/altitude; velocity, azimuth, elevation, provider observation timestamp and pass predictions are unavailable in this response shape and are left null rather than fabricated. This provider is not a complete satellite catalogue.
 - CCTV coverage comes from the Caltrans District 5 public status feed, not an asserted county-wide count. Status is `UNKNOWN` unless the feed provides an explicit service flag.
-- The map background is a schematic operational plot, not a street/terrain basemap. Markers are actual provider coordinates. Add a licensed/approved tile or map provider only after CSP, attribution and usage terms are reviewed.
+- The map background is currently a schematic operational plot, not a street/terrain basemap. Markers use provider coordinates. A production basemap remains a release gate: select an approved tile provider, add visible attribution, and review CSP, provider usage terms, caching and tile-request policies before deployment.
 - “Live flights 9.6K”, “Military 171”, “Satellites 838” and “CCTV 800” are not hardcoded. The dashboard displays only actual returned counts or “—”.
 
 ## Production checklist
@@ -45,3 +45,4 @@ OpenSky can be queried anonymously subject to its current service policy and quo
 4. Confirm current provider terms, quota, retention and attribution obligations.
 5. Run `npm run typecheck`, `npm test`, and `npm run build` in CI; do not treat a workflow that starts but executes zero steps as a successful test run.
 6. Verify endpoint connectivity and provider schemas from the actual deployment environment; mark the deployment as a prototype until checks pass.
+7. The current map is schematic; do not advertise it as a full geographic basemap until a licensed/approved tile layer is integrated and verified.
