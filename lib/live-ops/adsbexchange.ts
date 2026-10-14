@@ -1,4 +1,4 @@
-import { cachedProvider, fetchJson } from "./cache";
+import { allowProviderRequest, cachedProvider, fetchJson } from "./cache";
 import { cleanText, distanceNm, isFiniteNumber, type Center, type FlightAsset, type ProviderResult } from "./types";
 
 /** ADS-B Exchange v2 encodes military status in bit 0 of dbFlags. */
@@ -22,6 +22,7 @@ export async function getMilitaryFlights(center: Center, radiusNm: number): Prom
   return cachedProvider(key, 7_000, async () => {
     const apiKey = process.env.ADSBX_API_KEY;
     if (!apiKey) throw new Error("ADSBX_API_KEY is not configured");
+    if (!allowProviderRequest("adsbexchange", 10, 60_000)) throw new Error("ADS-B Exchange local provider request budget exhausted");
     // ADS-B Exchange's current v2 API uses the gateway host, /api/aircraft/v2 path,
     // api-auth header, and an "ac" array in the response.
     const url = `https://gateway.adsbexchange.com/api/aircraft/v2/lat/${center.lat}/lon/${center.lon}/dist/${radiusNm}`;
