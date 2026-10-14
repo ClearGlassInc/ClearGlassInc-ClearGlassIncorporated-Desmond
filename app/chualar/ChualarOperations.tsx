@@ -99,14 +99,14 @@ export default function ChualarOperations(): React.JSX.Element {
       <div className={styles.mapPanel}>
         <div className={styles.panelHeading}><div><h2>GEOSPATIAL TRACK VIEW</h2><p>Configured operational radius · schematic projection</p></div><span>{allMarkers.length.toLocaleString()} VISIBLE ASSETS</span></div>
         <div className={styles.map} role="img" aria-label="Schematic geographic map with selectable public-source asset markers">
-          <div className={styles.gridLines}/><div className={styles.coastline}/><div className={styles.ring ring1}/><div className={styles.ring ring2}/><div className={styles.centerMark}><b/>CHUALAR</div>
+          <div className={styles.gridLines}/><div className={styles.coastline}/><div className={`${styles.ring} ${styles.ring1}`} style={{ width: `${Math.min(96, 48 * (40 / radius))}%` }}/><div className={`${styles.ring} ${styles.ring2}`} style={{ width: `${Math.min(96, 96 * (40 / radius))}%` }}/><div className={styles.centerMark}><b/>CHUALAR</div>
           {allMarkers.map(({ kind, asset }) => {
             const point = mapPoint(asset.lat, asset.lon, radius);
             return <button key={kind + ":" + asset.id} type="button" title={titleFor(kind, asset)} className={`${styles.marker} ${styles["marker_" + kind]}`} style={{ left: point.x + "%", top: point.y + "%" }} onClick={() => setSelected({ kind, asset })} aria-label={`Select ${names[kind]} asset ${titleFor(kind, asset)}`}>{kind === "flights" ? "✈" : kind === "military" ? "◆" : kind === "satellites" ? "✦" : "●"}</button>;
           })}
           {!allMarkers.length && <div className={styles.emptyMap}>NO ASSETS TO PLOT<br/><span>Sources may be offline, unavailable, or empty for this radius.</span></div>}
           <div className={styles.mapLegend}>{(Object.keys(names) as LayerKey[]).filter(k => layers[k]).map(k => <span key={k}><i style={{ background: colors[k] }}/>{names[k]}</span>)}</div>
-          <div className={styles.scale}>N ↑ <span>40 NM REFERENCE</span></div>
+          <div className={styles.scale}>N ↑ <span>{radius} NM OPERATIONAL RADIUS</span></div>
         </div>
         <p className={styles.mapNote}>Markers are plotted from provider coordinates. The background is a schematic view, not a street map; missing source positions are not inferred.</p>
       </div>
