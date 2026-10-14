@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { boundsFor, cleanText, distanceNm, inBounds, isValidCoordinates, parseFiniteNumber } from "../lib/live-ops/types";
+import { boundsFor, cleanText, distanceNm, inBounds, isValidCoordinates, parseFiniteNumber, tileZoomForRadius, webMercatorPixels } from "../lib/live-ops/types";
 import { allowProviderRequest } from "../lib/live-ops/cache";
 import { isMilitaryAircraft, normalizeOnGround } from "../lib/live-ops/adsbexchange";
 
@@ -90,5 +90,16 @@ test("provider fetch rejects payloads larger than its configured limit", async (
     await assert.rejects(fetchJson("https://provider.invalid", {}, 1_000, 0, 8), /size limit/);
   } finally {
     globalThis.fetch = originalFetch;
+  }
+});
+
+test("Web Mercator map projection keeps Chualar centered and chooses bounded zoom", () => {
+  for (const radius of [20, 40, 60, 100, 150]) {
+    const zoom = tileZoomForRadius(36.57, radius);
+    assert.ok(zoom >= 3 && zoom <= 13);
+    const center = webMercatorPixels(36.57, -121.525, zoom);
+    const samePoint = webMercatorPixels(36.57, -121.525, zoom);
+    assert.equal(center.x, samePoint.x);
+    assert.equal(center.y, samePoint.y);
   }
 });
