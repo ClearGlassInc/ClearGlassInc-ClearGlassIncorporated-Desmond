@@ -1,18 +1,33 @@
 import { cachedProvider, fetchJson } from "./cache";
 import { cleanText, distanceNm, isFiniteNumber, type Center, type FlightAsset, type ProviderResult } from "./types";
 
+/** ADS-B Exchange v2 encodes military status in bit 0 of dbFlags. */
+export function isMilitaryAircraft(value: Record<string, unknown>): boolean {
+  const flags = value.dbFlags;
+  if (typeof flags === "number" && Number.isFinite(flags)) return (Math.trunc(flags) & 1) === 1;
+  if (typeof flags === "string" && /^\d+$/.test(flags)) return (Number.parseInt(flags, 10) & 1) === 1;
+  // Some provider responses may also include an explicit boolean.
+  return value.mil === true;
+}
+
 export async function getMilitaryFlights(center: Center, radiusNm: number): Promise<ProviderResult<FlightAsset>> {
   const key = `adsbx-mil:${center.lat.toFixed(3)}:${center.lon.toFixed(3)}:${radiusNm}`;
   return cachedProvider(key, 7_000, async () => {
     const apiKey = process.env.ADSBX_API_KEY;
     if (!apiKey) throw new Error("ADSBX_API_KEY is not configured");
-    const url = `https://api.adsbexchange.com/v2/lat/${center.lat}/lon/${center.lon}/dist/${radiusNm}/`;
-    const raw = await fetchJson(url, { headers: { accept: "application/json", "api-auth": apiKey } }, 7_000, 1) as { aircraft?: unknown[] };
-    if (!Array.isArray(raw.aircraft)) throw new Error("ADS-B Exchange response has no aircraft array");
+    // ADS-B Exchange's current v2 API uses the gateway host, /api/aircraft/v2 path,
+    // api-auth header, and an "ac" array in the response.
+    const url = `https://gateway.adsbexchange.com/api/aircraft/v2/lat/${center.lat}/lon/${center.lon}/dist/${radiusNm}`;
+    const raw = await fetchJson(url, {
+      headers: { accept: "application/json", "accept-encoding": "gzip", "api-auth": apiKey }
+    }, 7_000, 1) as { ac?: unknown[]; msg?: unknown };
+    if (!Array.isArray(raw.ac)) throw new Error("ADS-B Exchange v2 response has no ac array");
     const now = Date.now();
     const items: FlightAsset[] = [];
-    for (const a of raw.aircraft as Record<string, unknown>[]) {
-      if (!a || typeof a !== "object" || a.mil !== true || typeof a.hex !== "string" || !isFiniteNumber(a.lat) || !isFiniteNumber(a.lon)) continue;
+    for (const item of raw.ac) {
+      if (!item || typeof item !== "object") continue;
+      const a = item as Record<string, unknown>;
+      if (!isMilitaryAircraft(a) || typeof a.hex !== "string" || !isFiniteNumber(a.lat) || !isFiniteNumber(a.lon)) continue;
       if (distanceNm(center, a.lat, a.lon) > radiusNm) continue;
       const seen = isFiniteNumber(a.seen_pos) ? new Date(now - a.seen_pos * 1000).toISOString() : null;
       const altitude = isFiniteNumber(a.alt_baro) ? a.alt_baro : isFiniteNumber(a.alt_geom) ? a.alt_geom : null;
