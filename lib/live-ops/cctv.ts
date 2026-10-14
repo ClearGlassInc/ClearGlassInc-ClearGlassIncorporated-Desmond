@@ -1,4 +1,4 @@
-import { cachedProvider, fetchJson } from "./cache";
+import { allowProviderRequest, cachedProvider, fetchJson } from "./cache";
 import { cleanText, distanceNm, isFiniteNumber, type CameraAsset, type Center, type ProviderResult } from "./types";
 
 const CALTRANS_D05 = "https://cwwp2.dot.ca.gov/data/d5/cctv/cctvStatusD05.json";
@@ -14,6 +14,7 @@ function nested(obj: unknown, ...keys: string[]): unknown {
 export async function getCameras(center: Center, radiusNm: number): Promise<ProviderResult<CameraAsset>> {
   const key = `caltrans-d05-cctv:${center.lat.toFixed(3)}:${center.lon.toFixed(3)}:${radiusNm}`;
   return cachedProvider(key, 180_000, async () => {
+    if (!allowProviderRequest("caltrans-d05-cctv", 4, 60_000)) throw new Error("Caltrans local provider request budget exhausted");
     const raw = await fetchJson(CALTRANS_D05, { headers: { accept: "application/json" } }, 8_000, 1) as { data?: unknown[] };
     if (!Array.isArray(raw.data)) throw new Error("Caltrans District 5 CCTV response has no data array");
     const checked = new Date().toISOString();
