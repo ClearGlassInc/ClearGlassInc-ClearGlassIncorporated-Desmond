@@ -15,7 +15,7 @@ export interface FlightAsset {
 export interface SatelliteAsset {
   id: string; type: "satellite"; name: string; norad_id: number; lat: number; lon: number;
   altitude_km: number | null; velocity_kms: number | null; azimuth: number | null;
-  elevation: number | null; last_seen: string; context: "OVERHEAD" | "NEARBY";
+  elevation: number | null; last_seen: string | null; context: "OVERHEAD" | "NEARBY";
 }
 export interface CameraAsset {
   id: string; type: "cctv"; name: string; agency: string; lat: number; lon: number;
