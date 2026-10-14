@@ -8,7 +8,7 @@ export interface Center { lat: number; lon: number; }
 export interface FlightAsset {
   id: string; type: "flight"; lat: number; lon: number;
   altitude_ft: number | null; speed_kts: number | null; heading_deg: number | null;
-  callsign: string | null; icao24: string; country: string | null; squawk: string | null;
+  callsign: string | null; icao24: string; country: string | null; operator?: string | null; squawk: string | null;
   on_ground: boolean | null; vertical_rate: number | null; last_seen: string | null;
   category?: "military" | number | null;
 }
