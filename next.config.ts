@@ -14,7 +14,7 @@ const securityHeaders = [
      statically prerendered, so adopting it means opting them into dynamic
      rendering. That is a rendering-strategy decision, not a config tweak, so
      it is left to the owner rather than made here. */
-  { key: "Content-Security-Policy", value: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://cwwp2.dot.ca.gov; connect-src 'self'; font-src 'self'; upgrade-insecure-requests" },
+  { key: "Content-Security-Policy", value: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://cwwp2.dot.ca.gov https://tile.openstreetmap.org; connect-src 'self'; font-src 'self'; upgrade-insecure-requests" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
   { key: "X-Content-Type-Options", value: "nosniff" },
