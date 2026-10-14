@@ -2,6 +2,13 @@ import { cachedProvider, fetchJson } from "./cache";
 import { cleanText, distanceNm, isFiniteNumber, type Center, type FlightAsset, type ProviderResult } from "./types";
 
 /** ADS-B Exchange v2 encodes military status in bit 0 of dbFlags. */
+export function normalizeOnGround(value: unknown): boolean | null {
+  if (value === "ground") return true;
+  if (typeof value === "number" && Number.isFinite(value)) return false;
+  if (value === null || value === undefined) return null;
+  return null;
+}
+
 export function isMilitaryAircraft(value: Record<string, unknown>): boolean {
   const flags = value.dbFlags;
   if (typeof flags === "number" && Number.isFinite(flags)) return (Math.trunc(flags) & 1) === 1;
@@ -37,7 +44,7 @@ export async function getMilitaryFlights(center: Center, radiusNm: number): Prom
         altitude_ft: altitude, speed_kts: isFiniteNumber(a.gs) ? Math.round(a.gs) : null,
         heading_deg: isFiniteNumber(a.track) ? a.track : null,
         vertical_rate: isFiniteNumber(a.baro_rate) ? a.baro_rate : isFiniteNumber(a.geom_rate) ? a.geom_rate : null,
-        on_ground: a.alt_baro === "ground", squawk: cleanText(a.squawk, 8), last_seen: seen
+        on_ground: normalizeOnGround(a.alt_baro), squawk: cleanText(a.squawk, 8), last_seen: seen
       });
     }
     return { items, status: "online" };
