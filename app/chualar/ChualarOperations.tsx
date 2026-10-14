@@ -99,6 +99,7 @@ export default function ChualarOperations(): React.JSX.Element {
     }
     return { zoom, tiles };
   }, [viewRadius]);
+  const radiusRingPct = Math.min(96, (2 * radius * 1.852) / (3 * (40075.016686 * Math.cos(CENTER.lat * Math.PI / 180) / (2 ** tileLayout.zoom))) * 100);
   function toggle(kind: LayerKey) { setLayers(prev => ({ ...prev, [kind]: !prev[kind] })); }
   function titleFor(kind: LayerKey, asset: Selected extends infer _ ? FlightAsset | SatelliteAsset | CameraAsset : never): string {
     if (kind === "satellites") return (asset as SatelliteAsset).name;
@@ -132,10 +133,10 @@ export default function ChualarOperations(): React.JSX.Element {
         <div className={styles.panelHeading}><div><h2>GEOSPATIAL TRACK VIEW</h2><p>Configured operational radius · schematic projection</p></div><span>{allMarkers.length.toLocaleString()} VISIBLE ASSETS</span></div>
         <div className={styles.map} role="group" aria-label="Interactive OpenStreetMap view with live-source asset markers">
           <div className={styles.mapSurface}>
-            {tileLayout.tiles.map(tile => <img key={tile.key} className={styles.mapTile} src={tile.url} alt="" aria-hidden="true" loading="lazy" referrerPolicy="no-referrer" style={{ left: tile.left + "%", top: tile.top + "%" }}/>)}
+            {tileLayout.tiles.map(tile => <img key={tile.key} className={styles.mapTile} src={tile.url} alt="" aria-hidden="true" loading="lazy" referrerPolicy="strict-origin-when-cross-origin" style={{ left: tile.left + "%", top: tile.top + "%" }}/>)}
             <div className={styles.gridLines}/>
-            <div className={styles.ring + " " + styles.ring1} style={{ width: Math.min(96, 50 * (40 / viewRadius)) + "%" }}/>
-            <div className={styles.ring + " " + styles.ring2} style={{ width: Math.min(96, 100 * (40 / viewRadius)) + "%" }}/>
+            <div className={styles.ring + " " + styles.ring1} style={{ width: radiusRingPct / 2 + "%" }}/>
+            <div className={styles.ring + " " + styles.ring2} style={{ width: radiusRingPct + "%" }}/>
             <div className={styles.centerMark}><b/>CHUALAR</div>
             {allMarkers.map(({ kind, asset }) => {
               const point = mapPoint(asset.lat, asset.lon, tileLayout.zoom);
@@ -149,7 +150,7 @@ export default function ChualarOperations(): React.JSX.Element {
           <div className={styles.scale}>N ↑ <span>{radius} NM OPERATIONAL RADIUS</span></div>
           <a className={styles.attribution} href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors</a>
         </div>
-        <p className={styles.mapNote}>Markers are plotted from provider coordinates. The background is a schematic view, not a street map; missing source positions are not inferred.</p>
+        <p className={styles.mapNote}>Markers use provider coordinates over an OpenStreetMap basemap. Public tile availability is best-effort; missing source positions are never inferred.</p>
       </div>
       <aside className={styles.sidePanel}>
         <div className={styles.panelHeading}><div><h2>ASSET INSPECTOR</h2><p>Choose any plotted marker</p></div></div>
