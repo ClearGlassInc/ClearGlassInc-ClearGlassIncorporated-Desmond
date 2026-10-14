@@ -4,6 +4,8 @@ type Entry<T> = { expiresAt: number; value: ProviderResult<T> };
 const cache = new Map<string, Entry<unknown>>();
 const inflight = new Map<string, Promise<ProviderResult<unknown>>>();
 const limits = new Map<string, { started: number; count: number }>();
+const providerLimits = new Map<string, { started: number; count: number }>();
+let providerLimitCalls = 0;
 
 export async function cachedProvider<T>(key: string, ttlMs: number, loader: () => Promise<ProviderResult<T>>): Promise<ProviderResult<T>> {
   const now = Date.now();
@@ -26,6 +28,24 @@ export async function cachedProvider<T>(key: string, ttlMs: number, loader: () =
   })();
   inflight.set(key, task as Promise<ProviderResult<unknown>>);
   return task;
+}
+
+/** Best-effort per-process provider request budgets; shared infrastructure is required across instances. */
+export function allowProviderRequest(provider: string, maxRequests: number, windowMs: number): boolean {
+  const now = Date.now();
+  if (++providerLimitCalls % 100 === 0) {
+    for (const [key, bucket] of providerLimits) {
+      if (now - bucket.started >= windowMs * 2) providerLimits.delete(key);
+    }
+  }
+  const bucket = providerLimits.get(provider);
+  if (!bucket || now - bucket.started >= windowMs) {
+    providerLimits.set(provider, { started: now, count: 1 });
+    return true;
+  }
+  if (bucket.count >= maxRequests) return false;
+  bucket.count += 1;
+  return true;
 }
 
 /** Best-effort per-process guard. Use a shared store (e.g. Redis) for multi-instance deployments. */
