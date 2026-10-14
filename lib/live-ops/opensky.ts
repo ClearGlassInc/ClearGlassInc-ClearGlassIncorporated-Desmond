@@ -1,4 +1,4 @@
-import { cachedProvider, fetchJson } from "./cache";
+import { allowProviderRequest, cachedProvider, fetchJson } from "./cache";
 import { cleanText, distanceNm, isFiniteNumber, type Center, type FlightAsset, type ProviderResult, type Bounds } from "./types";
 
 const M_TO_FT = 3.280839895;
@@ -25,6 +25,7 @@ async function openSkyBearerToken(clientId: string, clientSecret: string): Promi
 export async function getOpenSky(center: Center, radiusNm: number, bounds: Bounds): Promise<ProviderResult<FlightAsset>> {
   const key = `opensky:${center.lat.toFixed(3)}:${center.lon.toFixed(3)}:${radiusNm}`;
   return cachedProvider(key, 7_000, async () => {
+    if (!allowProviderRequest("opensky", 8, 60_000)) throw new Error("OpenSky local provider request budget exhausted");
     const url = new URL("https://opensky-network.org/api/states/all");
     url.searchParams.set("lamin", String(bounds.lamin)); url.searchParams.set("lomin", String(bounds.lomin));
     url.searchParams.set("lamax", String(bounds.lamax)); url.searchParams.set("lomax", String(bounds.lomax));
