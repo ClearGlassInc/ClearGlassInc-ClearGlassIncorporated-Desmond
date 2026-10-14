@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isIP } from "node:net";
 import { allowRequest } from "@/lib/live-ops/cache";
 import { getOpenSky } from "@/lib/live-ops/opensky";
 import { getMilitaryFlights } from "@/lib/live-ops/adsbexchange";
@@ -11,6 +12,13 @@ export const dynamic = "force-dynamic";
 const DEFAULT_CENTER = { lat: 36.57, lon: -121.525 };
 const DEFAULT_RADIUS_NM = 40;
 const MAX_RADIUS_NM = 150;
+function clientRateLimitKey(request: NextRequest): string {
+  // Reverse proxy must strip client-supplied forwarding headers and append the actual peer IP.
+  // Use the last hop, not the leftmost user-controlled X-Forwarded-For value.
+  const chain = request.headers.get("x-forwarded-for");
+  const candidate = chain?.split(",").map(value => value.trim()).filter(Boolean).at(-1);
+  return candidate && isIP(candidate) ? candidate : "unknown";
+}
 const validNum = (value: string | null, fallback: number) => {
   if (value === null || value.trim() === "") return fallback;
   const parsed = Number(value);
@@ -21,8 +29,8 @@ function jsonError(message: string, status: number) {
   return NextResponse.json({ error: message }, { status, headers: { "Cache-Control": "no-store" } });
 }
 export async function GET(request: NextRequest) {
-  const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-  if (!allowRequest(forwarded, 30, 60_000)) return jsonError("Request limit exceeded; retry shortly.", 429);
+  const clientKey = clientRateLimitKey(request);
+  if (!allowRequest(clientKey, 30, 60_000)) return jsonError("Request limit exceeded; retry shortly.", 429);
   const params = request.nextUrl.searchParams;
   const lat = validNum(params.get("lat"), DEFAULT_CENTER.lat);
   const lon = validNum(params.get("lon"), DEFAULT_CENTER.lon);

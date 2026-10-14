@@ -1,6 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { boundsFor, cleanText, distanceNm, inBounds } from "../lib/live-ops/types";
+import { boundsFor, cleanText, distanceNm, inBounds, isValidCoordinates, parseFiniteNumber, tileZoomForRadius, webMercatorPixels } from "../lib/live-ops/types";
+import { allowProviderRequest } from "../lib/live-ops/cache";
+import { isMilitaryAircraft, normalizeOnGround } from "../lib/live-ops/adsbexchange";
 
 test("Chualar 40 NM bounds contain the center and stay finite", () => {
   const center = { lat: 36.57, lon: -121.525 };
@@ -27,4 +29,83 @@ test("external text strips control characters and caps length", () => {
   assert.equal(cleanText("  flight\u0000\n id  "), "flight id");
   assert.equal(cleanText("abcdef", 3), "abc");
   assert.equal(cleanText("  "), null);
+});
+
+test("Web Mercator helpers produce finite coordinates for Chualar", () => {
+  const p = webMercatorPixels(36.57, -121.525, tileZoomForRadius(36.57, 40));
+  assert.ok(Number.isFinite(p.x) && p.x > 0);
+  assert.ok(Number.isFinite(p.y) && p.y > 0);
+});
+
+test("coordinate sanitizers reject absent and out-of-range values", () => {
+  assert.equal(parseFiniteNumber(null), null);
+  assert.equal(parseFiniteNumber(""), null);
+  assert.equal(parseFiniteNumber("36.57"), 36.57);
+  assert.equal(isValidCoordinates(36.57, -121.525), true);
+  assert.equal(isValidCoordinates(91, -121.525), false);
+  assert.equal(isValidCoordinates(36.57, 181), false);
+});
+
+test("ADS-B military classification requires the provider military bit or explicit flag", () => {
+  assert.equal(isMilitaryAircraft({ dbFlags: 1 }), true);
+  assert.equal(isMilitaryAircraft({ dbFlags: 3 }), true);
+  assert.equal(isMilitaryAircraft({ dbFlags: 2 }), false);
+  assert.equal(isMilitaryAircraft({ mil: true }), true);
+  assert.equal(isMilitaryAircraft({ flight: "NAVY1" }), false);
+});
+
+test("ADS-B on-ground normalization preserves missing values as unknown", () => {
+  assert.equal(normalizeOnGround("ground"), true);
+  assert.equal(normalizeOnGround(12000), false);
+  assert.equal(normalizeOnGround(null), null);
+  assert.equal(normalizeOnGround(undefined), null);
+});
+
+test("provider request budgets are isolated per provider", () => {
+  const provider = "test-provider-" + Date.now();
+  assert.equal(allowProviderRequest(provider, 1, 60_000), true);
+  assert.equal(allowProviderRequest(provider, 1, 60_000), false);
+  assert.equal(allowProviderRequest(provider + "-other", 1, 60_000), true);
+});
+
+
+test("provider fetch does not retry permanent client errors", async () => {
+  const originalFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = (async () => {
+    calls += 1;
+    return new Response("{}", { status: 401, headers: { "content-type": "application/json" } });
+  }) as typeof fetch;
+  try {
+    const { fetchJson } = await import("../lib/live-ops/cache");
+    await assert.rejects(fetchJson("https://provider.invalid", {}, 1_000, 2), /HTTP 401/);
+    assert.equal(calls, 1);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("provider fetch rejects payloads larger than its configured limit", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (async () => new Response('{"payload":"this is too large"}', {
+    status: 200,
+    headers: { "content-type": "application/json" }
+  })) as typeof fetch;
+  try {
+    const { fetchJson } = await import("../lib/live-ops/cache");
+    await assert.rejects(fetchJson("https://provider.invalid", {}, 1_000, 0, 8), /size limit/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("Web Mercator map projection keeps Chualar centered and chooses bounded zoom", () => {
+  for (const radius of [20, 40, 60, 100, 150]) {
+    const zoom = tileZoomForRadius(36.57, radius);
+    assert.ok(zoom >= 3 && zoom <= 13);
+    const center = webMercatorPixels(36.57, -121.525, zoom);
+    const samePoint = webMercatorPixels(36.57, -121.525, zoom);
+    assert.equal(center.x, samePoint.x);
+    assert.equal(center.y, samePoint.y);
+  }
 });

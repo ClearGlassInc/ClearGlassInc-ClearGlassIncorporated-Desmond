@@ -1,5 +1,5 @@
-import { cachedProvider, fetchJson } from "./cache";
-import { cleanText, distanceNm, isFiniteNumber, type Center, type FlightAsset, type ProviderResult, type Bounds } from "./types";
+import { allowProviderRequest, cachedProvider, fetchJson } from "./cache";
+import { cleanText, distanceNm, isFiniteNumber, isValidCoordinates, type Center, type FlightAsset, type ProviderResult, type Bounds } from "./types";
 
 const M_TO_FT = 3.280839895;
 const MS_TO_KTS = 1.943844492;
@@ -25,12 +25,14 @@ async function openSkyBearerToken(clientId: string, clientSecret: string): Promi
 export async function getOpenSky(center: Center, radiusNm: number, bounds: Bounds): Promise<ProviderResult<FlightAsset>> {
   const key = `opensky:${center.lat.toFixed(3)}:${center.lon.toFixed(3)}:${radiusNm}`;
   return cachedProvider(key, 7_000, async () => {
+    if (!allowProviderRequest("opensky", 8, 60_000)) throw new Error("OpenSky local provider request budget exhausted");
     const url = new URL("https://opensky-network.org/api/states/all");
     url.searchParams.set("lamin", String(bounds.lamin)); url.searchParams.set("lomin", String(bounds.lomin));
     url.searchParams.set("lamax", String(bounds.lamax)); url.searchParams.set("lomax", String(bounds.lomax));
     url.searchParams.set("extended", "1");
     const headers: Record<string, string> = { accept: "application/json" };
     const id = process.env.OPENSKY_CLIENT_ID, secret = process.env.OPENSKY_CLIENT_SECRET;
+    if (Boolean(id) !== Boolean(secret)) throw new Error("OpenSky credentials are incomplete; configure both OPENSKY_CLIENT_ID and OPENSKY_CLIENT_SECRET");
     if (id && secret) headers.authorization = `Bearer ${await openSkyBearerToken(id, secret)}`;
     const raw = await fetchJson(url.toString(), { headers }, 7_000, 1) as { states?: unknown[][] | null; time?: number };
     // OpenSky legitimately returns states: null when the bounding box has no aircraft.
@@ -38,8 +40,9 @@ export async function getOpenSky(center: Center, radiusNm: number, bounds: Bound
     if (!Array.isArray(raw.states)) throw new Error("OpenSky response has no states array");
     const items: FlightAsset[] = [];
     for (const s of raw.states) {
-      if (!Array.isArray(s) || typeof s[0] !== "string" || !isFiniteNumber(s[5]) || !isFiniteNumber(s[6])) continue;
+      if (!Array.isArray(s) || typeof s[0] !== "string" || !/^[a-fA-F0-9]{6}$/.test(s[0]) || !isFiniteNumber(s[5]) || !isFiniteNumber(s[6])) continue;
       const lat = s[6], lon = s[5];
+      if (!isValidCoordinates(lat, lon)) continue;
       if (distanceNm(center, lat, lon) > radiusNm) continue;
       const seen = isFiniteNumber(s[4]) ? s[4] : isFiniteNumber(s[3]) ? s[3] : null;
       items.push({
