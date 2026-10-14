@@ -1,5 +1,5 @@
 import { allowProviderRequest, cachedProvider, fetchJson } from "./cache";
-import { cleanText, distanceNm, isFiniteNumber, type Center, type FlightAsset, type ProviderResult } from "./types";
+import { cleanText, distanceNm, isFiniteNumber, isValidCoordinates, type Center, type FlightAsset, type ProviderResult } from "./types";
 
 /** ADS-B Exchange v2 encodes military status in bit 0 of dbFlags. */
 export function normalizeOnGround(value: unknown): boolean | null {
@@ -36,7 +36,7 @@ export async function getMilitaryFlights(center: Center, radiusNm: number): Prom
       if (!item || typeof item !== "object") continue;
       const a = item as Record<string, unknown>;
       if (!isMilitaryAircraft(a) || typeof a.hex !== "string" || !isFiniteNumber(a.lat) || !isFiniteNumber(a.lon)) continue;
-      if (distanceNm(center, a.lat, a.lon) > radiusNm) continue;
+      if (!isValidCoordinates(a.lat, a.lon) || distanceNm(center, a.lat, a.lon) > radiusNm) continue;
       const seen = isFiniteNumber(a.seen_pos) ? new Date(now - a.seen_pos * 1000).toISOString() : null;
       const altitude = isFiniteNumber(a.alt_baro) ? a.alt_baro : isFiniteNumber(a.alt_geom) ? a.alt_geom : null;
       items.push({
