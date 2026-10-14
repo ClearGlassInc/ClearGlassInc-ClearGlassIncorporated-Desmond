@@ -84,7 +84,7 @@ export default function ChualarOperations(): React.JSX.Element {
     const minY = Math.floor((centerPx.y - 384) / 256);
     const maxY = Math.floor((centerPx.y + 384) / 256);
     const worldTiles = 2 ** zoom;
-    const tiles = [];
+    const tiles: Array<{ key: string; url: string; left: number; top: number }> = [];
     for (let y = minY; y <= maxY; y += 1) {
       if (y < 0 || y >= worldTiles) continue;
       for (let x = minX; x <= maxX; x += 1) {
@@ -101,7 +101,7 @@ export default function ChualarOperations(): React.JSX.Element {
   }, [viewRadius]);
   const radiusRingPct = Math.min(96, (2 * radius * 1.852) / (3 * (40075.016686 * Math.cos(CENTER.lat * Math.PI / 180) / (2 ** tileLayout.zoom))) * 100);
   function toggle(kind: LayerKey) { setLayers(prev => ({ ...prev, [kind]: !prev[kind] })); }
-  function titleFor(kind: LayerKey, asset: Selected extends infer _ ? FlightAsset | SatelliteAsset | CameraAsset : never): string {
+  function titleFor(kind: LayerKey, asset: FlightAsset | SatelliteAsset | CameraAsset): string {
     if (kind === "satellites") return (asset as SatelliteAsset).name;
     if (kind === "cctv") return (asset as CameraAsset).name;
     return (asset as FlightAsset).callsign || (asset as FlightAsset).icao24;
