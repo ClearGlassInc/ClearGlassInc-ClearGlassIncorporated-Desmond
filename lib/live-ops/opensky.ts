@@ -39,7 +39,7 @@ export async function getOpenSky(center: Center, radiusNm: number, bounds: Bound
     if (!Array.isArray(raw.states)) throw new Error("OpenSky response has no states array");
     const items: FlightAsset[] = [];
     for (const s of raw.states) {
-      if (!Array.isArray(s) || typeof s[0] !== "string" || !isFiniteNumber(s[5]) || !isFiniteNumber(s[6])) continue;
+      if (!Array.isArray(s) || typeof s[0] !== "string" || !/^[a-fA-F0-9]{6}$/.test(s[0]) || !isFiniteNumber(s[5]) || !isFiniteNumber(s[6])) continue;
       const lat = s[6], lon = s[5];
       if (!isValidCoordinates(lat, lon)) continue;
       if (distanceNm(center, lat, lon) > radiusNm) continue;
