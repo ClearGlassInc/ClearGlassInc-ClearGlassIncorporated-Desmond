@@ -61,3 +61,34 @@ test("provider request budgets are isolated per provider", () => {
   assert.equal(allowProviderRequest(provider, 1, 60_000), false);
   assert.equal(allowProviderRequest(provider + "-other", 1, 60_000), true);
 });
+
+
+test("provider fetch does not retry permanent client errors", async () => {
+  const originalFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = (async () => {
+    calls += 1;
+    return new Response("{}", { status: 401, headers: { "content-type": "application/json" } });
+  }) as typeof fetch;
+  try {
+    const { fetchJson } = await import("../lib/live-ops/cache");
+    await assert.rejects(fetchJson("https://provider.invalid", {}, 1_000, 2), /HTTP 401/);
+    assert.equal(calls, 1);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("provider fetch rejects payloads larger than its configured limit", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (async () => new Response('{"payload":"this is too large"}', {
+    status: 200,
+    headers: { "content-type": "application/json" }
+  })) as typeof fetch;
+  try {
+    const { fetchJson } = await import("../lib/live-ops/cache");
+    await assert.rejects(fetchJson("https://provider.invalid", {}, 1_000, 0, 8), /size limit/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
