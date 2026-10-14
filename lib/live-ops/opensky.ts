@@ -32,6 +32,7 @@ export async function getOpenSky(center: Center, radiusNm: number, bounds: Bound
     url.searchParams.set("extended", "1");
     const headers: Record<string, string> = { accept: "application/json" };
     const id = process.env.OPENSKY_CLIENT_ID, secret = process.env.OPENSKY_CLIENT_SECRET;
+    if (Boolean(id) !== Boolean(secret)) throw new Error("OpenSky credentials are incomplete; configure both OPENSKY_CLIENT_ID and OPENSKY_CLIENT_SECRET");
     if (id && secret) headers.authorization = `Bearer ${await openSkyBearerToken(id, secret)}`;
     const raw = await fetchJson(url.toString(), { headers }, 7_000, 1) as { states?: unknown[][] | null; time?: number };
     // OpenSky legitimately returns states: null when the bounding box has no aircraft.
