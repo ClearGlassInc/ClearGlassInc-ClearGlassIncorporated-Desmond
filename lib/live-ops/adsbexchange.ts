@@ -35,7 +35,7 @@ export async function getMilitaryFlights(center: Center, radiusNm: number): Prom
     for (const item of raw.ac) {
       if (!item || typeof item !== "object") continue;
       const a = item as Record<string, unknown>;
-      if (!isMilitaryAircraft(a) || typeof a.hex !== "string" || !isFiniteNumber(a.lat) || !isFiniteNumber(a.lon)) continue;
+      if (!isMilitaryAircraft(a) || typeof a.hex !== "string" || !/^[a-fA-F0-9]{6,8}$/.test(a.hex) || !isFiniteNumber(a.lat) || !isFiniteNumber(a.lon)) continue;
       if (!isValidCoordinates(a.lat, a.lon) || distanceNm(center, a.lat, a.lon) > radiusNm) continue;
       const seen = isFiniteNumber(a.seen_pos) ? new Date(now - a.seen_pos * 1000).toISOString() : null;
       const altitude = isFiniteNumber(a.alt_baro) ? a.alt_baro : isFiniteNumber(a.alt_geom) ? a.alt_geom : null;
