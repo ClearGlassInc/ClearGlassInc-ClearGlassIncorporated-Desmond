@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { boundsFor, cleanText, distanceNm, inBounds } from "../lib/live-ops/types";
+import { boundsFor, cleanText, distanceNm, inBounds, isValidCoordinates, parseFiniteNumber } from "../lib/live-ops/types";
 
 test("Chualar 40 NM bounds contain the center and stay finite", () => {
   const center = { lat: 36.57, lon: -121.525 };
@@ -27,4 +27,13 @@ test("external text strips control characters and caps length", () => {
   assert.equal(cleanText("  flight\u0000\n id  "), "flight id");
   assert.equal(cleanText("abcdef", 3), "abc");
   assert.equal(cleanText("  "), null);
+});
+
+test("coordinate sanitizers reject absent and out-of-range values", () => {
+  assert.equal(parseFiniteNumber(null), null);
+  assert.equal(parseFiniteNumber(""), null);
+  assert.equal(parseFiniteNumber("36.57"), 36.57);
+  assert.equal(isValidCoordinates(36.57, -121.525), true);
+  assert.equal(isValidCoordinates(91, -121.525), false);
+  assert.equal(isValidCoordinates(36.57, 181), false);
 });
