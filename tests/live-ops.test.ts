@@ -31,6 +31,12 @@ test("external text strips control characters and caps length", () => {
   assert.equal(cleanText("  "), null);
 });
 
+test("Web Mercator helpers produce finite coordinates for Chualar", () => {
+  const p = webMercatorPixels(36.57, -121.525, tileZoomForRadius(36.57, 40));
+  assert.ok(Number.isFinite(p.x) && p.x > 0);
+  assert.ok(Number.isFinite(p.y) && p.y > 0);
+});
+
 test("coordinate sanitizers reject absent and out-of-range values", () => {
   assert.equal(parseFiniteNumber(null), null);
   assert.equal(parseFiniteNumber(""), null);
