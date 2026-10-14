@@ -18,10 +18,11 @@ const emptyData: LiveOpsResponse = {
 };
 function sourceLabel(v: SourceHealth) { return v.toUpperCase(); }
 function countLabel(n: number | null) { return n === null ? "—" : n.toLocaleString(); }
-function mapPoint(lat: number, lon: number) {
+function mapPoint(lat: number, lon: number, radiusNm: number) {
   // Equirectangular operational view centered on Chualar; bounds are intentionally fixed to the configured 40-NM operational area.
-  const x = 50 + (lon - CENTER.lon) * 60 * Math.cos(CENTER.lat * Math.PI / 180) / 40 * 50;
-  const y = 50 - (lat - CENTER.lat) * 60 / 40 * 50;
+  const scale = Math.max(1, radiusNm);
+  const x = 50 + (lon - CENTER.lon) * 60 * Math.cos(CENTER.lat * Math.PI / 180) / scale * 50;
+  const y = 50 - (lat - CENTER.lat) * 60 / scale * 50;
   return { x: Math.max(1.5, Math.min(98.5, x)), y: Math.max(1.5, Math.min(98.5, y)) };
 }
 export default function ChualarOperations(): React.JSX.Element {
@@ -100,7 +101,7 @@ export default function ChualarOperations(): React.JSX.Element {
         <div className={styles.map} role="img" aria-label="Schematic geographic map with selectable public-source asset markers">
           <div className={styles.gridLines}/><div className={styles.coastline}/><div className={styles.ring ring1}/><div className={styles.ring ring2}/><div className={styles.centerMark}><b/>CHUALAR</div>
           {allMarkers.map(({ kind, asset }) => {
-            const point = mapPoint(asset.lat, asset.lon);
+            const point = mapPoint(asset.lat, asset.lon, radius);
             return <button key={kind + ":" + asset.id} type="button" title={titleFor(kind, asset)} className={`${styles.marker} ${styles["marker_" + kind]}`} style={{ left: point.x + "%", top: point.y + "%" }} onClick={() => setSelected({ kind, asset })} aria-label={`Select ${names[kind]} asset ${titleFor(kind, asset)}`}>{kind === "flights" ? "✈" : kind === "military" ? "◆" : kind === "satellites" ? "✦" : "●"}</button>;
           })}
           {!allMarkers.length && <div className={styles.emptyMap}>NO ASSETS TO PLOT<br/><span>Sources may be offline, unavailable, or empty for this radius.</span></div>}
@@ -127,7 +128,7 @@ function AssetDetails({ selected }: { selected: NonNullable<Selected> }): React.
   }
   if (kind === "satellites") {
     const a = asset as SatelliteAsset;
-    return <div className={styles.details}><p className={styles.assetType} style={{ color: colors.satellites }}>SATELLITE · {a.context}</p><h3>{a.name}</h3>{row("NORAD ID", a.norad_id)}{row("ALTITUDE", a.altitude_km === null ? null : `${a.altitude_km.toLocaleString()} km`)}{row("VELOCITY", a.velocity_kms === null ? null : `${a.velocity_kms} km/s`)}{row("AZIMUTH", a.azimuth === null ? null : `${a.azimuth}°`)}{row("ELEVATION", a.elevation === null ? null : `${a.elevation}°`)}{row("POSITION TIME", new Date(a.last_seen).toLocaleString())}<p className={styles.detailNote}>N2YO /above provides position and altitude. Velocity, azimuth, elevation and next-pass are shown only when a provider response supplies them.</p></div>;
+    return <div className={styles.details}><p className={styles.assetType} style={{ color: colors.satellites }}>SATELLITE · {a.context}</p><h3>{a.name}</h3>{row("NORAD ID", a.norad_id)}{row("ALTITUDE", a.altitude_km === null ? null : `${a.altitude_km.toLocaleString()} km`)}{row("VELOCITY", a.velocity_kms === null ? null : `${a.velocity_kms} km/s`)}{row("AZIMUTH", a.azimuth === null ? null : `${a.azimuth}°`)}{row("ELEVATION", a.elevation === null ? null : `${a.elevation}°`)}{row("POSITION TIME", a.last_seen ? new Date(a.last_seen).toLocaleString() : null)}<p className={styles.detailNote}>N2YO /above provides position and altitude. Velocity, azimuth, elevation and next-pass are shown only when a provider response supplies them.</p></div>;
   }
   const a = asset as CameraAsset;
   return <div className={styles.details}><p className={styles.assetType} style={{ color: colors.cctv }}>PUBLIC TRAFFIC CAMERA</p><h3>{a.name}</h3>{row("AGENCY", a.agency)}{row("STATUS", a.status)}{row("LAST CHECKED", new Date(a.last_checked).toLocaleString())}{a.preview_url && <><a className={styles.cameraLink} href={a.preview_url} target="_blank" rel="noreferrer">OPEN PREVIEW ↗</a><a className={styles.previewFrame} href={a.preview_url} target="_blank" rel="noreferrer"><img src={a.preview_url} alt={`Public preview for ${a.name}`} loading="lazy" referrerPolicy="no-referrer"/><span>PUBLIC CAMERA PREVIEW · OPEN FULL SIZE</span></a></>}{a.stream_url && <a className={styles.cameraLink} href={a.stream_url} target="_blank" rel="noreferrer">OPEN STREAM ↗</a>}{a.page_url && <a className={styles.cameraLink} href={a.page_url} target="_blank" rel="noreferrer">OFFICIAL SOURCE PAGE ↗</a>}</div>;
