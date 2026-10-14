@@ -1,4 +1,4 @@
-import { cachedProvider, fetchJson } from "./cache";
+import { allowProviderRequest, cachedProvider, fetchJson } from "./cache";
 import { distanceNm, isFiniteNumber, type Center, type ProviderResult, type SatelliteAsset } from "./types";
 
 export async function getSatellites(center: Center, radiusNm: number): Promise<ProviderResult<SatelliteAsset>> {
@@ -6,6 +6,7 @@ export async function getSatellites(center: Center, radiusNm: number): Promise<P
   return cachedProvider(key, 45_000, async () => {
     const apiKey = process.env.SATELLITE_API_KEY;
     if (!apiKey) throw new Error("SATELLITE_API_KEY is not configured");
+    if (!allowProviderRequest("n2yo", 4, 60_000)) throw new Error("N2YO local provider request budget exhausted");
     // N2YO's radius is an angular radius from zenith, NOT a ground-distance radius.
     const queryAbove = async (radiusDegrees: number) => {
       const url = `https://api.n2yo.com/rest/v1/satellite/above/${center.lat}/${center.lon}/0/${radiusDegrees}/0/&apiKey=${encodeURIComponent(apiKey)}`;
