@@ -11,6 +11,12 @@ function nested(obj: unknown, ...keys: string[]): unknown {
   for (const key of keys) { if (!v || typeof v !== "object") return undefined; v = (v as Record<string, unknown>)[key]; }
   return v;
 }
+export function normalizeCameraStatus(value: unknown): CameraAsset["status"] {
+  if (value === true || value === "true") return "online";
+  if (value === false || value === "false") return "offline";
+  return "unknown";
+}
+
 export async function getCameras(center: Center, radiusNm: number): Promise<ProviderResult<CameraAsset>> {
   const key = `caltrans-d05-cctv:${center.lat.toFixed(3)}:${center.lon.toFixed(3)}:${radiusNm}`;
   return cachedProvider(key, 180_000, async () => {
@@ -31,7 +37,7 @@ export async function getCameras(center: Center, radiusNm: number): Promise<Prov
       const fallback = nested(camera, "imageData", "static", "imageURL");
       const preview = safeHttpUrl(current ?? fallback);
       const inService = camera.inService;
-      const status: CameraAsset["status"] = inService === true || inService === "true" ? "ONLINE" : inService === false || inService === "false" ? "OFFLINE" : "UNKNOWN";
+      const status = normalizeCameraStatus(inService);
       items.push({ id, type: "cctv", name, agency: "Caltrans District 5", lat, lon, status,
         preview_url: preview, stream_url: safeHttpUrl(camera.streamURL ?? camera.videoURL),
         page_url: safeHttpUrl(camera.url ?? camera.pageURL),
