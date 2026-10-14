@@ -33,7 +33,7 @@ export async function getCameras(center: Center, radiusNm: number): Promise<Prov
       const status: CameraAsset["status"] = inService === true || inService === "true" ? "ONLINE" : inService === false || inService === "false" ? "OFFLINE" : "UNKNOWN";
       items.push({ id, type: "cctv", name, agency: "Caltrans District 5", lat, lon, status,
         preview_url: preview, stream_url: safeHttpUrl(camera.streamURL ?? camera.videoURL),
-        page_url: safeHttpUrl(camera.url ?? camera.pageURL) || "https://cwwp2.dot.ca.gov/vm/loc/d5/",
+        page_url: safeHttpUrl(camera.url ?? camera.pageURL),
         last_checked: checked });
     }
     return { items, status: "online" };
