@@ -1,5 +1,5 @@
 import { allowProviderRequest, cachedProvider, fetchJson } from "./cache";
-import { cleanText, distanceNm, isFiniteNumber, type Center, type FlightAsset, type ProviderResult, type Bounds } from "./types";
+import { cleanText, distanceNm, isFiniteNumber, isValidCoordinates, type Center, type FlightAsset, type ProviderResult, type Bounds } from "./types";
 
 const M_TO_FT = 3.280839895;
 const MS_TO_KTS = 1.943844492;
@@ -41,6 +41,7 @@ export async function getOpenSky(center: Center, radiusNm: number, bounds: Bound
     for (const s of raw.states) {
       if (!Array.isArray(s) || typeof s[0] !== "string" || !isFiniteNumber(s[5]) || !isFiniteNumber(s[6])) continue;
       const lat = s[6], lon = s[5];
+      if (!isValidCoordinates(lat, lon)) continue;
       if (distanceNm(center, lat, lon) > radiusNm) continue;
       const seen = isFiniteNumber(s[4]) ? s[4] : isFiniteNumber(s[3]) ? s[3] : null;
       items.push({
