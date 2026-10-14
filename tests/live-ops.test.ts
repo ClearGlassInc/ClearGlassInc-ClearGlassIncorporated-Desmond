@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import { boundsFor, cleanText, distanceNm, inBounds, isValidCoordinates, parseFiniteNumber, tileZoomForRadius, webMercatorPixels } from "../lib/live-ops/types";
 import { allowProviderRequest } from "../lib/live-ops/cache";
 import { isMilitaryAircraft, normalizeOnGround } from "../lib/live-ops/adsbexchange";
+import { normalizeCameraStatus } from "../lib/live-ops/cctv";
+import type { SatelliteAsset } from "../lib/live-ops/types";
 
 test("Chualar 40 NM bounds contain the center and stay finite", () => {
   const center = { lat: 36.57, lon: -121.525 };
@@ -59,6 +61,24 @@ test("ADS-B on-ground normalization preserves missing values as unknown", () => 
   assert.equal(normalizeOnGround(12000), false);
   assert.equal(normalizeOnGround(null), null);
   assert.equal(normalizeOnGround(undefined), null);
+});
+
+test("camera status normalization follows the lowercase API contract", () => {
+  assert.equal(normalizeCameraStatus(true), "online");
+  assert.equal(normalizeCameraStatus("true"), "online");
+  assert.equal(normalizeCameraStatus(false), "offline");
+  assert.equal(normalizeCameraStatus("false"), "offline");
+  assert.equal(normalizeCameraStatus(undefined), "unknown");
+  assert.equal(normalizeCameraStatus("yes"), "unknown");
+});
+
+test("satellite NORAD identifiers use string values in the normalized schema", () => {
+  const satellite: SatelliteAsset = {
+    id: "25544", type: "satellite", name: "INTERNATIONAL SPACE STATION", norad_id: "25544",
+    lat: 36.57, lon: -121.525, altitude_km: 420, velocity_kms: null,
+    azimuth: null, elevation: null, last_seen: null, context: "NEARBY"
+  };
+  assert.equal(typeof satellite.norad_id, "string");
 });
 
 test("provider request budgets are isolated per provider", () => {

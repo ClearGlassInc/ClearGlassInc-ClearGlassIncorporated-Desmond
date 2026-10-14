@@ -20,7 +20,7 @@ export async function getSatellites(center: Center, radiusNm: number): Promise<P
         if (!sat || !isFiniteNumber(sat.satid) || !Number.isInteger(sat.satid) || sat.satid <= 0 || typeof sat.satname !== "string" || !isFiniteNumber(sat.satlat) || !isFiniteNumber(sat.satlng)) continue;
         if (!isValidCoordinates(sat.satlat, sat.satlng) || distanceNm(center, sat.satlat, sat.satlng) > maxDistanceNm) continue;
         items.push({
-          id: String(sat.satid), type: "satellite", name: cleanText(sat.satname, 120) || ("NORAD " + sat.satid), norad_id: sat.satid,
+          id: String(sat.satid), type: "satellite", name: cleanText(sat.satname, 120) || ("NORAD " + sat.satid), norad_id: String(sat.satid),
           lat: sat.satlat, lon: sat.satlng, altitude_km: isFiniteNumber(sat.satalt) ? sat.satalt : null,
           velocity_kms: null, azimuth: null, elevation: null,
           last_seen: null, context

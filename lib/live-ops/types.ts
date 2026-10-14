@@ -13,13 +13,13 @@ export interface FlightAsset {
   category?: "military" | number | null;
 }
 export interface SatelliteAsset {
-  id: string; type: "satellite"; name: string; norad_id: number; lat: number; lon: number;
+  id: string; type: "satellite"; name: string; norad_id: string; lat: number; lon: number;
   altitude_km: number | null; velocity_kms: number | null; azimuth: number | null;
   elevation: number | null; last_seen: string | null; context: "OVERHEAD" | "NEARBY";
 }
 export interface CameraAsset {
   id: string; type: "cctv"; name: string; agency: string; lat: number; lon: number;
-  status: "ONLINE" | "OFFLINE" | "UNKNOWN"; preview_url: string | null;
+  status: "online" | "offline" | "unknown"; preview_url: string | null;
   stream_url: string | null; page_url: string | null; last_checked: string;
 }
 export interface ProviderResult<T> { items: T[]; status: SourceHealth; error?: string; stale?: boolean; }
