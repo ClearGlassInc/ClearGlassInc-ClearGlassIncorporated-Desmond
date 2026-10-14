@@ -1,5 +1,5 @@
 import { allowProviderRequest, cachedProvider, fetchJson } from "./cache";
-import { distanceNm, isFiniteNumber, isValidCoordinates, type Center, type ProviderResult, type SatelliteAsset } from "./types";
+import { cleanText, distanceNm, isFiniteNumber, isValidCoordinates, type Center, type ProviderResult, type SatelliteAsset } from "./types";
 
 export async function getSatellites(center: Center, radiusNm: number): Promise<ProviderResult<SatelliteAsset>> {
   const key = `n2yo:${center.lat.toFixed(3)}:${center.lon.toFixed(3)}:${radiusNm}`;
@@ -17,10 +17,10 @@ export async function getSatellites(center: Center, radiusNm: number): Promise<P
     const normalize = (raw: unknown[], maxDistanceNm: number, context: SatelliteAsset["context"]): SatelliteAsset[] => {
       const items: SatelliteAsset[] = [];
       for (const sat of raw as Record<string, unknown>[]) {
-        if (!sat || !isFiniteNumber(sat.satid) || typeof sat.satname !== "string" || !isFiniteNumber(sat.satlat) || !isFiniteNumber(sat.satlng)) continue;
+        if (!sat || !isFiniteNumber(sat.satid) || !Number.isInteger(sat.satid) || sat.satid <= 0 || typeof sat.satname !== "string" || !isFiniteNumber(sat.satlat) || !isFiniteNumber(sat.satlng)) continue;
         if (!isValidCoordinates(sat.satlat, sat.satlng) || distanceNm(center, sat.satlat, sat.satlng) > maxDistanceNm) continue;
         items.push({
-          id: String(sat.satid), type: "satellite", name: sat.satname.slice(0, 120), norad_id: sat.satid,
+          id: String(sat.satid), type: "satellite", name: cleanText(sat.satname, 120) || ("NORAD " + sat.satid), norad_id: sat.satid,
           lat: sat.satlat, lon: sat.satlng, altitude_km: isFiniteNumber(sat.satalt) ? sat.satalt : null,
           velocity_kms: null, azimuth: null, elevation: null,
           last_seen: null, context
