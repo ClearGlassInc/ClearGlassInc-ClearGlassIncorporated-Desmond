@@ -155,3 +155,27 @@ def test_checkout_mode_follows_the_cart() -> None:
     offer = pricebook.get_offer(sku)
     _items, mode = pricebook.resolve_line_items([{"sku": sku, "quantity": 1}])
     assert mode == ("subscription" if offer.recurring else "payment")
+
+
+def test_every_active_offer_has_an_authoritative_stripe_price() -> None:
+    """Do not expose a purchasable SKU that has no real Stripe Price."""
+    for offer in pricebook.all_offers():
+        assert offer.stripe_price_id, (
+            f"{offer.sku}: active offers must point to an existing Stripe Price"
+        )
+
+
+def test_security_quick_audit_uses_the_existing_cad_249_stripe_price() -> None:
+    """Pin the selected first offer to the verified catalog mapping."""
+    offer = pricebook.get_offer("security-quick-audit")
+    assert offer.stripe_product_id == "prod_V1HHNVmyiBA9rA"
+    assert offer.stripe_price_id == "price_1U1Ej7L8uR92FksUuYvLnwhV"
+    assert offer.amount == 24900
+    assert offer.currency == "cad"
+    assert offer.kind == "one_time"
+    assert offer.tax_behavior == "exclusive"
+
+
+def test_unpriced_rapid_diagnostic_placeholder_is_not_sellable() -> None:
+    with pytest.raises(pricebook.PricebookError):
+        pricebook.get_offer("rapid-website-deployment-diagnostic")
