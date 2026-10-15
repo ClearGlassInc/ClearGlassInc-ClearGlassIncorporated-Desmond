@@ -3,6 +3,19 @@
   "note": "Server-side price authority. The browser names a SKU; only this file (and, in live mode, the Stripe Price it points at) sets the amount charged. Each offer carries the id of a real Stripe Price — that Price is the single source of truth for live charges, so `amount` here is display/mock only and must be kept in step with Stripe.",
   "offers": [
     {
+      "sku": "security-quick-audit",
+      "name": "ClearGlass Security Quick-Audit",
+      "description": "Fixed-fee, read-only security review of the customer's Microsoft 365 and Windows environment, delivered as a prioritized findings report with practical next actions.",
+      "stripe_price_id": "price_1U1Ej7L8uR92FksUuYvLnwhV",
+      "stripe_product_id": "prod_V1HHNVmyiBA9rA",
+      "amount": 24900,
+      "currency": "cad",
+      "kind": "one_time",
+      "max_quantity": 1,
+      "tax_behavior": "exclusive",
+      "active": true
+    },
+    {
       "sku": "rapid-website-deployment-diagnostic",
       "name": "Rapid Website & Deployment Diagnostic",
       "description": "Fixed-scope technical diagnosis for a website, GitHub Pages deployment, workflow, performance issue, or broken conversion path.",
@@ -13,7 +26,7 @@
       "kind": "one_time",
       "max_quantity": 1,
       "tax_behavior": "exclusive",
-      "active": true
+      "active": false
     },
     {
       "sku": "risk-audit-90",
