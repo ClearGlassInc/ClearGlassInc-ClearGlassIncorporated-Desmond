@@ -4197,7 +4197,7 @@
       a.href = url; a.download = "clearglass-sentinel-evidence-" + new Date().toISOString().slice(0, 10) + "." + extension;
       a.hidden = true; document.body.appendChild(a); a.click(); a.remove();
       setTimeout(function () { try { window.URL.revokeObjectURL(url); } catch (e) {} }, 1000);
-      if (status) setText(status, "Export generated locally. No external service was called.");
+      if (status) setText(status, "Export generated locally. No external export service is called.");
     } catch (e) {
       if (status) setText(status, "Export unavailable: " + (e && e.message ? e.message : "download failed"));
     }
