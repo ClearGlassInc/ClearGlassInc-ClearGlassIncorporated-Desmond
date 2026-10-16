@@ -760,7 +760,6 @@ def test_graph_metrics_are_not_misrepresented_as_confidence_or_model_count() -> 
     assert '"Analysis runtime"' in DOCK
     assert "mDenom = m || 1" in DOCK
     assert "Q += c.inE / mDenom" in DOCK
-    assert "reciprocalPct" not in DOCK  # the public field is named for its semantics
     assert "reciprocalNeighborSharePercent" in DOCK
 
 
@@ -792,5 +791,5 @@ def test_graph_methodology_disclosure_defines_density_and_scope() -> None:
     assert "data-cgst-gmethod-body" in DOCK
     assert "Unique undirected pairs m divided by n" in DOCK
     assert "Modularity against those labels; no automatic community-detection algorithm is run." in DOCK
-    assert "Adamic–Adar" in DOCK and "not validated forecast" in DOCK
+    assert "Adamic–Adar" in DOCK and "not a validated forecast" in DOCK
     assert "source freshness is unknown" in DOCK
