@@ -4319,6 +4319,28 @@
       feed.appendChild(li);
     });
 
+    var methodBody = graphEl.querySelector("[data-cgst-gmethod-body]");
+    if (methodBody) {
+      methodBody.textContent = "";
+      [
+        ["Dataset and freshness", "Scope: generated public-site page and related-link index at data/site-index.json. Retrieved at " +
+          (site.fetchedAt && site.fetchedAt.toISOString ? site.fetchedAt.toISOString() : "not recorded") +
+          ". The index does not supply a source-update timestamp, so source freshness is unknown."],
+        ["Relationship semantics", "Source assertions are directed. Pair metrics use a simple undirected projection: one pair per entity pair, self-loops excluded and duplicate assertions collapsed. Direction assertions remain inspectable."],
+        ["Density", "Unique undirected pairs m divided by n × (n − 1) / 2. Self-loops and multiedges are excluded; an empty graph has zero edges and zero density."],
+        ["Degree centralisation", "Freeman centralisation: sum(maximum degree − each node degree) / ((n − 1) × (n − 2)); zero when n ≤ 2. Degree counts unique undirected neighbours."],
+        ["PageRank", "Directed PageRank, damping 0.85, 60 power iterations. Node displays are relative to this graph's maximum and scaled 0–100."],
+        ["Betweenness", "Brandes shortest-path betweenness on an unweighted undirected projection. Node displays are relative to this graph's maximum and scaled 0–100."],
+        ["Clusters and modularity", "Groups come from the index's declared clusters. Modularity is measured against those labels; no automatic community-detection algorithm is run."],
+        ["Inbound sparsity and priority", "Inbound-sparsity heuristic: 0 for the home page, otherwise round(100 / (1 + inbound-degree² / 2)). Structural priority = round(0.45 × PageRank-relative + 0.35 × betweenness-relative + 0.20 × inbound-sparsity). Neither is real-world power or risk."],
+        ["Reciprocity", "Numerator: reciprocal unique pairs. Denominator: all unique undirected pairs. Both directions in one generated index are structural symmetry, not independent-source corroboration."],
+        ["Experimental candidates", "Adamic–Adar ranks unlinked page pairs with at least three common neighbours. Candidates are unevaluated and are not validated forecasts."],
+        ["Evidence unavailable", "First/last seen times, historical snapshots, source reliability, extraction confidence and analyst-review state are absent from the source dataset."],
+        ["Security limitation", "This is a public-site relationship graph, not IDS/SIEM or host/network telemetry. Findings do not indicate intrusion, maliciousness, causal influence or readiness."],
+        ["Runtime", "Measured on this device for graph analysis plus layout; DOM rendering and index retrieval are excluded. Computation time is shown in UTC; index retrieval time is not source freshness."]
+      ].forEach(function (item) { appendGraphFact(methodBody, item[0], item[1]); });
+    }
+
     var leg = graphEl.querySelector("[data-cgst-glegend]"), seen = {};
     leg.textContent = "";
     site.clusters.forEach(function (c) {
