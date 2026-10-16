@@ -4216,11 +4216,46 @@
     var box = graphEl && graphEl.querySelector("[data-cgst-gprof]"), an = graph.an;
     if (!box || !an) return;
     box.textContent = "";
-    var x = graph.sel ? an.ent[an.idx[graph.sel]] : null;
-    setText(graphEl.querySelector("[data-cgst-gprof-id]"), x ? "ENT-" + ("00" + x.i).slice(-3) : "no selection");
+    var edgeId = graph.edgeSel || graph.previewEdgeId, edgeRow = edgeId && graph.edgeEl[edgeId];
+    if (edgeRow) {
+      var rel = relationshipDetails(edgeRow.edge), preview = !graph.edgeSel;
+      setText(graphEl.querySelector("[data-cgst-gprof-id]"), rel.id);
+      box.appendChild(make("p", "cgst-gprof-c", preview ? "Relationship preview · hover/focus" : "Selected relationship"));
+      box.appendChild(make("p", "cgst-gprof-t", rel.a.title + " ↔ " + rel.b.title));
+      appendGraphFact(box, "Stable relationship ID", rel.id);
+      appendGraphFact(box, "Relationship type", "Related-page link pair; direction assertions are preserved separately.");
+      appendGraphFact(box, "Source record", "data/site-index.json");
+      appendGraphFact(box, "Direction assertions", rel.directions.map(function (d) { return d.from + " → " + d.to; }).join(" · ") || "No direction assertion available");
+      var proof = make("ul", "cgst-grows");
+      rel.directions.forEach(function (d) {
+        proof.appendChild(make("li", "", d.assertion + " · source field " + d.sourceReference));
+      });
+      box.appendChild(proof);
+      appendGraphFact(box, "Reciprocal in this index", rel.reciprocal ?
+        "Yes; both pages list the other in the same generated index. This is not independent-source corroboration." :
+        "No; only one direction is listed in the current index.");
+      appendGraphFact(box, "Evidence quality", "Source reliability, extraction confidence and analyst review are not recorded. Independent corroboration has not been assessed.");
+      appendGraphFact(box, "First / last seen", "Unavailable: the index has no relationship-level timestamps or historical snapshots.");
+      appendGraphFact(box, "Collection method", "tools/internal_links.py generates the static site's related-page index.");
+      appendGraphFact(box, "Limitations", "An index assertion is not proof of independent observation, a causal relationship or cybersecurity activity.");
+      var actsRel = make("div", "cgst-gacts"), openIndex = make("a", "cgst-gcmd", "Open source index"),
+        endA = make("button", "cgst-gcmd", "Select endpoint A"), endB = make("button", "cgst-gcmd", "Select endpoint B"),
+        clearRel = make("button", "cgst-gcmd", "Clear");
+      openIndex.href = BASE + SITE.index; openIndex.target = "_blank"; openIndex.rel = "noopener noreferrer";
+      endA.type = endB.type = clearRel.type = "button";
+      endA.addEventListener("click", function () { selectNode(rel.a.path, true); });
+      endB.addEventListener("click", function () { selectNode(rel.b.path, true); });
+      clearRel.addEventListener("click", function () { selectNode(""); });
+      actsRel.appendChild(openIndex); actsRel.appendChild(endA); actsRel.appendChild(endB); actsRel.appendChild(clearRel);
+      box.appendChild(actsRel);
+      return;
+    }
+
+    var nodePath = graph.sel || graph.previewPath;
+    var x = nodePath && an.idx[nodePath] != null ? an.ent[an.idx[nodePath]] : null;
+    setText(graphEl.querySelector("[data-cgst-gprof-id]"), x ? "PAGE:" + x.e.path : "no selection");
     if (!x) {
-      box.appendChild(make("p", "cgst-gnote", "Select a node, a priority target or a feed line. Importance is PageRank, bridge is betweenness, " +
-        "exposure falls as inbound links rise, corroboration is the share of links returned. All are scaled 0–100 against this graph."));
+      box.appendChild(make("p", "cgst-gnote", "Select a page or relationship to inspect its generated source record. PageRank and betweenness are relative to this graph; inbound sparsity and priority are explicit heuristics. Reciprocal links are not independent corroboration."));
       if (site.here && graph.node[site.here.path]) {
         var acts = make("div", "cgst-gacts"), b = make("button", "cgst-gcmd", "Profile this page");
         b.type = "button";
@@ -4229,38 +4264,47 @@
       }
       return;
     }
-    var e = x.e, hue = hueOf(e.cluster), c = site.byId[e.cluster];
+
+    var e = x.e, hue = hueOf(e.cluster), cluster = site.byId[e.cluster];
     box.style.setProperty("--h", hue);
-    box.appendChild(make("p", "cgst-gprof-c", (FAMILY[e.cluster] || ["Other"])[0] + " · " + (c ? c.name : e.cluster)));
+    box.appendChild(make("p", "cgst-gprof-c", (FAMILY[e.cluster] || ["Other"])[0] + " · " + (cluster ? cluster.name : e.cluster)));
     box.appendChild(make("p", "cgst-gprof-t", e.title));
     if (e.summary) box.appendChild(make("p", "cgst-gprof-s", e.summary));
-    meter(box, "Importance", x.imp, hue);
-    meter(box, "Bridge", x.bri, "#9fc2e0");
-    meter(box, "Exposure", x.exp, x.exp >= 60 ? "#e5484d" : x.exp >= 30 ? "#e0a040" : "#7fd1a8");
-    meter(box, "Corroboration", x.conf, "#a48bf0");
-    meter(box, "Priority", x.pri, "#d4b25a");
+    appendGraphFact(box, "Stable entity ID", "PAGE:" + e.path);
+    appendGraphFact(box, "Source record", pageRecordRef(e.path));
+    appendGraphFact(box, "Summary excerpt", e.summary ? e.summary.slice(0, 420) : "No summary excerpt is present in this index record.");
+    appendGraphFact(box, "About excerpt", e.about ? e.about.slice(0, 420) : "No about excerpt is present in this index record.");
+    appendGraphFact(box, "Collection method", "tools/internal_links.py generates the static public-site index from page metadata and related-page links.");
+    appendGraphFact(box, "Evidence quality", "Source reliability, extraction confidence, independent-source corroboration and analyst review are not recorded in this dataset.");
+    appendGraphFact(box, "Observation history", "First-seen and last-seen timestamps are unavailable; this index has no temporal history.");
+    meter(box, "PageRank · relative", x.imp, hue);
+    meter(box, "Betweenness · relative", x.bri, "#9fc2e0");
+    meter(box, "Inbound sparsity heuristic", x.exp, x.exp >= 60 ? "#e5484d" : x.exp >= 30 ? "#e0a040" : "#7fd1a8");
+    meter(box, "Reciprocal-neighbor share", x.recipPct, "#a48bf0");
+    meter(box, "Structural priority heuristic", x.pri, "#d4b25a");
     var dl = make("dl", "cgst-gstats");
     [["Inbound", x.inD], ["Outbound", x.outD], ["Depth from home", x.depth < 0 ? "unreached" : x.depth + " hops"], ["Cut point", x.cut ? "yes" : "no"]]
       .forEach(function (s) { kpi(dl, s[0], String(s[1])); });
     box.appendChild(dl);
-    var ties = graph.an.adj[x.i].map(function (j) { return an.ent[j]; }).sort(function (p, r) { return r.imp - p.imp; }).slice(0, 5);
+    var ties = an.adj[x.i].map(function (j) { return an.ent[j]; }).sort(function (p, r) { return r.imp - p.imp; }).slice(0, 5);
     if (ties.length) {
       box.appendChild(make("p", "cgst-gpath", "Strongest ties"));
       var ul = make("ul", "cgst-grows");
       ties.forEach(function (t) {
         var o = an.out[x.i].indexOf(t.i) > -1, n2 = an.out[t.i].indexOf(x.i) > -1;
-        rowBtn(ul, hueOf(t.e.cluster), (o && n2 ? "↔ " : o ? "→ " : "← ") + t.e.title, "IMP " + t.imp, function () { selectNode(t.e.path, true); });
+        rowBtn(ul, hueOf(t.e.cluster), (o && n2 ? "↔ " : o ? "→ " : "← ") + t.e.title,
+          "PR " + t.imp, function () { selectNode(t.e.path, true); });
       });
       box.appendChild(ul);
     }
-    an.find.filter(function (f) { return f.x === x; }).forEach(function (f) {
-      var p = make("p", "cgst-gnote");
-      var s = make("span", "cgst-gsev", f.s.toUpperCase() + " " + f.code + " ");
+    an.find.filter(function (f) { return f.x === x || f.related === x; }).forEach(function (f) {
+      var p = make("p", "cgst-gnote"), s = make("span", "cgst-gsev", f.s.toUpperCase() + " " + f.code + " ");
       s.setAttribute("data-s", f.s);
       p.appendChild(s); p.appendChild(document.createTextNode(f.text));
       box.appendChild(p);
     });
-    var acts2 = make("div", "cgst-gacts"), open = make("a", "cgst-gcmd", "Open page"), tr = make("button", "cgst-gcmd", "Trace reach"), clr = make("button", "cgst-gcmd", "Clear");
+    var acts2 = make("div", "cgst-gacts"), open = make("a", "cgst-gcmd", "Open page"),
+      tr = make("button", "cgst-gcmd", "Trace reach"), clr = make("button", "cgst-gcmd", "Clear");
     open.href = e.url;
     tr.type = clr.type = "button";
     tr.addEventListener("click", function () { playTrace(true); });
