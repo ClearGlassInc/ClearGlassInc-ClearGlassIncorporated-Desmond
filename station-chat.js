@@ -822,7 +822,21 @@
     "#cg-station .cgst-gorg i b{display:inline-block;font-weight:inherit;text-shadow:0 0 8px rgba(127,209,168,.9);animation:cgstGLive 2.4s ease-in-out infinite}",
     "@keyframes cgstGLive{50%{opacity:.4;text-shadow:none}}",
     "#cg-station .cgst-gtitle{margin:0;font-size:15px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:var(--g-ink);outline:none}",
-    "#cg-station .cgst-gsub{margin:3px 0 0;font-size:8.5px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--g-mute)}",
+    "#cg-station .cgst-gsub{margin:3px 0 0;font-size:8.5px;font-weight:500;letter-spacing:.10em;text-transform:uppercase;color:var(--g-mute);line-height:1.45}", 
+    "#cg-station .cgst-gmethod{position:relative;margin-top:5px;font-size:10px;line-height:1.4;letter-spacing:0;color:var(--g-mute)}",
+    "#cg-station .cgst-gmethod summary{display:inline-flex;align-items:center;min-height:27px;padding:4px 8px;border:1px solid var(--g-line2);border-radius:6px;color:#b9c7d2;cursor:pointer;letter-spacing:.03em}",
+    "#cg-station .cgst-gmethod[open]{z-index:35}",
+    "#cg-station .cgst-gmethod-body{position:absolute;z-index:35;top:calc(100% + 4px);left:0;width:min(620px,85vw);max-height:32vh;overflow:auto;padding:10px 12px;background:#080c11;border:1px solid var(--g-line2);border-radius:8px;box-shadow:0 16px 32px rgba(0,0,0,.75)}",
+    "#cg-station .cgst-gmethod-body .cgst-gfact{margin:0 0 7px}",
+    "#cg-station .cgst-gmethod-body .cgst-gfact:last-child{margin-bottom:0}",
+    "#cg-station .cgst-gfact{margin:0 0 5px;font-size:10px;line-height:1.45;color:#b9c8d4;overflow-wrap:anywhere;letter-spacing:0;text-transform:none}",
+    "#cg-station .cgst-gfact b{color:#83cadb;font-weight:700;letter-spacing:.02em}",
+    "#cg-station .cgst-gexports{display:flex;flex-wrap:wrap;gap:5px}",
+    "#cg-station .cgst-gexport-status{margin:0;font-size:9px;line-height:1.45;color:#a7bbc8;overflow-wrap:anywhere;letter-spacing:0;text-transform:none}",
+    "#cg-station .cgst-gedge-hit{fill:none;stroke:transparent;stroke-width:14;pointer-events:stroke;cursor:pointer;outline:none;vector-effect:non-scaling-stroke}",
+    "#cg-station .cgst-gedge-hit:focus-visible{stroke:rgba(76,195,255,.55);stroke-width:8;stroke-dasharray:3 3}",
+    "#cg-station .cgst-gedge-hit-selected{stroke:rgba(120,224,200,.55);stroke-width:8}",
+    "#cg-station .cgst-gedge.cgst-gselected{stroke:#fff;stroke-opacity:.95;stroke-width:2}",
     "#cg-station .cgst-gtools{flex:0 0 auto;display:flex;gap:4px}",
     "#cg-station .cgst-gtool{display:grid;place-items:center;min-width:32px;height:30px;padding:0 9px;border-radius:8px;cursor:pointer;",
     "border:1px solid var(--g-line2);background:linear-gradient(180deg,rgba(20,25,31,.92),rgba(11,14,18,.92));color:var(--g-ink);font:600 11px/1 var(--cgst-mono);letter-spacing:.1em;",
@@ -1985,7 +1999,7 @@
   }
 
   // ── Site Intelligence: the index ─────────────────────────────────────────
-  var site = { state: "idle", pages: [], byPath: {}, clusters: [], byId: {}, links: 0, here: null, waiters: [] };
+  var site = { state: "idle", pages: [], byPath: {}, clusters: [], byId: {}, links: 0, here: null, fetchedAt: null, waiters: [] };
   var nexusEl;
 
   // Only same-site page paths are followed: letters, digits and ._/- ending in
@@ -2071,6 +2085,7 @@
     var hp = herePath();
     site.here = byPath[hp] || byPath[hp + ".html"] || null;
     SECTORS.forEach(function (s) { s.pages = s.missions ? [] : orderSector(pages.filter(function (e) { return inSector(e, s); }), s); });
+    site.fetchedAt = new Date();
     site.state = "ready";
     paintIndex();
     flushSite();
@@ -3634,7 +3649,7 @@
   };
   var SEV = { high: 0, med: 1, low: 2, info: 3 };
   var graph = { built: false, open: false, vb: { x: 0, y: 0, w: 1000 }, focus: "", hits: [], hitLabel: "", lastFocus: null, anim: 0,
-    node: {}, pts: {}, drag: null, pinch: null, suppress: false, an: null, sel: "", eb: [], hop: -1, play: 0, dq: 0, calm: false, calmT: 0 };
+    node: {}, pts: {}, drag: null, pinch: null, suppress: false, an: null, sel: "", edgeSel: "", previewPath: "", previewEdgeId: "", edgeEl: {}, eb: [], hop: -1, play: 0, dq: 0, calm: false, calmT: 0 };
   var graphEl, gSvg, gView, gSide, gTree, gPath, gFind, gSub, gLinks, gHop, gHopOut, gPlay;
 
   function sv(tag, attrs, parent) {
@@ -3677,7 +3692,8 @@
       });
     });
     var adj = nb.map(function (m) { return Object.keys(m).map(Number); });
-    // undirected relationships, weight 2 when both pages link each other
+    // Simple undirected projection for pair metrics. A reciprocal pair is still
+    // one relationship pair, and reciprocity is not independent evidence.
     var edges = [], recip = 0;
     adj.forEach(function (list, a) {
       list.forEach(function (b) {
@@ -3687,7 +3703,7 @@
         edges.push({ a: a, b: b, w: w, x: P[a].cluster !== P[b].cluster });
       });
     });
-    var m = edges.length || 1;
+    var m = edges.length, mDenom = m || 1;
     // PageRank, damping 0.85; dangling pages spread their rank evenly
     var pr = zeros(n, 1 / n);
     for (k = 0; k < 60; k++) {
@@ -3757,7 +3773,7 @@
     var Q = 0;
     cs.forEach(function (c) {
       c.dens = c.n > 1 ? 2 * c.inE / (c.n * (c.n - 1)) : 0;
-      Q += c.inE / m - Math.pow(c.deg / (2 * m), 2);
+      Q += c.inE / mDenom - Math.pow(c.deg / (2 * mDenom), 2);
     });
     // link forecast: unlinked pairs that share at least three neighbours (Adamic–Adar)
     var fore = [];
@@ -3780,7 +3796,7 @@
       if (deg > maxDeg) maxDeg = deg;
       var imp = Math.round(100 * pr[a] / maxPr), bri = Math.round(100 * bc[a] / maxBc), inD = inn[a].length;
       var exp = a === home ? 0 : Math.round(100 / (1 + inD * inD / 2));
-      return { i: a, e: e, imp: imp, bri: bri, exp: exp, conf: deg ? Math.round(100 * both / deg) : 0, inD: inD, outD: out[a].length,
+      return { i: a, e: e, imp: imp, bri: bri, exp: exp, recipPct: deg ? Math.round(100 * both / deg) : 0, inD: inD, outD: out[a].length,
         deg: deg, depth: depth[a], cut: !!cut[a], pri: Math.round(0.45 * imp + 0.35 * bri + 0.2 * exp), sev: "" };
     });
     var cent = 0;
@@ -3788,8 +3804,8 @@
     cent = n > 2 ? cent / ((n - 1) * (n - 2)) : 0;
     // findings: each one names the page and the measurement behind it
     var find = [];
-    function flag(sev, code, x, text) {
-      find.push({ s: sev, code: code, x: x, text: text });
+    function flag(sev, code, x, text, related) {
+      find.push({ s: sev, code: code, x: x, text: text, related: related || null });
       if (x && (!x.sev || SEV[sev] < SEV[x.sev])) x.sev = sev;
     }
     ent.forEach(function (x) {
@@ -3811,7 +3827,7 @@
       flag("info", "BRIDGE", x, x.e.title + ": bridge score " + x.bri + ", the most shortest paths between clusters run through it");
     });
     fore.slice(0, 4).forEach(function (f) {
-      flag("info", "FORECAST", ent[f.a], P[f.a].title + " ↔ " + P[f.b].title + ": " + f.c + " shared neighbours, no link yet");
+      flag("info", "CANDIDATE", ent[f.a], P[f.a].title + " ↔ " + P[f.b].title + ": " + f.c + " shared neighbours; unevaluated structural heuristic, not a validated forecast", ent[f.b]);
     });
     find.sort(function (p, r) { return SEV[p.s] - SEV[r.s]; });
     var reached = depth.filter(function (x) { return x >= 0; }).length;
@@ -3844,6 +3860,36 @@
         });
     });
     return pos;
+  }
+
+  function relationshipId(a, b) {
+    var pair = [String(a), String(b)].sort();
+    return "REL:" + encodeURIComponent(pair[0]) + "::" + encodeURIComponent(pair[1]);
+  }
+  function pageRecordRef(path) {
+    return "data/site-index.json#pages[path=" + JSON.stringify(String(path)) + "]";
+  }
+  function relationshipDetails(edge) {
+    var an = graph.an || analyseGraph(), a = an.P[edge.a], b = an.P[edge.b];
+    var aToB = an.out[edge.a].indexOf(edge.b) > -1, bToA = an.out[edge.b].indexOf(edge.a) > -1;
+    var directions = [];
+    if (aToB) directions.push({ from: "PAGE:" + a.path, to: "PAGE:" + b.path, sourcePath: a.path,
+      sourceReference: pageRecordRef(a.path) + ".related", assertion: a.path + " lists " + b.path + " in its related-page links" });
+    if (bToA) directions.push({ from: "PAGE:" + b.path, to: "PAGE:" + a.path, sourcePath: b.path,
+      sourceReference: pageRecordRef(b.path) + ".related", assertion: b.path + " lists " + a.path + " in its related-page links" });
+    return { id: relationshipId(a.path, b.path), edge: edge, a: a, b: b, reciprocal: aToB && bToA, directions: directions };
+  }
+  function appendGraphFact(parent, label, value) {
+    var p = make("p", "cgst-gfact");
+    p.appendChild(make("b", "", label + ": "));
+    p.appendChild(document.createTextNode(value == null ? "Not recorded" : String(value)));
+    parent.appendChild(p);
+  }
+  function graphFindingReference(f) {
+    var refs = [];
+    if (f.x && f.x.e) refs.push(pageRecordRef(f.x.e.path));
+    if (f.related && f.related.e) refs.push(pageRecordRef(f.related.e.path));
+    return refs;
   }
 
   function buildGraph() {
@@ -3910,7 +3956,9 @@
     var edgeG = sv("g", { "class": "cgst-gedges" }, gSvg), pulses = sv("g", { "class": "cgst-gpulses", "aria-hidden": "true" }, gSvg);
     var preds = sv("g", { "class": "cgst-gpreds" }, gSvg);
     gLinks = sv("g", {}, gSvg);
+    var edgeHitG = sv("g", { "class": "cgst-gedgehits" }, gSvg);
     var nodes = sv("g", {}, gSvg);
+    graph.edgeEl = {};
 
     // cluster boundaries: 1.5 standard deviations of the members' spread
     site.clusters.forEach(function (c, ck) {
@@ -3962,8 +4010,17 @@
         d = "M" + p.x.toFixed(1) + " " + p.y.toFixed(1) + " Q" + (mx2 + (C - mx2) * 0.4).toFixed(1) + " " + (my2 + (C - my2) * 0.4).toFixed(1) +
           " " + q.x.toFixed(1) + " " + q.y.toFixed(1);
       } else d = "M" + p.x.toFixed(1) + " " + p.y.toFixed(1) + " L" + q.x.toFixed(1) + " " + q.y.toFixed(1);
-      var el = sv("path", { d: d, "class": "cgst-gedge", "data-w": e.w, style: "--h:" + hueOf(an.P[e.a].cluster) }, edgeG);
+      var relId = relationshipId(an.P[e.a].path, an.P[e.b].path);
+      var el = sv("path", { d: d, "class": "cgst-gedge", "data-edge-id": relId, "data-w": e.w, style: "--h:" + hueOf(an.P[e.a].cluster) }, edgeG);
       if (e.x) el.setAttribute("data-x", "");
+      var aToB = an.out[e.a].indexOf(e.b) > -1, bToA = an.out[e.b].indexOf(e.a) > -1;
+      var hit = sv("path", { d: d, "class": "cgst-gedge-hit", "data-edge-id": relId, tabindex: "-1", role: "button",
+        "aria-label": "Inspect relationship between " + an.P[e.a].title + " and " + an.P[e.b].title +
+          ". " + (aToB ? an.P[e.a].path + " lists " + an.P[e.b].path + ". " : "") +
+          (bToA ? an.P[e.b].path + " lists " + an.P[e.a].path + ". " : "") +
+          "Source record: data/site-index.json. Reciprocal links are not independent corroboration." }, edgeHitG);
+      sv("title", {}, hit).textContent = "Select to inspect direction assertions and source record references";
+      graph.edgeEl[relId] = { edge: e, visual: el, hit: hit };
       graph.eb[e.a].push(el); graph.eb[e.b].push(el);
     });
     an.fore.forEach(function (f) {
@@ -3971,11 +4028,13 @@
       sv("path", { d: "M" + p.x.toFixed(1) + " " + p.y.toFixed(1) + " L" + q.x.toFixed(1) + " " + q.y.toFixed(1), "class": "cgst-gpred" }, preds);
     });
 
-    // entities: size is importance, the ring is corroboration, red marks cut points and findings
+    // Entities: size is PageRank relative to this graph maximum; the outer ring
+    // is the share of neighbors with reciprocal links in this same index, not confidence.
     an.ent.forEach(function (x) {
       var e = x.e, p = pos[x.i], r = 2.6 + x.imp * 0.075, px = p.x.toFixed(1), py = p.y.toFixed(1);
       var link = sv("a", { href: e.url, "class": "cgst-gnode", "data-cluster": e.cluster, "data-path": e.path, tabindex: "-1", style: "--h:" + hueOf(e.cluster),
-        "aria-label": e.title + ". Importance " + x.imp + ", bridge " + x.bri + ", exposure " + x.exp + ", corroboration " + x.conf + " percent" }, nodes);
+        "aria-label": e.title + ". PageRank relative to graph maximum " + x.imp + ", betweenness relative to graph maximum " + x.bri +
+          ", inbound-sparsity heuristic " + x.exp + ", reciprocal-neighbor share in this index " + x.recipPct + " percent" }, nodes);
       if (e.hub) link.setAttribute("data-hub", "");
       if (x.key) link.setAttribute("data-key", "");
       if (x.sev === "high" || x.sev === "med") link.setAttribute("data-anom", x.sev);
@@ -3984,7 +4043,7 @@
         sv("circle", { cx: px, cy: py, r: (r + 5).toFixed(1), "class": "cgst-gping" }, link);
       }
       sv("circle", { cx: px, cy: py, r: (r + 3.2).toFixed(1), "class": "cgst-gconf0" }, link);
-      if (x.conf) sv("circle", { cx: px, cy: py, r: (r + 3.2).toFixed(1), "class": "cgst-gconf", pathLength: 100, "stroke-dasharray": x.conf + " 100",
+      if (x.recipPct) sv("circle", { cx: px, cy: py, r: (r + 3.2).toFixed(1), "class": "cgst-gconf", pathLength: 100, "stroke-dasharray": x.recipPct + " 100",
         transform: "rotate(-90 " + px + " " + py + ")" }, link);
       sv("circle", { cx: px, cy: py, r: r.toFixed(1), "class": "cgst-gdot" }, link);
       sv("circle", { cx: px, cy: py, r: Math.max(1.1, r * 0.42).toFixed(1), "class": "cgst-gpip" }, link);
@@ -3997,19 +4056,19 @@
       var right = p.x >= C, lx = p.x + (right ? r + 6 : -(r + 6));
       var lab = svText(link, lx, p.y, clip(e.title, 30), "cgst-glabel", right ? "start" : "end");
       lab.setAttribute("dominant-baseline", "central");
-      var meta = svText(link, lx, p.y, "IMP " + x.imp + " · EXP " + x.exp + " · CNF " + x.conf + "%", "cgst-gmeta", right ? "start" : "end");
+      var meta = svText(link, lx, p.y, "PR " + x.imp + " · SP " + x.exp + " · REC " + x.recipPct + "%", "cgst-gmeta", right ? "start" : "end");
       meta.setAttribute("dy", "1.6em");
       meta.setAttribute("dominant-baseline", "central");
       if (site.byId[e.cluster] && site.byId[e.cluster].members.length > 14) link.setAttribute("data-dense", "");
       graph.node[e.path] = { el: link, x: p.x, y: p.y, i: x.i, lab: lab, meta: meta, gap: r + 6, right: right, side: right };
     });
 
-    // Sentinel Core: corroboration, cohesion and reach as three arcs
+    // Sentinel Core: link reciprocity, declared-cluster modularity and directed reach.
     var core = sv("g", { "class": "cgst-gcore", tabindex: "0", role: "button", "aria-label": "Sentinel Core: show the whole graph" }, gSvg);
     sv("circle", { cx: C, cy: C, r: 150, fill: "url(#cgstCoreGlow)", "class": "cgst-gcglow", "aria-hidden": "true" }, core);
     [96, 104, 113].forEach(function (r, k) { sv("circle", { cx: C, cy: C, r: r, "class": "cgst-gcring", "data-r": k + 1, "aria-hidden": "true" }, core); });
     sv("circle", { cx: C, cy: C, r: 86, "class": "cgst-gcdisc" }, core);
-    [[80, an.recip / an.m, "#9fc2e0"], [74, Math.max(0, an.Q), "#a48bf0"], [68, an.reach, "#7fd1a8"]].forEach(function (a) {
+    [[80, an.m ? an.recip / an.m : 0, "#9fc2e0"], [74, Math.max(0, an.Q), "#a48bf0"], [68, an.reach, "#7fd1a8"]].forEach(function (a) {
       sv("circle", { cx: C, cy: C, r: a[0], "class": "cgst-garc0" }, core);
       sv("circle", { cx: C, cy: C, r: a[0], "class": "cgst-garc", pathLength: 100, "stroke-dasharray": Math.round(a[1] * 100) + " 100",
         transform: "rotate(-90 500 500)", style: "--h:" + a[2] }, core);
@@ -4042,18 +4101,144 @@
   }
   function clock(d) { return ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2); }
 
+  function graphExportPayload() {
+    var an = graph.an;
+    if (!an) return null;
+    var computedAt = an.at && an.at.toISOString ? an.at.toISOString() : null;
+    var entities = an.P.map(function (e, i) {
+      var x = an.ent[i];
+      return { id: "PAGE:" + e.path, type: "site-page", title: e.title, path: e.path, url: e.url,
+        clusterId: e.cluster, clusterName: site.byId[e.cluster] ? site.byId[e.cluster].name : e.cluster, sourceReference: pageRecordRef(e.path),
+        sourceExcerpt: String(e.summary || "").slice(0, 500), aboutExcerpt: String(e.about || "").slice(0, 500),
+        firstSeen: null, lastSeen: null, reviewState: "not-recorded",
+        evidenceQuality: { sourceReliability: "not-recorded", extractionConfidence: "not-recorded",
+          independentCorroboration: "not-assessed", analystReview: "not-recorded",
+          modelUncertainty: "not-applicable; no model uncertainty estimate is used" },
+        metrics: { inDegree: x.inD, outDegree: x.outD, undirectedDegree: x.deg, pageRankRelativeToGraphMaximum: x.imp,
+          betweennessRelativeToGraphMaximum: x.bri, inboundSparsityHeuristic: x.exp,
+          reciprocalNeighborSharePercent: x.recipPct, structuralPriorityHeuristic: x.pri,
+          directedDistanceFromHome: x.depth < 0 ? null : x.depth, articulationPoint: x.cut } };
+    });
+    var relationships = an.edges.map(function (edge) {
+      var rel = relationshipDetails(edge);
+      return { id: rel.id, type: "related-page-link-pair", source: "data/site-index.json",
+        entityA: "PAGE:" + rel.a.path, entityB: "PAGE:" + rel.b.path,
+        directionAssertions: rel.directions, reciprocalInThisIndex: rel.reciprocal,
+        directedAssertionCount: rel.directions.length, weight: edge.w, crossCluster: !!edge.x,
+        firstSeen: null, lastSeen: null,
+        evidenceQuality: { sourceReliability: "not-recorded", extractionConfidence: "not-recorded",
+          independentCorroboration: "not-assessed; links in one generated index are not independent sources",
+          analystReview: "not-recorded" },
+        limitations: ["Static generated page index; no relationship event timestamps or review metadata."] };
+    });
+    var findings = an.find.map(function (f, i) {
+      var refs = graphFindingReference(f);
+      return { id: "FIND:" + f.code + ":" + i, title: f.code + " · " + f.text,
+        category: "graph-structure-or-data-quality", triggeringRule: f.code,
+        displayedSeverityBand: f.s,
+        severityRationale: "Graph-structure heuristic only; not a cybersecurity severity or threat assessment.",
+        affectedEntities: [f.x && f.x.e ? "PAGE:" + f.x.e.path : null, f.related && f.related.e ? "PAGE:" + f.related.e.path : null].filter(Boolean),
+        supportingEvidenceReferences: refs.length ? refs : ["data/site-index.json"], computedAt: computedAt,
+        firstSeen: null, lastSeen: null, reviewState: "not-recorded",
+        confidence: "not-scored; no calibrated evidence-confidence model is connected",
+        suggestedVerificationStep: "Review the referenced index records and source pages, then regenerate data/site-index.json to verify the structural condition.",
+        limitations: ["Static site graph only; no temporal history or security telemetry."] };
+    });
+    return { schemaVersion: "clearglass.sentinel-evidence-export.v1",
+      exportMetadata: { exportedAt: new Date().toISOString(), computedAt: computedAt,
+        computationRuntimeMs: an.ms, runtimeScope: "graph analysis plus layout; DOM rendering and index retrieval excluded",
+        generatedBy: "Sentinel Core deterministic in-browser graph analysis",
+        delivery: "local browser download; no external export service is called" },
+      dataset: { source: "data/site-index.json", generator: "tools/internal_links.py",
+        type: "generated public-site page and related-link index",
+        fetchedAt: site.fetchedAt && site.fetchedAt.toISOString ? site.fetchedAt.toISOString() : null,
+        sourceUpdatedAt: null, sourceUpdatedAtStatus: "not supplied by this index schema",
+        entities: an.n, uniqueUndirectedRelationshipPairs: an.m, directedLinkAssertions: an.links, declaredClusters: site.clusters.length },
+      graphSemantics: { sourceAssertionsDirected: true, pairMetricsProjection: "undirected simple graph",
+        selfLoops: "excluded", duplicatePairs: "collapsed", density: "unique undirected pairs / (n * (n - 1) / 2)",
+        reciprocity: "both pages list each other in the same index; not independent-source corroboration" },
+      metrics: { degreeCentralisation: { value: an.cent, unit: "0–1",
+          definition: "Freeman degree centralisation: sum(max degree − degree) / ((n−1)(n−2)); zero for n ≤ 2.",
+          algorithm: "unique undirected degree", computedAt: computedAt },
+        edgeDensity: { value: an.dens, unit: "0–1", definition: "m / (n * (n - 1) / 2); simple undirected graph, no self-loops or multiedges.", computedAt: computedAt },
+        pageRank: { definition: "Directed PageRank; node values relative to graph maximum, scaled 0–100.",
+          algorithm: "power iteration", parameters: { damping: 0.85, iterations: 60, danglingRank: "distributed evenly" }, computedAt: computedAt },
+        betweenness: { definition: "Shortest-path betweenness on the unweighted undirected projection; relative to graph maximum, scaled 0–100.",
+          algorithm: "Brandes", computedAt: computedAt },
+        declaredClusterModularity: { value: an.Q, definition: "Modularity against declared site clusters; no automatic community detection is run.", computedAt: computedAt },
+        reciprocalPairs: { numerator: an.recip, denominator: an.m, value: an.m ? an.recip / an.m : null,
+          definition: "Reciprocal pairs in one index; not independent corroboration.", computedAt: computedAt },
+        temporalAnalysis: { available: false, reason: "No historical snapshots or per-relationship timestamps are available." },
+        securityTelemetry: { available: false, reason: "This is a public-site graph, not host/network intrusion-detection telemetry." } },
+      evidenceQualityFields: { sourceReliability: "not-recorded", extractionConfidence: "not-recorded",
+        independentCorroboration: "not-assessed", analystReviewState: "not-recorded",
+        modelUncertainty: "not-applicable; no model uncertainty estimate is used",
+        freshness: "retrieval time recorded; source update timestamp not supplied" },
+      limitations: ["First-seen/last-seen timestamps and temporal history are unavailable.",
+        "Source reliability, extraction confidence and analyst review state are not stored in this dataset.",
+        "Reciprocal links in one generated index are not independent corroboration.",
+        "Adamic–Adar candidates are an unevaluated heuristic, not a validated forecast.",
+        "This graph has no security telemetry and makes no intrusion-detection claims.",
+        "Normalized scores do not imply real-world power, risk, authority or causation."],
+      entities: entities, relationships: relationships, findings: findings };
+  }
+  function csvCell(value) {
+    var isString = typeof value === "string";
+    var s = value == null ? "" : (typeof value === "object" ? JSON.stringify(value) : String(value));
+    if (isString && /^[\s]*[=+\-@]/.test(s)) s = "'" + s;
+    return "\"" + s.replace(/"/g, "\"\"") + "\"";
+  }
+  function downloadGraphFile(content, mime, extension) {
+    var status = graphEl && graphEl.querySelector("[data-cgst-gexport-status]");
+    try {
+      if (!window.Blob || !window.URL || !window.URL.createObjectURL) throw new Error("Downloads are not supported by this browser.");
+      var blob = new Blob([content], { type: mime }), url = window.URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url; a.download = "clearglass-sentinel-evidence-" + new Date().toISOString().slice(0, 10) + "." + extension;
+      a.hidden = true; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { try { window.URL.revokeObjectURL(url); } catch (e) {} }, 1000);
+      if (status) setText(status, "Export generated locally. No external export service is called.");
+    } catch (e) {
+      if (status) setText(status, "Export unavailable: " + (e && e.message ? e.message : "download failed"));
+    }
+  }
+  function exportGraphJSON() {
+    var payload = graphExportPayload();
+    if (!payload) { var status = graphEl && graphEl.querySelector("[data-cgst-gexport-status]"); if (status) setText(status, "Open a loaded graph before exporting."); return; }
+    downloadGraphFile(JSON.stringify(payload, null, 2) + "\n", "application/json;charset=utf-8", "json");
+  }
+  function exportGraphCSV() {
+    var payload = graphExportPayload();
+    if (!payload) { var status = graphEl && graphEl.querySelector("[data-cgst-gexport-status]"); if (status) setText(status, "Open a loaded graph before exporting."); return; }
+    var rows = [["record_type", "id", "category", "from_entity", "to_entity", "title", "source_reference",
+      "supporting_excerpt", "source_reliability", "extraction_confidence", "independent_corroboration", "analyst_review",
+      "first_seen", "last_seen", "computed_at", "limitations"]];
+    payload.entities.forEach(function (e) { rows.push(["entity", e.id, e.type, "", "", e.title, e.sourceReference, e.sourceExcerpt,
+      e.evidenceQuality.sourceReliability, e.evidenceQuality.extractionConfidence, e.evidenceQuality.independentCorroboration,
+      e.evidenceQuality.analystReview, e.firstSeen, e.lastSeen, payload.exportMetadata.computedAt, e.evidenceQuality.modelUncertainty]); });
+    payload.relationships.forEach(function (r) { rows.push(["relationship", r.id, r.type, r.entityA, r.entityB,
+      r.reciprocalInThisIndex ? "reciprocal in the same index" : "one-way assertion", r.directionAssertions.map(function (d) { return d.sourceReference; }).join("; "),
+      r.directionAssertions.map(function (d) { return d.assertion; }).join("; "), r.evidenceQuality.sourceReliability, r.evidenceQuality.extractionConfidence,
+      r.evidenceQuality.independentCorroboration, r.evidenceQuality.analystReview, r.firstSeen, r.lastSeen,
+      payload.exportMetadata.computedAt, r.limitations.join("; ")]); });
+    payload.findings.forEach(function (f) { rows.push(["finding", f.id, f.category + " · " + f.displayedSeverityBand, f.affectedEntities[0] || "",
+      f.affectedEntities[1] || "", f.title, f.supportingEvidenceReferences.join("; "), f.severityRationale, "not-recorded", "not-recorded",
+      "not-assessed", f.reviewState, f.firstSeen, f.lastSeen, f.computedAt, f.limitations.join("; ")]); });
+    downloadGraphFile(rows.map(function (row) { return row.map(csvCell).join(","); }).join("\r\n") + "\r\n", "text/csv;charset=utf-8", "csv");
+  }
+
   function paintPanels() {
     var an = graph.an, P = an.P, counts = { high: 0, med: 0, low: 0, info: 0 };
     an.find.forEach(function (f) { counts[f.s]++; });
     var top = an.ent.slice().sort(function (p, r) { return r.pri - p.pri; }), worst = counts.high ? "high" : counts.med ? "med" : "";
     var dl = graphEl.querySelector("[data-cgst-gkpi]");
     dl.textContent = "";
-    kpi(dl, "Network centrality", an.cent.toFixed(2), "degree centralisation");
-    kpi(dl, "Intelligence confidence", pct(an.recip / an.m), "links corroborated both ways");
-    kpi(dl, "Active analytic models", "7", "run on this device in " + an.ms + " ms");
-    kpi(dl, "Priority index", String(top[0].pri), clip(top[0].e.title, 26));
-    kpi(dl, "Alert severity", worst ? worst.toUpperCase() : "NONE", counts.high + " high · " + counts.med + " med · " + counts.low + " low", worst);
-    kpi(dl, "Relationship density", (an.dens * 100).toFixed(1) + "%", (2 * an.m / an.n).toFixed(1) + " relationships per entity");
+    kpi(dl, "Degree centralisation", an.cent.toFixed(2), "Freeman index on unique undirected neighbours; 0–1");
+    kpi(dl, "Link reciprocity", an.m ? pct(an.recip / an.m) : "n/a", an.recip + " / " + an.m + " unique pairs are reciprocal in this one index");
+    kpi(dl, "Analysis runtime", an.ms + " ms", "analysis + layout on this device; DOM rendering excluded");
+    kpi(dl, "Structural priority", String(top.length ? top[0].pri : "n/a"), "0.45 PageRank + 0.35 bridge + 0.20 inbound-sparsity heuristic");
+    kpi(dl, "Graph finding band", worst ? worst.toUpperCase() : "NONE", counts.high + " high · " + counts.med + " medium · " + counts.low + " low; no security telemetry", worst);
+    kpi(dl, "Relationship density", (an.dens * 100).toFixed(1) + "%", (an.n ? (2 * an.m / an.n).toFixed(1) : "n/a") + " mean undirected degree");
 
     var cov = graphEl.querySelector("[data-cgst-gcov]");
     cov.textContent = "";
@@ -4112,17 +4297,21 @@
 
     var mo = graphEl.querySelector("[data-cgst-gmodels]");
     mo.textContent = "";
-    setText(graphEl.querySelector("[data-cgst-gms]"), "run " + clock(an.at));
-    [["PageRank · d 0.85 · 60 iterations", "importance"], ["Brandes betweenness", "bridge"], ["Tarjan cut points", "critical"],
-      ["Reciprocity", "corroboration"], ["Modularity, declared clusters", "Q " + an.Q.toFixed(2)], ["Adamic–Adar link forecast", an.fore.length + " pairs"],
-      ["Radial cluster layout · phyllotaxis", "seeded"]].forEach(function (x) { rowBtn(mo, "", x[0], x[1], null); });
+    setText(graphEl.querySelector("[data-cgst-gms]"), "computed " + an.ms + " ms");
+    [["Directed PageRank · d 0.85 · 60 iterations", "relative 0–100"], ["Brandes betweenness · unweighted undirected graph", "relative 0–100"],
+      ["Tarjan DFS · articulation points and components", an.comps + " components"], ["Link reciprocity", an.recip + " / " + an.m + " unique pairs"],
+      ["Modularity against declared clusters · no community detection", "Q " + an.Q.toFixed(2)],
+      ["Experimental Adamic–Adar candidates · ≥3 shared neighbours", an.fore.length + " pairs · not validated"],
+      ["Deterministic radial cluster layout · phyllotaxis", "layout only"]].forEach(function (x) { rowBtn(mo, "", x[0], x[1], null); });
 
-    var feed = graphEl.querySelector("[data-cgst-gfeed]"), at = clock(an.at);
+    var feed = graphEl.querySelector("[data-cgst-gfeed]"), at = an.at.toISOString().slice(11, 19) + "Z";
     feed.textContent = "";
-    setText(graphEl.querySelector("[data-cgst-gfeedn]"), plural(an.find.length, "observation"));
+    setText(graphEl.querySelector("[data-cgst-gfeedn]"), plural(an.find.length, "finding"));
     an.find.forEach(function (f) {
       var li = make("li");
-      li.appendChild(make("time", "", at));
+      var when = make("time", "", at);
+      when.setAttribute("title", "Graph computation time in UTC; not a source-observation timestamp");
+      li.appendChild(when);
       var sv2 = make("span", "cgst-gsev", f.s.toUpperCase());
       sv2.setAttribute("data-s", f.s);
       li.appendChild(sv2);
@@ -4135,6 +4324,28 @@
       } else li.appendChild(make("span", "", f.text));
       feed.appendChild(li);
     });
+
+    var methodBody = graphEl.querySelector("[data-cgst-gmethod-body]");
+    if (methodBody) {
+      methodBody.textContent = "";
+      [
+        ["Dataset and freshness", "Scope: generated public-site page and related-link index at data/site-index.json. Retrieved at " +
+          (site.fetchedAt && site.fetchedAt.toISOString ? site.fetchedAt.toISOString() : "not recorded") +
+          ". The index does not supply a source-update timestamp, so source freshness is unknown."],
+        ["Relationship semantics", "Source assertions are directed. Pair metrics use a simple undirected projection: one pair per entity pair, self-loops excluded and duplicate assertions collapsed. Direction assertions remain inspectable."],
+        ["Density", "Unique undirected pairs m divided by n × (n − 1) / 2. Self-loops and multiedges are excluded; an empty graph has zero edges and zero density."],
+        ["Degree centralisation", "Freeman centralisation: sum(maximum degree − each node degree) / ((n − 1) × (n − 2)); zero when n ≤ 2. Degree counts unique undirected neighbours."],
+        ["PageRank", "Directed PageRank, damping 0.85, 60 power iterations. Node displays are relative to this graph's maximum and scaled 0–100."],
+        ["Betweenness", "Brandes shortest-path betweenness on an unweighted undirected projection. Node displays are relative to this graph's maximum and scaled 0–100."],
+        ["Clusters and modularity", "Groups come from the index's declared clusters. Modularity is measured against those labels; no automatic community-detection algorithm is run."],
+        ["Inbound sparsity and priority", "Inbound-sparsity heuristic: 0 for the home page, otherwise round(100 / (1 + inbound-degree² / 2)). Structural priority = round(0.45 × PageRank-relative + 0.35 × betweenness-relative + 0.20 × inbound-sparsity). Neither is real-world power or risk."],
+        ["Reciprocity", "Numerator: reciprocal unique pairs. Denominator: all unique undirected pairs. Both directions in one generated index are structural symmetry, not independent-source corroboration."],
+        ["Experimental candidates", "Adamic–Adar ranks unlinked page pairs with at least three common neighbours. Candidates are unevaluated and are not validated forecasts."],
+        ["Evidence unavailable", "First/last seen times, historical snapshots, source reliability, extraction confidence and analyst-review state are absent from the source dataset."],
+        ["Security limitation", "This is a public-site relationship graph, not IDS/SIEM or host/network telemetry. Findings do not indicate intrusion, maliciousness, causal influence or readiness."],
+        ["Runtime", "Measured on this device for graph analysis plus layout; DOM rendering and index retrieval are excluded. Computation time is shown in UTC; index retrieval time is not source freshness."]
+      ].forEach(function (item) { appendGraphFact(methodBody, item[0], item[1]); });
+    }
 
     var leg = graphEl.querySelector("[data-cgst-glegend]"), seen = {};
     leg.textContent = "";
@@ -4173,11 +4384,46 @@
     var box = graphEl && graphEl.querySelector("[data-cgst-gprof]"), an = graph.an;
     if (!box || !an) return;
     box.textContent = "";
-    var x = graph.sel ? an.ent[an.idx[graph.sel]] : null;
-    setText(graphEl.querySelector("[data-cgst-gprof-id]"), x ? "ENT-" + ("00" + x.i).slice(-3) : "no selection");
+    var edgeId = graph.edgeSel || graph.previewEdgeId, edgeRow = edgeId && graph.edgeEl[edgeId];
+    if (edgeRow) {
+      var rel = relationshipDetails(edgeRow.edge), preview = !graph.edgeSel;
+      setText(graphEl.querySelector("[data-cgst-gprof-id]"), rel.id);
+      box.appendChild(make("p", "cgst-gprof-c", preview ? "Relationship preview · hover/focus" : "Selected relationship"));
+      box.appendChild(make("p", "cgst-gprof-t", rel.a.title + " ↔ " + rel.b.title));
+      appendGraphFact(box, "Stable relationship ID", rel.id);
+      appendGraphFact(box, "Relationship type", "Related-page link pair; direction assertions are preserved separately.");
+      appendGraphFact(box, "Source record", "data/site-index.json");
+      appendGraphFact(box, "Direction assertions", rel.directions.map(function (d) { return d.from + " → " + d.to; }).join(" · ") || "No direction assertion available");
+      var proof = make("ul", "cgst-grows");
+      rel.directions.forEach(function (d) {
+        proof.appendChild(make("li", "", d.assertion + " · source field " + d.sourceReference));
+      });
+      box.appendChild(proof);
+      appendGraphFact(box, "Reciprocal in this index", rel.reciprocal ?
+        "Yes; both pages list the other in the same generated index. This is not independent-source corroboration." :
+        "No; only one direction is listed in the current index.");
+      appendGraphFact(box, "Evidence quality", "Source reliability, extraction confidence and analyst review are not recorded. Independent corroboration has not been assessed.");
+      appendGraphFact(box, "First / last seen", "Unavailable: the index has no relationship-level timestamps or historical snapshots.");
+      appendGraphFact(box, "Collection method", "tools/internal_links.py generates the static site's related-page index.");
+      appendGraphFact(box, "Limitations", "An index assertion is not proof of independent observation, a causal relationship or cybersecurity activity.");
+      var actsRel = make("div", "cgst-gacts"), openIndex = make("a", "cgst-gcmd", "Open source index"),
+        endA = make("button", "cgst-gcmd", "Select endpoint A"), endB = make("button", "cgst-gcmd", "Select endpoint B"),
+        clearRel = make("button", "cgst-gcmd", "Clear");
+      openIndex.href = BASE + SITE.index; openIndex.target = "_blank"; openIndex.rel = "noopener noreferrer";
+      endA.type = endB.type = clearRel.type = "button";
+      endA.addEventListener("click", function () { selectNode(rel.a.path, true); });
+      endB.addEventListener("click", function () { selectNode(rel.b.path, true); });
+      clearRel.addEventListener("click", function () { selectNode(""); });
+      actsRel.appendChild(openIndex); actsRel.appendChild(endA); actsRel.appendChild(endB); actsRel.appendChild(clearRel);
+      box.appendChild(actsRel);
+      return;
+    }
+
+    var nodePath = graph.sel || graph.previewPath;
+    var x = nodePath && an.idx[nodePath] != null ? an.ent[an.idx[nodePath]] : null;
+    setText(graphEl.querySelector("[data-cgst-gprof-id]"), x ? "PAGE:" + x.e.path : "no selection");
     if (!x) {
-      box.appendChild(make("p", "cgst-gnote", "Select a node, a priority target or a feed line. Importance is PageRank, bridge is betweenness, " +
-        "exposure falls as inbound links rise, corroboration is the share of links returned. All are scaled 0–100 against this graph."));
+      box.appendChild(make("p", "cgst-gnote", "Select a page or relationship to inspect its generated source record. PageRank and betweenness are relative to this graph; inbound sparsity and priority are explicit heuristics. Reciprocal links are not independent corroboration."));
       if (site.here && graph.node[site.here.path]) {
         var acts = make("div", "cgst-gacts"), b = make("button", "cgst-gcmd", "Profile this page");
         b.type = "button";
@@ -4186,38 +4432,47 @@
       }
       return;
     }
-    var e = x.e, hue = hueOf(e.cluster), c = site.byId[e.cluster];
+
+    var e = x.e, hue = hueOf(e.cluster), cluster = site.byId[e.cluster];
     box.style.setProperty("--h", hue);
-    box.appendChild(make("p", "cgst-gprof-c", (FAMILY[e.cluster] || ["Other"])[0] + " · " + (c ? c.name : e.cluster)));
+    box.appendChild(make("p", "cgst-gprof-c", (FAMILY[e.cluster] || ["Other"])[0] + " · " + (cluster ? cluster.name : e.cluster)));
     box.appendChild(make("p", "cgst-gprof-t", e.title));
     if (e.summary) box.appendChild(make("p", "cgst-gprof-s", e.summary));
-    meter(box, "Importance", x.imp, hue);
-    meter(box, "Bridge", x.bri, "#9fc2e0");
-    meter(box, "Exposure", x.exp, x.exp >= 60 ? "#e5484d" : x.exp >= 30 ? "#e0a040" : "#7fd1a8");
-    meter(box, "Corroboration", x.conf, "#a48bf0");
-    meter(box, "Priority", x.pri, "#d4b25a");
+    appendGraphFact(box, "Stable entity ID", "PAGE:" + e.path);
+    appendGraphFact(box, "Source record", pageRecordRef(e.path));
+    appendGraphFact(box, "Summary excerpt", e.summary ? e.summary.slice(0, 420) : "No summary excerpt is present in this index record.");
+    appendGraphFact(box, "About excerpt", e.about ? e.about.slice(0, 420) : "No about excerpt is present in this index record.");
+    appendGraphFact(box, "Collection method", "tools/internal_links.py generates the static public-site index from page metadata and related-page links.");
+    appendGraphFact(box, "Evidence quality", "Source reliability, extraction confidence, independent-source corroboration and analyst review are not recorded in this dataset.");
+    appendGraphFact(box, "Observation history", "First-seen and last-seen timestamps are unavailable; this index has no temporal history.");
+    meter(box, "PageRank · relative", x.imp, hue);
+    meter(box, "Betweenness · relative", x.bri, "#9fc2e0");
+    meter(box, "Inbound sparsity heuristic", x.exp, x.exp >= 60 ? "#e5484d" : x.exp >= 30 ? "#e0a040" : "#7fd1a8");
+    meter(box, "Reciprocal-neighbor share", x.recipPct, "#a48bf0");
+    meter(box, "Structural priority heuristic", x.pri, "#d4b25a");
     var dl = make("dl", "cgst-gstats");
     [["Inbound", x.inD], ["Outbound", x.outD], ["Depth from home", x.depth < 0 ? "unreached" : x.depth + " hops"], ["Cut point", x.cut ? "yes" : "no"]]
       .forEach(function (s) { kpi(dl, s[0], String(s[1])); });
     box.appendChild(dl);
-    var ties = graph.an.adj[x.i].map(function (j) { return an.ent[j]; }).sort(function (p, r) { return r.imp - p.imp; }).slice(0, 5);
+    var ties = an.adj[x.i].map(function (j) { return an.ent[j]; }).sort(function (p, r) { return r.imp - p.imp; }).slice(0, 5);
     if (ties.length) {
       box.appendChild(make("p", "cgst-gpath", "Strongest ties"));
       var ul = make("ul", "cgst-grows");
       ties.forEach(function (t) {
         var o = an.out[x.i].indexOf(t.i) > -1, n2 = an.out[t.i].indexOf(x.i) > -1;
-        rowBtn(ul, hueOf(t.e.cluster), (o && n2 ? "↔ " : o ? "→ " : "← ") + t.e.title, "IMP " + t.imp, function () { selectNode(t.e.path, true); });
+        rowBtn(ul, hueOf(t.e.cluster), (o && n2 ? "↔ " : o ? "→ " : "← ") + t.e.title,
+          "PR " + t.imp, function () { selectNode(t.e.path, true); });
       });
       box.appendChild(ul);
     }
-    an.find.filter(function (f) { return f.x === x; }).forEach(function (f) {
-      var p = make("p", "cgst-gnote");
-      var s = make("span", "cgst-gsev", f.s.toUpperCase() + " " + f.code + " ");
+    an.find.filter(function (f) { return f.x === x || f.related === x; }).forEach(function (f) {
+      var p = make("p", "cgst-gnote"), s = make("span", "cgst-gsev", f.s.toUpperCase() + " " + f.code + " ");
       s.setAttribute("data-s", f.s);
       p.appendChild(s); p.appendChild(document.createTextNode(f.text));
       box.appendChild(p);
     });
-    var acts2 = make("div", "cgst-gacts"), open = make("a", "cgst-gcmd", "Open page"), tr = make("button", "cgst-gcmd", "Trace reach"), clr = make("button", "cgst-gcmd", "Clear");
+    var acts2 = make("div", "cgst-gacts"), open = make("a", "cgst-gcmd", "Open page"),
+      tr = make("button", "cgst-gcmd", "Trace reach"), clr = make("button", "cgst-gcmd", "Clear");
     open.href = e.url;
     tr.type = clr.type = "button";
     tr.addEventListener("click", function () { playTrace(true); });
@@ -4230,8 +4485,15 @@
   function selectNode(path, zoom) {
     var an = graph.an;
     if (!an) return;
+    graph.edgeSel = "";
+    graph.previewEdgeId = "";
+    graph.previewPath = "";
     graph.sel = path && an.idx[path] != null ? path : "";
     Object.keys(graph.node).forEach(function (p) { graph.node[p].el.classList.remove("cgst-gsel", "cgst-gh1", "cgst-gh2"); });
+    Object.keys(graph.edgeEl).forEach(function (id) {
+      graph.edgeEl[id].hit.classList.remove("cgst-gedge-hit-selected");
+      graph.edgeEl[id].visual.classList.remove("cgst-gselected");
+    });
     Array.prototype.forEach.call(gSvg.querySelectorAll(".cgst-gedge.cgst-gon"), function (el) { el.classList.remove("cgst-gon"); });
     stopTrace();
     if (graph.sel) {
@@ -4239,13 +4501,42 @@
       graph.node[graph.sel].el.classList.add("cgst-gsel");
       h1.forEach(function (j) {
         graph.node[an.P[j].path].el.classList.add("cgst-gh1");
-        an.adj[j].forEach(function (k) { if (k !== i && h1.indexOf(k) < 0 && !seen[k]) { seen[k] = 1; graph.node[an.P[k].path].el.classList.add("cgst-gh2"); } });
+        an.adj[j].forEach(function (k) {
+          if (k !== i && h1.indexOf(k) < 0 && !seen[k]) {
+            seen[k] = 1;
+            graph.node[an.P[k].path].el.classList.add("cgst-gh2");
+          }
+        });
       });
       graph.eb[i].forEach(function (el) { el.classList.add("cgst-gon"); });
       showLinks(graph.sel);
       if (zoom) { var nd = graph.node[graph.sel]; setVB({ x: nd.x - 170, y: nd.y - 170, w: 340 }, true); }
     } else clearLinks();
+    syncEdgeTabStops(graph.sel);
     Array.prototype.forEach.call(graphEl.querySelectorAll("[data-cgst-gprio] .cgst-grow"), function (b) { b.removeAttribute("aria-current"); });
+    paintDim();
+    paintProfile();
+  }
+
+  function syncEdgeTabStops(path) {
+    var an = graph.an, selected = path && an && an.idx[path] != null ? an.idx[path] : -1;
+    Object.keys(graph.edgeEl).forEach(function (id) { graph.edgeEl[id].hit.setAttribute("tabindex", "-1"); });
+    if (selected < 0) return;
+    an.edges.forEach(function (edge) {
+      if (edge.a !== selected && edge.b !== selected) return;
+      var id = relationshipId(an.P[edge.a].path, an.P[edge.b].path);
+      if (graph.edgeEl[id]) graph.edgeEl[id].hit.setAttribute("tabindex", "0");
+    });
+  }
+
+  function selectEdge(id) {
+    var row = graph.edgeEl[id];
+    if (!row || !graph.an) return;
+    var rel = relationshipDetails(row.edge);
+    selectNode(rel.a.path, false);
+    graph.edgeSel = id;
+    graph.edgeEl[id].hit.classList.add("cgst-gedge-hit-selected");
+    graph.edgeEl[id].visual.classList.add("cgst-gselected", "cgst-gon");
     paintDim();
     paintProfile();
   }
@@ -4447,7 +4738,7 @@
     fitCluster(site.byId[graph.focus]);
     paintSide();
   }
-  function paintDim() { gSvg.setAttribute("data-dim", graph.focus || graph.hits.length || graph.sel ? "1" : "0"); queueDeclutter(); }
+  function paintDim() { gSvg.setAttribute("data-dim", graph.focus || graph.hits.length || graph.sel || graph.edgeSel || graph.previewEdgeId ? "1" : "0"); queueDeclutter(); }
 
   function setHits(paths, label) {
     graph.hits = (paths || []).filter(function (p) { return graph.node[p]; });
@@ -4609,8 +4900,9 @@
         return;
       }
       buildGraph();
-      setText(gSub, plural(site.pages.length, "entity", "entities") + " · " + plural(graph.an.m, "relationship") + " · " +
-        plural(site.clusters.length, "cluster") + " · " + plural(graph.an.find.length, "observation") + " · built from the site index");
+      setText(gSub, plural(site.pages.length, "entity", "entities") + " · " + plural(graph.an.m, "unique relationship pair", "unique relationship pairs") + " · " +
+        plural(site.clusters.length, "declared cluster") + " · " + plural(graph.an.find.length, "structural finding") +
+        " · source timestamp unavailable · computed " + graph.an.at.toISOString().slice(11, 19) + "Z");
       selectNode("");
       graph.hits = [];
       Object.keys(graph.node).forEach(function (p) { graph.node[p].el.classList.remove("cgst-ghit"); });
@@ -4671,6 +4963,8 @@
     graphEl.addEventListener("click", function (event) {
       if (event.target === graphEl) { closeGraph(); return; }
       var t = event.target.closest ? event.target : null;
+      var edgeHit = event.target.closest ? event.target.closest(".cgst-gedge-hit") : null;
+      if (edgeHit) { event.preventDefault(); selectEdge(edgeHit.getAttribute("data-edge-id")); return; }
       // real taps only (detail > 0): a keyboard Enter on a cluster stays a cluster action
       if (t && event.detail && !t.closest(".cgst-gnode") && !t.closest(".cgst-gcore") && t.closest(".cgst-gsvg") &&
           (graph.focus || graph.vb.w <= 520) && !(event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)) {
@@ -4693,16 +4987,37 @@
     });
     graphEl.addEventListener("keydown", function (event) {
       var t = event.target;
+      if ((event.key === "Enter" || event.key === " ") && t.classList && t.classList.contains("cgst-gedge-hit")) {
+        event.preventDefault(); selectEdge(t.getAttribute("data-edge-id")); return;
+      }
       if ((event.key === "Enter" || event.key === " ") && t.classList && (t.classList.contains("cgst-gcluster") || t.classList.contains("cgst-gcore"))) {
         event.preventDefault();
         t.dispatchEvent(new MouseEvent("click", { bubbles: true }));
       }
     });
-    // hover or focus on a page, in the graph or the list: route its links
+    // Hover/focus previews expose source assertions; selection pins the record.
     function pathOf(el) { var n = el && el.closest ? el.closest("[data-path]") : null; return n ? n.getAttribute("data-path") : ""; }
-    graphEl.addEventListener("pointerover", function (event) { var p = pathOf(event.target); if (p) showLinks(p); });
-    graphEl.addEventListener("focusin", function (event) { var p = pathOf(event.target); if (p) showLinks(p); });
-    graphEl.addEventListener("pointerout", function (event) { if (pathOf(event.target) && !pathOf(event.relatedTarget)) clearLinks(); });
+    graphEl.addEventListener("pointerover", function (event) {
+      var hit = event.target.closest ? event.target.closest(".cgst-gedge-hit") : null;
+      if (hit && !graph.edgeSel) { graph.previewEdgeId = hit.getAttribute("data-edge-id"); graph.previewPath = ""; paintProfile(); return; }
+      var p = pathOf(event.target);
+      if (p) { showLinks(p); if (!graph.sel && !graph.edgeSel) { graph.previewEdgeId = ""; graph.previewPath = p; paintProfile(); } }
+    });
+    graphEl.addEventListener("focusin", function (event) {
+      var hit = event.target.closest ? event.target.closest(".cgst-gedge-hit") : null;
+      if (hit && !graph.edgeSel) { graph.previewEdgeId = hit.getAttribute("data-edge-id"); graph.previewPath = ""; paintProfile(); return; }
+      var p = pathOf(event.target);
+      if (p) { showLinks(p); if (!graph.sel && !graph.edgeSel) { graph.previewEdgeId = ""; graph.previewPath = p; paintProfile(); } }
+    });
+    graphEl.addEventListener("pointerout", function (event) {
+      var hit = event.target.closest ? event.target.closest(".cgst-gedge-hit") : null;
+      var nextHit = event.relatedTarget && event.relatedTarget.closest ? event.relatedTarget.closest(".cgst-gedge-hit") : null;
+      if (hit && !nextHit && !graph.edgeSel) { graph.previewEdgeId = ""; paintProfile(); }
+      if (pathOf(event.target) && !pathOf(event.relatedTarget)) {
+        clearLinks();
+        if (!graph.sel && !graph.edgeSel) { graph.previewPath = ""; paintProfile(); }
+      }
+    });
 
     gView.addEventListener("wheel", function (event) {
       if (!graph.built) return;
@@ -4950,9 +5265,11 @@
           '<div class="cgst-smart">' + smartHTML + '</div></div>' +
       '</section>';
 
-    var layerHTML = [["edges", "Links", 1], ["bounds", "Clusters", 1], ["heat", "Influence", 1], ["anomaly", "Anomalies", 1],
-      ["predict", "Forecast", 0], ["labels", "Labels", 0]].map(function (l) {
-      return '<button type="button" class="cgst-glayer" data-glayer="' + l[0] + '" aria-pressed="' + (l[2] ? "true" : "false") + '">' + l[1] + '</button>';
+    var layerHTML = [["edges", "Links", 1], ["bounds", "Clusters", 1], ["heat", "Influence", 1], ["anomaly", "Findings", 1],
+      ["predict", "Candidates", 0], ["labels", "Labels", 0]].map(function (l) {
+      var hint = l[0] === "predict" ? "Unevaluated Adamic–Adar candidates; not a validated forecast" :
+        l[0] === "anomaly" ? "Graph-structure and data-quality findings only; no security telemetry" : l[1];
+      return '<button type="button" class="cgst-glayer" data-glayer="' + l[0] + '" title="' + hint + '" aria-pressed="' + (l[2] ? "true" : "false") + '">' + l[1] + '</button>';
     }).join("");
     var graphHTML =
       '<div class="cgst-graph" data-cgst-graph role="dialog" aria-modal="true" aria-labelledby="cgstGraphTitle" hidden>' +
@@ -4960,7 +5277,8 @@
           '<div class="cgst-ghead">' +
             '<div><p class="cgst-gorg" aria-hidden="true">ClearGlass · Sentinel Core <i><b>●</b> Computed on this device</i></p>' +
               '<h2 class="cgst-gtitle" id="cgstGraphTitle" tabindex="-1">Intelligence Graph</h2>' +
-              '<p class="cgst-gsub" data-cgst-gsub>Reading the site index…</p></div>' +
+              '<p class="cgst-gsub" data-cgst-gsub>Reading the site index…</p>' +
+              '<details class="cgst-gmethod"><summary>Definitions &amp; evidence limits</summary><div class="cgst-gmethod-body" data-cgst-gmethod-body></div></details></div>' +
             '<div class="cgst-gtools">' +
               '<button type="button" class="cgst-gtool" data-cgst="g-in" aria-label="Zoom in">+</button>' +
               '<button type="button" class="cgst-gtool" data-cgst="g-out" aria-label="Zoom out">&minus;</button>' +
@@ -4979,6 +5297,9 @@
                   '<input id="cgstGFind" type="search" autocomplete="off" spellcheck="false" maxlength="120" placeholder="Filter: osint, pricing…"></form>' +
                 '<p class="cgst-gpath" data-cgst-gpath>Sentinel Core</p>' +
                 '<div data-cgst-gtree></div></section>' +
+              '<section class="cgst-gsec"><h3 class="cgst-gh">Evidence exports <span>local</span></h3>' +
+                '<div class="cgst-gexports"><button type="button" class="cgst-gcmd" data-cgst="g-export-json">Evidence JSON</button><button type="button" class="cgst-gcmd" data-cgst="g-export-csv">Evidence CSV</button></div>' +
+                '<p class="cgst-gexport-status" data-cgst-gexport-status role="status" aria-live="polite">Includes source references, computation metadata and explicit evidence gaps. Downloads stay in this browser.</p></section>' +
             '</aside>' +
             '<div class="cgst-gview" data-cgst-gview tabindex="0" role="group" ' +
               'aria-label="Graph canvas. Arrow keys pan, plus and minus zoom, 0 resets. Select a node to profile it; the directory holds the same pages.">' +
@@ -4996,13 +5317,13 @@
               '<section class="cgst-gsec"><h3 class="cgst-gh">Entity profile <span data-cgst-gprof-id>no selection</span></h3>' +
                 '<div class="cgst-gprof" data-cgst-gprof aria-live="polite"></div></section>' +
               '<section class="cgst-gsec"><h3 class="cgst-gh">Correlation matrix <span>links, row → column</span></h3><div data-cgst-gmx></div></section>' +
-              '<section class="cgst-gsec"><h3 class="cgst-gh">Link forecast <span>Adamic–Adar</span></h3><ul class="cgst-grows" data-cgst-gpred></ul></section>' +
-              '<section class="cgst-gsec"><h3 class="cgst-gh">Analytic models <span data-cgst-gms></span></h3><ul class="cgst-grows" data-cgst-gmodels></ul>' +
-                '<p class="cgst-gnote">Structural signals only: every score describes how a page sits in the site’s own link graph. ' +
-                'No threat, geospatial or telemetry feed is connected, so none is drawn. ' +
-                'Drag to pan · wheel, pinch or +/− to zoom · select a node to profile it · Esc closes.</p></section>' +
+              '<section class="cgst-gsec"><h3 class="cgst-gh">Experimental link candidates <span>Adamic–Adar · unevaluated</span></h3><ul class="cgst-grows" data-cgst-gpred></ul>' +
+                '<p class="cgst-gnote">Candidates are unlinked pairs with at least three shared neighbours. This heuristic has not been evaluated and is not a validated forecast.</p></section>' +
+              '<section class="cgst-gsec"><h3 class="cgst-gh">Computed methods <span data-cgst-gms></span></h3><ul class="cgst-grows" data-cgst-gmodels></ul>' +
+                '<p class="cgst-gnote">This is a public-site relationship graph: no security telemetry, geospatial feed or language model is connected. The graph does not imply intrusion detection, maliciousness, real-world authority or causation.' +
+                ' Drag to pan · wheel, pinch or +/− to zoom · select a page or edge to inspect source assertions · Esc closes.</p></section>' +
             '</aside>' +
-            '<section class="cgst-gfeed" aria-label="Observation feed"><h3 class="cgst-gh">Observation feed <span data-cgst-gfeedn></span></h3>' +
+            '<section class="cgst-gfeed" aria-label="Derived graph findings"><h3 class="cgst-gh">Derived graph findings <span data-cgst-gfeedn></span></h3>' +
               '<ol data-cgst-gfeed></ol></section>' +
           '</div>' +
         '</div>' +
@@ -5261,6 +5582,8 @@
         if (typeof fn === "function") fn();
         return;
       }
+      if (act === "g-export-json") { exportGraphJSON(); return; }
+      if (act === "g-export-csv") { exportGraphCSV(); return; }
       if (act === "g-in") { zoomAt(1 / 1.3, null, true); return; }
       if (act === "g-out") { zoomAt(1.3, null, true); return; }
       if (act === "g-fit") { setHits([], ""); if (gFind) gFind.value = ""; selectNode(""); focusCluster(""); return; }
