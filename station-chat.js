@@ -4081,6 +4081,132 @@
   }
   function clock(d) { return ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2); }
 
+  function graphExportPayload() {
+    var an = graph.an;
+    if (!an) return null;
+    var computedAt = an.at && an.at.toISOString ? an.at.toISOString() : null;
+    var entities = an.P.map(function (e, i) {
+      var x = an.ent[i];
+      return { id: "PAGE:" + e.path, type: "site-page", title: e.title, path: e.path, url: e.url,
+        clusterId: e.cluster, clusterName: e.group || "", sourceReference: pageRecordRef(e.path),
+        sourceExcerpt: String(e.summary || "").slice(0, 500), aboutExcerpt: String(e.about || "").slice(0, 500),
+        firstSeen: null, lastSeen: null, reviewState: "not-recorded",
+        evidenceQuality: { sourceReliability: "not-recorded", extractionConfidence: "not-recorded",
+          independentCorroboration: "not-assessed", analystReview: "not-recorded",
+          modelUncertainty: "not-applicable; no model uncertainty estimate is used" },
+        metrics: { inDegree: x.inD, outDegree: x.outD, undirectedDegree: x.deg, pageRankRelativeToGraphMaximum: x.imp,
+          betweennessRelativeToGraphMaximum: x.bri, inboundSparsityHeuristic: x.exp,
+          reciprocalNeighborSharePercent: x.recipPct, structuralPriorityHeuristic: x.pri,
+          directedDistanceFromHome: x.depth < 0 ? null : x.depth, articulationPoint: x.cut } };
+    });
+    var relationships = an.edges.map(function (edge) {
+      var rel = relationshipDetails(edge);
+      return { id: rel.id, type: "related-page-link-pair", source: "data/site-index.json",
+        entityA: "PAGE:" + rel.a.path, entityB: "PAGE:" + rel.b.path,
+        directionAssertions: rel.directions, reciprocalInThisIndex: rel.reciprocal,
+        directedAssertionCount: rel.directions.length, weight: edge.w, crossCluster: !!edge.x,
+        firstSeen: null, lastSeen: null,
+        evidenceQuality: { sourceReliability: "not-recorded", extractionConfidence: "not-recorded",
+          independentCorroboration: "not-assessed; links in one generated index are not independent sources",
+          analystReview: "not-recorded" },
+        limitations: ["Static generated page index; no relationship event timestamps or review metadata."] };
+    });
+    var findings = an.find.map(function (f, i) {
+      var refs = graphFindingReference(f);
+      return { id: "FIND:" + f.code + ":" + i, title: f.code + " · " + f.text,
+        category: "graph-structure-or-data-quality", triggeringRule: f.code,
+        displayedSeverityBand: f.s,
+        severityRationale: "Graph-structure heuristic only; not a cybersecurity severity or threat assessment.",
+        affectedEntities: [f.x && f.x.e ? "PAGE:" + f.x.e.path : null, f.related && f.related.e ? "PAGE:" + f.related.e.path : null].filter(Boolean),
+        supportingEvidenceReferences: refs.length ? refs : ["data/site-index.json"], computedAt: computedAt,
+        firstSeen: null, lastSeen: null, reviewState: "not-recorded",
+        confidence: "not-scored; no calibrated evidence-confidence model is connected",
+        suggestedVerificationStep: "Review the referenced index records and source pages, then regenerate data/site-index.json to verify the structural condition.",
+        limitations: ["Static site graph only; no temporal history or security telemetry."] };
+    });
+    return { schemaVersion: "clearglass.sentinel-evidence-export.v1",
+      exportMetadata: { exportedAt: new Date().toISOString(), computedAt: computedAt,
+        computationRuntimeMs: an.ms, runtimeScope: "graph analysis plus layout; DOM rendering and index retrieval excluded",
+        generatedBy: "Sentinel Core deterministic in-browser graph analysis",
+        delivery: "local browser download; no external export service is called" },
+      dataset: { source: "data/site-index.json", generator: "tools/internal_links.py",
+        type: "generated public-site page and related-link index",
+        fetchedAt: site.fetchedAt && site.fetchedAt.toISOString ? site.fetchedAt.toISOString() : null,
+        sourceUpdatedAt: null, sourceUpdatedAtStatus: "not supplied by this index schema",
+        entities: an.n, uniqueUndirectedRelationshipPairs: an.m, directedLinkAssertions: an.links, declaredClusters: site.clusters.length },
+      graphSemantics: { sourceAssertionsDirected: true, pairMetricsProjection: "undirected simple graph",
+        selfLoops: "excluded", duplicatePairs: "collapsed", density: "unique undirected pairs / (n * (n - 1) / 2)",
+        reciprocity: "both pages list each other in the same index; not independent-source corroboration" },
+      metrics: { degreeCentralisation: { value: an.cent, unit: "0–1",
+          definition: "Freeman degree centralisation: sum(max degree − degree) / ((n−1)(n−2)); zero for n ≤ 2.",
+          algorithm: "unique undirected degree", computedAt: computedAt },
+        edgeDensity: { value: an.dens, unit: "0–1", definition: "m / (n * (n - 1) / 2); simple undirected graph, no self-loops or multiedges.", computedAt: computedAt },
+        pageRank: { definition: "Directed PageRank; node values relative to graph maximum, scaled 0–100.",
+          algorithm: "power iteration", parameters: { damping: 0.85, iterations: 60, danglingRank: "distributed evenly" }, computedAt: computedAt },
+        betweenness: { definition: "Shortest-path betweenness on the unweighted undirected projection; relative to graph maximum, scaled 0–100.",
+          algorithm: "Brandes", computedAt: computedAt },
+        declaredClusterModularity: { value: an.Q, definition: "Modularity against declared site clusters; no automatic community detection is run.", computedAt: computedAt },
+        reciprocalPairs: { numerator: an.recip, denominator: an.m, value: an.m ? an.recip / an.m : null,
+          definition: "Reciprocal pairs in one index; not independent corroboration.", computedAt: computedAt },
+        temporalAnalysis: { available: false, reason: "No historical snapshots or per-relationship timestamps are available." },
+        securityTelemetry: { available: false, reason: "This is a public-site graph, not host/network intrusion-detection telemetry." } },
+      evidenceQualityFields: { sourceReliability: "not-recorded", extractionConfidence: "not-recorded",
+        independentCorroboration: "not-assessed", analystReviewState: "not-recorded",
+        modelUncertainty: "not-applicable; no model uncertainty estimate is used",
+        freshness: "retrieval time recorded; source update timestamp not supplied" },
+      limitations: ["First-seen/last-seen timestamps and temporal history are unavailable.",
+        "Source reliability, extraction confidence and analyst review state are not stored in this dataset.",
+        "Reciprocal links in one generated index are not independent corroboration.",
+        "Adamic–Adar candidates are an unevaluated heuristic, not a validated forecast.",
+        "This graph has no security telemetry and makes no intrusion-detection claims.",
+        "Normalized scores do not imply real-world power, risk, authority or causation."],
+      entities: entities, relationships: relationships, findings: findings };
+  }
+  function csvCell(value) {
+    var isString = typeof value === "string";
+    var s = value == null ? "" : (typeof value === "object" ? JSON.stringify(value) : String(value));
+    if (isString && /^[\s]*[=+\-@]/.test(s)) s = "'" + s;
+    return "\"" + s.replace(/"/g, "\"\"") + "\"";
+  }
+  function downloadGraphFile(content, mime, extension) {
+    var status = graphEl && graphEl.querySelector("[data-cgst-gexport-status]");
+    try {
+      if (!window.Blob || !window.URL || !window.URL.createObjectURL) throw new Error("Downloads are not supported by this browser.");
+      var blob = new Blob([content], { type: mime }), url = window.URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url; a.download = "clearglass-sentinel-evidence-" + new Date().toISOString().slice(0, 10) + "." + extension;
+      a.hidden = true; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { try { window.URL.revokeObjectURL(url); } catch (e) {} }, 1000);
+      if (status) setText(status, "Export generated locally. No external service was called.");
+    } catch (e) {
+      if (status) setText(status, "Export unavailable: " + (e && e.message ? e.message : "download failed"));
+    }
+  }
+  function exportGraphJSON() {
+    var payload = graphExportPayload();
+    if (!payload) { var status = graphEl && graphEl.querySelector("[data-cgst-gexport-status]"); if (status) setText(status, "Open a loaded graph before exporting."); return; }
+    downloadGraphFile(JSON.stringify(payload, null, 2) + "\n", "application/json;charset=utf-8", "json");
+  }
+  function exportGraphCSV() {
+    var payload = graphExportPayload();
+    if (!payload) { var status = graphEl && graphEl.querySelector("[data-cgst-gexport-status]"); if (status) setText(status, "Open a loaded graph before exporting."); return; }
+    var rows = [["record_type", "id", "category", "from_entity", "to_entity", "title", "source_reference",
+      "supporting_excerpt", "source_reliability", "extraction_confidence", "independent_corroboration", "analyst_review",
+      "first_seen", "last_seen", "computed_at", "limitations"]];
+    payload.entities.forEach(function (e) { rows.push(["entity", e.id, e.type, "", "", e.title, e.sourceReference, e.sourceExcerpt,
+      e.evidenceQuality.sourceReliability, e.evidenceQuality.extractionConfidence, e.evidenceQuality.independentCorroboration,
+      e.evidenceQuality.analystReview, e.firstSeen, e.lastSeen, payload.exportMetadata.computedAt, e.evidenceQuality.modelUncertainty]); });
+    payload.relationships.forEach(function (r) { rows.push(["relationship", r.id, r.type, r.entityA, r.entityB,
+      r.reciprocalInThisIndex ? "reciprocal in the same index" : "one-way assertion", r.directionAssertions.map(function (d) { return d.sourceReference; }).join("; "),
+      r.directionAssertions.map(function (d) { return d.assertion; }).join("; "), r.evidenceQuality.sourceReliability, r.evidenceQuality.extractionConfidence,
+      r.evidenceQuality.independentCorroboration, r.evidenceQuality.analystReview, r.firstSeen, r.lastSeen,
+      payload.exportMetadata.computedAt, r.limitations.join("; ")]); });
+    payload.findings.forEach(function (f) { rows.push(["finding", f.id, f.category + " · " + f.displayedSeverityBand, f.affectedEntities[0] || "",
+      f.affectedEntities[1] || "", f.title, f.supportingEvidenceReferences.join("; "), f.severityRationale, "not-recorded", "not-recorded",
+      "not-assessed", f.reviewState, f.firstSeen, f.lastSeen, f.computedAt, f.limitations.join("; ")]); });
+    downloadGraphFile(rows.map(function (row) { return row.map(csvCell).join(","); }).join("\r\n") + "\r\n", "text/csv;charset=utf-8", "csv");
+  }
+
   function paintPanels() {
     var an = graph.an, P = an.P, counts = { high: 0, med: 0, low: 0, info: 0 };
     an.find.forEach(function (f) { counts[f.s]++; });
