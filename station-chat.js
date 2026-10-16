@@ -1985,7 +1985,7 @@
   }
 
   // ── Site Intelligence: the index ─────────────────────────────────────────
-  var site = { state: "idle", pages: [], byPath: {}, clusters: [], byId: {}, links: 0, here: null, waiters: [] };
+  var site = { state: "idle", pages: [], byPath: {}, clusters: [], byId: {}, links: 0, here: null, fetchedAt: null, waiters: [] };
   var nexusEl;
 
   // Only same-site page paths are followed: letters, digits and ._/- ending in
@@ -2071,6 +2071,7 @@
     var hp = herePath();
     site.here = byPath[hp] || byPath[hp + ".html"] || null;
     SECTORS.forEach(function (s) { s.pages = s.missions ? [] : orderSector(pages.filter(function (e) { return inSector(e, s); }), s); });
+    site.fetchedAt = new Date();
     site.state = "ready";
     paintIndex();
     flushSite();
@@ -3634,7 +3635,7 @@
   };
   var SEV = { high: 0, med: 1, low: 2, info: 3 };
   var graph = { built: false, open: false, vb: { x: 0, y: 0, w: 1000 }, focus: "", hits: [], hitLabel: "", lastFocus: null, anim: 0,
-    node: {}, pts: {}, drag: null, pinch: null, suppress: false, an: null, sel: "", eb: [], hop: -1, play: 0, dq: 0, calm: false, calmT: 0 };
+    node: {}, pts: {}, drag: null, pinch: null, suppress: false, an: null, sel: "", edgeSel: "", previewPath: "", previewEdgeId: "", edgeEl: {}, eb: [], hop: -1, play: 0, dq: 0, calm: false, calmT: 0 };
   var graphEl, gSvg, gView, gSide, gTree, gPath, gFind, gSub, gLinks, gHop, gHopOut, gPlay;
 
   function sv(tag, attrs, parent) {
@@ -3677,7 +3678,8 @@
       });
     });
     var adj = nb.map(function (m) { return Object.keys(m).map(Number); });
-    // undirected relationships, weight 2 when both pages link each other
+    // Simple undirected projection for pair metrics. A reciprocal pair is still
+    // one relationship pair, and reciprocity is not independent evidence.
     var edges = [], recip = 0;
     adj.forEach(function (list, a) {
       list.forEach(function (b) {
@@ -3687,7 +3689,7 @@
         edges.push({ a: a, b: b, w: w, x: P[a].cluster !== P[b].cluster });
       });
     });
-    var m = edges.length || 1;
+    var m = edges.length, mDenom = m || 1;
     // PageRank, damping 0.85; dangling pages spread their rank evenly
     var pr = zeros(n, 1 / n);
     for (k = 0; k < 60; k++) {
@@ -3757,7 +3759,7 @@
     var Q = 0;
     cs.forEach(function (c) {
       c.dens = c.n > 1 ? 2 * c.inE / (c.n * (c.n - 1)) : 0;
-      Q += c.inE / m - Math.pow(c.deg / (2 * m), 2);
+      Q += c.inE / mDenom - Math.pow(c.deg / (2 * mDenom), 2);
     });
     // link forecast: unlinked pairs that share at least three neighbours (Adamic–Adar)
     var fore = [];
@@ -3780,7 +3782,7 @@
       if (deg > maxDeg) maxDeg = deg;
       var imp = Math.round(100 * pr[a] / maxPr), bri = Math.round(100 * bc[a] / maxBc), inD = inn[a].length;
       var exp = a === home ? 0 : Math.round(100 / (1 + inD * inD / 2));
-      return { i: a, e: e, imp: imp, bri: bri, exp: exp, conf: deg ? Math.round(100 * both / deg) : 0, inD: inD, outD: out[a].length,
+      return { i: a, e: e, imp: imp, bri: bri, exp: exp, recipPct: deg ? Math.round(100 * both / deg) : 0, inD: inD, outD: out[a].length,
         deg: deg, depth: depth[a], cut: !!cut[a], pri: Math.round(0.45 * imp + 0.35 * bri + 0.2 * exp), sev: "" };
     });
     var cent = 0;
@@ -3788,8 +3790,8 @@
     cent = n > 2 ? cent / ((n - 1) * (n - 2)) : 0;
     // findings: each one names the page and the measurement behind it
     var find = [];
-    function flag(sev, code, x, text) {
-      find.push({ s: sev, code: code, x: x, text: text });
+    function flag(sev, code, x, text, related) {
+      find.push({ s: sev, code: code, x: x, text: text, related: related || null });
       if (x && (!x.sev || SEV[sev] < SEV[x.sev])) x.sev = sev;
     }
     ent.forEach(function (x) {
@@ -3811,7 +3813,7 @@
       flag("info", "BRIDGE", x, x.e.title + ": bridge score " + x.bri + ", the most shortest paths between clusters run through it");
     });
     fore.slice(0, 4).forEach(function (f) {
-      flag("info", "FORECAST", ent[f.a], P[f.a].title + " ↔ " + P[f.b].title + ": " + f.c + " shared neighbours, no link yet");
+      flag("info", "CANDIDATE", ent[f.a], P[f.a].title + " ↔ " + P[f.b].title + ": " + f.c + " shared neighbours; unevaluated structural heuristic, not a validated forecast", ent[f.b]);
     });
     find.sort(function (p, r) { return SEV[p.s] - SEV[r.s]; });
     var reached = depth.filter(function (x) { return x >= 0; }).length;
@@ -3971,7 +3973,8 @@
       sv("path", { d: "M" + p.x.toFixed(1) + " " + p.y.toFixed(1) + " L" + q.x.toFixed(1) + " " + q.y.toFixed(1), "class": "cgst-gpred" }, preds);
     });
 
-    // entities: size is importance, the ring is corroboration, red marks cut points and findings
+    // Entities: size is PageRank relative to this graph maximum; the outer ring
+    // is the share of neighbors with reciprocal links in this same index, not confidence.
     an.ent.forEach(function (x) {
       var e = x.e, p = pos[x.i], r = 2.6 + x.imp * 0.075, px = p.x.toFixed(1), py = p.y.toFixed(1);
       var link = sv("a", { href: e.url, "class": "cgst-gnode", "data-cluster": e.cluster, "data-path": e.path, tabindex: "-1", style: "--h:" + hueOf(e.cluster),
@@ -4004,12 +4007,12 @@
       graph.node[e.path] = { el: link, x: p.x, y: p.y, i: x.i, lab: lab, meta: meta, gap: r + 6, right: right, side: right };
     });
 
-    // Sentinel Core: corroboration, cohesion and reach as three arcs
+    // Sentinel Core: link reciprocity, declared-cluster modularity and directed reach.
     var core = sv("g", { "class": "cgst-gcore", tabindex: "0", role: "button", "aria-label": "Sentinel Core: show the whole graph" }, gSvg);
     sv("circle", { cx: C, cy: C, r: 150, fill: "url(#cgstCoreGlow)", "class": "cgst-gcglow", "aria-hidden": "true" }, core);
     [96, 104, 113].forEach(function (r, k) { sv("circle", { cx: C, cy: C, r: r, "class": "cgst-gcring", "data-r": k + 1, "aria-hidden": "true" }, core); });
     sv("circle", { cx: C, cy: C, r: 86, "class": "cgst-gcdisc" }, core);
-    [[80, an.recip / an.m, "#9fc2e0"], [74, Math.max(0, an.Q), "#a48bf0"], [68, an.reach, "#7fd1a8"]].forEach(function (a) {
+    [[80, an.m ? an.recip / an.m : 0, "#9fc2e0"], [74, Math.max(0, an.Q), "#a48bf0"], [68, an.reach, "#7fd1a8"]].forEach(function (a) {
       sv("circle", { cx: C, cy: C, r: a[0], "class": "cgst-garc0" }, core);
       sv("circle", { cx: C, cy: C, r: a[0], "class": "cgst-garc", pathLength: 100, "stroke-dasharray": Math.round(a[1] * 100) + " 100",
         transform: "rotate(-90 500 500)", style: "--h:" + a[2] }, core);
