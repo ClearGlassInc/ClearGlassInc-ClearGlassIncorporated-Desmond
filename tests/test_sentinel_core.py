@@ -749,3 +749,48 @@ def test_hidden_cluster_rings_leave_the_tab_order() -> None:
     # cluster would then take keyboard focus with nothing drawn to show it.
     layer = re.search(r"\n  function setLayer\(name, on\) \{(.*?)\n  \}", DOCK, re.S)
     assert layer and 'name === "bounds"' in layer.group(1) and '"tabindex", on ? "0" : "-1"' in layer.group(1)
+
+
+def test_graph_metrics_are_not_misrepresented_as_confidence_or_model_count() -> None:
+    # Reciprocal links in one generated index are a structural property, not
+    # independent evidence; reported runtime must be a measured value.
+    assert '"Intelligence confidence"' not in DOCK
+    assert '"Active analytic models", "7"' not in DOCK
+    assert '"Link reciprocity"' in DOCK
+    assert '"Analysis runtime"' in DOCK
+    assert "mDenom = m || 1" in DOCK
+    assert "Q += c.inE / mDenom" in DOCK
+    assert "reciprocalPct" not in DOCK  # the public field is named for its semantics
+    assert "reciprocalNeighborSharePercent" in DOCK
+
+
+def test_graph_relationships_expose_record_references_and_keyboard_selection() -> None:
+    assert "function relationshipId(a, b)" in DOCK
+    assert "function relationshipDetails(edge)" in DOCK
+    assert 'class": "cgst-gedge-hit"' in DOCK
+    assert "function selectEdge(id)" in DOCK
+    assert "function syncEdgeTabStops(path)" in DOCK
+    assert "sourceReference: pageRecordRef(a.path) + \".related\"" in DOCK
+    assert "not independent-source corroboration" in DOCK
+
+
+def test_graph_exports_are_local_and_state_data_limitations_are_explicit() -> None:
+    assert 'data-cgst="g-export-json"' in DOCK
+    assert 'data-cgst="g-export-csv"' in DOCK
+    assert 'schemaVersion: "clearglass.sentinel-evidence-export.v1"' in DOCK
+    assert "function exportGraphJSON()" in DOCK
+    assert "function exportGraphCSV()" in DOCK
+    assert "sourceUpdatedAt: null" in DOCK
+    assert "temporalAnalysis: { available: false" in DOCK
+    assert "securityTelemetry: { available: false" in DOCK
+    assert "Source reliability, extraction confidence" in DOCK
+    assert "No external export service is called" in DOCK
+    assert "cg-v70" not in DOCK  # cache version belongs to the service worker
+
+
+def test_graph_methodology_disclosure_defines_density_and_scope() -> None:
+    assert "data-cgst-gmethod-body" in DOCK
+    assert "Unique undirected pairs m divided by n" in DOCK
+    assert "Modularity against those labels; no automatic community-detection algorithm is run." in DOCK
+    assert "Adamic–Adar" in DOCK and "not validated forecast" in DOCK
+    assert "source freshness is unknown" in DOCK
