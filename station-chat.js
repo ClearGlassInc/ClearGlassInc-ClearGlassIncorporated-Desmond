@@ -4317,8 +4317,15 @@
   function selectNode(path, zoom) {
     var an = graph.an;
     if (!an) return;
+    graph.edgeSel = "";
+    graph.previewEdgeId = "";
+    graph.previewPath = "";
     graph.sel = path && an.idx[path] != null ? path : "";
     Object.keys(graph.node).forEach(function (p) { graph.node[p].el.classList.remove("cgst-gsel", "cgst-gh1", "cgst-gh2"); });
+    Object.keys(graph.edgeEl).forEach(function (id) {
+      graph.edgeEl[id].hit.classList.remove("cgst-gedge-hit-selected");
+      graph.edgeEl[id].visual.classList.remove("cgst-gselected");
+    });
     Array.prototype.forEach.call(gSvg.querySelectorAll(".cgst-gedge.cgst-gon"), function (el) { el.classList.remove("cgst-gon"); });
     stopTrace();
     if (graph.sel) {
@@ -4326,13 +4333,42 @@
       graph.node[graph.sel].el.classList.add("cgst-gsel");
       h1.forEach(function (j) {
         graph.node[an.P[j].path].el.classList.add("cgst-gh1");
-        an.adj[j].forEach(function (k) { if (k !== i && h1.indexOf(k) < 0 && !seen[k]) { seen[k] = 1; graph.node[an.P[k].path].el.classList.add("cgst-gh2"); } });
+        an.adj[j].forEach(function (k) {
+          if (k !== i && h1.indexOf(k) < 0 && !seen[k]) {
+            seen[k] = 1;
+            graph.node[an.P[k].path].el.classList.add("cgst-gh2");
+          }
+        });
       });
       graph.eb[i].forEach(function (el) { el.classList.add("cgst-gon"); });
       showLinks(graph.sel);
       if (zoom) { var nd = graph.node[graph.sel]; setVB({ x: nd.x - 170, y: nd.y - 170, w: 340 }, true); }
     } else clearLinks();
+    syncEdgeTabStops(graph.sel);
     Array.prototype.forEach.call(graphEl.querySelectorAll("[data-cgst-gprio] .cgst-grow"), function (b) { b.removeAttribute("aria-current"); });
+    paintDim();
+    paintProfile();
+  }
+
+  function syncEdgeTabStops(path) {
+    var an = graph.an, selected = path && an && an.idx[path] != null ? an.idx[path] : -1;
+    Object.keys(graph.edgeEl).forEach(function (id) { graph.edgeEl[id].hit.setAttribute("tabindex", "-1"); });
+    if (selected < 0) return;
+    an.edges.forEach(function (edge) {
+      if (edge.a !== selected && edge.b !== selected) return;
+      var id = relationshipId(an.P[edge.a].path, an.P[edge.b].path);
+      if (graph.edgeEl[id]) graph.edgeEl[id].hit.setAttribute("tabindex", "0");
+    });
+  }
+
+  function selectEdge(id) {
+    var row = graph.edgeEl[id];
+    if (!row || !graph.an) return;
+    var rel = relationshipDetails(row.edge);
+    selectNode(rel.a.path, false);
+    graph.edgeSel = id;
+    graph.edgeEl[id].hit.classList.add("cgst-gedge-hit-selected");
+    graph.edgeEl[id].visual.classList.add("cgst-gselected", "cgst-gon");
     paintDim();
     paintProfile();
   }
