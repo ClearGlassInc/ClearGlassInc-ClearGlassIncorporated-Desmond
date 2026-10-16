@@ -3936,7 +3936,9 @@
     var edgeG = sv("g", { "class": "cgst-gedges" }, gSvg), pulses = sv("g", { "class": "cgst-gpulses", "aria-hidden": "true" }, gSvg);
     var preds = sv("g", { "class": "cgst-gpreds" }, gSvg);
     gLinks = sv("g", {}, gSvg);
+    var edgeHitG = sv("g", { "class": "cgst-gedgehits" }, gSvg);
     var nodes = sv("g", {}, gSvg);
+    graph.edgeEl = {};
 
     // cluster boundaries: 1.5 standard deviations of the members' spread
     site.clusters.forEach(function (c, ck) {
@@ -3988,8 +3990,17 @@
         d = "M" + p.x.toFixed(1) + " " + p.y.toFixed(1) + " Q" + (mx2 + (C - mx2) * 0.4).toFixed(1) + " " + (my2 + (C - my2) * 0.4).toFixed(1) +
           " " + q.x.toFixed(1) + " " + q.y.toFixed(1);
       } else d = "M" + p.x.toFixed(1) + " " + p.y.toFixed(1) + " L" + q.x.toFixed(1) + " " + q.y.toFixed(1);
-      var el = sv("path", { d: d, "class": "cgst-gedge", "data-w": e.w, style: "--h:" + hueOf(an.P[e.a].cluster) }, edgeG);
+      var relId = relationshipId(an.P[e.a].path, an.P[e.b].path);
+      var el = sv("path", { d: d, "class": "cgst-gedge", "data-edge-id": relId, "data-w": e.w, style: "--h:" + hueOf(an.P[e.a].cluster) }, edgeG);
       if (e.x) el.setAttribute("data-x", "");
+      var aToB = an.out[e.a].indexOf(e.b) > -1, bToA = an.out[e.b].indexOf(e.a) > -1;
+      var hit = sv("path", { d: d, "class": "cgst-gedge-hit", "data-edge-id": relId, tabindex: "-1", role: "button",
+        "aria-label": "Inspect relationship between " + an.P[e.a].title + " and " + an.P[e.b].title +
+          ". " + (aToB ? an.P[e.a].path + " lists " + an.P[e.b].path + ". " : "") +
+          (bToA ? an.P[e.b].path + " lists " + an.P[e.a].path + ". " : "") +
+          "Source record: data/site-index.json. Reciprocal links are not independent corroboration." }, edgeHitG);
+      sv("title", {}, hit).textContent = "Select to inspect direction assertions and source record references";
+      graph.edgeEl[relId] = { edge: e, visual: el, hit: hit };
       graph.eb[e.a].push(el); graph.eb[e.b].push(el);
     });
     an.fore.forEach(function (f) {
@@ -4002,7 +4013,8 @@
     an.ent.forEach(function (x) {
       var e = x.e, p = pos[x.i], r = 2.6 + x.imp * 0.075, px = p.x.toFixed(1), py = p.y.toFixed(1);
       var link = sv("a", { href: e.url, "class": "cgst-gnode", "data-cluster": e.cluster, "data-path": e.path, tabindex: "-1", style: "--h:" + hueOf(e.cluster),
-        "aria-label": e.title + ". Importance " + x.imp + ", bridge " + x.bri + ", exposure " + x.exp + ", corroboration " + x.conf + " percent" }, nodes);
+        "aria-label": e.title + ". PageRank relative to graph maximum " + x.imp + ", betweenness relative to graph maximum " + x.bri +
+          ", inbound-sparsity heuristic " + x.exp + ", reciprocal-neighbor share in this index " + x.recipPct + " percent" }, nodes);
       if (e.hub) link.setAttribute("data-hub", "");
       if (x.key) link.setAttribute("data-key", "");
       if (x.sev === "high" || x.sev === "med") link.setAttribute("data-anom", x.sev);
@@ -4011,7 +4023,7 @@
         sv("circle", { cx: px, cy: py, r: (r + 5).toFixed(1), "class": "cgst-gping" }, link);
       }
       sv("circle", { cx: px, cy: py, r: (r + 3.2).toFixed(1), "class": "cgst-gconf0" }, link);
-      if (x.conf) sv("circle", { cx: px, cy: py, r: (r + 3.2).toFixed(1), "class": "cgst-gconf", pathLength: 100, "stroke-dasharray": x.conf + " 100",
+      if (x.recipPct) sv("circle", { cx: px, cy: py, r: (r + 3.2).toFixed(1), "class": "cgst-gconf", pathLength: 100, "stroke-dasharray": x.recipPct + " 100",
         transform: "rotate(-90 " + px + " " + py + ")" }, link);
       sv("circle", { cx: px, cy: py, r: r.toFixed(1), "class": "cgst-gdot" }, link);
       sv("circle", { cx: px, cy: py, r: Math.max(1.1, r * 0.42).toFixed(1), "class": "cgst-gpip" }, link);
@@ -4024,7 +4036,7 @@
       var right = p.x >= C, lx = p.x + (right ? r + 6 : -(r + 6));
       var lab = svText(link, lx, p.y, clip(e.title, 30), "cgst-glabel", right ? "start" : "end");
       lab.setAttribute("dominant-baseline", "central");
-      var meta = svText(link, lx, p.y, "IMP " + x.imp + " · EXP " + x.exp + " · CNF " + x.conf + "%", "cgst-gmeta", right ? "start" : "end");
+      var meta = svText(link, lx, p.y, "PR " + x.imp + " · SP " + x.exp + " · REC " + x.recipPct + "%", "cgst-gmeta", right ? "start" : "end");
       meta.setAttribute("dy", "1.6em");
       meta.setAttribute("dominant-baseline", "central");
       if (site.byId[e.cluster] && site.byId[e.cluster].members.length > 14) link.setAttribute("data-dense", "");
