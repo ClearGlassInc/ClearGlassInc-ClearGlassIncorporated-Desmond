@@ -4570,7 +4570,7 @@
     fitCluster(site.byId[graph.focus]);
     paintSide();
   }
-  function paintDim() { gSvg.setAttribute("data-dim", graph.focus || graph.hits.length || graph.sel ? "1" : "0"); queueDeclutter(); }
+  function paintDim() { gSvg.setAttribute("data-dim", graph.focus || graph.hits.length || graph.sel || graph.edgeSel || graph.previewEdgeId ? "1" : "0"); queueDeclutter(); }
 
   function setHits(paths, label) {
     graph.hits = (paths || []).filter(function (p) { return graph.node[p]; });
@@ -4794,6 +4794,8 @@
     graphEl.addEventListener("click", function (event) {
       if (event.target === graphEl) { closeGraph(); return; }
       var t = event.target.closest ? event.target : null;
+      var edgeHit = event.target.closest ? event.target.closest(".cgst-gedge-hit") : null;
+      if (edgeHit) { event.preventDefault(); selectEdge(edgeHit.getAttribute("data-edge-id")); return; }
       // real taps only (detail > 0): a keyboard Enter on a cluster stays a cluster action
       if (t && event.detail && !t.closest(".cgst-gnode") && !t.closest(".cgst-gcore") && t.closest(".cgst-gsvg") &&
           (graph.focus || graph.vb.w <= 520) && !(event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)) {
@@ -4816,16 +4818,37 @@
     });
     graphEl.addEventListener("keydown", function (event) {
       var t = event.target;
+      if ((event.key === "Enter" || event.key === " ") && t.classList && t.classList.contains("cgst-gedge-hit")) {
+        event.preventDefault(); selectEdge(t.getAttribute("data-edge-id")); return;
+      }
       if ((event.key === "Enter" || event.key === " ") && t.classList && (t.classList.contains("cgst-gcluster") || t.classList.contains("cgst-gcore"))) {
         event.preventDefault();
         t.dispatchEvent(new MouseEvent("click", { bubbles: true }));
       }
     });
-    // hover or focus on a page, in the graph or the list: route its links
+    // Hover/focus previews expose source assertions; selection pins the record.
     function pathOf(el) { var n = el && el.closest ? el.closest("[data-path]") : null; return n ? n.getAttribute("data-path") : ""; }
-    graphEl.addEventListener("pointerover", function (event) { var p = pathOf(event.target); if (p) showLinks(p); });
-    graphEl.addEventListener("focusin", function (event) { var p = pathOf(event.target); if (p) showLinks(p); });
-    graphEl.addEventListener("pointerout", function (event) { if (pathOf(event.target) && !pathOf(event.relatedTarget)) clearLinks(); });
+    graphEl.addEventListener("pointerover", function (event) {
+      var hit = event.target.closest ? event.target.closest(".cgst-gedge-hit") : null;
+      if (hit && !graph.edgeSel) { graph.previewEdgeId = hit.getAttribute("data-edge-id"); graph.previewPath = ""; paintProfile(); return; }
+      var p = pathOf(event.target);
+      if (p) { showLinks(p); if (!graph.sel && !graph.edgeSel) { graph.previewEdgeId = ""; graph.previewPath = p; paintProfile(); } }
+    });
+    graphEl.addEventListener("focusin", function (event) {
+      var hit = event.target.closest ? event.target.closest(".cgst-gedge-hit") : null;
+      if (hit && !graph.edgeSel) { graph.previewEdgeId = hit.getAttribute("data-edge-id"); graph.previewPath = ""; paintProfile(); return; }
+      var p = pathOf(event.target);
+      if (p) { showLinks(p); if (!graph.sel && !graph.edgeSel) { graph.previewEdgeId = ""; graph.previewPath = p; paintProfile(); } }
+    });
+    graphEl.addEventListener("pointerout", function (event) {
+      var hit = event.target.closest ? event.target.closest(".cgst-gedge-hit") : null;
+      var nextHit = event.relatedTarget && event.relatedTarget.closest ? event.relatedTarget.closest(".cgst-gedge-hit") : null;
+      if (hit && !nextHit && !graph.edgeSel) { graph.previewEdgeId = ""; paintProfile(); }
+      if (pathOf(event.target) && !pathOf(event.relatedTarget)) {
+        clearLinks();
+        if (!graph.sel && !graph.edgeSel) { graph.previewPath = ""; paintProfile(); }
+      }
+    });
 
     gView.addEventListener("wheel", function (event) {
       if (!graph.built) return;
