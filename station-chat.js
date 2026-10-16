@@ -3848,6 +3848,30 @@
     return pos;
   }
 
+  function relationshipId(a, b) {
+    var pair = [String(a), String(b)].sort();
+    return "REL:" + encodeURIComponent(pair[0]) + "::" + encodeURIComponent(pair[1]);
+  }
+  function pageRecordRef(path) {
+    return "data/site-index.json#pages[path=" + JSON.stringify(String(path)) + "]";
+  }
+  function relationshipDetails(edge) {
+    var an = graph.an || analyseGraph(), a = an.P[edge.a], b = an.P[edge.b];
+    var aToB = an.out[edge.a].indexOf(edge.b) > -1, bToA = an.out[edge.b].indexOf(edge.a) > -1;
+    var directions = [];
+    if (aToB) directions.push({ from: "PAGE:" + a.path, to: "PAGE:" + b.path, sourcePath: a.path,
+      sourceReference: pageRecordRef(a.path) + ".related", assertion: a.path + " lists " + b.path + " in its related-page links" });
+    if (bToA) directions.push({ from: "PAGE:" + b.path, to: "PAGE:" + a.path, sourcePath: b.path,
+      sourceReference: pageRecordRef(b.path) + ".related", assertion: b.path + " lists " + a.path + " in its related-page links" });
+    return { id: relationshipId(a.path, b.path), edge: edge, a: a, b: b, reciprocal: aToB && bToA, directions: directions };
+  }
+  function appendGraphFact(parent, label, value) {
+    var p = make("p", "cgst-gfact");
+    p.appendChild(make("b", "", label + ": "));
+    p.appendChild(document.createTextNode(value == null ? "Not recorded" : String(value)));
+    parent.appendChild(p);
+  }
+
   function buildGraph() {
     if (graph.built || site.state !== "ready" || !gSvg) return;
     graph.built = true;
