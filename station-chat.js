@@ -4087,12 +4087,12 @@
     var top = an.ent.slice().sort(function (p, r) { return r.pri - p.pri; }), worst = counts.high ? "high" : counts.med ? "med" : "";
     var dl = graphEl.querySelector("[data-cgst-gkpi]");
     dl.textContent = "";
-    kpi(dl, "Network centrality", an.cent.toFixed(2), "degree centralisation");
-    kpi(dl, "Intelligence confidence", pct(an.recip / an.m), "links corroborated both ways");
-    kpi(dl, "Active analytic models", "7", "run on this device in " + an.ms + " ms");
-    kpi(dl, "Priority index", String(top[0].pri), clip(top[0].e.title, 26));
-    kpi(dl, "Alert severity", worst ? worst.toUpperCase() : "NONE", counts.high + " high · " + counts.med + " med · " + counts.low + " low", worst);
-    kpi(dl, "Relationship density", (an.dens * 100).toFixed(1) + "%", (2 * an.m / an.n).toFixed(1) + " relationships per entity");
+    kpi(dl, "Degree centralisation", an.cent.toFixed(2), "Freeman index on unique undirected neighbours; 0–1");
+    kpi(dl, "Link reciprocity", an.m ? pct(an.recip / an.m) : "n/a", an.recip + " / " + an.m + " unique pairs are reciprocal in this one index");
+    kpi(dl, "Analysis runtime", an.ms + " ms", "analysis + layout on this device; DOM rendering excluded");
+    kpi(dl, "Structural priority", String(top.length ? top[0].pri : "n/a"), "0.45 PageRank + 0.35 bridge + 0.20 inbound-sparsity heuristic");
+    kpi(dl, "Graph finding band", worst ? worst.toUpperCase() : "NONE", counts.high + " high · " + counts.med + " medium · " + counts.low + " low; no security telemetry", worst);
+    kpi(dl, "Relationship density", (an.dens * 100).toFixed(1) + "%", (an.n ? (2 * an.m / an.n).toFixed(1) : "n/a") + " mean undirected degree");
 
     var cov = graphEl.querySelector("[data-cgst-gcov]");
     cov.textContent = "";
@@ -4151,17 +4151,21 @@
 
     var mo = graphEl.querySelector("[data-cgst-gmodels]");
     mo.textContent = "";
-    setText(graphEl.querySelector("[data-cgst-gms]"), "run " + clock(an.at));
-    [["PageRank · d 0.85 · 60 iterations", "importance"], ["Brandes betweenness", "bridge"], ["Tarjan cut points", "critical"],
-      ["Reciprocity", "corroboration"], ["Modularity, declared clusters", "Q " + an.Q.toFixed(2)], ["Adamic–Adar link forecast", an.fore.length + " pairs"],
-      ["Radial cluster layout · phyllotaxis", "seeded"]].forEach(function (x) { rowBtn(mo, "", x[0], x[1], null); });
+    setText(graphEl.querySelector("[data-cgst-gms]"), "computed " + an.ms + " ms");
+    [["Directed PageRank · d 0.85 · 60 iterations", "relative 0–100"], ["Brandes betweenness · unweighted undirected graph", "relative 0–100"],
+      ["Tarjan DFS · articulation points and components", an.comps + " components"], ["Link reciprocity", an.recip + " / " + an.m + " unique pairs"],
+      ["Modularity against declared clusters · no community detection", "Q " + an.Q.toFixed(2)],
+      ["Experimental Adamic–Adar candidates · ≥3 shared neighbours", an.fore.length + " pairs · not validated"],
+      ["Deterministic radial cluster layout · phyllotaxis", "layout only"]].forEach(function (x) { rowBtn(mo, "", x[0], x[1], null); });
 
-    var feed = graphEl.querySelector("[data-cgst-gfeed]"), at = clock(an.at);
+    var feed = graphEl.querySelector("[data-cgst-gfeed]"), at = an.at.toISOString().slice(11, 19) + "Z";
     feed.textContent = "";
-    setText(graphEl.querySelector("[data-cgst-gfeedn]"), plural(an.find.length, "observation"));
+    setText(graphEl.querySelector("[data-cgst-gfeedn]"), plural(an.find.length, "finding"));
     an.find.forEach(function (f) {
       var li = make("li");
-      li.appendChild(make("time", "", at));
+      var when = make("time", "", at);
+      when.setAttribute("title", "Graph computation time in UTC; not a source-observation timestamp");
+      li.appendChild(when);
       var sv2 = make("span", "cgst-gsev", f.s.toUpperCase());
       sv2.setAttribute("data-s", f.s);
       li.appendChild(sv2);
