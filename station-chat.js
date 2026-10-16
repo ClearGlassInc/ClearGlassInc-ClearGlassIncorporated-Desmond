@@ -3885,6 +3885,12 @@
     p.appendChild(document.createTextNode(value == null ? "Not recorded" : String(value)));
     parent.appendChild(p);
   }
+  function graphFindingReference(f) {
+    var refs = [];
+    if (f.x && f.x.e) refs.push(pageRecordRef(f.x.e.path));
+    if (f.related && f.related.e) refs.push(pageRecordRef(f.related.e.path));
+    return refs;
+  }
 
   function buildGraph() {
     if (graph.built || site.state !== "ready" || !gSvg) return;
@@ -4102,7 +4108,7 @@
     var entities = an.P.map(function (e, i) {
       var x = an.ent[i];
       return { id: "PAGE:" + e.path, type: "site-page", title: e.title, path: e.path, url: e.url,
-        clusterId: e.cluster, clusterName: e.group || "", sourceReference: pageRecordRef(e.path),
+        clusterId: e.cluster, clusterName: site.byId[e.cluster] ? site.byId[e.cluster].name : e.cluster, sourceReference: pageRecordRef(e.path),
         sourceExcerpt: String(e.summary || "").slice(0, 500), aboutExcerpt: String(e.about || "").slice(0, 500),
         firstSeen: null, lastSeen: null, reviewState: "not-recorded",
         evidenceQuality: { sourceReliability: "not-recorded", extractionConfidence: "not-recorded",
