@@ -4858,8 +4858,9 @@
         return;
       }
       buildGraph();
-      setText(gSub, plural(site.pages.length, "entity", "entities") + " · " + plural(graph.an.m, "relationship") + " · " +
-        plural(site.clusters.length, "cluster") + " · " + plural(graph.an.find.length, "observation") + " · built from the site index");
+      setText(gSub, plural(site.pages.length, "entity", "entities") + " · " + plural(graph.an.m, "unique relationship pair", "unique relationship pairs") + " · " +
+        plural(site.clusters.length, "declared cluster") + " · " + plural(graph.an.find.length, "structural finding") +
+        " · source timestamp unavailable · computed " + graph.an.at.toISOString().slice(11, 19) + "Z");
       selectNode("");
       graph.hits = [];
       Object.keys(graph.node).forEach(function (p) { graph.node[p].el.classList.remove("cgst-ghit"); });
@@ -5222,9 +5223,11 @@
           '<div class="cgst-smart">' + smartHTML + '</div></div>' +
       '</section>';
 
-    var layerHTML = [["edges", "Links", 1], ["bounds", "Clusters", 1], ["heat", "Influence", 1], ["anomaly", "Anomalies", 1],
-      ["predict", "Forecast", 0], ["labels", "Labels", 0]].map(function (l) {
-      return '<button type="button" class="cgst-glayer" data-glayer="' + l[0] + '" aria-pressed="' + (l[2] ? "true" : "false") + '">' + l[1] + '</button>';
+    var layerHTML = [["edges", "Links", 1], ["bounds", "Clusters", 1], ["heat", "Influence", 1], ["anomaly", "Findings", 1],
+      ["predict", "Candidates", 0], ["labels", "Labels", 0]].map(function (l) {
+      var hint = l[0] === "predict" ? "Unevaluated Adamic–Adar candidates; not a validated forecast" :
+        l[0] === "anomaly" ? "Graph-structure and data-quality findings only; no security telemetry" : l[1];
+      return '<button type="button" class="cgst-glayer" data-glayer="' + l[0] + '" title="' + hint + '" aria-pressed="' + (l[2] ? "true" : "false") + '">' + l[1] + '</button>';
     }).join("");
     var graphHTML =
       '<div class="cgst-graph" data-cgst-graph role="dialog" aria-modal="true" aria-labelledby="cgstGraphTitle" hidden>' +
@@ -5232,7 +5235,8 @@
           '<div class="cgst-ghead">' +
             '<div><p class="cgst-gorg" aria-hidden="true">ClearGlass · Sentinel Core <i><b>●</b> Computed on this device</i></p>' +
               '<h2 class="cgst-gtitle" id="cgstGraphTitle" tabindex="-1">Intelligence Graph</h2>' +
-              '<p class="cgst-gsub" data-cgst-gsub>Reading the site index…</p></div>' +
+              '<p class="cgst-gsub" data-cgst-gsub>Reading the site index…</p>' +
+              '<details class="cgst-gmethod"><summary>Definitions &amp; evidence limits</summary><div class="cgst-gmethod-body" data-cgst-gmethod-body></div></details></div>' +
             '<div class="cgst-gtools">' +
               '<button type="button" class="cgst-gtool" data-cgst="g-in" aria-label="Zoom in">+</button>' +
               '<button type="button" class="cgst-gtool" data-cgst="g-out" aria-label="Zoom out">&minus;</button>' +
@@ -5251,6 +5255,9 @@
                   '<input id="cgstGFind" type="search" autocomplete="off" spellcheck="false" maxlength="120" placeholder="Filter: osint, pricing…"></form>' +
                 '<p class="cgst-gpath" data-cgst-gpath>Sentinel Core</p>' +
                 '<div data-cgst-gtree></div></section>' +
+              '<section class="cgst-gsec"><h3 class="cgst-gh">Evidence exports <span>local</span></h3>' +
+                '<div class="cgst-gexports"><button type="button" class="cgst-gcmd" data-cgst="g-export-json">Evidence JSON</button><button type="button" class="cgst-gcmd" data-cgst="g-export-csv">Evidence CSV</button></div>' +
+                '<p class="cgst-gexport-status" data-cgst-gexport-status role="status" aria-live="polite">Includes source references, computation metadata and explicit evidence gaps. Downloads stay in this browser.</p></section>' +
             '</aside>' +
             '<div class="cgst-gview" data-cgst-gview tabindex="0" role="group" ' +
               'aria-label="Graph canvas. Arrow keys pan, plus and minus zoom, 0 resets. Select a node to profile it; the directory holds the same pages.">' +
@@ -5268,13 +5275,13 @@
               '<section class="cgst-gsec"><h3 class="cgst-gh">Entity profile <span data-cgst-gprof-id>no selection</span></h3>' +
                 '<div class="cgst-gprof" data-cgst-gprof aria-live="polite"></div></section>' +
               '<section class="cgst-gsec"><h3 class="cgst-gh">Correlation matrix <span>links, row → column</span></h3><div data-cgst-gmx></div></section>' +
-              '<section class="cgst-gsec"><h3 class="cgst-gh">Link forecast <span>Adamic–Adar</span></h3><ul class="cgst-grows" data-cgst-gpred></ul></section>' +
-              '<section class="cgst-gsec"><h3 class="cgst-gh">Analytic models <span data-cgst-gms></span></h3><ul class="cgst-grows" data-cgst-gmodels></ul>' +
-                '<p class="cgst-gnote">Structural signals only: every score describes how a page sits in the site’s own link graph. ' +
-                'No threat, geospatial or telemetry feed is connected, so none is drawn. ' +
-                'Drag to pan · wheel, pinch or +/− to zoom · select a node to profile it · Esc closes.</p></section>' +
+              '<section class="cgst-gsec"><h3 class="cgst-gh">Experimental link candidates <span>Adamic–Adar · unevaluated</span></h3><ul class="cgst-grows" data-cgst-gpred></ul>' +
+                '<p class="cgst-gnote">Candidates are unlinked pairs with at least three shared neighbours. This heuristic has not been evaluated and is not a validated forecast.</p></section>' +
+              '<section class="cgst-gsec"><h3 class="cgst-gh">Computed methods <span data-cgst-gms></span></h3><ul class="cgst-grows" data-cgst-gmodels></ul>' +
+                '<p class="cgst-gnote">This is a public-site relationship graph: no security telemetry, geospatial feed or language model is connected. The graph does not imply intrusion detection, maliciousness, real-world authority or causation.' +
+                ' Drag to pan · wheel, pinch or +/− to zoom · select a page or edge to inspect source assertions · Esc closes.</p></section>' +
             '</aside>' +
-            '<section class="cgst-gfeed" aria-label="Observation feed"><h3 class="cgst-gh">Observation feed <span data-cgst-gfeedn></span></h3>' +
+            '<section class="cgst-gfeed" aria-label="Derived graph findings"><h3 class="cgst-gh">Derived graph findings <span data-cgst-gfeedn></span></h3>' +
               '<ol data-cgst-gfeed></ol></section>' +
           '</div>' +
         '</div>' +
@@ -5533,6 +5540,8 @@
         if (typeof fn === "function") fn();
         return;
       }
+      if (act === "g-export-json") { exportGraphJSON(); return; }
+      if (act === "g-export-csv") { exportGraphCSV(); return; }
       if (act === "g-in") { zoomAt(1 / 1.3, null, true); return; }
       if (act === "g-out") { zoomAt(1.3, null, true); return; }
       if (act === "g-fit") { setHits([], ""); if (gFind) gFind.value = ""; selectNode(""); focusCluster(""); return; }
