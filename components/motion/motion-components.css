@@ -16,23 +16,25 @@
 .cgm-atmos__field--wine{background:radial-gradient(closest-side circle at 78% 30%,
   color-mix(in srgb,var(--cgm-wine) 20%,transparent) 0%,transparent 100%);
   filter:blur(22px);animation:cgm-drift-b 55s ease-in-out infinite alternate}
-.cgm-atmos__grid{background-image:
-  linear-gradient(color-mix(in srgb,var(--cgm-signal) 5%,transparent) 1px,transparent 1px),
-  linear-gradient(90deg,color-mix(in srgb,var(--cgm-signal-2) 4%,transparent) 1px,transparent 1px);
-  background-size:72px 72px;
-  mask-image:radial-gradient(circle at 50% 40%,#000 0%,rgba(0,0,0,.72) 42%,transparent 82%);
-  animation:cgm-grid-drift 32s linear infinite}
-.cgm-atmos__scan{background:linear-gradient(115deg,transparent 42%,
-  color-mix(in srgb,var(--cgm-signal) 6%,transparent) 50%,transparent 58%);
-  background-size:280% 280%;animation:cgm-scan 28s linear infinite}
+.cgm-atmos__grid{mask-image:radial-gradient(circle at 50% 40%,#000 0%,rgba(0,0,0,.72) 42%,transparent 82%)}
+.cgm-atmos__grid::before{content:"";position:absolute;inset:-72px 0 0;
+  background-image:
+    linear-gradient(color-mix(in srgb,var(--cgm-signal) 5%,transparent) 1px,transparent 1px),
+    linear-gradient(90deg,color-mix(in srgb,var(--cgm-signal-2) 4%,transparent) 1px,transparent 1px);
+  background-size:72px 72px;animation:cgm-grid-drift 32s linear infinite}
+.cgm-atmos__scan{overflow:hidden}
+.cgm-atmos__scan::before{content:"";position:absolute;top:0;left:0;width:280%;height:280%;
+  background:linear-gradient(115deg,transparent 42%,
+    color-mix(in srgb,var(--cgm-signal) 6%,transparent) 50%,transparent 58%);
+  animation:cgm-scan 28s linear infinite}
 .cgm-atmos__noise{opacity:.035;background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E")}
 .cgm-atmos__cursor{position:absolute;width:520px;height:520px;left:var(--cgm-mx);top:var(--cgm-my);
   transform:translate(-50%,-50%);border-radius:50%;will-change:transform;
   background:radial-gradient(circle,color-mix(in srgb,var(--cgm-signal) 9%,transparent) 0%,transparent 68%)}
 @keyframes cgm-drift-a{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(4vw,3vh,0) scale(1.12)}}
 @keyframes cgm-drift-b{from{transform:translate3d(0,0,0) scale(1.05)}to{transform:translate3d(-5vw,-2vh,0) scale(1)}}
-@keyframes cgm-grid-drift{to{background-position:72px 72px}}
-@keyframes cgm-scan{to{background-position:280% 0}}
+@keyframes cgm-grid-drift{to{transform:translate3d(0,72px,0)}}
+@keyframes cgm-scan{to{transform:translate3d(-180%,0,0)}}
 
 /* ── reveal ─────────────────────────────────────────────────────────── */
 .cgm-r{opacity:0;transform:translate3d(0,18px,0);
@@ -206,7 +208,7 @@
   .cgm-route{opacity:1 !important;transform:none !important}
   .cgm-scene--scatter .cgm-frag{transform:none !important}
   .cgm-atmos__scan,.cgm-atmos__noise,.cgm-atmos__cursor,.cgm-atmos__canvas,.cgm-cursor{display:none !important}
-  .cgm-atmos__field--signal,.cgm-atmos__field--wine,.cgm-atmos__grid{animation:none !important}
+  .cgm-atmos__field--signal,.cgm-atmos__field--wine,.cgm-atmos__grid,.cgm-atmos__grid::before,.cgm-atmos__scan::before{animation:none !important}
 }
 html[data-cgm-motion="reduced"] .cgm-r,
 html[data-cgm-motion="reduced"] .cgm-route{opacity:1 !important;transform:none !important}
@@ -216,7 +218,9 @@ html[data-cgm-motion="reduced"] .cgm-atmos__noise,
 html[data-cgm-motion="reduced"] .cgm-atmos__canvas{display:none !important}
 html[data-cgm-motion="reduced"] .cgm-atmos__field--signal,
 html[data-cgm-motion="reduced"] .cgm-atmos__field--wine,
-html[data-cgm-motion="reduced"] .cgm-atmos__grid{animation:none !important}
+html[data-cgm-motion="reduced"] .cgm-atmos__grid,
+html[data-cgm-motion="reduced"] .cgm-atmos__grid::before,
+html[data-cgm-motion="reduced"] .cgm-atmos__scan::before{animation:none !important}
 @media (forced-colors: active){
   .cgm-atmos{display:none}
   .cgm-glass,.cgm-node,.cgm-btn{border:1px solid CanvasText;background:Canvas}

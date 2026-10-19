@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { PointerEvent as ReactPointerEvent, ReactNode } from "react";
 import { usePerformanceMode } from "./PerformanceModeController";
 
@@ -40,6 +40,7 @@ export function MagneticButton({
       const clamp = (n: number): number => Math.max(-1, Math.min(1, n)) * MAGNET_MAX_PX;
       if (frame.current !== null) cancelAnimationFrame(frame.current);
       frame.current = requestAnimationFrame(() => {
+        frame.current = null;
         node.style.setProperty("--cgm-btn-x", `${clamp(dx).toFixed(1)}px`);
         node.style.setProperty("--cgm-btn-y", `${clamp(dy).toFixed(1)}px`);
       });
@@ -49,10 +50,24 @@ export function MagneticButton({
 
   const reset = useCallback(() => {
     const node = ref.current;
+    if (frame.current !== null) {
+      cancelAnimationFrame(frame.current);
+      frame.current = null;
+    }
     if (node === null) return;
     node.style.setProperty("--cgm-btn-x", "0px");
     node.style.setProperty("--cgm-btn-y", "0px");
   }, []);
+
+  useEffect(
+    () => () => {
+      if (frame.current !== null) {
+        cancelAnimationFrame(frame.current);
+        frame.current = null;
+      }
+    },
+    [enabled],
+  );
 
   return (
     <a

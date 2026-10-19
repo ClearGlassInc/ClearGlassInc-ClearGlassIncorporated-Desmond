@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { PointerEvent as ReactPointerEvent, ReactNode } from "react";
 import { usePerformanceMode } from "./PerformanceModeController";
 
@@ -40,6 +40,7 @@ export function GlassCard({
       const py = (event.clientY - rect.top) / rect.height;
       if (frame.current !== null) cancelAnimationFrame(frame.current);
       frame.current = requestAnimationFrame(() => {
+        frame.current = null;
         node.style.setProperty("--cgm-mx", `${(px * 100).toFixed(2)}%`);
         node.style.setProperty("--cgm-my", `${(py * 100).toFixed(2)}%`);
         if (tilt) {
@@ -54,9 +55,23 @@ export function GlassCard({
   const onPointerLeave = useCallback(() => {
     const node = ref.current;
     if (node === null) return;
+    if (frame.current !== null) {
+      cancelAnimationFrame(frame.current);
+      frame.current = null;
+    }
     node.style.setProperty("--cgm-rx", "0deg");
     node.style.setProperty("--cgm-ry", "0deg");
   }, []);
+
+  useEffect(
+    () => () => {
+      if (frame.current !== null) {
+        cancelAnimationFrame(frame.current);
+        frame.current = null;
+      }
+    },
+    [interactive],
+  );
 
   return (
     <div

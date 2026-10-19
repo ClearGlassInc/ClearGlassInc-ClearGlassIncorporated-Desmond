@@ -72,21 +72,32 @@
   animation:cgm-drift-b 55s ease-in-out infinite alternate;
 }
 
-/* Fine technical grid, masked to a soft vignette. */
+/* Fine technical grid, masked to a soft vignette.
+   The periodic pattern scrolls on its own paint layer so the animation changes
+   only transform instead of repainting the full-viewport background every frame. */
 .cgm-atmos__grid{
+  mask-image:radial-gradient(circle at 50% 40%, #000 0%, rgba(0,0,0,.72) 42%, transparent 82%);
+}
+.cgm-atmos__grid::before{
+  content:'';
+  position:absolute;
+  inset:-72px 0 0;
   background-image:
     linear-gradient(color-mix(in srgb, var(--cgm-signal) 5%, transparent) 1px, transparent 1px),
     linear-gradient(90deg, color-mix(in srgb, var(--cgm-signal-2) 4%, transparent) 1px, transparent 1px);
   background-size:72px 72px;
-  mask-image:radial-gradient(circle at 50% 40%, #000 0%, rgba(0,0,0,.72) 42%, transparent 82%);
   animation:cgm-grid-drift 32s linear infinite;
 }
 
 /* Slow diagonal scan. Single low-contrast sweep, never a flash. */
-.cgm-atmos__scan{
+.cgm-atmos__scan{overflow:hidden}
+.cgm-atmos__scan::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;
+  width:280%;height:280%;
   background:linear-gradient(115deg, transparent 42%,
     color-mix(in srgb, var(--cgm-signal) 6%, transparent) 50%, transparent 58%);
-  background-size:280% 280%;
   animation:cgm-scan 28s linear infinite;
 }
 
@@ -116,8 +127,8 @@
 
 @keyframes cgm-drift-a{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(4vw,3vh,0) scale(1.12)}}
 @keyframes cgm-drift-b{from{transform:translate3d(0,0,0) scale(1.05)}to{transform:translate3d(-5vw,-2vh,0) scale(1)}}
-@keyframes cgm-grid-drift{to{background-position:72px 72px}}
-@keyframes cgm-scan{to{background-position:280% 0}}
+@keyframes cgm-grid-drift{to{transform:translate3d(0,72px,0)}}
+@keyframes cgm-scan{to{transform:translate3d(-180%,0,0)}}
 
 /* ─────────────────────────────────────────────────────────────────────────
    LAYER 2 — SECTION REVEAL
@@ -457,7 +468,7 @@
   .cgm-js [data-cgm-reveal]{opacity:1 !important;transform:none !important}
   .cgm-js .cgm-scene--scatter .cgm-scene__frag{transform:none !important}
   .cgm-atmos__field--signal,.cgm-atmos__field--wine,
-  .cgm-atmos__grid,.cgm-atmos__scan,.cgm-atmos__cursor,.cgm-atmos__canvas{animation:none !important}
+  .cgm-atmos__grid,.cgm-atmos__grid::before,.cgm-atmos__scan,.cgm-atmos__cursor,.cgm-atmos__canvas{animation:none !important}
   .cgm-atmos__scan,.cgm-atmos__noise,.cgm-atmos__cursor,.cgm-atmos__canvas,.cgm-cursor{display:none !important}
   .cgm-trace::after{clip-path:none !important}
 }
@@ -472,7 +483,9 @@ html[data-cgm-motion="reduced"] .cgm-atmos__canvas,
 html[data-cgm-motion="reduced"] .cgm-cursor{display:none !important}
 html[data-cgm-motion="reduced"] .cgm-atmos__field--signal,
 html[data-cgm-motion="reduced"] .cgm-atmos__field--wine,
-html[data-cgm-motion="reduced"] .cgm-atmos__grid{animation:none !important}
+html[data-cgm-motion="reduced"] .cgm-atmos__grid,
+html[data-cgm-motion="reduced"] .cgm-atmos__grid::before,
+html[data-cgm-motion="reduced"] .cgm-atmos__scan::before{animation:none !important}
 html[data-cgm-motion="reduced"] .cgm-glass:hover{transform:none}
 
 /* Forced-colours / high contrast: drop decoration, keep structure. */
