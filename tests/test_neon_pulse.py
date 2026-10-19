@@ -133,3 +133,17 @@ def test_status_and_opt_in_classes_are_available() -> None:
         ".cg-np-scanbar",
     ):
         assert selector in css
+
+def test_pending_discovery_is_cancelled_when_page_is_unloaded() -> None:
+    """Idle work must not mutate a departing document or retain pending nodes."""
+    script = JS_PATH.read_text(encoding="utf-8")
+    assert "function cancelScheduledFlush()" in script
+    assert "cancelIdleCallback" in script
+    assert "window.clearTimeout(scheduledFlushHandle)" in script
+    assert "if (disposed) {" in script
+    assert "pending = [];" in script
+    pagehide = script[script.index('addEventListener("pagehide"') :]
+    assert "if (event.persisted) return;" in pagehide
+    assert "disposed = true;" in pagehide
+    assert "cancelScheduledFlush();" in pagehide
+
