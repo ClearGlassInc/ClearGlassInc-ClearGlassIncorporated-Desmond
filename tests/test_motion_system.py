@@ -195,3 +195,46 @@ def test_cursor_glow_moves_by_transform() -> None:
     css = _strip_comments(DESIGN.read_text(encoding="utf-8"))
     cursor = re.search(r"\.cg-fx-cursor\s*\{([^}]*)\}", css).group(1)
     assert "transition: transform" in cursor and "left .45s" not in cursor
+
+def test_loader_motion_is_smooth_composited_and_reduced_motion_safe() -> None:
+    """The full-screen loaders must not flicker, repaint their scanlines, or loop at 1ms."""
+    for name in ("loader.html", "cg-loader.html"):
+        html = (ROOT / name).read_text(encoding="utf-8")
+        style = html[html.index("<style>") : html.index("</style>")]
+        frames = _keyframes(style)
+        for keyframe in ("scanDrift", "scanSweep"):
+            props = _props(frames[keyframe])
+            assert "transform" in props, (name, keyframe, sorted(props))
+            assert not (props & {"top", "background-position", "background-size"}), (
+                name, keyframe, sorted(props)
+            )
+        assert "flicker" not in frames, name
+        assert "logo-breathe" in frames, name
+        assert "animation-iteration-count:1 !important" in style
+        assert "animation-delay:0s !important" in style
+        assert "0.001ms !important" in style
+        assert ".pulse-ring{animation:none !important;opacity:0 !important}" in style
+        assert "--cg-loader-status-min-opacity:.68" in style
+        assert "--cg-loader-status-pulse-duration:3s" in style
+        assert "--cg-loader-logo-breathe-duration:6s" in style
+
+def test_visual_engine_lifecycle_and_renderer_errors_are_observable() -> None:
+    engine = (ROOT / "assets/cg-visual/render/engine.js").read_text(encoding="utf-8")
+    boot = (ROOT / "assets/cg-visual/cg-visual-boot.js").read_text(encoding="utf-8")
+    backend = (ROOT / "assets/cg-visual/render/backend.js").read_text(encoding="utf-8")
+    smoke = (ROOT / "assets/cg-visual/tests/browser-smoke.mjs").read_text(encoding="utf-8")
+
+    assert "if (event.persisted) this.setVisible(false)" in engine
+    assert "this._pageshowHandler = (event)" in engine
+    assert "this._disposed || this.canvas !== canvas || selectionId !== this._backendSelectionId" in engine
+    assert "Frame rendering failed; animation paused" in engine
+    assert "console.error('[ClearGlass Visual Engine] Initialization failed', error)" in boot
+    assert "engine.init().catch(() =>" not in boot
+    assert "catch (e) {}" not in engine
+    assert "dispose() { try { ctx.clearRect(0, 0, w, h); } catch (e) {}" not in backend
+    assert "dispose() { try { vbuf.destroy(); device.destroy(); } catch (e) {} }" not in backend
+    assert "lose.loseContext()" not in backend
+    assert "disposePartialWebGpu()" in backend
+    assert "F1 persisted pagehide pauses without disposing the renderer" in smoke
+    assert "F2 persisted pageshow resumes the renderer" in smoke
+
