@@ -56,7 +56,7 @@ jobs:
         run: python -m pytest -q tests/test_site_reliability_audit.py tests/test_live_sitemap_crawl.py tests/test_audit_github_actions.py
       - name: Upload offline evidence
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: site-reliability-offline-${{ github.run_id }}
           path: |
@@ -84,7 +84,7 @@ jobs:
         run: python scripts/live_sitemap_crawl.py --output live-sitemap-crawl.json
       - name: Upload live evidence
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: site-reliability-live-${{ github.run_id }}
           path: live-sitemap-crawl.json
