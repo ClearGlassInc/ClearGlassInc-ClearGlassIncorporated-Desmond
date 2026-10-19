@@ -146,4 +146,5 @@ def test_pending_discovery_is_cancelled_when_page_is_unloaded() -> None:
     assert "if (event.persisted) return;" in pagehide
     assert "disposed = true;" in pagehide
     assert "cancelScheduledFlush();" in pagehide
+    assert "}, { once: true });" not in pagehide
 
