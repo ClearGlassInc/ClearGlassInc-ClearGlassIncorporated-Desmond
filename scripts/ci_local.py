@@ -81,7 +81,12 @@ class Gate:
 # its three steps because the first is a generator + drift check, and knowing
 # which of the three failed is the whole point of running it.
 GATES: list[Gate] = [
-    Gate("python-tests", "pytest tests/", [sys.executable, "-m", "pytest", "tests/", "-q"]),
+    Gate(
+        "python-tests",
+        "pytest tests/",
+        [sys.executable, "-m", "pytest", "tests/", "--cov", "--cov-report=xml", "-q"],
+        artifacts=("coverage.xml",),
+    ),
     Gate("lint", "ruff check .", [sys.executable, "-m", "ruff", "check", "."]),
     Gate(
         "site-audit",
