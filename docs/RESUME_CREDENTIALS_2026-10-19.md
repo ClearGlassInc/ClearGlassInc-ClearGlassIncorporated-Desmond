@@ -1,6 +1,6 @@
 # Resume Credential Addendum
 
-**Source:** Official transcript issued 19 October 2026. Credentials below are listed under their transcript titles. These are Coursera credentials; where the transcript says a credential is authorized by Google, IBM, or Pearson Enterprise Learning and Skills, that wording is preserved. Do not describe these as degrees or professional licences.
+**Source:** Official transcript issued 19 October 2026. Credentials below are listed under their transcript titles. These are Coursera credentials; where the transcript says a credential is authorized by IBM or Pearson Enterprise Learning and Skills, that wording is preserved. The Google IT Automation with Python Professional Certificate is issued by Coursera and described in the transcript as developed by Google. Do not describe these as university degrees or professional licences.
 
 ## AI, Generative AI and Machine Learning
 
@@ -21,7 +21,7 @@
 
 ## Software Engineering, Automation and IT
 
-- Google IT Automation with Python Professional Certificate — Coursera; issued 5 October 2025. Transcript records a FIBAA credit recommendation with grade Pass and 5 semester hours.
+- Google IT Automation with Python Professional Certificate — Coursera; issued 5 October 2025. The transcript description says the certificate was developed by Google. Transcript records a FIBAA credit recommendation with grade Pass and 5 semester hours.
 - Practical Windows PowerShell Scripting — Coursera; authorized by Pearson Enterprise Learning and Skills; issued 13 October 2025.
 - Software Engineering Essentials — Coursera; authorized by IBM; issued 8 October 2025.
 - Software, Programming, and Database Essentials — Coursera; authorized by IBM; issued 8 October 2025.
@@ -34,7 +34,7 @@
 
 ## Resume Usage Guidance
 
-Use a compact, role-targeted selection in the main resume; place the full list in a credential appendix or LinkedIn Certifications section when space permits. For AI engineering roles, prioritize Generative AI Engineering with Transformers & LLMs, Generative AI Applications Specialist, Neural Networks with PyTorch, Deep Learning with PyTorch, and the Google IT Automation with Python certificate. For IT automation/software roles, prioritize Google IT Automation with Python, Practical Windows PowerShell Scripting, and Software Engineering Essentials. For security-oriented roles, list Introduction to Cybersecurity Careers alongside separately verified hands-on security experience. Do not infer expertise or seniority beyond the transcript evidence.
+Use a compact, role-targeted selection in the main resume; place the full list in a credential appendix or LinkedIn Certifications section when space permits. For AI engineering roles, prioritize Generative AI Engineering with Transformers & LLMs, Generative AI Applications Specialist, Introduction to Neural Networks with PyTorch, Deep Learning with PyTorch, and Google IT Automation with Python Professional Certificate. For IT automation/software roles, prioritize Google IT Automation with Python, Practical Windows PowerShell Scripting, and Software Engineering Essentials. For security-oriented roles, list Introduction to Cybersecurity Careers alongside separately verified hands-on security experience. Do not infer expertise or seniority beyond the transcript evidence.
 
 ## Professional Platform References
 
