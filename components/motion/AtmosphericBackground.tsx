@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePerformanceMode } from "./PerformanceModeController";
+import { particleRadiusCssPixels } from "./particle-math";
 
 const FPS_CAP = 30;
 const DPR_CAP = 2;
@@ -69,7 +70,7 @@ export function AtmosphericBackground(): React.JSX.Element {
     if (ctx === null) return;
 
     const parts = seed(PARTICLES);
-    const dpr = Math.min(window.devicePixelRatio, DPR_CAP);
+    const dpr = Math.min(window.devicePixelRatio || 1, DPR_CAP);
     const minFrame = 1000 / FPS_CAP;
     let raf = 0;
     let last = 0;
@@ -83,7 +84,9 @@ export function AtmosphericBackground(): React.JSX.Element {
       const { width: w, height: h } = canvas;
       ctx.clearRect(0, 0, w, h);
       ctx.fillStyle = "rgba(234,70,72,0.5)";
-      const r = Math.max(1, h * 0.002);
+      // h is the DPR-scaled backing-store height; derive the radius in CSS pixels
+      // before converting it back to backing-store pixels below.
+      const r = particleRadiusCssPixels(h, dpr);
       for (const p of parts) {
         const y = (p.y + now * 0.000004 * (0.4 + p.speed)) % 1;
         ctx.globalAlpha = Math.max(0.05, 0.25 + 0.45 * Math.sin(now * 0.001 + p.phase));

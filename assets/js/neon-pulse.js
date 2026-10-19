@@ -41,6 +41,9 @@
   let queued = false;
   let pending = [];
   let ambientChecked = false;
+  let disposed = false;
+  let scheduledFlushHandle = null;
+  let scheduledFlushUsesIdleCallback = false;
 
   const visibility = "IntersectionObserver" in window
     ? new IntersectionObserver((entries) => {
@@ -274,6 +277,12 @@
 
   function flush() {
     queued = false;
+    scheduledFlushHandle = null;
+    scheduledFlushUsesIdleCallback = false;
+    if (disposed) {
+      pending = [];
+      return;
+    }
     if (!ambientChecked) ambient();
     const batch = pending;
     pending = [];
@@ -282,30 +291,56 @@
     apply(decisions);
   }
 
+  function cancelScheduledFlush() {
+    if (scheduledFlushHandle !== null) {
+      if (scheduledFlushUsesIdleCallback) {
+        if (typeof window.cancelIdleCallback === "function") {
+          window.cancelIdleCallback(scheduledFlushHandle);
+        }
+      } else {
+        window.clearTimeout(scheduledFlushHandle);
+      }
+    }
+    scheduledFlushHandle = null;
+    scheduledFlushUsesIdleCallback = false;
+    queued = false;
+    pending = [];
+  }
+
   function schedule(node) {
+    if (disposed || !node) return;
     pending.push(node);
     if (queued) return;
     queued = true;
-    (window.requestIdleCallback || ((fn) => setTimeout(fn, 120)))(flush, { timeout: 800 });
+    if (typeof window.requestIdleCallback === "function") {
+      scheduledFlushUsesIdleCallback = true;
+      scheduledFlushHandle = window.requestIdleCallback(flush, { timeout: 800 });
+    } else {
+      scheduledFlushUsesIdleCallback = false;
+      scheduledFlushHandle = window.setTimeout(flush, 120);
+    }
   }
 
   function start() {
     if (!document.body || document.body.hasAttribute("data-no-neon")) return;
     schedule(document.body);
-    if (!("MutationObserver" in window)) return;
-    const mutations = new MutationObserver((records) => {
-      if (frames >= MAX_FRAMES && beacons >= MAX_BEACONS) { mutations.disconnect(); return; }
-      for (const record of records) {
-        for (const node of record.addedNodes) {
-          if (node.nodeType === 1 && !node.classList.contains("cg-np-ambient")) schedule(node);
-        }
-      }
-    });
-    mutations.observe(document.body, { childList: true, subtree: true });
+    const mutations = "MutationObserver" in window
+      ? new MutationObserver((records) => {
+          if (frames >= MAX_FRAMES && beacons >= MAX_BEACONS) { mutations.disconnect(); return; }
+          for (const record of records) {
+            for (const node of record.addedNodes) {
+              if (node.nodeType === 1 && !node.classList.contains("cg-np-ambient")) schedule(node);
+            }
+          }
+        })
+      : null;
+    if (mutations) mutations.observe(document.body, { childList: true, subtree: true });
     addEventListener("pagehide", (event) => {
       if (event.persisted) return;
-      mutations.disconnect();
+      disposed = true;
+      if (mutations) mutations.disconnect();
       if (visibility) visibility.disconnect();
+      cancelScheduledFlush();
     });
   }
 
