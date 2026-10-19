@@ -65,6 +65,27 @@ def test_design_system_keyframes_are_composited() -> None:
         bad = _props(body) & PAINT_PROPS
         assert not bad, f"@keyframes {name} repaints every frame: {sorted(bad)}"
 
+def test_cinematic_atmosphere_uses_composited_background_motion() -> None:
+    """Continuous full-viewport grid/scan motion must not repaint background position."""
+    paths = (
+        ROOT / "clearglass-motion.css",
+        ROOT / "components/motion/motion-components.css",
+    )
+    for path in paths:
+        frames = _keyframes(path.read_text(encoding="utf-8"))
+        for name in ("cgm-grid-drift", "cgm-scan"):
+            assert name in frames, (path.name, name)
+            props = _props(frames[name])
+            assert "transform" in props, (path.name, name, sorted(props))
+            assert "background-position" not in props, (path.name, name, sorted(props))
+            assert not (props & {"background-size", "box-shadow", "filter"}), (
+                path.name, name, sorted(props)
+            )
+        css = _strip_comments(path.read_text(encoding="utf-8"))
+        assert "cgm-atmos__grid::before" in css
+        assert "cgm-atmos__scan::before" in css
+        assert "prefers-reduced-motion: reduce" in css
+
 
 def _opacities(body: str) -> list[float]:
     return [float(v) for v in re.findall(r"opacity\s*:\s*([\d.]+)", body)]
