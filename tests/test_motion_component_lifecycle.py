@@ -12,9 +12,8 @@ def test_glass_card_cancels_pending_pointer_frame_on_leave_and_mode_change() -> 
     assert "frame.current = null" in leave
     assert "useEffect(" in leave
     assert "[interactive]" in leave
-    assert "frame.current = null;" in leave[
-        leave.index("requestAnimationFrame(() =>") : leave.index("const onPointerLeave")
-    ]
+    move = source[source.index("const onPointerMove") : source.index("const onPointerLeave")]
+    assert "frame.current = null;" in move
 
 
 def test_magnetic_button_cancels_pending_pointer_frame_on_reset_and_mode_change() -> None:
