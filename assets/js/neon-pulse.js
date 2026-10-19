@@ -341,7 +341,7 @@
       if (mutations) mutations.disconnect();
       if (visibility) visibility.disconnect();
       cancelScheduledFlush();
-    }, { once: true });
+    });
   }
 
   if (document.readyState === "loading") {
