@@ -113,6 +113,29 @@ async function main() {
       await page.close();
     }
 
+    // ── F: BFCache navigation lifecycle ──────────────────────────────────
+    {
+      const page = await browser.newPage();
+      await page.goto(base + '/index.html?cgdebug=1', { waitUntil: 'domcontentloaded' });
+      await page.waitForFunction(() => window.__cgVisual && window.__cgVisual.engine && window.__cgVisual.engine.backend, null, { timeout: 8000 });
+      const hidden = await page.evaluate(() => {
+        window.dispatchEvent(new PageTransitionEvent('pagehide', { persisted: true }));
+        return {
+          disposed: window.__cgVisual.engine._disposed,
+          running: window.__cgVisual.engine.running,
+          canvas: !!document.querySelector('.cg-visual-stage .cg-visual-canvas'),
+        };
+      });
+      check('F1 persisted pagehide pauses without disposing the renderer', hidden.disposed === false && hidden.running === false && hidden.canvas);
+      const restored = await page.evaluate(() => {
+        window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true }));
+        return window.__cgVisual.engine._disposed;
+      });
+      await page.waitForFunction(() => window.__cgVisual.engine.running === true, null, { timeout: 8000 });
+      check('F2 persisted pageshow resumes the renderer', restored === false);
+      await page.close();
+    }
+
     // ── E: event flood does not crash the page ─────────────────────────────
     {
       const page = await browser.newPage();
