@@ -14,6 +14,33 @@ below were found by web search that day. The USPTO and CPATA registers could
 not be opened from the build environment (egress blocked). Nothing in this
 file has been checked against a register.
 
+## Transcript-recorded course credentials (19 October 2026)
+
+The credential holder supplied an official transcript issued 19 October 2026. The entries below are transcribed from that document and are recorded as course certificates, specializations, or badges as described by the transcript. This is holder-supplied documentary evidence; issuer-side badge pages and verification URLs have not been independently checked. Do not present these entries as professional licences, university degrees, or vendor certification exams. The transcript's private identifier is intentionally not reproduced.
+
+| Credential | Issuer / authorization shown | Issue date |
+|---|---|---|
+| Google IT Automation with Python Professional Certificate | Coursera; developed by Google | 5 October 2025 |
+| Software Engineering Essentials | Coursera; authorized by IBM | 8 October 2025 |
+| Software, Programming, and Database Essentials | Coursera; authorized by IBM | 8 October 2025 |
+| Practical Windows PowerShell Scripting | Coursera; authorized by Pearson Enterprise Learning and Skills | 13 October 2025 |
+| Introduction to Cybersecurity Careers | Coursera; authorized by IBM | 27 October 2025 |
+| Artificial Intelligence Essentials V2 | Coursera; authorized by IBM | 10 April 2026 |
+| Generative AI Foundational Models for NLP & Language Understanding | Coursera; authorized by IBM | 17 April 2026 |
+| Generative AI Essentials | Coursera; authorized by IBM | 19 April 2026 |
+| Introduction to UX/UI Design | Coursera; authorized by IBM | 21 April 2026 |
+| Introduction to Agile Development and Scrum | Coursera; authorized by IBM | 22 April 2026 |
+| GenAI for Execs & Business Leaders: Integration Strategy | Coursera; authorized by IBM | 27 April 2026 |
+| Generative AI Engineering with Transformers & LLMs | Coursera; authorized by IBM | 29 April 2026 |
+| Generative AI Applications Specialist | Coursera; authorized by IBM | 29 April 2026 |
+| Data Science Orientation | Coursera; authorized by IBM | 7 May 2026 |
+| IBM AI Ladder: A Framework for Deploying AI in your Enterprise | Coursera; authorized by IBM | 21 May 2026 |
+| IBM AI Foundations for Business Specialization | Coursera; authorized by IBM | 13 June 2026 |
+| Introduction to Neural Networks with PyTorch | Coursera; authorized by IBM | 10 October 2026 |
+| Deep Learning with PyTorch | Coursera; authorized by IBM | 18 October 2026 |
+
+The transcript also records a FIBAA credit recommendation for the Google IT Automation with Python Professional Certificate: Pass, 5 semester hours. Treat this as a recommendation stated on the transcript, not as proof that an institution has awarded or transferred credit.
+
 ## Published
 
 | Claim on the page | Source | Check |
