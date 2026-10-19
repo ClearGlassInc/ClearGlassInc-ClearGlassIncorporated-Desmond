@@ -42,11 +42,16 @@ export class VisualEngine {
     this._simMs = 0;
     this._recovering = false;
     this._disposed = false;
+    this._backendSelectionId = 0;
+    this._pagehideHandler = null;
+    this._pageshowHandler = null;
+    this._contextLostHandler = null;
+    this._contextRestoredHandler = null;
   }
 
   /** Async init: create the decorative canvas, pick a backend, start. */
   async init() {
-    if (typeof document === 'undefined' || !this.host) return this;
+    if (typeof document === 'undefined' || !this.host || this._disposed || this.canvas) return this;
     const canvas = document.createElement('canvas');
     canvas.className = 'cg-visual-canvas';
     canvas.setAttribute('aria-hidden', 'true');
@@ -56,26 +61,45 @@ export class VisualEngine {
     this.canvas = canvas;
 
     // Context-loss handling (WebGL). Preserve WorldState, rebuild the backend.
-    canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); this._onContextLost(); }, false);
-    canvas.addEventListener('webglcontextrestored', () => { this.reinitBackend(); }, false);
+    this._contextLostHandler = (event) => { event.preventDefault(); this._onContextLost(); };
+    this._contextRestoredHandler = () => {
+      this.reinitBackend().then(() => {
+        if (this._disposed || !this.backend) return;
+        if (this.reduced) this._renderStaticProfile();
+        else if (this.visible) this.start();
+      }).catch((error) => this._reportError('Backend restoration failed', error));
+    };
+    canvas.addEventListener('webglcontextlost', this._contextLostHandler, false);
+    canvas.addEventListener('webglcontextrestored', this._contextRestoredHandler, false);
+
+    // Attach lifecycle listeners before asynchronous backend selection. A fast
+    // navigation must not strand a canvas while init() is still awaiting GPU setup.
+    this._pagehideHandler = (event) => {
+      if (event.persisted) this.setVisible(false);
+      else this.dispose();
+    };
+    this._pageshowHandler = (event) => {
+      if (event.persisted && !this._disposed) this.setVisible(!document.hidden);
+    };
+    this._visHandler = () => this.setVisible(!document.hidden);
+    window.addEventListener('pagehide', this._pagehideHandler);
+    window.addEventListener('pageshow', this._pageshowHandler);
+    document.addEventListener('visibilitychange', this._visHandler);
+    this.visible = !document.hidden;
+    this.governor.setVisible(this.visible);
 
     if (this._faults.has('disableWebGPU')) this.opts.allowWebGPU = false;
     if (this._faults.has('disableWebGL') || this._faults.has('forceCanvas')) this.opts.forced = 'canvas2d';
     if (this._faults.has('reducedMotion')) this.reduced = true;
 
     await this.reinitBackend();
+    if (this._disposed || !this.canvas) return this;
 
     // Offscreen pause.
     if (typeof IntersectionObserver !== 'undefined') {
       this._io = new IntersectionObserver((es) => { this.setVisible(es[0].isIntersecting); }, { threshold: 0.01 });
       this._io.observe(this.host);
     }
-    if (typeof document !== 'undefined') {
-      this._visHandler = () => this.setVisible(!document.hidden);
-      document.addEventListener('visibilitychange', this._visHandler);
-    }
-    window.addEventListener('pagehide', () => this.dispose(), { once: true });
-
     if (hudEnabled()) { this._hud = new Hud(); }
 
     // Expose a dev handle (faults + engine) when debugging.
@@ -87,16 +111,26 @@ export class VisualEngine {
     }
 
     if (this.reduced) this._renderStaticProfile();
-    else this.start();
+    else if (this.visible) this.start();
     return this;
   }
 
   /** (Re)select the backend, preserving WorldState. Resizes to host box. */
   async reinitBackend() {
-    if (!this.canvas) return;
-    if (this.backend) { try { this.backend.dispose(); } catch (e) {} this.backend = null; }
-    this.backend = await selectBackend(this.canvas, { forced: this.opts.forced, allowWebGPU: this.opts.allowWebGPU });
-    this.sim.setBackend(this.backend.kind);
+    const canvas = this.canvas;
+    if (!canvas || this._disposed) return;
+    const selectionId = ++this._backendSelectionId;
+    const previous = this.backend;
+    this.backend = null;
+    if (previous) this._cleanup('Previous renderer backend disposal failed', () => previous.dispose());
+
+    const backend = await selectBackend(canvas, { forced: this.opts.forced, allowWebGPU: this.opts.allowWebGPU });
+    if (this._disposed || this.canvas !== canvas || selectionId !== this._backendSelectionId) {
+      this._cleanup('Stale renderer backend disposal failed', () => backend.dispose());
+      return;
+    }
+    this.backend = backend;
+    this.sim.setBackend(backend.kind);
     this._resize();
     // In reduced-motion, repaint the static frame after a backend swap.
     if (this.reduced && !this.running) this._renderStaticProfile();
@@ -120,7 +154,7 @@ export class VisualEngine {
   }
 
   start() {
-    if (this.running || this.reduced || this._disposed) return;
+    if (this.running || this.reduced || this._disposed || !this.visible || !this.backend) return;
     this.running = true; this._last = 0;
     const loop = (now) => {
       if (!this.running) return;
@@ -138,6 +172,7 @@ export class VisualEngine {
 
   /** One rendered frame: governed fixed-timestep sim, then draw. */
   _tick(frameMs) {
+    if (this._disposed || !this.backend) { this.stop(); return; }
     this._frameTimes.push(frameMs); if (this._frameTimes.length > 120) this._frameTimes.shift();
     this.governor.record(frameMs);
     const budget = this.governor.budget;
@@ -163,29 +198,48 @@ export class VisualEngine {
       this.backend.begin();
       this.scenes.render(this.backend, this.sim.world, this.sim, this._quality());
       this.backend.end();
-    } catch (e) { /* a render error must never crash the page */ }
+    } catch (error) {
+      // Stop the repeating loop on a persistent backend fault and expose evidence
+      // in the console rather than retrying a broken renderer every frame.
+      this.stop();
+      this._reportError('Frame rendering failed; animation paused', error);
+    }
 
-    if (this._hud) this._updateHud(frameMs);
+    if (this._hud && this.backend) this._updateHud(frameMs);
   }
 
   /** Reduced-motion: build a settled state deterministically, paint once, stop. */
   _renderStaticProfile() {
-    for (let i = 0; i < 90; i++) this.sim.step(1 / 60);   // settle silently
+    if (!this.backend || this._disposed) return;
+    for (let i = 0; i < 90; i++) this.sim.step(1 / 60);
     this._resize();
-    try { this.backend.begin(); this.scenes.render(this.backend, this.sim.world, this.sim, { ...this._quality(), reduced: true }); this.backend.end(); } catch (e) {}
+    try {
+      this.backend.begin();
+      this.scenes.render(this.backend, this.sim.world, this.sim, { ...this._quality(), reduced: true });
+      this.backend.end();
+    } catch (error) {
+      this._reportError('Static reduced-motion render failed', error);
+    }
   }
 
   _onContextLost() {
-    if (this._recovering) return;
+    if (this._recovering || this._disposed) return;
     this._recovering = true;
     this.stop();
     // WorldState (this.sim) is preserved; only GPU resources are invalid.
-    if (this.backend) { try { this.backend.dispose(); } catch (e) {} this.backend = null; }
+    const previous = this.backend;
+    this.backend = null;
+    if (previous) this._cleanup('Context-lost renderer disposal failed', () => previous.dispose());
     // Re-init on the next microtask so the browser finishes the loss event.
     Promise.resolve().then(async () => {
-      await this.reinitBackend();
-      this._recovering = false;
-      if (!this.reduced) this.start();
+      try {
+        await this.reinitBackend();
+      } catch (error) {
+        this._reportError('GPU context recovery failed', error);
+      } finally {
+        this._recovering = false;
+      }
+      if (!this.reduced && !this._disposed && this.visible && this.backend) this.start();
     });
   }
 
@@ -203,12 +257,14 @@ export class VisualEngine {
   }
 
   setReducedMotion(on) {
+    if (this._disposed) return;
     this.reduced = !!on;
     if (this.reduced) { this.stop(); this._renderStaticProfile(); }
     else this.start();
   }
 
   setVisible(v) {
+    if (this._disposed) return;
     this.visible = !!v;
     this.governor.setVisible(this.visible);
     if (this.reduced) return;
@@ -230,15 +286,56 @@ export class VisualEngine {
   }
 
   dispose() {
-    if (this._disposed) return; this._disposed = true;
+    if (this._disposed) return;
+    this._disposed = true;
+    this._backendSelectionId++;
     this.stop();
-    try { if (this._io) this._io.disconnect(); } catch (e) {}
-    try { if (this._ro) this._ro.disconnect(); } catch (e) {}
-    try { if (this._visHandler) document.removeEventListener('visibilitychange', this._visHandler); } catch (e) {}
-    if (this.backend) { try { this.backend.dispose(); } catch (e) {} }
-    if (this._hud) this._hud.dispose();
-    this.scenes.destroyAll();
-    if (this.canvas && this.canvas.remove) { this.canvas.width = this.canvas.height = 0; this.canvas.remove(); }
+
+    if (this._io) this._cleanup('IntersectionObserver cleanup failed', () => this._io.disconnect());
+    if (this._ro) this._cleanup('ResizeObserver cleanup failed', () => this._ro.disconnect());
+    if (this._visHandler && typeof document !== 'undefined') {
+      document.removeEventListener('visibilitychange', this._visHandler);
+    }
+    if (this._pagehideHandler && typeof window !== 'undefined') {
+      window.removeEventListener('pagehide', this._pagehideHandler);
+    }
+    if (this._pageshowHandler && typeof window !== 'undefined') {
+      window.removeEventListener('pageshow', this._pageshowHandler);
+    }
+
+    const canvas = this.canvas;
+    if (canvas && this._contextLostHandler) {
+      canvas.removeEventListener('webglcontextlost', this._contextLostHandler);
+    }
+    if (canvas && this._contextRestoredHandler) {
+      canvas.removeEventListener('webglcontextrestored', this._contextRestoredHandler);
+    }
+
+    const backend = this.backend;
+    this.backend = null;
+    if (backend) this._cleanup('Renderer backend disposal failed', () => backend.dispose());
+    if (this._hud) this._cleanup('HUD disposal failed', () => this._hud.dispose());
+    this._cleanup('Scene cleanup failed', () => this.scenes.destroyAll());
+
+    this.canvas = null;
+    if (canvas && typeof canvas.remove === 'function') {
+      canvas.width = canvas.height = 0;
+      canvas.remove();
+    }
+  }
+
+  _reportError(phase, error) {
+    if (typeof console !== 'undefined' && typeof console.error === 'function') {
+      console.error('[ClearGlass Visual Engine] ' + phase, error);
+    }
+  }
+
+  _cleanup(phase, action) {
+    try {
+      action();
+    } catch (error) {
+      this._reportError(phase, error);
+    }
   }
 }
 
