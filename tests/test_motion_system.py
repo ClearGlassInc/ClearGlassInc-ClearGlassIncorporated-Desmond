@@ -218,3 +218,22 @@ def test_loader_motion_is_smooth_composited_and_reduced_motion_safe() -> None:
         assert "--cg-loader-status-pulse-duration:3s" in style
         assert "--cg-loader-logo-breathe-duration:6s" in style
 
+def test_visual_engine_lifecycle_and_renderer_errors_are_observable() -> None:
+    engine = (ROOT / "assets/cg-visual/render/engine.js").read_text(encoding="utf-8")
+    boot = (ROOT / "assets/cg-visual/cg-visual-boot.js").read_text(encoding="utf-8")
+    backend = (ROOT / "assets/cg-visual/render/backend.js").read_text(encoding="utf-8")
+    smoke = (ROOT / "assets/cg-visual/tests/browser-smoke.mjs").read_text(encoding="utf-8")
+
+    assert "if (event.persisted) this.setVisible(false)" in engine
+    assert "this._pageshowHandler = (event)" in engine
+    assert "this._disposed || this.canvas !== canvas || selectionId !== this._backendSelectionId" in engine
+    assert "Frame rendering failed; animation paused" in engine
+    assert "console.error('[ClearGlass Visual Engine] Initialization failed', error)" in boot
+    assert "engine.init().catch(() =>" not in boot
+    assert "catch (e) {}" not in engine
+    assert "if (ctx) { ctx.clearRect" not in backend
+    assert "lose.loseContext()" not in backend
+    assert "disposePartialWebGpu()" in backend
+    assert "F1 persisted pagehide pauses without disposing the renderer" in smoke
+    assert "F2 persisted pageshow resumes the renderer" in smoke
+
