@@ -72,7 +72,11 @@ import { VisualEngine } from './render/engine.js';
       reduced: reducedMotion(),
       seed: 20260912,
     });
-    engine.init().catch(() => { /* never surface engine errors to the page */ });
+    engine.init().catch((error) => {
+      console.error('[ClearGlass Visual Engine] Initialization failed', error);
+      engine.dispose();
+      stage.remove();
+    });
     window.__cgVisual = Object.assign(window.__cgVisual || {}, { engine });
 
     // React to a later reduced-motion change (e.g. the site's toggle button).
