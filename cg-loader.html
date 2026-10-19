@@ -48,6 +48,11 @@
   --D:'Syne',sans-serif;
   --M:'IBM Plex Mono',monospace;
   --ease:cubic-bezier(0.16,1,0.3,1);
+  --cg-loader-status-pulse-duration:3s;
+  --cg-loader-status-min-opacity:.68;
+  --cg-loader-logo-breathe-duration:6s;
+  --cg-loader-scan-drift-duration:14s;
+  --cg-loader-scan-sweep-duration:7s;
 }
 
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
@@ -79,19 +84,20 @@ body::after{
 /* CRT scanlines */
 .scanlines{position:fixed;inset:0;z-index:3;pointer-events:none;overflow:hidden;}
 .scanlines::before{
-  content:'';position:absolute;inset:0;
+  content:'';position:absolute;inset:-81px 0 0;
   background:repeating-linear-gradient(0deg,
     transparent,transparent 2px,
     rgba(255,27,61,0.022) 2px,rgba(255,27,61,0.022) 3px);
-  animation:scanDrift 14s linear infinite;
+  animation:scanDrift var(--cg-loader-scan-drift-duration) linear infinite;
 }
 .scanlines::after{
-  content:'';position:absolute;top:-50%;left:0;right:0;height:60%;
+  content:'';position:absolute;top:0;left:0;right:0;height:60%;
+  transform:translateY(-100%);
   background:linear-gradient(180deg,transparent 0%,rgba(255,27,61,0.025) 50%,transparent 100%);
-  animation:scanSweep 7s ease-in-out infinite;
+  animation:scanSweep var(--cg-loader-scan-sweep-duration) ease-in-out infinite;
 }
-@keyframes scanDrift{to{background-position:0 80px}}
-@keyframes scanSweep{0%,100%{top:-60%}50%{top:120%}}
+@keyframes scanDrift{to{transform:translateY(81px)}}
+@keyframes scanSweep{0%,100%{transform:translateY(-100%)}50%{transform:translateY(200%)}}
 
 /* Conic ambient red glow behind logo */
 .ambient{
@@ -148,9 +154,9 @@ body::after{
 .classified::before{
   content:'';width:6px;height:6px;background:var(--crimson);
   box-shadow:0 0 8px var(--crimson-glow);
-  animation:opPulse 1.4s ease-in-out infinite;
+  animation:opPulse var(--cg-loader-status-pulse-duration) ease-in-out infinite;
 }
-@keyframes opPulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
+@keyframes opPulse{0%,100%{opacity:1;}50%{opacity:var(--cg-loader-status-min-opacity);}}
 
 .top-right{display:flex;gap:24px;align-items:center;}
 .top-meta{display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
@@ -203,18 +209,12 @@ body::after{
   100%{opacity:1;transform:scale(1);}
 }
 
-/* Soft flicker on the whole logo */
+/* Low-amplitude breathing on the whole logo */
 .hex-svg{
   animation:logoEnter 1.4s var(--ease) 0.5s forwards,
-            flicker 5s ease-in-out 2s infinite;
+            logo-breathe var(--cg-loader-logo-breathe-duration) ease-in-out 2s infinite;
 }
-@keyframes flicker{
-  0%,90%,100%{opacity:1;}
-  92%{opacity:0.78;}
-  94%{opacity:1;}
-  95%{opacity:0.86;}
-  96%{opacity:1;}
-}
+@keyframes logo-breathe{0%,100%{opacity:.94}50%{opacity:1}}
 
 /* CG monogram */
 .cg-mono{
@@ -226,7 +226,7 @@ body::after{
               0 0 32px rgba(255,27,61,0.18);
   opacity:0;
   animation:fadeIn 1s var(--ease) 1.2s forwards,
-            flicker 5s ease-in-out 2s infinite;
+            logo-breathe var(--cg-loader-logo-breathe-duration) ease-in-out 2s infinite;
 }
 
 /* Corner brackets around hex */
@@ -312,7 +312,7 @@ body::after{
 .progress-label::before{
   content:'';width:5px;height:5px;background:var(--crimson);
   box-shadow:0 0 6px var(--crimson-glow);
-  animation:opPulse 1.4s ease-in-out infinite;
+  animation:opPulse var(--cg-loader-status-pulse-duration) ease-in-out infinite;
 }
 .progress-pct{color:var(--bone);font-weight:500;letter-spacing:0.15em;}
 
@@ -412,9 +412,12 @@ body.exiting .ambient{
 /* ── REDUCED MOTION ── */
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{
-    animation-duration:0.001s !important;
-    transition-duration:0.001s !important;
+    animation-duration:0.001ms !important;
+    animation-iteration-count:1 !important;
+    animation-delay:0s !important;
+    transition-duration:0.001ms !important;
   }
+  .pulse-ring{animation:none !important;opacity:0 !important}
 }
 
 /* ── SKIP LINK ── */
