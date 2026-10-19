@@ -53,7 +53,10 @@ export function createCanvas2DBackend(canvas) {
       }
     },
     end() {},
-    dispose() { try { ctx.clearRect(0, 0, w, h); } catch (e) {} canvas.width = canvas.height = 0; },
+    dispose() {
+      try { ctx.clearRect(0, 0, w, h); }
+      finally { canvas.width = canvas.height = 0; }
+    },
   };
 }
 
@@ -71,17 +74,58 @@ export function createWebGL2Backend(canvas) {
   const lvs = '#version 300 es\nlayout(location=0) in vec2 p;layout(location=1) in float hot;out float vh;void main(){vh=hot;gl_Position=vec4(p*2.0-1.0,0.0,1.0);}';
   const lfs = '#version 300 es\nprecision mediump float;in float vh;uniform vec3 col;uniform float a;out vec4 o;void main(){o=vec4(col,a*(0.5+vh));}';
 
-  function sh(t, src) { const s = gl.createShader(t); gl.shaderSource(s, src); gl.compileShader(s); return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null; }
-  function prog(v, f) { const p = gl.createProgram(); const a = sh(gl.VERTEX_SHADER, v), b = sh(gl.FRAGMENT_SHADER, f); if (!a || !b) return null; gl.attachShader(p, a); gl.attachShader(p, b); gl.linkProgram(p); return gl.getProgramParameter(p, gl.LINK_STATUS) ? p : null; }
+  function sh(t, src) {
+    const shader = gl.createShader(t);
+    if (!shader) return null;
+    gl.shaderSource(shader, src);
+    gl.compileShader(shader);
+    if (gl.getShaderParameter(shader, gl.COMPILE_STATUS)) return shader;
+    gl.deleteShader(shader);
+    return null;
+  }
+  function prog(v, f) {
+    const program = gl.createProgram();
+    if (!program) return null;
+    const vertex = sh(gl.VERTEX_SHADER, v);
+    const fragment = sh(gl.FRAGMENT_SHADER, f);
+    if (!vertex || !fragment) {
+      if (vertex) gl.deleteShader(vertex);
+      if (fragment) gl.deleteShader(fragment);
+      gl.deleteProgram(program);
+      return null;
+    }
+    gl.attachShader(program, vertex);
+    gl.attachShader(program, fragment);
+    gl.linkProgram(program);
+    const linked = gl.getProgramParameter(program, gl.LINK_STATUS);
+    gl.deleteShader(vertex);
+    gl.deleteShader(fragment);
+    if (!linked) {
+      gl.deleteProgram(program);
+      return null;
+    }
+    return program;
+  }
 
   const pPoints = prog(vs, fs), pLines = prog(lvs, lfs);
-  if (!pPoints || !pLines) return null;
+  if (!pPoints || !pLines) {
+    if (pPoints) gl.deleteProgram(pPoints);
+    if (pLines) gl.deleteProgram(pLines);
+    return null;
+  }
 
   // Reused dynamic buffers (grown once to a ceiling, never per-frame).
   const CAP = 6000;
   const pointData = new Float32Array(CAP * 3);   // x,y,hot interleaved
   const lineData = new Float32Array(CAP * 3);
   const vboP = gl.createBuffer(), vboL = gl.createBuffer();
+  if (!vboP || !vboL) {
+    if (vboP) gl.deleteBuffer(vboP);
+    if (vboL) gl.deleteBuffer(vboL);
+    gl.deleteProgram(pPoints);
+    gl.deleteProgram(pLines);
+    return null;
+  }
   let w = 1, h = 1, s = 1, ps = 3;
 
   function bindInterleaved(vbo, data, n) {
@@ -130,11 +174,20 @@ export function createWebGL2Backend(canvas) {
     },
     end() {},
     dispose() {
-      try {
-        gl.deleteBuffer(vboP); gl.deleteBuffer(vboL);
-        gl.deleteProgram(pPoints); gl.deleteProgram(pLines);
-        const lose = gl.getExtension('WEBGL_lose_context'); if (lose) lose.loseContext();
-      } catch (e) {}
+      const errors = [];
+      for (const release of [
+        () => gl.deleteBuffer(vboP),
+        () => gl.deleteBuffer(vboL),
+        () => gl.deleteProgram(pPoints),
+        () => gl.deleteProgram(pLines),
+      ]) {
+        try { release(); } catch (error) { errors.push(error); }
+      }
+      // Resource disposal must not force context loss: reinitialising this
+      // canvas can reuse a healthy WebGL context after the resources are freed.
+      if (errors.length) {
+        throw new Error('WebGL resource cleanup failed (' + errors.length + ' operation(s)): ' + String(errors[0]));
+      }
     },
   };
 }
@@ -144,14 +197,32 @@ export function createWebGL2Backend(canvas) {
    path is guarded end-to-end and is documented as NOT VERIFIED. Any failure
    at any step returns null and the chain falls through to WebGL2. */
 export async function createWebGPUBackend(canvas) {
+  let device = null;
+  let vertexBuffer = null;
+  const disposePartialWebGpu = () => {
+    const errors = [];
+    if (vertexBuffer) {
+      const resource = vertexBuffer;
+      vertexBuffer = null;
+      try { resource.destroy(); } catch (error) { errors.push(error); }
+    }
+    if (device) {
+      const resource = device;
+      device = null;
+      try { resource.destroy(); } catch (error) { errors.push(error); }
+    }
+    if (errors.length && typeof console !== 'undefined' && typeof console.error === 'function') {
+      console.error('[ClearGlass Visual Engine] Partial WebGPU resource cleanup failed', errors);
+    }
+  };
   try {
     if (typeof navigator === 'undefined' || !navigator.gpu) return null;
     const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'low-power' });
     if (!adapter) return null;
-    const device = await adapter.requestDevice();
+    device = await adapter.requestDevice();
     if (!device) return null;
     const ctx = canvas.getContext('webgpu');
-    if (!ctx) return null;
+    if (!ctx) { disposePartialWebGpu(); return null; }
     const format = navigator.gpu.getPreferredCanvasFormat();
     ctx.configure({ device, format, alphaMode: 'premultiplied' });
 
@@ -174,7 +245,8 @@ export async function createWebGPUBackend(canvas) {
 
     const CAP = 6000;
     const staging = new Float32Array(CAP * 3);
-    const vbuf = device.createBuffer({ size: staging.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST });
+    vertexBuffer = device.createBuffer({ size: staging.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST });
+    const vbuf = vertexBuffer;
     let s = 1;
 
     return {
@@ -200,9 +272,21 @@ export async function createWebGPUBackend(canvas) {
         pass.end();
         device.queue.submit([this._enc.finish()]);
       },
-      dispose() { try { vbuf.destroy(); device.destroy(); } catch (e) {} },
+      dispose() {
+        const errors = [];
+        try { vbuf.destroy(); } catch (error) { errors.push(error); }
+        try { device.destroy(); } catch (error) { errors.push(error); }
+        vertexBuffer = null;
+        device = null;
+        if (errors.length) {
+          throw new Error('WebGPU resource cleanup failed (' + errors.length + ' operation(s)): ' + String(errors[0]));
+        }
+      },
     };
-  } catch (e) { return null; }
+  } catch {
+    disposePartialWebGpu();
+    return null;
+  }
 }
 
 /* ─────────────────────────── static (the floor — one paint, no animation) ─ */
