@@ -231,7 +231,8 @@ def test_visual_engine_lifecycle_and_renderer_errors_are_observable() -> None:
     assert "console.error('[ClearGlass Visual Engine] Initialization failed', error)" in boot
     assert "engine.init().catch(() =>" not in boot
     assert "catch (e) {}" not in engine
-    assert "if (ctx) { ctx.clearRect" not in backend
+    assert "dispose() { try { ctx.clearRect(0, 0, w, h); } catch (e) {}" not in backend
+    assert "dispose() { try { vbuf.destroy(); device.destroy(); } catch (e) {} }" not in backend
     assert "lose.loseContext()" not in backend
     assert "disposePartialWebGpu()" in backend
     assert "F1 persisted pagehide pauses without disposing the renderer" in smoke
