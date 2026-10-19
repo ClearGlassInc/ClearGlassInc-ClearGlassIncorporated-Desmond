@@ -3,13 +3,13 @@
 
 Why this exists
 ---------------
-``.github/workflows/pages.yml`` and ``site-integrity-and-deploy.yml`` both run
-this script as their first gate, but the repository's opening
-``Add files via upload`` commits flattened the tree and dropped it
-(``PRODUCTION-RECOVERY.md``). With the script absent, both workflows fail at
-step one, which is why Pages has to stay on "Deploy from a branch": switching
-the source to "GitHub Actions" would route publishing through a workflow that
-cannot get past its first step.
+This verifier was restored in commit ``be0b7cd`` after historical
+``Add files via upload`` commits flattened the tree and dropped it.
+The verifier currently exists, so the historical absence must not be treated
+as a current code defect. Standard workflow dispatch remains subject to the
+runner-dispatch state described in ``CLAUDE.md`` and ``docs/BASELINE.md``.
+Do not change the GitHub Pages publishing source based on this historical
+recovery note; verify current deployment status independently.
 
 What it checks
 --------------
