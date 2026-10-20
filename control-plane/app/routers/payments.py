@@ -13,7 +13,7 @@ from ..config import get_settings
 from ..audit import log_event
 from ..db import get_session
 from ..fulfillment import shipping_from_stripe_session
-from ..models import CommercialOrder, Order, Payout
+from ..models import CommercialOrder, Lead, Order, Payout
 from ..order_ledger import record_dispute, record_payment_order, record_refund
 from ..schemas import (
     ActionResult,
@@ -248,8 +248,58 @@ async def stripe_webhook(request: Request, session: Session = Depends(get_sessio
         metadata = obj.get("metadata") or {}
         # Written server-side by commerce_orders.start_checkout; re-validated,
         # because Stripe echoes metadata back verbatim.
-        order_ref = str(metadata.get("cg_order_ref") or "").strip()
-        order_ref = order_ref if order_states.is_order_ref(order_ref) else None
+        raw_order_ref = str(metadata.get("cg_order_ref") or "").strip()
+        order_ref = raw_order_ref if order_states.is_order_ref(raw_order_ref) else None
+        if raw_order_ref and order_ref is None:
+            log_event(
+                session, actor="stripe", action="payment_for_unknown_order",
+                target=str(obj.get("id") or ""),
+                payload={"event": etype, "reason": "invalid_order_ref_metadata"},
+                result="flagged",
+            )
+        if order_ref:
+            commercial_order = session.scalar(
+                select(CommercialOrder).where(CommercialOrder.order_ref == order_ref).with_for_update()
+            )
+            if commercial_order is not None:
+                association_issues: list[str] = []
+                if commercial_order.provider not in (None, "stripe"):
+                    association_issues.append("checkout_provider_mismatch")
+                # In real Stripe mode, the object id must match the checkout session
+                # recorded by the trusted backend. Mock/offline mode has no provider
+                # session to compare, so the server-owned order reference remains the
+                # test fixture's association source.
+                if get_settings().stripe_secret_key:
+                    expected_checkout = str(commercial_order.provider_checkout_ref or "")
+                    if not expected_checkout:
+                        association_issues.append("checkout_reference_missing")
+                    elif expected_checkout != str(obj.get("id") or ""):
+                        association_issues.append("checkout_reference_mismatch")
+                supplied_client_ref = str(obj.get("client_reference_id") or "")
+                if supplied_client_ref and supplied_client_ref != order_ref and not supplied_client_ref.startswith("crcs-"):
+                    association_issues.append("checkout_client_reference_mismatch")
+                if commercial_order.lead_id:
+                    lead = session.get(Lead, commercial_order.lead_id)
+                    expected_email = str(getattr(lead, "email", "") or "").strip().lower() if lead else ""
+                    delivered_email = str(customer_email or "").strip().lower()
+                    if expected_email and not delivered_email:
+                        association_issues.append("checkout_customer_email_missing")
+                    elif expected_email and delivered_email and expected_email != delivered_email:
+                        association_issues.append("checkout_customer_email_mismatch")
+                if association_issues:
+                    # Keep verified money in the ledger, but hold this order's
+                    # fulfillment until the customer/order association is reviewed.
+                    commercial_order.reconciliation_required = True
+                    prior = str(commercial_order.reconciliation_reason or "").strip()
+                    reason = ",".join(sorted(set(association_issues)))
+                    commercial_order.reconciliation_reason = ";".join(part for part in (prior, reason) if part)
+                    log_event(
+                        session, actor="stripe", action="checkout_association_mismatch",
+                        target=order_ref,
+                        payload={"event": etype, "checkout_session": str(obj.get("id") or ""),
+                                 "issues": sorted(set(association_issues))},
+                        result="flagged",
+                    )
         order = _record_order(
             session,
             # Stripe redelivers webhooks; key the order on the checkout-session id so a
