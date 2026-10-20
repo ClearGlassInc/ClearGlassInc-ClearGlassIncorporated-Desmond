@@ -18,7 +18,7 @@ from sqlalchemy.orm import Session
 from .. import payments
 from ..config import get_settings
 from ..db import get_session
-from ..models import StripeInboxEvent
+from ..models import StripeInboxEvent, StripeOutboxJob
 from ..security import rate_limit, require_admin
 
 router = APIRouter(tags=["stripe-payment-ops"])
@@ -223,6 +223,64 @@ def list_inbox(
             "processed_at": r.processed_at.isoformat() if r.processed_at else None,
         } for r in rows]
     }
+
+
+@router.get("/ops/stripe-outbox")
+def list_outbox(
+    state: str | None = None,
+    limit: int = 100,
+    session: Session = Depends(get_session),
+    _admin: str = Depends(require_admin),
+) -> dict[str, object]:
+    """Inspect outbound jobs without disclosing their payloads or destination credentials."""
+    allowed = {"pending", "processing", "retry", "succeeded", "dead_letter"}
+    if state and state not in allowed:
+        raise HTTPException(status_code=400, detail="Invalid outbox state")
+    query = session.query(StripeOutboxJob)
+    if state:
+        query = query.filter(StripeOutboxJob.state == state)
+    rows = query.order_by(StripeOutboxJob.created_at.desc()).limit(max(1, min(limit, 250))).all()
+    return {"items": [{
+        "id": r.id,
+        "operation_key": r.operation_key,
+        "job_type": r.job_type,
+        "state": r.state,
+        "attempt_count": r.attempt_count,
+        "last_error_code": r.last_error_code,
+        "created_at": r.created_at.isoformat() if r.created_at else None,
+        "delivered_at": r.delivered_at.isoformat() if r.delivered_at else None,
+    } for r in rows]}
+
+
+@router.post("/ops/stripe-outbox/{job_id}/replay")
+def replay_dead_letter_outbox(
+    job_id: int,
+    session: Session = Depends(get_session),
+    _admin: str = Depends(require_admin),
+) -> dict[str, object]:
+    """Replay one dead-letter operator notification after its delivery issue is fixed."""
+    from sqlalchemy import select
+    from ..audit import log_event
+
+    row = session.scalar(select(StripeOutboxJob).where(StripeOutboxJob.id == job_id).with_for_update())
+    if row is None:
+        raise HTTPException(status_code=404, detail="Outbox job not found")
+    if row.state != "dead_letter":
+        raise HTTPException(status_code=409, detail="Only dead-letter outbox jobs may be replayed")
+    row.state = "retry"
+    row.next_attempt_at = datetime.now(UTC)
+    row.last_error_code = None
+    row.lease_owner = None
+    row.lease_expires_at = None
+    row.updated_at = datetime.now(UTC)
+    log_event(
+        session, actor="operator", action="stripe_outbox_replay_requested",
+        target=row.operation_key,
+        payload={"job_id": row.id, "job_type": row.job_type},
+        result="executed",
+    )
+    session.commit()
+    return {"requeued": True, "job_id": row.id, "state": row.state}
 
 
 @router.post("/ops/stripe-inbox/{event_id}/replay")
