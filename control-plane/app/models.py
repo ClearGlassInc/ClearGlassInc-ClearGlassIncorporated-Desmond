@@ -10,6 +10,7 @@ from decimal import Decimal
 
 from sqlalchemy import (
     JSON,
+    Boolean,
     CheckConstraint,
     DateTime,
     ForeignKey,
@@ -19,6 +20,7 @@ from sqlalchemy import (
     String,
     Text,
     Uuid,
+    UniqueConstraint,
     text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
@@ -251,6 +253,93 @@ class Payout(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=_utcnow, onupdate=_utcnow
     )
+
+
+
+class StripeInboxEvent(Base):
+    """Durable receipt and recoverable processing state for one Stripe event."""
+
+    __tablename__ = "stripe_event_inbox"
+    __table_args__ = (
+        UniqueConstraint("account_scope", "stripe_event_id", name="uq_stripe_inbox_account_event"),
+        CheckConstraint(
+            "state IN ('pending', 'processing', 'retry', 'succeeded', 'dead_letter')",
+            name="stripe_event_inbox_state_check",
+        ),
+        CheckConstraint(
+            "event_format IN ('snapshot', 'thin')",
+            name="stripe_event_inbox_format_check",
+        ),
+        Index("idx_stripe_inbox_claim", "state", "next_attempt_at", "received_at"),
+        Index("idx_stripe_inbox_object", "related_object_id"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    account_scope: Mapped[str] = mapped_column(String(160), nullable=False)
+    stripe_event_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    event_type: Mapped[str] = mapped_column(String(160), nullable=False)
+    related_object_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    livemode: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    event_format: Mapped[str] = mapped_column(String(16), nullable=False, default="snapshot")
+    source: Mapped[str] = mapped_column(String(24), nullable=False, default="webhook")
+    verification_method: Mapped[str] = mapped_column(String(32), nullable=False)
+    verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    payload_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    # Full payload is retained only while operationally necessary; never log it.
+    raw_payload: Mapped[str | None] = mapped_column(Text, nullable=True)
+    state: Mapped[str] = mapped_column(String(24), nullable=False, default="pending", index=True)
+    attempt_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    next_attempt_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_utcnow)
+    lease_owner: Mapped[str | None] = mapped_column(String(160), nullable=True)
+    lease_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    fencing_token: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    last_error_code: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_utcnow)
+    processed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_utcnow, onupdate=_utcnow)
+
+
+class StripeOutboxJob(Base):
+    """Transactional outbound work created with the payment state transition."""
+
+    __tablename__ = "stripe_outbox_jobs"
+    __table_args__ = (
+        UniqueConstraint("operation_key", name="uq_stripe_outbox_operation_key"),
+        CheckConstraint(
+            "state IN ('pending', 'processing', 'retry', 'succeeded', 'dead_letter')",
+            name="stripe_outbox_state_check",
+        ),
+        Index("idx_stripe_outbox_claim", "state", "next_attempt_at", "created_at"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    operation_key: Mapped[str] = mapped_column(String(320), nullable=False)
+    job_type: Mapped[str] = mapped_column(String(80), nullable=False)
+    payload: Mapped[dict] = mapped_column(PortableJSON, nullable=False, default=dict)
+    state: Mapped[str] = mapped_column(String(24), nullable=False, default="pending", index=True)
+    attempt_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    next_attempt_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_utcnow)
+    lease_owner: Mapped[str | None] = mapped_column(String(160), nullable=True)
+    lease_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    fencing_token: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    last_error_code: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    delivered_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_utcnow, onupdate=_utcnow)
+
+
+class StripeReconciliationCheckpoint(Base):
+    """Resumable Stripe Events API scan; incomplete scans retain their cursor."""
+
+    __tablename__ = "stripe_reconciliation_checkpoints"
+
+    name: Mapped[str] = mapped_column(String(120), primary_key=True)
+    window_start_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    cursor_event_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    last_completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_result: Mapped[str] = mapped_column(Text, default="")
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_utcnow, onupdate=_utcnow)
 
 
 class Inventory(Base):
