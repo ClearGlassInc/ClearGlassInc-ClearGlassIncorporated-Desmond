@@ -170,6 +170,18 @@ async def _ingest(request: Request, session: Session) -> dict[str, object]:
                 {"account_scope": account_scope, "event_id": event_id},
             ).first()
             if existing is not None:
+                # Duplicate delivery is visible in the append-only audit ledger, but it
+                # never resets attempts or replays business effects.
+                action = (
+                    "subscription_event_duplicate_skipped"
+                    if request.url.path == "/subscriptions/webhook"
+                    else "stripe_inbox_duplicate_delivery"
+                )
+                log_event(
+                    session, actor="stripe", action=action, target=event_id,
+                    payload={"event_type": event_type, "existing_state": existing[0]},
+                    result="skipped",
+                )
                 session.commit()
                 return {
                     "received": True,
