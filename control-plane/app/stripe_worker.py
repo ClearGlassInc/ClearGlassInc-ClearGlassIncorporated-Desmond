@@ -12,7 +12,7 @@ import time
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
-from sqlalchemy import or_, select
+from sqlalchemy import or_, select, update
 from sqlalchemy.orm import Session, sessionmaker
 from starlette.requests import Request
 
@@ -374,11 +374,39 @@ def process_one_outbox(factory: sessionmaker = SessionLocal, *, worker_id: str |
     return True
 
 
+def purge_expired_payloads(factory: sessionmaker = SessionLocal) -> int:
+    """Scrub raw JSON from old succeeded rows; keep minimal audit and idempotency data."""
+    days = max(1, get_settings().stripe_payload_retention_days)
+    cutoff, now = _now() - timedelta(days=days), _now()
+    with factory() as session:
+        result = session.execute(
+            update(StripeInboxEvent)
+            .where(
+                StripeInboxEvent.state == "succeeded",
+                StripeInboxEvent.received_at < cutoff,
+                StripeInboxEvent.raw_payload.is_not(None),
+            )
+            .values(raw_payload=None, updated_at=now)
+        )
+        count = int(result.rowcount or 0)
+        session.commit()
+        return count
+
+
 def run_worker(*, worker_id: str | None = None, poll_seconds: float = 1.0) -> None:
     worker = worker_id or f"{socket.gethostname()}:{int(time.time())}"
+    last_purge = 0.0
     while True:
         did = process_one_event(worker_id=worker)
         did = process_one_outbox(worker_id=worker) or did
+        if time.monotonic() - last_purge >= 21600:
+            try:
+                purged = purge_expired_payloads()
+                if purged:
+                    logger.info("scrubbed %s expired succeeded Stripe payloads", purged)
+            except Exception as exc:
+                logger.warning("Stripe payload retention sweep failed code=%s", _error_code(exc))
+            last_purge = time.monotonic()
         if not did:
             time.sleep(max(0.1, poll_seconds))
 
