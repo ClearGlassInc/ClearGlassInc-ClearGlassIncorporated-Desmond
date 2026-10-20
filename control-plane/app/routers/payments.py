@@ -2,16 +2,18 @@
 from __future__ import annotations
 
 from decimal import Decimal
+import json
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from .. import attribution, order_states, payments, pricebook
+from ..config import get_settings
 from ..audit import log_event
 from ..db import get_session
 from ..fulfillment import shipping_from_stripe_session
-from ..models import Order, Payout
+from ..models import CommercialOrder, Order, Payout
 from ..order_ledger import record_dispute, record_payment_order, record_refund
 from ..schemas import (
     ActionResult,
@@ -179,11 +181,20 @@ def create_billing_portal(req: BillingPortalRequest, session: Session = Depends(
 async def stripe_webhook(request: Request, session: Session = Depends(get_session)) -> dict:
     """Ingest Stripe webhook events. Signature is verified when a webhook secret is configured."""
     payload = await request.body()
-    sig = request.headers.get("stripe-signature", "")
-    check = payments.verify_webhook(payload, sig)
-
-    if payments.webhook_requires_signature() and not check["verified"]:
-        raise HTTPException(status_code=400, detail=f"webhook rejected: {check['reason']}")
+    internal_event_id = request.scope.get("clearglass_verified_stripe_event_id")
+    if internal_event_id:
+        try:
+            event = json.loads(payload.decode("utf-8"))
+        except (ValueError, UnicodeDecodeError) as exc:
+            raise HTTPException(status_code=500, detail="Durable inbox payload is invalid") from exc
+        if str(event.get("id") or "") != str(internal_event_id):
+            raise HTTPException(status_code=500, detail="Durable inbox event identity mismatch")
+        check = {"verified": True, "event": event, "reason": "durable-inbox"}
+    else:
+        sig = request.headers.get("stripe-signature", "")
+        check = payments.verify_webhook(payload, sig)
+        if not check["verified"]:
+            raise HTTPException(status_code=400, detail="Stripe signature verification failed")
 
     event = check["event"]
     etype = event.get("type", "unknown")
@@ -199,8 +210,37 @@ async def stripe_webhook(request: Request, session: Session = Depends(get_sessio
         elif etype == "checkout.session.async_payment_failed":
             status = "failed"
         else:
-            paid = obj.get("payment_status") in {"paid", "no_payment_required"}
-            status = "paid" if paid else "pending"
+            payment_status = obj.get("payment_status")
+            if payment_status == "paid":
+                status = "paid"
+            elif payment_status == "no_payment_required":
+                # Zero-total purchases are opt-in. A "no_payment_required" status
+                # alone must not create a paid order for a normal priced SKU.
+                metadata_for_zero = obj.get("metadata") or {}
+                zero_ref = str(metadata_for_zero.get("cg_order_ref") or "").strip()
+                zero_order = (
+                    session.scalar(select(CommercialOrder).where(CommercialOrder.order_ref == zero_ref))
+                    if zero_ref else None
+                )
+                zero_allowed = (
+                    get_settings().stripe_allow_zero_total_orders
+                    and int(obj.get("amount_total") or 0) == 0
+                    and zero_order is not None
+                    and Decimal(zero_order.amount) == Decimal("0")
+                    and (obj.get("currency") or zero_order.currency).upper() == zero_order.currency.upper()
+                )
+                status = "paid" if zero_allowed else "failed"
+                if not zero_allowed:
+                    log_event(
+                        session,
+                        actor="stripe",
+                        action="zero_total_checkout_refused",
+                        target=str(obj.get("id") or ""),
+                        payload={"event": etype},
+                        result="flagged",
+                    )
+            else:
+                status = "pending"
 
         environment = "live" if bool(event.get("livemode")) else "test"
         customer_email = (
