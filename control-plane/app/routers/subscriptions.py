@@ -15,7 +15,6 @@ from ..db import get_session
 from ..security import rate_limit
 
 router = APIRouter(prefix="/subscriptions", tags=["subscriptions"])
-_webhook_throttle = rate_limit("stripe_subscription_webhook", "rate_limit_webhook_per_minute")
 # The portal is unauthenticated by design (the customer has no account with us),
 # and each call costs a Stripe API round-trip, so it carries the same per-IP
 # throttle as /billing/portal. Without it an anonymous caller can pin the
@@ -197,12 +196,11 @@ def subscription_status(
     }
 
 
-@router.post("/webhook", dependencies=[Depends(_webhook_throttle)])
 async def subscription_webhook(
     request: Request,
     session: Session = Depends(get_session),
 ) -> dict[str, object]:
-    """Verify and durably synchronize Stripe subscription lifecycle events."""
+    """Internal transactional handler invoked by the durable inbox worker."""
     payload = await request.body()
     internal_event_id = request.scope.get("clearglass_verified_stripe_event_id")
     if internal_event_id:
