@@ -27,19 +27,28 @@ _webhook_throttle = rate_limit("stripe_payment_ops_ingress", "rate_limit_webhook
 
 
 def _expected_livemode() -> bool | None:
-    """Resolve the configured mode without ever guessing from event contents."""
+    """Resolve the configured mode and fail if an explicit setting conflicts with its key."""
     settings = get_settings()
     explicit = settings.stripe_expected_livemode.strip().lower()
     if explicit in {"live", "true", "1"}:
-        return True
-    if explicit in {"test", "false", "0"}:
-        return False
+        configured: bool | None = True
+    elif explicit in {"test", "false", "0"}:
+        configured = False
+    elif not explicit:
+        configured = None
+    else:
+        raise HTTPException(status_code=503, detail="Stripe expected environment configuration is invalid")
+
     key = settings.stripe_secret_key.strip()
     if key.startswith(("sk_live_", "rk_live_")):
-        return True
-    if key.startswith(("sk_test_", "rk_test_")):
-        return False
-    return None
+        key_mode: bool | None = True
+    elif key.startswith(("sk_test_", "rk_test_")):
+        key_mode = False
+    else:
+        key_mode = None
+    if configured is not None and key_mode is not None and configured is not key_mode:
+        raise HTTPException(status_code=503, detail="Stripe key conflicts with the configured environment")
+    return configured if configured is not None else key_mode
 
 
 def _signature_check(payload: bytes, signature: str) -> tuple[dict, str]:
