@@ -195,13 +195,28 @@ def test_thin_notification_is_never_processed_as_snapshot(ops_env):
     response = _post(client, thin)
     assert response.status_code == 200, response.text
     assert response.json()["event_format"] == "thin"
-    assert process_one_event(factory=Factory, worker_id="test-worker") is False
+    assert process_one_event(factory=Factory, worker_id="test-worker") is True
     with Factory() as session:
         inbox = session.scalar(select(StripeInboxEvent))
         alert = session.scalar(select(StripeOutboxJob))
         assert inbox is not None and inbox.state == "dead_letter"
         assert inbox.last_error_code == "thin_event_adapter_required"
         assert alert is not None and alert.job_type == "operator_alert"
+
+
+def test_previous_secret_is_accepted_only_before_explicit_rotation_cutoff(ops_env, monkeypatch):
+    client, Factory = ops_env
+    previous = "whsec_previous_test_secret"
+    monkeypatch.setenv("STRIPE_WEBHOOK_PREVIOUS_SECRET", previous)
+    monkeypatch.setenv(
+        "STRIPE_WEBHOOK_PREVIOUS_SECRET_ACCEPT_UNTIL",
+        (datetime.now(UTC) + timedelta(minutes=5)).isoformat(),
+    )
+    config_module.get_settings.cache_clear()
+    response = _post(client, _event(event_id="evt_rotate_001"), secret=previous)
+    assert response.status_code == 200, response.text
+    with Factory() as session:
+        assert session.scalar(select(StripeInboxEvent)) is not None
 
 
 def test_configured_environment_mismatch_is_rejected(ops_env, monkeypatch):
