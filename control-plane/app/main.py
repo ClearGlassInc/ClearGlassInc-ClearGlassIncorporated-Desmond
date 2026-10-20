@@ -25,6 +25,7 @@ from .routers import (
     sidestore,
     store,
     subscriptions,
+    stripe_inbox,
 )
 from .security import (
     auth_enabled,
@@ -150,6 +151,9 @@ def create_app() -> FastAPI:
     # so an open GET /events let anyone count leads and read sales as they happened.
     admin = [Depends(require_admin)]
     app.include_router(store.router, dependencies=admin)
+    # Register the durable ingress before the legacy route implementations.
+    # Both Stripe webhook URLs now share one inbox and one processing transaction.
+    app.include_router(stripe_inbox.router)
     app.include_router(payments.router)  # per-endpoint: only the refund is gated (see router)
     # PayPal mixes surfaces the same way: creating an order is a customer flow, the
     # webhook authenticates by PayPal's signature, and the capture (which moves
