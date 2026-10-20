@@ -88,6 +88,7 @@ def env(monkeypatch):
             session.close()
 
     app = create_app()
+    app.state.test_session_factory = Factory
     app.dependency_overrides[db_module.get_session] = override_session
     yield TestClient(app, raise_server_exceptions=False), Factory
     config_module.get_settings.cache_clear()
@@ -111,7 +112,13 @@ def _stripe(client, etype: str, obj: dict, *, livemode: bool = True, sign: bool 
     body = json.dumps({"id": f"evt_{obj.get('id')}_{etype}", "type": etype, "livemode": livemode,
                        "data": {"object": obj}}).encode()
     headers = {"stripe-signature": payments.sign_payload(body, _SECRET)} if sign else {}
-    return client.post("/webhooks/stripe", content=body, headers=headers)
+    response = client.post("/webhooks/stripe", content=body, headers=headers)
+    # Production ingress is asynchronous by design; the integration test drains one
+    # durable job after receipt instead of relying on work inside the HTTP request.
+    if response.status_code == 200 and not response.json().get("duplicate", False):
+        from app.stripe_worker import process_one_event
+        process_one_event(factory=client.app.state.test_session_factory, worker_id="pytest-commerce")
+    return response
 
 
 def _stripe_paid(client, ref: str, *, amount: int = 29700, session_id: str = "cs_live_1",
