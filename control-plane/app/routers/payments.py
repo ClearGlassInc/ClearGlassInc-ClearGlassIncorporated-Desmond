@@ -282,9 +282,7 @@ async def stripe_webhook(request: Request, session: Session = Depends(get_sessio
                     lead = session.get(Lead, commercial_order.lead_id)
                     expected_email = str(getattr(lead, "email", "") or "").strip().lower() if lead else ""
                     delivered_email = str(customer_email or "").strip().lower()
-                    if expected_email and not delivered_email:
-                        association_issues.append("checkout_customer_email_missing")
-                    elif expected_email and delivered_email and expected_email != delivered_email:
+                    if expected_email and delivered_email and expected_email != delivered_email:
                         association_issues.append("checkout_customer_email_mismatch")
                 if association_issues:
                     # Keep verified money in the ledger, but hold this order's
