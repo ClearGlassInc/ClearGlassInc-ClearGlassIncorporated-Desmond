@@ -242,8 +242,8 @@ def replay_dead_letter(
         raise HTTPException(status_code=404, detail="Inbox event not found")
     if row.state != "dead_letter":
         raise HTTPException(status_code=409, detail="Only dead-letter events may be replayed")
-    if row.event_format != "snapshot" or not row.raw_payload:
-        raise HTTPException(status_code=409, detail="This event format cannot be replayed by the snapshot worker")
+    if not row.raw_payload:
+        raise HTTPException(status_code=409, detail="The retained event payload has expired; reconcile it from Stripe instead")
     row.state = "retry"
     row.next_attempt_at = datetime.now(UTC)
     row.last_error_code = None
