@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
+import json
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
@@ -203,10 +204,20 @@ async def subscription_webhook(
 ) -> dict[str, object]:
     """Verify and durably synchronize Stripe subscription lifecycle events."""
     payload = await request.body()
-    signature = request.headers.get("stripe-signature", "")
-    check = payments.verify_webhook(payload, signature)
-    if not check["verified"]:
-        raise HTTPException(status_code=400, detail="invalid Stripe webhook signature")
+    internal_event_id = request.scope.get("clearglass_verified_stripe_event_id")
+    if internal_event_id:
+        try:
+            event = json.loads(payload.decode("utf-8"))
+        except (ValueError, UnicodeDecodeError) as exc:
+            raise HTTPException(status_code=500, detail="Durable inbox payload is invalid") from exc
+        if str(event.get("id") or "") != str(internal_event_id):
+            raise HTTPException(status_code=500, detail="Durable inbox event identity mismatch")
+        check = {"verified": True, "event": event, "reason": "durable-inbox"}
+    else:
+        signature = request.headers.get("stripe-signature", "")
+        check = payments.verify_webhook(payload, signature)
+        if not check["verified"]:
+            raise HTTPException(status_code=400, detail="invalid Stripe webhook signature")
 
     event = check["event"]
     event_id = str(event.get("id") or "")
@@ -224,7 +235,6 @@ async def subscription_webhook(
             payload={"event": event_type},
             result="skipped",
         )
-        session.commit()
         return {"received": True, "duplicate": True, "type": event_type}
 
     obj = (event.get("data") or {}).get("object") or {}
@@ -300,5 +310,4 @@ async def subscription_webhook(
             # so dunning surfaces in the same query as the rest of them.
             result="executed" if event_type == "invoice.paid" else "flagged",
         )
-    session.commit()
     return {"received": True, "duplicate": False, "type": event_type}
