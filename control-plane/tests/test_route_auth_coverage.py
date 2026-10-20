@@ -54,9 +54,9 @@ EXEMPT: dict[str, str] = {
         "pay. Rate limited per IP."
     ),
     "/webhooks/stripe": (
-        "Stripe webhook. Authenticated by Stripe's signature, which an operator "
-        "credential cannot substitute for. Idempotent on redelivery via "
-        "orders.external_ref. Rate limited per IP."
+        "Stripe webhook. Authenticated by Stripe's signature; the public route only "
+        "persists the raw verified event into a unique account-scoped durable inbox "
+        "and acknowledges after commit. Business effects run in the leased worker."
     ),
     "/sentinel/ask": (
         "Sentinel Core's model endpoint for the public console, which runs on a static "
@@ -92,10 +92,9 @@ EXEMPT: dict[str, str] = {
         "per IP."
     ),
     "/subscriptions/webhook": (
-        "Stripe subscription-lifecycle webhook. Stricter than /webhooks/stripe: it "
-        "refuses any event whose signature does not verify, including when no "
-        "webhook secret is configured, so it cannot run open. Idempotent on "
-        "redelivery via the processed-event table. Rate limited per IP."
+        "Compatibility URL for Stripe lifecycle events. Uses the same fail-closed, "
+        "signature-verified durable inbox as /webhooks/stripe; returns success only "
+        "after persisted receipt and defers lifecycle changes to the worker."
     ),
     "/subscriptions/portal": (
         "Customer billing portal for a subscription. Same contract as "
