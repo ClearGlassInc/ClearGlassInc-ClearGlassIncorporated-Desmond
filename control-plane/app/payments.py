@@ -377,6 +377,27 @@ def verify_webhook(
     if tolerance and abs(int(time.time()) - ts_int) > tolerance:
         return {"verified": False, "event": event, "reason": "timestamp outside tolerance"}
 
+    # Prefer Stripe's official SDK verifier in deployed environments. The stdlib
+    # implementation below is retained solely for minimal offline/dev installations.
+    try:
+        try:
+            import stripe
+        except ImportError:
+            stripe = None
+        if stripe is not None:
+            verifier = getattr(stripe, "WebhookSignature", None)
+            if verifier is None:
+                from stripe._webhook import WebhookSignature as verifier
+            verifier.verify_header(payload, sig_header, secret, tolerance)
+            return {"verified": True, "event": event, "reason": "ok"}
+    except ImportError:
+        # SDK not installed; fall through to the compatible HMAC implementation.
+        pass
+    except Exception as exc:
+        message = str(exc).lower()
+        reason = "timestamp outside tolerance" if "timestamp" in message and ("tolerance" in message or "outside" in message) else "signature verification failed"
+        return {"verified": False, "event": event, "reason": reason}
+
     signed = f"{ts}.".encode() + payload
     expected = hmac.new(secret.encode(), signed, hashlib.sha256).hexdigest()
     verified = hmac.compare_digest(expected, given)
