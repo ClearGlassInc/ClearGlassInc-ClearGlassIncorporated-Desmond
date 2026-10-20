@@ -68,6 +68,18 @@ class Settings(BaseSettings):
     stripe_secret_key: str = ""
     stripe_webhook_secret: str = ""
     stripe_publishable_key: str = ""
+    # Optional Stripe Connect account fence. Empty is the platform account only.
+    stripe_account_id: str = ""
+    # Explicit expected environment is used if the API key prefix cannot identify it.
+    stripe_expected_livemode: str = ""
+    # A previous endpoint secret is accepted only until this explicit UTC ISO-8601 cutoff.
+    stripe_webhook_previous_secret: str = ""
+    stripe_webhook_previous_secret_accept_until: str = ""
+    stripe_allow_zero_total_orders: bool = False
+    stripe_webhook_max_payload_bytes: int = 1048576
+    stripe_event_lease_seconds: int = 60
+    stripe_event_max_attempts: int = 12
+    stripe_outbox_max_attempts: int = 10
 
     # ── PayPal Orders v2 (second customer-facing processor) ─────────────────
     # Unset client id/secret = mock mode: no order is created at PayPal and no
