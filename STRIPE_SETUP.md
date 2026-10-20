@@ -104,7 +104,7 @@ Each of these is a human step; none can be done from code.
 | Variable | Required | Purpose |
 |---|---|---|
 | `STRIPE_SECRET_KEY` | to leave mock mode | Unset ⇒ deterministic mock sessions, no network |
-| `STRIPE_WEBHOOK_SECRET` | **yes, in production** | Unset ⇒ webhooks are accepted but marked unverified |
+| `STRIPE_WEBHOOK_SECRET` | **required to receive Stripe events** | Missing ⇒ webhook ingress returns 503; production also fails startup if Stripe API access is configured without the secret |
 | `STRIPE_PUBLISHABLE_KEY` | no | Not used by the hosted-page flow |
 | `STRIPE_AUTOMATIC_TAX` | no (default off) | `true` turns on Stripe Tax; requires §3.5 first |
 | `STRIPE_PORTAL_RETURN_URL` | yes for subscriptions in production | Return destination after the hosted customer portal |
@@ -113,11 +113,10 @@ Each of these is a human step; none can be done from code.
 | `CHECKOUT_SUCCESS_URL` / `CHECKOUT_CANCEL_URL` | yes in production | `{CHECKOUT_SESSION_ID}` is appended automatically if absent |
 | `PAYOUT_EXTERNAL_ACCOUNT_ID` | for payout reconciliation | Stripe `ba_…` token |
 
-`STRIPE_WEBHOOK_SECRET` being unset is a hard production blocker: `verify_webhook` returns
-`verified: false`, and the webhook route rejects that event whenever a Stripe key is configured
-or `APP_ENV` is production. In development mock mode (no Stripe key and non-production), the
-route retains the offline fixture behavior. Production must therefore have
-`STRIPE_WEBHOOK_SECRET` configured before signed webhook processing can succeed.
+`STRIPE_WEBHOOK_SECRET` is mandatory for the shared durable inbox: if it is missing, ingress
+returns `503`; an unsigned event can never reach payment booking, including in development.
+When `APP_ENV` is production and a Stripe API key is configured, startup also fails closed if
+the webhook secret is absent. Test traffic must use a signed Stripe CLI/test endpoint secret.
 
 ## 5. Webhooks to configure
 
@@ -143,15 +142,25 @@ Handling is idempotent on redelivery: orders key on `orders.external_ref`, payou
 that matches no order is flagged (`refund_unmatched`, `dispute_unmatched`), never dropped.
 A refunded order is never promoted back to `paid` by a late settlement event.
 
-Subscription lifecycle events go to a **second** endpoint, `/subscriptions/webhook`,
-which de-duplicates on the Stripe event id (`stripe_events`). Register both.
+Both historical Stripe URLs now enter the **same durable inbox**:
+`/webhooks/stripe` and `/subscriptions/webhook`. Register whichever endpoints are needed
+for the account, but ensure both use this release's shared ingress. A verified event is stored
+before the endpoint returns 2xx; a separate worker executes payment/subscription changes and
+outbox tasks. See [Stripe Payment Operations](control-plane/docs/STRIPE_PAYMENT_OPERATIONS.md)
+for the migration, worker, retry/dead-letter, retention and reconciliation runbooks.
 
 Local testing:
 
 ```bash
+cd control-plane
 stripe listen --forward-to localhost:8000/webhooks/stripe
+# Use the whsec_ value printed by Stripe CLI as STRIPE_WEBHOOK_SECRET in the API environment.
 stripe trigger checkout.session.completed
+python -m app.stripe_worker --once
 ```
+
+Do not interpret webhook 2xx as completed fulfillment. It means the verified event was durably
+accepted. Check inbox state, order ledger and the service-order/approval state separately.
 
 Enable Stripe's hosted **Customer portal** in Dashboard → Settings → Billing →
 Customer portal. `POST /billing/portal` accepts only the Checkout Session id returned
