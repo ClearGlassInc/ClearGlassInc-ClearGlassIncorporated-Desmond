@@ -179,6 +179,11 @@ def webhook_client(monkeypatch):
 
     monkeypatch.setattr(security, "_limiter", security.SlidingWindowLimiter())
     monkeypatch.setattr(payments, "_webhook_secret", lambda: _WEBHOOK_SECRET)
+    monkeypatch.setenv("APP_ENV", "development")
+    monkeypatch.setenv("STRIPE_SECRET_KEY", "")
+    monkeypatch.setenv("STRIPE_EXPECTED_LIVEMODE", "")
+    from app import config as config_module
+    config_module.get_settings.cache_clear()
 
     engine = create_engine(
         "sqlite://", future=True,
@@ -235,6 +240,7 @@ def webhook_client(monkeypatch):
             session.close()
 
     app = create_app()
+    app.state.test_session_factory = TestingSession
     app.dependency_overrides[db_module.get_session] = override_session
     return TestClient(app), TestingSession
 
@@ -245,12 +251,17 @@ def _post_event(client, event: dict):
 
     from app import payments
 
+    event.setdefault("livemode", False)
     body = json.dumps(event).encode()
-    return client.post(
+    response = client.post(
         "/subscriptions/webhook",
         content=body,
         headers={"stripe-signature": payments.sign_payload(body, _WEBHOOK_SECRET)},
     )
+    if response.status_code == 200 and not response.json().get("duplicate", False):
+        from app.stripe_worker import process_one_event
+        process_one_event(factory=client.app.state.test_session_factory, worker_id="pytest-subscriptions")
+    return response
 
 
 def _ledger(SessionFactory, action: str | None = None) -> list:
