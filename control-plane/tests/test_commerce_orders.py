@@ -431,6 +431,31 @@ def test_async_payment_is_processing_until_it_settles(env) -> None:
     assert _status(client, ref)["payment_state"] == "PAID"
 
 
+def test_late_async_failure_cannot_downgrade_an_already_paid_order(env) -> None:
+    """Out-of-order failure events must not reverse a confirmed settlement."""
+    client, Factory = env
+    ref = _new_order(client)["order_ref"]
+    _checkout(client, ref)
+    _stripe_paid(client, ref)
+    assert _status(client, ref)["payment_state"] == "PAID"
+
+    _stripe(client, "checkout.session.async_payment_failed", {
+        "id": "cs_live_1",
+        "payment_intent": "pi_1",
+        "payment_status": "unpaid",
+        "amount_total": 29700,
+        "currency": "cad",
+        "metadata": {"cg_order_ref": ref},
+    })
+
+    assert _status(client, ref)["payment_state"] == "PAID"
+    with Factory() as session:
+        payment = session.scalar(select(Order))
+        assert payment.status == "paid"
+    assert "late_non_settlement_after_paid_skipped" in _actions(Factory)
+    assert _count(Factory, ServiceOrder) == 1
+
+
 # --- one order, one payment ---------------------------------------------------------
 
 
