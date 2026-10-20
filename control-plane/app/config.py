@@ -80,6 +80,7 @@ class Settings(BaseSettings):
     stripe_event_lease_seconds: int = 60
     stripe_event_max_attempts: int = 12
     stripe_outbox_max_attempts: int = 10
+    stripe_payload_retention_days: int = 30
 
     # ── PayPal Orders v2 (second customer-facing processor) ─────────────────
     # Unset client id/secret = mock mode: no order is created at PayPal and no
