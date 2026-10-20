@@ -341,7 +341,13 @@ def sign_payload(payload: bytes, secret: str, timestamp: int | None = None) -> s
     return f"t={ts},v1={sig}"
 
 
-def verify_webhook(payload: bytes, sig_header: str, *, tolerance: int = 300) -> dict[str, Any]:
+def verify_webhook(
+    payload: bytes,
+    sig_header: str,
+    *,
+    tolerance: int = 300,
+    secret_override: str | None = None,
+) -> dict[str, Any]:
     """Verify a Stripe webhook signature and return ``{"verified": bool, "event": dict}``.
 
     When no webhook secret is configured (dev), the payload is parsed but marked unverified so
@@ -352,7 +358,7 @@ def verify_webhook(payload: bytes, sig_header: str, *, tolerance: int = 300) -> 
     except (ValueError, UnicodeDecodeError):
         return {"verified": False, "event": {}, "reason": "unparseable payload"}
 
-    secret = _webhook_secret()
+    secret = secret_override if secret_override is not None else _webhook_secret()
     if not secret:
         return {"verified": False, "event": event, "reason": "no webhook secret configured"}
 
