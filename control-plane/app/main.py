@@ -41,6 +41,15 @@ def create_app() -> FastAPI:
     settings = get_settings()
     # Refuse to boot a production control plane with an unauthenticated admin surface.
     verify_startup_posture(settings)
+    # If Stripe charging is enabled, unsigned webhook processing must never be a
+    # fallback path. A disabled Stripe integration (no API key) may leave the rest
+    # of the control plane running, but its ingress returns 503 until configured.
+    if (
+        settings.app_env.strip().lower() in {"production", "prod"}
+        and settings.stripe_secret_key
+        and not settings.stripe_webhook_secret
+    ):
+        raise RuntimeError("STRIPE_WEBHOOK_SECRET is required when Stripe is enabled in production")
     if settings.run_migrations:
         # Before create_all, so the SQL files (server defaults, the events
         # append-only trigger) define any table they cover.
