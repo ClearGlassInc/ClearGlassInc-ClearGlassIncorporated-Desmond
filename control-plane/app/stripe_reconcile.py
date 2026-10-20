@@ -218,6 +218,7 @@ def reconcile_paid_checkouts(*, limit: int = 200, factory=SessionLocal) -> dict[
     if not expected_live:
         return {"checked": 0, "mismatches": 0, "skipped": 0}
     account = settings.stripe_account_id.strip() or None
+    cutoff = _now() - timedelta(minutes=5)
     with factory() as session:
         orders = session.execute(
             select(
@@ -227,14 +228,14 @@ def reconcile_paid_checkouts(*, limit: int = 200, factory=SessionLocal) -> dict[
                 CommercialOrder.currency,
                 CommercialOrder.payment_order_id,
                 CommercialOrder.payment_state,
-                CommercialOrder.reconciliation_required,
                 CommercialOrder.created_at,
             ).where(
                 CommercialOrder.provider == "stripe",
                 CommercialOrder.environment == "live",
                 CommercialOrder.provider_checkout_ref.is_not(None),
-                CommercialOrder.payment_state.in_({"PAID", "PARTIALLY_REFUNDED", "REFUNDED", "DISPUTED", "CHARGEBACK"}),
-            ).order_by(CommercialOrder.created_at.desc()).limit(max(1, min(limit, 500))
+                CommercialOrder.reconciliation_required.is_(False),
+                CommercialOrder.created_at < cutoff,
+            ).order_by(CommercialOrder.created_at.desc()).limit(max(1, min(limit, 200))
         ).all()
 
     checked = mismatches = skipped = 0
@@ -257,15 +258,35 @@ def reconcile_paid_checkouts(*, limit: int = 200, factory=SessionLocal) -> dict[
             continue
         checked += 1
         issues: list[str] = []
-        if current.get("payment_status") not in {"paid", "no_payment_required"}:
-            issues.append("STRIPE_SESSION_NOT_PAID")
-        if (current.get("client_reference_id") or "") != order_ref:
+        status = str(record.payment_state or "")
+        settled_local = status in {"PAID", "PARTIALLY_REFUNDED", "REFUNDED", "DISPUTED", "CHARGEBACK"}
+        amount_total = current.get("amount_total")
+        stripe_paid = current.get("payment_status") == "paid"
+        zero_total_allowed = (
+            current.get("payment_status") == "no_payment_required"
+            and settings.stripe_allow_zero_total_orders
+            and amount_total is not None and int(amount_total) == 0
+            and Decimal(record.amount) == Decimal("0")
+        )
+        if settled_local and not (stripe_paid or zero_total_allowed):
+            issues.append("LOCAL_ORDER_PAID_BUT_STRIPE_NOT_PAID")
+        elif not settled_local and (stripe_paid or zero_total_allowed):
+            # The event backfill may already have a verified job in progress; defer
+            # the alert rather than racing the worker that repairs the omission.
+            with factory() as session:
+                active_job = session.scalar(select(StripeInboxEvent.id).where(
+                    StripeInboxEvent.related_object_id == str(session_id),
+                    StripeInboxEvent.state.in_({"pending", "processing", "retry"}),
+                ).limit(1))
+            if active_job is None:
+                issues.append("STRIPE_PAID_BUT_LOCAL_ORDER_NOT_PAID")
+        client_ref = str(current.get("client_reference_id") or "")
+        if client_ref and client_ref != order_ref and not client_ref.startswith("crcs-"):
             issues.append("CHECKOUT_ORDER_REFERENCE_MISMATCH")
         if ((current.get("metadata") or {}).get("cg_order_ref") or "") != order_ref:
             issues.append("CHECKOUT_METADATA_MISMATCH")
         if str(current.get("currency") or "").upper() != str(record.currency or "").upper():
             issues.append("CHECKOUT_CURRENCY_MISMATCH")
-        amount_total = current.get("amount_total")
         if amount_total is None:
             issues.append("CHECKOUT_AMOUNT_MISSING")
         elif record.payment_order_id is not None:
