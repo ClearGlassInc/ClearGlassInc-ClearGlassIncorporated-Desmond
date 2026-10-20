@@ -112,6 +112,30 @@ def record_payment_order(
     )
 
     if existing is not None:
+        # Late, out-of-order non-settlement notifications must never downgrade money
+        # already confirmed paid. The Stripe API refresh is an additional safeguard,
+        # not a prerequisite for preserving this monotonic local ledger invariant.
+        if existing.status == "paid" and status in {"pending", "failed"}:
+            log_event(
+                session,
+                actor=actor,
+                action="late_non_settlement_after_paid_skipped",
+                target=str(existing.id),
+                payload={"verified": verified, "external_ref": external_ref, "event": event,
+                         "current_status": existing.status, "incoming_status": status},
+                result="skipped",
+            )
+            return None
+        if existing.status == "failed" and status == "pending":
+            log_event(
+                session,
+                actor=actor,
+                action="late_pending_after_failure_skipped",
+                target=str(existing.id),
+                payload={"verified": verified, "external_ref": external_ref, "event": event},
+                result="skipped",
+            )
+            return None
         # A refund is final. Without this, a redelivered or late settlement event
         # (status "paid" != "refunded") would promote the order back to paid and
         # count the returned money as revenue again.
