@@ -33,7 +33,6 @@ from ..revenue_service import provision_paid_service, upsert_customer_for_order
 router = APIRouter(tags=["payments"])
 
 _checkout_throttle = rate_limit("checkout", "rate_limit_checkout_per_minute")
-_webhook_throttle = rate_limit("stripe_webhook", "rate_limit_webhook_per_minute")
 
 #: Checkout events that decide whether an order's money actually arrived.
 CHECKOUT_SETTLEMENT_EVENTS = frozenset(
@@ -177,9 +176,8 @@ def create_billing_portal(req: BillingPortalRequest, session: Session = Depends(
     return BillingPortalOut(**result)
 
 
-@router.post("/webhooks/stripe", dependencies=[Depends(_webhook_throttle)])
 async def stripe_webhook(request: Request, session: Session = Depends(get_session)) -> dict:
-    """Ingest Stripe webhook events. Signature is verified when a webhook secret is configured."""
+    """Internal handler called only by the durable inbox worker after ingress verification."""
     payload = await request.body()
     internal_event_id = request.scope.get("clearglass_verified_stripe_event_id")
     if internal_event_id:
