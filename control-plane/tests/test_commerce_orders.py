@@ -361,17 +361,22 @@ def test_a_verified_live_stripe_payment_pays_the_order_and_opens_delivery(env) -
         assert payment.order_ref == ref and payment.environment == "live"
 
 
-def test_an_unsigned_stripe_event_cannot_pay_an_order(env, monkeypatch) -> None:
-    """With no webhook secret (dev), the ledger records what it is told; the order does not move."""
+def test_missing_stripe_webhook_secret_fails_closed_even_in_development(env, monkeypatch) -> None:
+    """Missing verifier configuration must not acknowledge an unverified payment."""
     client, Factory = env
     ref = _new_order(client)["order_ref"]
     _checkout(client, ref)
     monkeypatch.setattr(payments, "_webhook_secret", lambda: "")
-    monkeypatch.delenv("STRIPE_SECRET_KEY", raising=False)
+    monkeypatch.setenv("STRIPE_SECRET_KEY", "")
     monkeypatch.setenv("APP_ENV", "development")
-    _stripe_paid(client, ref)
+    config_module.get_settings.cache_clear()
+    response = _stripe(client, "checkout.session.completed", {
+        "id": "cs_unverified", "payment_status": "paid", "amount_total": 29700,
+        "currency": "cad", "metadata": {"cg_order_ref": ref},
+    })
+    assert response.status_code == 503
     assert _status(client, ref)["payment_state"] == "CHECKOUT_STARTED"
-    assert "unverified_payment_not_applied" in _actions(Factory)
+    assert _count(Factory, Order) == 0
     assert _count(Factory, ServiceOrder) == 0
 
 
