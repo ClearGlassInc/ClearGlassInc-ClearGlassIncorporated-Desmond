@@ -140,7 +140,9 @@ async def _ingest(request: Request, session: Session) -> dict[str, object]:
         verified_at=datetime.now(UTC),
         payload_sha256=hashlib.sha256(payload).hexdigest(),
         raw_payload=payload.decode("utf-8"),
-        state="pending" if event_format == "snapshot" else "dead_letter",
+        # Persist thin notifications too. The worker will explicitly dead-letter
+        # them with a sanitized operator alert instead of parsing them as snapshots.
+        state="pending",
         last_error_code=None if event_format == "snapshot" else "thin_event_adapter_required",
     )
 
