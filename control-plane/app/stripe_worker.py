@@ -91,17 +91,6 @@ def _claim_event(factory: sessionmaker, worker: str) -> dict[str, Any] | None:
         )
         if row is None:
             return None
-        if row.event_format != "snapshot" or not row.raw_payload:
-            row.state, row.last_error_code = "dead_letter", "thin_event_adapter_required"
-            row.lease_owner = row.lease_expires_at = None
-            row.updated_at = now
-            _enqueue_alert(session, f"stripe-event:{row.stripe_event_id}:thin-event", {
-                "event_id": row.stripe_event_id, "event_type": row.event_type,
-                "error_code": "thin_event_adapter_required",
-                "summary": "Verified Stripe thin notification needs a dedicated adapter before processing.",
-            })
-            session.commit()
-            return None
         row.state = "processing"
         row.attempt_count += 1
         row.fencing_token += 1
@@ -111,11 +100,54 @@ def _claim_event(factory: sessionmaker, worker: str) -> dict[str, Any] | None:
         result = {
             "id": row.id, "event_id": row.stripe_event_id, "event_type": row.event_type,
             "account_scope": row.account_scope, "livemode": row.livemode,
-            "payload": row.raw_payload, "attempt_count": row.attempt_count,
-            "fencing_token": row.fencing_token, "lease_owner": worker,
+            "payload": row.raw_payload, "event_format": row.event_format,
+            "attempt_count": row.attempt_count, "fencing_token": row.fencing_token, "lease_owner": worker,
         }
         session.commit()
         return result
+
+
+def _expand_thin_event(event: dict[str, Any], payload: bytes) -> dict[str, Any]:
+    """Use Stripe's official thin-notification parser and authenticated API read."""
+    settings = get_settings()
+    if not settings.stripe_secret_key:
+        raise PermanentProcessingError("stripe_api_key_required_for_thin_event")
+    import inspect
+    import stripe
+
+    client = stripe.StripeClient(settings.stripe_secret_key)
+    try:
+        notification = client.parse_event_notification_without_verification(payload)
+        fetched = notification.fetch_event() if hasattr(notification, "fetch_event") else None
+        if inspect.isawaitable(fetched):
+            fetched = asyncio.run(fetched)
+        if fetched is not None:
+            full = fetched.to_dict_recursive() if hasattr(fetched, "to_dict_recursive") else dict(fetched)
+            data = full.get("data") if isinstance(full, dict) else None
+            obj = data.get("object") if isinstance(data, dict) else None
+            if isinstance(obj, dict):
+                if str(full.get("id") or event.get("id")) != str(event.get("id")):
+                    raise PermanentProcessingError("thin_event_identity_mismatch")
+                full["id"] = str(event.get("id"))
+                full["type"] = str(event.get("type") or full.get("type") or "")
+                full["livemode"] = bool(event.get("livemode"))
+                return full
+
+        related = notification.fetch_related_object() if hasattr(notification, "fetch_related_object") else None
+        if inspect.isawaitable(related):
+            related = asyncio.run(related)
+        if related is None:
+            raise PermanentProcessingError("thin_event_has_no_fetchable_object")
+        obj = related.to_dict_recursive() if hasattr(related, "to_dict_recursive") else dict(related)
+        if not isinstance(obj, dict) or not obj.get("id"):
+            raise PermanentProcessingError("thin_event_related_object_invalid")
+        expanded = dict(event)
+        expanded["data"] = {"object": obj}
+        return expanded
+    except PermanentProcessingError:
+        raise
+    except Exception as exc:
+        raise RuntimeError(f"thin_event_fetch_failed:{type(exc).__name__}") from exc
 
 
 def _refresh_current(event: dict[str, Any], account_scope: str) -> dict[str, Any]:
@@ -204,8 +236,12 @@ def process_one_event(factory: sessionmaker = SessionLocal, *, worker_id: str | 
             raise PermanentProcessingError("inbox_event_identity_mismatch")
         if event.get("livemode") is not job["livemode"]:
             raise PermanentProcessingError("inbox_environment_mismatch")
+        if event.get("object") == "v2.core.event" or not isinstance(event.get("data"), dict):
+            if job["event_format"] != "thin":
+                raise PermanentProcessingError("event_format_mismatch")
+            event = _expand_thin_event(event, job["payload"].encode("utf-8"))
         if not isinstance(event.get("data"), dict) or not isinstance(event["data"].get("object"), dict):
-            raise PermanentProcessingError("snapshot_event_data_missing")
+            raise PermanentProcessingError("event_object_missing")
         event = _refresh_current(event, job["account_scope"])
         stale = _stale_failure(event)
         with factory() as session:
