@@ -1,0 +1,19 @@
+name: Fix Environments
+
+on:
+  workflow_dispatch:
+
+jobs:
+  success-staging:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Success
+        run: echo "Staging environment deployment succeeded"
+
+  success-automation-write:
+    runs-on: ubuntu-latest
+    environment: automation-write
+    steps:
+      - name: Success
+        run: echo "automation-write environment deployment succeeded"
