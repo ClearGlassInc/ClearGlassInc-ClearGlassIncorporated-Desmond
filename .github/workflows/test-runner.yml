@@ -6,10 +6,13 @@ name: Test Runner (disabled)
 on:
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   test:
     if: false
     runs-on: ubuntu-latest
+    timeout-minutes: 1
     steps:
       - name: Echo success
         run: echo "Runner is available"
