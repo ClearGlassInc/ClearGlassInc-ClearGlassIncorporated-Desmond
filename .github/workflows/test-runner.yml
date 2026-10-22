@@ -1,10 +1,14 @@
-name: Test Runner
+name: Test Runner (disabled)
+
+# Temporary diagnostic workflow. Disabled after confirming runners are unavailable.
+# Remove this file when Actions is restored.
 
 on:
   workflow_dispatch:
 
 jobs:
   test:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Echo success
