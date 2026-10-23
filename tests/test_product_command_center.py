@@ -147,7 +147,7 @@ class ProductCommandCenterTests(unittest.TestCase):
         for product in noindex_public:
             self.assertNotIn("https://www.clearglassinc.com" + product["publicUrl"], sitemap)
         page = (ROOT / "products.html").read_text(encoding="utf-8")
-        match = re.search(r'<script type="application/ld\\+json">([\\s\\S]*?)</script>', page)
+        match = re.search(r'<script type="application/ld\+json">([\s\S]*?)</script>', page)
         self.assertIsNotNone(match)
         schema = json.loads(match.group(1))
         urls = {row["item"]["url"] for row in schema["mainEntity"]["itemListElement"]}

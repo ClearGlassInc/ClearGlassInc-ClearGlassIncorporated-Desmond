@@ -145,7 +145,7 @@ def test_the_honeypot_answers_like_a_real_submission_and_stores_nothing(client) 
     assert len(lead_events) == 1
 
 
-def test_the_public_offer_is_priced_from_the_price_book(client) -> None:
+def test_the_public_offer_is_priced_from_the_price_book(client, crcs_offer_on_sale) -> None:
     response = client.get("/revenue/public-offer")
     assert response.status_code == 200, response.text
     body = response.json()
@@ -154,13 +154,36 @@ def test_the_public_offer_is_priced_from_the_price_book(client) -> None:
     assert body["amount_cad"] == offer.amount / 100
 
 
-def test_checkout_is_refused_until_the_owner_enables_it(client) -> None:
+def test_an_offer_taken_off_sale_is_unavailable_not_sold(client, monkeypatch) -> None:
+    """The committed price book has the CRCS offer off sale (owner, 2026-10-15).
+
+    Even with the payment switch on, that must read as unavailable — the page
+    shows "Offer details could not be loaded" — and must never reach Stripe.
+    """
+    pricebook.reload()
+    with pytest.raises(pricebook.PricebookError):
+        pricebook.get_offer(config_module.get_settings().crcs_first_offer_sku)
+
+    monkeypatch.setenv("CRCS_RAPID_DIAGNOSTIC_ENABLED", "true")
+    config_module.get_settings.cache_clear()
+
+    def never(*_args, **_kwargs):
+        raise AssertionError("an off-sale offer reached the payment processor")
+
+    monkeypatch.setattr(payments, "create_checkout_session", never)
+    assert client.get("/revenue/public-offer").status_code == 503
+    response = client.post("/revenue/checkout", json={"customer_email": "buyer@example.com"})
+    assert response.status_code == 503, response.text
+    assert not [e for e in client.get("/events").json() if "checkout" in e["action"]]
+
+
+def test_checkout_is_refused_until_the_owner_enables_it(client, crcs_offer_on_sale) -> None:
     """Fail closed: live purchase needs an explicit owner decision, not a default."""
     response = client.post("/revenue/checkout", json={"customer_email": "buyer@example.com"})
     assert response.status_code == 409, response.text
 
 
-def test_checkout_does_not_reveal_which_leads_exist(client, monkeypatch) -> None:
+def test_checkout_does_not_reveal_which_leads_exist(client, crcs_offer_on_sale, monkeypatch) -> None:
     """If an unknown reference answered differently from a known reference with
     the wrong email, anyone holding a reference could confirm which address had
     submitted the qualification form."""
@@ -190,7 +213,9 @@ def test_checkout_no_longer_accepts_the_sequential_lead_id(client, monkeypatch) 
 
 
 @pytest.mark.parametrize("payment_link", ["", "https://buy.stripe.com/test_placeholder"])
-def test_checkout_keeps_email_addresses_out_of_the_ledger(client, monkeypatch, payment_link) -> None:
+def test_checkout_keeps_email_addresses_out_of_the_ledger(
+    client, crcs_offer_on_sale, monkeypatch, payment_link
+) -> None:
     """The ledger is append-only and kept for years; it holds IDs, not people.
 
     Both checkout branches are covered: the payment-link branch wrote the

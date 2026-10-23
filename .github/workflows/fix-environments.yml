@@ -3,9 +3,12 @@ name: Fix Environments
 on:
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   success-staging:
     runs-on: ubuntu-latest
+    timeout-minutes: 1
     environment: staging
     steps:
       - name: Success
@@ -13,6 +16,7 @@ jobs:
 
   success-automation-write:
     runs-on: ubuntu-latest
+    timeout-minutes: 1
     environment: automation-write
     steps:
       - name: Success
