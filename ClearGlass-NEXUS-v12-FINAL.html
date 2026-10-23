@@ -466,8 +466,11 @@ body::after{
 #aria{position:fixed;bottom:12px;right:12px;width:300px;
   background:rgba(4,2,0,.97);border:1px solid var(--bdr);border-radius:4px;z-index:500;
   display:flex;flex-direction:column;overflow:hidden;box-shadow:0 0 35px rgba(255,176,0,.06);
-  transform:translateX(360px);transition:transform .38s cubic-bezier(.4,0,.2,1)}
-#aria.on{transform:translateX(0)}
+  transform:translateX(360px);visibility:hidden;
+  /* Closed = off-screen AND out of the tab order / accessibility tree. Visibility
+     flips only after the .38s slide-out, so the closing animation is unchanged. */
+  transition:transform .38s cubic-bezier(.4,0,.2,1),visibility 0s linear .38s}
+#aria.on{transform:translateX(0);visibility:visible;transition:transform .38s cubic-bezier(.4,0,.2,1),visibility 0s}
 .aria-hdr{padding:6px 10px;border-bottom:1px solid var(--bdr2);display:flex;
   align-items:center;justify-content:space-between;background:rgba(255,176,0,.03)}
 .aria-nm{font-size:8px;font-weight:700;letter-spacing:4px;color:var(--am)}

@@ -1605,6 +1605,13 @@ button {
   .pb-price__head { font-size: 17px; }
 }
 
+/* At 409px and below the topbar actions no longer fit beside the title at
+   their 44px touch size (measured: 400px overflowed, 410px fit). Wrap them to
+   a second row there rather than widen the page; wider layouts are unchanged. */
+@media (max-width: 409px) {
+  .pb-topbar { flex-wrap: wrap; row-gap: 8px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }

@@ -143,8 +143,8 @@
   ".cgcs-dot.fail{background:var(--cg-status-fail,#ee6375);box-shadow:0 0 9px var(--cg-status-fail,#ee6375);animation:cgcsPulse 1.1s infinite}" +
   "@keyframes cgcsPulse{0%,100%{opacity:1}50%{opacity:.35}}" +
   ".cgcs-chip .cgcs-st{white-space:nowrap;font-size:11px;letter-spacing:.02em}" +
-  "#cgcs.scrolled .cgcs-chip .cgcs-st{display:none}#cgcs.scrolled .cgcs-chip{padding:0 9px}" +
-  "#cgcs.scrolled .cgcs-cmd .cgcs-cmdlbl{display:none}#cgcs.scrolled .cgcs-cmd{padding:0 10px}" +
+  "#cgcs.scrolled .cgcs-chip .cgcs-st,#cgcs.cgcs-compact .cgcs-chip .cgcs-st{display:none}#cgcs.scrolled .cgcs-chip,#cgcs.cgcs-compact .cgcs-chip{padding:0 9px}" +
+  "#cgcs.scrolled .cgcs-cmd .cgcs-cmdlbl,#cgcs.cgcs-compact .cgcs-cmd .cgcs-cmdlbl{display:none}#cgcs.scrolled .cgcs-cmd,#cgcs.cgcs-compact .cgcs-cmd{padding:0 10px}" +
   // overlay shared
   ".cgcs-ov{position:fixed;inset:0;z-index:2147483640;display:none}" +
   ".cgcs-ov.open{display:block}" +
@@ -269,7 +269,64 @@
     var lastY = 0;
     window.addEventListener("scroll", function () { var y = window.pageYOffset; root.classList.toggle("scrolled", y > 40); lastY = y; }, { passive: true });
 
+    clearPageControls(bar);
+    var fitFrame = 0;
+    window.addEventListener("resize", function () {
+      if (fitFrame) return;
+      fitFrame = requestAnimationFrame(function () { fitFrame = 0; clearPageControls(bar); });
+    }, { passive: true });
+    // Fonts and images can still move the page header after DOMContentLoaded.
+    if (document.readyState !== "complete") window.addEventListener("load", function () { clearPageControls(bar); }, { once: true });
+
     startStatus();
+  }
+
+  // ── keep the bar off the page's own controls ────────────────────────────
+  // The bar is pinned top-right on every page that loads this file. Where a
+  // page's own header already has controls there (a nav CTA, a back link, a
+  // kill switch) the bar sat on top of them and swallowed their clicks: on
+  // 2026-10-23 that was 12 of the 35 pages using it. Try a few placements —
+  // full size then compact, each stepped down below what it covers, never
+  // lower than MAX_TOP — and keep the one covering the fewest page controls.
+  // A placement only replaces the original if it is strictly better, so pages
+  // with nothing in the way are untouched. Runs on load and resize, not scroll.
+  var MAX_TOP = 160;      // px; lower than this the bar would sit in page content
+  var CONTROL_MAX_H = 120; // taller than this is a container, not a control
+  function coveredControls(bar) {
+    var b = bar.getBoundingClientRect(), count = 0, lowest = 0;
+    var els = document.querySelectorAll('a[href],button,input,select,textarea,[role="button"],[tabindex]:not([tabindex="-1"])');
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (root.contains(el)) continue;
+      var r = el.getBoundingClientRect();
+      if (!r.width || !r.height || r.height > CONTROL_MAX_H) continue;
+      if (r.bottom <= b.top || r.top >= b.bottom || r.right <= b.left || r.left >= b.right) continue;
+      if (getComputedStyle(el).visibility !== "visible") continue;
+      count++;
+      if (r.bottom > lowest) lowest = r.bottom;
+    }
+    return { count: count, lowest: lowest };
+  }
+  function clearPageControls(bar) {
+    root.classList.remove("cgcs-compact");
+    bar.style.top = "";
+    var best = { compact: false, top: "", count: coveredControls(bar).count };
+    if (!best.count) return;
+    [false, true].forEach(function (compact) {
+      if (!best.count) return;
+      root.classList.toggle("cgcs-compact", compact);
+      bar.style.top = "";
+      for (var pass = 0; pass < 4; pass++) {
+        var c = coveredControls(bar);
+        if (c.count < best.count) best = { compact: compact, top: bar.style.top, count: c.count };
+        if (!c.count) break;
+        var next = Math.round(c.lowest + 8);
+        if (next > MAX_TOP) break;
+        bar.style.top = next + "px";
+      }
+    });
+    root.classList.toggle("cgcs-compact", best.compact);
+    bar.style.top = best.top;
   }
 
   // ── palette data + render ───────────────────────────────────────────────
