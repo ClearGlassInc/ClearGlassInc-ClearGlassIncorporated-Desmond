@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { distanceNm, tileZoomForRadius, webMercatorPixels } from "@/lib/live-ops/types";
 import type { CameraAsset, FlightAsset, LiveOpsResponse, SatelliteAsset, SourceHealth } from "@/lib/live-ops/types";
 import styles from "./chualar.module.css";
 
