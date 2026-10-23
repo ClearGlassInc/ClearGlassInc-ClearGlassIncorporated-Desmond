@@ -195,3 +195,15 @@ def test_cursor_glow_moves_by_transform() -> None:
     css = _strip_comments(DESIGN.read_text(encoding="utf-8"))
     cursor = re.search(r"\.cg-fx-cursor\s*\{([^}]*)\}", css).group(1)
     assert "transition: transform" in cursor and "left .45s" not in cursor
+
+def test_ui_neon_rgb_tokens_are_namespaced_from_design_system_hex_tokens() -> None:
+    """RGB tuple tokens in ui.css must not collide with hex-valued design tokens."""
+    ui = _strip_comments((ROOT / "ui.css").read_text(encoding="utf-8"))
+    design = _strip_comments(DESIGN.read_text(encoding="utf-8"))
+    for channel in ("cyan", "blue", "violet", "magenta"):
+        rgb_token = f"--cg-ui-neon-{channel}-rgb"
+        legacy_token = f"--cg-neon-{channel}"
+        assert re.search(rf"{re.escape(rgb_token)}\s*:\s*\d+\s*,\s*\d+\s*,\s*\d+\s*;", ui), rgb_token
+        assert f"rgba(var({rgb_token})" in ui, rgb_token
+        assert not re.search(rf"rgba\(\s*var\(\s*{re.escape(legacy_token)}\s*\)", ui), legacy_token
+    assert re.search(r"--cg-neon-cyan\s*:\s*#[0-9a-f]{3,8}\s*;", design, re.IGNORECASE)
