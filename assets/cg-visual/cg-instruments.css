@@ -1,0 +1,374 @@
+/* ClearGlass Visual Engine · in-content instruments.
+ *
+ * Presentation for figure[data-cg-instrument] and the .cg-bridge section
+ * connector. Contract (tests/test_cg_instruments.py):
+ *   - Every colour, font and easing comes from the site's existing tokens
+ *     (--prism-1 / --cgm-signal, --cgm-wine, --text, --text-2, --mono,
+ *     --cgm-ease) through one --cgi-* variable each. The site deliberately
+ *     repainted its "cyan" onto crimson (tokens.css); retarget the signal
+ *     colour by overriding --cgi-signal, not by editing rules.
+ *   - Keyframes animate transform and opacity only.
+ *   - The static state is complete: with no JS, reduced motion, or
+ *     ?cgvisual=off, every instrument still shows its stages, scope and
+ *     values. Motion is never needed to understand a figure.
+ *   - Instruments are self-contained boxes (overflow clipped, sizes reserved
+ *     with aspect-ratio), so nothing can widen the page or shift layout. */
+
+:root {
+  --cgi-signal: var(--cgm-signal, var(--prism-1, #ea4648));
+  --cgi-secondary: var(--cgm-wine, #7a123d);
+  --cgi-text: var(--text, #e7e3e3);
+  --cgi-muted: var(--text-2, #c0afb0);
+  --cgi-line: rgba(255, 255, 255, .12);
+  --cgi-line-strong: rgba(255, 255, 255, .3);
+  --cgi-panel: rgba(9, 9, 12, .64);
+  --cgi-mono: var(--mono, ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace);
+  --cgi-ease: var(--cgm-ease, cubic-bezier(.22, .61, .36, 1));
+  --cgi-signal-soft: rgba(234, 70, 72, .2);
+  --cgi-signal-glow: rgba(234, 70, 72, .5);
+}
+@supports (color: color-mix(in srgb, red 50%, transparent)) {
+  :root {
+    --cgi-signal-soft: color-mix(in srgb, var(--cgi-signal) 20%, transparent);
+    --cgi-signal-glow: color-mix(in srgb, var(--cgi-signal) 50%, transparent);
+  }
+}
+
+/* ── shared instrument frame ─────────────────────────────────────────── */
+.cg-instrument {
+  position: relative;
+  margin: clamp(28px, 4vw, 44px) 0 0;
+  padding: clamp(16px, 2.2vw, 22px);
+  border: 1px solid var(--cgi-line);
+  border-radius: 16px;
+  background: var(--cgi-panel);
+  color: var(--cgi-text);
+  text-align: left;
+  overflow: hidden;
+}
+.cg-instrument__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 14px;
+  margin: 0;
+}
+.cg-instrument__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 700 .68rem/1.2 var(--cgi-mono);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--cgi-muted);
+}
+/* System pulse: a low-frequency sign the figure is running, nothing more. */
+.cg-instrument__kicker::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cgi-signal);
+  opacity: .5;
+}
+.cg-instrument--live .cg-instrument__kicker::before { animation: cgi-pulse 4.8s var(--cgi-ease) infinite; }
+.cg-instrument__title {
+  flex: 1 1 16rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--cgi-text);
+}
+.cg-instrument__mode {
+  font: 600 .64rem/1.2 var(--cgi-mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--cgi-muted);
+  border: 1px solid var(--cgi-line);
+  border-radius: 999px;
+  padding: 4px 9px;
+}
+.cg-instrument__note {
+  margin: 14px 0 0;
+  font-size: .8rem;
+  line-height: 1.5;
+  color: var(--cgi-muted);
+}
+
+/* ── evidence chain ───────────────────────────────────────────────────── */
+.cg-chain__stages {
+  list-style: none;
+  margin: 20px 0 0;
+  padding: 0;
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr); /* one equal column per stage, any count */
+  grid-auto-flow: column;
+  gap: 12px;
+}
+.cg-chain__stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  min-width: 0;
+}
+/* Connector from this stage's node to the next one's. */
+.cg-chain__stage:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  width: calc(100% + 12px);
+  height: 1px;
+  background: linear-gradient(90deg, var(--cgi-line-strong), var(--cgi-line));
+}
+.cg-chain__node {
+  position: relative;
+  z-index: 1;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--cgi-line-strong);
+  background: #0b0b0f;
+}
+.cg-chain__node::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 1px solid var(--cgi-signal);
+  opacity: 0;
+  transition: opacity .25s var(--cgi-ease);
+}
+.cg-chain__stage b {
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--cgi-text);
+  overflow-wrap: anywhere;
+}
+.cg-chain__stage span {
+  font-size: .72rem;
+  line-height: 1.35;
+  color: var(--cgi-muted);
+}
+.cg-chain__stage.is-active .cg-chain__node,
+.cg-chain__stage.is-passed .cg-chain__node { border-color: var(--cgi-signal); }
+.cg-chain__stage.is-passed .cg-chain__node { background: var(--cgi-signal-soft); }
+.cg-chain__stage.is-active .cg-chain__node::after { opacity: .9; }
+.cg-chain__stage.is-holding .cg-chain__node::after { animation: cgi-hold 1.1s var(--cgi-ease) infinite; }
+.cg-chain__stage.is-holding b { color: var(--cgi-signal); }
+.cg-chain.is-sealed .cg-chain__stage:last-child .cg-chain__node { background: var(--cgi-signal); border-color: var(--cgi-signal); }
+.cg-chain__packet {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: var(--cgi-signal);
+  box-shadow: 0 0 10px 2px var(--cgi-signal-glow);
+  opacity: 0;
+  transition: opacity .3s var(--cgi-ease);
+  will-change: transform;
+  pointer-events: none;
+  z-index: 2;
+}
+.cg-chain__packet.is-on { opacity: 1; }
+
+/* ── operating picture: scope + telemetry side by side ───────────────── */
+.cg-ops {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 18px;
+  margin: clamp(28px, 4vw, 44px) 0 0;
+}
+.cg-ops > .cg-instrument { margin: 0; }
+
+/* ── sensor scope ─────────────────────────────────────────────────────── */
+.cg-radar__scope {
+  position: relative;
+  width: min(100%, 300px);
+  aspect-ratio: 1 / 1;
+  margin: 18px auto 0;
+  border-radius: 50%;
+  /* Rings + crosshair: visible with no JS at all. closest-side makes 100% the
+     scope radius, matching the SVG's 0..100 radius units. */
+  background:
+    radial-gradient(circle closest-side, transparent 0 24.2%, var(--cgi-line) 24.2% 24.7%, transparent 24.7% 48.2%, var(--cgi-line) 48.2% 48.7%, transparent 48.7% 72.2%, var(--cgi-line) 72.2% 72.7%, transparent 72.7% 96%, var(--cgi-line-strong) 96% 96.6%, transparent 96.6%),
+    linear-gradient(var(--cgi-line), var(--cgi-line)) center / 1px 94% no-repeat,
+    linear-gradient(var(--cgi-line), var(--cgi-line)) center / 94% 1px no-repeat;
+}
+.cg-radar__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.cg-radar__grid line { stroke: var(--cgi-line); stroke-width: .6; }
+.cg-radar__grid line.is-major { stroke: var(--cgi-line-strong); }
+.cg-radar__bearings text { fill: var(--cgi-muted); font: 600 6px var(--cgi-mono); letter-spacing: .06em; }
+.cg-radar__dot { fill: rgba(255, 255, 255, .72); }
+.cg-radar__label { fill: var(--cgi-muted); font: 600 5.5px var(--cgi-mono); }
+.cg-radar__ring {
+  fill: none;
+  stroke: var(--cgi-signal);
+  stroke-width: .8;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.cg-radar__target.is-ping .cg-radar__ring { animation: cgi-ping 1.4s var(--cgi-ease) 1 both; }
+.cg-radar__target.is-ping .cg-radar__dot { fill: var(--cgi-signal); }
+.cg-radar__link {
+  stroke: var(--cgi-signal);
+  stroke-width: .8;
+  stroke-dasharray: 2 2;
+  opacity: 0;
+  transition: opacity .4s var(--cgi-ease);
+}
+.cg-radar__link.is-on { opacity: .85; }
+.cg-radar__sweep {
+  position: absolute;
+  inset: 3%;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0deg 290deg, var(--cgi-signal-soft) 356deg, var(--cgi-signal-glow) 359.4deg, transparent 360deg);
+  opacity: 0;
+  transition: opacity .5s var(--cgi-ease);
+  will-change: transform;
+  pointer-events: none;
+}
+.cg-instrument--live .cg-radar__sweep { opacity: .9; }
+.cg-radar__legend {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 16px;
+  font: 600 .66rem/1.3 var(--cgi-mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--cgi-muted);
+}
+.cg-radar__legend li { display: inline-flex; align-items: center; gap: 6px; }
+.cg-radar__legend li::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: rgba(255, 255, 255, .72); }
+.cg-radar__legend li.is-signal::before { background: var(--cgi-signal); }
+.cg-radar__legend li.is-link::before { border-radius: 0; height: 1px; width: 12px; background: var(--cgi-signal); }
+
+/* ── interface telemetry ──────────────────────────────────────────────── */
+.cg-telemetry__rows { margin: 16px 0 0; }
+.cg-telemetry__rows > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 9px 0;
+  border-top: 1px solid var(--cgi-line);
+}
+.cg-telemetry__rows dt {
+  font: 600 .68rem/1.3 var(--cgi-mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--cgi-muted);
+}
+.cg-telemetry__rows dd {
+  margin: 0;
+  font: 600 .8rem/1.3 var(--cgi-mono);
+  color: var(--cgi-text);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── section bridge (zero height: adds no layout) ─────────────────────── */
+.cg-bridge {
+  position: relative;
+  z-index: 1;
+  height: 0;
+  pointer-events: none;
+}
+.cg-bridge::before,
+.cg-bridge::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -36px;
+  pointer-events: none;
+}
+.cg-bridge::before {
+  width: 1px;
+  height: 72px;
+  background: linear-gradient(180deg, transparent, var(--cgi-line-strong) 30%, var(--cgi-line-strong) 70%, transparent);
+  transform-origin: 50% 0;
+}
+.cg-bridge::after {
+  width: 5px;
+  height: 5px;
+  margin-left: -2px;
+  border-radius: 50%;
+  background: var(--cgi-signal);
+  opacity: 0;
+}
+/* The site's reveal utility (clearglass-motion.js) marks it .cgm-in on entry. */
+.cgm-js .cg-bridge::before { transform: scaleY(0); transition: transform .6s var(--cgi-ease); }
+.cgm-js .cg-bridge.cgm-in::before { transform: scaleY(1); }
+.cgm-js .cg-bridge.cgm-in::after { animation: cgi-bridge 1.6s .45s var(--cgi-ease) 1 both; }
+
+/* ── responsive ───────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .cg-ops { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 720px) {
+  .cg-chain__stages { grid-auto-flow: row; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .cg-chain__stage {
+    display: grid;
+    grid-template-columns: 14px minmax(0, 1fr);
+    column-gap: 12px;
+    align-items: start;
+    text-align: left;
+  }
+  .cg-chain__node { grid-row: span 2; margin-top: 2px; }
+  /* From this node's bottom (2px margin + 14px) to the next node's top
+     (this stage's height + 14px gap + 2px margin): exactly 100%. */
+  .cg-chain__stage:not(:last-child)::after {
+    top: 16px;
+    left: 7px;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--cgi-line-strong), var(--cgi-line));
+  }
+  .cg-radar__scope { width: min(100%, 240px); }
+}
+
+/* ── static, reduced motion, forced colours, print ───────────────────── */
+.cg-instrument--static .cg-chain__packet,
+.cg-instrument--static .cg-radar__sweep { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .cg-chain__packet,
+  .cg-radar__sweep,
+  .cg-bridge::after { display: none; }
+  .cg-instrument *,
+  .cg-instrument *::before,
+  .cg-instrument *::after,
+  .cg-instrument__kicker::before,
+  .cg-bridge::before { animation: none !important; transition: none !important; }
+  .cgm-js .cg-bridge::before { transform: none; }
+}
+html[data-cgm-motion="reduced"] .cg-chain__packet,
+html[data-cgm-motion="reduced"] .cg-radar__sweep,
+html[data-cgm-motion="reduced"] .cg-bridge::after { display: none; }
+html[data-cgm-motion="reduced"] .cg-instrument *,
+html[data-cgm-motion="reduced"] .cg-instrument *::before,
+html[data-cgm-motion="reduced"] .cg-instrument *::after,
+html[data-cgm-motion="reduced"] .cg-instrument__kicker::before { animation: none !important; transition: none !important; }
+html[data-cgm-motion="reduced"] .cg-bridge::before { transform: none !important; transition: none !important; }
+@media (forced-colors: active) {
+  .cg-instrument { border-color: CanvasText; background: Canvas; }
+  .cg-chain__packet, .cg-radar__sweep, .cg-bridge { display: none; }
+}
+@media print {
+  .cg-chain__packet, .cg-radar__sweep, .cg-bridge { display: none; }
+  .cg-instrument { background: none; }
+}
+
+@keyframes cgi-pulse { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+@keyframes cgi-hold { 0%, 100% { opacity: .9; transform: scale(1); } 50% { opacity: .3; transform: scale(1.25); } }
+@keyframes cgi-ping { 0% { opacity: .95; transform: scale(.4); } 100% { opacity: 0; transform: scale(1.7); } }
+@keyframes cgi-bridge { 0% { opacity: 0; transform: translateY(0); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(70px); } }
