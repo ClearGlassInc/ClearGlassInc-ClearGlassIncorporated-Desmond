@@ -337,8 +337,14 @@ html .nav-links a.is-active,
 html .links a.active { color: #fff !important; background: rgba(198, 50, 57, .12) !important; }
 html .nav-links a::after { background: linear-gradient(90deg, #c4363a, #7a123d) !important; }
 html .nav-cursor { background: rgba(198, 50, 57, .14) !important; }
-html .nav-cta { background: #a92934 !important; color: #fff !important; border-color: #a92934 !important; }
-html .nav-cta:hover, html .nav-cta:focus-visible { background: #c4363a !important; }
+/* A CTA inside .nav-links also matches `html .nav-links a` (0,1,2), which beat
+   `html .nav-cta` (0,1,1): the button rendered muted grey on crimson (3.22:1)
+   and lost its fill on hover. The a.nav-cta forms restore the intended white
+   on crimson (6.9:1 at rest, 5.3:1 on hover/focus). */
+html .nav-cta,
+html .nav-links a.nav-cta { background: #a92934 !important; color: #fff !important; border-color: #a92934 !important; }
+html .nav-cta:hover, html .nav-cta:focus-visible,
+html .nav-links a.nav-cta:hover, html .nav-links a.nav-cta:focus-visible { background: #c4363a !important; color: #fff !important; }
 html .nav-toggle { color: #f3eeee !important; }
 html .nav-toggle svg { stroke: #f3eeee !important; }
 html .mobile-menu { background: rgba(9, 8, 11, .95) !important; border-color: rgba(201, 52, 58, .22) !important; }
