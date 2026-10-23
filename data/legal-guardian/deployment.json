@@ -1,0 +1,80 @@
+{
+  "note": "Section 19 deployment acceptance gate. A gate passes only with evidence, verified_by (a named human) and verified_on (ISO date). Code evidence alone does not pass a gate.",
+  "gates": {
+    "owner_and_alternate": {
+      "evidence": null,
+      "verified_by": null,
+      "verified_on": null
+    },
+    "mandate_separation": {
+      "evidence": null,
+      "verified_by": null,
+      "verified_on": null
+    },
+    "source_allowlist": {
+      "evidence": null,
+      "verified_by": null,
+      "verified_on": null
+    },
+    "processing_environment": {
+      "evidence": null,
+      "verified_by": null,
+      "verified_on": null
+    },
+    "privacy_employment_review": {
+      "evidence": null,
+      "verified_by": null,
+      "verified_on": null
+    },
+    "retention_preservation": {
+      "evidence": null,
+      "verified_by": null,
+      "verified_on": null
+    },
+    "approval_enforcement": {
+      "evidence": "bots/legal_guardian_bot.py gate_action(): approval bound to a SHA-256 digest of the exact action; prohibited kinds blocked regardless; tests/test_legal_guardian_bot.py",
+      "verified_by": null,
+      "verified_on": null
+    },
+    "scheduler_health": {
+      "evidence": null,
+      "verified_by": null,
+      "verified_on": null
+    },
+    "alert_delivery": {
+      "evidence": null,
+      "verified_by": null,
+      "verified_on": null
+    },
+    "audit_logging": {
+      "evidence": "bots/legal_guardian_bot.py append_audit(): hash-chained, stores subject digests and outcomes only, never matter content",
+      "verified_by": null,
+      "verified_on": null
+    },
+    "injection_exfiltration_tests": {
+      "evidence": "bots/legal_guardian_bot.py screen_untrusted() and tests/test_legal_guardian_bot.py injection cases",
+      "verified_by": null,
+      "verified_on": null
+    },
+    "deadline_review": {
+      "evidence": null,
+      "verified_by": null,
+      "verified_on": null
+    },
+    "revocation_stop": {
+      "evidence": null,
+      "verified_by": null,
+      "verified_on": null
+    },
+    "incident_contacts": {
+      "evidence": null,
+      "verified_by": null,
+      "verified_on": null
+    },
+    "resource_limits": {
+      "evidence": null,
+      "verified_by": null,
+      "verified_on": null
+    }
+  }
+}
