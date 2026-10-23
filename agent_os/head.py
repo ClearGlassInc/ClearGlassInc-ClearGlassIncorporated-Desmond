@@ -73,6 +73,7 @@ DEFAULT_DB = _REPO_ROOT / ".agent_os" / "tasks.sqlite3"
 MAX_OBJECTIVE = 500
 MAX_STREAM_BYTES = 32_000
 MAX_TASKS = 10
+CANCEL_POLL_SECONDS = 2.0
 
 #: What a child process may inherit. Everything else — API tokens, cloud
 #: credentials, payment keys — stays in the server process.
@@ -304,7 +305,9 @@ class HeadAgent:
             nonlocal last_renew
             if self._shutdown_at is not None and time.monotonic() >= self._shutdown_at:
                 return "shutdown"
-            if time.monotonic() - last_renew >= self.lease_seconds / 3:
+            # Renewing also reads the cancel flag, so check often: a cancel should
+            # stop a command within seconds, not at the next lease boundary.
+            if time.monotonic() - last_renew >= min(self.lease_seconds / 3, CANCEL_POLL_SECONDS):
                 last_renew = time.monotonic()
                 owned, cancel = self.store.renew_lease(task.task_id, worker_id, self.lease_seconds)
                 if not owned:

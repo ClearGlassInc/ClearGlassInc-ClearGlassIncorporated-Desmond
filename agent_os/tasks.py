@@ -267,7 +267,14 @@ def mission_status(tasks: list[Task], *, unmatched: bool) -> str:
     if unmatched or not tasks:
         return "unmatched"
     states = {t.status for t in tasks}
-    for active in (S.RUNNING, S.QUEUED, S.WAITING_FOR_APPROVAL):
+    if S.RUNNING in states:
+        return S.RUNNING.value
+    done = {t.task_id for t in tasks if t.status is S.SUCCEEDED}
+    ready = [t for t in tasks if t.status is S.QUEUED and set(t.dependencies) <= done]
+    if ready:
+        return S.QUEUED.value
+    # Queued work that sits behind an unapproved task is waiting on a human too.
+    for active in (S.WAITING_FOR_APPROVAL, S.QUEUED):
         if active in states:
             return active.value
     if states == {S.SUCCEEDED}:
@@ -447,7 +454,7 @@ class TaskStore:
             if row is None:
                 return None
             tasks = [Task.from_row(r) for r in conn.execute(
-                "SELECT * FROM tasks WHERE correlation_id = ? ORDER BY created_at, task_id",
+                "SELECT * FROM tasks WHERE correlation_id = ? ORDER BY created_at, rowid",
                 (correlation_id,)).fetchall()]
         plan = json.loads(row["plan"])
         return {
@@ -503,10 +510,13 @@ class TaskStore:
             busy_resources = {t.resource for t in running if t.resource}
 
             for row in conn.execute(
-                "SELECT * FROM tasks WHERE status = ? ORDER BY created_at, task_id",
+                "SELECT task_id FROM tasks WHERE status = ? ORDER BY created_at, rowid",
                 (S.QUEUED.value,),
             ).fetchall():
-                task = Task.from_row(row)
+                # Re-read: failing an expired task above can block later ones in this list.
+                task = self._task(conn, row["task_id"])
+                if task is None or task.status is not S.QUEUED:
+                    continue
                 deadline = parse_iso(task.deadline)
                 if deadline is not None and moment >= deadline:
                     self._set_status(conn, task, S.FAILED, error="deadline passed before the task could start")
