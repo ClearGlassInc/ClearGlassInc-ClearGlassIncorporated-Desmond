@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -19,9 +20,14 @@ def test_homepage_has_one_prominent_entry_offer_and_retains_existing_paths() -> 
 def test_homepage_metadata_matches_a_clearer_commercial_entry_point() -> None:
     homepage = (ROOT / "index.html").read_text(encoding="utf-8")
 
-    assert '<meta name="description" content="ClearGlass helps Ontario organizations reduce technology risk' in homepage
-    assert '<meta property="og:description" content="Reduce technology risk and put governed AI automation to work.' in homepage
-    assert '<meta name="twitter:description" content="Reduce technology risk and put governed AI automation to work.' in homepage
+    # Copy as the owner set it in 42e9a67 (2026-10-12), which dropped the audit
+    # price from metadata: a search snippet outlives the page that set it.
+    assert '<meta name="description" content="ClearGlass helps Ontario businesses reduce cyber risk' in homepage
+    assert '<meta property="og:description" content="Reduce cyber risk and govern AI automation' in homepage
+    assert '<meta name="twitter:description" content="Reduce cyber risk and govern AI automation' in homepage
+    descriptions = re.findall(r'<meta (?:name|property)="[^"]*description" content="([^"]*)"', homepage)
+    assert len(descriptions) == 3
+    assert not [d for d in descriptions if "$" in d], "a price leaked back into homepage metadata"
 
 
 def test_quick_audit_destination_is_present_in_sitemap_and_has_truthful_scope() -> None:

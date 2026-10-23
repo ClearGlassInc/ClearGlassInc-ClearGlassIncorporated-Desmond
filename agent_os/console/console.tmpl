@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Agent OS Console</title>
+<link rel="stylesheet" href="/console.css">
+<script defer src="/console.js"></script>
+</head>
+<body>
+<header>
+  <h1>Agent OS Console</h1>
+  <p id="ready" class="pill" role="status" data-state="loading">Checking server…</p>
+</header>
+
+<main>
+  <section aria-labelledby="auth-h">
+    <h2 id="auth-h">Credentials</h2>
+    <p class="hint">Held in this tab's session storage only. The approver token is separate by design: the token that submits work cannot approve it.</p>
+    <label>Operator token <input id="token" type="password" autocomplete="off" spellcheck="false"></label>
+    <label>Approver token (optional) <input id="approver-token" type="password" autocomplete="off" spellcheck="false"></label>
+  </section>
+
+  <section aria-labelledby="submit-h">
+    <h2 id="submit-h">New objective</h2>
+    <form id="submit-form">
+      <label for="objective">What should the agents do?</label>
+      <input id="objective" maxlength="500" placeholder="e.g. run a security review and check data freshness" required>
+      <button type="submit">Plan and run</button>
+    </form>
+    <p id="submit-status" class="status" role="status"></p>
+  </section>
+
+  <section aria-labelledby="mission-h">
+    <h2 id="mission-h">Mission</h2>
+    <p id="mission-status" class="status" role="status">Select or submit a mission.</p>
+    <div id="mission" hidden>
+      <p><strong id="mission-objective"></strong></p>
+      <p>Status: <span id="mission-state" class="pill"></span> · <span id="mission-id" class="mono"></span> · Audit chain: <span id="chain" class="pill"></span></p>
+      <p id="mission-note" class="hint"></p>
+      <button id="cancel-btn" type="button">Cancel mission</button>
+      <table>
+        <thead><tr><th>Task</th><th>Agent</th><th>Status</th><th>Attempt</th><th>Detail</th></tr></thead>
+        <tbody id="tasks"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="list-h">
+    <h2 id="list-h">Recent missions</h2>
+    <p id="list-status" class="status" role="status"></p>
+    <ul id="missions"></ul>
+  </section>
+
+  <section aria-labelledby="metrics-h">
+    <h2 id="metrics-h">Operations</h2>
+    <p id="metrics-status" class="status" role="status"></p>
+    <dl id="metrics"></dl>
+    <h3>Live-data sources</h3>
+    <p class="hint">From the provenance each fetcher recorded. "never retrieved" means no successful fetch has ever happened; it is not shown as healthy.</p>
+    <table>
+      <thead><tr><th>Source</th><th>Feed</th><th>State</th><th>Age (h)</th><th>Last success</th></tr></thead>
+      <tbody id="sources"></tbody>
+    </table>
+  </section>
+</main>
+</body>
+</html>
