@@ -112,12 +112,16 @@ export function isLiveOpsResponse(value: unknown): value is LiveOpsResponse {
   if (!validTime(v.generated_at) || !obj(v.area) || !obj(v.layers) || !obj(v.sources) ||
       !obj(v.counts) || !obj(v.errors)) return false;
 
-  const { area, layers, sources, counts } = v;
-  if (!obj(area.center) || !obj(area.bounds) ||
-      !isFiniteNumber(area.center.lat) || !isFiniteNumber(area.center.lon) ||
-      !isValidCoordinates(area.center.lat, area.center.lon) ||
+  const area = v.area as Record<string, unknown>;
+  const layers = v.layers as Record<string, unknown>;
+  const sources = v.sources as Record<string, unknown>;
+  const counts = v.counts as Record<string, unknown>;
+  if (!obj(area.center) || !obj(area.bounds)) return false;
+  const center = area.center as Record<string, unknown>;
+  const b = area.bounds as Record<string, unknown>;
+  if (!isFiniteNumber(center.lat) || !isFiniteNumber(center.lon) ||
+      !isValidCoordinates(center.lat, center.lon) ||
       !isFiniteNumber(area.radius_nm) || area.radius_nm < 1 || area.radius_nm > 150) return false;
-  const b = area.bounds;
   if (!isFiniteNumber(b.lamin) || !isFiniteNumber(b.lamax) ||
       !isFiniteNumber(b.lomin) || !isFiniteNumber(b.lomax) ||
       b.lamin < -90 || b.lamax > 90 || b.lamin > b.lamax ||
