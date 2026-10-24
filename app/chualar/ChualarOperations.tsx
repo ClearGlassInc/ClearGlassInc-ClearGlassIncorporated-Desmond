@@ -38,7 +38,7 @@ export default function ChualarOperations(): React.JSX.Element {
   const [radius, setRadius] = useState(40);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const lastGood = useRef<LiveOpsResponse | null>(null);
-  const refresh = useCallback(async (manual = false) => {
+  const refresh = useCallback(async () => {
     if (busyRef.current) return;
     busyRef.current = true;
     setBusy(true);
@@ -121,7 +121,7 @@ export default function ChualarOperations(): React.JSX.Element {
     <section className={styles.toolbar}>
       <label>RADIUS <select value={radius} onChange={e => setRadius(Number(e.target.value))}><option value={20}>20 NM</option><option value={40}>40 NM</option><option value={60}>60 NM</option><option value={100}>100 NM</option><option value={150}>150 NM</option></select></label>
       <label className={styles.auto}><input type="checkbox" checked={autoRefresh} onChange={e => setAutoRefresh(e.target.checked)}/> AUTO REFRESH</label>
-      <button onClick={() => void refresh(true)} disabled={busy}>{busy ? "REFRESHING…" : "↻ REFRESH NOW"}</button>
+      <button onClick={() => void refresh()} disabled={busy}>{busy ? "REFRESHING…" : "↻ REFRESH NOW"}</button>
       <span className={styles.updated}>LAST RESPONSE: {data.generated_at ? new Date(data.generated_at).toLocaleTimeString() : "—"}</span>
     </section>
     {error && <div role="alert" className={styles.error}><strong>DATA REFRESH WARNING</strong> {error} {lastGood.current ? "Showing last good response where available." : "No previous response is available."}</div>}
