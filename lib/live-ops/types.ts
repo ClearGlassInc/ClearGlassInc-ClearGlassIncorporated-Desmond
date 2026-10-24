@@ -72,7 +72,11 @@ export function cleanText(value: unknown, max = 120): string | null {
   return text || null;
 }
 export function inBounds(lat: number, lon: number, b: Bounds): boolean {
-  return Number.isFinite(lat) && Number.isFinite(lon) && lat >= b.lamin && lat <= b.lamax && lon >= b.lomin && lon <= b.lomax;
+  if (!isValidCoordinates(lat, lon) || lat < b.lamin || lat > b.lamax) return false;
+  // lomin > lomax represents a box crossing the antimeridian.
+  return b.lomin <= b.lomax
+    ? lon >= b.lomin && lon <= b.lomax
+    : lon >= b.lomin || lon <= b.lomax;
 }
 export function distanceNm(a: Center, lat: number, lon: number): number {
   const rad = (n: number) => n * Math.PI / 180;
@@ -81,7 +85,47 @@ export function distanceNm(a: Center, lat: number, lon: number): number {
   return 3440.065 * 2 * Math.asin(Math.min(1, Math.sqrt(h)));
 }
 export function boundsFor(center: Center, radiusNm: number): Bounds {
+  if (!isValidCoordinates(center.lat, center.lon) || !Number.isFinite(radiusNm) || radiusNm <= 0) {
+    throw new RangeError("Invalid geospatial center or radius");
+  }
   const dLat = radiusNm / 60;
   const dLon = radiusNm / (60 * Math.max(0.1, Math.cos(center.lat * Math.PI / 180)));
-  return { lamin: Math.max(-90, center.lat - dLat), lomin: Math.max(-180, center.lon - dLon), lamax: Math.min(90, center.lat + dLat), lomax: Math.min(180, center.lon + dLon) };
+  // If the longitude span covers the globe, represent it with a conventional full-width box.
+  if (dLon >= 180) return { lamin: Math.max(-90, center.lat - dLat), lomin: -180, lamax: Math.min(90, center.lat + dLat), lomax: 180 };
+  const wrap = (lon: number) => ((lon + 180) % 360 + 360) % 360 - 180;
+  return {
+    lamin: Math.max(-90, center.lat - dLat),
+    lomin: wrap(center.lon - dLon),
+    lamax: Math.min(90, center.lat + dLat),
+    lomax: wrap(center.lon + dLon)
+  };
+}
+
+/** Only provider-supported fields are trusted; this guard prevents malformed payloads from crashing the map. */
+export function isLiveOpsResponse(value: unknown): value is LiveOpsResponse {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  if (typeof v.generated_at !== "string" || !Number.isFinite(Date.parse(v.generated_at))) return false;
+  if (!v.layers || typeof v.layers !== "object" || !v.sources || typeof v.sources !== "object" ||
+      !v.counts || typeof v.counts !== "object") return false;
+  const layers = v.layers as Record<string, unknown>;
+  const sources = v.sources as Record<string, unknown>;
+  const counts = v.counts as Record<string, unknown>;
+  for (const key of ["flights", "military", "satellites", "cctv"] as const) {
+    const status = sources[key];
+    if (status !== "online" && status !== "degraded" && status !== "offline") return false;
+    const assets = layers[key];
+    if (!Array.isArray(assets) || !assets.every((item: unknown) => {
+      if (!item || typeof item !== "object") return false;
+      const asset = item as Record<string, unknown>;
+      return typeof asset.id === "string" && asset.id.length > 0 &&
+        typeof asset.lat === "number" && typeof asset.lon === "number" &&
+        isValidCoordinates(asset.lat, asset.lon);
+    })) return false;
+  }
+  for (const key of ["live_flights", "military_flights", "satellites", "cctv", "total_assets"] as const) {
+    const count = counts[key];
+    if (count !== null && (typeof count !== "number" || !Number.isSafeInteger(count) || count < 0)) return false;
+  }
+  return true;
 }
