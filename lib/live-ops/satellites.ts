@@ -9,6 +9,11 @@ export async function getSatellites(center: Center, radiusNm: number): Promise<P
     if (!allowProviderRequest("n2yo", 4, 60_000)) throw new Error("N2YO local provider request budget exhausted");
     // N2YO's radius is an angular radius from zenith, NOT a ground-distance radius.
     const queryAbove = async (radiusDegrees: number) => {
+      // N2YO /above has a published 100-request-per-hour limit.
+      // Count every upstream call (including a NEARBY fallback), leaving quota headroom.
+      if (!allowProviderRequest("n2yo-above-hourly", 90, 3_600_000)) {
+        throw new Error("N2YO hourly local request budget reached; fresh satellite positions temporarily unavailable");
+      }
       const url = `https://api.n2yo.com/rest/v1/satellite/above/${center.lat}/${center.lon}/0/${radiusDegrees}/0/&apiKey=${encodeURIComponent(apiKey)}`;
       const response = await fetchJson(url, { headers: { accept: "application/json" } }, 8_000, 1) as { above?: unknown[] };
       if (!Array.isArray(response.above)) throw new Error("N2YO response has no above array");
