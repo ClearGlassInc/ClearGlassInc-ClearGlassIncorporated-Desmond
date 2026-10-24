@@ -25,6 +25,7 @@ REPOSITORY = os.environ.get("GITHUB_REPOSITORY", "")
 API_URL = os.environ.get("GITHUB_API_URL", "https://api.github.com").rstrip("/")
 TARGET_RUN_ID = os.environ.get("AUTO_HEAL_RUN_ID", "").strip()
 SELF_WORKFLOW = os.environ.get("AUTO_HEAL_WORKFLOW_NAME", "Auto Heal")
+BILLING_LOCK_MESSAGE = "The job was not started because your account is locked due to a billing issue."
 
 # Logs and API error bodies are untrusted: never persist a credential-shaped
 # value into the issue register, learned signatures, or run history.
@@ -147,6 +148,8 @@ def compile_patterns(config: dict[str, Any]) -> list[tuple[re.Pattern[str], dict
 
 
 def classify(log_text: str, compiled: list[tuple[re.Pattern[str], dict[str, Any]]]) -> tuple[str, str]:
+    if BILLING_LOCK_MESSAGE.lower() in log_text.lower():
+        return "BILLING_BLOCKED", "Require human billing-owner review of the account lock; do not rerun or apply workflow repairs."
     for regex, item in compiled:
         if regex.search(log_text):
             return item.get("category", "UNKNOWN_FAILURE"), item.get("strategy", "Escalate with diagnostics.")
@@ -269,7 +272,26 @@ def job_diagnostics(run_id: int, compiled: list[tuple[re.Pattern[str], dict[str,
             continue
         log = try_api("GET", f"/repos/{REPOSITORY}/actions/jobs/{job['id']}/logs")
         text = log if isinstance(log, str) else ""
-        category, strategy = classify(text, compiled)
+        source = "logs" if text.strip() else "unavailable"
+        if source == "unavailable":
+            # Never follow an untrusted URL or let annotation-only evidence
+            # authorize generic retry/repair strategies.
+            check = re.fullmatch(
+                re.escape(f"{API_URL}/repos/{REPOSITORY}/check-runs/") + r"([0-9]+)",
+                str(job.get("check_run_url") or ""),
+            )
+            annotations = try_api(
+                "GET", f"/repos/{REPOSITORY}/check-runs/{check[1]}/annotations?per_page=100"
+            ) if check else None
+            if isinstance(annotations, list):
+                text = redact_sensitive_text("\n".join(
+                    item["message"] for item in annotations
+                    if isinstance(item, dict) and item.get("annotation_level") == "failure"
+                    and isinstance(item.get("message"), str)
+                ))
+                if text.strip():
+                    source = "check_run_annotations"
+        category, strategy = classify(text, compiled if source == "logs" else [])
         categories.append((category, strategy))
         diagnostics.append({
             "job": job.get("name", str(job.get("id"))),
@@ -277,11 +299,12 @@ def job_diagnostics(run_id: int, compiled: list[tuple[re.Pattern[str], dict[str,
             "conclusion": job.get("conclusion"),
             "category": category,
             "signature": signature(text),
+            "evidence_source": source,
         })
     if not categories:
         return "UNKNOWN_FAILURE", "No failed-job logs were available; require human review.", diagnostics
     priority = [
-        "SECURITY_SCAN_FAILURE", "DEPLOYMENT_ERROR", "CONFIG_ERROR", "DEPENDENCY_ERROR",
+        "BILLING_BLOCKED", "SECURITY_SCAN_FAILURE", "DEPLOYMENT_ERROR", "CONFIG_ERROR", "DEPENDENCY_ERROR",
         "BUILD_ERROR", "TEST_FAILURE", "LINT_ERROR", "INFRASTRUCTURE_ERROR", "UNKNOWN_FAILURE",
     ]
     for wanted in priority:
