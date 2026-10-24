@@ -2,9 +2,17 @@ import { allowProviderRequest, cachedProvider, fetchJson } from "./cache";
 import { cleanText, distanceNm, isValidCoordinates, parseFiniteNumber, type CameraAsset, type Center, type ProviderResult } from "./types";
 
 const CALTRANS_D05 = "https://cwwp2.dot.ca.gov/data/d5/cctv/cctvStatusD05.json";
-function safeHttpUrl(value: unknown): string | null {
+/** Constrain external camera links to official California government domains. */
+export function safeHttpUrl(value: unknown): string | null {
   if (typeof value !== "string") return null;
-  try { const u = new URL(value); return u.protocol === "https:" ? u.toString() : null; } catch { return null; }
+  try {
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase();
+    if (url.protocol !== "https:" || url.username || url.password ||
+        (host !== "ca.gov" && !host.endsWith(".ca.gov")) ||
+        (url.port && url.port !== "443")) return null;
+    return url.toString();
+  } catch { return null; }
 }
 function nested(obj: unknown, ...keys: string[]): unknown {
   let v = obj;
