@@ -36,7 +36,8 @@ export async function getCameras(center: Center, radiusNm: number): Promise<Prov
     for (const entry of raw.data) {
       const camera = nested(entry, "cctv") as Record<string, unknown> | undefined;
       if (!camera) continue;
-      const loc = nested(entry, "location") as Record<string, unknown> | undefined;
+      // Caltrans CCTV JSON: data[].cctv.location, not data[].location.
+      const loc = nested(camera, "location") as Record<string, unknown> | undefined;
       const lat = parseFiniteNumber(loc?.latitude), lon = parseFiniteNumber(loc?.longitude);
       if (lat === null || lon === null || !isValidCoordinates(lat, lon) || distanceNm(center, lat, lon) > radiusNm) continue;
       const name = cleanText(loc?.locationName ?? camera.locationName ?? camera.name, 160) || "Caltrans public traffic camera";
@@ -47,7 +48,7 @@ export async function getCameras(center: Center, radiusNm: number): Promise<Prov
       const inService = camera.inService;
       const status = normalizeCameraStatus(inService);
       items.push({ id, type: "cctv", name, agency: "Caltrans District 5", lat, lon, status,
-        preview_url: preview, stream_url: safeHttpUrl(camera.streamURL ?? camera.videoURL),
+        preview_url: preview, stream_url: safeHttpUrl(nested(camera, "imageData", "streamingVideoURL")),
         page_url: safeHttpUrl(camera.url ?? camera.pageURL),
         last_checked: checked });
     }
