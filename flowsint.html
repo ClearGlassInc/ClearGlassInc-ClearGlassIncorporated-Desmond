@@ -106,7 +106,7 @@ section{max-width:1280px;margin:0 auto;padding:46px 22px}
 /* entity list */
 .ents{border-right:1px solid var(--line);padding:10px;overflow-y:auto;max-height:600px}
 .ents .eh{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim-2);padding:6px;display:flex;align-items:center;gap:6px}
-.ents .eh .sel{margin-left:auto;color:var(--blue);background:rgba(238, 99, 101,.12);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.ents .eh .sel{margin-left:auto;color:color-mix(in srgb, var(--blue) 76%, white);background:rgba(238, 99, 101,.12);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
 .esearch{width:100%;font-family:var(--mono);font-size:11px;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:9px;padding:8px 10px;color:var(--txt);outline:none;margin:4px 0 8px}
 .esearch:focus{border-color:var(--line-2)}
 .ent{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;border:1px solid transparent;cursor:pointer;font-family:var(--mono);font-size:11px;transition:.1s}
@@ -175,6 +175,11 @@ footer a{color:#ee636c;text-decoration:none}
 <link rel="stylesheet" href="/assets/css/future-buttons.css">
 <link rel="stylesheet" href="/clearglass-crimson.css">
 <link rel="stylesheet" href="/assets/css/neon-pulse.css">
+<style id="cg-contrast-fit">
+/* Contrast fit (2026-10-24): text that a shared rule colours for dark
+   backgrounds sits on a different background here; measured below WCAG AA. */
+html div.sec-kicker { color: #d98586 !important; } /* was 3.48:1 */
+</style>
 </head>
 <body>
 

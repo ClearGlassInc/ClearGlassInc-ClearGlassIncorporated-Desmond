@@ -104,7 +104,7 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
 .funnel-step h4{font-family:var(--serif);font-size:clamp(1.1rem,1.8vw,1.4rem);font-weight:500;margin-bottom:6px}
 .funnel-step p{color:var(--text-3);font-size:14px;line-height:1.7}
 .funnel-visual{border-radius:24px;background:var(--dark);padding:clamp(28px,4vw,44px);position:relative;overflow:hidden}
-.fv-header{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:rgba(255,255,255,.35);margin-bottom:24px;text-transform:uppercase}
+.fv-header{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:rgba(255,255,255,0.50);margin-bottom:24px;text-transform:uppercase}
 .fv-rows{display:grid;gap:14px}
 .fv-row{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
 .fv-row-icon{font-size:18px;width:36px;text-align:center}
@@ -183,6 +183,10 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
 <link rel="stylesheet" href="/assets/css/future-buttons.css">
 <link rel="stylesheet" href="/clearglass-crimson.css">
 <link rel="stylesheet" href="/assets/css/neon-pulse.css">
+<style id="cg-contrast-fit">
+/* Inline style="color:…" below WCAG AA here: the same colour, lightened just enough. */
+[style*="; color: var(--prism-5)"], [style*="; color:var(--prism-5)"], [style*=";color: var(--prism-5)"], [style*=";color:var(--prism-5)"], [style^="color: var(--prism-5)"], [style^="color:var(--prism-5)"] { color: color-mix(in srgb, var(--prism-5) 68%, white) !important; } /* var(--prism-5): was 2.25:1, 1 runs */
+</style>
 </head>
 <body>
 <div class="cursor-glow" id="cursorGlow"></div>
