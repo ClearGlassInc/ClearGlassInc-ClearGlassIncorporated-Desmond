@@ -13,6 +13,11 @@ export async function cachedProvider<T>(key: string, ttlMs: number, loader: () =
   const now = Date.now();
   const entry = cache.get(key) as Entry<T> | undefined;
   if (entry && entry.expiresAt > now) return entry.value;
+  // Last-good data may be retained briefly during outages, never indefinitely.
+  // Limits are per-process and must be replaced by a shared backend for multi-instance production.
+  const maxStaleMs = Math.max(60_000, ttlMs * 5);
+  const fallback = entry && now <= entry.expiresAt + maxStaleMs ? entry : null;
+  if (entry && !fallback) cache.delete(key);
   const active = inflight.get(key) as Promise<ProviderResult<T>> | undefined;
   if (active) return active;
   const task = (async () => {
@@ -25,10 +30,10 @@ export async function cachedProvider<T>(key: string, ttlMs: number, loader: () =
         }
         cache.set(key, { expiresAt: Date.now() + ttlMs, value: fresh });
       }
-      else if (entry) return { ...entry.value, status: "degraded" as const, stale: true, error: fresh.error || "Provider unavailable; serving cached data." };
+      else if (fallback) return { ...fallback.value, status: "degraded" as const, stale: true, error: fresh.error || "Provider unavailable; serving time-limited cached data." };
       return fresh;
     } catch (error) {
-      if (entry) return { ...entry.value, status: "degraded" as const, stale: true, error: error instanceof Error ? error.message : "Provider failed." };
+      if (fallback) return { ...fallback.value, status: "degraded" as const, stale: true, error: error instanceof Error ? error.message : "Provider failed." };
       return { items: [], status: "offline" as const, error: error instanceof Error ? error.message : "Provider failed." };
     } finally {
       inflight.delete(key);
