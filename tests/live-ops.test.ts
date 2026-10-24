@@ -210,7 +210,7 @@ test("expired last-good records are degraded only for a bounded stale window", a
 test("Caltrans District 5 official nested JSON produces real coordinate-mapped cameras", async () => {
   const originalFetch = globalThis.fetch;
   let calls = 0;
-  globalThis.fetch = (async (input) => {
+  globalThis.fetch = (async (input: unknown) => {
     calls += 1;
     assert.equal(String(input), "https://cwwp2.dot.ca.gov/data/d5/cctv/cctvStatusD05.json");
     return new Response(JSON.stringify({ data: [
