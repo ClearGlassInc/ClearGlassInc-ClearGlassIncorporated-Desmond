@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { boundsFor, cleanText, distanceNm, inBounds, isLiveOpsResponse, isValidCoordinates, parseFiniteNumber, tileZoomForRadius, webMercatorPixels } from "../lib/live-ops/types";
 import { allowProviderRequest } from "../lib/live-ops/cache";
 import { isMilitaryAircraft, normalizeOnGround } from "../lib/live-ops/adsbexchange";
-import { normalizeCameraStatus } from "../lib/live-ops/cctv";
+import { normalizeCameraStatus, safeHttpUrl } from "../lib/live-ops/cctv";
 import type { SatelliteAsset } from "../lib/live-ops/types";
 
 test("Chualar 40 NM bounds contain the center and stay finite", () => {
@@ -165,4 +165,13 @@ test("unified response validator rejects malformed or invented count states", ()
   assert.equal(isLiveOpsResponse({ ...good, sources: { ...good.sources, military: "LIVE" } }), false);
   assert.equal(isLiveOpsResponse({ ...good, layers: { ...good.layers, cctv: [{ id: "a", lat: null, lon: 0 }] } }), false);
   assert.equal(isLiveOpsResponse({ ...good, generated_at: "not a timestamp" }), false);
+});
+
+test("Caltrans camera URLs must resolve to official HTTPS California government hosts", () => {
+  assert.equal(safeHttpUrl("https://cwwp2.dot.ca.gov/data/camera.jpg"), "https://cwwp2.dot.ca.gov/data/camera.jpg");
+  assert.equal(safeHttpUrl("https://evil.ca.gov.attacker.example/cam"), null);
+  assert.equal(safeHttpUrl("http://cwwp2.dot.ca.gov/cam"), null);
+  assert.equal(safeHttpUrl("https://example.com/cam"), null);
+  assert.equal(safeHttpUrl("https://user:pass@cwwp2.dot.ca.gov/cam"), null);
+  assert.equal(safeHttpUrl("javascript:alert(1)"), null);
 });
