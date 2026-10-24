@@ -88,9 +88,13 @@ a:not([class]):focus-visible { background-size: 100% 2px; }
   to { transform: scale(2.4); opacity: 0; }
 }
 
-/* ── pointer spotlight (driven by ui.js) — subtle ambient blue-violet glow ── */
+/* ── pointer spotlight (driven by ui.js): a faint crimson glow that follows
+   the pointer. It sits behind the glass (z-index -1, with the other ambient
+   layers) so it lights the page from behind instead of tinting whatever is
+   under the cursor. At 2147483000 it washed red over the Sentinel map, every
+   control and any dialog the pointer crossed. ── */
 #cg-spotlight {
-  position: fixed; inset: 0; z-index: 2147483000;
+  position: fixed; inset: 0; z-index: -1;
   pointer-events: none; opacity: 0;
   transition: opacity .45s ease;
   background: radial-gradient(280px circle at var(--cg-x, -100px) var(--cg-y, -100px),

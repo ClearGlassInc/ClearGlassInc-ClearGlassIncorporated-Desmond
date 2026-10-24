@@ -40,8 +40,17 @@
     (document.head || document.documentElement).appendChild(analytics);
   }
 
+  /* The neon aura is ambient light behind the glass, never on top of it.
+     z-index -1 is the layer neon-pulse.css gives .cg-np-ambient: below every
+     panel, control, dialog and the Sentinel Core dock. At 2147483000 it sat
+     above all of them, so its red edge glow and 340px corner bloom tinted the
+     Sentinel command center's panels and pulsed behind the Sentinel Core dock
+     on every page, on surfaces where red means offline or alert. It respects
+     the same data-no-neon opt-out as neon-pulse.js, holds still on phones,
+     and leaves forced-colors and print alone. */
   var CSS = [
-    "#cg-neon-aura{position:fixed;inset:0;z-index:2147483000;pointer-events:none;will-change:opacity;box-shadow:inset 0 0 130px rgba(238, 99, 101,.10),inset 0 0 46px rgba(238, 99, 122,.08);animation:cgNeonAura 6s ease-in-out infinite}",
+    "#cg-neon-aura{position:fixed;inset:0;z-index:-1;pointer-events:none;box-shadow:inset 0 0 130px rgba(238, 99, 101,.10),inset 0 0 46px rgba(238, 99, 122,.08);animation:cgNeonAura 6s ease-in-out infinite}",
+    "[data-no-neon] #cg-neon-aura{display:none}",
     "#cg-neon-aura::after{content:'';position:absolute;right:-46px;bottom:-46px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(238, 99, 101,.16),rgba(238, 99, 122,.09) 46%,transparent 72%);filter:blur(6px)}",
     "@keyframes cgNeonAura{0%,100%{opacity:.65}50%{opacity:1}}",
     "[data-skin='stealth'] #cg-neon-aura{box-shadow:inset 0 0 150px rgba(120,224,200,.12),inset 0 0 50px rgba(238, 99, 101,.08)}",
@@ -64,6 +73,8 @@
     "#cg-stealth-btn.is-on .cg-sg-ic{filter:drop-shadow(0 0 5px rgba(120,224,200,.7))}",
     "#cg-security-stack #cg-stealth-btn{position:relative;right:auto;bottom:auto;align-self:flex-end;pointer-events:auto}",
     "@media(max-width:640px){#cg-neon-aura::after{width:240px;height:240px;right:-40px;bottom:-40px}#cg-stealth-btn{right:var(--cg-security-edge,14px);bottom:var(--cg-security-bottom,72px);height:28px;font-size:8.5px;padding:0 10px 0 8px}}",
+    "@media(max-width:720px),(pointer:coarse){#cg-neon-aura{animation:none;opacity:.8}}",
+    "@media (forced-colors:active),print{#cg-neon-aura{display:none}}",
     "@media (prefers-reduced-motion:reduce){#cg-neon-aura{animation:none;opacity:.8}#cg-stealth-btn,#cg-stealth-btn:hover,#cg-stealth-btn:active{transition:none}#cg-stealth-btn::before{display:none}#cg-stealth-btn .cg-sg-glow{animation:none}#cg-stealth-veil{animation:none;opacity:1}}",
     "@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){#cg-stealth-btn{background:linear-gradient(165deg,rgba(43, 35, 35,.96),rgba(19, 15, 15,.97))}#cg-stealth-veil{background:rgba(6,9,13,.5)}}"
   ].join("");
