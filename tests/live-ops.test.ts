@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { boundsFor, cleanText, distanceNm, inBounds, isLiveOpsResponse, isValidCoordinates, parseFiniteNumber, tileZoomForRadius, webMercatorPixels } from "../lib/live-ops/types";
-import { allowProviderRequest } from "../lib/live-ops/cache";
+import { allowProviderRequest, cachedProvider } from "../lib/live-ops/cache";
 import { isMilitaryAircraft, normalizeOnGround } from "../lib/live-ops/adsbexchange";
 import { normalizeCameraStatus, safeHttpUrl } from "../lib/live-ops/cctv";
 import type { SatelliteAsset } from "../lib/live-ops/types";
@@ -156,15 +156,22 @@ test("geospatial bounds reject invalid radii and coordinates", () => {
 test("unified response validator rejects malformed or invented count states", () => {
   const good = {
     generated_at: "2026-10-24T20:00:00.000Z",
+    area: { center: { lat: 36.57, lon: -121.525 }, radius_nm: 40, bounds: boundsFor({ lat: 36.57, lon: -121.525 }, 40) },
     layers: { flights: [], military: [], satellites: [], cctv: [] },
     sources: { flights: "offline", military: "offline", satellites: "offline", cctv: "offline" },
-    counts: { live_flights: null, military_flights: null, satellites: null, cctv: null, total_assets: null }
+    counts: { live_flights: null, military_flights: null, satellites: null, cctv: null, total_assets: null },
+    errors: {}
   };
   assert.equal(isLiveOpsResponse(good), true);
   assert.equal(isLiveOpsResponse({ ...good, counts: { ...good.counts, satellites: 838.5 } }), false);
   assert.equal(isLiveOpsResponse({ ...good, sources: { ...good.sources, military: "LIVE" } }), false);
   assert.equal(isLiveOpsResponse({ ...good, layers: { ...good.layers, cctv: [{ id: "a", lat: null, lon: 0 }] } }), false);
   assert.equal(isLiveOpsResponse({ ...good, generated_at: "not a timestamp" }), false);
+  assert.equal(isLiveOpsResponse({ ...good, area: null }), false);
+  assert.equal(isLiveOpsResponse({ ...good, area: { ...good.area, radius_nm: 0 } }), false);
+  assert.equal(isLiveOpsResponse({ ...good, layers: { ...good.layers, flights: [{ id: "fake", type: "satellite", lat: 36, lon: -121 }] } }), false);
+  assert.equal(isLiveOpsResponse({ ...good, counts: { ...good.counts, total_assets: 99 } }), false);
+  assert.equal(isLiveOpsResponse({ ...good, sources: { ...good.sources, cctv: "online" }, counts: { ...good.counts, cctv: 5, total_assets: null } }), false);
 });
 
 test("Caltrans camera URLs must resolve to official HTTPS California government hosts", () => {
@@ -174,4 +181,28 @@ test("Caltrans camera URLs must resolve to official HTTPS California government 
   assert.equal(safeHttpUrl("https://example.com/cam"), null);
   assert.equal(safeHttpUrl("https://user:pass@cwwp2.dot.ca.gov/cam"), null);
   assert.equal(safeHttpUrl("javascript:alert(1)"), null);
+});
+
+test("expired last-good records are degraded only for a bounded stale window", async () => {
+  const savedNow = Date.now;
+  let fakeNow = 1_790_000_000_000;
+  Date.now = () => fakeNow;
+  const cacheKey = "chualar-expiring-provider-20261024";
+  try {
+    const initial = await cachedProvider(cacheKey, 7_000, async () => ({
+      items: [{ id: "provider-record" }], status: "online" as const
+    }));
+    assert.equal(initial.status, "online");
+    fakeNow += 8_000;
+    const degraded = await cachedProvider(cacheKey, 7_000, async () => { throw new Error("network unavailable"); });
+    assert.equal(degraded.status, "degraded");
+    assert.equal(degraded.stale, true);
+    assert.equal(degraded.items.length, 1);
+    fakeNow += 70_000;
+    const offline = await cachedProvider(cacheKey, 7_000, async () => { throw new Error("network unavailable"); });
+    assert.equal(offline.status, "offline");
+    assert.equal(offline.items.length, 0);
+  } finally {
+    Date.now = savedNow;
+  }
 });
