@@ -159,7 +159,7 @@ export function isLiveOpsResponse(value: unknown): value is LiveOpsResponse {
     if (sources[key] === "offline" && (n !== null || entries.length !== 0)) return false;
   }
   const total = counts.total_assets;
-  if (total !== null && (!Number.isSafeInteger(total) || total < 0)) return false;
+  if (total !== null && (!Number.isSafeInteger(total) || (total as number) < 0)) return false;
   const values = keys.map(key => counts[countKey[key]] as number | null);
   if (values.some(n => n === null)) return total === null;
   return total === values.reduce<number>((sum, n) => sum + (n || 0), 0);
