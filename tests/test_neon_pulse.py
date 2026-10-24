@@ -118,6 +118,14 @@ def test_classes_do_not_collide_with_existing_site_layers() -> None:
         assert f'"{foreign}"' not in script
 
 
+def test_status_halos_stay_anchored_inside_the_sentinel_console() -> None:
+    """station-chat.js resets its markup with `#cg-station :where(span,…){all:revert}`.
+    The id outranked .cg-np-anchor, so a 7px status dot stayed static and its
+    inset:0 halo filled the console header: a blurred green slab under the title."""
+    css = CSS_PATH.read_text(encoding="utf-8")
+    assert "#cg-station .cg-np-anchor { position: relative; }" in css
+
+
 def test_status_and_opt_in_classes_are_available() -> None:
     css = CSS_PATH.read_text(encoding="utf-8")
     for selector in (
