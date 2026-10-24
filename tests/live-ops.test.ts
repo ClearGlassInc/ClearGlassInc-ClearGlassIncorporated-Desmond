@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { boundsFor, cleanText, distanceNm, inBounds, isValidCoordinates, parseFiniteNumber, tileZoomForRadius, webMercatorPixels } from "../lib/live-ops/types";
+import { boundsFor, cleanText, distanceNm, inBounds, isLiveOpsResponse, isValidCoordinates, parseFiniteNumber, tileZoomForRadius, webMercatorPixels } from "../lib/live-ops/types";
 import { allowProviderRequest } from "../lib/live-ops/cache";
 import { isMilitaryAircraft, normalizeOnGround } from "../lib/live-ops/adsbexchange";
 import { normalizeCameraStatus } from "../lib/live-ops/cctv";
@@ -128,4 +128,41 @@ test("Web Mercator map projection keeps Chualar centered and chooses bounded zoo
     assert.equal(center.x, samePoint.x);
     assert.equal(center.y, samePoint.y);
   }
+});
+
+test("antimeridian radius includes both sides of the dateline", () => {
+  const center = { lat: 0, lon: 179.8 };
+  const bounds = boundsFor(center, 40);
+  assert.ok(bounds.lomin > bounds.lomax);
+  assert.equal(inBounds(0, 179.9, bounds), true);
+  assert.equal(inBounds(0, -179.9, bounds), true);
+  assert.equal(inBounds(0, -177, bounds), false);
+  assert.equal(inBounds(0, 175, bounds), false);
+});
+
+test("antimeridian on the western side remains wrapped", () => {
+  const bounds = boundsFor({ lat: 0, lon: -179.8 }, 40);
+  assert.ok(bounds.lomin > bounds.lomax);
+  assert.equal(inBounds(0, 179.9, bounds), true);
+  assert.equal(inBounds(0, -179.9, bounds), true);
+});
+
+test("geospatial bounds reject invalid radii and coordinates", () => {
+  assert.throws(() => boundsFor({ lat: 91, lon: 0 }, 40), RangeError);
+  assert.throws(() => boundsFor({ lat: 0, lon: 0 }, 0), RangeError);
+  assert.throws(() => boundsFor({ lat: 0, lon: 0 }, Number.NaN), RangeError);
+});
+
+test("unified response validator rejects malformed or invented count states", () => {
+  const good = {
+    generated_at: "2026-10-24T20:00:00.000Z",
+    layers: { flights: [], military: [], satellites: [], cctv: [] },
+    sources: { flights: "offline", military: "offline", satellites: "offline", cctv: "offline" },
+    counts: { live_flights: null, military_flights: null, satellites: null, cctv: null, total_assets: null }
+  };
+  assert.equal(isLiveOpsResponse(good), true);
+  assert.equal(isLiveOpsResponse({ ...good, counts: { ...good.counts, satellites: 838.5 } }), false);
+  assert.equal(isLiveOpsResponse({ ...good, sources: { ...good.sources, military: "LIVE" } }), false);
+  assert.equal(isLiveOpsResponse({ ...good, layers: { ...good.layers, cctv: [{ id: "a", lat: null, lon: 0 }] } }), false);
+  assert.equal(isLiveOpsResponse({ ...good, generated_at: "not a timestamp" }), false);
 });
