@@ -101,31 +101,66 @@ export function boundsFor(center: Center, radiusNm: number): Bounds {
   };
 }
 
-/** Only provider-supported fields are trusted; this guard prevents malformed payloads from crashing the map. */
+/** Runtime shape guard for the complete normalized API response received by the browser. */
 export function isLiveOpsResponse(value: unknown): value is LiveOpsResponse {
-  if (!value || typeof value !== "object") return false;
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const v = value as Record<string, unknown>;
-  if (typeof v.generated_at !== "string" || !Number.isFinite(Date.parse(v.generated_at))) return false;
-  if (!v.layers || typeof v.layers !== "object" || !v.sources || typeof v.sources !== "object" ||
-      !v.counts || typeof v.counts !== "object") return false;
-  const layers = v.layers as Record<string, unknown>;
-  const sources = v.sources as Record<string, unknown>;
-  const counts = v.counts as Record<string, unknown>;
-  for (const key of ["flights", "military", "satellites", "cctv"] as const) {
-    const status = sources[key];
-    if (status !== "online" && status !== "degraded" && status !== "offline") return false;
-    const assets = layers[key];
-    if (!Array.isArray(assets) || !assets.every((item: unknown) => {
-      if (!item || typeof item !== "object") return false;
-      const asset = item as Record<string, unknown>;
-      return typeof asset.id === "string" && asset.id.length > 0 &&
-        typeof asset.lat === "number" && typeof asset.lon === "number" &&
-        isValidCoordinates(asset.lat, asset.lon);
-    })) return false;
+  const obj = (x: unknown): x is Record<string, unknown> =>
+    Boolean(x) && typeof x === "object" && !Array.isArray(x);
+  const finiteOrNull = (x: unknown) => x === null || isFiniteNumber(x);
+  const validTime = (x: unknown) => typeof x === "string" && Number.isFinite(Date.parse(x));
+  if (!validTime(v.generated_at) || !obj(v.area) || !obj(v.layers) || !obj(v.sources) ||
+      !obj(v.counts) || !obj(v.errors)) return false;
+
+  const { area, layers, sources, counts } = v;
+  if (!obj(area.center) || !obj(area.bounds) ||
+      !isFiniteNumber(area.center.lat) || !isFiniteNumber(area.center.lon) ||
+      !isValidCoordinates(area.center.lat, area.center.lon) ||
+      !isFiniteNumber(area.radius_nm) || area.radius_nm < 1 || area.radius_nm > 150) return false;
+  const b = area.bounds;
+  if (!isFiniteNumber(b.lamin) || !isFiniteNumber(b.lamax) ||
+      !isFiniteNumber(b.lomin) || !isFiniteNumber(b.lomax) ||
+      b.lamin < -90 || b.lamax > 90 || b.lamin > b.lamax ||
+      b.lomin < -180 || b.lomin > 180 || b.lomax < -180 || b.lomax > 180) return false;
+
+  const keys = ["flights", "military", "satellites", "cctv"] as const;
+  const countKey = { flights: "live_flights", military: "military_flights", satellites: "satellites", cctv: "cctv" } as const;
+  for (const key of keys) {
+    if (!["online", "degraded", "offline"].includes(String(sources[key]))) return false;
+    const entries = layers[key];
+    if (!Array.isArray(entries) || entries.length > 100_000) return false;
+    for (const item of entries as unknown[]) {
+      if (!obj(item) || typeof item.id !== "string" || item.id.length === 0 || item.id.length > 200 ||
+          !isFiniteNumber(item.lat) || !isFiniteNumber(item.lon) ||
+          !isValidCoordinates(item.lat, item.lon)) return false;
+      if (key === "flights" || key === "military") {
+        if (item.type !== "flight" || typeof item.icao24 !== "string" ||
+            !finiteOrNull(item.altitude_ft) || !finiteOrNull(item.speed_kts) ||
+            !finiteOrNull(item.heading_deg) || !finiteOrNull(item.vertical_rate) ||
+            !(item.last_seen === null || validTime(item.last_seen))) return false;
+        if (key === "military" && item.category !== "military") return false;
+      } else if (key === "satellites") {
+        if (item.type !== "satellite" || typeof item.name !== "string" ||
+            typeof item.norad_id !== "string" ||
+            (item.context !== "OVERHEAD" && item.context !== "NEARBY") ||
+            !finiteOrNull(item.altitude_km) || !finiteOrNull(item.velocity_kms) ||
+            !finiteOrNull(item.azimuth) || !finiteOrNull(item.elevation) ||
+            !(item.last_seen === null || validTime(item.last_seen))) return false;
+      } else {
+        if (item.type !== "cctv" || typeof item.name !== "string" ||
+            typeof item.agency !== "string" ||
+            !["online", "offline", "unknown"].includes(String(item.status)) ||
+            !validTime(item.last_checked) ||
+            !["preview_url", "stream_url", "page_url"].every(k => item[k] === null || typeof item[k] === "string")) return false;
+      }
+    }
+    const n = counts[countKey[key]];
+    if (n !== null && (!Number.isSafeInteger(n) || (n as number) < 0 || n !== entries.length)) return false;
+    if (sources[key] === "offline" && (n !== null || entries.length !== 0)) return false;
   }
-  for (const key of ["live_flights", "military_flights", "satellites", "cctv", "total_assets"] as const) {
-    const count = counts[key];
-    if (count !== null && (typeof count !== "number" || !Number.isSafeInteger(count) || count < 0)) return false;
-  }
-  return true;
+  const total = counts.total_assets;
+  if (total !== null && (!Number.isSafeInteger(total) || total < 0)) return false;
+  const values = keys.map(key => counts[countKey[key]] as number | null);
+  if (values.some(n => n === null)) return total === null;
+  return total === values.reduce<number>((sum, n) => sum + (n || 0), 0);
 }
