@@ -148,16 +148,16 @@ code,kbd{font-family:'IBM Plex Mono',monospace}
 /* ---- stat tiles --------------------------------------------------------- */
 .stat{padding:18px 20px}
 .stat .k{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:2.4px;
-  text-transform:uppercase;color:var(--ink3)}
+  text-transform:uppercase;color:color-mix(in srgb, var(--ink3) 96%, white)}
 .stat .v{font-size:clamp(1.7rem,3.4vw,2.3rem);font-weight:200;letter-spacing:-.03em;margin-top:7px;
   font-variant-numeric:tabular-nums}
-.stat .v em{font-style:normal;font-size:.5em;color:var(--ink3);letter-spacing:0;margin-left:5px}
-.stat .s{font-size:.79rem;color:var(--ink3);margin-top:5px}
+.stat .v em{font-style:normal;font-size:.5em;color:color-mix(in srgb, var(--ink3) 96%, white);letter-spacing:0;margin-left:5px}
+.stat .s{font-size:.79rem;color:color-mix(in srgb, var(--ink3) 96%, white);margin-top:5px}
 .v.ion{color:var(--ion)}.v.plasma{color:var(--plasma)}.v.vital{color:var(--vital)}.v.amber{color:var(--amber)}
 
 /* ---- domain cards ------------------------------------------------------- */
 .dom{padding:24px}
-.dom .idx{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:2.4px;color:var(--ink3)}
+.dom .idx{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:2.4px;color:color-mix(in srgb, var(--ink3) 96%, white)}
 .dom h3{margin:9px 0 8px;font-size:1.14rem}
 .dom p{color:var(--ink2);font-size:.9rem;line-height:1.65;font-weight:300}
 .dom ul{list-style:none;margin:14px 0 0;padding:13px 0 0;border-top:1px solid var(--edge);
@@ -173,7 +173,7 @@ code,kbd{font-family:'IBM Plex Mono',monospace}
 .rung .desc{color:var(--ink2);font-size:.89rem;line-height:1.6;font-weight:300}
 .rung .desc b{color:#bcaeb0;font-weight:600}
 .rung.low{border-left:3px solid var(--vital)}.rung.low .tier{color:var(--vital)}
-.rung.med{border-left:3px solid var(--amber)}.rung.med .tier{color:var(--amber)}
+.rung.med{border-left:3px solid var(--amber)}.rung.med .tier{color:color-mix(in srgb, var(--amber) 84%, white)}
 .rung.high{border-left:3px solid var(--alert)}.rung.high .tier{color:var(--alert)}
 .rung.crit{border-left:3px solid var(--plasma)}.rung.crit .tier{color:var(--plasma)}
 
@@ -210,9 +210,9 @@ th.mono{font-family:'IBM Plex Mono',monospace}
 .flow .step:first-child{border-radius:12px 0 0 12px}
 .flow .step:last-child{border-radius:0 12px 12px 0}
 .flow .step+.step{border-left:0}
-.flow .step .n{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--ion)}
+.flow .step .n{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;color:color-mix(in srgb, var(--ion) 94%, white)}
 .flow .step .t{font-size:.92rem;font-weight:600;margin:7px 0 5px}
-.flow .step .d{font-size:.78rem;color:var(--ink3);line-height:1.55;font-weight:300}
+.flow .step .d{font-size:.78rem;color:color-mix(in srgb, var(--ink3) 92%, white);line-height:1.55;font-weight:300}
 .flow .step.gate{background:linear-gradient(165deg,rgba(237, 95, 119,.16),rgba(25, 17, 17,.6));
   border-color:rgba(237, 95, 119,.4)}
 .flow .step.gate .n{color:var(--plasma)}
@@ -226,15 +226,15 @@ th.mono{font-family:'IBM Plex Mono',monospace}
   text-transform:none;letter-spacing:0}
 .link{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;padding:10px 14px;
   border-radius:9px;border:1px solid var(--edge);background:rgba(25, 17, 17,.45)}
-.link .i{color:var(--ink3)}
+.link .i{color:color-mix(in srgb, var(--ink3) 94%, white)}
 .link .a{color:#bcaeb0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .link .h{color:var(--ink3);font-size:.68rem;white-space:nowrap}
 
 /* ---- code --------------------------------------------------------------- */
 pre.code{background:rgba(3,5,16,.8);border:1px solid var(--edge);border-radius:13px;padding:20px 22px;
   overflow-x:auto;font-size:.79rem;line-height:1.85;color:var(--ink2)}
-pre.code .c{color:var(--ink3)}
-pre.code .p{color:var(--ion)}
+pre.code .c{color:color-mix(in srgb, var(--ink3) 92%, white)}
+pre.code .p{color:color-mix(in srgb, var(--ion) 90%, white)}
 pre.code .s{color:var(--vital)}
 
 /* ---- modal (secure action confirmation) --------------------------------- */
@@ -258,7 +258,7 @@ pre.code .s{color:var(--vital)}
 .modal button:hover{background:rgba(231, 41, 44,.16)}
 .queue-act{cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:1.4px;
   text-transform:uppercase;padding:5px 11px;border-radius:6px;border:1px solid var(--edge2);
-  background:rgba(231, 41, 44,.07);color:var(--ion)}
+  background:rgba(231, 41, 44,.07);color:color-mix(in srgb, var(--ion) 84%, white)}
 .queue-act:hover{background:rgba(231, 41, 44,.18)}
 
 footer.foot{border-top:1px solid var(--edge);padding:34px 0 46px;

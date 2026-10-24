@@ -171,7 +171,7 @@ body{
   transition:color .25s var(--ease),background .25s var(--ease)
 }
 .topbar nav a:hover,.topbar nav a:focus-visible{color:var(--txt-0);background:rgba(238, 99, 108,0.08);outline:none}
-.topbar .clock{font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:.1em;
+.topbar .clock{font-family:var(--mono);font-size:11px;color:color-mix(in srgb, var(--cyan) 82%, white);letter-spacing:.1em;
   padding-left:16px;margin-left:6px;border-left:1px solid var(--line);min-width:104px;text-align:right}
 @media (max-width:760px){.topbar nav{display:none}}
 
@@ -212,7 +212,7 @@ body{
 .sec{padding:clamp(30px,5vw,58px) 0}
 .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:26px}
 .sec-head h2{font-size:clamp(1.3rem,2.6vw,1.9rem);font-weight:600;letter-spacing:-.01em}
-.sec-head .idx{font-family:var(--mono);font-size:12px;color:var(--cyan);letter-spacing:.18em}
+.sec-head .idx{font-family:var(--mono);font-size:12px;color:color-mix(in srgb, var(--cyan) 74%, white);letter-spacing:.18em}
 .sec-head .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
 
 /* =====================  BUTTON SYSTEM  ===================== */
@@ -300,7 +300,7 @@ body{
 .card p{color:var(--txt-1);font-size:.92rem;margin-bottom:16px}
 .card .c-metric{font-family:var(--mono);display:flex;align-items:baseline;gap:8px}
 .card .c-metric b{font-size:1.7rem;font-weight:700;color:var(--txt-0)}
-.card .c-metric .delta{font-size:11px;color:var(--green)}
+.card .c-metric .delta{font-size:11px;color:color-mix(in srgb, var(--green) 92%, white)}
 .card .c-metric .delta.dn{color:var(--danger)}
 /* mini sparkline bar */
 .spark{display:flex;align-items:flex-end;gap:3px;height:34px;margin-top:14px}
@@ -352,9 +352,9 @@ body{
 .console .c-body{padding:18px 18px 22px;font-family:var(--mono);font-size:12.5px;line-height:1.9;color:var(--txt-1)}
 .console .c-body .ln{display:block;white-space:pre-wrap}
 .console .c-body .t{color:var(--txt-3)}
-.console .c-body .ok{color:var(--green)}
-.console .c-body .acc{color:var(--cyan)}
-.console .c-body .vl{color:var(--violet)}
+.console .c-body .ok{color:color-mix(in srgb, var(--green) 92%, white)}
+.console .c-body .acc{color:color-mix(in srgb, var(--cyan) 86%, white)}
+.console .c-body .vl{color:color-mix(in srgb, var(--violet) 80%, white)}
 /* progress / loader */
 .loader{margin-top:16px}
 .loader .lbar{height:6px;border-radius:999px;background:var(--bg-3);overflow:hidden;border:1px solid var(--line)}

@@ -121,7 +121,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:61;
 .corner{position:absolute;width:12px;height:12px;border:1px solid var(--line-2);pointer-events:none}
 .corner.tl{top:6px;left:6px;border-right:0;border-bottom:0}.corner.tr{top:6px;right:6px;border-left:0;border-bottom:0}
 .corner.bl{bottom:6px;left:6px;border-right:0;border-top:0}.corner.br{bottom:6px;right:6px;border-left:0;border-top:0}
-.p-title{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);padding:13px 16px 10px}
+.p-title{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:color-mix(in srgb, var(--cyan) 84%, white);padding:13px 16px 10px}
 .p-title .ico{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
 .p-title small{margin-left:auto;color:var(--dim-2);font-size:9px;letter-spacing:.1em}
 
@@ -135,11 +135,11 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:61;
 .mitem .mi-tx{min-width:0}
 .mitem .mi-n{font-size:12.5px;font-weight:600;color:#eee2e4}
 .mitem .mi-s{font-size:9.5px;color:var(--dim);font-family:var(--mono);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mitem .mi-b{margin-left:auto;font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:6px;background:rgba(238, 99, 122,.16);color:var(--amber);border:1px solid rgba(238, 99, 122,.3)}
+.mitem .mi-b{margin-left:auto;font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:6px;background:rgba(238, 99, 122,.16);color:color-mix(in srgb, var(--amber) 66%, white);border:1px solid rgba(238, 99, 122,.3)}
 .mitem .mi-launch{margin-left:auto;text-decoration:none;color:#e56c6e;font-size:13px;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;border:1px solid rgba(212, 47, 50,.35);background:rgba(212, 47, 50,.08);transition:.15s}
 .mitem .mi-launch:hover{color:#bff7ee;border-color:rgba(212, 47, 50,.7);box-shadow:0 0 12px rgba(212, 47, 50,.35)}
 .mitem .mi-launch+.mi-b{margin-left:6px}
-.mitem.on .mi-ic{background:rgba(238, 99, 108,.18);color:var(--cyan)}
+.mitem.on .mi-ic{background:rgba(238, 99, 108,.18);color:color-mix(in srgb, var(--cyan) 60%, white)}
 
 /* ---- Center ---- */
 .center{display:grid;grid-template-rows:1fr auto;gap:14px;min-height:0}
@@ -171,7 +171,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:61;
 .node .chip:hover{border-color:var(--cyan);box-shadow:0 0 16px rgba(238, 99, 108,.35)}
 .node .chip .d{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;background:rgba(238, 99, 108,.12);border:1px solid var(--line)}
 .node .chip .nm{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;color:#f3ebeb}
-.node .chip .pct{font-family:var(--display);font-size:9px;font-weight:700;color:var(--cyan)}
+.node .chip .pct{font-family:var(--display);font-size:9px;font-weight:700;color:color-mix(in srgb, var(--cyan) 84%, white)}
 .node.warn .chip{border-color:rgba(238, 99, 101,.5)}.node.warn .chip .pct{color:var(--amber)}
 .node.bad .chip{border-color:rgba(238, 99, 117,.6);animation:alertPulse 1.4s ease-in-out infinite}.node.bad .chip .pct{color:var(--bad)}
 @keyframes alertPulse{50%{box-shadow:0 0 20px rgba(238, 99, 117,.5)}}
@@ -182,7 +182,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:61;
 .msg{max-width:88%;font-size:13px;line-height:1.6}
 .msg.u{align-self:flex-end;text-align:right}
 .msg .who{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
-.msg.j .who{color:var(--cyan)}.msg.u .who{color:var(--amber)}
+.msg.j .who{color:color-mix(in srgb, var(--cyan) 86%, white)}.msg.u .who{color:var(--amber)}
 .msg .body{padding:9px 13px;border-radius:12px;border:1px solid var(--line)}
 .msg.j .body{background:linear-gradient(180deg,rgba(238, 99, 108,.08),rgba(238, 99, 108,.02));border-color:var(--line-2);border-top-left-radius:3px}
 .msg.u .body{background:rgba(238, 99, 122,.09);border-color:rgba(238, 99, 122,.28);border-top-right-radius:3px;display:inline-block;text-align:left}
@@ -304,7 +304,7 @@ body::after{background:radial-gradient(120% 90% at 50% 38%,transparent 60%,rgba(
 /* near-white text → ink/deep-blue */
 .b-name,.clock .t,.gring .val,.modes button.on,.msg .body b,.kpi .k-v,
 .tcell .n,.toast .tt b,.node .chip .nm,.ev .e-b b{color:#e98a8b !important}
-.b-name b{color:var(--cyan) !important}
+.b-name b{color:color-mix(in srgb, var(--cyan) 82%, white) !important}
 .mi-n{color:#dbbaba !important}
 .ev .e-b{color:#c99fa2 !important}
 .approve .ab{color:#dbbaba !important}
@@ -330,7 +330,7 @@ body::after{background:radial-gradient(120% 90% at 50% 38%,transparent 60%,rgba(
 .composer{background:rgba(14, 14, 14,.55) !important;border-top-color:var(--line)}
 .composer input{background:rgba(14, 14, 14,.7) !important;color:var(--txt) !important;border-color:var(--line)}
 .composer input::placeholder{color:var(--dim-2) !important}
-.mic{background:rgba(234, 70, 72,.10);color:var(--cyan)}
+.mic{background:rgba(234, 70, 72,.10);color:color-mix(in srgb, var(--cyan) 78%, white)}
 .send{background:linear-gradient(180deg,rgba(234, 70, 72,.95),rgba(231, 41, 53,.95)) !important;color:#fff !important;border-color:transparent}
 .qchip{background:rgba(14, 14, 14,.5);color:var(--dim)}
 .approve{background:rgba(231, 41, 53,.05);border-color:rgba(234, 70, 72,.35)}
@@ -466,7 +466,7 @@ body::after{background:radial-gradient(120% 90% at 50% 38%,transparent 60%,rgba(
 .dk-mitem .mi-s{font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.03em;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dk-mitem .mi-x{margin-left:auto;font-family:var(--mono);font-size:8px;padding:2px 6px;border-radius:6px;
-  background:rgba(231, 41, 53,.10);color:#e72935;border:1px solid rgba(231, 41, 53,.22)}
+  background:rgba(231, 41, 53,.10);color:#e93e49;border:1px solid rgba(231, 41, 53,.22)}
 
 /* ---------- overlay shell ---------- */
 /* right padding keeps the window clear of the launcher rail that floats above it */

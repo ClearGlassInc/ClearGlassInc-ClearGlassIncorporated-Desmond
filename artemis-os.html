@@ -182,7 +182,7 @@ body{
 .eco::before{content:'';position:absolute;inset:0;border-radius:22px;padding:1px;background:linear-gradient(135deg,rgba(238, 99, 101,.28),transparent 40%,transparent 60%,rgba(238, 99, 122,.18));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .4s var(--ease);pointer-events:none}
 .eco:hover{transform:translateY(-4px);border-color:var(--border-hi);box-shadow:var(--glow)}
 .eco:hover::before{opacity:1}
-.eco-num{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--cyan);margin-bottom:18px;display:flex;justify-content:space-between;align-items:center}
+.eco-num{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:color-mix(in srgb, var(--cyan) 82%, white);margin-bottom:18px;display:flex;justify-content:space-between;align-items:center}
 .eco-num .stat{color:var(--green);display:inline-flex;align-items:center;gap:6px}
 .eco-num .stat::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1.6s infinite}
 .eco h3{font-family:var(--serif);font-size:1.7rem;font-weight:500;line-height:1.15;letter-spacing:-.01em;color:#bcaeb0;margin-bottom:12px}
@@ -198,15 +198,15 @@ body{
 .diag-scan{position:absolute;left:0;right:0;height:80px;pointer-events:none;background:linear-gradient(180deg,transparent,rgba(238, 99, 101,.06),transparent);animation:diagScan 6s ease-in-out infinite}
 @keyframes diagScan{0%{top:-80px}100%{top:100%}}
 .diag-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:32px}
-.diag-title{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--cyan);text-transform:uppercase}
+.diag-title{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:color-mix(in srgb, var(--cyan) 84%, white);text-transform:uppercase}
 .diag-meta{display:flex;gap:18px;align-items:center;font-family:var(--mono);font-size:11px;color:var(--dim)}
-.diag-meta .live{color:var(--green);display:inline-flex;align-items:center;gap:8px}
+.diag-meta .live{color:color-mix(in srgb, var(--green) 92%, white);display:inline-flex;align-items:center;gap:8px}
 .diag-meta .live::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:pulse 1.6s infinite}
 .diag-grid{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
 .metric-card{position:relative;padding:24px 22px;border-radius:16px;background:rgba(238, 99, 101,.025);border:1px solid var(--border);overflow:hidden}
 .metric-card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--cyan),transparent)}
 .metric-label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--dim);margin-bottom:14px;display:flex;justify-content:space-between;text-transform:uppercase}
-.metric-status{color:var(--green);display:inline-flex;align-items:center;gap:6px}
+.metric-status{color:color-mix(in srgb, var(--green) 92%, white);display:inline-flex;align-items:center;gap:6px}
 .metric-status::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1.6s infinite}
 .metric-value{font-family:var(--serif);font-size:2.6rem;font-weight:400;line-height:1;background:var(--crystal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.02em}
 .metric-value sup{font-size:.5em;font-weight:300;margin-left:2px;-webkit-text-fill-color:var(--dim)}

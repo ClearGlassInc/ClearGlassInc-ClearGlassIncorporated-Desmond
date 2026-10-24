@@ -118,7 +118,7 @@ body{
 .corner{position:absolute;width:13px;height:13px;border:1px solid var(--line-2);pointer-events:none;z-index:2}
 .corner.tl{top:7px;left:7px;border-right:0;border-bottom:0}.corner.tr{top:7px;right:7px;border-left:0;border-bottom:0}
 .corner.bl{bottom:7px;left:7px;border-right:0;border-top:0}.corner.br{bottom:7px;right:7px;border-left:0;border-top:0}
-.p-title{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);padding:14px 17px 11px}
+.p-title{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:color-mix(in srgb, var(--cyan) 70%, white);padding:14px 17px 11px}
 .p-title .ico{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 9px var(--cyan);animation:blink 2.4s ease-in-out infinite}
 .p-title small{margin-left:auto;color:var(--dim-2);font-size:9px;letter-spacing:.12em}
 
@@ -182,7 +182,7 @@ body{
 .filt-ring svg{transform:rotate(-90deg)}
 .filt-ring .pc{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-size:12px;font-weight:700;color:#f7f2f2}
 .filt-tx .ft-n{font-size:12.5px;font-weight:600;color:#f7f2f2}
-.filt-tx .ft-s{font-family:var(--mono);font-size:9.5px;color:var(--dim);letter-spacing:.04em;margin-top:3px}
+.filt-tx .ft-s{font-family:var(--mono);font-size:9.5px;color:color-mix(in srgb, var(--dim) 96%, white);letter-spacing:.04em;margin-top:3px}
 .filt-tx .ft-s b{color:var(--mint)}
 .bars{display:flex;gap:4px;margin-top:9px}
 .bars i{flex:1;height:5px;border-radius:3px;background:rgba(238, 99, 108,.12);overflow:hidden;position:relative}
@@ -234,11 +234,11 @@ body{
   transition:transform .28s var(--spring,cubic-bezier(.16,1,.3,1)),border-color .2s,box-shadow .3s,background .2s;text-align:center}
 .vent:hover{transform:translateY(-3px);border-color:var(--line-2);background:rgba(238, 99, 108,.07)}
 .vent.active{border-color:rgba(231, 41, 44,.55);box-shadow:0 0 22px rgba(231, 41, 44,.2)}
-.vent .v-n{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+.vent .v-n{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:color-mix(in srgb, var(--dim) 82%, white);text-transform:uppercase}
 .vent .v-louver{height:30px;margin:9px auto 8px;width:34px;display:flex;flex-direction:column;justify-content:space-between}
 .vent .v-louver b{display:block;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--cyan),var(--blue));box-shadow:0 0 7px rgba(231, 41, 44,.5);transform-origin:center;transition:transform .5s var(--spring,cubic-bezier(.16,1,.3,1)),opacity .4s}
 .vent .v-pct{font-family:var(--display);font-size:15px;font-weight:700;color:#f7f2f2}
-.vent .v-pct s{font-size:9px;text-decoration:none;color:var(--dim);font-family:var(--mono)}
+.vent .v-pct s{font-size:9px;text-decoration:none;color:color-mix(in srgb, var(--dim) 82%, white);font-family:var(--mono)}
 
 /* ---- Right column controls ---- */
 .metric{padding:4px 16px 16px;display:grid;gap:15px}
@@ -300,7 +300,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bor
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast .ti{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;background:rgba(238, 99, 101,.14);border:1px solid var(--line);font-size:16px}
 .toast .tt b{font-size:12.5px;color:#eef5ff;display:block}
-.toast .tt span{font-family:var(--mono);font-size:9.5px;color:var(--dim);letter-spacing:.06em}
+.toast .tt span{font-family:var(--mono);font-size:9.5px;color:color-mix(in srgb, var(--dim) 90%, white);letter-spacing:.06em}
 
 @media (max-width:1180px){
   .main{grid-template-columns:1fr;grid-auto-rows:min-content}
@@ -324,6 +324,14 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bor
 <link rel="stylesheet" href="/assets/css/future-buttons.css">
 <link rel="stylesheet" href="/clearglass-crimson.css">
 <link rel="stylesheet" href="/assets/css/neon-pulse.css">
+<style id="cg-contrast-fit">
+/* Contrast fit (2026-10-24): text that a shared rule colours for dark
+   backgrounds sits on a different background here; measured below WCAG AA. */
+html div#tagBl.tag.bl { color: #eec8c9 !important; } /* was 1.95:1 */
+html div#tagBr.tag.br { color: #e4aaab !important; } /* was 2.52:1 */
+html div#tagTr.tag.tr { color: #eec9c9 !important; } /* was 1.78:1 */
+html div.tag.tl { color: #f7e7e7 !important; } /* was 1.51:1 */
+</style>
 </head>
 <body>
   <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">ZEPHYR · Air Systems Control Surface — ClearGlass Inc.</h1>

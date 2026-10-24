@@ -124,7 +124,7 @@ body{font-family:var(--sans);color:var(--txt);min-height:100vh;overflow-x:hidden
 main{position:relative;z-index:1}
 .wrap{max-width:1220px;margin:0 auto;padding:0 24px}
 section{padding:78px 0}
-.sec-tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--cyan);
+.sec-tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:color-mix(in srgb, var(--cyan) 82%, white);
   border:1px solid var(--cyan-line);background:rgba(235, 76, 79,.06);padding:6px 13px;border-radius:18px;margin-bottom:16px}
 .sec-tag::before{content:"▸"}
 h2.sec-title{font-family:var(--display);font-weight:900;font-size:clamp(24px,3.4vw,38px);letter-spacing:.04em;margin-bottom:10px}
@@ -218,7 +218,7 @@ h1 .glow{background:linear-gradient(92deg,var(--cyan),var(--blue-2) 55%,var(--vi
 .feed{font-family:var(--mono);font-size:10px;line-height:1.9;color:var(--dim);height:96px;overflow:hidden;position:relative}
 .feed::after{content:"";position:absolute;inset:auto 0 0 0;height:34px;background:linear-gradient(180deg,transparent,rgba(18, 12, 12,.95))}
 .feed div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.feed .ok{color:var(--ok)}.feed .ky{color:var(--cyan)}.feed .wr{color:var(--warn)}.feed .al{color:var(--alert)}
+.feed .ok{color:var(--ok)}.feed .ky{color:color-mix(in srgb, var(--cyan) 86%, white)}.feed .wr{color:var(--warn)}.feed .al{color:var(--alert)}
 .cursor{display:inline-block;width:7px;height:12px;background:var(--cyan);vertical-align:-2px;animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
 
@@ -307,7 +307,7 @@ footer .spacer{flex:1}
 .a-btns{display:flex;gap:8px;margin-top:10px}
 .a-btns button{flex:1;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;padding:7px 0;border-radius:8px;cursor:pointer;transition:box-shadow .2s,transform .2s}
 .a-btns button:hover{transform:translateY(-1px)}
-.a-approve{color:#d1f7e5;font-weight:700;border:1px solid rgba(52,211,153,.6);background:linear-gradient(90deg,#34d399,#5eead4)}
+.a-approve{color:#0b4a2e;font-weight:700;border:1px solid rgba(52,211,153,.6);background:linear-gradient(90deg,#34d399,#5eead4)}
 .a-approve:hover{box-shadow:0 0 16px rgba(52,211,153,.45)}
 .a-deny{color:var(--alert);border:1px solid rgba(255,77,94,.45);background:rgba(255,77,94,.07)}
 .a-deny:hover{box-shadow:0 0 14px rgba(255,77,94,.3)}
