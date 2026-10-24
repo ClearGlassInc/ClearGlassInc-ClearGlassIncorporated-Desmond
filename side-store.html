@@ -435,6 +435,9 @@
 
   /* product cards — engineered glass objects */
   .st-card{background:var(--st-glass);border:1px solid var(--st-line);backdrop-filter:blur(24px) saturate(1.55);box-shadow:var(--st-shadow)}
+  /* Blur budget (2026-10-23): a control inside an already-blurred glass surface
+     re-blurred only that surface; 80 cards x 4 controls did it 335 times. */
+  .st-card .future-glass-control,.st-controls .future-glass-control,.st-header .future-glass-control,.st-cartbar .future-glass-control,.st-drawer .future-glass-control{-webkit-backdrop-filter:none;backdrop-filter:none}
   .st-card:hover{border-color:rgba(237, 97, 99,.55);box-shadow:var(--st-shadow-lift)}
   .st-card::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(230px circle at var(--gx,50%) var(--gy,0%),rgba(236, 83, 86,.16),transparent 65%);opacity:0;transition:opacity .3s}
   .st-card:hover::before{opacity:1}
