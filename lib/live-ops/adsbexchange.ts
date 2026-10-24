@@ -37,7 +37,10 @@ export async function getMilitaryFlights(center: Center, radiusNm: number): Prom
       const a = item as Record<string, unknown>;
       if (!isMilitaryAircraft(a) || typeof a.hex !== "string" || !/^[a-fA-F0-9]{6,8}$/.test(a.hex) || !isFiniteNumber(a.lat) || !isFiniteNumber(a.lon)) continue;
       if (!isValidCoordinates(a.lat, a.lon) || distanceNm(center, a.lat, a.lon) > radiusNm) continue;
-      const seen = isFiniteNumber(a.seen_pos) ? new Date(now - a.seen_pos * 1000).toISOString() : null;
+      // External age fields can be negative or enormous. Invalid timestamps must not crash a provider batch.
+      const ageSeconds = isFiniteNumber(a.seen_pos) && a.seen_pos >= 0 && a.seen_pos <= 31_536_000
+        ? a.seen_pos : null;
+      const seen = ageSeconds === null ? null : new Date(now - ageSeconds * 1000).toISOString();
       const altitude = isFiniteNumber(a.alt_baro) ? a.alt_baro : isFiniteNumber(a.alt_geom) ? a.alt_geom : null;
       items.push({
         id: a.hex.toLowerCase(), type: "flight", category: "military", icao24: a.hex.toLowerCase(),

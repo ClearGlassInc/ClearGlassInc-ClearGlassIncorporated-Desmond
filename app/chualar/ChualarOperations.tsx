@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { distanceNm, tileZoomForRadius, webMercatorPixels } from "@/lib/live-ops/types";
+import { distanceNm, isLiveOpsResponse, tileZoomForRadius, webMercatorPixels } from "@/lib/live-ops/types";
 import type { CameraAsset, FlightAsset, LiveOpsResponse, SatelliteAsset, SourceHealth } from "@/lib/live-ops/types";
 import styles from "./chualar.module.css";
 
@@ -38,8 +38,8 @@ export default function ChualarOperations(): React.JSX.Element {
   const [radius, setRadius] = useState(40);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const lastGood = useRef<LiveOpsResponse | null>(null);
-  const refresh = useCallback(async (manual = false) => {
-    if (busyRef.current && !manual) return;
+  const refresh = useCallback(async () => {
+    if (busyRef.current) return;
     busyRef.current = true;
     setBusy(true);
     try {
@@ -47,7 +47,7 @@ export default function ChualarOperations(): React.JSX.Element {
       const response = await fetch(`/api/live/ops?${query}`, { cache: "no-store", headers: { accept: "application/json" } });
       if (!response.ok) throw new Error(response.status === 429 ? "Request limit reached; waiting for the next refresh." : `Operations API returned HTTP ${response.status}.`);
       const next = await response.json() as LiveOpsResponse;
-      if (!next || !next.layers || !next.sources) throw new Error("Operations API returned an invalid payload.");
+      if (!isLiveOpsResponse(next)) throw new Error("Operations API returned an invalid payload.");
       setData(next); lastGood.current = next; setError(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Refresh failed.");
@@ -70,9 +70,10 @@ export default function ChualarOperations(): React.JSX.Element {
   }), [data]);
   const allMarkers = (Object.keys(assets) as LayerKey[]).flatMap(kind => layers[kind] ? assets[kind].map(({ asset }) => ({ kind, asset })) : []);
   const sourceStatus = data.sources;
-  const overallHealth = Object.values(sourceStatus).some(status => status === "online")
+  const statuses = Object.values(sourceStatus);
+  const overallHealth = statuses.every(status => status === "online") && !error
     ? "LIVE"
-    : Object.values(sourceStatus).some(status => status === "degraded") ? "DEGRADED" : "OFFLINE";
+    : statuses.every(status => status === "offline") ? "OFFLINE" : "DEGRADED";
   const overallStyle = overallHealth === "LIVE" ? styles.liveOnline : overallHealth === "DEGRADED" ? styles.liveDegraded : styles.liveOffline;
   const pulseStyle = overallHealth === "LIVE" ? styles.pulseOnline : overallHealth === "DEGRADED" ? styles.pulseDegraded : styles.pulseOffline;
   const viewRadius = useMemo(() => {
@@ -120,7 +121,7 @@ export default function ChualarOperations(): React.JSX.Element {
     <section className={styles.toolbar}>
       <label>RADIUS <select value={radius} onChange={e => setRadius(Number(e.target.value))}><option value={20}>20 NM</option><option value={40}>40 NM</option><option value={60}>60 NM</option><option value={100}>100 NM</option><option value={150}>150 NM</option></select></label>
       <label className={styles.auto}><input type="checkbox" checked={autoRefresh} onChange={e => setAutoRefresh(e.target.checked)}/> AUTO REFRESH</label>
-      <button onClick={() => void refresh(true)} disabled={busy}>{busy ? "REFRESHING…" : "↻ REFRESH NOW"}</button>
+      <button onClick={() => void refresh()} disabled={busy}>{busy ? "REFRESHING…" : "↻ REFRESH NOW"}</button>
       <span className={styles.updated}>LAST RESPONSE: {data.generated_at ? new Date(data.generated_at).toLocaleTimeString() : "—"}</span>
     </section>
     {error && <div role="alert" className={styles.error}><strong>DATA REFRESH WARNING</strong> {error} {lastGood.current ? "Showing last good response where available." : "No previous response is available."}</div>}
