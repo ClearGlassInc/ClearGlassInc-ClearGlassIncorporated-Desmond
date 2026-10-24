@@ -272,6 +272,17 @@
     .hero{aspect-ratio:16/10}
   }
 </style>
+<style id="cg-mobile-fit">
+/* Mobile fit (2026-10-23): fixes the layout cause of sideways overflow on phones. */
+/* .brand is min-width:max-content and the tagline is nowrap with wide
+   tracking, so the brand alone was 412px. On phones let it shrink. */
+@media (max-width: 560px) {
+  .brand, .wordmark { min-width: 0; }
+  .wordmark .tag { white-space: normal; letter-spacing: .24em; }
+  .seal-housing { width: 56px; height: 56px; }
+  .wordmark .name { font-size: 1.15rem; }
+}
+</style>
 <link rel="stylesheet" href="/assets/css/future-buttons.css">
 <link rel="stylesheet" href="/clearglass-crimson.css">
 <link rel="stylesheet" href="/assets/css/neon-pulse.css">
