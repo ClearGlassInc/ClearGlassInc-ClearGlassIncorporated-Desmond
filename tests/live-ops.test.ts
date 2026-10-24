@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { boundsFor, cleanText, distanceNm, inBounds, isLiveOpsResponse, isValidCoordinates, parseFiniteNumber, tileZoomForRadius, webMercatorPixels } from "../lib/live-ops/types";
 import { allowProviderRequest, cachedProvider } from "../lib/live-ops/cache";
 import { isMilitaryAircraft, normalizeOnGround } from "../lib/live-ops/adsbexchange";
-import { normalizeCameraStatus, safeHttpUrl } from "../lib/live-ops/cctv";
+import { getCameras, normalizeCameraStatus, safeHttpUrl } from "../lib/live-ops/cctv";
 import type { SatelliteAsset } from "../lib/live-ops/types";
 
 test("Chualar 40 NM bounds contain the center and stay finite", () => {
@@ -204,5 +204,42 @@ test("expired last-good records are degraded only for a bounded stale window", a
     assert.equal(offline.items.length, 0);
   } finally {
     Date.now = savedNow;
+  }
+});
+
+test("Caltrans District 5 official nested JSON produces real coordinate-mapped cameras", async () => {
+  const originalFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = (async (input) => {
+    calls += 1;
+    assert.equal(String(input), "https://cwwp2.dot.ca.gov/data/d5/cctv/cctvStatusD05.json");
+    return new Response(JSON.stringify({ data: [
+      { cctv: {
+        index: "17", inService: "true",
+        location: { locationName: "CHUALAR HWY 101", latitude: "36.57", longitude: "-121.525" },
+        imageData: { streamingVideoURL: "https://www.dot.ca.gov/public/stream",
+          static: { currentImageURL: "https://www.dot.ca.gov/camera/updated.jpg" } }
+      } },
+      { cctv: {
+        index: "18", inService: "false",
+        location: { locationName: "MISSING COORDS", latitude: null, longitude: null },
+        imageData: {}
+      } }
+    ] }), { status: 200, headers: { "content-type": "application/json" } });
+  }) as typeof fetch;
+  try {
+    const result = await getCameras({ lat: 36.57, lon: -121.525 }, 40);
+    assert.equal(calls, 1);
+    assert.equal(result.status, "online");
+    assert.equal(result.items.length, 1);
+    const camera = result.items[0];
+    assert.equal(camera.id, "17");
+    assert.equal(camera.lat, 36.57);
+    assert.equal(camera.lon, -121.525);
+    assert.equal(camera.status, "online");
+    assert.equal(camera.preview_url, "https://www.dot.ca.gov/camera/updated.jpg");
+    assert.equal(camera.stream_url, "https://www.dot.ca.gov/public/stream");
+  } finally {
+    globalThis.fetch = originalFetch;
   }
 });
