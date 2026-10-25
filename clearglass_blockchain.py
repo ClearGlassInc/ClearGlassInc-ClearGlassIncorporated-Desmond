@@ -7,7 +7,6 @@ import hashlib
 import json
 import time
 from typing import List, Dict, Optional
-from datetime import datetime
 import ecdsa
 import base64
 
@@ -339,7 +338,7 @@ if __name__ == "__main__":
     clearglass.mine_pending_transactions(bob_public)
     
     # Check balances
-    print(f"\nFinal balances:")
+    print("\nFinal balances:")
     print(f"Alice: {clearglass.get_balance(alice_public)} CGLASS")
     print(f"Bob: {clearglass.get_balance(bob_public)} CGLASS")
     

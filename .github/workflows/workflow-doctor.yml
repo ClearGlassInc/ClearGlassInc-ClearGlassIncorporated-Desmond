@@ -65,13 +65,15 @@ jobs:
           fi
 
       - name: Establish repair branch
+        id: branch
         if: steps.doctor.outputs.changed == 'true'
         run: |
-          # Reset the disposable repair branch to main on the remote so the
-          # signing action can add its commit on top, then stage (don't commit)
-          # the repairs for it. Working-tree edits from --fix stay uncommitted.
-          git push -f origin "HEAD:refs/heads/bot/workflow-doctor-repair"
+          # Keep each run/attempt reviewable without rewriting earlier PR work.
+          # Seed the remote branch for the signing API; preserve staged repairs.
+          BRANCH="bot/workflow-doctor-repair-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          git push origin "HEAD:refs/heads/${BRANCH}"
           git add .github/workflows/
+          echo "branch=${BRANCH}" >> "$GITHUB_OUTPUT"
 
       - name: Commit repairs (Verified)
         if: steps.doctor.outputs.changed == 'true'
@@ -79,28 +81,30 @@ jobs:
         with:
           paths: .github/workflows
           message: "fix(ci): repair GitHub Actions workflows [auto]"
-          branch: bot/workflow-doctor-repair
+          branch: ${{ steps.branch.outputs.branch }}
 
       - name: Open repair PR
         if: steps.doctor.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
+          REPAIR_BRANCH: ${{ steps.branch.outputs.branch }}
         run: |
           python3 - <<'PYEOF'
           import json, os, urllib.request, urllib.error
 
           token = os.environ["GH_TOKEN"]
           repo  = os.environ["REPO"]
+          branch = os.environ["REPAIR_BRANCH"]
 
           payload = json.dumps({
             "title": "fix(ci): auto-repair GitHub Actions workflows",
-            "head":  "bot/workflow-doctor-repair",
+            "head":  branch,
             "base":  "main",
             "body": (
               "Automated workflow repair by the Workflow Doctor bot.\n\n"
               "### What changed\n"
-              "Run `git diff main...bot/workflow-doctor-repair` to inspect exact changes.\n\n"
+              f"Run `git diff main...{branch}` to inspect exact changes.\n\n"
               "### Rollback\n"
               "Close this PR without merging to reject all repairs."
             ),

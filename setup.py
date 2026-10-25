@@ -6,7 +6,6 @@ ClearGlass Cryptocurrency - Setup and Installation Script
 import os
 import sys
 import subprocess
-import platform
 
 def print_header(text):
     """Print formatted header"""
@@ -104,7 +103,7 @@ def create_sample_wallet():
         
         print("✓ Sample wallet created")
         print(f"  Address: {wallet_data['address'][:40]}...")
-        print(f"  Saved to: wallets/sample_wallet.json")
+        print("  Saved to: wallets/sample_wallet.json")
         print("\n⚠️  This is a SAMPLE wallet for testing only!")
         print("  Create your own wallet with: python clearglass_cli.py wallet create --name mywallet")
         return True

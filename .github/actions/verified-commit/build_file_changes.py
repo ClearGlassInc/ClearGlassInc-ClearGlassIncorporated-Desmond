@@ -7,8 +7,8 @@ compact JSON object of the form::
     {"additions": [{"path": "...", "contents": "<base64>"}], "deletions": [{"path": "..."}]}
 
 createCommitOnBranch requires added/modified file contents base64-encoded and
-deletions listed by path. Renames are handled by git as delete + add via the
-ACMR/D filters. stdlib only — GitHub runners always have python3.
+deletions listed by path. Rename detection is disabled so both sides of a rename
+are included as delete + add. stdlib only — GitHub runners always have python3.
 """
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ from pathlib import Path
 
 def _staged(diff_filter: str) -> list[str]:
     out = subprocess.run(
-        ["git", "diff", "--cached", "--name-only", f"--diff-filter={diff_filter}"],
+        ["git", "diff", "--cached", "--name-only", "--no-renames", f"--diff-filter={diff_filter}"],
         check=True,
         capture_output=True,
         text=True,
@@ -30,7 +30,7 @@ def _staged(diff_filter: str) -> list[str]:
 
 def main() -> int:
     additions = []
-    for path in _staged("ACMR"):  # added, copied, modified, renamed (new name)
+    for path in _staged("AM"):
         data = Path(path).read_bytes()
         additions.append({"path": path, "contents": base64.b64encode(data).decode("ascii")})
     deletions = [{"path": path} for path in _staged("D")]

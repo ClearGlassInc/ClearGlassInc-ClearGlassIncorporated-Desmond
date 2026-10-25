@@ -75,15 +75,27 @@ runs:
 
         api_commit() {
           local head_oid="$1"
-          gh api graphql -f query='
-            mutation($input: CreateCommitOnBranchInput!) {
-              createCommitOnBranch(input: $input) { commit { oid } }
-            }' \
-            -f "input[branch][repositoryNameWithOwner]=$GH_REPO" \
-            -f "input[branch][branchName]=$CG_BRANCH" \
-            -f "input[message][headline]=$CG_MESSAGE" \
-            -f "input[expectedHeadOid]=$head_oid" \
-            -f "input[fileChanges]=$payload" 2>/dev/null
+          # --raw-field serializes fileChanges as a string, but GraphQL requires
+          # an object. Serialize the complete request to preserve nested values.
+          CG_EXPECTED_HEAD_OID="$head_oid" CG_FILE_CHANGES="$payload" python3 - <<'PY' | gh api graphql --input - 2>/dev/null
+        import json
+        import os
+
+        print(json.dumps({
+            "query": "mutation($input: CreateCommitOnBranchInput!) { createCommitOnBranch(input: $input) { commit { oid } } }",
+            "variables": {
+                "input": {
+                    "branch": {
+                        "repositoryNameWithOwner": os.environ["GH_REPO"],
+                        "branchName": os.environ["CG_BRANCH"],
+                    },
+                    "message": {"headline": os.environ["CG_MESSAGE"]},
+                    "expectedHeadOid": os.environ["CG_EXPECTED_HEAD_OID"],
+                    "fileChanges": json.loads(os.environ["CG_FILE_CHANGES"]),
+                },
+            },
+        }))
+        PY
         }
 
         committed_via_api=false

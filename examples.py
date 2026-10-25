@@ -26,17 +26,17 @@ def example_1_basic_blockchain():
     # Create blockchain
     print("1. Creating blockchain...")
     blockchain = ClearGlassBlockchain()
-    print(f"   ✓ Genesis block created")
+    print("   ✓ Genesis block created")
     print(f"   ✓ Blockchain initialized with {len(blockchain.chain)} block")
     
     # Create wallets
     print("\n2. Creating wallets...")
     alice_public, alice_private = create_wallet()
-    print(f"   ✓ Alice's wallet created")
+    print("   ✓ Alice's wallet created")
     print(f"     Address: {alice_public[:40]}...")
     
     bob_public, bob_private = create_wallet()
-    print(f"   ✓ Bob's wallet created")
+    print("   ✓ Bob's wallet created")
     print(f"     Address: {bob_public[:40]}...")
     
     # Mine initial blocks for Alice
@@ -72,7 +72,7 @@ def example_2_transactions(blockchain, alice_public, alice_private, bob_public):
     print("\n2. Signing transaction with Alice's private key...")
     private_key = load_private_key(alice_private)
     transaction.sign_transaction(private_key)
-    print(f"   ✓ Transaction signed")
+    print("   ✓ Transaction signed")
     print(f"     Signature: {transaction.signature[:40]}...")
     
     # Validate transaction
@@ -83,7 +83,7 @@ def example_2_transactions(blockchain, alice_public, alice_private, bob_public):
     # Add to blockchain
     print("\n4. Adding transaction to blockchain...")
     if blockchain.add_transaction(transaction):
-        print(f"   ✓ Transaction added to pending pool")
+        print("   ✓ Transaction added to pending pool")
     
     # Mine block
     print("\n5. Mining block with transaction...")
@@ -127,7 +127,7 @@ def example_3_multiple_transactions(blockchain, alice_public, alice_private, bob
     
     # Show latest block
     latest = blockchain.get_latest_block()
-    print(f"\n4. Latest block details:")
+    print("\n4. Latest block details:")
     print(f"   Block index: {latest.index}")
     print(f"   Transactions: {len(latest.transactions)}")
     print(f"   Hash: {latest.hash[:40]}...")
@@ -144,7 +144,7 @@ def example_4_blockchain_validation(blockchain):
     
     print(f"\n2. Validation result: {'✓ VALID' if is_valid else '✗ INVALID'}")
     
-    print(f"\n3. Blockchain statistics:")
+    print("\n3. Blockchain statistics:")
     print(f"   Total blocks: {len(blockchain.chain)}")
     print(f"   Total supply: {blockchain.get_total_supply()} CGLASS")
     print(f"   Max supply: {blockchain.MAX_SUPPLY} CGLASS")
@@ -162,14 +162,14 @@ def example_5_wallet_management():
     wallet = ClearGlassWallet('example_wallet.json')
     wallet_data = wallet.create_new_wallet()
     
-    print(f"   ✓ Wallet created and saved")
+    print("   ✓ Wallet created and saved")
     print(f"     Address: {wallet_data['address'][:40]}...")
     print(f"     Created: {wallet_data['created_at']}")
     
     print("\n2. Loading wallet from file...")
     wallet2 = ClearGlassWallet('example_wallet.json')
     if wallet2.load_wallet():
-        print(f"   ✓ Wallet loaded successfully")
+        print("   ✓ Wallet loaded successfully")
         print(f"     Address matches: {wallet2.address == wallet_data['address']}")
     
     # Clean up
