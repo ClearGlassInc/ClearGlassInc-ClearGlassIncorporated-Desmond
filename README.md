@@ -1,395 +1,127 @@
-# 🔷 ClearGlass Cryptocurrency (CGLASS)
+# ClearGlass Inc.
 
-![ClearGlass Logo](https://img.shields.io/badge/ClearGlass-CGLASS-blue?style=for-the-badge)
-![Version](https://img.shields.io/badge/version-1.0.0-green?style=flat-square)
-![License](https://img.shields.io/badge/license-MIT-orange?style=flat-square)
-![Python](https://img.shields.io/badge/python-3.8+-blue?style=flat-square)
+**Transparency Is Infrastructure.**
 
-**Transparent. Secure. Decentralized.**
+**AI automation · Cybersecurity · Software architecture**
 
-ClearGlass is a fully functional cryptocurrency built from the ground up with transparency and security at its core. Featuring a custom blockchain implementation, secure wallet system, and complete mining capabilities.
+ClearGlass Inc. is a Canadian technology company based in Burlington, Ontario.
+We design software and automation to help organizations understand their systems,
+manage digital risk, and turn complex operations into clear, accountable workflows.
 
----
+This repository brings together the ClearGlass website, application source,
+AI agent systems, security tooling, and supporting technical documentation.
 
-## 🌟 Features
+[Website](https://www.clearglassinc.com) ·
+[Contact](mailto:desmondotieno@icloud.com) ·
+[Report an issue](https://github.com/ClearGlassInc/ClearGlassInc-ClearGlassIncorporated-Desmond/issues)
 
-### Core Blockchain
-- ✅ **Proof of Work Mining** - Secure consensus mechanism
-- ✅ **Digital Signatures** - ECDSA cryptographic security
-- ✅ **Transaction Validation** - Automatic verification
-- ✅ **Supply Cap** - Maximum 21 million CGLASS tokens
-- ✅ **Blockchain Validation** - Full chain integrity checks
+## What we focus on
 
-### Wallet System
-- 💼 **Secure Key Management** - ECDSA keypair generation
-- 💼 **Transaction Signing** - Cryptographically signed transfers
-- 💼 **Balance Tracking** - Real-time balance updates
-- 💼 **Transaction History** - Complete audit trail
-- 💼 **Multiple Wallet Support** - Manage multiple addresses
+| Area | Focus |
+| --- | --- |
+| AI automation and agent systems | Workflow orchestration, decision support, human approval, and traceable execution. |
+| Cybersecurity and digital risk | Access governance, defensive security workflows, and evidence-based assessment. |
+| Software architecture and integration | Web applications, backend services, APIs, and connected operational data. |
+| Governance and operational intelligence | Documented controls, evidence integrity, and accountable decision-making. |
 
-### API & Network
-- 🌐 **REST API** - Complete HTTP interface
-- 🌐 **Node Registration** - Peer-to-peer networking ready
-- 🌐 **Mining Endpoints** - Remote mining capability
-- 🌐 **Real-time Stats** - Network statistics and monitoring
+Our engineering approach emphasizes transparency, security, and human oversight.
+The repository includes working components, prototypes, and architecture proposals;
+each component's documentation defines its scope and setup. A design document or
+demo does not establish that a system is deployed or independently audited.
 
----
+## Repository guide
 
-## 🚀 Quick Start
+This is a monorepo: its applications and services have separate dependencies and
+deployment requirements.
 
-### Prerequisites
-- Python 3.8 or higher
-- pip (Python package manager)
+| Location | Contents |
+| --- | --- |
+| [`index.html`](index.html), [`assets/`](assets/) | ClearGlass public website and shared assets. |
+| [`app/`](app/), [`components/`](components/), [`lib/`](lib/) | Root Next.js application and supporting UI and application code. |
+| [`control-plane/`](control-plane/) | FastAPI commerce and operations control plane. |
+| [`storefront/`](storefront/), [`admin/`](admin/) | Separate Next.js commerce applications. |
+| [`agent_os/`](agent_os/), [`agents/`](agents/) | Agent orchestration, policies, and agent definitions. |
+| [`security/`](security/), [`truth_forensics/`](truth_forensics/) | Security documentation and evidence-integrity tooling. |
+| [`docs/`](docs/), [`deployment/`](deployment/) | Architecture notes, component documentation, and deployment runbooks. |
+| [`tests/`](tests/), [`scripts/`](scripts/), [`tools/`](tools/) | Tests, validation scripts, and maintenance tools. |
 
-### Installation
+## Getting started
 
-1. **Clone or download the repository**
+### Clone the repository
+
 ```bash
-cd clearglass-cryptocurrency
+git clone https://github.com/ClearGlassInc/ClearGlassInc-ClearGlassIncorporated-Desmond.git
+cd ClearGlassInc-ClearGlassIncorporated-Desmond
 ```
 
-2. **Install dependencies**
+Read [CONTRIBUTING.md](CONTRIBUTING.md), [AGENTS.md](AGENTS.md), and
+[CLAUDE.md](CLAUDE.md) before making changes.
+
+### Preview the static website
+
+From the repository root:
+
 ```bash
-pip install -r requirements.txt
+python3 -m http.server 8080 --bind 127.0.0.1
 ```
 
-3. **Verify installation**
+Open [http://127.0.0.1:8080](http://127.0.0.1:8080). This previews the static
+pages; integrations that require a backend need their own configuration.
+
+### Run the root Next.js application
+
+With Node.js and npm installed, use the root [package.json](package.json):
+
 ```bash
-python clearglass_blockchain.py
+npm ci
+npm run dev
 ```
 
----
+Open [http://localhost:3030](http://localhost:3030). Root application checks are:
 
-## 📖 Usage Guide
-
-### 1. Running the Blockchain Demo
 ```bash
-python clearglass_blockchain.py
+npm run typecheck
+npm test
+npm run build
 ```
-This will:
-- Initialize the blockchain with genesis block
-- Create sample wallets
-- Demonstrate mining and transactions
-- Validate the blockchain
 
-### 2. Wallet Management
+### Work on other components
 
-#### Create a New Wallet
+Use the manifest and instructions for the component you intend to run.
+[CLAUDE.md](CLAUDE.md) covers the commerce control plane and frontends;
+[DEPLOY.md](DEPLOY.md) describes their deployment requirements.
+
+Python tooling uses Python 3.11 as documented in [CONTRIBUTING.md](CONTRIBUTING.md).
+After preparing the required Python environment, run the repository's local gates:
+
 ```bash
-python clearglass_wallet.py
-# Select option 1: Create new wallet
+python3 scripts/ci_local.py
 ```
 
-#### Interactive Wallet CLI
-```bash
-python clearglass_wallet.py
-```
+## Engineering and security
 
-**Available Commands:**
-1. Create new wallet
-2. Load wallet
-3. View balance
-4. Send transaction
-5. View transaction history
-6. Export public key
-7. Mine blocks
-8. Exit
+- Keep consequential actions behind the applicable human approval gates.
+- Keep credentials in runtime configuration, outside source code and browser bundles.
+- Preserve existing functionality and validate changes before opening a pull request.
 
-### 3. API Server
+Follow [CONTRIBUTING.md](CONTRIBUTING.md) for contributions and
+[SECURITY.md](SECURITY.md) for vulnerability reporting.
 
-#### Start the API Server
-```bash
-python clearglass_api.py
-```
+## Additional project documentation
 
-Server runs on: `http://localhost:5000`
+The educational blockchain and wallet project remains part of this repository.
+Its previous README is preserved in [README-CGLASS.md](README-CGLASS.md),
+alongside its [whitepaper](WHITEPAPER.md) and [technical documentation](TECHNICAL_DOCS.md).
+Those materials describe that individual project within the wider ClearGlass repository.
 
-#### API Endpoints
+## Company and contact
 
-**Blockchain Operations**
-- `GET /` - API information and documentation
-- `GET /blockchain` - Get full blockchain
-- `GET /blockchain/latest` - Get latest block
-- `GET /blockchain/validate` - Validate blockchain
-- `GET /block/<index>` - Get specific block
+Burlington, Ontario, Canada.
 
-**Transaction Operations**
-- `POST /transaction/new` - Create new transaction
-- `GET /transactions/<address>` - Get transaction history
-- `GET /pending` - Get pending transactions
+- **Founder:** Desmond Otieno Odhiambo
+- **Website:** [www.clearglassinc.com](https://www.clearglassinc.com)
+- **Email:** [desmondotieno@icloud.com](mailto:desmondotieno@icloud.com)
 
-**Mining Operations**
-- `POST /mine` - Mine pending transactions
+## License
 
-**Wallet Operations**
-- `POST /wallet/create` - Create new wallet
-- `GET /balance/<address>` - Get address balance
-
-**Network Operations**
-- `POST /nodes/register` - Register network node
-- `GET /nodes` - Get all registered nodes
-- `GET /stats` - Get blockchain statistics
-
-#### Example API Calls
-
-**Create a Wallet**
-```bash
-curl -X POST http://localhost:5000/wallet/create
-```
-
-**Check Balance**
-```bash
-curl http://localhost:5000/balance/YOUR_ADDRESS
-```
-
-**Mine a Block**
-```bash
-curl -X POST http://localhost:5000/mine \
-  -H "Content-Type: application/json" \
-  -d '{"miner_address": "YOUR_ADDRESS"}'
-```
-
-**Get Blockchain Stats**
-```bash
-curl http://localhost:5000/stats
-```
-
----
-
-## 🏗️ Project Structure
-
-```
-clearglass-cryptocurrency/
-├── clearglass_blockchain.py    # Core blockchain implementation
-├── clearglass_wallet.py        # Wallet management system
-├── clearglass_api.py           # REST API server
-├── requirements.txt            # Python dependencies
-├── README.md                   # This file
-├── WHITEPAPER.md              # Technical whitepaper
-├── TECHNICAL_DOCS.md          # Detailed technical documentation
-├── LICENSE                     # MIT License
-└── wallets/                   # Wallet storage directory
-```
-
----
-
-## ⚙️ Configuration
-
-### Blockchain Parameters
-
-These can be modified in `clearglass_blockchain.py`:
-
-```python
-DIFFICULTY = 4              # Mining difficulty (leading zeros)
-MINING_REWARD = 50         # CGLASS tokens per block
-MAX_SUPPLY = 21_000_000    # Total supply cap
-BLOCK_TIME = 60            # Target seconds per block
-```
-
-### Network Configuration
-
-API server settings in `clearglass_api.py`:
-```python
-HOST = '0.0.0.0'           # Server host
-PORT = 5000                # Server port
-DEBUG = True               # Debug mode
-```
-
----
-
-## 🔒 Security Features
-
-### Cryptographic Security
-- **ECDSA Signatures** - Secp256k1 elliptic curve
-- **SHA-256 Hashing** - Industry-standard hashing
-- **Proof of Work** - Prevents spam and attacks
-- **Chain Validation** - Immutable transaction history
-
-### Wallet Security
-- **Private Key Storage** - Secure local storage
-- **Transaction Signing** - All transactions must be signed
-- **Balance Verification** - Prevents overspending
-- **Address Validation** - Checks recipient validity
-
-### Best Practices
-1. **Never share your private key**
-2. **Backup your wallet file securely**
-3. **Use strong passwords** (when encryption is enabled)
-4. **Verify recipient addresses** before sending
-5. **Keep software updated**
-
----
-
-## 💡 How It Works
-
-### Transaction Flow
-1. User creates transaction with sender, recipient, amount
-2. Transaction is signed with sender's private key
-3. Transaction is broadcast to network (pending pool)
-4. Miner includes transaction in new block
-5. Block is mined (Proof of Work)
-6. Block is added to blockchain
-7. Transaction is confirmed
-
-### Mining Process
-1. Collect pending transactions
-2. Create block with transactions + mining reward
-3. Find nonce that produces valid hash (Proof of Work)
-4. Broadcast mined block to network
-5. Receive mining reward (50 CGLASS)
-
-### Wallet Operations
-1. Generate ECDSA keypair
-2. Public key becomes wallet address
-3. Private key signs transactions
-4. Balance calculated from blockchain history
-
----
-
-## 📊 Technical Specifications
-
-| Specification | Value |
-|--------------|-------|
-| **Algorithm** | Proof of Work (SHA-256) |
-| **Block Time** | ~60 seconds |
-| **Mining Reward** | 50 CGLASS |
-| **Max Supply** | 21,000,000 CGLASS |
-| **Difficulty** | 4 (adjustable) |
-| **Signature Scheme** | ECDSA (Secp256k1) |
-| **Hash Function** | SHA-256 |
-| **Block Size** | Variable (transaction-dependent) |
-
----
-
-## 🧪 Testing
-
-### Run Unit Tests
-```bash
-pytest tests/
-```
-
-### Manual Testing
-```bash
-# Test blockchain
-python clearglass_blockchain.py
-
-# Test wallet
-python clearglass_wallet.py
-
-# Test API
-python clearglass_api.py
-# Then use curl or Postman to test endpoints
-```
-
----
-
-## 🛠️ Development
-
-### Adding New Features
-
-1. **Custom Transaction Types**
-   - Extend `Transaction` class
-   - Add validation logic
-   - Update API endpoints
-
-2. **Smart Contracts**
-   - Create contract execution engine
-   - Define contract language/VM
-   - Add contract storage
-
-3. **Network Consensus**
-   - Implement peer-to-peer protocol
-   - Add consensus algorithm
-   - Build node synchronization
-
-### Code Style
-- Follow PEP 8 guidelines
-- Use type hints
-- Document all functions
-- Write unit tests
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
-
----
-
-## ⚠️ Disclaimer
-
-**IMPORTANT:** This is an educational cryptocurrency implementation. It is NOT intended for production use or real financial transactions. Always conduct thorough security audits before deploying any cryptocurrency in a real-world environment.
-
-Key Limitations:
-- No peer-to-peer networking (centralized for demonstration)
-- Basic wallet encryption
-- No GUI interface (command-line only)
-- Not audited by security professionals
-- No consensus protocol for network conflicts
-
----
-
-## 📚 Additional Resources
-
-- **Whitepaper:** See `WHITEPAPER.md` for detailed technical design
-- **Technical Docs:** See `TECHNICAL_DOCS.md` for API and architecture details
-- **Bitcoin Whitepaper:** https://bitcoin.org/bitcoin.pdf
-- **Ethereum Documentation:** https://ethereum.org/en/developers/docs/
-
----
-
-## 🎯 Roadmap
-
-### Phase 1 (Current)
-- ✅ Core blockchain implementation
-- ✅ Wallet system
-- ✅ REST API
-- ✅ Basic mining
-
-### Phase 2 (Future)
-- ⏳ Peer-to-peer networking
-- ⏳ GUI wallet application
-- ⏳ Mobile wallet app
-- ⏳ Block explorer website
-
-### Phase 3 (Advanced)
-- ⏳ Smart contract support
-- ⏳ Lightning network integration
-- ⏳ Decentralized exchange
-- ⏳ Governance system
-
----
-
-## 💬 Support
-
-For questions, issues, or contributions:
-- **GitHub Issues:** Report bugs or request features
-- **Documentation:** Check TECHNICAL_DOCS.md
-- **Whitepaper:** Read WHITEPAPER.md for deep dive
-
----
-
-## 🎉 Acknowledgments
-
-Built with inspiration from:
-- Bitcoin - The original cryptocurrency
-- Ethereum - Smart contract innovation
-- Modern blockchain research and development
-
----
-
-**Made with 💙 by the ClearGlass Development Team**
-
-*Transparency is Trust. Security is Paramount. Decentralization is Freedom.*
+See [LICENSE](LICENSE) and any component-specific or third-party license notices.
