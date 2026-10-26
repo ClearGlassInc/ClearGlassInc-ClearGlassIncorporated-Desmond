@@ -230,3 +230,51 @@ button:focus-visible,input:focus-visible{outline:3px solid rgba(103,232,249,.72)
 @media(prefers-reduced-motion:reduce){
   .cg-icon-btn,.cg-link-btn,.cg-control,.cg-action-btn{transition:none}
 }
+
+/* Executive readability pass, 2026-10-26.
+   Additive only: preserve all IDs, graph behavior, homepage-linked tokens and panels. */
+:root{
+  --cg-cyan:#67e8f9; /* analytical interaction, not a replacement for brand crimson */
+  --cg-readable-muted:#d6cbcd;
+}
+.cg-section-label,.cg-kicker,.cg-metric-name{font-size:14px;line-height:1.4}
+.cg-hero-note,.cg-status-note,.cg-metric-card small,.cg-panel p,
+.cg-muted-state,.cg-find-card span,.cg-feed-item p{font-size:14px;line-height:1.55;color:var(--cg-readable-muted)}
+.cg-panel-head,.cg-feed-top strong,.cg-find-card strong{font-size:16px;line-height:1.35}
+.cg-metric-card strong{font-size:clamp(24px,2vw,30px)}
+.cg-status-value{font-size:clamp(20px,2vw,26px)}
+.cg-control,.cg-icon-btn,.cg-filter-chip,.cg-link-btn,.cg-action-btn,
+.cg-crumb,.cg-neighbor,.cg-diagnostic-card button{min-height:44px;min-width:44px}
+.cg-icon-btn,.cg-control,.cg-filter-chip,.cg-action-btn{font-size:14px}
+.cg-graph-legend,.cg-legend-title,.cg-coverage-item span,.cg-coverage-item strong,
+.cg-kv dt,.cg-kv dd,.cg-mini-grid span,.cg-neighbor strong,.cg-neighbor span{font-size:12px;line-height:1.5}
+.cg-graph-legend{max-width:min(250px,72vw)}
+.cg-metric-card small{display:block}
+.cg-metric-card{min-height:104px}
+.cg-feed-item,.cg-find-card,.cg-panel{overflow-wrap:anywhere}
+.cg-icon-btn:focus-visible,.cg-link-btn:focus-visible,.cg-control:focus-visible,
+.cg-action-btn:focus-visible,.cg-filter-chip:focus-visible,.cg-crumb:focus-visible,
+.cg-neighbor:focus-visible,.cg-diagnostic-card button:focus-visible,
+.cg-input:focus-visible{outline:3px solid #67e8f9;outline-offset:3px}
+@media(max-width:620px){
+  .cg-header{flex-wrap:wrap;align-items:center}
+  .cg-header-actions{width:100%;justify-content:space-between}
+  .cg-header-actions .cg-icon-btn{flex:1;min-height:44px}
+  .cg-metric-card{min-height:106px}
+  .cg-metric-icon{min-width:36px;width:36px;height:36px}
+  .cg-graph-legend{max-width:60%;font-size:12px}
+  .cg-command-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cg-hero-score{grid-column:1/-1}
+  .cg-status-card{min-height:116px}
+  .cg-metric-card small{font-size:12px}
+  .cg-canvas{min-height:420px}
+}
+@media(max-width:430px){
+  .cg-header-actions .cg-icon-btn:nth-child(3){display:inline-flex;align-items:center;justify-content:center}
+  .cg-header-actions .cg-icon-btn{font-size:12px;padding:8px 6px}
+  .cg-graph-legend{max-width:58%}
+  .cg-status-value-small{font-size:14px}
+}
+@media(prefers-reduced-motion:reduce){
+  .cg-meter span{transition:none}
+}
