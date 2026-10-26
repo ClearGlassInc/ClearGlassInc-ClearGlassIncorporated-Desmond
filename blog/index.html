@@ -996,7 +996,7 @@ section{padding:42px 0}
 .desk-film .list{margin-top:16px}
 .desk-notes{padding:24px;position:relative}
 /* Featured book in the existing editorial desk; original video, seal and calls to action retained. */
-.ledger-cover-link{position:absolute;inset:0;z-index:2;display:grid;place-items:center;text-decoration:none;background:radial-gradient(ellipse at center,rgba(8,7,13,.5),transparent 70%);outline-offset:-4px}
+.ledger-cover-link{position:absolute;inset:0;z-index:2;display:grid;place-items:center;text-decoration:none;background:radial-gradient(ellipse at center,rgba(8,7,13,.5),transparent 70%);outline-offset:-4px;pointer-events:auto}
 .ledger-cover-art{width:min(42%,190px);aspect-ratio:3/4;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(11px,2vw,21px);border:1px solid rgba(255,177,167,.65);border-left:5px solid #5a1926;border-radius:3px;background:radial-gradient(circle at 50% 78%,rgba(197,39,55,.3),transparent 67%),linear-gradient(140deg,#2b151c 0%,#08080d 74%);box-shadow:-6px 10px 0 rgba(23,11,17,.6),0 15px 35px rgba(0,0,0,.85),0 0 26px rgba(239,69,76,.28);transform:rotate(-3deg);transition:transform .2s ease,box-shadow .2s ease}
 .ledger-cover-link:hover .ledger-cover-art,.ledger-cover-link:focus-visible .ledger-cover-art{transform:rotate(0deg) scale(1.04);box-shadow:0 17px 40px #000c,0 0 32px rgba(239,69,76,.42)}
 .ledger-cover-link:focus-visible{outline:3px solid #ffb4af}
@@ -1014,6 +1014,25 @@ section{padding:42px 0}
 .ledger-book-cta:focus-visible{outline:3px solid #ffb4af;outline-offset:3px}
 .ledger-book-status{font:500 11px/1.5 var(--mono);color:var(--muted);margin-top:14px}
 @media(max-width:900px){.desk-notes{padding:10px 0 24px}.ledger-book-feature{padding-bottom:14px}.ledger-cover-art{width:min(42%,182px)}.ledger-cover-art strong{font-size:clamp(24px,6vw,38px)}}
+/* Book placement correction: keep the cover inside the media frame and away from film labels and the original seal. */
+.desk-frame .ledger-cover-link{inset:48px 12px 18px;z-index:2}
+.desk-frame .ledger-cover-art{width:min(35%,158px);max-height:100%;aspect-ratio:3/4;padding:12px}
+.desk-frame .ledger-cover-art strong{font-size:clamp(23px,3vw,36px)}
+.desk-frame .desk-tag{z-index:4}
+.desk-frame .desk-toggle{z-index:5}
+.desk-stage .desk-seal{z-index:6;pointer-events:none}
+.desk-caption{display:none}
+.desk-notes .ledger-book-feature{position:relative;z-index:1}
+@media(max-width:900px){
+ .desk-frame .ledger-cover-link{inset:54px 12px 42px}
+ .desk-frame .ledger-cover-art{width:min(36%,152px);padding:10px}
+ .desk-frame .ledger-cover-art strong{font-size:clamp(20px,5vw,32px)}
+ .desk-frame .ledger-cover-top,.desk-frame .ledger-cover-bottom{font-size:7px}
+ .desk-film{gap:48px}
+ .desk-notes{padding:8px 0 20px}
+ .desk-notes .ledger-book-feature h2{font-size:clamp(36px,9vw,55px)}
+}
+@media(max-width:440px){.desk-frame .ledger-cover-link{inset:54px 8px 36px}.desk-frame .ledger-cover-art{width:35%;padding:8px}.desk-frame .ledger-cover-art strong{font-size:clamp(18px,5.2vw,25px)}}
 @media(prefers-reduced-motion:reduce){.ledger-cover-art{transition:none}}
 
 @media(max-width:900px){.desk-film{grid-template-columns:1fr;gap:24px}.desk-tag.t2,.desk-tag.t3{display:none}}
