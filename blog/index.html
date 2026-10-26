@@ -995,6 +995,27 @@ section{padding:42px 0}
 .desk-caption{margin-top:calc(14px + var(--desk-seal) * .42);font:500 12px/1.5 var(--mono);letter-spacing:.03em;color:var(--muted)}
 .desk-film .list{margin-top:16px}
 .desk-notes{padding:24px;position:relative}
+/* Featured book in the existing editorial desk; original video, seal and calls to action retained. */
+.ledger-cover-link{position:absolute;inset:0;z-index:2;display:grid;place-items:center;text-decoration:none;background:radial-gradient(ellipse at center,rgba(8,7,13,.5),transparent 70%);outline-offset:-4px}
+.ledger-cover-art{width:min(42%,190px);aspect-ratio:3/4;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(11px,2vw,21px);border:1px solid rgba(255,177,167,.65);border-left:5px solid #5a1926;border-radius:3px;background:radial-gradient(circle at 50% 78%,rgba(197,39,55,.3),transparent 67%),linear-gradient(140deg,#2b151c 0%,#08080d 74%);box-shadow:-6px 10px 0 rgba(23,11,17,.6),0 15px 35px rgba(0,0,0,.85),0 0 26px rgba(239,69,76,.28);transform:rotate(-3deg);transition:transform .2s ease,box-shadow .2s ease}
+.ledger-cover-link:hover .ledger-cover-art,.ledger-cover-link:focus-visible .ledger-cover-art{transform:rotate(0deg) scale(1.04);box-shadow:0 17px 40px #000c,0 0 32px rgba(239,69,76,.42)}
+.ledger-cover-link:focus-visible{outline:3px solid #ffb4af}
+.ledger-cover-top,.ledger-cover-bottom{font:600 clamp(7px,.75vw,11px)/1.45 var(--mono);text-transform:uppercase;letter-spacing:.1em;color:#f4c6c7}
+.ledger-cover-art strong{font:600 clamp(20px,3.4vw,44px)/.88 var(--serif);letter-spacing:-.03em;color:#fff;text-wrap:balance}
+.ledger-cover-art strong em{display:block;color:#ef6a73}
+.ledger-book-feature{padding-bottom:24px}
+.ledger-book-kicker{font:600 11px/1.5 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:#ff9aa0}
+.ledger-book-feature h2{font:600 clamp(38px,4.6vw,65px)/.95 var(--serif);letter-spacing:-.03em;margin:12px 0 16px;color:#fff}
+.ledger-book-feature h2 em{color:#ff848c}
+.ledger-book-genre{font:600 12px/1.65 var(--mono);color:#f1c0c2;letter-spacing:.04em}
+.ledger-book-summary{font:400 clamp(15px,1.5vw,18px)/1.65 var(--sans);color:var(--soft);max-width:45ch;margin:16px 0 22px}
+.ledger-book-cta{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:11px 18px;border-radius:999px;background:#c12938;color:#fff;border:1px solid #ef6467;text-decoration:none;font:700 14px/1.45 var(--sans);box-shadow:0 0 24px rgba(235,77,79,.3)}
+.ledger-book-cta:hover{background:#a72233}
+.ledger-book-cta:focus-visible{outline:3px solid #ffb4af;outline-offset:3px}
+.ledger-book-status{font:500 11px/1.5 var(--mono);color:var(--muted);margin-top:14px}
+@media(max-width:900px){.desk-notes{padding:10px 0 24px}.ledger-book-feature{padding-bottom:14px}.ledger-cover-art{width:min(42%,182px)}.ledger-cover-art strong{font-size:clamp(24px,6vw,38px)}}
+@media(prefers-reduced-motion:reduce){.ledger-cover-art{transition:none}}
+
 @media(max-width:900px){.desk-film{grid-template-columns:1fr;gap:24px}.desk-tag.t2,.desk-tag.t3{display:none}}
 </style>
 <!-- ClearGlass Global Design System — homepage is the design source of truth -->
@@ -1048,6 +1069,14 @@ section{padding:42px 0}
               <source src="/assets/video/insights-intelligence-desk.mp4" type="video/mp4">
               <img src="/assets/video/insights-intelligence-desk-poster.jpg" alt="An analyst reviewing holographic network, threat-map, and financial panels in a dark operations room.">
             </video>
+            <!-- Ledger of Ashes: typographic preview; original desk film and controls remain intact. -->
+            <a class="ledger-cover-link" href="ledger-of-ashes.html" aria-label="Open the Ledger of Ashes book preview">
+              <span class="ledger-cover-art" aria-hidden="true">
+                <span class="ledger-cover-top">Featured fiction</span>
+                <strong>Ledger <em>of</em> Ashes</strong>
+                <span class="ledger-cover-bottom">Political thriller · Book preview</span>
+              </span>
+            </a>
             <div class="desk-scan" aria-hidden="true"></div>
             <button class="desk-toggle" id="deskToggle" type="button" data-state="paused">
               <span class="desk-toggle-icon" aria-hidden="true">▶</span>
@@ -1062,6 +1091,14 @@ section{padding:42px 0}
         <p class="desk-caption">H.264 · 672×448 · muted, looped, poster-first · ~500&nbsp;KB</p>
       </div>
       <div class="desk-notes">
+        <article class="ledger-book-feature" aria-labelledby="ledger-feature-title">
+          <p class="ledger-book-kicker">From the founder's bookshelf · Featured fiction</p>
+          <h2 id="ledger-feature-title">Ledger <em>of</em> Ashes</h2>
+          <p class="ledger-book-genre">Political thriller / Conspiracy thriller</p>
+          <p class="ledger-book-summary">A shadowy cabal plans a public execution of a nonprofit CEO. One general, one analyst, and one insider must steal the ledger that can bring them down—before the clock hits zero.</p>
+          <a class="ledger-book-cta" href="ledger-of-ashes.html">Explore the book &amp; read an excerpt <span aria-hidden="true">→</span></a>
+          <p class="ledger-book-status">Manuscript preview · Publication details forthcoming</p>
+        </article>
         <div class="section-actions"><a class="btn primary btn-magnet" href="#latest">Read the latest brief →</a><a class="btn btn-magnet" href="#command">Open the command deck</a></div>
       </div>
     </div>
