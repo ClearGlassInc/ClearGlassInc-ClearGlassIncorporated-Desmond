@@ -1007,6 +1007,19 @@ section{padding:42px 0}
 <link rel="stylesheet" href="/assets/css/future-buttons.css">
 <link rel="stylesheet" href="/clearglass-crimson.css">
 <link rel="stylesheet" href="/assets/css/neon-pulse.css">
+<style>
+/* Literary-feature spotlight: additive and isolated from generated Insights cards. */
+.cg-book-feature{max-width:1200px;margin:24px auto 30px;padding:0 20px}
+.cg-book-feature .cg-book-inner{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:25px;align-items:center;padding:27px clamp(18px,3vw,40px);border:1px solid rgba(235,101,106,.42);border-radius:20px;background:linear-gradient(110deg,rgba(104,27,35,.35),rgba(10,13,19,.91));box-shadow:0 18px 55px rgba(0,0,0,.28)}
+.cg-book-feature .cg-book-inner:before{content:"";position:absolute;right:-100px;top:-160px;width:370px;height:370px;border-radius:50%;border:1px solid rgba(235,101,106,.11);box-shadow:0 0 0 34px rgba(235,101,106,.028),0 0 0 76px rgba(235,101,106,.02);pointer-events:none}
+.cg-book-feature .cg-book-kicker{color:#ffaaaa;font:800 11px/1.4 Inter,system-ui,sans-serif;text-transform:uppercase;letter-spacing:.16em;margin:0 0 10px}
+.cg-book-feature h2{color:white;font:600 clamp(25px,3.3vw,40px)/1.15 Georgia,serif;letter-spacing:-.02em;margin:0 0 11px}
+.cg-book-feature p{color:#e0d3d6;max-width:750px;font:400 15px/1.75 Inter,system-ui,sans-serif;margin:0}
+.cg-book-feature .cg-book-link{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 19px;border-radius:10px;border:1px solid #df7579;background:#96303a;color:#fff;font-weight:800;white-space:nowrap;text-decoration:none;position:relative;z-index:1}
+.cg-book-feature .cg-book-link:hover{background:#b83d47;color:white}
+.cg-book-feature .cg-book-link:focus-visible{outline:3px solid white;outline-offset:3px}
+@media(max-width:720px){.cg-book-feature .cg-book-inner{grid-template-columns:1fr}.cg-book-feature .cg-book-link{justify-self:start}}
+</style>
 </head>
 <body data-ix-page="hub" data-ix-theme="dark">
 <div class="future-progress" aria-hidden="true"><span id="futureProgress"></span></div>
@@ -1032,6 +1045,17 @@ section{padding:42px 0}
     </div>
     <div class="command tilt-card" aria-label="Cinematic intelligence console"><div class="screen"><div class="screen-top"><span><i class="live-dot"></i>ARTEMIS//EDITORIAL_RADAR</span><span>LIVE</span></div><div class="radar"><img class="radar-seal" src="../assets/images/clearglass-holographic-seal.png" alt="ClearGlass holographic eagle seal" width="1024" height="1024" decoding="async" fetchpriority="high"></div><div class="intel-line"><span>Governed autonomy</span><code>risk-router</code></div><div class="intel-line"><span>OSINT workflows</span><code>source-lineage</code></div><div class="intel-line"><span>High-trust software</span><code>audit-first</code></div></div></div>
   </div>
+  <section class="cg-book-feature" id="book-feature-ledger-of-ashes" aria-labelledby="ledger-feature-title">
+  <div class="cg-book-inner">
+    <div>
+      <p class="cg-book-kicker">Literary feature · Political thriller · Manuscript excerpt</p>
+      <h2 id="ledger-feature-title">The Ledger of Ashes</h2>
+      <p>A philanthropist's murder. An unsettling trail of money and influence. Step inside the unaltered opening of a political conspiracy thriller in this special ClearGlass Insights feature.</p>
+    </div>
+    <a class="cg-book-link" href="books/ledger-of-ashes-excerpt.html">Read the opening <span aria-hidden="true">&nbsp;→</span></a>
+  </div>
+</section>
+
   <div class="chips" id="topics" role="toolbar" aria-label="Filter briefs by topic"><!-- cg-insights-chips:start -->
       <a class="chip on" href="?" data-topic="all">All briefs</a><a class="chip" href="?topic=governed-ai" data-topic="governed-ai">Governed AI</a><a class="chip" href="?topic=agents" data-topic="agents">Autonomous agents</a><a class="chip" href="?topic=cyber" data-topic="cyber">Cyber architecture</a><a class="chip" href="?topic=osint" data-topic="osint">OSINT workflows</a><a class="chip" href="?topic=automation" data-topic="automation">AI automation</a><a class="chip" href="?topic=systems" data-topic="systems">High-trust systems</a><a class="chip" href="?topic=growth" data-topic="growth">Revenue growth systems</a><a class="chip" href="?topic=frontier" data-topic="frontier">Frontier intelligence</a><a class="chip" href="?topic=cross-border" data-topic="cross-border">Canada–US controls</a><a class="chip" href="?topic=strategic-resilience" data-topic="strategic-resilience">Strategic resilience</a><a class="chip" href="?topic=culture" data-topic="culture">Technology culture</a><a class="chip" href="?topic=fincrime" data-topic="fincrime">Financial crime detection</a><a class="chip" href="?topic=information-integrity" data-topic="information-integrity">Information integrity</a><a class="chip" href="?topic=saved" data-topic="saved">★ Saved</a>
       <!-- cg-insights-chips:end --></div>
