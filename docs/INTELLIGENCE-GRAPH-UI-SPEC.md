@@ -67,18 +67,17 @@ On mobile the hierarchy becomes: hero status → key metrics → graph → execu
 
 ## 4. Colour system
 
-- Graphite/base: #07080b / #0b0c11.
-- ClearGlass crimson: #c4363a.
-- Bright crimson: #eb4344.
-- Wine: #7a123d.
-- Cyan accent: #67e8f9.
-- Teal success: #5ef2b5.
-- Amber caution: #f4b860.
-- Primary text: #f7f2f2.
-- Muted text: #bcaeb0.
-- Dim text: #8b7d81.
-- Danger: #ff7b80.
-- Glow is used only on status/control emphasis; glassmorphism is limited to major overlays and the graph empty-state.
+Homepage-authoritative palette (from `index.html` `:root`; supersedes the exploratory cyan/purple styling):
+
+- Graphite canvas: `#07080b`; homepage dark surface: `#0e0c0c`.
+- Panel surfaces: `#151012` and `#0e1115`.
+- Primary ClearGlass crimson: `#ea4648`.
+- Rose / active interaction: `#ee637a` and `#ee6375`.
+- Secondary brand rose: `#ee6365`.
+- Verified/success: `#34d399`; caution: `#fbbf24`.
+- Primary text: `#f7f2f2`; descriptive text: `#d6cbcd`.
+- No independent cyan, blue, or violet palette in graph nodes and controls; neutral accents may distinguish communities.
+- Contrast must be tested against actual rendered surfaces; use severity text and icons rather than relying on colour alone.
 
 ## 5. Mobile layout
 
@@ -113,16 +112,15 @@ theme: {
     colors: {
       cg: {
         bg: "#07080b",
-        panel: "#101014",
-        crimson: "#c4363a",
-        bright: "#eb4344",
-        wine: "#7a123d",
-        cyan: "#67e8f9",
-        teal: "#5ef2b5",
-        amber: "#f4b860",
+        panel: "#151012",
+        crimson: "#ea4648",
+        rose: "#ee637a",
+        roseSoft: "#ee6375",
+        teal: "#34d399",
+        amber: "#fbbf24",
         text: "#f7f2f2",
-        muted: "#bcaeb0",
-        dim: "#8b7d81",
+        muted: "#d6cbcd",
+        dim: "#968283",
         danger: "#ff7b80"
       }
     },
