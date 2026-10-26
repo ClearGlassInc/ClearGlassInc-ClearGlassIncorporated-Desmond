@@ -991,8 +991,7 @@ section{padding:42px 0}
 .desk-seal img{position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:cover;filter:saturate(1.12) contrast(1.06)}
 @keyframes deskSealFloat{0%,100%{transform:translate(-50%,42%) rotate(-1deg)}50%{transform:translate(-50%,calc(42% - 9px)) rotate(1deg)}}
 @media(prefers-reduced-motion:reduce){.desk-seal{animation:none}}
-/* Clear the medallion's overhang so the caption never runs under it. */
-.desk-caption{margin-top:calc(14px + var(--desk-seal) * .42);font:500 12px/1.5 var(--mono);letter-spacing:.03em;color:var(--muted)}
+/* The book desk retains its animated seal; narrow viewports reserve space below the film. */
 .desk-film .list{margin-top:16px}
 .desk-notes{padding:24px;position:relative}
 /* Featured book in the existing editorial desk; original video, seal and calls to action retained. */
@@ -1017,6 +1016,16 @@ section{padding:42px 0}
 @media(prefers-reduced-motion:reduce){.ledger-cover-art{transition:none}}
 
 @media(max-width:900px){.desk-film{grid-template-columns:1fr;gap:24px}.desk-tag.t2,.desk-tag.t3{display:none}}
+@media(max-width:640px){
+  .desk-film{gap:18px}
+  .desk-stage{margin-bottom:calc(var(--desk-seal) * .42 + 12px)}
+  /* Keep the book cover legible instead of printing a video overlay across it. */
+  .desk-tag.t1{display:none}
+  .desk-notes{padding:0 0 20px}
+  .ledger-book-feature h2{font-size:clamp(38px,10vw,54px);line-height:1}
+  .ledger-book-summary{margin:14px 0 18px}
+  .ledger-book-cta{max-width:100%;justify-content:center;text-align:center}
+}
 </style>
 <!-- ClearGlass Global Design System — homepage is the design source of truth -->
 <link rel="stylesheet" href="/assets/css/glass.css">
@@ -1040,6 +1049,17 @@ section{padding:42px 0}
 .cg-book-feature .cg-book-link:hover{background:#b83d47;color:white}
 .cg-book-feature .cg-book-link:focus-visible{outline:3px solid white;outline-offset:3px}
 @media(max-width:720px){.cg-book-feature .cg-book-inner{grid-template-columns:1fr}.cg-book-feature .cg-book-link{justify-self:start}}
+/* Compact the existing mobile controls; keep their functionality and accessible labels. */
+@media(max-width:640px){
+  body[data-ix-page="hub"] #cg-dock{gap:5px;max-width:calc(100vw - 24px)}
+  body[data-ix-page="hub"] #cg-dock>#cgw-fab{min-height:42px;margin:0!important;padding:0 10px!important;font-size:11px;gap:5px;white-space:nowrap}
+  body[data-ix-page="hub"] #cg-dock #cg-sales-button{min-height:42px;padding:0 10px;font-size:10px;letter-spacing:.05em}
+  body[data-ix-page="hub"] #cg-dock #cg-logo-badge{width:42px;height:42px}
+  body[data-ix-page="hub"] #cg-station[data-open="false"]{width:max-content;max-width:calc(100vw - 24px)}
+  body[data-ix-page="hub"] #cg-station .cgst-dock{min-height:48px;gap:6px;padding:0 10px 0 7px}
+  body[data-ix-page="hub"] #cg-station .cgst-dock-tx strong{font-size:11px;letter-spacing:.06em}
+  body[data-ix-page="hub"] #cg-station .cgst-dock-tx small{display:none}
+}
 </style>
 </head>
 <body data-ix-page="hub" data-ix-theme="dark">
@@ -1113,12 +1133,11 @@ section{padding:42px 0}
           </div>
           <span class="desk-seal" aria-hidden="true"><img src="../assets/images/clearglass-holographic-seal.png" alt="" width="512" height="512" decoding="async" loading="lazy"></span>
         </div>
-        <p class="desk-caption">H.264 · 672×448 · muted, looped, poster-first · ~500&nbsp;KB</p>
       </div>
       <div class="desk-notes">
-        <article class="ledger-book-feature" aria-labelledby="ledger-feature-title">
+        <article class="ledger-book-feature" aria-labelledby="ledger-desk-feature-title">
           <p class="ledger-book-kicker">From the founder's bookshelf · Featured fiction</p>
-          <h2 id="ledger-feature-title">Ledger <em>of</em> Ashes</h2>
+          <h2 id="ledger-desk-feature-title">Ledger <em>of</em> Ashes</h2>
           <p class="ledger-book-genre">Political thriller / Conspiracy thriller</p>
           <p class="ledger-book-summary">A shadowy cabal plans a public execution of a nonprofit CEO. One general, one analyst, and one insider must steal the ledger that can bring them down—before the clock hits zero.</p>
           <a class="ledger-book-cta" href="ledger-of-ashes.html">Explore the book &amp; read an excerpt <span aria-hidden="true">→</span></a>
