@@ -6,7 +6,7 @@
 
 ### The Ledger of Ashes: Read the Opening of a Political Thriller
 
-**By [AUTHOR NAME — CONFIRM]**  
+**By Desmond Otieno Odhiambo**  
 **Genre:** Political thriller / conspiracy thriller  
 **Book status:** [CONFIRM PUBLICATION STATUS]  
 **Featured on:** ClearGlass Insights
@@ -35,7 +35,7 @@ The opening pages establish the novel's central contrast: service in the public 
 
 ### Continue exploring the story
 
-Start with the prologue and follow the questions it raises. Official author attribution, publication status, and a purchase, preorder, or launch-signup destination can be added once confirmed.
+Start with the prologue and follow the questions it raises. Publication status and a purchase, preorder, or launch-signup destination can be added once confirmed.
 
 **Current functional CTA:** [Read the excerpt](https://www.clearglassinc.com/blog/books/ledger-of-ashes-excerpt.html) *(planned URL; not verified live)*
 
@@ -87,7 +87,7 @@ Start with the prologue and follow the questions it raises. Official author attr
 
 ## Editorial / accuracy notes — NOT FOR PUBLICATION
 
-- **Book-author identity was not provided in either supplied manuscript.** A byline on other ClearGlass blog articles does not establish this novel's authorship; the live-facing literary feature deliberately avoids attributing the novel.
+- **Author attribution confirmed directly by the author (26 October 2026):** Desmond Otieno Odhiambo. The feature page, metadata, and promotional copy now use this attribution.
 - The supplied `THE LEDGER OF ASHES FINAL.txt` labels the revised manuscript incomplete, with suggested rather than author-approved ending material. The excerpt comes exclusively from its prologue, unchanged.
 - **Release, purchase/preorder and signup destinations are unverified.** The public-facing CTA currently scrolls to the excerpt instead of advertising a nonexistent sale or form.
 - The legacy technical Insights index is generated from top-level `blog/*.html` files. This distinct literary feature intentionally lives under `blog/books/` and is promoted via an additive, static spotlight on `blog/index.html`; nothing in the generated archive or feed is overwritten.
