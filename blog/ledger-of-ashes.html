@@ -52,6 +52,40 @@
     .excerpt{max-width:780px;border-left:3px solid var(--accent);padding:8px 0 8px 24px;color:var(--ink)!important;font:500 clamp(22px,3.2vw,30px)/1.4 'Cormorant Garamond',Georgia,serif}
     .note{font-size:13px;color:#cfafb2}
     footer{border-top:1px solid var(--line);padding:27px 0 42px;color:var(--sub);font-size:13px}
+
+    /* Editorial 9:16 storyboard: CSS scene treatments, not delivered image assets. */
+    .loa-gallery{border-top:1px solid var(--line);padding:58px 0 72px}
+    .loa-gallery h2{font:600 clamp(36px,5vw,58px)/1 'Cormorant Garamond',Georgia,serif;margin:10px 0 14px}
+    .loa-gallery .loa-summary{color:var(--sub);max-width:70ch;margin:0 0 24px}
+    .loa-list{list-style:none;margin:0;padding:0 0 20px;display:flex;gap:18px;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scroll-padding-inline:2px;-webkit-overflow-scrolling:touch}
+    .loa-slide{scroll-snap-align:start;flex:0 0 min(290px,calc(100vw - 64px));aspect-ratio:9/16;border:1px solid #77515a;border-radius:13px;overflow:hidden;isolation:isolate;position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:21px;background:#0e1015;box-shadow:0 10px 28px #0008}
+    .loa-slide::before,.loa-slide::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none}
+    .loa-slide::after{background:linear-gradient(180deg,rgba(0,0,0,.15),transparent 25%,rgba(0,0,0,.12) 44%,rgba(2,3,7,.96) 97%)}
+    .loa-kicker{font:700 10px/1.5 'IBM Plex Mono',monospace;letter-spacing:.18em;text-transform:uppercase;color:#ffd4c8}
+    .loa-slide h3{font:700 clamp(35px,4vw,51px)/.98 'Cormorant Garamond',Georgia,serif;text-transform:uppercase;letter-spacing:-.018em;margin:auto 0 16px;color:#fff;text-wrap:balance;text-shadow:0 2px 16px #000}
+    .loa-slide p{font:500 12px/1.55 Inter,sans-serif;color:#f3dcda;margin:0}
+    .loa-number{position:absolute;top:18px;right:18px;color:#eac4bc;font:700 11px 'IBM Plex Mono',monospace}
+    .loa-rain::before{background:repeating-linear-gradient(91deg,transparent 0 32px,#96aabb21 33px 34px,transparent 35px 59px),linear-gradient(155deg,transparent 38%,#3f2939ac 65%,transparent 72%),linear-gradient(180deg,#111c28 0%,#26222c 48%,#382a2e 68%,#080b11 100%)}
+    .loa-rain h3{font-weight:700;color:#fff6ee;text-shadow:0 0 7px #eeaaa4,0 0 27px #d43842,0 4px 15px #000}
+    .loa-rain::after{background:linear-gradient(90deg,#04080fd9 0 12%,transparent 12% 16%,#070b13bd 16% 34%,transparent 34% 41%,#050914c9 41% 63%,transparent 63% 69%,#070b13b8 69% 85%,transparent 85%),linear-gradient(180deg,transparent 45%,#9b53604a 73%,#020307 100%);opacity:.78}
+    .loa-sealed::before{background:radial-gradient(circle at 50% 44%,#f8ab582e,#ac371300 43%),linear-gradient(130deg,#3b1515,#130c10 52%,#030507)}
+    .loa-book{position:absolute;inset:25% 11% 28%;transform:rotate(-8deg);border:3px solid #4b3027;border-left:15px solid #170e0e;background:repeating-linear-gradient(0deg,#402925 0 2px,#221717 3px 20px);box-shadow:12px 20px 28px #000d,0 0 42px #cd522c39}
+    .loa-book::after{content:"";position:absolute;width:88px;height:88px;border-radius:50%;top:36%;left:calc(50% - 44px);background:radial-gradient(circle at 35% 27%,#ffb56d,#df4726 40%,#7d151a 68%,#391012);box-shadow:0 0 19px #ffb453,0 0 45px #ff592e91,0 0 95px #ed7e396e}
+    .loa-sealed h3,.loa-sealed .loa-kicker,.loa-sealed p{z-index:1}
+    .loa-dossier::before{background:repeating-linear-gradient(0deg,transparent 0 35px,#76a6ae18 36px 37px),repeating-linear-gradient(90deg,transparent 0 34px,#a6afc313 35px 36px),radial-gradient(circle at 54% 43%,#a9484f9e,transparent 52%),linear-gradient(145deg,#111a22,#060911 73%)}
+    .loa-dossier .loa-paper{position:absolute;inset:25% 18% 33%;transform:rotate(6deg);border:1px solid #cdb2a07a;background:repeating-linear-gradient(180deg,#d9c5a02c 0 1px,transparent 1px 21px),linear-gradient(#705551e8,#201d23e8);box-shadow:8px 8px 35px #000c}
+    .loa-dossier .loa-paper::after{content:"";position:absolute;inset:30% 12% 20%;border-top:5px solid #f97b767d;border-bottom:4px solid #f97b767d;transform:rotate(-15deg)}
+    .loa-orders::before{background:repeating-linear-gradient(90deg,transparent 0 45px,#98b3b313 45px 47px),radial-gradient(circle at 50% 35%,#da474436,transparent 48%),linear-gradient(145deg,#111923,#161019 70%,#050508)}
+    .loa-orders .loa-reticle{position:absolute;top:23%;left:18%;width:64%;aspect-ratio:1;border:1px solid #e864706b;border-radius:50%;box-shadow:0 0 0 28px #ec5a6114,0 0 0 56px #ed566214}
+    .loa-orders .loa-reticle::before{content:"";position:absolute;inset:50% -30%;height:1px;background:#ec7c7f77}
+    .loa-orders .loa-reticle::after{content:"";position:absolute;inset:-30% 50%;width:1px;background:#ec7c7f77}
+    .loa-ashes::before{background:radial-gradient(circle at 15% 18%,#ffac75 0 2px,transparent 4px),radial-gradient(circle at 63% 12%,#ffd097 0 2px,transparent 5px),radial-gradient(circle at 81% 41%,#fe6438 0 3px,transparent 6px),radial-gradient(circle at 22% 65%,#ffba73 0 2px,transparent 5px),radial-gradient(circle at 74% 72%,#fd754a 0 2px,transparent 5px),radial-gradient(circle at 40% 38%,#ffc588 0 1px,transparent 4px),radial-gradient(ellipse at 50% 82%,#b42f2d9c,transparent 58%),linear-gradient(150deg,#230f17,#060609 68%)}
+    .loa-ashes h3{font-size:clamp(41px,5vw,58px);color:#fff6ed;text-shadow:0 0 26px #d6413891}
+    .loa-ashes .loa-author{text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:#ffc0b6}
+    .loa-help{color:#cbb8b9;font-size:12px;margin:12px 0 0}
+    @media(max-width:740px){.loa-gallery{padding:44px 0 55px}.loa-list{gap:12px}.loa-slide{flex-basis:min(78vw,300px)}}
+    @media(prefers-reduced-motion:reduce){.loa-list{scroll-behavior:auto}}
+
     @media(max-width:740px){.hero{grid-template-columns:1fr;padding-top:45px}.cover{grid-row:1;width:min(65vw,240px)}.hero-copy{grid-row:2}.wrap{width:min(100% - 32px,1120px)}.back{font-size:12px}.brand{font-size:13px}h1{margin-top:14px}}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
   </style>
@@ -76,6 +110,23 @@
         <span class="cover-footer">Preview edition · Fiction</span>
       </div>
     </section>
+
+    <section class="loa-gallery" id="cinematic-preview" aria-labelledby="cinematic-title">
+      <div class="wrap">
+        <p class="eyebrow">Five scenes · Cinematic book teaser</p>
+        <h2 id="cinematic-title">The story in five frames</h2>
+        <p class="loa-summary">Swipe or scroll through a 9:16 noir storyboard inspired by the manuscript. These are designed scene treatments, not the original finished slide images or a final book cover.</p>
+        <ol class="loa-list" aria-label="The Ledger of Ashes five-frame teaser">
+          <li class="loa-slide loa-rain"><span class="loa-kicker">Georgetown · November</span><span class="loa-number">01 / 05</span><div><h3>The night everything changed.</h3><p>A rain-slicked street. A closed door. A secret that will not stay buried.</p></div></li>
+          <li class="loa-slide loa-sealed"><div class="loa-book" aria-hidden="true"></div><span class="loa-kicker">The evidence</span><span class="loa-number">02 / 05</span><div><h3>One ledger. Every name.</h3><p>Sealed records hold the answers someone would kill to protect.</p></div></li>
+          <li class="loa-slide loa-dossier"><div class="loa-paper" aria-hidden="true"></div><span class="loa-kicker">Follow the money</span><span class="loa-number">03 / 05</span><div><h3>The money leaves a trail.</h3><p>A financial analyst begins to connect the concealed network.</p></div></li>
+          <li class="loa-slide loa-orders"><div class="loa-reticle" aria-hidden="true"></div><span class="loa-kicker">The countdown</span><span class="loa-number">04 / 05</span><div><h3>The order is already signed.</h3><p>An unlawful operation. A commander with a decision to make.</p></div></li>
+          <li class="loa-slide loa-ashes"><span class="loa-kicker">A political conspiracy thriller · Fiction</span><span class="loa-number">05 / 05</span><div><h3>The Ledger of Ashes</h3><p class="loa-author">Desmond Otieno Odhiambo</p></div></li>
+        </ol>
+        <p class="loa-help">Horizontal scrolling; all five frames remain readable without JavaScript. <a href="#excerpt">Continue to the excerpt</a>.</p>
+      </div>
+    </section>
+
     <section class="content" id="story"><div class="wrap">
       <p class="eyebrow">The story</p>
       <h2>When power erases the evidence, one ledger can expose it.</h2>
