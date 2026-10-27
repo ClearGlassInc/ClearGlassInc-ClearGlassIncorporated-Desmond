@@ -72,6 +72,45 @@ class ArtemisIpGuardianBotTests(unittest.TestCase):
         bot.check_agent_configs(report)
         self.assertEqual(report.status, "fail")
 
+    def test_codeowners_is_found_where_github_reads_it(self) -> None:
+        _populate_compliant_tree(self.root)
+        for rel in bot.CODEOWNERS_LOCATIONS:
+            (self.root / rel).unlink(missing_ok=True)
+        for rel in bot.CODEOWNERS_LOCATIONS:
+            with self.subTest(location=rel):
+                path = self.root / rel
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("* @ClearGlassInc\n", encoding="utf-8")
+                report = bot.GuardianReport(run_utc="test", strict=True)
+                bot.check_governance_files(report)
+                self.assertEqual(report.status, "pass", report.checks)
+                path.unlink()
+
+    def test_empty_github_codeowners_shadows_the_root_file(self) -> None:
+        # GitHub uses the first CODEOWNERS it finds, so an empty .github/ copy
+        # leaves the repository with no owners even when the root file is set.
+        _populate_compliant_tree(self.root)
+        (self.root / "CODEOWNERS").write_text("* @ClearGlassInc\n", encoding="utf-8")
+        (self.root / ".github").mkdir(exist_ok=True)
+        (self.root / ".github" / "CODEOWNERS").write_text("", encoding="utf-8")
+        report = bot.GuardianReport(run_utc="test", strict=True)
+        bot.check_governance_files(report)
+        failed = [c.target for c in report.checks if c.status == "fail"]
+        self.assertEqual(failed, [".github/CODEOWNERS"])
+
+    def test_this_repository_passes_the_gate(self) -> None:
+        # The other tests build their tree from REQUIRED_GOVERNANCE_FILES, so a
+        # wrong path there passes them all. Since the 2026-09-06 upload left
+        # docs/PROVENANCE.md and docs/IP-POLICY.md at the root, the strict gate
+        # in artemis-deploy.yml failed every run while this suite stayed green.
+        bot.ROOT = self._original_root
+        report = bot.GuardianReport(run_utc="test", strict=True)
+        bot.check_governance_files(report)
+        bot.check_attribution_headers(report)
+        bot.check_agent_configs(report)
+        failed = [(c.check, c.target, c.detail) for c in report.checks if c.status == "fail"]
+        self.assertEqual(failed, [])
+
     def test_markdown_report_states_overall_status(self) -> None:
         report = bot.GuardianReport(run_utc="test", strict=True)
         report.add("governance-file", "LICENSE", True)
