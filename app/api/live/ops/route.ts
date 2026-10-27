@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
     sources: { flights: health(fr), military: health(mr), satellites: health(sr), cctv: health(cr) },
     errors: Object.fromEntries(([
       ["flights", fr.error], ["military", mr.error], ["satellites", sr.error], ["cctv", cr.error]
-    ] as const).filter((entry): entry is readonly [string, string] => Boolean(entry[1]))) as LiveOpsResponse["errors"]
+    ] as const).filter(entry => Boolean(entry[1]))) as LiveOpsResponse["errors"]
   };
   return NextResponse.json(response, { headers: { "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff" } });
 }

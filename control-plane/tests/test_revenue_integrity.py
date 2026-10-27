@@ -276,7 +276,7 @@ def test_attribution_is_cleaned_before_it_reaches_stripe() -> None:
     assert attribution.from_metadata(None) == {}
 
 
-def test_the_crcs_checkout_carries_the_leads_campaign_to_stripe(env, monkeypatch) -> None:
+def test_the_crcs_checkout_carries_the_leads_campaign_to_stripe(env, crcs_offer_on_sale, monkeypatch) -> None:
     client, Factory, _ = env
     monkeypatch.setenv("CRCS_RAPID_DIAGNOSTIC_ENABLED", "true")
     config_module.get_settings.cache_clear()

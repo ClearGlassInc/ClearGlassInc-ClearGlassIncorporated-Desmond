@@ -149,7 +149,8 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
   letter-spacing:.01em;
 }
 .btn-gold{
-  color:#bcaeb0;background:linear-gradient(135deg,var(--gold),var(--gold-2));
+  /* Deep crimson: the forced light link text measured 2.4:1 on var(--gold)/var(--gold-2). */
+  color:#bcaeb0;background:linear-gradient(135deg,#a92934,#7a1230);
   box-shadow:0 4px 20px rgba(200, 75, 83,.25);
 }
 .btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(200, 75, 83,.35)}
@@ -193,7 +194,7 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
 .stat-val strong{font-weight:600;color:var(--gold-2)}
 .stat-label{
   font-family:var(--mono);font-size:10px;letter-spacing:.14em;
-  color:rgba(255,255,255,.35);margin-top:6px;
+  color:rgba(255,255,255,0.50);margin-top:6px;
 }
 @media(max-width:680px){.stat-inner{grid-template-columns:repeat(2,1fr)}}
 
@@ -267,7 +268,7 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
 .uc-flag{
   display:flex;align-items:center;gap:8px;
   font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;
-  color:var(--gov-blue-2);margin-bottom:18px;
+  color:color-mix(in srgb, var(--gov-blue-2) 72%, white);margin-bottom:18px;
 }
 .uc-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:20px;flex-shrink:0}
 .uc-card h3{font-family:var(--serif);font-size:1.5rem;font-weight:500;margin-bottom:10px;letter-spacing:-.01em}
@@ -391,6 +392,11 @@ body{font-family:var(--sans);color:var(--text);background:var(--white);overflow-
 <link rel="stylesheet" href="/assets/css/future-buttons.css">
 <link rel="stylesheet" href="/clearglass-crimson.css">
 <link rel="stylesheet" href="/assets/css/neon-pulse.css">
+<style id="cg-contrast-fit">
+/* Inline style="color:…" below WCAG AA here: the same colour, lightened just enough. */
+[style*="; color: #D5435B"], [style*="; color: #d5435b"], [style*="; color: rgb(213, 67, 91)"], [style*="; color: rgb(213,67,91)"], [style*="; color:#D5435B"], [style*="; color:#d5435b"], [style*="; color:rgb(213, 67, 91)"], [style*="; color:rgb(213,67,91)"], [style*=";color: #D5435B"], [style*=";color: #d5435b"], [style*=";color: rgb(213, 67, 91)"], [style*=";color: rgb(213,67,91)"], [style*=";color:#D5435B"], [style*=";color:#d5435b"], [style*=";color:rgb(213, 67, 91)"], [style*=";color:rgb(213,67,91)"], [style^="color: #D5435B"], [style^="color: #d5435b"], [style^="color: rgb(213, 67, 91)"], [style^="color: rgb(213,67,91)"], [style^="color:#D5435B"], [style^="color:#d5435b"], [style^="color:rgb(213, 67, 91)"], [style^="color:rgb(213,67,91)"] { color: #d74b62 !important; } /* rgb(213, 67, 91): was 4.38:1, 1 runs */
+[style*="; color: var(--gold-2)"], [style*="; color:var(--gold-2)"], [style*=";color: var(--gold-2)"], [style*=";color:var(--gold-2)"], [style^="color: var(--gold-2)"], [style^="color:var(--gold-2)"] { color: color-mix(in srgb, var(--gold-2) 68%, white) !important; } /* var(--gold-2): was 2.51:1, 8 runs */
+</style>
 </head>
 <body>
 

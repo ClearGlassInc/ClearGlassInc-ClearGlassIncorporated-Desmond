@@ -197,7 +197,7 @@
     .kpi-card.live { border-color: rgba(92, 140, 114, .45); }
     .kpi-label { font-family: var(--mono); color: var(--muted); font-size: .72rem; letter-spacing: .08em; }
     .kpi-value { font-size: 1.4rem; font-weight: 650; margin: 6px 0 4px; }
-    .kpi-value.critical { color: var(--red); }
+    .kpi-value.critical { color: color-mix(in srgb, var(--red) 80%, white); }
     .kpi-value.success { color: var(--green); }
 
     .intel-feed, .script-container {
@@ -899,7 +899,7 @@
       <div class="map-wrap"><canvas id="threatMapCanvas" width="800" height="280" aria-label="Interactive threat matrix"></canvas><div id="mapTooltip" class="map-tooltip" role="status" aria-live="polite"></div></div>
       <div class="forecast-widget" id="forecastWidget">
         <div class="forecast-head">
-          <span>◈ 24H PREDICTIVE THREAT FORECAST</span>
+          <span>◈ 24H THREAT FORECAST · SIMULATED</span>
           <span class="forecast-trend" id="forecastTrend">TREND · STABLE</span>
         </div>
         <div class="forecast-bars" id="forecastBars"></div>
@@ -990,16 +990,16 @@
           <div class="ana-sub" id="threatScoreSub">Composite of feed health, CVE volume, APT signals.</div>
         </div>
         <div class="ana-card">
-          <h4>◐ CVE SEVERITY · LAST 14D</h4>
+          <h4>◐ CVE SEVERITY · LAST 14D · SIMULATED</h4>
           <svg class="ana-sparkline" id="cveSparkline" viewBox="0 0 200 56" preserveAspectRatio="none" aria-hidden="true"></svg>
           <div class="ana-row"><span>PEAK</span><span id="anaCvePeak">—</span></div>
           <div class="ana-row"><span>AVG / DAY</span><span id="anaCveAvg">—</span></div>
           <div class="ana-row"><span>TOP CVSS</span><span id="anaCveTop">—</span></div>
         </div>
         <div class="ana-card">
-          <h4>◍ FEED UPTIME (LAST 5M)</h4>
+          <h4>◍ FEED STATUS (NOW)</h4>
           <div id="anaFeedRows"></div>
-          <div class="ana-sub" id="anaFeedUpAvg">Average uptime: —</div>
+          <div class="ana-sub" id="anaFeedUpAvg">Online now: —</div>
         </div>
         <div class="ana-card" style="grid-column: span 2">
           <h4>◌ CVE SEVERITY HEATMAP · 14 DAYS</h4>
@@ -1286,6 +1286,12 @@
     mission:      JSON.parse(localStorage.getItem('artemis.mission') || '[]'),
     aiKey:        localStorage.getItem('artemis.apiKey') || '',
   };
+  // The Artemis V extensions further down were written against an earlier
+  // revision of this core that named these `state`, `logMission` and
+  // `escapeHtml`. Bind those names to the real implementations.
+  const state = S;
+  const logMission = logM;
+  const escapeHtml = esc;
 
   const staticData = window.ARTEMIS_IV_DATA || null;
   if (staticData?.executiveMetrics) {
@@ -1318,6 +1324,25 @@
       const el = $(`#${id}`); if (!el) return;
       const st = S.feeds[feed]?.status;
       el.style.color = st === 'ONLINE' ? 'var(--green)' : st === 'DEGRADED' ? '#b08a3d' : 'var(--muted)';
+    });
+  }
+
+  // Every loader reports through here; the sidebar and header follow.
+  function setFeed(key, status, count) {
+    const f = S.feeds[key]; if (!f) return;
+    f.status = status;
+    if (count != null) f.count = count;
+    renderFeedSidebar();
+    updateHeaderFeeds();
+  }
+
+  // URLhaus, ThreatFox and GHSA are listed feeds with no loader in this
+  // build. Say so rather than leave "fetching…" on screen.
+  const NOT_CONNECTED = { URLhaus: '#urlhausFeed', ThreatFox: '#threatfoxFeed', GHSA: '#githubAdvisories' };
+  function renderNotConnected() {
+    Object.entries(NOT_CONNECTED).forEach(([k, sel]) => {
+      const el = $(sel);
+      if (el) el.innerHTML = `<span style="color:var(--muted)">${k} is not connected in this build. No data is shown.</span>`;
     });
   }
 
@@ -1420,31 +1445,16 @@
     }).join('');
   }
 
-  function bringFeedOnline(key, delay) {
-    setTimeout(() => {
-      state.feeds[key].status = 'ONLINE';
-      updateFeedCount();
-      logMission('system', `Feed ${key} came online`);
-    }, delay);
-  }
-
-  // Stagger feed activation on boot
-  bringFeedOnline('NVD',    400);
-  bringFeedOnline('GDELT',  900);
-  bringFeedOnline('ADS-B', 1400);
-  bringFeedOnline('USGS',  1900);
-  bringFeedOnline('SIGINT',2400);
-  bringFeedOnline('OSINT', 2900);
-  updateFeedCount();
-
   // ── Threat Actors Sidebar ──────────────────────────────────────
-  const threatActors = (window.ARTEMIS_IV_DATA && window.ARTEMIS_IV_DATA.threatActors) || [
+  // assets/artemis-iv-data.js names these fields status/industries; the
+  // renderers read level/sectors/ttp. Map the data file onto that shape.
+  const threatActors = ((window.ARTEMIS_IV_DATA && window.ARTEMIS_IV_DATA.threatActors) || [
     { name: 'APT41',   level: 'ELEVATED', sectors: 'Telecom · Healthcare', region: 'CN',  ttp: 'Supply-chain · ShadowPad' },
     { name: 'FIN7',    level: 'ACTIVE',   sectors: 'Retail · Hospitality', region: 'RU',  ttp: 'Carbanak · BadUSB' },
     { name: 'Lazarus', level: 'MONITOR',  sectors: 'Finance · Crypto',     region: 'KP',  ttp: 'AppleJeus · ZINC' },
     { name: 'TA505',   level: 'LOW',      sectors: 'Banking',              region: 'RU',  ttp: 'Clop · FlawedAmmyy' },
     { name: 'APT29',   level: 'MONITOR',  sectors: 'Government · Energy',  region: 'RU',  ttp: 'WellMess · NOBELIUM' },
-  ];
+  ]).map(a => ({ level: a.status, sectors: a.industries, ttp: '—', ...a }));
 
   async function loadNVD() {
     const start = new Date(Date.now() - 7 * 86400e3).toISOString().slice(0,19) + ':000';
@@ -1458,13 +1468,14 @@
         const m = c.metrics?.cvssMetricV31?.[0]?.cvssData || c.metrics?.cvssMetricV30?.[0]?.cvssData;
         return { id: c.id, score: m?.baseScore ?? 0, summary: (c.descriptions?.find(d => d.lang==='en')?.value||'').slice(0,160) };
       }).filter(c => c.score >= 9.0).slice(0, 10);
-      S.cves = parsed.length ? parsed : NVD_FB;
+      S.cves = parsed;
       setFeed('NVD', 'ONLINE', S.cves.length);
       logM('threat', `NVD: ${S.cves.length} critical CVEs (CVSS ≥ 9.0) published in last 7d`);
     } catch {
-      S.cves = NVD_FB;
-      setFeed('NVD', 'DEGRADED', NVD_FB.length);
-      logM('system', 'NVD: rate-limited or timeout — cached critical CVE set loaded');
+      // No cached NVD set ships with this page, so show none rather than invent one.
+      S.cves = [];
+      setFeed('NVD', 'OFFLINE', 0);
+      logM('system', 'NVD: unreachable (rate limit, timeout or CORS). No CVEs shown');
     }
     const cnt   = $('#cveCount');   if (cnt)   cnt.textContent = S.cves.length;
     const first = $('#cveFirst');   if (first && S.cves[0]) first.textContent = `${S.cves[0].id} · CVSS ${S.cves[0].score}`;
@@ -1527,20 +1538,13 @@
   }
 
   function gdeltHTML() {
-    if (!S.gdeltArticles.length) return GDELT_STATIC();
+    // Headlines credited to named outlets are only ever ones GDELT returned.
+    if (!S.gdeltArticles.length) return '<span style="color:var(--muted)">GDELT returned no articles (unreachable or blocked). No headlines are shown.</span>';
     return S.gdeltArticles.map(a => {
       const ts  = a.seendate ? (a.seendate.slice(9,11) + ':' + a.seendate.slice(11,13)) : '—';
       const src = esc((a.domain || a.sourcecountry || '').slice(0, 14));
       return `<div class="pulse-line"><span class="pulse-time">${ts} · ${src}</span><span class="pulse-text">${esc(a.title||'No title')}</span></div>`;
     }).join('');
-  }
-  function GDELT_STATIC() {
-    return [
-      { ts:'09:14', src:'WIRED',     text:'Chinese state-sponsored hackers target telecom authentication servers — CISA advisory pending' },
-      { ts:'08:52', src:'BLEEPCOMP', text:'LockBit affiliate arrested; successor group surfaces with improved Rust-based locker' },
-      { ts:'07:33', src:'KREBS',     text:'CISA warns active exploitation of edge device stack overflows (Ivanti, CrushFTP)' },
-      { ts:'06:11', src:'SECWEEK',   text:'Critical infrastructure operators under coordinated spear-phishing surge — Ontario CAOs targeted' },
-    ].map(i => `<div class="pulse-line"><span class="pulse-time">${i.ts} · ${i.src}</span><span class="pulse-text">${i.text}</span></div>`).join('');
   }
 
   function renderGDELT() {
@@ -1548,40 +1552,7 @@
     [$('#gdeltFeed'), $('#fusionFeed')].forEach(el => { if (el) el.innerHTML = h; });
   }
 
-  // ════════════════════════════════════════════════════════════════
-  // FEED 5 · URLhaus — Active Malware Distribution URLs (abuse.ch)
-  // https://urlhaus.abuse.ch/api/
-  // ════════════════════════════════════════════════════════════════
-  async function loadURLhaus() {
-    try {
-      const ctrl = new AbortController();
-      const to = setTimeout(() => ctrl.abort(), 6000);
-      const res = await fetch(url, { signal: ctrl.signal });
-      clearTimeout(to);
-      if (!res.ok) throw new Error('NVD ' + res.status);
-      const data = await res.json();
-      state.cves = (data.vulnerabilities || []).map(v => {
-        const c = v.cve;
-        const metric = c.metrics?.cvssMetricV31?.[0]?.cvssData || c.metrics?.cvssMetricV30?.[0]?.cvssData;
-        return {
-          id: c.id,
-          score: metric?.baseScore ?? 0,
-          summary: (c.descriptions?.find(d => d.lang === 'en')?.value || '').slice(0, 140),
-        };
-      }).filter(c => c.score >= 9.0).slice(0, 8);
-      if (!state.cves.length) state.cves = fallbackCves;
-      logMission('threat', `NVD pulled ${state.cves.length} critical CVEs`);
-    } catch (e) {
-      state.cves = fallbackCves;
-      state.feeds.NVD.status = 'DEGRADED';
-      updateFeedCount();
-      logMission('system', 'NVD live fetch unavailable — using cached intel');
-    }
-    $('#cveCount').textContent = state.cves.length;
-    $('#cveFirst').textContent = state.cves[0] ? `${state.cves[0].id} · ${state.cves[0].score}` : '';
-    syncThreatCves();
-  }
-  loadCves();
+  // FEED 5-7 · URLhaus, ThreatFox, GHSA: no loader in this build (see NOT_CONNECTED).
 
   // ── Geopolitical Pulse (synthetic real-time GDELT simulator) ───
   // Synthetic demo intelligence only (no live fact reporting).
@@ -1657,6 +1628,8 @@
       tooltip.innerHTML = `<strong>${hit.a.name}</strong><br>Severity: ${hit.a.severity || hit.a.level}<br>Industries: ${hit.a.industries || hit.a.sectors}<br>Action: ${hit.a.recommendation || 'Prioritize executive briefing and rapid hardening.'}`;
     });
     threatMap.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+    // Equirectangular: matches the equator (H/2) and prime meridian (W/2) drawn below.
+    const geo2canvas = (lon, lat, w, h) => ({ x: (lon + 180) / 360 * w, y: (90 - lat) / 180 * h });
     function drawMap(ts) {
       ctx.clearRect(0, 0, W, H);
       // Graticule grid
@@ -1695,10 +1668,10 @@
         ctx.fillStyle = 'rgba(77,123,170,.65)'; ctx.fill();
       });
 
-      // APT actor geo-attributed blips
-      ACTORS.forEach(a => {
-        const {x,y} = geo2canvas(a.lon, a.lat, W, H);
-        const pulse  = (Math.sin((ts||0)/450 + a.lon*0.05) + 1) / 2;
+      // APT actor blips: the actors carry no coordinates, so they sit at the
+      // matrix positions the hover tooltip hit-tests, not at a location.
+      blips.forEach(({ a, x, y, phase }) => {
+        const pulse  = (Math.sin((ts||0)/450 + phase) + 1) / 2;
         const color  = a.level==='ELEVATED'?'184,116,116': a.level==='ACTIVE'?'214,166,74': a.level==='MONITOR'?'77,123,170':'92,140,114';
         ctx.beginPath(); ctx.arc(x,y, 5+pulse*10, 0, Math.PI*2);
         ctx.fillStyle = `rgba(${color},${.1+pulse*.14})`; ctx.fill();
@@ -1710,12 +1683,11 @@
 
       // Legend
       ctx.font = '9px IBM Plex Mono,monospace'; ctx.fillStyle = 'rgba(111,130,152,.7)';
-      ctx.fillText('● APT actor  ● USGS M≥5  ● ADS-B mil.', 8, H-6);
-      mapAnim = requestAnimationFrame(frame);
+      ctx.fillText('● APT actor (not geolocated)  ● USGS M≥5  ● ADS-B mil.', 8, H-6);
+      requestAnimationFrame(drawMap);
     }
-    mapAnim = requestAnimationFrame(frame);
+    requestAnimationFrame(drawMap);
   }
-  startThreatMap();
 
   // ════════════════════════════════════════════════════════════════
   // CANVAS: Quantum Entanglement — lazy start
@@ -1749,7 +1721,7 @@
   function renderThreatPanel() {
     const list = $('#aptList');
     if (list && !threatRendered) {
-      list.innerHTML = ACTORS.map(a => `
+      list.innerHTML = threatActors.map(a => `
         <div class="apt-card">
           <div class="apt-head"><span class="apt-name">${a.name}</span><span class="apt-tag ${a.level.toLowerCase()}">${a.level}</span></div>
           <div class="apt-meta">
@@ -1759,13 +1731,13 @@
         </div>`).join('');
       threatRendered = true;
     }
-    renderURLhaus(); renderThreatFox();
+    renderNotConnected();
     const iocEl = $('#iocCount'); if (iocEl) iocEl.textContent = S.tfoxIocs.length || '—';
     const ukpi  = $('#urlhausKpi'); if (ukpi) ukpi.textContent = S.urlhausUrls.length || '—';
     const tcve  = $('#threatCveCount'); if (tcve) tcve.textContent = S.cves.length || '—';
   }
 
-  function renderIntelPanel() { renderGDELT(); renderGHSA(); renderUSGS(); }
+  function renderIntelPanel() { renderGDELT(); renderNotConnected(); renderUSGS(); }
 
   // ════════════════════════════════════════════════════════════════
   // Guardian script
@@ -1919,8 +1891,10 @@
   // ════════════════════════════════════════════════════════════════
   function runAllFeeds() {
     loadKEV(); loadNVD(); loadUSGS(); loadGDELT();
-    loadURLhaus(); loadThreatFox(); loadGHSA(); loadADSB();
+    Object.keys(NOT_CONNECTED).forEach(k => setFeed(k, 'NOT CONNECTED'));
+    renderNotConnected();
   }
+  runAllFeeds();
 
   // ── CRUCIX Markets (defensive no-op until grid + data are mounted) ──
   function renderCXMarkets(){
@@ -2622,7 +2596,7 @@
     toastEx('Refresh dispatched', 'ok');
   });
   $('#stgReloadCvesBtn')?.addEventListener('click', () => {
-    loadCves().then(() => {
+    loadNVD().then(() => {
       toastEx('CVE feed reloaded', 'ok');
       if (typeof window.__artemisRenderAnalytics === 'function') window.__artemisRenderAnalytics();
     });
@@ -2678,7 +2652,7 @@
       { type:'action', label:'Open settings', meta:'Action', action:() => $('#settingsBtn').click() },
       { type:'action', label:'Export mission log (markdown)', meta:'Export', action:() => exportMissionMarkdown() },
       { type:'action', label:'Export mission log (JSON)', meta:'Export', action:() => $('#exportLogBtn').click() },
-      { type:'action', label:'Reload CVE feed', meta:'Action', action:() => loadCves().then(() => toastEx('CVE feed reloaded','ok')) },
+      { type:'action', label:'Reload CVE feed', meta:'Action', action:() => loadNVD().then(() => toastEx('CVE feed reloaded','ok')) },
       { type:'action', label:'Seed demo activity', meta:'Action', action:() => $('#seedDemoBtn').click() },
       { type:'action', label:'Clear mission log', meta:'Action', action:() => $('#clearLogBtn').click() },
       { type:'action', label:'Force notification (test)', meta:'Action', action:() => pushNotification({ level:'info', title:'Test notification', text:'Manual palette test.' }) },
@@ -2774,14 +2748,19 @@
     runPaletteSelection();
   });
   palette?.addEventListener('click', (e) => { if (e.target === palette) closePalette(); });
-  document.addEventListener('keydown', (e) => {
+  // This page advertises ⌘K for its own palette. control-surface.js binds the
+  // same chord in the document capture phase, so claim it one step earlier
+  // (window capture) or both palettes open and the Control Surface scrim is
+  // left over the header. Its palette still opens from its bar and "/".
+  window.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
       e.preventDefault();
+      e.stopPropagation();
       palette.classList.contains('open') ? closePalette() : openPalette();
     } else if (e.key === 'Escape' && palette.classList.contains('open')) {
       closePalette();
     }
-  });
+  }, true);
 
   // ── Forecast Widget (24h synthetic threat forecast) ────────────
   function renderForecast() {
@@ -2876,14 +2855,11 @@
   function renderFeedUptime() {
     const rows = $('#anaFeedRows');
     if (!rows) return;
+    // No uptime history is recorded, so report each feed's current status only.
     const entries = Object.entries(state.feeds);
-    let total = 0;
-    rows.innerHTML = entries.map(([k, f]) => {
-      const up = f.status === 'ONLINE' ? 99 + Math.random() : f.status === 'DEGRADED' ? 85 + Math.random() * 8 : 0;
-      total += up;
-      return `<div class="ana-row"><span>${k}</span><span>${up.toFixed(1)}%</span></div>`;
-    }).join('');
-    $('#anaFeedUpAvg').textContent = `Average uptime: ${(total / entries.length).toFixed(2)}%`;
+    rows.innerHTML = entries.map(([k, f]) => `<div class="ana-row"><span>${k}</span><span>${f.status}</span></div>`).join('');
+    const online = entries.filter(([, f]) => f.status === 'ONLINE').length;
+    $('#anaFeedUpAvg').textContent = `Online now: ${online}/${entries.length}`;
   }
   function renderMissionStats() {
     const m = state.mission;
@@ -3010,7 +2986,6 @@
 
   // ── Critical CVE → notification bridge ─────────────────────────
   // After CVEs load, push a notification for the top one.
-  const originalLoadCves = loadCves;
   setTimeout(() => {
     if (state.cves[0]) {
       pushNotification({
@@ -3021,12 +2996,13 @@
     }
   }, 2400);
 
-  // Periodic synthetic notification cadence (low-rate, demo)
+  // Periodic synthetic notification cadence (low-rate, demo). Titled as
+  // demos: none of these is derived from a feed.
   const notifTemplates = [
-    { level:'info', title:'Geopolitical pulse', text:'GDELT signal cluster in EU energy sector.' },
-    { level:'warn', title:'APT41 chatter rising', text:'Telecom & healthcare sector activity uptick.' },
-    { level:'ok',   title:'Feed restored', text:'OSINT relay reattached after brief latency spike.' },
-    { level:'info', title:'New CVE candidate', text:'Pre-publication signal in monitored advisory list.' },
+    { level:'info', title:'Demo · Geopolitical pulse', text:'GDELT signal cluster in EU energy sector.' },
+    { level:'warn', title:'Demo · APT41 chatter rising', text:'Telecom & healthcare sector activity uptick.' },
+    { level:'ok',   title:'Demo · Feed restored', text:'OSINT relay reattached after brief latency spike.' },
+    { level:'info', title:'Demo · New CVE candidate', text:'Pre-publication signal in monitored advisory list.' },
   ];
   setInterval(() => {
     if (!state.autoRefresh) return;

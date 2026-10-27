@@ -43,6 +43,11 @@ Guidance for agents working in this repository.
 > Re-verified 2026-10-02: still true. Job `110643972279` (Auto Heal, on
 > `582ec42`) reported `runner_id: 0` and no steps, and finished in 4 seconds;
 > Pages run #257 deployed the same commit. See `docs/revenue/daily/2026-10-02.md`.
+>
+> Re-verified 2026-10-27: still true. Job `122121602803` (Multi-Repo Audit, on
+> `0d711f1`) reported `runner_id: 0`, and its annotation reads "The job was not
+> started because your account is locked due to a billing issue." Pages run
+> `40427632068` deployed the same commit. See `docs/audit/2026-10-27-recovery.md`.
 
 ## What this repo is
 
@@ -75,7 +80,8 @@ non‑negotiable when changing it.
 | `apps/osint-fraud-dashboard/` | OSINT Fraud Detection Dashboard prototype: Next.js + Prisma/Postgres, own lockfile and compose (port 3050, db 5434). Synthetic data only; not deployed. Rules return MATCH / NO_MATCH / INSUFFICIENT_DATA and never treat an unsupplied field as a negative; keep that, and keep authorization in `src/lib/services/`. Integration tests need `TEST_DATABASE_URL` (a `_test` database). See its `README.md` and `docs/` |
 | `side-store.html`, `side-store/lib/`, `data/side-store/` | The Side Store: 57 impulse SKUs inline in the page, its pricing module, and the catalog projected out of it by `tools/side_store_catalog.py` |
 | `.github/auto-heal/` | Self-healing controller for Actions (`auto_heal.py` + its JSON policy). Landed at the root as `auto-heal/` in the upload flattening, so the workflow that runs it found nothing; restored to the path `auto_heal.py` itself resolves |
-| `AUTOMATION.md`, `.github/actions/` | The CI/CD layer: `reusable-ci.yml` (runs `scripts/ci_local.py` + the commerce gates), `reusable-deploy.yml` (provider per GitHub Environment via `DEPLOY_PROVIDER`; `none` deploys nothing), `deploy-staging.yml` and `deploy-promotion.yml` (both **off** until `CG_PR_STAGING_DEPLOY` / `CG_PROMOTION_ENABLED` are `true`), `auto-fix.yml` (deterministic: ruff + generated assets; PR code never runs beside the write token), `heal-pipeline.yml`, `ci-telemetry.yml`. Rollback stays manual via `rollback.yml`. Don't add `.github/CODEOWNERS`: it would shadow the root file. Invariants: `tests/test_cicd_layer.py` |
+| `AUTOMATION.md`, `.github/actions/` | The CI/CD layer: `reusable-ci.yml` (runs `scripts/ci_local.py` + the commerce gates), `reusable-deploy.yml` (provider per GitHub Environment via `DEPLOY_PROVIDER`; `none` deploys nothing), `deploy-staging.yml` and `deploy-promotion.yml` (both **off**: staging until `PR_PREVIEW_URL_TEMPLATE` is set, promotion-on-push until `PROMOTION_PIPELINE_ENABLED` is `true`; a manual promotion dispatch always runs — see `AUTOMATION.md` §2), `auto-fix.yml` (deterministic: ruff + generated assets; PR code never runs beside the write token), `heal-pipeline.yml`, `ci-telemetry.yml`. Rollback stays manual via `rollback.yml`. Don't add `.github/CODEOWNERS`: it would shadow the root file. Invariants: `tests/test_cicd_layer.py` |
+| `agent_os/head.py`, `agent_os/tasks.py`, `agent_os/agents.py`, `agent_os/server.py` | **Head agent**: objective → bounded mission → tasks delegated to five registered worker agents (repository, verification, integration, security, deployment), durable in SQLite (`.agent_os/`, gitignored) with leases, attempt budgets, deadlines, approvals and a hash-chained event log; authenticated API + console (`python -m agent_os.server`). Writes and non-LOW actions wait for a decision made with a *separate* approver token; workers cannot delegate; no capability deploys, pushes, messages or moves money. Live-data feeds run as gated `integration` tasks and `agent_os/freshness.py` reports their state from recorded provenance. The console markup is `console/console.tmpl`, not `.html`, because Pages publishes this tree. See `agent_os/HEAD_AGENT.md`; tests `tests/test_agent_os_head.py`, `tests/test_agent_os_server.py` |
 | `agent_army/` | Governed role routing + approval gating (`AGENT_POLICY.md`, `orchestrator.py`, `secure_runtime/` Rust sidecar) |
 | `agents/` | Per‑agent definitions (`agent.json`, `system_prompt.md`, tool schemas) |
 | `bots/` | Standalone Python automation bots invoked by workflows (e.g. `store_smoke_bot.py`) |

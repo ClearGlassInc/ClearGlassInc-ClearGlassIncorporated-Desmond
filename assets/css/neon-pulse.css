@@ -158,6 +158,11 @@
    ------------------------------------------------------------------------ */
 /* Set by discovery only when inert: static, no offsets, no absolute descendants. */
 .cg-np-anchor { position: relative; }
+/* station-chat.js isolates the Sentinel console with
+   `#cg-station :where(span,…){all:revert}`, whose id outranks the class above.
+   Unanchored, a 7px status dot's halo (inset:0) filled the whole console header
+   as a blurred green slab under its title (3.2:1) and status line (1.2:1). */
+#cg-station .cg-np-anchor { position: relative; }
 
 .cg-np-card {
   --cg-np-rim: linear-gradient(135deg,

@@ -180,7 +180,7 @@ section{max-width:1280px;margin:0 auto;padding:46px 22px}
 .intg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:9px}
 .intg{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:11px;border:1px solid var(--line);background:rgba(238, 99, 108,.04);font-size:12.5px;transition:.13s}
 .intg:hover{border-color:var(--line-2);background:rgba(238, 99, 108,.1)}
-.intg .glyph{width:24px;height:24px;border-radius:6px;display:grid;place-items:center;font-size:12px;font-weight:700;flex:0 0 auto;color:#dce1f1}
+.intg .glyph{width:24px;height:24px;border-radius:6px;display:grid;place-items:center;font-size:12px;font-weight:700;flex:0 0 auto;color:#05070d}
 .intg .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .intg-more{text-align:center;color:var(--dim-2);font-family:var(--mono);font-size:11px;margin-top:18px;letter-spacing:.06em}
 
@@ -192,7 +192,7 @@ section{max-width:1280px;margin:0 auto;padding:46px 22px}
 .term-h .d{width:11px;height:11px;border-radius:50%}
 .term-h .t{margin-left:8px;font-size:10px;color:var(--dim-2);letter-spacing:.1em}
 .term-b{padding:16px;font-size:12.5px;line-height:1.75;overflow-x:auto}
-.term-b .c{color:#e9d9da}.term-b .p{color:var(--violet)}.term-b .o{color:var(--dim)}.term-b .g{color:var(--ok)}
+.term-b .c{color:#e9d9da}.term-b .p{color:color-mix(in srgb, var(--violet) 82%, white)}.term-b .o{color:var(--dim)}.term-b .g{color:var(--ok)}
 .deploy ul{list-style:none;display:grid;gap:12px}
 .deploy li{display:flex;gap:11px;align-items:flex-start;font-size:14px;color:var(--dim);line-height:1.5}
 .deploy li b{color:var(--txt);font-weight:600}
@@ -280,6 +280,10 @@ body::after{opacity:.18;background:repeating-linear-gradient(90deg,transparent 0
 <link rel="stylesheet" href="/assets/css/future-buttons.css">
 <link rel="stylesheet" href="/clearglass-crimson.css">
 <link rel="stylesheet" href="/assets/css/neon-pulse.css">
+<style id="cg-contrast-fit">
+/* Inline style="color:…" below WCAG AA here: the same colour, lightened just enough. */
+[style*="; color: #7C5CFF"], [style*="; color: #7c5cff"], [style*="; color: rgb(124, 92, 255)"], [style*="; color: rgb(124,92,255)"], [style*="; color:#7C5CFF"], [style*="; color:#7c5cff"], [style*="; color:rgb(124, 92, 255)"], [style*="; color:rgb(124,92,255)"], [style*=";color: #7C5CFF"], [style*=";color: #7c5cff"], [style*=";color: rgb(124, 92, 255)"], [style*=";color: rgb(124,92,255)"], [style*=";color:#7C5CFF"], [style*=";color:#7c5cff"], [style*=";color:rgb(124, 92, 255)"], [style*=";color:rgb(124,92,255)"], [style^="color: #7C5CFF"], [style^="color: #7c5cff"], [style^="color: rgb(124, 92, 255)"], [style^="color: rgb(124,92,255)"], [style^="color:#7C5CFF"], [style^="color:#7c5cff"], [style^="color:rgb(124, 92, 255)"], [style^="color:rgb(124,92,255)"] { color: #967cff !important; } /* rgb(124, 92, 255): was 3.38:1, 1 runs */
+</style>
 </head>
 <body>
 

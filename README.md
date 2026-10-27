@@ -1,43 +1,127 @@
 # ClearGlass Inc.
 
-This repository is a multi-application monorepo, not a single runtime. Components have separate toolchains and deployment boundaries. Integrate them through explicit, documented interfaces; do not try to import or start every component from one process.
+**Transparency Is Infrastructure.**
 
-## System map
+**AI automation · Cybersecurity · Software architecture**
 
-| Component | Location | Stack / entry point | Integration boundary and status |
-|---|---|---|---|
-| Public static site | Repository root (`*.html`, `*.css`, `*.js`, `assets/`) | Static HTML/CSS/JavaScript; `tools/build_pages.py` prepares a Pages artifact | GitHub Pages workflows exist. Repository instructions record branch-based Pages publishing as the fallback because Actions jobs are not receiving runners. `netlify.toml` is also present, so confirm the custom domain's actual serving provider before changing hosting. |
-| Commerce control plane | `control-plane/` | Python 3.11, FastAPI, SQLAlchemy, Pydantic Settings | Independent API and test suite; Render is the documented deployment target. Current production reachability is not verified by this README. Payment, approval, audit, and webhook safeguards must remain intact. |
-| Customer storefront | `storefront/` | Independent Next.js app with its own `package.json` and lockfile | Separate install/build/start lifecycle; do not merge into the root Next.js application by assumption. |
-| Operator admin | `admin/` | Independent Next.js app with its own `package.json` and lockfile | Separate lifecycle and security boundary; preserve existing login and authorization checks. |
-| Root signal-fabric application | Root `package.json` | Next.js; `npm run dev` serves port `3030`; `npm run build`, `npm run start`, `npm run typecheck`, and `npm test` are declared | A separate application from the static site and the `storefront/` and `admin/` apps. `docs/ARCHITECTURE.md` records no registered deployment workflow for this root app. |
-| Agent, automation, and intelligence modules | `agents/`, `agent_army/`, `artemis/`, `artemis_platform/`, `bots/`, `sentinel/`, `tools/` | Python tooling, with additional package-specific runtimes | Invoked through specific scripts and workflows. Keep execution boundaries, environment requirements, and approval controls explicit; do not start every agent as a side effect of application startup. |
-| Additional independent systems | `apps/`, `services/`, `clearglass-ai-proxy/`, `delos-os/`, `clearglassinc_sdk/`, and other package subtrees | Package-specific Node.js, Python, and Rust manifests | Each component owns its documented install/test/build lifecycle. There is no evidence of one universal install/build/start command covering the full repository. |
+ClearGlass Inc. is a Canadian technology company based in Burlington, Ontario.
+We design software and automation to help organizations understand their systems,
+manage digital risk, and turn complex operations into clear, accountable workflows.
 
-## Prototype scope
+This repository brings together the ClearGlass website, application source,
+AI agent systems, security tooling, and supporting technical documentation.
 
-The repository's existing prototype note remains in force: **prototype fixtures are synthetic; no real incidents are included.** The documented prototype stack is Next.js, TypeScript, Tailwind, Prisma, PostgreSQL, Zod, Docker Compose, and Jest. This statement does not establish that every listed service is provisioned or deployed.
+[Website](https://www.clearglassinc.com) ·
+[Contact](mailto:desmondotieno@icloud.com) ·
+[Report an issue](https://github.com/ClearGlassInc/ClearGlassInc-ClearGlassIncorporated-Desmond/issues)
 
-## Validation and operational guidance
+## What we focus on
 
-Start with the repository runbook and baseline rather than assuming that all workflows are runnable:
+| Area | Focus |
+| --- | --- |
+| AI automation and agent systems | Workflow orchestration, decision support, human approval, and traceable execution. |
+| Cybersecurity and digital risk | Access governance, defensive security workflows, and evidence-based assessment. |
+| Software architecture and integration | Web applications, backend services, APIs, and connected operational data. |
+| Governance and operational intelligence | Documented controls, evidence integrity, and accountable decision-making. |
 
-- [`AGENTS.md`](AGENTS.md) — repository-wide engineering and preservation rules.
-- [`CLAUDE.md`](CLAUDE.md) — project-specific execution, safety, and deployment constraints.
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — component boundaries and request/data flows.
-- [`docs/BASELINE.md`](docs/BASELINE.md) — known failures, verified findings, and risk register.
-- [`docs/RUNBOOK.md`](docs/RUNBOOK.md) — install and validation commands for the affected component.
-- [`docs/audit/2026-10-01/INTEGRATION_MAP.md`](docs/audit/2026-10-01/INTEGRATION_MAP.md) — external integration inventory and credential names (never secret values).
+Our engineering approach emphasizes transparency, security, and human oversight.
+The repository includes working components, prototypes, and architecture proposals;
+each component's documentation defines its scope and setup. A design document or
+demo does not establish that a system is deployed or independently audited.
 
-The local mirror of the primary CI gates is declared in `scripts/ci_local.py`:
+## Repository guide
+
+This is a monorepo: its applications and services have separate dependencies and
+deployment requirements.
+
+| Location | Contents |
+| --- | --- |
+| [`index.html`](index.html), [`assets/`](assets/) | ClearGlass public website and shared assets. |
+| [`app/`](app/), [`components/`](components/), [`lib/`](lib/) | Root Next.js application and supporting UI and application code. |
+| [`control-plane/`](control-plane/) | FastAPI commerce and operations control plane. |
+| [`storefront/`](storefront/), [`admin/`](admin/) | Separate Next.js commerce applications. |
+| [`agent_os/`](agent_os/), [`agents/`](agents/) | Agent orchestration, policies, and agent definitions. |
+| [`security/`](security/), [`truth_forensics/`](truth_forensics/) | Security documentation and evidence-integrity tooling. |
+| [`docs/`](docs/), [`deployment/`](deployment/) | Architecture notes, component documentation, and deployment runbooks. |
+| [`tests/`](tests/), [`scripts/`](scripts/), [`tools/`](tools/) | Tests, validation scripts, and maintenance tools. |
+
+## Getting started
+
+### Clone the repository
+
+```bash
+git clone https://github.com/ClearGlassInc/ClearGlassInc-ClearGlassIncorporated-Desmond.git
+cd ClearGlassInc-ClearGlassIncorporated-Desmond
+```
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md), [AGENTS.md](AGENTS.md), and
+[CLAUDE.md](CLAUDE.md) before making changes.
+
+### Preview the static website
+
+From the repository root:
+
+```bash
+python3 -m http.server 8080 --bind 127.0.0.1
+```
+
+Open [http://127.0.0.1:8080](http://127.0.0.1:8080). This previews the static
+pages; integrations that require a backend need their own configuration.
+
+### Run the root Next.js application
+
+With Node.js and npm installed, use the root [package.json](package.json):
+
+```bash
+npm ci
+npm run dev
+```
+
+Open [http://localhost:3030](http://localhost:3030). Root application checks are:
+
+```bash
+npm run typecheck
+npm test
+npm run build
+```
+
+### Work on other components
+
+Use the manifest and instructions for the component you intend to run.
+[CLAUDE.md](CLAUDE.md) covers the commerce control plane and frontends;
+[DEPLOY.md](DEPLOY.md) describes their deployment requirements.
+
+Python tooling uses Python 3.11 as documented in [CONTRIBUTING.md](CONTRIBUTING.md).
+After preparing the required Python environment, run the repository's local gates:
 
 ```bash
 python3 scripts/ci_local.py
-python3 scripts/ci_local.py --list
 ```
 
-Run package-specific checks from that package's directory, following `docs/RUNBOOK.md`. These commands are documented entry points, not a claim that tests passed in the current environment.
+## Engineering and security
 
-## Current verification caveat
+- Keep consequential actions behind the applicable human approval gates.
+- Keep credentials in runtime configuration, outside source code and browser bundles.
+- Preserve existing functionality and validate changes before opening a pull request.
 
-At repository commit `10c3d912f3774c946f7c8935882ff82556f5d402` (2026-10-18 review), recent GitHub Actions jobs were failing before any step appeared and their job logs were unavailable. This matches the previously documented runner-dispatch blocker. Until an authorized repository/organization administrator resolves it, a failed Actions job cannot be interpreted as an application-test result, and a green local check does not establish successful production deployment. Do not switch the Pages source, deploy, publish, or change production configuration based on this README.
+Follow [CONTRIBUTING.md](CONTRIBUTING.md) for contributions and
+[SECURITY.md](SECURITY.md) for vulnerability reporting.
+
+## Additional project documentation
+
+The educational blockchain and wallet project remains part of this repository.
+Its previous README is preserved in [README-CGLASS.md](README-CGLASS.md),
+alongside its [whitepaper](WHITEPAPER.md) and [technical documentation](TECHNICAL_DOCS.md).
+Those materials describe that individual project within the wider ClearGlass repository.
+
+## Company and contact
+
+Burlington, Ontario, Canada.
+
+- **Founder:** Desmond Otieno Odhiambo
+- **Website:** [www.clearglassinc.com](https://www.clearglassinc.com)
+- **Email:** [desmondotieno@icloud.com](mailto:desmondotieno@icloud.com)
+
+## License
+
+See [LICENSE](LICENSE) and any component-specific or third-party license notices.

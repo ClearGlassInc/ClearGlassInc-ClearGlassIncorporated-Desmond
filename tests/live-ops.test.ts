@@ -1,9 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { boundsFor, cleanText, distanceNm, inBounds, isValidCoordinates, parseFiniteNumber, tileZoomForRadius, webMercatorPixels } from "../lib/live-ops/types";
-import { allowProviderRequest } from "../lib/live-ops/cache";
+import { boundsFor, cleanText, distanceNm, inBounds, isLiveOpsResponse, isValidCoordinates, parseFiniteNumber, tileZoomForRadius, webMercatorPixels } from "../lib/live-ops/types";
+import { allowProviderRequest, cachedProvider } from "../lib/live-ops/cache";
 import { isMilitaryAircraft, normalizeOnGround } from "../lib/live-ops/adsbexchange";
-import { normalizeCameraStatus } from "../lib/live-ops/cctv";
+import { getCameras, normalizeCameraStatus, safeHttpUrl } from "../lib/live-ops/cctv";
 import type { SatelliteAsset } from "../lib/live-ops/types";
 
 test("Chualar 40 NM bounds contain the center and stay finite", () => {
@@ -127,5 +127,119 @@ test("Web Mercator map projection keeps Chualar centered and chooses bounded zoo
     const samePoint = webMercatorPixels(36.57, -121.525, zoom);
     assert.equal(center.x, samePoint.x);
     assert.equal(center.y, samePoint.y);
+  }
+});
+
+test("antimeridian radius includes both sides of the dateline", () => {
+  const center = { lat: 0, lon: 179.8 };
+  const bounds = boundsFor(center, 40);
+  assert.ok(bounds.lomin > bounds.lomax);
+  assert.equal(inBounds(0, 179.9, bounds), true);
+  assert.equal(inBounds(0, -179.9, bounds), true);
+  assert.equal(inBounds(0, -177, bounds), false);
+  assert.equal(inBounds(0, 175, bounds), false);
+});
+
+test("antimeridian on the western side remains wrapped", () => {
+  const bounds = boundsFor({ lat: 0, lon: -179.8 }, 40);
+  assert.ok(bounds.lomin > bounds.lomax);
+  assert.equal(inBounds(0, 179.9, bounds), true);
+  assert.equal(inBounds(0, -179.9, bounds), true);
+});
+
+test("geospatial bounds reject invalid radii and coordinates", () => {
+  assert.throws(() => boundsFor({ lat: 91, lon: 0 }, 40), RangeError);
+  assert.throws(() => boundsFor({ lat: 0, lon: 0 }, 0), RangeError);
+  assert.throws(() => boundsFor({ lat: 0, lon: 0 }, Number.NaN), RangeError);
+});
+
+test("unified response validator rejects malformed or invented count states", () => {
+  const good = {
+    generated_at: "2026-10-24T20:00:00.000Z",
+    area: { center: { lat: 36.57, lon: -121.525 }, radius_nm: 40, bounds: boundsFor({ lat: 36.57, lon: -121.525 }, 40) },
+    layers: { flights: [], military: [], satellites: [], cctv: [] },
+    sources: { flights: "offline", military: "offline", satellites: "offline", cctv: "offline" },
+    counts: { live_flights: null, military_flights: null, satellites: null, cctv: null, total_assets: null },
+    errors: {}
+  };
+  assert.equal(isLiveOpsResponse(good), true);
+  assert.equal(isLiveOpsResponse({ ...good, counts: { ...good.counts, satellites: 838.5 } }), false);
+  assert.equal(isLiveOpsResponse({ ...good, sources: { ...good.sources, military: "LIVE" } }), false);
+  assert.equal(isLiveOpsResponse({ ...good, layers: { ...good.layers, cctv: [{ id: "a", lat: null, lon: 0 }] } }), false);
+  assert.equal(isLiveOpsResponse({ ...good, generated_at: "not a timestamp" }), false);
+  assert.equal(isLiveOpsResponse({ ...good, area: null }), false);
+  assert.equal(isLiveOpsResponse({ ...good, area: { ...good.area, radius_nm: 0 } }), false);
+  assert.equal(isLiveOpsResponse({ ...good, layers: { ...good.layers, flights: [{ id: "fake", type: "satellite", lat: 36, lon: -121 }] } }), false);
+  assert.equal(isLiveOpsResponse({ ...good, counts: { ...good.counts, total_assets: 99 } }), false);
+  assert.equal(isLiveOpsResponse({ ...good, sources: { ...good.sources, cctv: "online" }, counts: { ...good.counts, cctv: 5, total_assets: null } }), false);
+});
+
+test("Caltrans camera URLs must resolve to official HTTPS California government hosts", () => {
+  assert.equal(safeHttpUrl("https://cwwp2.dot.ca.gov/data/camera.jpg"), "https://cwwp2.dot.ca.gov/data/camera.jpg");
+  assert.equal(safeHttpUrl("https://evil.ca.gov.attacker.example/cam"), null);
+  assert.equal(safeHttpUrl("http://cwwp2.dot.ca.gov/cam"), null);
+  assert.equal(safeHttpUrl("https://example.com/cam"), null);
+  assert.equal(safeHttpUrl("https://user:pass@cwwp2.dot.ca.gov/cam"), null);
+  assert.equal(safeHttpUrl("javascript:alert(1)"), null);
+});
+
+test("expired last-good records are degraded only for a bounded stale window", async () => {
+  const savedNow = Date.now;
+  let fakeNow = 1_790_000_000_000;
+  Date.now = () => fakeNow;
+  const cacheKey = "chualar-expiring-provider-20261024";
+  try {
+    const initial = await cachedProvider(cacheKey, 7_000, async () => ({
+      items: [{ id: "provider-record" }], status: "online" as const
+    }));
+    assert.equal(initial.status, "online");
+    fakeNow += 8_000;
+    const degraded = await cachedProvider(cacheKey, 7_000, async () => { throw new Error("network unavailable"); });
+    assert.equal(degraded.status, "degraded");
+    assert.equal(degraded.stale, true);
+    assert.equal(degraded.items.length, 1);
+    fakeNow += 70_000;
+    const offline = await cachedProvider(cacheKey, 7_000, async () => { throw new Error("network unavailable"); });
+    assert.equal(offline.status, "offline");
+    assert.equal(offline.items.length, 0);
+  } finally {
+    Date.now = savedNow;
+  }
+});
+
+test("Caltrans District 5 official nested JSON produces real coordinate-mapped cameras", async () => {
+  const originalFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = (async (input: unknown) => {
+    calls += 1;
+    assert.equal(String(input), "https://cwwp2.dot.ca.gov/data/d5/cctv/cctvStatusD05.json");
+    return new Response(JSON.stringify({ data: [
+      { cctv: {
+        index: "17", inService: "true",
+        location: { locationName: "CHUALAR HWY 101", latitude: "36.57", longitude: "-121.525" },
+        imageData: { streamingVideoURL: "https://www.dot.ca.gov/public/stream",
+          static: { currentImageURL: "https://www.dot.ca.gov/camera/updated.jpg" } }
+      } },
+      { cctv: {
+        index: "18", inService: "false",
+        location: { locationName: "MISSING COORDS", latitude: null, longitude: null },
+        imageData: {}
+      } }
+    ] }), { status: 200, headers: { "content-type": "application/json" } });
+  }) as typeof fetch;
+  try {
+    const result = await getCameras({ lat: 36.57, lon: -121.525 }, 40);
+    assert.equal(calls, 1);
+    assert.equal(result.status, "online");
+    assert.equal(result.items.length, 1);
+    const camera = result.items[0];
+    assert.equal(camera.id, "17");
+    assert.equal(camera.lat, 36.57);
+    assert.equal(camera.lon, -121.525);
+    assert.equal(camera.status, "online");
+    assert.equal(camera.preview_url, "https://www.dot.ca.gov/camera/updated.jpg");
+    assert.equal(camera.stream_url, "https://www.dot.ca.gov/public/stream");
+  } finally {
+    globalThis.fetch = originalFetch;
   }
 });

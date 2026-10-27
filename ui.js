@@ -28,7 +28,7 @@
      nav.js actually creates — #cg-nav has never existed in this repository, so
      the original guard matched nothing and let these behaviors run inside the
      bar anyway. */
-  var NAV_OWNED = "#cg-global-nav,#cg-mobile-nav";
+  var NAV_OWNED = "#cg-global-nav,#cg-mobile-nav,#navbar,#mobileMenu";
 
   function isControl(node) {
     if (!node || !node.closest) return null;
@@ -76,6 +76,9 @@
        `transition` shorthand that file relies on for translate/scale/filter.
        Defer there, and keep magnetizing every other control as before. */
     if (el.classList.contains("future-glass-primary")) return;
+    // clearglass-motion.js owns the cinematic CTAs' CSS-variable magnetic shift.
+    // Binding a second inline transform here overrides its positioning/transition.
+    if (el.matches && el.matches('.cgm-btn[data-cgm-magnetic]')) return;
     el.__cgMag = true;
     el.classList.add("cg-magnetic");
     var raf = 0, tx = 0, ty = 0;

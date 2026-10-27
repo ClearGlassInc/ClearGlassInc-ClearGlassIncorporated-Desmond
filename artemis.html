@@ -95,8 +95,8 @@ body{padding-top:18px}
 
 .sh{display:flex;align-items:center;gap:9px;margin:14px 16px 6px}
 .sh::before{content:"//";color:var(--al);font-size:7px;letter-spacing:2px}
-.sh-t{font-size:7px;letter-spacing:5px;color:var(--am)}
-.sh-c{font-size:6px;letter-spacing:2px;color:var(--al)}
+.sh-t{font-size:7px;letter-spacing:5px;color:color-mix(in srgb, var(--am) 80%, white)}
+.sh-c{font-size:6px;letter-spacing:2px;color:color-mix(in srgb, var(--al) 88%, white)}
 .sh::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--bdr2),transparent)}
 
 #main{padding:0 16px 24px;display:flex;flex-direction:column;gap:14px}
@@ -123,25 +123,25 @@ body{padding-top:18px}
 .bdim{color:var(--al);border-color:rgba(140, 70, 75,.22)}
 
 .er{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(238, 99, 101,.04);font-size:7px}
-.ek{color:var(--al);letter-spacing:.4px}
+.ek{color:color-mix(in srgb, var(--al) 92%, white);letter-spacing:.4px}
 .ev{color:var(--wt);text-align:right}
 .ev.g{color:var(--gn)}.ev.r{color:var(--rd)}.ev.o{color:var(--or)}.ev.a{color:var(--am)}.ev.c{color:var(--cy)}.ev.b{color:var(--bl)}.ev.p{color:var(--pu)}.ev.y{color:var(--yw)}
 
 .ph{padding:18px;text-align:center}
 .ph-i{font-size:20px;opacity:.2;margin-bottom:7px}
-.ph-t{font-size:7px;letter-spacing:3px;color:var(--al)}
+.ph-t{font-size:7px;letter-spacing:3px;color:color-mix(in srgb, var(--al) 92%, white)}
 
 .ticker{height:20px;background:rgba(0,0,0,.55);border-bottom:1px solid var(--bdr2);overflow:hidden;position:relative;display:flex;align-items:center}
 .tk-lbl{position:absolute;left:0;top:0;bottom:0;display:flex;align-items:center;padding:0 10px;z-index:5;font-size:6px;letter-spacing:3px;font-weight:700;color:#f0f0f0;background:linear-gradient(90deg,var(--am) 0%,rgba(238, 99, 101,.85) 65%,transparent);min-width:80px}
 .tk-track{display:flex;align-items:center;white-space:nowrap;padding-left:90px;animation:scroll 70s linear infinite}
-.tk-item{font-size:6px;letter-spacing:1.5px;color:var(--al);padding:0 16px;border-right:1px solid rgba(238, 99, 101,.08)}
-.tk-item.hi{color:var(--am)}.tk-item.al{color:var(--rd)}.tk-item.gn{color:var(--gn)}.tk-item.bl{color:var(--bl)}.tk-item.cy{color:var(--cy)}
+.tk-item{font-size:6px;letter-spacing:1.5px;color:color-mix(in srgb, var(--al) 94%, white);padding:0 16px;border-right:1px solid rgba(238, 99, 101,.08)}
+.tk-item.hi{color:color-mix(in srgb, var(--am) 86%, white)}.tk-item.al{color:color-mix(in srgb, var(--rd) 88%, white)}.tk-item.gn{color:color-mix(in srgb, var(--gn) 92%, white)}.tk-item.bl{color:var(--bl)}.tk-item.cy{color:var(--cy)}
 @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
 .cam-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px}
 .cc{position:relative;background:rgba(0,0,0,.72);border:1px solid rgba(238, 99, 101,.08);border-radius:3px;overflow:hidden;cursor:pointer;transition:all .2s}
 .cc:hover{border-color:rgba(238, 99, 101,.26)}
-.cc-hd{display:flex;align-items:center;justify-content:space-between;padding:3px 5px;background:rgba(238, 99, 101,.03);border-bottom:1px solid rgba(238, 99, 101,.05);font-size:5px;letter-spacing:2px;color:var(--al)}
+.cc-hd{display:flex;align-items:center;justify-content:space-between;padding:3px 5px;background:rgba(238, 99, 101,.03);border-bottom:1px solid rgba(238, 99, 101,.05);font-size:5px;letter-spacing:2px;color:color-mix(in srgb, var(--al) 92%, white)}
 .cc-imgwrap{position:relative;width:100%;aspect-ratio:4/3;background:#05060e;overflow:hidden}
 .cc-img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .4s;filter:sepia(.07) saturate(1.1)}
 .cc-img.ld{opacity:1}
@@ -149,11 +149,11 @@ body{padding-top:18px}
 .cc-ft{padding:3px 5px;font-size:5.5px;color:var(--wt);border-top:1px solid rgba(238, 99, 101,.04)}
 
 .fabs{position:fixed;bottom:12px;left:12px;z-index:499;display:flex;flex-direction:column;gap:4px}
-.fab{background:rgba(2,0,4,.92);border:1px solid rgba(238, 99, 101,.2);color:var(--am);font-family:'IBM Plex Mono',monospace;font-size:6px;letter-spacing:2px;padding:6px 12px;cursor:pointer;border-radius:3px;transition:all .2s;white-space:nowrap}
+.fab{background:rgba(2,0,4,.92);border:1px solid rgba(238, 99, 101,.2);color:color-mix(in srgb, var(--am) 88%, white);font-family:'IBM Plex Mono',monospace;font-size:6px;letter-spacing:2px;padding:6px 12px;cursor:pointer;border-radius:3px;transition:all .2s;white-space:nowrap}
 .fab:hover{background:rgba(238, 99, 101,.08);border-color:rgba(238, 99, 101,.42)}
-.fab.solid{background:rgba(238, 99, 101,.86);color:#f0f0f0;font-weight:700}
+.fab.solid{background:rgba(196, 54, 58,.92);color:#f0f0f0;font-weight:700}
 
-.wm{text-align:center;padding:18px;font-size:5px;letter-spacing:5px;color:var(--al);border-top:1px solid var(--bdr2)}
+.wm{text-align:center;padding:18px;font-size:5px;letter-spacing:5px;color:color-mix(in srgb, var(--al) 88%, white);border-top:1px solid var(--bdr2)}
 
 ::-webkit-scrollbar{width:3px;height:3px}
 ::-webkit-scrollbar-track{background:var(--bg)}
@@ -183,6 +183,11 @@ body{padding-top:18px}
 <link rel="stylesheet" href="/assets/css/future-buttons.css">
 <link rel="stylesheet" href="/clearglass-crimson.css">
 <link rel="stylesheet" href="/assets/css/neon-pulse.css">
+<style id="cg-contrast-fit">
+/* Inline style="color:…" below WCAG AA here: the same colour, lightened just enough. */
+[style*="; color: var(--al)"], [style*="; color:var(--al)"], [style*=";color: var(--al)"], [style*=";color:var(--al)"], [style^="color: var(--al)"], [style^="color:var(--al)"] { color: color-mix(in srgb, var(--al) 90%, white) !important; } /* var(--al): was 3.92:1, 3 runs */
+[style*="; color: var(--am)"], [style*="; color:var(--am)"], [style*=";color: var(--am)"], [style*=";color:var(--am)"], [style^="color: var(--am)"], [style^="color:var(--am)"] { color: color-mix(in srgb, var(--am) 86%, white) !important; } /* var(--am): was 3.79:1, 11 runs */
+</style>
 </head>
 <body>
   <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">ClearGlass NEXUS v12 — Intelligence Platform | Ontario Operations Center</h1>
@@ -327,7 +332,7 @@ body{padding-top:18px}
         #occtv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:9px}
         #occtv-grid .occtv-card{min-width:0;border:1px solid var(--bd,rgba(255,255,255,.12));background:rgba(0,0,0,.18);overflow:hidden}
         #occtv-grid .occtv-card-head,#occtv-grid .occtv-card-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 8px;font-size:6px;letter-spacing:.7px;color:var(--al)}
-        #occtv-grid .occtv-card-head span:last-child{color:var(--am)}
+        #occtv-grid .occtv-card-head span:last-child{color:color-mix(in srgb, var(--am) 76%, white)}
         #occtv-grid iframe{display:block;width:100%;height:180px;border:0;background:#090d12}
         #occtv-grid .occtv-card-foot{font-size:7px;line-height:1.5;letter-spacing:0}
         #occtv-grid .occtv-card-foot a{color:var(--cy);text-decoration:none;white-space:nowrap}

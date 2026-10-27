@@ -991,11 +991,41 @@ section{padding:42px 0}
 .desk-seal img{position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:cover;filter:saturate(1.12) contrast(1.06)}
 @keyframes deskSealFloat{0%,100%{transform:translate(-50%,42%) rotate(-1deg)}50%{transform:translate(-50%,calc(42% - 9px)) rotate(1deg)}}
 @media(prefers-reduced-motion:reduce){.desk-seal{animation:none}}
-/* Clear the medallion's overhang so the caption never runs under it. */
-.desk-caption{margin-top:calc(14px + var(--desk-seal) * .42);font:500 12px/1.5 var(--mono);letter-spacing:.03em;color:var(--muted)}
+/* The book desk retains its animated seal; narrow viewports reserve space below the film. */
 .desk-film .list{margin-top:16px}
 .desk-notes{padding:24px;position:relative}
+/* Featured book in the existing editorial desk; original video, seal and calls to action retained. */
+.ledger-cover-link{position:absolute;inset:0;z-index:2;display:grid;place-items:center;text-decoration:none;background:radial-gradient(ellipse at center,rgba(8,7,13,.5),transparent 70%);outline-offset:-4px}
+.ledger-cover-art{width:min(42%,190px);aspect-ratio:3/4;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(11px,2vw,21px);border:1px solid rgba(255,177,167,.65);border-left:5px solid #5a1926;border-radius:3px;background:radial-gradient(circle at 50% 78%,rgba(197,39,55,.3),transparent 67%),linear-gradient(140deg,#2b151c 0%,#08080d 74%);box-shadow:-6px 10px 0 rgba(23,11,17,.6),0 15px 35px rgba(0,0,0,.85),0 0 26px rgba(239,69,76,.28);transform:rotate(-3deg);transition:transform .2s ease,box-shadow .2s ease}
+.ledger-cover-link:hover .ledger-cover-art,.ledger-cover-link:focus-visible .ledger-cover-art{transform:rotate(0deg) scale(1.04);box-shadow:0 17px 40px #000c,0 0 32px rgba(239,69,76,.42)}
+.ledger-cover-link:focus-visible{outline:3px solid #ffb4af}
+.ledger-cover-top,.ledger-cover-bottom{font:600 clamp(7px,.75vw,11px)/1.45 var(--mono);text-transform:uppercase;letter-spacing:.1em;color:#f4c6c7}
+.ledger-cover-art strong{font:600 clamp(20px,3.4vw,44px)/.88 var(--serif);letter-spacing:-.03em;color:#fff;text-wrap:balance}
+.ledger-cover-art strong em{display:block;color:#ef6a73}
+.ledger-book-feature{padding-bottom:24px}
+.ledger-book-kicker{font:600 11px/1.5 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:#ff9aa0}
+.ledger-book-feature h2{font:600 clamp(38px,4.6vw,65px)/.95 var(--serif);letter-spacing:-.03em;margin:12px 0 16px;color:#fff}
+.ledger-book-feature h2 em{color:#ff848c}
+.ledger-book-genre{font:600 12px/1.65 var(--mono);color:#f1c0c2;letter-spacing:.04em}
+.ledger-book-summary{font:400 clamp(15px,1.5vw,18px)/1.65 var(--sans);color:var(--soft);max-width:45ch;margin:16px 0 22px}
+.ledger-book-cta{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:11px 18px;border-radius:999px;background:#c12938;color:#fff;border:1px solid #ef6467;text-decoration:none;font:700 14px/1.45 var(--sans);box-shadow:0 0 24px rgba(235,77,79,.3)}
+.ledger-book-cta:hover{background:#a72233}
+.ledger-book-cta:focus-visible{outline:3px solid #ffb4af;outline-offset:3px}
+.ledger-book-status{font:500 11px/1.5 var(--mono);color:var(--muted);margin-top:14px}
+@media(max-width:900px){.desk-notes{padding:10px 0 24px}.ledger-book-feature{padding-bottom:14px}.ledger-cover-art{width:min(42%,182px)}.ledger-cover-art strong{font-size:clamp(24px,6vw,38px)}}
+@media(prefers-reduced-motion:reduce){.ledger-cover-art{transition:none}}
+
 @media(max-width:900px){.desk-film{grid-template-columns:1fr;gap:24px}.desk-tag.t2,.desk-tag.t3{display:none}}
+@media(max-width:640px){
+  .desk-film{gap:18px}
+  .desk-stage{margin-bottom:calc(var(--desk-seal) * .42 + 12px)}
+  /* Keep the book cover legible instead of printing a video overlay across it. */
+  .desk-tag.t1{display:none}
+  .desk-notes{padding:0 0 20px}
+  .ledger-book-feature h2{font-size:clamp(38px,10vw,54px);line-height:1}
+  .ledger-book-summary{margin:14px 0 18px}
+  .ledger-book-cta{max-width:100%;justify-content:center;text-align:center}
+}
 </style>
 <!-- ClearGlass Global Design System — homepage is the design source of truth -->
 <link rel="stylesheet" href="/assets/css/glass.css">
@@ -1007,6 +1037,30 @@ section{padding:42px 0}
 <link rel="stylesheet" href="/assets/css/future-buttons.css">
 <link rel="stylesheet" href="/clearglass-crimson.css">
 <link rel="stylesheet" href="/assets/css/neon-pulse.css">
+<style>
+/* Literary-feature spotlight: additive and isolated from generated Insights cards. */
+.cg-book-feature{max-width:1200px;margin:24px auto 30px;padding:0 20px}
+.cg-book-feature .cg-book-inner{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:25px;align-items:center;padding:27px clamp(18px,3vw,40px);border:1px solid rgba(235,101,106,.42);border-radius:20px;background:linear-gradient(110deg,rgba(104,27,35,.35),rgba(10,13,19,.91));box-shadow:0 18px 55px rgba(0,0,0,.28)}
+.cg-book-feature .cg-book-inner:before{content:"";position:absolute;right:-100px;top:-160px;width:370px;height:370px;border-radius:50%;border:1px solid rgba(235,101,106,.11);box-shadow:0 0 0 34px rgba(235,101,106,.028),0 0 0 76px rgba(235,101,106,.02);pointer-events:none}
+.cg-book-feature .cg-book-kicker{color:#ffaaaa;font:800 11px/1.4 Inter,system-ui,sans-serif;text-transform:uppercase;letter-spacing:.16em;margin:0 0 10px}
+.cg-book-feature h2{color:white;font:600 clamp(25px,3.3vw,40px)/1.15 Georgia,serif;letter-spacing:-.02em;margin:0 0 11px}
+.cg-book-feature p{color:#e0d3d6;max-width:750px;font:400 15px/1.75 Inter,system-ui,sans-serif;margin:0}
+.cg-book-feature .cg-book-link{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 19px;border-radius:10px;border:1px solid #df7579;background:#96303a;color:#fff;font-weight:800;white-space:nowrap;text-decoration:none;position:relative;z-index:1}
+.cg-book-feature .cg-book-link:hover{background:#b83d47;color:white}
+.cg-book-feature .cg-book-link:focus-visible{outline:3px solid white;outline-offset:3px}
+@media(max-width:720px){.cg-book-feature .cg-book-inner{grid-template-columns:1fr}.cg-book-feature .cg-book-link{justify-self:start}}
+/* Compact the existing mobile controls; keep their functionality and accessible labels. */
+@media(max-width:640px){
+  body[data-ix-page="hub"] #cg-dock{gap:5px;max-width:calc(100vw - 24px)}
+  body[data-ix-page="hub"] #cg-dock>#cgw-fab{min-height:42px;margin:0!important;padding:0 10px!important;font-size:11px;gap:5px;white-space:nowrap}
+  body[data-ix-page="hub"] #cg-dock #cg-sales-button{min-height:42px;padding:0 10px;font-size:10px;letter-spacing:.05em}
+  body[data-ix-page="hub"] #cg-dock #cg-logo-badge{width:42px;height:42px}
+  body[data-ix-page="hub"] #cg-station[data-open="false"]{width:max-content;max-width:calc(100vw - 24px)}
+  body[data-ix-page="hub"] #cg-station .cgst-dock{min-height:48px;gap:6px;padding:0 10px 0 7px}
+  body[data-ix-page="hub"] #cg-station .cgst-dock-tx strong{font-size:11px;letter-spacing:.06em}
+  body[data-ix-page="hub"] #cg-station .cgst-dock-tx small{display:none}
+}
+</style>
 </head>
 <body data-ix-page="hub" data-ix-theme="dark">
 <div class="future-progress" aria-hidden="true"><span id="futureProgress"></span></div>
@@ -1032,6 +1086,18 @@ section{padding:42px 0}
     </div>
     <div class="command tilt-card" aria-label="Cinematic intelligence console"><div class="screen"><div class="screen-top"><span><i class="live-dot"></i>ARTEMIS//EDITORIAL_RADAR</span><span>LIVE</span></div><div class="radar"><img class="radar-seal" src="../assets/images/clearglass-holographic-seal.png" alt="ClearGlass holographic eagle seal" width="1024" height="1024" decoding="async" fetchpriority="high"></div><div class="intel-line"><span>Governed autonomy</span><code>risk-router</code></div><div class="intel-line"><span>OSINT workflows</span><code>source-lineage</code></div><div class="intel-line"><span>High-trust software</span><code>audit-first</code></div></div></div>
   </div>
+  <section class="cg-book-feature" id="book-feature-ledger-of-ashes" aria-labelledby="ledger-feature-title">
+  <div class="cg-book-inner">
+    <div>
+      <p class="cg-book-kicker">Literary feature · Political thriller · Manuscript excerpt</p>
+      <h2 id="ledger-feature-title">The Ledger of Ashes</h2>
+      <p>By Desmond Otieno Odhiambo</p>
+      <p>A philanthropist's murder. An unsettling trail of money and influence. Step inside the unaltered opening of a political conspiracy thriller in this special ClearGlass Insights feature.</p>
+    </div>
+    <a class="cg-book-link" href="books/ledger-of-ashes-excerpt.html">Read the opening <span aria-hidden="true">&nbsp;→</span></a>
+  </div>
+</section>
+
   <div class="chips" id="topics" role="toolbar" aria-label="Filter briefs by topic"><!-- cg-insights-chips:start -->
       <a class="chip on" href="?" data-topic="all">All briefs</a><a class="chip" href="?topic=governed-ai" data-topic="governed-ai">Governed AI</a><a class="chip" href="?topic=agents" data-topic="agents">Autonomous agents</a><a class="chip" href="?topic=cyber" data-topic="cyber">Cyber architecture</a><a class="chip" href="?topic=osint" data-topic="osint">OSINT workflows</a><a class="chip" href="?topic=automation" data-topic="automation">AI automation</a><a class="chip" href="?topic=systems" data-topic="systems">High-trust systems</a><a class="chip" href="?topic=growth" data-topic="growth">Revenue growth systems</a><a class="chip" href="?topic=frontier" data-topic="frontier">Frontier intelligence</a><a class="chip" href="?topic=cross-border" data-topic="cross-border">Canada–US controls</a><a class="chip" href="?topic=strategic-resilience" data-topic="strategic-resilience">Strategic resilience</a><a class="chip" href="?topic=culture" data-topic="culture">Technology culture</a><a class="chip" href="?topic=fincrime" data-topic="fincrime">Financial crime detection</a><a class="chip" href="?topic=information-integrity" data-topic="information-integrity">Information integrity</a><a class="chip" href="?topic=saved" data-topic="saved">★ Saved</a>
       <!-- cg-insights-chips:end --></div>
@@ -1048,6 +1114,14 @@ section{padding:42px 0}
               <source src="/assets/video/insights-intelligence-desk.mp4" type="video/mp4">
               <img src="/assets/video/insights-intelligence-desk-poster.jpg" alt="An analyst reviewing holographic network, threat-map, and financial panels in a dark operations room.">
             </video>
+            <!-- Ledger of Ashes: typographic preview; original desk film and controls remain intact. -->
+            <a class="ledger-cover-link" href="ledger-of-ashes.html" aria-label="Open the Ledger of Ashes book preview">
+              <span class="ledger-cover-art" aria-hidden="true">
+                <span class="ledger-cover-top">Featured fiction</span>
+                <strong>Ledger <em>of</em> Ashes</strong>
+                <span class="ledger-cover-bottom">Political thriller · Book preview</span>
+              </span>
+            </a>
             <div class="desk-scan" aria-hidden="true"></div>
             <button class="desk-toggle" id="deskToggle" type="button" data-state="paused">
               <span class="desk-toggle-icon" aria-hidden="true">▶</span>
@@ -1059,9 +1133,16 @@ section{padding:42px 0}
           </div>
           <span class="desk-seal" aria-hidden="true"><img src="../assets/images/clearglass-holographic-seal.png" alt="" width="512" height="512" decoding="async" loading="lazy"></span>
         </div>
-        <p class="desk-caption">H.264 · 672×448 · muted, looped, poster-first · ~500&nbsp;KB</p>
       </div>
       <div class="desk-notes">
+        <article class="ledger-book-feature" aria-labelledby="ledger-desk-feature-title">
+          <p class="ledger-book-kicker">From the founder's bookshelf · Featured fiction</p>
+          <h2 id="ledger-desk-feature-title">Ledger <em>of</em> Ashes</h2>
+          <p class="ledger-book-genre">Political thriller / Conspiracy thriller</p>
+          <p class="ledger-book-summary">A shadowy cabal plans a public execution of a nonprofit CEO. One general, one analyst, and one insider must steal the ledger that can bring them down—before the clock hits zero.</p>
+          <a class="ledger-book-cta" href="ledger-of-ashes.html">Explore the book &amp; read an excerpt <span aria-hidden="true">→</span></a>
+          <p class="ledger-book-status">Manuscript preview · Publication details forthcoming</p>
+        </article>
         <div class="section-actions"><a class="btn primary btn-magnet" href="#latest">Read the latest brief →</a><a class="btn btn-magnet" href="#command">Open the command deck</a></div>
       </div>
     </div>
@@ -1207,7 +1288,7 @@ section{padding:42px 0}
     <div class="search reveal" role="search"><input id="smartSearch" type="search" placeholder="Search the hub: governed AI, OSINT, agents, financial crime, policy-as-code…" aria-label="Search ClearGlass Insights"></div>
     <div class="grid stagger reveal" id="postGrid">
       <!-- cg-insights-archive:start -->
-      <a class="article-card tilt-card" href="canada-strategic-briefing-october-2026.html" data-slug="canada-strategic-briefing-october-2026" data-title="Strategic Briefing: Canada — October 2026 Canada&#x27;s strategic position in October 2026: 29 claims checked against primary sources, three scenarios, ranked weaknesses, a DIMEFIL strategy and an action matrix. Strategic Resilience ClearGlass Strategic Intelligence canada strategic briefing cusma arctic security critical minerals defence industrial strategy dimefil scenario analysis osint Strategic resilience OSINT workflows Canada–US controls Cyber architecture Information integrity Desmond Otieno Odhiambo 2026-10-06" data-tags="canada strategic briefing cusma arctic security critical minerals defence industrial strategy dimefil scenario analysis osint" data-topics="strategic-resilience osint cross-border cyber information-integrity" data-date="2026-10-06"><div class="card-art"><div class="quote">Strong on paper. Slower in practice. Measured claim by claim.</div></div><div class="card-body"><div class="meta"><span>New</span><span>Strategic Resilience</span><span>16 min read</span><span><time datetime="2026-10-06">6 Oct 2026</time></span></div><h3>Strategic Briefing: Canada — October 2026</h3><p>Canada&#x27;s strategic position in October 2026: 29 claims checked against primary sources, three scenarios, ranked weaknesses, a DIMEFIL strategy and an action matrix.</p><span class="read">Open the briefing →</span></div></a>
+      <a class="article-card tilt-card" href="canada-strategic-briefing-october-2026.html" data-slug="canada-strategic-briefing-october-2026" data-title="Strategic Briefing: Canada — October 2026 Canada&#x27;s strategic position in October 2026: 29 claims checked against primary sources, three scenarios, ranked weaknesses, a DIMEFIL strategy and an action matrix. Strategic Resilience ClearGlass Strategic Intelligence canada strategic briefing cusma arctic security critical minerals defence industrial strategy dimefil scenario analysis osint Strategic resilience OSINT workflows Canada–US controls Cyber architecture Information integrity Desmond Otieno Odhiambo 2026-10-06" data-tags="canada strategic briefing cusma arctic security critical minerals defence industrial strategy dimefil scenario analysis osint" data-topics="strategic-resilience osint cross-border cyber information-integrity" data-date="2026-10-06"><div class="card-art"><div class="quote">Strong on paper. Slower in practice. Measured claim by claim.</div></div><div class="card-body"><div class="meta"><span>New</span><span>Strategic Resilience</span><span>18 min read</span><span><time datetime="2026-10-06">6 Oct 2026</time></span></div><h3>Strategic Briefing: Canada — October 2026</h3><p>Canada&#x27;s strategic position in October 2026: 29 claims checked against primary sources, three scenarios, ranked weaknesses, a DIMEFIL strategy and an action matrix.</p><span class="read">Open the briefing →</span></div></a>
       <a class="article-card tilt-card" href="when-ai-cannot-determine-the-truth.html" data-slug="when-ai-cannot-determine-the-truth" data-title="When AI Cannot Determine the Truth What automated media analysis can find, what it cannot know, and the governance that keeps an indicator from becoming a verdict. With a buyer&#x27;s checklist. AI Governance ClearGlass Truth Forensics ai governance human review deepfake detection media forensics explainability false positives Information integrity Governed AI High-trust systems Desmond Otieno Odhiambo 2026-09-30" data-tags="ai governance human review deepfake detection media forensics explainability false positives" data-topics="information-integrity governed-ai systems" data-date="2026-09-30"><div class="card-art"><div class="quote">No indicators is not authenticity.</div></div><div class="card-body"><div class="meta"><span>New</span><span>AI Governance</span><span>4 min read</span><span><time datetime="2026-09-30">30 Sep 2026</time></span></div><h3>When AI Cannot Determine the Truth</h3><p>What automated media analysis can find, what it cannot know, and the governance that keeps an indicator from becoming a verdict. With a buyer&#x27;s checklist.</p><span class="read">Read brief 03 →</span></div></a>
       <a class="article-card tilt-card" href="truth-is-an-evidence-graph.html" data-slug="truth-is-an-evidence-graph" data-title="Truth Is an Evidence Graph Why “is this real?” has no single answer, why ten reposts are one source, and how to separate what a file shows from what someone infers about it. Information Integrity ClearGlass Truth Forensics digital evidence provenance corroboration information integrity synthetic media chain of custody Information integrity OSINT workflows High-trust systems Desmond Otieno Odhiambo 2026-09-30" data-tags="digital evidence provenance corroboration information integrity synthetic media chain of custody" data-topics="information-integrity osint systems" data-date="2026-09-30"><div class="card-art"><div class="quote">Ten reposts are one source.</div></div><div class="card-body"><div class="meta"><span>New</span><span>Information Integrity</span><span>4 min read</span><span><time datetime="2026-09-30">30 Sep 2026</time></span></div><h3>Truth Is an Evidence Graph</h3><p>Why “is this real?” has no single answer, why ten reposts are one source, and how to separate what a file shows from what someone infers about it.</p><span class="read">Read brief 01 →</span></div></a>
       <a class="article-card tilt-card" href="truth-forensics.html" data-slug="truth-forensics" data-title="ClearGlass Truth Forensics — Evidence Integrity Console Hash, trace and test digital evidence in your browser: provenance chains, media-integrity indicators, claim checks and human review. Nothing is uploaded. Media Integrity ClearGlass Truth Forensics Information integrity High-trust systems Cyber architecture Governed AI Desmond Otieno Odhiambo 2026-09-30" data-tags="" data-topics="information-integrity systems cyber governed-ai" data-date="2026-09-30"><div class="card-art"><div class="quote">Indicators, not verdicts.</div></div><div class="card-body"><div class="meta"><span>Media Integrity</span><span>9 min read</span><span><time datetime="2026-09-30">30 Sep 2026</time></span></div><h3>ClearGlass Truth Forensics — Evidence Integrity Console</h3><p>Hash, trace and test digital evidence in your browser: provenance chains, media-integrity indicators, claim checks and human review. Nothing is uploaded.</p><span class="read">Open the console →</span></div></a>
@@ -1242,13 +1323,14 @@ section{padding:42px 0}
       <a class="article-card tilt-card" href="osint-workflow-that-survives-contact-with-reality.html" data-slug="osint-workflow-that-survives-contact-with-reality" data-title="The OSINT Workflow That Survives Contact With Reality A production OSINT workflow: collection planning, machine-enforceable source grading, entity resolution without hallucinated merges, claim lineage, and analyst review loops that don&#x27;t drown in noise. OSINT osint workflow source grading admiralty code entity resolution provenance claim lineage analyst review loop OSINT workflows High-trust systems Desmond Otieno Odhiambo 2026-07-01" data-tags="osint workflow source grading admiralty code entity resolution provenance claim lineage analyst review loop" data-topics="osint systems" data-date="2026-07-01"><div class="card-art"><div class="quote">OSINT with provenance</div></div><div class="card-body"><div class="meta"><span>OSINT</span><span>9 min read</span><span><time datetime="2026-07-01">1 Jul 2026</time></span></div><h3>The OSINT Workflow That Survives Contact With Reality</h3><p>A production OSINT workflow: collection planning, machine-enforceable source grading, entity resolution without hallucinated merges, claim lineage, and analyst review loops that don&#x27;t drown in noise.</p><span class="read">Read brief 01 →</span></div></a>
       <a class="article-card tilt-card" href="clearglassinc-artemis-self-evolving-ai-intelligence-platform.html" data-slug="clearglassinc-artemis-self-evolving-ai-intelligence-platform" data-title="ClearGlassInc Artemis: The Self-Evolving AI Intelligence Platform A production architecture for ClearGlassInc Artemis: a governed, self-evolving AI intelligence platform on Gotham, Foundry, AIP, and Apollo. AI Architecture clearglassinc artemis palantir aip foundry gotham apollo ontology self-improving ai intelligence platform Governed AI AI automation High-trust systems Desmond Otieno Odhiambo 2026-06-30" data-tags="clearglassinc artemis palantir aip foundry gotham apollo ontology self-improving ai intelligence platform" data-topics="governed-ai automation systems" data-date="2026-06-30"><div class="card-art"><div class="quote">Artemis systems blueprint</div></div><div class="card-body"><div class="meta"><span>AI Architecture</span><span>20 min read</span><span><time datetime="2026-06-30">30 Jun 2026</time></span></div><h3>ClearGlassInc Artemis: The Self-Evolving AI Intelligence Platform</h3><p>A production architecture for ClearGlassInc Artemis: a governed, self-evolving AI intelligence platform on Gotham, Foundry, AIP, and Apollo.</p><span class="read">Read the architecture →</span></div></a>
       <a class="article-card tilt-card" href="resume-builder.html" data-slug="resume-builder" data-title="Resume Builder PDF Export A static, browser-only ClearGlass resume builder focused on print-safe PDF export from an isolated live preview container. PDF Export High-trust systems AI automation" data-tags="" data-topics="systems automation"><div class="card-art"><div class="quote">Print-safe resume export</div></div><div class="card-body"><div class="meta"><span>PDF Export</span><span>1 min read</span></div><h3>Resume Builder PDF Export</h3><p>A static, browser-only ClearGlass resume builder focused on print-safe PDF export from an isolated live preview container.</p><span class="read">Open the builder →</span></div></a>
+      <a class="article-card tilt-card" href="ledger-of-ashes.html" data-slug="ledger-of-ashes" data-title="Ledger of Ashes — Book Preview Discover Ledger of Ashes, a political conspiracy thriller. Read a manuscript excerpt and explore its story of power, secrecy, and an evidence ledger. Fiction" data-tags="" data-topics=""><div class="card-art"><div class="quote">When power erases the evidence, one ledger can expose it.</div></div><div class="card-body"><div class="meta"><span>Fiction</span><span>2 min read</span></div><h3>Ledger of Ashes — Book Preview</h3><p>Discover Ledger of Ashes, a political conspiracy thriller. Read a manuscript excerpt and explore its story of power, secrecy, and an evidence ledger.</p><span class="read">Explore the book &amp; read an excerpt →</span></div></a>
       <a class="article-card tilt-card" href="almach-scalp-engine.html" data-slug="almach-scalp-engine" data-title="ALMACH Scalp Engine · Directional Neural Mesh A cinematic AI trading dashboard concept: the ALMACH Scalp Engine — a governed, read-only visualization of a Polymarket settlement scalper, directional neural mesh, and fair-value model. Illustrative UI, not investment advice. Market Systems AI automation High-trust systems Financial crime detection ClearGlass Inc." data-tags="" data-topics="automation systems fincrime"><div class="card-art"><div class="quote">Governed, read-only, observable.</div></div><div class="card-body"><div class="meta"><span>Market Systems</span><span>1 min read</span></div><h3>ALMACH Scalp Engine · Directional Neural Mesh</h3><p>A cinematic AI trading dashboard concept: the ALMACH Scalp Engine — a governed, read-only visualization of a Polymarket settlement scalper, directional neural mesh, and fair-value model. Illustrative UI, not investment advice.</p><span class="read">Open the concept →</span></div></a>
       <!-- cg-insights-archive:end -->
     </div>
     <nav class="future-pagination" id="postPagination" aria-label="Article archive pages">
       <!-- cg-insights-pagination:start -->
-      <p id="postPageStatus" aria-live="polite" aria-atomic="true">Showing the first 6 of 36 briefs.</p>
-      <div class="future-page-links"><a href="?page=1#postGrid" data-page="1" aria-current="page">1</a><a href="?page=2#postGrid" data-page="2">2</a><a href="?page=3#postGrid" data-page="3">3</a><a href="?page=4#postGrid" data-page="4">4</a><a href="?page=5#postGrid" data-page="5">5</a><a href="?page=6#postGrid" data-page="6">6</a><button id="loadMorePosts" type="button">Load the next briefing page <span aria-hidden="true">↓</span></button></div>
+      <p id="postPageStatus" aria-live="polite" aria-atomic="true">Showing the first 6 of 37 briefs.</p>
+      <div class="future-page-links"><a href="?page=1#postGrid" data-page="1" aria-current="page">1</a><a href="?page=2#postGrid" data-page="2">2</a><a href="?page=3#postGrid" data-page="3">3</a><a href="?page=4#postGrid" data-page="4">4</a><a href="?page=5#postGrid" data-page="5">5</a><a href="?page=6#postGrid" data-page="6">6</a><a href="?page=7#postGrid" data-page="7">7</a><button id="loadMorePosts" type="button">Load the next briefing page <span aria-hidden="true">↓</span></button></div>
       <!-- cg-insights-pagination:end -->
       <span class="future-scroll-sentinel" id="postScrollSentinel" aria-hidden="true"></span>
     </nav>
@@ -1526,7 +1608,7 @@ if(!reduceMotion&&finePointer){
     <p class="cgr-crumb"><a href="../index.html">ClearGlass Inc.</a> › ClearGlass Intelligence · Insights</p>
     <h2>Inside ClearGlass Intelligence · Insights</h2>
     <div class="cgr-route" aria-label="Journey navigation">
-      <a href="when-ai-cannot-determine-the-truth.html"><span><b>Previous</b>When AI Cannot Determine the Truth</span></a>
+      <a href="books/ledger-of-ashes-excerpt.html"><span><b>Previous</b>The Ledger of Ashes — Read an Excerpt</span></a>
       <a href="index.html"><span><b>Topic hub</b>ClearGlass Intelligence</span></a>
       <a href="autonomous-threat-modeling-2026.html"><span><b>Next in journey</b>Autonomous Threat Modeling in 2026</span></a>
     </div>

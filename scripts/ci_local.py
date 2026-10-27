@@ -85,7 +85,7 @@ GATES: list[Gate] = [
         "python-tests",
         "pytest tests/",
         [sys.executable, "-m", "pytest", "tests/", "--cov", "--cov-report=xml", "-q"],
-        artifacts=("coverage.xml",),
+        artifacts=("coverage.xml", ".coverage"),
     ),
     Gate("lint", "ruff check .", [sys.executable, "-m", "ruff", "check", "."]),
     Gate(

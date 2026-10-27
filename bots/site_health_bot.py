@@ -24,9 +24,15 @@ from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
-from tools.site_page_policy import is_non_deployable_html
-
 ROOT = Path(__file__).resolve().parents[1]
+
+# health-monitor.yml runs `python bots/site_health_bot.py`: sys.path[0] is then
+# bots/, not the repository root, and without this the import below fails, which
+# the workflow reads as "site unhealthy".
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from tools.site_page_policy import is_non_deployable_html  # noqa: E402
 OUTPUT_DIR = ROOT / "operations" / "output"
 
 SITE_URL = "https://www.clearglassinc.com"

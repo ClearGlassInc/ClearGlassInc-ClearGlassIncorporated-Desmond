@@ -696,7 +696,9 @@ def test_settlement_records_need_the_admin_credential(env, monkeypatch, path) ->
     assert client.get(path, headers={"Authorization": f"Bearer {_ADMIN_KEY}"}).status_code == 200
 
 
-def test_the_crcs_first_offer_checkout_books_against_a_clearglass_order(env, monkeypatch) -> None:
+def test_the_crcs_first_offer_checkout_books_against_a_clearglass_order(
+    env, crcs_offer_on_sale, monkeypatch
+) -> None:
     client, Factory = env
     monkeypatch.setenv("CRCS_RAPID_DIAGNOSTIC_ENABLED", "true")
     config_module.get_settings.cache_clear()

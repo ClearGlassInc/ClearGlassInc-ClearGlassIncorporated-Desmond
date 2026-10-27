@@ -73,6 +73,9 @@ EXCLUDED_PAGES: dict[str, tuple[str, str]] = {
     "clearglass-legal-assistance/prototype/security-prototype.html": (
         "Design prototype", "noindex, nofollow local encryption and voice-state study"
     ),
+    "clearglass-decision-os/index.html": (
+        "Design prototype", "noindex, nofollow isolated synthetic decision simulator"
+    ),
     "loader.html": ("Application utility", "noindex branded loading surface"),
     "guardian_command_nexus_spec.html": (
         "Duplicate surface",
@@ -366,6 +369,8 @@ PAGES: dict[str, tuple[str, str]] = {
     "blog/truth-is-an-evidence-graph.html": ("Truth Is an Evidence Graph", "why copies are not corroboration and how to label what you know"),
     "blog/deepfake-detection-needs-chain-of-custody.html": ("Deepfake Detection Needs Chain of Custody", "detectors estimate, custody records show"),
     "blog/when-ai-cannot-determine-the-truth.html": ("When AI Cannot Determine the Truth", "what media analysis can find, what it cannot know, and the governance between"),
+    "blog/ledger-of-ashes.html": ("Ledger of Ashes — Book Preview", "the story and an opening excerpt from a political conspiracy thriller"),
+    "blog/books/ledger-of-ashes-excerpt.html": ("The Ledger of Ashes — Read an Excerpt", "the opening of the political thriller, in full"),
 }
 
 # --------------------------------------------------------------------------
@@ -559,6 +564,8 @@ CLUSTERS: dict[str, dict] = {
             "blog/truth-is-an-evidence-graph.html",
             "blog/deepfake-detection-needs-chain-of-custody.html",
             "blog/when-ai-cannot-determine-the-truth.html",
+            "blog/ledger-of-ashes.html",
+            "blog/books/ledger-of-ashes-excerpt.html",
         ],
         "cta": [CTA_STORE, CTA_PRICING],
     },
@@ -651,6 +658,8 @@ EXTRA_LINKS: dict[str, list[str]] = {
     "blog/deepfake-detection-needs-chain-of-custody.html": ["blog/truth-forensics.html", "blog/shadow-ai-incident-response-logs-gone.html"],
     "blog/when-ai-cannot-determine-the-truth.html": ["blog/truth-forensics.html", "blog/ai-agent-governance-governed-autonomy.html"],
     "blog/canada-strategic-briefing-october-2026.html": ["blog/canada-strategic-resilience-command-brief-2026.html", "blog/dual-clock-incident-runbook-ccspa-circia-pipeda.html", "blog/truth-is-an-evidence-graph.html"],
+    "blog/ledger-of-ashes.html": ["blog/books/ledger-of-ashes-excerpt.html"],
+    "blog/books/ledger-of-ashes-excerpt.html": ["blog/ledger-of-ashes.html"],
 }
 
 SIBLING_WINDOW = 4     # rotated sibling links per member page

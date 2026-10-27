@@ -790,6 +790,6 @@ def test_graph_exports_are_local_and_state_data_limitations_are_explicit() -> No
 def test_graph_methodology_disclosure_defines_density_and_scope() -> None:
     assert "data-cgst-gmethod-body" in DOCK
     assert "Unique undirected pairs m divided by n" in DOCK
-    assert "Modularity against those labels; no automatic community-detection algorithm is run." in DOCK
+    assert "Modularity is measured against those labels; no automatic community-detection algorithm is run." in DOCK
     assert "Adamic–Adar" in DOCK and "not a validated forecast" in DOCK
     assert "source freshness is unknown" in DOCK

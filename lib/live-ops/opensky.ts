@@ -26,25 +26,62 @@ export async function getOpenSky(center: Center, radiusNm: number, bounds: Bound
   const key = `opensky:${center.lat.toFixed(3)}:${center.lon.toFixed(3)}:${radiusNm}`;
   return cachedProvider(key, 7_000, async () => {
     if (!allowProviderRequest("opensky", 8, 60_000)) throw new Error("OpenSky local provider request budget exhausted");
-    const url = new URL("https://opensky-network.org/api/states/all");
-    url.searchParams.set("lamin", String(bounds.lamin)); url.searchParams.set("lomin", String(bounds.lomin));
-    url.searchParams.set("lamax", String(bounds.lamax)); url.searchParams.set("lomax", String(bounds.lomax));
-    url.searchParams.set("extended", "1");
+    // OpenSky accepts a conventional non-wrapping box. Split queries when
+    // the selected radius crosses ±180°, rather than silently losing aircraft.
+    const longitudeRanges = bounds.lomin <= bounds.lomax
+      ? [[bounds.lomin, bounds.lomax]]
+      : [[bounds.lomin, 180], [-180, bounds.lomax]];
+    const urls = longitudeRanges.map(([minLon, maxLon]) => {
+      const url = new URL("https://opensky-network.org/api/states/all");
+      url.searchParams.set("lamin", String(bounds.lamin));
+      url.searchParams.set("lomin", String(minLon));
+      url.searchParams.set("lamax", String(bounds.lamax));
+      url.searchParams.set("lomax", String(maxLon));
+      url.searchParams.set("extended", "1");
+      return url.toString();
+    });
     const headers: Record<string, string> = { accept: "application/json" };
     const id = process.env.OPENSKY_CLIENT_ID, secret = process.env.OPENSKY_CLIENT_SECRET;
     if (Boolean(id) !== Boolean(secret)) throw new Error("OpenSky credentials are incomplete; configure both OPENSKY_CLIENT_ID and OPENSKY_CLIENT_SECRET");
+    // Anonymous OpenSky allows 400 state credits/day, standard authenticated 4,000/day.
+    // Count each box by documented geographic credit tier; reserve headroom for other clients.
+    // This is per-process only, not a distributed quota guarantee.
+    const creditCost = urls.reduce((total, rawUrl) => {
+      const u = new URL(rawUrl);
+      const latSpan = Number(u.searchParams.get("lamax")) - Number(u.searchParams.get("lamin"));
+      const lonSpan = Number(u.searchParams.get("lomax")) - Number(u.searchParams.get("lomin"));
+      const area = latSpan * lonSpan;
+      return total + (area <= 25 ? 1 : area <= 100 ? 2 : area <= 400 ? 3 : 4);
+    }, 0);
+    const budgetKey = id && secret ? "opensky-standard-credits" : "opensky-anonymous-credits";
+    const maxCreditsPerDay = id && secret ? 3_500 : 350;
+    for (let unit = 0; unit < creditCost; unit += 1) {
+      if (!allowProviderRequest(budgetKey, maxCreditsPerDay, 86_400_000)) {
+        throw new Error("OpenSky daily local credit budget reached; fresh positions temporarily unavailable");
+      }
+    }
     if (id && secret) headers.authorization = `Bearer ${await openSkyBearerToken(id, secret)}`;
-    const raw = await fetchJson(url.toString(), { headers }, 7_000, 1) as { states?: unknown[][] | null; time?: number };
-    // OpenSky legitimately returns states: null when the bounding box has no aircraft.
-    if (raw.states === null && isFiniteNumber(raw.time)) return { items: [], status: "online" };
-    if (!Array.isArray(raw.states)) throw new Error("OpenSky response has no states array");
+    const responses = await Promise.all(urls.map(url =>
+      fetchJson(url, { headers }, 7_000, 1) as Promise<{ states?: unknown[][] | null; time?: number }>
+    ));
+    const states: unknown[][] = [];
+    for (const response of responses) {
+      // A null states collection with a valid time means no aircraft.
+      if (response.states === null && isFiniteNumber(response.time)) continue;
+      if (!Array.isArray(response.states)) throw new Error("OpenSky response has no states array");
+      states.push(...response.states);
+    }
     const items: FlightAsset[] = [];
-    for (const s of raw.states) {
+    const seenIds = new Set<string>();
+    for (const s of states) {
       if (!Array.isArray(s) || typeof s[0] !== "string" || !/^[a-fA-F0-9]{6}$/.test(s[0]) || !isFiniteNumber(s[5]) || !isFiniteNumber(s[6])) continue;
       const lat = s[6], lon = s[5];
       if (!isValidCoordinates(lat, lon)) continue;
-      if (distanceNm(center, lat, lon) > radiusNm) continue;
-      const seen = isFiniteNumber(s[4]) ? s[4] : isFiniteNumber(s[3]) ? s[3] : null;
+      if (distanceNm(center, lat, lon) > radiusNm || seenIds.has(s[0].toLowerCase())) continue;
+      seenIds.add(s[0].toLowerCase());
+      const timestamp = isFiniteNumber(s[4]) ? s[4] : isFiniteNumber(s[3]) ? s[3] : null;
+      const seen = timestamp !== null && timestamp >= 0 && timestamp <= 8_640_000_000
+        ? new Date(timestamp * 1000).toISOString() : null;
       items.push({
         id: s[0].toLowerCase(), type: "flight", icao24: s[0].toLowerCase(), lat, lon,
         callsign: cleanText(s[1], 16), country: cleanText(s[2], 80),
@@ -53,7 +90,7 @@ export async function getOpenSky(center: Center, radiusNm: number, bounds: Bound
         heading_deg: isFiniteNumber(s[10]) ? s[10] : null,
         vertical_rate: isFiniteNumber(s[11]) ? Math.round(s[11] * MS_TO_FPM) : null,
         on_ground: typeof s[8] === "boolean" ? s[8] : null,
-        squawk: cleanText(s[14], 8), category: isFiniteNumber(s[17]) ? s[17] : null, last_seen: seen === null ? null : new Date(seen * 1000).toISOString()
+        squawk: cleanText(s[14], 8), category: isFiniteNumber(s[17]) ? s[17] : null, last_seen: seen
       });
     }
     return { items, status: "online" };

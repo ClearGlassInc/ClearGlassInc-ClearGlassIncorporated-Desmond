@@ -2,6 +2,7 @@ name: 4-D AI / Agent Deployer
 
 # Reusable domain workflow for the AI dimension of the 4-D Dominance pipeline.
 # Runs the orchestrator in dry-run mode and prints the JSON report.
+# Called by master-orchestrator.yml (workflow_call) or run manually.
 
 on:
   workflow_call:
@@ -13,14 +14,21 @@ permissions:
 jobs:
   run:
     name: AI domain dry-run
-    runs-on: ubuntu-latest
+    # Pinned image instead of ubuntu-latest, which GitHub is migrating to
+    # Ubuntu 26 from 2026-10-19 (actions/runner-images#14748). A fixed label
+    # keeps the runner reproducible; bump it deliberately, not implicitly.
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.11"
+
       - name: Run 4-D ai pipeline (dry-run)
         run: python -m four_d_dominance.pipeline --domain ai --json
