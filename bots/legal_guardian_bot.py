@@ -43,7 +43,7 @@ DATA_DIR = ROOT / "data" / "legal-guardian"
 
 #: Bump when a gate, threshold or vocabulary below changes. Recorded in every
 #: audit entry so a decision can be replayed against the policy of the day.
-POLICY_VERSION = "legal-guardian-1.1.0"
+POLICY_VERSION = "legal-guardian-1.2.0"
 
 GENESIS_HASH = "0" * 64
 
@@ -789,6 +789,98 @@ DEPLOYMENT_GATES: tuple[tuple[str, str], ...] = (
 )
 
 
+# ---------------------------------------------------------------------------
+# §22 Gate sequence
+# ---------------------------------------------------------------------------
+
+#: The §22 order. Reported in each result so a decision shows which gates ran.
+GATE_SEQUENCE = (
+    "MANDATE IDENTIFICATION", "AUTHORITY CHECK", "CONFLICT CHECK",
+    "EVIDENCE COLLECTION", "LEGAL ANALYSIS", "RISK ASSESSMENT", "OPTIONS",
+    "RECOMMENDATION", "APPROVAL GATE", "AUTHORIZED ACTION",
+    "RESULT VERIFICATION", "FOLLOW-UP",
+)
+
+#: The gates that must have passed before APPROVAL GATE is even reachable.
+#: check_matter covers MANDATE IDENTIFICATION and CONFLICT CHECK; check_source
+#: covers AUTHORITY CHECK for each source the action relies on.
+PREREQUISITE_GATES = ("MANDATE IDENTIFICATION", "CONFLICT CHECK", "AUTHORITY CHECK")
+
+
+def gate_external_action(
+    action: Mapping[str, Any],
+    approvals: Sequence[Mapping[str, Any]],
+    now: datetime,
+    *,
+    matter: Mapping[str, Any] | None = None,
+    sources: Sequence[Mapping[str, Any]] = (),
+    today: date | None = None,
+) -> GateResult:
+    """§22: run the gates in order, and refuse if an upstream one is unresolved.
+
+    ``gate_action`` answers one question -- does an approval bind this exact
+    action (§15). It cannot see whether the matter ever cleared intake, so on
+    its own a digest plus an approver is enough to authorize a write for a
+    client that was never identified, or on evidence from a source that was
+    never authorized. This composes the chain so that cannot happen.
+
+    Fails closed: omitting ``matter`` is an unresolved MANDATE IDENTIFICATION
+    gate, not a waiver. Read-only work (§15 READ_ONLY_KINDS) needs no matter,
+    since it has no external effect and reaches no approval gate.
+    """
+    gate = "gate_sequence"
+    aid = action.get("action_id") or "<unnamed action>"
+    today = today or now.date()
+    cleared: list[str] = []
+
+    kind = _norm(action.get("kind"))
+    # A prohibited kind dies at §15 whatever the upstream gates say, and
+    # read-only work never reaches an approval gate at all. Both are decided
+    # by gate_action, so ask it first for those two cases only.
+    if kind in PROHIBITED_KINDS or kind in READ_ONLY_KINDS:
+        res = gate_action(action, approvals, now)
+        res.details["GATE_SEQUENCE"] = {"cleared": [], "stopped_at": None,
+                                        "reason": f"'{kind}' decided at §15"}
+        return res
+
+    if matter is None:
+        return GateResult(gate, Status.BLOCKED, False, [
+            "MANDATE IDENTIFICATION is unresolved: no matter record was supplied, "
+            "so the client, capacity and conflict position are unknown. An "
+            "approval cannot authorize a write for an unidentified client.",
+        ], {"action_id": aid, "GATE_SEQUENCE": {"cleared": cleared,
+                                                "stopped_at": "MANDATE IDENTIFICATION"}})
+
+    intake = check_matter(matter)
+    if not intake.allowed:
+        return GateResult(gate, intake.status, False,
+                          [f"Upstream gate not cleared ({intake.gate}).", *intake.reasons],
+                          {"action_id": aid, "upstream": intake.to_dict(),
+                           "GATE_SEQUENCE": {"cleared": cleared,
+                                             "stopped_at": "MANDATE IDENTIFICATION"}})
+    cleared += ["MANDATE IDENTIFICATION", "CONFLICT CHECK"]
+
+    for src in sources:
+        sres = check_source(src, today)
+        if not sres.allowed:
+            return GateResult(gate, sres.status, False,
+                              [f"Upstream gate not cleared ({sres.gate}).", *sres.reasons],
+                              {"action_id": aid, "upstream": sres.to_dict(),
+                               "GATE_SEQUENCE": {"cleared": cleared,
+                                                 "stopped_at": "AUTHORITY CHECK"}})
+    cleared.append("AUTHORITY CHECK")
+
+    approval = gate_action(action, approvals, now)
+    approval.details["GATE_SEQUENCE"] = {
+        "cleared": cleared + (["APPROVAL GATE"] if approval.allowed else []),
+        "stopped_at": None if approval.allowed else "APPROVAL GATE",
+        "order": list(GATE_SEQUENCE),
+    }
+    if approval.allowed:
+        approval.reasons.insert(0, "Gates cleared in §22 order: " + " -> ".join(cleared) + ".")
+    return approval
+
+
 def deployment_status(config: Mapping[str, Any]) -> dict[str, Any]:
     """§19: a gate passes only with evidence, a human verifier and a date."""
     gates = config.get("gates") or {}
@@ -901,6 +993,18 @@ def render_footer(
 # ---------------------------------------------------------------------------
 
 
+def _example_matter() -> dict[str, Any]:
+    return {
+        "matter_id": "CG-SELF-1", "requesting_person": "Desmond Otieno Odhiambo",
+        "proposed_client": "clearglass", "capacity": "director",
+        "authorized_instructions": "Review vendor renewal exposure",
+        "other_affected_parties": [], "potential_conflict": "none",
+        "counsel_contact": None, "jurisdiction": "Ontario, Canada",
+        "scope": "Vendor agreement renewal and termination terms",
+        "approver_implicated": False, "alternate_approver": None,
+    }
+
+
 def _example_action() -> dict[str, Any]:
     return {
         "action_id": "ACT-SELF-1", "kind": "send_email", "authorized_approver": "Owner",
@@ -1003,6 +1107,37 @@ def self_check() -> list[tuple[str, bool]]:
              "This does not establish continuous monitoring or legal protection.",
              "A human decision is required before sending this notice.",
          ))),
+        # §22 -- the gates must run in order, and an approval alone is not enough.
+        ("external action with no matter identified is blocked (fail closed)",
+         not gate_external_action(act, [good], now).allowed),
+        ("external action on a matter needing conflict review is blocked "
+         "even with a valid approval",
+         not gate_external_action(
+             act, [good], now,
+             matter={**_example_matter(), "proposed_client": "clearglass",
+                     "other_affected_parties": ["Desmond Otieno Odhiambo"]},
+         ).allowed),
+        ("external action relying on an unauthorized source is blocked "
+         "even with a valid approval",
+         not gate_external_action(
+             act, [good], now, matter=_example_matter(),
+             sources=[{**full_source, "authority_basis": ["job_title"]}], today=today,
+         ).allowed),
+        ("the full §22 chain with clean intake, authorized source and bound "
+         "approval reaches APPROVED FOR EXECUTION",
+         gate_external_action(act, [good], now, matter=_example_matter(),
+                              sources=[full_source], today=today).status
+         is Status.APPROVED_FOR_EXECUTION),
+        ("read-only work needs no matter record",
+         gate_external_action({**act, "kind": "analyze"}, [], now).allowed),
+        ("a prohibited kind stays blocked whatever the upstream gates say",
+         not gate_external_action({**act, "kind": "delete_evidence"}, [good], now,
+                                  matter=_example_matter()).allowed),
+        ("a cleared sequence records the gates it passed, in §22 order",
+         gate_external_action(act, [good], now, matter=_example_matter(),
+                              sources=[full_source], today=today)
+         .details["GATE_SEQUENCE"]["cleared"][:3]
+         == ["MANDATE IDENTIFICATION", "CONFLICT CHECK", "AUTHORITY CHECK"]),
     ]
     return checks
 
