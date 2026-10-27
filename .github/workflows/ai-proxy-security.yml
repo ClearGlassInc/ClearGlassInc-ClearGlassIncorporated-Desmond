@@ -107,9 +107,11 @@ jobs:
 
           # Provider key shapes and generic assignments. Restricted to tracked
           # files so node_modules and build output cannot create false hits.
+          # A key starts a token: without the left boundary "sk-" also matches
+          # inside "task-..." and "risk-management-...".
           patterns=(
-            'sk-[A-Za-z0-9_-]{20,}'
-            'sk-proj-[A-Za-z0-9_-]{20,}'
+            '(^|[^[:alnum:]])sk-[A-Za-z0-9_-]{20,}'
+            '(^|[^[:alnum:]])sk-proj-[A-Za-z0-9_-]{20,}'
             'xox[baprs]-[A-Za-z0-9-]{10,}'
             'gh[pousr]_[A-Za-z0-9]{30,}'
             'AKIA[0-9A-Z]{16}'

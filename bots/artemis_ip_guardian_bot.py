@@ -14,8 +14,8 @@
 Audits the repository's intellectual-property and attribution posture:
 
 1. Required governance files exist (LICENSE, NOTICE, SECURITY.md,
-   .github/CODEOWNERS, CONTRIBUTING.md, TRADEMARKS.md, docs/PROVENANCE.md,
-   docs/IP-POLICY.md).
+   CODEOWNERS where GitHub reads it, CONTRIBUTING.md, TRADEMARKS.md,
+   docs/PROVENANCE.md, docs/IP-POLICY.md).
 2. ARTEMIS-owned source files carry the ClearGlass Inc. ownership imprint.
 3. ARTEMIS agent configurations are valid JSON and point at an existing
    system prompt file.
@@ -41,12 +41,16 @@ REQUIRED_GOVERNANCE_FILES = [
     "LICENSE",
     "NOTICE",
     "SECURITY.md",
-    ".github/CODEOWNERS",
+    "CODEOWNERS",
     "CONTRIBUTING.md",
     "TRADEMARKS.md",
     "docs/PROVENANCE.md",
     "docs/IP-POLICY.md",
 ]
+
+# GitHub reads CODEOWNERS from the first of these that exists. This repository
+# keeps it at the root; a .github/ copy would take precedence and shadow it.
+CODEOWNERS_LOCATIONS = (".github/CODEOWNERS", "CODEOWNERS", "docs/CODEOWNERS")
 
 # Paths owned by the ARTEMIS system whose source files must carry the imprint.
 ARTEMIS_SOURCE_GLOBS = [
@@ -88,6 +92,9 @@ def _now_utc() -> str:
 
 def check_governance_files(report: GuardianReport) -> None:
     for rel in REQUIRED_GOVERNANCE_FILES:
+        if rel == "CODEOWNERS":
+            # Check the file GitHub enforces: the first that exists, even if empty.
+            rel = next((loc for loc in CODEOWNERS_LOCATIONS if (ROOT / loc).is_file()), rel)
         path = ROOT / rel
         ok = path.is_file() and path.stat().st_size > 0
         report.add("governance-file", rel, ok, "" if ok else "missing or empty")
