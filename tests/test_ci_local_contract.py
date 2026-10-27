@@ -41,3 +41,6 @@ def test_local_python_gate_preserves_ci_coverage_validation_and_cleanup() -> Non
         "-q",
     ]
     assert "coverage.xml" in gate.artifacts
+    # --cov also writes coverage.py's data file. Left behind, it is an untracked
+    # 50 KB binary in every working tree the gate runs in.
+    assert ".coverage" in gate.artifacts
