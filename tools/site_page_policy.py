@@ -15,6 +15,7 @@ NON_DEPLOYABLE_HTML_PAGES: frozenset[str] = frozenset(
     {
         "clearglass-legal-assistance/prototype/index.html",
         "clearglass-legal-assistance/prototype/security-prototype.html",
+        "clearglass-decision-os/index.html",
     }
 )
 

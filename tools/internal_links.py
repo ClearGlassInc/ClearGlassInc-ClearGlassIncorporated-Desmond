@@ -73,6 +73,9 @@ EXCLUDED_PAGES: dict[str, tuple[str, str]] = {
     "clearglass-legal-assistance/prototype/security-prototype.html": (
         "Design prototype", "noindex, nofollow local encryption and voice-state study"
     ),
+    "clearglass-decision-os/index.html": (
+        "Design prototype", "noindex, nofollow isolated synthetic decision simulator"
+    ),
     "loader.html": ("Application utility", "noindex branded loading surface"),
     "guardian_command_nexus_spec.html": (
         "Duplicate surface",
