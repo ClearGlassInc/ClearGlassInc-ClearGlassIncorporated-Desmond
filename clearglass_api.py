@@ -3,6 +3,8 @@ ClearGlass Cryptocurrency - REST API Server
 Provides HTTP endpoints for blockchain interactions
 """
 
+import os
+
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from clearglass_blockchain import ClearGlassBlockchain, Transaction
@@ -242,5 +244,10 @@ if __name__ == '__main__':
     print("API documentation: http://localhost:5000")
     print("=" * 60)
     
-    # Run server
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Run server. Loopback by default, as the docs describe; the Werkzeug
+    # debugger runs code for whoever reaches it, so it is opt-in only.
+    app.run(
+        host=os.environ.get('CLEARGLASS_API_HOST', '127.0.0.1'),
+        port=5000,
+        debug=os.environ.get('CLEARGLASS_API_DEBUG') == '1',
+    )
