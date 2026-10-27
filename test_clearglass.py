@@ -4,7 +4,6 @@ Unit tests for blockchain, wallet, and transaction functionality
 """
 
 import unittest
-import time
 from clearglass_blockchain import (
     ClearGlassBlockchain,
     Transaction,

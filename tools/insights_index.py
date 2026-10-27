@@ -65,7 +65,9 @@ MARKERS = {
 
 # Pages under blog/ that are not editorial briefs. They stay linked from the hub
 # but never enter the RSS feed or the Blog JSON-LD, which describe articles.
-NON_ARTICLE_SLUGS = {"resume-builder", "truth-forensics"}
+# ledger-of-ashes is a book preview with its own design: the article pass would
+# add a table of contents and a rail of cyber briefs to a fiction teaser.
+NON_ARTICLE_SLUGS = {"resume-builder", "truth-forensics", "ledger-of-ashes"}
 
 # Topic vocabulary. The hub previously shipped chips for 8 of these while cards
 # carried 13, so `?topic=frontier` and friends were unreachable from the UI.
@@ -449,6 +451,13 @@ CURATED: dict[str, dict] = {
         cta="Read brief 03 →",
         topics="information-integrity governed-ai systems",
         series="ClearGlass Truth Forensics",
+    ),
+    # Copy is the page's own: its "Preview edition · Fiction" cover line, its
+    # story heading, and the call to action the hub's book feature already uses.
+    "ledger-of-ashes": dict(
+        category="Fiction",
+        quote="When power erases the evidence, one ledger can expose it.",
+        cta="Explore the book &amp; read an excerpt →",
     ),
 }
 
