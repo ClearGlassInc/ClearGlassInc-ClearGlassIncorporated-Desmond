@@ -368,3 +368,61 @@ def test_cli_status_and_strict_exit_codes(tmp_path, capsys):
     assert lg.main(["--gate-action", str(EXAMPLES / "action.example.json"),
                     "--now", "2026-10-23T12:00:00Z", "--strict"]) == 2
     assert lg.main(["--self-check"]) == 0
+
+
+# ---------------------------------------------------------------------------
+# §21 Prohibited overclaims
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("wording", [
+    "You are safe.",
+    "You're fully protected.",
+    "I am watching Desmond live.",
+    "Relax, I have everything covered.",
+    "All legal risks are handled.",
+    "No deadlines were missed.",
+    "No alerts detected.",
+])
+def test_overclaims_are_refused(wording):
+    res = lg.screen_overclaims(wording, lg.Monitoring.NOT_ACTIVE.value)
+    assert not res.allowed
+    assert res.status is lg.Status.BLOCKED
+    assert res.reasons
+
+
+@pytest.mark.parametrize("wording", [
+    "I can review the documents you provide.",
+    "I can track only the authorized sources listed below.",
+    "The last successful check was 2026-10-23 12:00 UTC.",
+    "Coverage is limited to the two authorized mailboxes.",
+    "No alerts were detected in the checked period.",
+    "This does not establish continuous monitoring or legal protection.",
+    "A human decision is required before sending this notice.",
+])
+def test_approved_substitutes_pass(wording):
+    """The §21 substitutes must survive the screen, or it is unusable.
+
+    Several contain the same nouns as the refusals ("legal protection",
+    "continuous monitoring") in disclaiming form; a broader pattern would
+    make the honest phrasing unsayable.
+    """
+    assert lg.screen_overclaims(wording, lg.Monitoring.NOT_ACTIVE.value).allowed
+
+
+def test_monitoring_active_claim_requires_verified_coverage():
+    claim = "Monitoring is active."
+    assert not lg.screen_overclaims(claim, lg.Monitoring.NOT_ACTIVE.value).allowed
+    assert not lg.screen_overclaims(claim, lg.Monitoring.LIMITED.value).allowed
+    assert lg.screen_overclaims(claim, lg.Monitoring.ACTIVE.value).allowed
+
+
+def test_unqualified_no_alerts_carries_the_scope_note():
+    res = lg.screen_overclaims("No alerts detected.", lg.Monitoring.NOT_ACTIVE.value)
+    assert "unqualified_no_alerts" in res.details["OVERCLAIMS"]
+    assert lg.NO_ALERT_NOTE in " ".join(res.reasons)
+
+
+def test_policy_version_matches_agent_manifest():
+    """A gate changed, so the engine and the manifest must agree on the version."""
+    manifest = json.loads((AGENT_DIR / "agent.json").read_text(encoding="utf-8"))
+    assert manifest["policy_version"] == lg.POLICY_VERSION
