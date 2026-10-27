@@ -34,9 +34,14 @@ import pathlib
 import re
 import sys
 
-from tools.site_page_policy import is_non_deployable_html
-
 REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
+
+# Run as `python3 tools/tab_icons.py`, sys.path[0] is tools/, not the
+# repository root, so `tools` is importable only through this.
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from tools.site_page_policy import is_non_deployable_html  # noqa: E402
 
 SEAL = "/assets/images/clearglass-holographic-seal.png"
 
