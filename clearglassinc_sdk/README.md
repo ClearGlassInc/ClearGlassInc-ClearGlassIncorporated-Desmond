@@ -119,3 +119,33 @@ export CLEARGLASS_PROVIDER=openai   # or anthropic; defaults to an offline fake 
 export OPENAI_API_KEY=sk-...
 clearglassinc chat
 ```
+
+## How to run agents
+
+One command runs one governed mission across three agents and exits non-zero
+if anything is unverified. It needs no credential and no network:
+
+```bash
+cd clearglassinc_sdk
+PYTHONPATH=. python3 -m clearglassinc_sdk.cli smoke          # human-readable
+PYTHONPATH=. python3 -m clearglassinc_sdk.cli smoke --json   # machine-readable
+```
+
+Three roles, three separate `Agent`s, so three separate `Memory` objects. No
+role ever sees another's transcript:
+
+| Role | Model | Does |
+|------|-------|------|
+| `PLANNER` | `claude-opus-5` | Writes a three-step plan |
+| `WORKER` | `claude-sonnet-5` | Globs the repo via its one tool, reports paths |
+| `CRITIC` | `claude-sonnet-5` | Stats each claimed path, marks Confirmed / Unconfirmed |
+
+The paths and the verdict come from real filesystem calls, not from the model,
+so the offline provider cannot fake a pass. To see a failure reported rather
+than assumed, add `--inject-bogus`: the critic marks the planted path
+`Unconfirmed` and the command exits 1.
+
+Set `CLEARGLASS_PROVIDER=anthropic` plus `ANTHROPIC_API_KEY` to run the same
+mission against a live model. A missing package or key prints one line and
+exits 2 rather than a traceback. Exit codes: `0` verified, `1` a claim failed
+verification, `2` the provider is not configured.
