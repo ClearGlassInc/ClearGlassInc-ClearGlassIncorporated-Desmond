@@ -43,6 +43,11 @@ Guidance for agents working in this repository.
 > Re-verified 2026-10-02: still true. Job `110643972279` (Auto Heal, on
 > `582ec42`) reported `runner_id: 0` and no steps, and finished in 4 seconds;
 > Pages run #257 deployed the same commit. See `docs/revenue/daily/2026-10-02.md`.
+>
+> Re-verified 2026-10-27: still true. Job `122121602803` (Multi-Repo Audit, on
+> `0d711f1`) reported `runner_id: 0`, and its annotation reads "The job was not
+> started because your account is locked due to a billing issue." Pages run
+> `40427632068` deployed the same commit. See `docs/audit/2026-10-27-recovery.md`.
 
 ## What this repo is
 
