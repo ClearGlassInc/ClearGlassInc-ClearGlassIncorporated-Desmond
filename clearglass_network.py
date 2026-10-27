@@ -7,7 +7,6 @@ import socket
 import json
 import threading
 import time
-import requests
 from typing import List, Set, Dict
 from clearglass_blockchain import ClearGlassBlockchain, Transaction, Block
 
@@ -143,9 +142,8 @@ class NetworkNode:
                 return {'type': 'error', 'message': 'Invalid transaction'}
         
         elif msg_type == 'new_block':
-            block_data = message.get('block')
-            # Validate and add block
-            # Implementation depends on consensus rules
+            # Not implemented: a peer's block is acknowledged but neither
+            # validated nor added to the chain. That needs consensus rules.
             return {'type': 'ack', 'message': 'Block received'}
         
         else:
@@ -164,7 +162,7 @@ class NetworkNode:
                     for peer in response.get('peers', []):
                         if peer != self.get_address():
                             self.peers.add(peer)
-            except:
+            except Exception:
                 pass
     
     def send_message(self, peer_address: str, message: Dict) -> Dict:
@@ -205,7 +203,7 @@ class NetworkNode:
         for peer in list(self.peers):
             try:
                 self.send_message(peer, message)
-            except:
+            except Exception:
                 # Remove unresponsive peer
                 self.peers.discard(peer)
     
@@ -219,7 +217,7 @@ class NetworkNode:
         for peer in list(self.peers):
             try:
                 self.send_message(peer, message)
-            except:
+            except Exception:
                 self.peers.discard(peer)
     
     def _discover_peers(self):
@@ -231,7 +229,7 @@ class NetworkNode:
                     response = self.send_message(peer, {'type': 'ping'})
                     if response.get('type') != 'pong':
                         self.peers.discard(peer)
-                except:
+                except Exception:
                     self.peers.discard(peer)
             
             time.sleep(30)  # Check every 30 seconds
@@ -255,7 +253,7 @@ class NetworkNode:
                         if len(chain_data) > max_length:
                             longest_chain = chain_data
                             max_length = len(chain_data)
-                except:
+                except Exception:
                     pass
             
             # Replace chain if longer valid chain found

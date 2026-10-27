@@ -5,9 +5,8 @@ Provides HTTP endpoints for blockchain interactions
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import json
 from clearglass_blockchain import ClearGlassBlockchain, Transaction
-from clearglass_wallet import ClearGlassWallet, create_wallet
+from clearglass_wallet import create_wallet
 import time
 
 app = Flask(__name__)

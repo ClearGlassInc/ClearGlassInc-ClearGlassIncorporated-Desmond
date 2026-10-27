@@ -5,13 +5,12 @@ Complete CLI for all ClearGlass operations
 """
 
 import click
-import json
 import os
 import sys
 from tabulate import tabulate
 from colorama import init, Fore, Style
-from clearglass_blockchain import ClearGlassBlockchain, Transaction
-from clearglass_wallet import ClearGlassWallet, WalletManager, create_wallet
+from clearglass_blockchain import ClearGlassBlockchain
+from clearglass_wallet import WalletManager
 from clearglass_network import NetworkNode
 
 # Initialize colorama
@@ -227,7 +226,7 @@ def blockchain_validate():
         click.echo(f"  All {len(blockchain.chain)} blocks verified")
     else:
         click.echo(f"{Fore.RED}✗ Blockchain is invalid!")
-        click.echo(f"  Chain integrity compromised")
+        click.echo("  Chain integrity compromised")
 
 
 @blockchain_cmd.command('blocks')
@@ -348,9 +347,9 @@ def init():
     click.echo(f"{Fore.GREEN}✓ Directories created")
     click.echo(f"{Fore.GREEN}✓ Blockchain initialized with genesis block")
     click.echo(f"\n{Fore.CYAN}Quick Start:")
-    click.echo(f"  1. Create wallet: clearglass wallet create --name mywallet")
-    click.echo(f"  2. Mine blocks: clearglass mine --address <your_address>")
-    click.echo(f"  3. Check balance: clearglass wallet balance --name mywallet")
+    click.echo("  1. Create wallet: clearglass wallet create --name mywallet")
+    click.echo("  2. Mine blocks: clearglass mine --address <your_address>")
+    click.echo("  3. Check balance: clearglass wallet balance --name mywallet")
 
 
 @cli.command()
@@ -360,10 +359,10 @@ def version():
     click.echo(f"Version: {Fore.WHITE}1.0.0")
     click.echo(f"Python: {Fore.WHITE}{sys.version.split()[0]}")
     click.echo(f"\n{Fore.CYAN}Components:")
-    click.echo(f"  • Blockchain Core: v1.0.0")
-    click.echo(f"  • Wallet System: v1.0.0")
-    click.echo(f"  • Network Protocol: v1.0.0")
-    click.echo(f"  • REST API: v1.0.0")
+    click.echo("  • Blockchain Core: v1.0.0")
+    click.echo("  • Wallet System: v1.0.0")
+    click.echo("  • Network Protocol: v1.0.0")
+    click.echo("  • REST API: v1.0.0")
 
 
 if __name__ == '__main__':

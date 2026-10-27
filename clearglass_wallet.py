@@ -6,9 +6,6 @@ Secure wallet creation, storage, and transaction signing
 import json
 import os
 from typing import Dict, Optional
-import ecdsa
-import base64
-import hashlib
 from datetime import datetime
 from clearglass_blockchain import (
     create_wallet, load_private_key, Transaction, ClearGlassBlockchain
@@ -56,7 +53,7 @@ class ClearGlassWallet:
         # Set restrictive permissions (Unix-like systems)
         try:
             os.chmod(self.wallet_file, 0o600)
-        except:
+        except OSError:
             pass
         
         print(f"✓ Wallet saved to {self.wallet_file}")
@@ -193,7 +190,6 @@ class WalletManager:
 # Command-line interface for wallet operations
 def wallet_cli():
     """Interactive wallet management CLI"""
-    import sys
     
     print("=" * 60)
     print("ClearGlass Cryptocurrency - Wallet Manager")
@@ -222,7 +218,7 @@ def wallet_cli():
         
         if choice == '1':
             wallet.create_new_wallet()
-            print(f"\n✓ New wallet created!")
+            print("\n✓ New wallet created!")
             print(f"Address: {wallet.address}")
             print("\n⚠️  SAVE YOUR WALLET FILE SECURELY!")
             
@@ -262,7 +258,7 @@ def wallet_cli():
         
         elif choice == '6':
             if wallet.public_key:
-                print(f"\nYour public key (share this to receive payments):")
+                print("\nYour public key (share this to receive payments):")
                 print(wallet.public_key)
             else:
                 print("No wallet loaded")
@@ -279,7 +275,7 @@ def wallet_cli():
                 print(f"\nMining block {i+1}/{num_blocks}...")
                 blockchain.mine_pending_transactions(wallet.address)
             
-            print(f"\n✓ Mining complete!")
+            print("\n✓ Mining complete!")
             print(f"New balance: {wallet.get_balance(blockchain)} CGLASS")
         
         elif choice == '8':
