@@ -426,3 +426,86 @@ def test_policy_version_matches_agent_manifest():
     """A gate changed, so the engine and the manifest must agree on the version."""
     manifest = json.loads((AGENT_DIR / "agent.json").read_text(encoding="utf-8"))
     assert manifest["policy_version"] == lg.POLICY_VERSION
+
+
+# ---------------------------------------------------------------------------
+# §22 Gate sequence
+# ---------------------------------------------------------------------------
+
+def _clean_matter():
+    return json.loads((EXAMPLES / "matter.example.json").read_text(encoding="utf-8"))
+
+
+def _bound(action):
+    return {"action_id": action["action_id"], "digest": lg.action_digest(action),
+            "approver": "Owner", "expires_at": "2099-01-01T00:00:00Z", "used": False}
+
+
+def _external_action():
+    return {
+        "action_id": "ACT-SEQ-1", "kind": "send_email", "authorized_approver": "Owner",
+        "exact_tool": "mail", "exact_target": "counsel@example.com",
+        "exact_content_or_change": "Draft text", "attachments": [],
+        "disclosure_scope": "matter excerpt", "legal_or_commercial_effect": "notice",
+        "execution_conditions": "after review",
+    }
+
+
+def test_approval_alone_cannot_authorize_a_write():
+    """The gap §22 closes: a valid digest-bound approval is not sufficient.
+
+    gate_action sees only the action and the approval, so on its own it would
+    authorize a write for a client that never cleared intake.
+    """
+    act = _external_action()
+    assert lg.gate_action(act, [_bound(act)], NOW).allowed          # §15 alone: yes
+    assert not lg.gate_external_action(act, [_bound(act)], NOW).allowed  # §22: no
+
+
+def test_unresolved_mandate_gate_fails_closed():
+    act = _external_action()
+    res = lg.gate_external_action(act, [_bound(act)], NOW)
+    assert res.status is lg.Status.BLOCKED
+    assert res.details["GATE_SEQUENCE"]["stopped_at"] == "MANDATE IDENTIFICATION"
+
+
+def test_conflicted_matter_blocks_despite_valid_approval():
+    act = _external_action()
+    matter = {**_clean_matter(), "other_affected_parties": ["Desmond Otieno Odhiambo"]}
+    res = lg.gate_external_action(act, [_bound(act)], NOW, matter=matter)
+    assert not res.allowed
+    assert res.details["GATE_SEQUENCE"]["stopped_at"] == "MANDATE IDENTIFICATION"
+
+
+def test_unauthorized_source_blocks_despite_valid_approval():
+    act = _external_action()
+    source = json.loads((EXAMPLES / "source.example.json").read_text(encoding="utf-8"))
+    res = lg.gate_external_action(
+        act, [_bound(act)], NOW, matter=_clean_matter(),
+        sources=[{**source, "authority_basis": ["job_title"]}], today=TODAY)
+    assert not res.allowed
+    assert res.details["GATE_SEQUENCE"]["stopped_at"] == "AUTHORITY CHECK"
+
+
+def test_clean_chain_reaches_approved_for_execution_and_records_order():
+    act = _external_action()
+    source = json.loads((EXAMPLES / "source.example.json").read_text(encoding="utf-8"))
+    res = lg.gate_external_action(act, [_bound(act)], NOW, matter=_clean_matter(),
+                                  sources=[source], today=TODAY)
+    assert res.status is lg.Status.APPROVED_FOR_EXECUTION
+    cleared = res.details["GATE_SEQUENCE"]["cleared"]
+    assert cleared[:3] == list(lg.PREREQUISITE_GATES[:2]) + ["AUTHORITY CHECK"]
+    assert "APPROVAL GATE" in cleared
+
+
+@pytest.mark.parametrize("kind", sorted(lg.READ_ONLY_KINDS))
+def test_read_only_work_needs_no_matter(kind):
+    assert lg.gate_external_action({**_external_action(), "kind": kind}, [], NOW).allowed
+
+
+@pytest.mark.parametrize("kind", sorted(lg.PROHIBITED_KINDS))
+def test_prohibited_kinds_stay_blocked_whatever_upstream_says(kind):
+    act = {**_external_action(), "kind": kind}
+    res = lg.gate_external_action(act, [_bound(act)], NOW, matter=_clean_matter())
+    assert not res.allowed
+    assert res.status is lg.Status.BLOCKED
