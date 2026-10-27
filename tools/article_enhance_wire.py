@@ -31,8 +31,9 @@ import sys
 BLOG = pathlib.Path(__file__).resolve().parent.parent / "blog"
 
 # The hub runs its own layer; the resume builder and the Truth Forensics
-# console are tool shells, not briefs.
-SKIP = {"index.html", "resume-builder.html", "truth-forensics.html"}
+# console are tool shells, not briefs, and Ledger of Ashes is a book preview
+# (all three are NON_ARTICLE_SLUGS in tools/insights_index.py).
+SKIP = {"index.html", "resume-builder.html", "truth-forensics.html", "ledger-of-ashes.html"}
 
 CSS_LINKS = ('<link rel="stylesheet" href="insights.css"/>',
              '<link rel="stylesheet" href="article-enhance.css"/>')
