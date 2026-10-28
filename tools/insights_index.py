@@ -91,6 +91,14 @@ TOPICS = {
 # Entries for the 23 briefs that already had hub cards preserve their authored
 # copy verbatim; the rest were written from what each brief actually argues.
 CURATED: dict[str, dict] = {
+    "seeing-exposure-before-it-moves-endpoint-api-agent-risk": dict(
+        category="Cyber Architecture &amp; Canada–US Controls",
+        quote="Discover the path. Constrain the reach. Record the decision.",
+        cta="Read the exposure model →",
+        topics="cross-border cyber agents governed-ai systems",
+        series="ClearGlass Exposure Operating Models",
+        deskRank=1,
+    ),
     "canada-surveillance-privacy-digital-rights-evidence-review-2026": dict(
         category="Privacy, Digital Rights &amp; Cybersecurity",
         quote="Verified records. Attributed claims. Open questions.",
