@@ -87,6 +87,21 @@ GATES: list[Gate] = [
         [sys.executable, "-m", "pytest", "tests/", "--cov", "--cov-report=xml", "-q"],
         artifacts=("coverage.xml", ".coverage"),
     ),
+    # The agent-sdk job. Its suite is invisible to the root `pytest tests/`
+    # gate above: it lives in clearglassinc_sdk/tests and needs that package's
+    # own pyproject (pythonpath, asyncio_mode), so both run with cwd set there.
+    Gate(
+        "agent-sdk",
+        "agent SDK tests",
+        [sys.executable, "-m", "pytest", "tests/", "-q"],
+        cwd="clearglassinc_sdk",
+    ),
+    Gate(
+        "agent-sdk",
+        "agent smoke mission",
+        [sys.executable, "-m", "clearglassinc_sdk.cli", "smoke"],
+        cwd="clearglassinc_sdk",
+    ),
     Gate("lint", "ruff check .", [sys.executable, "-m", "ruff", "check", "."]),
     Gate(
         "site-audit",

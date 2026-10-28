@@ -44,6 +44,32 @@ jobs:
       - run: pip install pytest pytest-cov pyyaml "pydantic>=2,<3" "httpx>=0.27,<1"
       - run: pytest tests/ --cov --cov-report=xml -q
 
+  agent-sdk:
+    name: Agent SDK
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+          cache: pip
+      # The root `pytest tests/` job does not reach this suite: it lives in
+      # clearglassinc_sdk/tests and needs that package's own pyproject
+      # (pythonpath=["."], asyncio_mode=auto), so it must run from there.
+      # Until this job existed the 41 tests ran nowhere at all.
+      - run: pip install pytest pytest-asyncio
+      - run: python -m pytest tests/ -q
+        working-directory: clearglassinc_sdk
+      # The end-to-end proof: one governed mission across three isolated
+      # agents. Offline by default, so no credential and no network.
+      - run: python -m clearglassinc_sdk.cli smoke
+        working-directory: clearglassinc_sdk
+        env:
+          PYTHONPATH: .
+
   lint:
     name: Lint (ruff)
     runs-on: ubuntu-latest
@@ -197,6 +223,7 @@ jobs:
     if: always()
     needs:
       - python-tests
+      - agent-sdk
       - lint
       - site-audit
       - search-integrity
