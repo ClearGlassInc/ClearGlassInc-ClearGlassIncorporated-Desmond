@@ -330,19 +330,17 @@ body::after{
 
 /* ── BOTTOM BAR ── */
 .bot-bar{
-  display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px;
+  display:grid;grid-template-columns:1fr;gap:0;
   font-family:var(--M);font-size:9px;letter-spacing:0.28em;
   color:var(--ash-d);text-transform:uppercase;
   opacity:0;animation:fadeIn 1s var(--ease) 2s forwards;
 }
 
 .bot-col{
-  display:flex;flex-direction:column;gap:6px;
+  display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;
   padding:14px 0;
   border-top:1px solid rgba(255,27,61,0.10);
 }
-.bot-col:nth-child(2){text-align:center;align-items:center;}
-.bot-col:nth-child(3){text-align:right;align-items:flex-end;}
 
 .bc-label{color:var(--ash-d);letter-spacing:0.34em;font-size:8px;}
 .bc-value{color:var(--bone);letter-spacing:0.16em;font-size:10px;font-weight:500;}
@@ -398,7 +396,7 @@ body.exiting .ambient{
   .top-bar{font-size:9px;letter-spacing:0.22em;}
   .top-tag{font-size:8px;}
   .bot-bar{grid-template-columns:1fr;gap:8px;font-size:8px;}
-  .bot-col:nth-child(2),.bot-col:nth-child(3){text-align:left;align-items:flex-start;}
+  .bot-col{text-align:left;align-items:flex-start;}
   .energy-line{bottom:auto;top:auto;display:none;}
   .side-ticker{display:none;}
   .center{gap:32px;}
@@ -596,16 +594,8 @@ body.exiting .ambient{
   <!-- BOTTOM BAR -->
   <div class="bot-bar">
     <div class="bot-col">
-      <span class="bc-label">Node</span>
-      <span class="bc-value">CG-ONT-TOR-01</span>
-    </div>
-    <div class="bot-col">
       <span class="bc-label">Encryption</span>
       <span class="bc-value ok">AES-256-GCM · KYBER</span>
-    </div>
-    <div class="bot-col">
-      <span class="bc-label">Build</span>
-      <span class="bc-value">v5.0.2026.04</span>
     </div>
   </div>
 
