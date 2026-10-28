@@ -91,6 +91,14 @@ TOPICS = {
 # Entries for the 23 briefs that already had hub cards preserve their authored
 # copy verbatim; the rest were written from what each brief actually argues.
 CURATED: dict[str, dict] = {
+    "canada-surveillance-privacy-digital-rights-evidence-review-2026": dict(
+        category="Privacy, Digital Rights &amp; Cybersecurity",
+        quote="Verified records. Attributed claims. Open questions.",
+        cta="Read the evidence review →",
+        topics="cyber osint information-integrity systems",
+        series="ClearGlass Public-Interest Intelligence",
+        deskRank=1,
+    ),
     "clearglass-workplace-surveillance-intelligence-defense-system": dict(
         category="Worker Rights",
         quote="Transparency over concealment.",
