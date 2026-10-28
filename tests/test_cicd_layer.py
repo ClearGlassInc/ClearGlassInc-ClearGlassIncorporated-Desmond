@@ -191,8 +191,12 @@ def test_existing_ci_jobs_are_kept_and_one_result_check_covers_them() -> None:
     """Job names are the checks branch protection reads; `result` is the one to require."""
     jobs = workflow("ci.yml")["jobs"]
     existing = {"python-tests", "lint", "site-audit", "search-integrity", "lighthouse", "workflow-doctor", "osint-deck"}
-    assert existing <= set(jobs)
-    assert set(jobs["result"]["needs"]) == existing | {"changes", "stack"}
+    assert existing | {"changes", "stack"} <= set(jobs)
+    # `result` must aggregate *every* other job, not a list kept by hand: a job
+    # absent from `needs` is a check branch protection never waits for, which is
+    # the failure this test exists to prevent. Stated this way, adding a job
+    # cannot pass without also wiring it in.
+    assert set(jobs["result"]["needs"]) == set(jobs) - {"result"}
     assert jobs["result"]["if"] == "always()"
     callers = {name: job["uses"] for name, job in jobs.items() if "uses" in job}
     assert callers == {"stack": "./.github/workflows/reusable-component-ci.yml"}
